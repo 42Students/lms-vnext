@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
@@ -42,33 +43,35 @@ export default async function FacultyAssignmentSubmissionsPage({
     kind:"assignment",assessmentId:report.assignment.id,
     deliveryId:report.assignment.deliveryId,filter:query.filter,
   });
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader title="Assignment submissions"
+      description={[report.assignment.courseName, report.assignment.sectionName].join(" · ")}
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Full Section report
       </Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3">
+    <form method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <Input type="hidden" name="deliveryId" value={query.deliveryId}/>
       {query.filter!=="ALL"?<Input type="hidden" name="filter" value={query.filter}/>:null}
       {query.order!=="NEWEST"?<Input type="hidden" name="order" value={query.order}/>:null}
       {query.publication!=="ALL"?<Input type="hidden" name="publication" value={query.publication}/>:null}
-      <label className="grid min-w-0 w-full flex-1 basis-full gap-[6px] md:w-auto md:basis-56 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner submissions
         <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
       </label>
-      <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
+      <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear search</Link>
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear search</Link>
     </form>
     <Tabs ariaLabel="Submission grading filters" value={query.filter} renderPanel={false}
       items={(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>({
        value:filter,label:filter==="ALL"?"All":filter==="GRADED"?"Graded":filter==="UNGRADED"?"Ungraded":"Late",
        href:facultySubmissionListHref({...query,filter,page:1}),
       }))}/>
+    <Disclosure title="Grade visibility and order" className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-3 px-2 py-3">
     <Tabs ariaLabel="Grade publication visibility" value={query.publication} renderPanel={false}
       items={(["ALL","PUBLISHED","PRIVATE"] as const).map(mode=>({
        value:mode,label:mode==="ALL"?"All grades":mode==="PUBLISHED"?"Published grades":"Private grades",
@@ -77,12 +80,13 @@ export default async function FacultyAssignmentSubmissionsPage({
     <Tabs ariaLabel="Submission date order" value={query.order} renderPanel={false}
       items={[{value:"NEWEST",label:"Newest first",href:facultySubmissionListHref({...query,order:"NEWEST",page:1})},
        {value:"OLDEST",label:"Oldest first",href:facultySubmissionListHref({...query,order:"OLDEST",page:1})}]}/>
-    <div className="flex flex-wrap items-center justify-between gap-3">
+    </Disclosure>
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]">
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
-        <Link href={csvHref} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
         </Link>
         <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>
@@ -94,8 +98,8 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.items.map(row=>{
           const late=report.assignment.dueAt!==null&&
             row.submittedAt.getTime()>report.assignment.dueAt.getTime();
-          return <li key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 last:border-b-0">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+          return <li key={row.id} className="min-w-0 bg-transparent py-4">
+            <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">
               {row.learnerDisplayName||row.learnerEmail||"Learner"}
             </h2>
             <p className="mt-1 text-sm text-body leading-[22px]">
@@ -116,7 +120,7 @@ export default async function FacultyAssignmentSubmissionsPage({
         })}
       </ol>}
     <Pagination label="Submission pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultySubmissionListHref({...query,page})} />
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       All rows and CSV exports are recalculated with the current persisted Faculty Section scope.
       Draft private grades are never described as learner-visible. No grading mutation occurs here.
     </p>
