@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import {friendlyApiError} from "@/lib/friendly-error";
+import { Alert } from "@/components/ui/alert";
 export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;status:"ACTIVE"|"DISABLED"}){
  const router=useRouter();
  const lock=useRef(false);
@@ -28,7 +29,7 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
    setNotice(next==="DISABLED"?"Platform account blocked and sessions revoked.":"Platform account reactivated.");
    setReason("");setConfirmOpen(false);
    router.refresh();
-  }catch{setError(friendlyApiError({}));}
+  }catch(cause){setError(cause instanceof Error?cause.message:friendlyApiError({}));}
   finally{lock.current=false;setPending(false);}
  }
  return <details aria-label="Platform account control" className="min-w-0 border-b border-border pb-[var(--lms-space-3)]">
@@ -37,8 +38,10 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   <p className="max-w-3xl text-sm leading-6 text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
   <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
    <Textarea value={reason} maxLength={1000} rows={2} disabled={pending}
-    onChange={event=>setReason(event.target.value)} className="min-h-11 w-full md:min-h-9"/>
+    aria-describedby="platform-block-reason-help"
+    onChange={event=>{setReason(event.target.value);setError(null);}} className="min-h-11 w-full md:min-h-9"/>
   </label>
+  <p id="platform-block-reason-help" className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">Enter at least 4 characters for the audit reason.</p>
   <Button type="button" variant={status==="ACTIVE"?"danger":"secondary"} disabled={pending||reason.trim().length<4}
    onClick={()=>setConfirmOpen(true)} className="mt-[var(--lms-space-3)] min-h-11 w-full sm:w-auto md:min-h-9">
    {pending?"Updating…":status==="ACTIVE"?"Block platform account":"Reactivate platform account"}
@@ -48,9 +51,11 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
    description={status==="ACTIVE"?"Block this person across the platform? All active sessions will be revoked immediately.":"Reactivate this platform account? The person must sign in again."}
    confirmLabel={status==="ACTIVE"?"Block platform account":"Reactivate platform account"}
    confirmVariant={status==="ACTIVE"?"danger":"primary"} pending={pending}
-   onConfirm={()=>void submit()}/>
-  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="mt-2 text-sm text-body">{notice}</p>:null}
+   onConfirm={()=>void submit()}>
+    {error?<Alert tone="error">{error}</Alert>:null}
+   </ConfirmDialog>
+  {error?<Alert tone="error" className="mt-2">{error}</Alert>:null}
+  {notice?<Alert tone="success" className="mt-2">{notice}</Alert>:null}
   </div>
  </details>;
 }
