@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -80,19 +81,7 @@ export default async function TpoDriveShortlistPage({
           {key:"when",header:"Shortlisted at (IST)",mobilePriority:"secondary",cell:item=>item.shortlistedAtIso
             ?dateLabel.format(new Date(item.shortlistedAtIso))+" IST":"Decision timestamp unavailable"},
         ]}/>
-      <nav aria-label="Shortlist pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[13px]">
-        <span>Page {data.page} of {data.totalPages}</span>
-        <div className="flex gap-4">
-          {data.page > 1 ? (
-            <Link href={pathname + "?page=" + (data.page - 1)}
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Previous</Link>
-          ) : null}
-          {data.page < data.totalPages ? (
-            <Link href={pathname + "?page=" + (data.page + 1)}
-              className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] hover:underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next →</Link>
-          ) : null}
-        </div>
-      </nav>
+      <Pagination label="Shortlist pagination" page={data.page} pageCount={data.totalPages} hrefForPage={target=>pathname+"?page="+target}/>
     </div>
   );
 }

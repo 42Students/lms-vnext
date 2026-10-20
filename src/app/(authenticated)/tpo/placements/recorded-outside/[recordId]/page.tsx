@@ -25,7 +25,7 @@ export default async function TpoOutsideDriveDetail({params,searchParams}:{
    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(data.record.occurredAt)} IST</p>
   <form method="get" role="search" aria-label="Find college learners" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search college learners
-    <Input name="q" defaultValue={q} maxLength={80} />
+    <Input type="search" name="q" defaultValue={q} maxLength={80} />
    </label>
    <Button variant="secondary" type="submit" className="self-end">Find</Button>
   </form>

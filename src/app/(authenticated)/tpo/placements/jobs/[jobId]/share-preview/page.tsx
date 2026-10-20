@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -114,22 +115,11 @@ export default async function TpoShortlistSharePreviewPage({
         revokedAt: link.revokedAt?.toISOString() ?? null,
         audit:link.audit,
       }))} />
-    <nav aria-label="Company-share link pages" className="flex flex-wrap items-center gap-3 text-sm">
-      <span>{shares.total} matching link(s) · Page {shares.page} of {shares.totalPages}</span>
-      {shares.page>1?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page-1,parsed.data.q,data.page)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous links</Link>:null}
-      {shares.page<shares.totalPages?<Link href={companyShareLinksHref(data.job.id,shareStatus,shares.page+1,parsed.data.q,data.page)}
-        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next links</Link>:null}
-    </nav>
-    <nav aria-label="Share preview pagination"
-      className="flex flex-wrap justify-between gap-3 text-sm">
-      <span>Page {data.page} of {data.totalPages}</span>
-      <div className="flex gap-4">
-        {data.page > 1 ? <Link href={path + "?" + new URLSearchParams({page:String(data.page-1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:underline md:min-h-9">← Previous</Link> : null}
-        {data.page < data.totalPages ? <Link href={path + "?" + new URLSearchParams({page:String(data.page+1),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] hover:underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next →</Link> : null}
-      </div>
-    </nav>
+    <div className="space-y-2">
+      <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{shares.total.toLocaleString("en-IN")} matching link(s)</p>
+      <Pagination label="Company-share link pages" page={shares.page} pageCount={shares.totalPages}
+        hrefForPage={target=>companyShareLinksHref(data.job.id,shareStatus,target,parsed.data.q,data.page)}/>
+    </div>
+    <Pagination label="Share preview pagination" page={data.page} pageCount={data.totalPages} hrefForPage={target=>path+"?"+new URLSearchParams({page:String(target),...(parsed.data.q?{q:parsed.data.q}:{}),shareStatus})}/>
   </div>;
 }
