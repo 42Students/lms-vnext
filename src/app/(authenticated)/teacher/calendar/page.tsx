@@ -45,7 +45,14 @@ export default async function FacultyCalendarPage({
     courseName:event.courseName,courseCode:event.courseCode,
   }));
   const names=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-  const todayIst = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+  // Construct the ISO day key explicitly; Intl locale-specific punctuation
+  // must not decide whether today's IST cell receives its highlight.
+  const todayParts = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+  }).formatToParts(new Date());
+  const todayField = (type: "year" | "month" | "day") =>
+    todayParts.find(part => part.type === type)?.value ?? "";
+  const todayIst = `${todayField("year")}-${todayField("month")}-${todayField("day")}`;
   const selected=grid.query.deliveryId;
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader title="Class Schedule" actions={<Link href="/teacher/live-classes"
