@@ -74,15 +74,21 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   }catch(error){setMessage(error instanceof Error?error.message:"Could not load leads.");}
   finally{setLoadingLeads(false);}
  }
- async function moveFollowup(followupId:string,day:string,hour:number){
+ async function moveFollowup(followupId:string,day:string,hour:number,confirmed=false){
   if(!canCreate||saving)return;
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
   catch{setMessage("The selected IST time is invalid.");return;}
   if(new Date(dueAt).getTime()<=currentTimeMs()){setMessage("Choose a future time to reschedule.");return;}
-  if(blocked.has(day)&&!window.confirm("This date is blocked in placement settings. Move the follow-up here anyway?"))return;
-  if(!blockedDatesAvailable&&!window.confirm("Blocked dates could not be checked. Move this follow-up anyway?"))return;
-  if(!window.confirm("Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?"))return;
+  if(!confirmed){
+   const prompts=[
+    ...(blocked.has(day)?["This date is blocked in placement settings. Move the follow-up here anyway?"]:[]),
+    ...(!blockedDatesAvailable?["Blocked dates could not be checked. Move this follow-up anyway?"]:[]),
+    "Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?",
+   ];
+   setReview({kind:"MOVE",followupId,day,hour,prompts,index:0});
+   return;
+  }
   setSaving(true);setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/calendar/follow-ups/"+encodeURIComponent(followupId),{
@@ -94,13 +100,18 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   }catch(error){setMessage(error instanceof Error?error.message:"Could not move the follow-up.");}
   finally{setSaving(false);}
  }
- async function save(){
+ async function save(confirmed=false){
   if(!slot||saving||!leadId)return;
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(slot);}catch{setMessage("Invalid IST time.");return;}
   if(new Date(dueAt).getTime()<=new Date().getTime()){setMessage("Follow-up must be in the future.");return;}
-  if(blocked.has(slot.slice(0,10))&&!window.confirm("This date is blocked in placement settings. Add the follow-up anyway?"))return;
-  if(!blockedDatesAvailable&&!window.confirm("Blocked dates are unavailable. Add the follow-up without checking?"))return;
+  if(!confirmed){
+   const prompts=[
+    ...(blocked.has(slot.slice(0,10))?["This date is blocked in placement settings. Add the follow-up anyway?"]:[]),
+    ...(!blockedDatesAvailable?["Blocked dates are unavailable. Add the follow-up without checking?"]:[]),
+   ];
+   if(prompts.length){setReview({kind:"ADD",prompts,index:0});return;}
+  }
   setSaving(true);setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/calendar/follow-ups",{method:"POST",
@@ -114,21 +125,27 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const hasDraft=Boolean(slot&&(note.trim()||leadId||leadQuery.trim()));
  useEffect(()=>{
   if(!hasDraft)return;
-  const prevent=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  const prevent=(event:BeforeUnloadEvent)=>{
+   if(allowUnload.current)return;
+   event.preventDefault();event.returnValue="";
+  };
   const protectLinks=(event:MouseEvent)=>{
    const target=event.target;
-   if(!(target instanceof Element))return;
-   if(target.closest("a[href]")&&!window.confirm("Discard this unfinished follow-up?")){
-    event.preventDefault();event.stopPropagation();
-   }
+   const link=target instanceof Element ? target.closest<HTMLAnchorElement>("a[href]") : null;
+   if(!link||link.hasAttribute("download")||allowUnload.current)return;
+   event.preventDefault();event.stopPropagation();
+   setReview({kind:"LEAVE",href:link.href,prompts:["Discard this unfinished follow-up?"],index:0});
   };
   window.addEventListener("beforeunload",prevent);
   document.addEventListener("click",protectLinks,true);
   return ()=>{window.removeEventListener("beforeunload",prevent);document.removeEventListener("click",protectLinks,true);};
  },[hasDraft]);
- function cancelDraft(){
-  if(hasDraft&&!window.confirm("Discard this unfinished follow-up?"))return;
-  setSlot(null);setMessage("");triggerRef.current?.focus();
+ function cancelDraft(confirmed=false){
+  if(hasDraft&&!confirmed){
+   setReview({kind:"DISCARD",prompts:["Discard this unfinished follow-up?"],index:0});
+   return;
+  }
+  setSlot(null);setMessage("");if(triggerRef.current?.isConnected)triggerRef.current.focus();
  }
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
@@ -233,5 +250,32 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     </div>
    </div>
   </Dialog>:null}
+  <ConfirmDialog open={review !== null}
+   onOpenChange={next => {if(!next&&!saving)setReview(null);}}
+   title={review?.kind==="MOVE"?"Confirm follow-up move?" :
+    review?.kind==="ADD"?"Confirm blocked-date follow-up?" :
+    review?.kind==="LEAVE"?"Leave unfinished follow-up?":"Discard unfinished follow-up?"}
+   description={review?.prompts[review.index]??""}
+   confirmLabel={review?.kind==="LEAVE"||review?.kind==="DISCARD"?"Discard":
+    review?.index===review?.prompts.length-1?"Confirm":"Continue"}
+   confirmVariant={review?.kind==="LEAVE"||review?.kind==="DISCARD"?"danger":"primary"}
+   pending={saving} onConfirm={()=>{
+    if(!review)return;
+    if(review.index+1<review.prompts.length){
+     setReview({...review,index:review.index+1});
+     return;
+    }
+    setReview(null);
+    if(review.kind==="MOVE")void moveFollowup(review.followupId,review.day,review.hour,true);
+    else if(review.kind==="ADD")void save(true);
+    else if(review.kind==="DISCARD")cancelDraft(true);
+    else {
+     cancelDraft(true);
+     const href=new URL(review.href,window.location.href);
+     allowUnload.current=true;
+     if(href.origin===window.location.origin)router.push(href.pathname+href.search+href.hash);
+     else window.location.assign(href.href);
+    }
+   }}/>
  </section>;
 }
