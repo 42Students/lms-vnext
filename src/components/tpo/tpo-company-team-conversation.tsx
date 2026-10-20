@@ -152,7 +152,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open in Team</Link>
    </div>
   </div>
-  {error?<Banner tone="error" action={<Button variant="secondary" type="button" onClick={()=>void load()}>Retry</Button>}>{error}</Banner>:null}
+  {error?<Banner tone="error" action={<Button variant="secondary" type="button" className="min-h-11 md:min-h-9" onClick={()=>void load()}>Retry</Button>}>{error}</Banner>:null}
   {!data&&!error?<LoadingState label="Loading company Team conversation…"/>:null}
   {data?.status==="NOT_REGISTERED"?<Banner tone="warning">
     Company Team messages are unavailable until the database migration is registered. No messages have been fabricated.
@@ -160,7 +160,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
   {data?.status==="READY"?<>
    {data.truncated?<Banner tone="warning">Showing the latest 100 messages. Earlier history remains stored.</Banner>:null}
    {data.messages.some(m=>m.decision&&!m.deletedAt)?<aside aria-label="Pinned company Team decisions"
-     className="rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
+     className="border-y border-[var(--lms-canvas-border)] py-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
        <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link block min-h-11 truncate text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{m.body}</a>)}

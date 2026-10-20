@@ -9,6 +9,7 @@ import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
+import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Tabs} from "@/components/ui/tabs";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
@@ -33,7 +34,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(!parsed)return <div className="min-w-0 space-y-4">{header}
   <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
    action={<Link href="/tracker/audit-findings?view=OPEN"
-    className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline">Reset filters</Link>}/>
+    className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-link underline">Reset filters</Link>}/>
  </div>;
  if(!independentAuditFindingsReady())return <div className="min-w-0 space-y-4">{header}
   <Banner tone="warning">
@@ -51,7 +52,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
-      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
+      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
     <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
@@ -115,7 +116,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     </Select></label>
    <div className="flex items-end gap-3">
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
-    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9">Clear</Link>
+    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
    </div>
   </form>
   <p role="status" className="text-sm text-body">
@@ -124,9 +125,6 @@ export default async function IndependentFindingsPage({searchParams}:{
   <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
    caption="Independent audit findings"
    empty={<EmptyState title="No matching audit findings" description="No independent audit findings match these filters."/>}/>
-  <nav aria-label="Audit findings pages" className="flex justify-between gap-4">
-   {data.page>1?<Link href={independentFindingHref(parsed,data.page-1)} className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:<span/>}
-   {data.page<data.pages?<Link href={independentFindingHref(parsed,data.page+1)} className="inline-flex min-h-11 items-center md:min-h-9 font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
-  </nav>
+  <Pagination label="Audit findings pages" page={data.page} pageCount={data.pages} hrefForPage={page=>independentFindingHref(parsed,page)}/>
  </div>;
 }
