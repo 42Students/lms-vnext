@@ -90,3 +90,12 @@
 ## Verify2 surface 6 — `src/components/placements/college-drive-legacy-nav.tsx`
 - Regressions fixed: 0. Read CollegeDriveLegacyNav, route tab model, shared Tabs/ScrollCue, college/placements/jobs/[jobId]/layout, inherited college layout and the previous lane-18 polish entry. Model paths, aria-current, label, nav landmark and print exclusion remain valid.
 - Extra clutter/alignment: verified, no change; 16px bottom rhythm, tablet/phone scroll and one tab strip match legacy hierarchy. Files: queue/proof only; source-only, no CI.
+
+
+## Verify2 surface 7 — `src/components/ui/input-group.tsx`
+- Regressions fixed: 0. Read complete InputGroup, React DOM div props and native Input wrapper/aria contracts, disabled/invalid/focus states, overflow at 375/768 and original docs/audit/ux/polish-lane-18.md proof. Search confirms no current direct app consumers; public export preserved.
+- Extra clutter/alignment: verified, no change; outer 10px chrome, 8px gaps, constrained interactive adornment width and shrink-safe slot retained. Files: queue and proof only; no CI.
+
+## Verify2 surface 8 — `src/app/(authenticated)/error.tsx`
+- Regressions fixed: 0. Read authenticated error boundary, GracefulErrorBoundary (stale chunk guard, request reference, protected error copy, reset/home and reporting), parent authenticated layout with one PageCanvas, route loading and old-lane-18 polish proof. No lost error/reset prop, import, aria role or duplicate public shell.
+- Extra clutter/alignment: verified, no change; in-shell page head and full-width 44px mobile actions remain aligned. Files: queue/proof only; source-only, no CI.
