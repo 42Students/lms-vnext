@@ -65,3 +65,11 @@
 **States/source review:** invalid/nonexistent cohort and inherited not-found, permission guard, no rows, filtered no-match, assigned/unassigned class, 500-row cap, move dialog open/loading/empty/failure/selection/pending/success, route loading.tsx/error.tsx and college layout, 375/768 layouts. Reviewed shared FilterBar, ResponsiveFilterDrawer, DataTable and Dialog. Static inspection only; CI/browser not run.
 
 **Files changed:** `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`, `src/components/college/student-class-move-action.tsx`; queue ticked.
+
+## Surface 13 — `src/app/(authenticated)/college/batches/page.tsx`
+
+**9 problems/fixes:** Search was buried inside mobile Filters; the toolbar duplicated the PageHeader divider; 6px form label gaps broke legacy rhythm; a 24px stack reduced above-fold density; results invited sideways scrolling despite using mobile cards; status read like plain body text; CSV cap guidance crowded creation and filtering; create forms were unbounded; row actions had unpredictable wrapping. Exposed the exact q input in FilterBar's always-visible search slot with a native GET form association, retained program/status/more filters in the mobile drawer, kept a mobile form submit, removed redundant chrome and fake scroll guidance, aligned legacy 8/12/16px spacing with a 920px authoring max-width, used the shared StatusBadge for batch lifecycle, and moved the unchanged export guidance below results. Shared directory improvements also apply to Semesters without changing its queries or rows.
+
+**Source states checked:** invalid search/clear, unauthorized/failed reads, empty, pagination, filter drawer, creation with missing programs/periods and date validation, create pending/error/success, edit/discard confirm, graduate/remove dialogs, CSV truncation, 375/768 responsive. Reviewed loading/error.tsx and inherited college layout/not-found; inspected CollegeAcademicDirectory and CollegeCohortCreateForm/RowActions and shared components. No CI or runtime run.
+
+**Files changed:** `src/app/(authenticated)/college/batches/page.tsx`, `src/components/academics/college-academic-directory.tsx`, `src/components/academics/college-cohort-management.tsx`; queue ticked.
