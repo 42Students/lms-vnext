@@ -334,7 +334,7 @@ export function PersonMembershipActions({
       >
         <label
           htmlFor={`suspension-reason-${membershipId}`}
-          className="mb-1.5 block text-[13px] font-semibold text-body"
+          className="mb-1.5 block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4"
         >
           Suspension reason
         </label>
