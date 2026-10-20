@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { CollegeClassRowActions } from "@/components/academics/college-section-management";
 import { CollegeSectionLifecycleAction } from "@/components/academics/college-section-lifecycle-action";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
@@ -24,8 +25,9 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
   | Awaited<ReturnType<typeof listCollegeElectives>>;
 
-export function CollegeStructureDirectory({ data, electiveOptions }: {
+export function CollegeStructureDirectory({ data, electiveOptions, leading }: {
   data: DirectoryData;
+  leading?: ReactNode;
   electiveOptions?: {
     programs: { id: string; name: string; durationTerms: number }[];
     periods: { id: string; name: string }[];
@@ -43,6 +45,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
           Academic workspace
         </Link>}
       />
+      {leading ? <section aria-label="Class actions" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
       <section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form method="get" action={path} className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">
