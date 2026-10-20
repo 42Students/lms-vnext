@@ -24,9 +24,9 @@ export function GracefulPageLoading({ label = "Loading your page...", shape = "c
         <Skeleton label={label} variant="row" count={4} />
       </div>
     </>}
-    {slow ? <div role="status" aria-live="polite" className="flex flex-wrap items-center gap-[var(--lms-space-3)]">
-      <p className="m-0 text-[13px] leading-5 text-[var(--lms-body-text)]">This is taking longer than expected. Please try again.</p>
-      <Button type="button" variant="secondary" onClick={() => window.location.reload()}>Try again</Button>
+    {slow ? <div role="status" aria-live="polite" className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:items-center">
+      <p className="m-0 min-w-0 flex-1 break-words text-[13px] leading-5 text-[var(--lms-body-text)]">This is taking longer than expected. Please try again.</p>
+      <Button type="button" variant="secondary" className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" onClick={() => window.location.reload()}>Try again</Button>
     </div> : null}
   </section>;
 }
