@@ -24,7 +24,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [x] `src/components/tpo/tpo-student-saved-views.tsx`
 - [x] `src/components/tpo/tpo-students-assign-prep.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
 - [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`
 - [ ] `src/components/tpo/tpo-team-ask-panel.tsx`

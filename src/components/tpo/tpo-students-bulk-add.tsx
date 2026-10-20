@@ -188,7 +188,15 @@ export function TpoStudentsBulkAdd({
       ) : (
         <>
           <label className="grid min-w-0 gap-1 text-sm">Search open drives
-            <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
+            <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="search" value={driveSearch} onChange={event=>{
+              const nextSearch=event.target.value;
+              setDriveSearch(nextSearch);
+              // Never retain an invisible drive as the mutation target after filtering.
+              if(driveId&&!drives.some(drive=>drive.id===driveId &&
+                (drive.companyName+" "+drive.title).toLocaleLowerCase("en-IN").includes(nextSearch.toLocaleLowerCase("en-IN").trim()))){
+                void loadRoles("");
+              }
+             }}
              
              placeholder="Search company or drive"/>
           </label>
