@@ -202,6 +202,7 @@ export function PlacementSeasonManager({
           <Button
             size="sm"
             variant="secondary"
+            className="w-full sm:w-auto"
             disabled={pending}
             onClick={close}
           >
@@ -213,7 +214,7 @@ export function PlacementSeasonManager({
       ) : (
         <form
           onSubmit={create}
-          className="grid gap-4 py-5 lg:grid-cols-4"
+          className="grid min-w-0 gap-4 py-5 sm:grid-cols-2 xl:grid-cols-4"
         >
           <label>
             <span className="mb-1 block text-xs font-semibold text-body">
@@ -257,10 +258,11 @@ export function PlacementSeasonManager({
               required
             />
           </label>
-          <div className="lg:col-span-4">
+          <div className="sm:col-span-2 xl:col-span-4">
             <Button
               type="submit"
               size="sm"
+              className="w-full sm:w-auto"
               disabled={pending}
             >
               {pending

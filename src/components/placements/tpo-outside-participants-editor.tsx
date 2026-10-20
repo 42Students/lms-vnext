@@ -36,8 +36,8 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
   }
  }
  if(!available)return <Alert tone="warning">External drive participant evidence is not available until its database migration is registered. Existing outside-drive records are preserved.</Alert>;
- return <section className="space-y-4">
-  <div className="flex flex-wrap items-end gap-3">
+ return <section className="min-w-0 space-y-4">
+  <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner from this college
     <Select value={membershipId} onChange={e=>setMembershipId(e.target.value)}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3">
@@ -52,18 +52,18 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
     </Select>
    </label>
    <Button variant="primary" disabled={!membershipId||pending} type="button" onClick={()=>void save(membershipId,result)}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+    className="w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold disabled:opacity-50 sm:col-span-2 lg:col-span-1 lg:w-auto">
     Record participation
    </Button>
   </div>
   {message?<InlineNotice tone="info" message={message}/>:null}
   {participants.length?<ul className="space-y-2">
-   {participants.map(person=><li key={person.id} className="flex flex-wrap items-center gap-3 border-b border-border py-3">
+   {participants.map(person=><li key={person.id} className="grid min-w-0 gap-2 border-b border-border py-3 sm:grid-cols-[minmax(0,1fr)_minmax(12rem,auto)] sm:items-center">
     <span className="min-w-0 flex-1 text-sm">{person.name??"Unnamed learner"} · {outsideDriveResultLabel(person.result)}</span>
-    <label className="text-xs">Change recorded result
+    <label className="grid min-w-0 gap-1 text-xs">Change recorded result
      <Select defaultValue={person.result} disabled={pending}
       onChange={e=>void save(person.membershipId,e.target.value as Result)}
-      className="ml-2 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
+      className="min-h-11 w-full md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm">
       {outcomes.map(code=><option key={code} value={code}>{outsideDriveResultLabel(code)}</option>)}
      </Select>
     </label>
