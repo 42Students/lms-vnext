@@ -20,13 +20,13 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeLessons>>
   | Awaited<ReturnType<typeof listCollegeCourseProgress>>;
 
-export function CollegeLearningDirectory({ data, courseChoices=[], prepend }: { data: DirectoryData; courseChoices?:readonly {code:string;name:string}[]; prepend?:ReactNode }) {
+export function CollegeLearningDirectory({ data, courseChoices=[], prepend, showHeader=true }: { data: DirectoryData; courseChoices?:readonly {code:string;name:string}[]; prepend?:ReactNode; showHeader?:boolean }) {
   const lessons = data.kind === "LESSONS";
   const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
   return (
     <div className="space-y-6">
-      <PageHeader
+      {showHeader ? <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
         description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
@@ -36,7 +36,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend }: { 
             Course offerings
           </Link>
         }
-      />
+      /> : null}
       {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
       <section aria-label={title + " filters"} className="border-b border-border pb-5">
         <form method="get" action={href} className="flex min-w-0 flex-wrap items-end gap-3">
