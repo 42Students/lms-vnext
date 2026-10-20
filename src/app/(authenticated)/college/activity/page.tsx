@@ -36,7 +36,7 @@ export default async function CollegeActivityPage({
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
-      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
@@ -47,9 +47,9 @@ export default async function CollegeActivityPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
-      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View project activity</Link><a href={"/api/activity/college-export" +
+      actions={<div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]"><Link href="/college/projects/audit" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Export filtered CSV (max 1,000)
       </a></div>} />
     <Tabs ariaLabel="Activity feed categories" renderPanel={false}
@@ -76,18 +76,18 @@ export default async function CollegeActivityPage({
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <span className="text-muted-foreground">IST date shortcuts:</span>
       <Link href={collegeActivityTodayHref(data.query,new Date())}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Today</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Today</Link>
       <Link href={collegeActivityRecentHref(data.query,7,new Date())}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last 7 days</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Last 7 days</Link>
       <Link href={collegeActivityRecentHref(data.query,30,new Date())}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last 30 days</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Last 30 days</Link>
       <Link href={collegeActivityAllTimeHref(data.query)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">All time</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All time</Link>
       <Link href={collegeActivityHref({...data.query})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Refresh</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Refresh</Link>
     </div>
     <section className="border-b border-border pb-4" aria-label="Activity log filters">
-      <form action="/college/activity" method="get" className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <form action="/college/activity" method="get" className="grid min-w-0 gap-[var(--lms-space-2)] md:grid-cols-2 lg:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Module
           <Select name="module" defaultValue={data.query.module ?? ""}
@@ -165,7 +165,7 @@ export default async function CollegeActivityPage({
           <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">
             Apply filters
           </Button>
-          <Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          <Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Clear
           </Link>
         </div>
@@ -183,14 +183,14 @@ export default async function CollegeActivityPage({
           </>},
           {key:"details",header:"Details",mobilePriority:"action",cell:item=>
             <Link href={"/college/activity/" + encodeURIComponent(item.event.id)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View event</Link>},
+              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View event</Link>},
         ]}
         empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred."/>}/>
     </section>
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
       {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Older activity
       </Link> : <span className="text-muted-foreground">No older matching events</span>}
     </nav>

@@ -83,46 +83,46 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/loading.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/quizzes/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semester-courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/error.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/create/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/verification/page.tsx`
-- [ ] `src/app/(authenticated)/college-admin/not-found.tsx`
-- [ ] `src/app/(authenticated)/college/academics/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/assignments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/settings/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/page.tsx`
-- [ ] `src/app/(authenticated)/college/branding/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/page.tsx`
-- [ ] `src/app/(authenticated)/college/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/domains/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/quizzes/page.tsx`
+- [x] `src/app/(authenticated)/admin/semester-courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/error.tsx`
+- [x] `src/app/(authenticated)/admin/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/create/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/admin/verification/page.tsx`
+- [x] `src/app/(authenticated)/college-admin/not-found.tsx`
+- [x] `src/app/(authenticated)/college/academics/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/college/assignments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/settings/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/page.tsx`
+- [x] `src/app/(authenticated)/college/branding/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/college-profile/page.tsx`
+- [x] `src/app/(authenticated)/college/companies/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/college/courses/page.tsx`
+- [x] `src/app/(authenticated)/college/departments/page.tsx`
+- [x] `src/app/(authenticated)/college/domains/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
