@@ -51,7 +51,7 @@ export default async function TpoOffersAcceptanceReportPage({
   };
 
   return (
-    <div data-tpo-presentation-report className="min-w-0 space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Offers and acceptance"
@@ -70,7 +70,7 @@ export default async function TpoOffersAcceptanceReportPage({
 
       <section
         aria-label="Offer funnel totals"
-        className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3"
+        className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
       >
         {[
           ["Released offers", totals.released],
@@ -82,9 +82,9 @@ export default async function TpoOffersAcceptanceReportPage({
         ].map(([label, value]) => (
           <div
             key={label}
-            className="border-b border-[var(--lms-canvas-border)] py-4
+            className="border-b border-border py-4"
           >
-            <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <p className="text-xs font-semibold uppercase text-body">
               {label}
             </p>
             <p className="mt-2 text-xl font-semibold tabular-nums text-foreground">
