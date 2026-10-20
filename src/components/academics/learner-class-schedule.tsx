@@ -417,7 +417,7 @@ export function LearnerClassSchedule({
 
   return (
     <div data-learner-schedule={courseBasePath === "/learn/courses" ? "true" : undefined} className={"min-w-0 space-y-4 md:space-y-6 "+styles.root}>
-      <div className={styles.summary}>
+      <div className={styles.summary} aria-label="Class schedule overview">
         <Metric
           label="Today"
           value={todayEvents.length+" today"}
@@ -442,18 +442,11 @@ export function LearnerClassSchedule({
       </div>
 
       {upcoming.length > 0 ? (
-        <section
-          className={styles.upcoming}
-          aria-label="Next upcoming classes"
+        <Disclosure
+          title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3"><span>Next classes</span><span className="text-xs font-semibold text-muted-foreground">Next {upcoming.length}</span></span>}
+          className="min-w-0 border-b border-border pb-2"
+          contentClassName="pt-3"
         >
-          <div className={styles.upcomingHead}>
-            <h2 className="m-0 text-sm font-semibold text-foreground">
-              Next classes
-            </h2>
-            <span className="text-xs font-semibold text-muted-foreground">
-              Next {upcoming.length}
-            </span>
-          </div>
           <div className={styles.upcomingList}>
             {upcoming.map((event) => (
               <EventCard courseBasePath={courseBasePath}
@@ -463,7 +456,7 @@ export function LearnerClassSchedule({
               />
             ))}
           </div>
-        </section>
+        </Disclosure>
       ) : null}
 
       <section className={styles.calendarCard}>
@@ -497,7 +490,7 @@ export function LearnerClassSchedule({
             >
               →
             </Button>
-            <span className={styles.period}>
+            <span className={styles.period+" break-words"}>
               {dateLabel(anchor, view)}
             </span>
           </div>
@@ -526,13 +519,13 @@ export function LearnerClassSchedule({
         </div>
 
         {courseBasePath === "/learn/courses" ? (
-          <Disclosure title="Filters" className="border-b border-border" contentClassName="pb-2">
-          <div className={styles.filters}>
+          <Disclosure title="Filters" defaultOpen={Boolean(sessionSearch || sessionKind !== "ALL" || upcomingOnly)} className="border-b border-border" contentClassName="pb-2">
+          <div className={styles.filters+" min-w-0"}>
             <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find sessions
               <Input type="search" value={sessionSearch} maxLength={100}
                 onChange={event=>setSessionSearch(event.target.value)}
                 placeholder="Class title, faculty, location or course"
-                className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
+                className="mt-1.5 min-h-11 w-full min-w-0 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm font-normal text-foreground" />
             </label>
             {sessionSearch ? <Button variant="secondary" type="button" onClick={()=>setSessionSearch("")}
               >
@@ -540,7 +533,7 @@ export function LearnerClassSchedule({
             </Button> : null}
             <label className="min-w-44 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session kind
               <Select value={sessionKind} onChange={event=>setSessionKind(event.target.value as LearnerScheduleKind)}
-                className="mt-1.5 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
+                className="mt-1.5 min-h-11 w-full min-w-0 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-background px-3 text-sm text-foreground">
                 <option value="ALL">All sessions</option>
                 <option value="COURSE">Course classes only</option>
                 <option value="SECTION">General section events</option>
@@ -577,7 +570,7 @@ export function LearnerClassSchedule({
           </label>
         ) : null}
         {courses.length > 1 ? (
-          <div className={styles.courseFilter}>
+          <div className={styles.courseFilter+" min-w-0"}>
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <span className="mr-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 Courses
@@ -642,7 +635,7 @@ export function LearnerClassSchedule({
                       aria-label={day+", "+dayItems.length+" classes"}
                       aria-pressed={selected}
                       onClick={()=>setChosenDay(day)}
-                      className={styles.monthDay+" !block !w-full !min-h-24 !justify-start"}>
+                      className={styles.monthDay+" !block !w-full !min-h-16 md:!min-h-24 !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
                         {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-[50%] bg-primary " +
