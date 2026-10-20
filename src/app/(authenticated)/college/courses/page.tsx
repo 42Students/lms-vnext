@@ -1,10 +1,10 @@
-import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
+import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
 import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
-import {collegeCourseCatalogueQuerySchema} from "@/modules/courses/college-course-catalogue-model";
-import {listCollegeCourseCatalogue} from "@/modules/courses/college-course-catalogue-service";
+import { collegeCourseCatalogueQuerySchema } from "@/modules/courses/college-course-catalogue-model";
+import { listCollegeCourseCatalogue } from "@/modules/courses/college-course-catalogue-service";
 
 export default async function CollegeCoursesPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context =
@@ -22,7 +22,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
   ]);
   const duplicateCourseId=typeof raw.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(raw.duplicate)?raw.duplicate:undefined;
   return (
-    <div className="min-w-0 max-w-full space-y-6">
+    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader title="Courses"/>
       <AdminCourseOverview
         workspace={workspace}
