@@ -13,6 +13,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Disclosure} from "@/components/ui/disclosure";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoJoiningFollowups} from "@/modules/placements/tpo-joining-followup-service";
 type Search={seasonId?:string|string[];state?:string|string[]};
@@ -29,24 +30,24 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
  const params=new URLSearchParams();
  if(report.season)params.set("seasonId",report.season.id);
  params.set("state",report.state);
- return <div data-tpo-presentation-report className="space-y-6">
-      <TpoReportPresentation />
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-followups" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+ return <div data-tpo-presentation-report className="min-w-0 space-y-4">
   <PageHeader title="Joining follow-ups"
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
-   actions={report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
-    className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
-    Export CSV</a>:null}/>
-  <Link href="/tpo/reports/joining-status" className="text-sm font-semibold text-link hover:underline">← Joining outcomes</Link>
+   actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
+     <Link href="/tpo/reports/joining-status" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Joining outcomes</Link>
+     {report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto sm:min-h-9 text-sm font-[650] text-on-primary">
+    Export CSV</a>:null}
+   </div>}/>
   <form action="/tpo/reports/joining-followups" method="get"
-   className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    <label className="min-w-40 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Season
+   className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
+    <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Season
      <Select name="seasonId" defaultValue={report.season?.id??""}
       className="mt-2 block min-h-11 sm:min-h-9 w-full">
       {report.seasons.length===0?<option value="">No season</option>:null}
       {report.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
      </Select></label>
-    <label className="min-w-36 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Follow-up
+    <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Follow-up
      <Select name="state" defaultValue={report.state}
       className="mt-2 block min-h-11 sm:min-h-9 w-full">
       <option value="ALL">All open</option><option value="PENDING">Pending</option>
@@ -54,19 +55,21 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
       <option value="DATE_MISSING">Missing joining date</option>
       <option value="UPCOMING_7_DAYS">Joining next 7 days</option>
      </Select></label>
-    <Button type="submit" className="min-h-11 sm:min-h-9">Apply</Button>
+    <Button type="submit" className="min-h-11 w-full sm:w-auto sm:min-h-9">Apply</Button>
   </form>
+      <TpoReportPresentation />
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-followups" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
-   <section className="grid gap-3 min-[768px]:grid-cols-2 min-[1024px]:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
-   <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">
+   <section className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
+   <Disclosure title="Joining date methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body">
     Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
     Only ACCEPTED offers count; JOINED requires an explicit recorded outcome.
-   </p>
+   </p></Disclosure>
    {report.truncated?<Alert tone="warning">First 500 accepted offers examined; counts may be incomplete.</Alert>:null}
    {!report.rows.length?<EmptyState title="No matching joining follow-ups"
     description="No accepted offers remain in the selected open state."/>:
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">
-     {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border px-1 py-4">
+     {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border py-4">
        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</h2>
        <p className="mt-1 text-sm text-body">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
        <p className="mt-1 text-sm text-body">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
