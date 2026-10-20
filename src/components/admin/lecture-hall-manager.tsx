@@ -233,6 +233,7 @@ export function LectureHallManager({
                     <Button
                       variant="secondary"
                       size="sm"
+                      className="min-h-11 md:min-h-9"
                       disabled={pending}
                       onClick={() => setStatus(hall, "ACTIVE")}
                     >
