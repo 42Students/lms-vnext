@@ -1193,7 +1193,6 @@ export function PlacementJobCreateForm({
           </label>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
-        </div>
       </details>
       <section className="border-b border-border pb-6">
         <div className="border-b border-border pb-3">
