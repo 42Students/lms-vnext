@@ -13,7 +13,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-16.md: surface | regre
 - [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
 - [x] `src/app/(authenticated)/admin/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/admin/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/admin/live-classes/page.tsx`
 - [ ] `src/app/(authenticated)/admin/module-access/page.tsx`
 - [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
 - [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
