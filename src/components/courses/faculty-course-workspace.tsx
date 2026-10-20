@@ -102,7 +102,7 @@ function ContentItem({
   ];
 
   return (
-    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <article className="min-w-0 border-b border-border py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -183,7 +183,7 @@ function AssignmentItem({
 }) {
 
   return (
-    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <article className="min-w-0 border-b border-border py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -271,7 +271,7 @@ function QuizItem({
 }) {
 
   return (
-    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <article className="min-w-0 border-b border-border py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -380,13 +380,13 @@ export function FacultyCourseWorkspace({
     workspace;
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
         actions={view !== "BLUEPRINT" ? (
-      <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
+      <nav aria-label="Overview actions" className="grid w-full min-w-0 gap-2 sm:flex sm:w-auto sm:flex-wrap">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
@@ -613,7 +613,7 @@ export function FacultyCourseWorkspace({
                         </Badge>
                       
                       </div>}
-                      className="group rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4 md:p-5">
+                      className="group min-w-0 border-t border-border py-2" summaryClassName="!px-0">
 
                       {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
@@ -629,6 +629,8 @@ export function FacultyCourseWorkspace({
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}
+                      <Disclosure title="Manage lesson" className="mt-3 border-y border-border" defaultOpen={Boolean(selectedLessonId)}>
+                        <div className="min-w-0 space-y-3">
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
@@ -659,14 +661,15 @@ export function FacultyCourseWorkspace({
                             title: item.title,
                           }),
                         )}
-                      />
+                        </div>
+                      </Disclosure>
 
                       {itemCount === 0 ? (
-                        <div className="mt-3 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                        <div className="mt-3 border-t border-dashed border-border py-5 text-sm text-muted-foreground">
                           {selectedLessonId&&contentFilter==="ALL"?"No lesson content yet":contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
                         </div>
                       ) : (
-                        <div className="mt-3 space-y-3">
+                        <div className="mt-3 min-w-0 divide-y divide-border">
                           {visibleContents.map(
                             (item) => (
                               <ContentItem
