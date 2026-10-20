@@ -11,9 +11,10 @@ const ALL=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
 export function TpoPublicPlacementContentEditor({initial}:{initial:{
  ready:boolean;about:string;metricKeys:PublicPlacementMetricKey[];updatedAt:string|null;
 }}){
- const [saved,setSaved]=useState({about:initial.about,metricKeys:initial.metricKeys});
+ const initialMetricKeys=initial.metricKeys.length?initial.metricKeys:DEFAULT_PUBLIC_METRICS;
+ const [saved,setSaved]=useState({about:initial.about,metricKeys:initialMetricKeys});
  const [about,setAbout]=useState(initial.about);
- const [metricKeys,setMetricKeys]=useState(initial.metricKeys.length?initial.metricKeys:DEFAULT_PUBLIC_METRICS);
+ const [metricKeys,setMetricKeys]=useState(initialMetricKeys);
  const [version,setVersion]=useState(initial.updatedAt);
  const [busy,setBusy]=useState(false),pending=useRef(false),[message,setMessage]=useState("");
  const dirty=about!==saved.about||metricKeys.join("|")!==saved.metricKeys.join("|");

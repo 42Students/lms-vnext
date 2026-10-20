@@ -75,7 +75,7 @@ export function TpoRecruiterGrantForm({ companies }: {
           </Button>
         </>
       )}
-      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {error && !confirmOpen ? <InlineNotice tone="error" message={error}/> : null}
       {success ? <InlineNotice tone="success" message={success}/> : null}
       <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
         title="Review and confirm grant"
@@ -117,7 +117,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       className="min-h-11 w-full text-xs sm:w-auto md:min-h-9">
       {busy ? "Revoking..." : "Revoke access"}
     </Button>
-    {error ? <InlineNotice tone="error" message={error}/> : null}
+    {error && !confirmOpen ? <InlineNotice tone="error" message={error}/> : null}
     {notice ? <InlineNotice tone="success" message={notice}/> : null}
     <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Remove "+displayName+"\'s access?"}
@@ -160,7 +160,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
    className="min-h-11 md:min-h-9 text-xs">
    {busy?"Saving…":ended?"Give access again":"Extend"}
   </Button>
-  {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
+  {error&&!confirmOpen?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   {notice?<div className="sm:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
     title={"Extend "+displayName+"\'s access by "+months+" months?"}
