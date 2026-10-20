@@ -96,7 +96,7 @@ export default async function CollegeBatchStudentsPage({
         caption="Students in this batch"
         rows={students}
         getRowKey={item => item.membershipId}
-        empty={<EmptyState title="No matching students" description="No matching students."/>}
+        empty={<EmptyState title="No matching students" description="No students in this batch match the current search filters."/>}
         columns={[
           { key: "name", header: "Name", mobilePriority: "primary", cell: item => item.name ?? item.membershipId },
           { key: "roll", header: "Roll Number", mobilePriority: "secondary", cell: item => item.roll ?? "—" },
