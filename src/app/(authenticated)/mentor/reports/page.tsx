@@ -79,20 +79,20 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <FilterBar title="Filters"><form method="get" action="/mentor/reports"
         className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch border-b border-border pb-4 max-[767px]:[&_label]:w-full">
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
+            className="min-h-11 md:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Status
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+            className="min-h-11 md:min-h-9">
             {(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Attention
           <Select name="attention" defaultValue={data.query.attention}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+            className="min-h-11 md:min-h-9">
             <option value="ALL">All</option>
             <option value="REVIEW">Review</option>
             <option value="STALLED">Stalled</option>
@@ -101,23 +101,23 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="NONE">No currently recorded attention</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded tasks
-          <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded tasks
+          <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 md:min-h-9">
             <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
             <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Mentor assignment
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+            className="min-h-11 md:min-h-9">
             <option value="ALL">All assigned projects</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Report order
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report order
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+            className="min-h-11 md:min-h-9">
             <option value="UPDATED">Recently updated</option>
             <option value="TITLE_AZ">Project title A–Z</option>
             <option value="TITLE_ZA">Project title Z–A</option>

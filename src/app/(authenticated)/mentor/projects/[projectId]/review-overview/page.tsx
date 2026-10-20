@@ -35,14 +35,14 @@ export default async function MentorReviewOverviewPage({
   Delivery workspace</Link>}/>
  <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} role="search" aria-label="Delivery review filters"
  className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Delivery status
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery status
    <Select name="status" defaultValue={data.query.status}
     className="min-h-11 min-[768px]:min-h-9">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Written feedback
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
     className="min-h-11 min-[768px]:min-h-9">
     <option value="ALL">Any</option>
@@ -50,7 +50,7 @@ export default async function MentorReviewOverviewPage({
     <option value="WITHOUT">Not recorded</option>
    </Select>
   </label>
-  <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Exact delivery version
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 min-[768px]:min-h-9"/>
