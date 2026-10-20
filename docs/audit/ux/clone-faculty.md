@@ -558,3 +558,25 @@ The *printed shell command is not claimed as executed*, and its broad globs may 
 **Strict H status:** The original 94 Work queue checkboxes remain `[ ]` because rendered computed-style comparison for default/hover/focus/disabled/empty/error/loading and portal-wide transitive coverage proof are not yet available. Do **not** claim pixel parity complete or tick them based on only source inspection.
 
 **Next exact source file:** `src/components/academics/academics-overview.tsx`, then the 46 owned teacher/Super Admin route pages starting `src/app/(authenticated)/admin/academics/page.tsx` and their directly rendered components; preserve ownership boundaries.
+
+
+## 2026-10-20 route sweep · part 1/3 — source proof, not strict parity
+
+Fast-forwarded `chatgpt/chat-3-b` from `52a9f8e096c45e3e4767f833c84a27f64226df62` to fetched main `a7616350ee830c5e187533defabafb477a27172e` (branch compare: ahead 0, behind 1133 before fast-forward), then committed only to the lane branch. No local execution, lint, typecheck, tests, CI, browser, or screenshots.
+
+| Full source file | Line examples for tokens/shared UI | Raw controls / native confirm / hex | `sm:` 640px variants after edit | JSX `Button` open/close |
+|---|---|---:|---:|---:|
+| `src/components/academics/academics-overview.tsx` | 342,358,374,390 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/academics/page.tsx` | 19,24,25,28 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx` | 25,34,41 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/admin/people/directory/page.tsx` | 33,41,59,63 | 1 (78:<input) | 0 | 1/1 |
+| `src/app/(authenticated)/admin/people/page.tsx` | 112,117,122,143 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/admin/people/unassigned/page.tsx` | 22,23,24,39 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx` | 30,31,37,41 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx` | 15,18,20,31 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx` | 27,30,34,48 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx` | 33,36,48,54 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx` | 15,16,21,22 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx` | 13,14,15,25 | 0 | 0 | 0/0 |
+
+**Source regex actually evaluated on every full fetched blob above:** `<(button|input|select|textarea|table|dialog)\\b|window\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b`. The audit table is generated from the whole UTF-8 content returned by GitHub. A shell `git grep` was not executed; the counts do not claim whole-portal coverage. Line examples show where shared elements or responsive rules were inspected; they are not rendered measurements. `sm:` is explicitly counted to distinguish the legacy phone (up to 767px) from tablet (768px+).
