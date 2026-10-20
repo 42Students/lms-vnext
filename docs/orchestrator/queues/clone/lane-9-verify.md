@@ -13,10 +13,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
 - [x] `src/components/tpo/tpo-bell-panel.tsx`
 - [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
 - [ ] `src/components/tpo/tpo-notice-composer-dialog.tsx`
 - [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`

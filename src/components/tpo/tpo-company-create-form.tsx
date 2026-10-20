@@ -93,7 +93,7 @@ export function TpoCompanyCreateForm() {
               <Input className="mt-1 min-h-11 w-full md:min-h-9" required minLength={2} maxLength={200}
                 
                 value={form.name} disabled={pending}
-                onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, name: event.target.value }));}}/>
+                onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, name: event.target.value }));}}/>
             </label>
             <Disclosure title="Optional website and domain" className="border-t border-border" contentClassName="space-y-3 px-2 pb-2">
             <label className="block min-w-0 text-sm font-semibold text-foreground">
@@ -102,14 +102,14 @@ export function TpoCompanyCreateForm() {
                 placeholder="https://company.example"
                 
                 value={form.websiteUrl} disabled={pending}
-                onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
+                onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
             </label>
             <label className="block text-sm font-semibold text-foreground">
               Primary domain (optional)
               <Input className="mt-1 w-full min-w-0" maxLength={255} placeholder="company.example"
                 
                 value={form.primaryDomain} disabled={pending}
-                onChange={(event) => {setReviewing(false);setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
+                onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
             </Disclosure>
             {reviewing?<p role="status" className="break-words border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
