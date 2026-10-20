@@ -60,7 +60,6 @@ export function ProjectReadinessOverrideForm({
     } catch {
       // Keep the selected direction and the entered note for a safe retry.
       setFeedback(copy.failed);
-      setConfirmOpen(false);
     } finally {
       pendingRef.current = false;
       setPending(false);
@@ -71,7 +70,7 @@ export function ProjectReadinessOverrideForm({
     <>
       <form onSubmit={requestSave} className={compactLayout?"min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]":"min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-5)]"}>
         {compactLayout?null:<h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>}
-        {feedback ? <Alert tone={feedback === copy.failed ? "error" : "success"} role="status">{feedback}</Alert> : null}
+        {feedback&&!confirmOpen ? <Alert tone={feedback === copy.updated ? "success" : "error"} role={feedback === copy.updated ? "status" : "alert"}>{feedback}</Alert> : null}
         {hasSubmission && state !== "CLEAR" ? (
           <Alert tone="warning">
             Force Unlock/Block will have no effect here while a submission already exists.
@@ -88,6 +87,7 @@ export function ProjectReadinessOverrideForm({
             const nextState = event.target.value as ReadinessOverrideState;
             if (nextState !== state) setNote("");
             setState(nextState);
+            setFeedback(null);
           }}
         >
           <option value="FORCE_UNLOCK">{copy.unlock}</option>
@@ -103,7 +103,8 @@ export function ProjectReadinessOverrideForm({
               value={note}
               disabled={pending}
               required
-              onChange={(event) => setNote(event.target.value)}
+              aria-invalid={feedback === copy.noteRequired && !note.trim()}
+              onChange={(event) => { setNote(event.target.value); setFeedback(null); }}
               placeholder={copy.notePlaceholder}
               maxLength={2000}
               rows={3}
@@ -112,21 +113,23 @@ export function ProjectReadinessOverrideForm({
           </div>
         ) : null}
         <div className="flex min-w-0 justify-stretch md:justify-end">
-        <Button type="submit" variant="primary" disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
+        <Button type="submit" variant="primary" loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
           {copy.submit}
         </Button>
         </div>
       </form>
       <ConfirmDialog
         open={confirmOpen}
-        onOpenChange={setConfirmOpen}
+        onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
         title={state === "CLEAR" ? copy.clearConfirm : copy.applyConfirm}
         description={state === "CLEAR" ? "The manual override will be removed." : "The chosen override will be visible to mentors and learners."}
         confirmLabel="Apply override"
         confirmVariant="primary"
         pending={pending}
         onConfirm={() => { void save(); }}
-      />
+      >
+        {feedback === copy.failed ? <Alert tone="error" role="alert">{feedback}</Alert> : null}
+      </ConfirmDialog>
     </>
   );
 }
