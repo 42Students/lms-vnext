@@ -35,7 +35,7 @@ export default async function MentorSprintProgressPage({
   });
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid sprint progress filters"} />
-    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear filters</Link>
   </section>;
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "MENTOR")) redirect("/dashboard");
@@ -43,17 +43,17 @@ export default async function MentorSprintProgressPage({
   return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Sprint progress"
       description="Registered sprint, release and task status across your current project assignments."
-      actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+      actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
         Mentoring projects
       </Link>} />
     {!data.enabled ? <section role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Sprint progress was not loaded.
     </section> : <>
       <FilterBar title="Filters"><form action="/mentor/sprint-progress" method="get"
-        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+        className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Search
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
-            placeholder="Sprint, release or project" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
+            placeholder="Sprint, release or project" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-[var(--lms-form-ink)]" />
         </label>
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
@@ -63,7 +63,7 @@ export default async function MentorSprintProgressPage({
         </label>
         <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Sprint status
           <Select name="state" defaultValue={data.query.state}
-            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-[var(--lms-form-ink)]">
             <option value="ALL">All</option><option value="ACTIVE">Active</option>
             <option value="PLANNED">Planned</option><option value="COMPLETED">Completed</option>
           </Select>
@@ -88,7 +88,7 @@ export default async function MentorSprintProgressPage({
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
-        <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
+        <Link href="/mentor/sprint-progress" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-9">Clear</Link>
       </form></FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/mentor/sprint-progress/export?"+
@@ -97,7 +97,7 @@ export default async function MentorSprintProgressPage({
             projectId:data.query.projectId??"",taskAttention:data.query.taskAttention,
             order:data.query.order,
           }).toString()}
-          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-colors duration-150 motion-reduce:transition-none">
+          download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:py-0 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] transition-colors duration-150 motion-reduce:transition-none">
           Export filtered sprint CSV (max 100)
         </Link>
         {data.total>100?<span role="status">
@@ -133,7 +133,7 @@ export default async function MentorSprintProgressPage({
               ? "Unknown (no tasks)" : item.tasks.completionPercent + "%"} of persisted tasks marked Done
           </p>
           <Link href={"/mentor/projects/" + encodeURIComponent(item.projectId) + "?tab=sprints"}
-            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Open authorized sprint workspace →
           </Link>
         </article>)}</div>}
