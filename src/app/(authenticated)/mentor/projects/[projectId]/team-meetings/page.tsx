@@ -62,7 +62,7 @@ export default async function MentorTeamMeetingsPage({
         </p>
       </section>
       <form method="get" action={mentorTeamMeetingsHref({...data.query,page:1}).split("?")[0]}
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:[&_label]:w-full">
         <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Meeting status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
