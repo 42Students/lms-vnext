@@ -119,7 +119,7 @@ export default async function TpoCompanyMemoryPage({
   const page = data.page;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="TPO · Recruiter relationships"
         title="Companies"

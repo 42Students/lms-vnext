@@ -24,14 +24,14 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   programId:raw.programId||undefined,cohortId:raw.cohortId||undefined,
   appliedFrom:raw.appliedFrom||undefined,appliedTo:raw.appliedTo||undefined,
  });
- if(!parsed.success)return <div className="min-w-0 space-y-4">
+ if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Analytics"/>
   <ErrorState title="Invalid analytics filters"
    description="Check the selected dates or filters."
    action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
   <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
@@ -69,11 +69,11 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   })),
  ];
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
-  <label className="grid gap-1 text-sm font-semibold">{label}<Select name={key} defaultValue={q[key]??""}
+  <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-w-0">
    <option value="">All {label.toLowerCase()}</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
  );
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
    actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}

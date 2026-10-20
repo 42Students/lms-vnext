@@ -48,7 +48,7 @@ export default async function TpoLearnerPlacementHistoryPage({
     encodeURIComponent(history.learner.membershipId) + "/history?page=" + page;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <Link href="/tpo/students" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← Back to Students
       </Link>

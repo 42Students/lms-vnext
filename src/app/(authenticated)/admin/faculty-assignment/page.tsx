@@ -19,7 +19,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <AdminScopedReadPage
   headerActions={<Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create teaching assignment →</Link>}
   intro={workspace?<section aria-label="Create faculty assignment" className="space-y-3 border-b border-border pb-5">

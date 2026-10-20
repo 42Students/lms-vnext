@@ -30,7 +30,7 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
   const ready = await tpoCrmTablesReady();
   const data = ready ? await getTpoDueFollowupQueue(context,undefined,{scope,window,q,page}) : null;
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-4 md:space-y-6">
       <Link href="/tpo/recruiters"
         className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">
         ← Back to recruiter leads

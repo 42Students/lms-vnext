@@ -25,7 +25,7 @@ export default async function SuperAdminLectureHallsPage({
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
-  if (!collegeId) return <div className="min-w-0 space-y-6">
+  if (!collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader  title="Lecture Halls"
       description="Lecture hall administration requires an exact college safety scope." />
     <EmptyState title="Select a college to continue"
@@ -34,7 +34,7 @@ export default async function SuperAdminLectureHallsPage({
   requireSuperAdminSelectedCollege(context,"academics.manage");
 
   const query = parseSuperAdminLectureHallFilters(await searchParams);
-  if (!query) return <div className="space-y-6">
+  if (!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
@@ -65,7 +65,7 @@ export default async function SuperAdminLectureHallsPage({
     "/api/academics/admin-lecture-halls-export",
   );
 
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
     <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">

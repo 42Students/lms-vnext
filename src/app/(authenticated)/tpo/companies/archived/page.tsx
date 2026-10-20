@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { listArchivedTpoCompanyRelationships } from "@/modules/placements/tpo-company-lifecycle-service";
 
 export default async function ArchivedCompanyRelationshipsPage() {
@@ -13,7 +14,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
   }
   await requireTpoBatchActor(context);
   const { rows, truncated } = await listArchivedTpoCompanyRelationships(context);
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     <Link href="/tpo/companies" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       ← Companies directory
     </Link>
@@ -22,9 +23,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
     {truncated ? <p role="status" className="text-sm text-body">
       Showing only the first 100 archived relationships. This is not a complete list.
     </p> : null}
-    {rows.length === 0 ? <p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
-      No archived college-company relationships are recorded.
-    </p> : <ul className="divide-y divide-border border-y border-border bg-surface">
+    {rows.length === 0 ? <EmptyState title="No archived college-company relationships are recorded." /> : <ul className="min-w-0 divide-y divide-border border-y border-border bg-surface">
       {rows.map((row) => <li key={row.companyId} className="flex flex-wrap items-center justify-between gap-3 py-4 text-sm">
         <span className="font-semibold text-foreground">{row.name}</span>
         <Link href={"/tpo/companies/" + encodeURIComponent(row.companyId) + "/manage"}
