@@ -130,7 +130,7 @@ export function FacultyAttendanceScheduleEditor({
       <Textarea value={description} onChange={e=>setDescription(e.target.value)}
         maxLength={1000} className="text-base md:text-sm" />
     </label>
-    <Button type="button" variant="primary" className="min-h-11 md:min-h-[var(--lms-control-height)]" loading={busy} onClick={()=>void save()}
+    <Button type="button" variant="primary" loading={busy} onClick={()=>void save()}
       disabled={busy||unchanged||action==="RESCHEDULE"&&!selected}>
       {busy?"Saving…":"Confirm "+(action==="CREATE"?"schedule":"reschedule")}
     </Button>
