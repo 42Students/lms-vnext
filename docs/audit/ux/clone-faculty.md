@@ -580,3 +580,23 @@ Fast-forwarded `chatgpt/chat-3-b` from `52a9f8e096c45e3e4767f833c84a27f64226df62
 | `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx` | 13,14,15,25 | 0 | 0 | 0/0 |
 
 **Source regex actually evaluated on every full fetched blob above:** `<(button|input|select|textarea|table|dialog)\\b|window\\.confirm\\s*\\(|#[0-9a-fA-F]{3,8}\\b`. The audit table is generated from the whole UTF-8 content returned by GitHub. A shell `git grep` was not executed; the counts do not claim whole-portal coverage. Line examples show where shared elements or responsive rules were inspected; they are not rendered measurements. `sm:` is explicitly counted to distinguish the legacy phone (up to 767px) from tablet (768px+).
+
+
+### Route sweep part 2/3 — faculty student, contacts, profile, reports and scheduling
+
+| Full source file | Line examples for shared UI / value declarations | Raw control / confirm / hex hits | 640px `sm:` hits | Shared Button JSX open/close |
+|---|---|---:|---:|---:|
+| `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx` | 25,26,29,44 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx` | 53,55,76,80 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/profile/contacts/page.tsx` | 9,11,14,25 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/profile/page.tsx` | 21,25,27,31 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/profile/teaching/page.tsx` | 25,26,33,36 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/results/page.tsx` | 24,25,32,36 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/response-followups/page.tsx` | 23,24,31,34 | 0 | 0 | 1/1 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` | 48,51,63,128 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` | 50,53,56,63 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/allAssignments/page.tsx` | 13,18 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/allQuizzes/page.tsx` | 17,22 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/teacher/calendar/page.tsx` | 31,32,49,52 | 0 | 0 | 1/1 |
+
+Source query identical to part 1, applied to complete fetched GitHub files. Interactive contact pills replaced by shared linked `Tabs` (active value and original route href retained). `results` and `response-followups` previously referenced `Input` (both) and `Select` (results) without imports; imports were supplied. All recorded `Button` opening/closing counts balance. No browser parity claimed.
