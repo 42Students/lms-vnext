@@ -23,7 +23,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
-  <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">{label}
+  <label className="grid min-w-36 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
    <Select className="min-h-11 min-[768px]:min-h-9" value={value}
     onChange={e=>change(e.target.value)}>
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
