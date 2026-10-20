@@ -8,8 +8,7 @@ import { getTpoJobTypes } from "@/modules/placements/tpo-configuration-read-serv
 export const dynamic="force-dynamic";
 export default async function JobTypesSettings(){
  const {ready,rows}=await getTpoJobTypes(await getCurrentRequestContext());
- return <div className="min-w-0 space-y-4"><TpoSettingsNav active="job-types"/><PageHeader title="Job types" />
- <p className="text-sm text-muted-foreground">Manage the college&apos;s custom job-type choices. Inactive types are kept for historical records.</p>
+ return <div className="min-w-0 space-y-4"><TpoSettingsNav active="job-types"/><PageHeader title="Job types" description="Manage the college's custom job-type choices. Inactive types are kept for historical records." />
  {ready?<TpoBuiltinJobTypesEditor stored={rows.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}
   customActive={rows.filter(row=>!row.isBuiltin&&row.active).length}/>:null}
  {!ready?<Alert tone="warning">Job types storage is awaiting migration registration.</Alert>:
