@@ -125,21 +125,27 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const hasDraft=Boolean(slot&&(note.trim()||leadId||leadQuery.trim()));
  useEffect(()=>{
   if(!hasDraft)return;
-  const prevent=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  const prevent=(event:BeforeUnloadEvent)=>{
+   if(allowUnload.current)return;
+   event.preventDefault();event.returnValue="";
+  };
   const protectLinks=(event:MouseEvent)=>{
    const target=event.target;
-   if(!(target instanceof Element))return;
-   if(target.closest("a[href]")&&!window.confirm("Discard this unfinished follow-up?")){
-    event.preventDefault();event.stopPropagation();
-   }
+   const link=target instanceof Element ? target.closest<HTMLAnchorElement>("a[href]") : null;
+   if(!link||link.hasAttribute("download")||allowUnload.current)return;
+   event.preventDefault();event.stopPropagation();
+   setReview({kind:"LEAVE",href:link.href,prompts:["Discard this unfinished follow-up?"],index:0});
   };
   window.addEventListener("beforeunload",prevent);
   document.addEventListener("click",protectLinks,true);
   return ()=>{window.removeEventListener("beforeunload",prevent);document.removeEventListener("click",protectLinks,true);};
  },[hasDraft]);
- function cancelDraft(){
-  if(hasDraft&&!window.confirm("Discard this unfinished follow-up?"))return;
-  setSlot(null);setMessage("");triggerRef.current?.focus();
+ function cancelDraft(confirmed=false){
+  if(hasDraft&&!confirmed){
+   setReview({kind:"DISCARD",prompts:["Discard this unfinished follow-up?"],index:0});
+   return;
+  }
+  setSlot(null);setMessage("");if(triggerRef.current?.isConnected)triggerRef.current.focus();
  }
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
