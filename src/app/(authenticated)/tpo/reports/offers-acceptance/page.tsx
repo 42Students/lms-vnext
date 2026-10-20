@@ -1,9 +1,5 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -65,8 +61,6 @@ export default async function TpoOffersAcceptanceReportPage({
         }
       />
 
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/offers-acceptance" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
