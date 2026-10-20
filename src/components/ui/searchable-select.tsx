@@ -162,13 +162,13 @@ export function SearchableSelect({
     {open && !disabled && !readOnly
       ? <PopoverListbox id={listId} label={String(props["aria-label"] ?? "Available options")}
           onDismiss={() => { setOpen(false); inputRef.current?.focus(); }}
-          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[120px] w-full min-w-0 overflow-y-auto pt-[5px]">
+          className="absolute left-0 top-[calc(100%_+_5px)] z-[var(--lms-z-dropdown)] max-h-[200px] min-h-[120px] w-full min-w-0 overflow-y-auto !px-0 !pb-0 pt-[5px] !shadow-[0_14px_16px_rgba(0,0,0,0.04)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {matches.length
             ? matches.map((option, index) =>
               <Button key={option.value} id={`${listId}-option-${index}`} type="button" variant="ghost" size="md" role="option"
                 aria-selected={option.value === visibleQuery} disabled={option.disabled} tabIndex={-1}
                 onPointerEnter={() => { if (!option.disabled) setActiveIndex(index); }}
-                className={cx("!flex !min-h-11 !w-full !items-center !justify-start !rounded-none !border-0 !px-[10px] !py-[5px] !text-left !text-[14px] !font-normal !leading-5 !text-[var(--lms-body-text)] !shadow-none enabled:hover:!bg-[#d1f1f1] focus-visible:!outline-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50", index === validActiveIndex ? "!bg-[#d1f1f1]" : "!bg-transparent")}
+                className={cx("!flex !min-h-11 !w-full !items-center !justify-start !rounded-none !border-0 !px-[10px] !py-[5px] !text-left !text-[14px] !font-normal !leading-5 !shadow-none focus-visible:!outline-2 focus-visible:!outline-offset-2 focus-visible:!outline-[var(--lms-primary)] disabled:!opacity-50 motion-reduce:!transition-none", option.value === visibleQuery ? "!bg-[var(--lms-primary)] !text-white enabled:hover:!bg-[var(--lms-primary)] enabled:hover:!text-white" : index === validActiveIndex ? "!bg-[#d1f1f1] !text-[var(--lms-body-text)] enabled:hover:!bg-[#d1f1f1]" : "!bg-transparent !text-[var(--lms-body-text)] enabled:hover:!bg-[#d1f1f1]")}
                 onPointerDown={event => event.preventDefault()} onClick={() => select(option.value)}>
                 {option.label ?? option.value}
               </Button>)
