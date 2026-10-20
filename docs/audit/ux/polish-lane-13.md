@@ -135,3 +135,23 @@
 ## 28. Delivery review queue
 
 **Surface:** `src/app/(authenticated)/mentor/reviews/page.tsx`, loading/error, Select/Input/PageSize, Disclosure, EmptyState/Pagination, 375/768/1280, and restricted delivery href actions. **Problems fixed (9):** six competing filters and page size hid actual reviews; two header links were large buttons; CSV export another competing action; Filter lacked stable alignment; dense row link repeated an emphasized action line; 375px required full-width Filter; empty state lacked next step; single-page pagination; error Retry gutter. **Changes:** keep search/project and Filter visible, tuck five secondary controls into a disclosure auto-open when selected, demote links, compact review rows, empty Projects recovery, conditional pager and aligned route error. Original text, filter names, export, permissions retained. **Files:** page, error, audit/queue. No browser/CI.
+
+## 29. Mentor sprint progress
+
+**Surface:** `src/app/(authenticated)/mentor/sprint-progress/page.tsx`; read its rendered FilterBar/ResponsiveFilterDrawer, Select/Input/Button, Disclosure, EmptyState, Pagination, loading/error, checked absent not-found/template and Mentor/authenticated layouts.
+
+**Problems fixed (10):** six equal-weight filters bury sprint data, grid-free wrapping on tablet, mobile filters too tall, header navigation competes with Filter, export looks primary, detached count, 30–40px card headings, four KPI columns squeeze phones, empty has no next step, one-page pager and cramped route error.
+
+**Changes:** keep Search and Assigned project prominent; place status, attention, release and order in an accessible disclosure that auto-opens for active selections. Retain original form field names, options and GET behavior inside the same form and responsive drawer, give Filter a full-width phone target, demote links, align count/export, flatten compact sprint rows into hairline separators and 2/4-column task stats, offer Clear or Projects recovery, suppress inert pager, align loading and error states. All legacy colors, permissions, routes, task counts, copy and export cap retained. Reviewed semantics for 375/768/1280 in source; no browser or CI.
+
+**Files:** page, loading, error, queue, proof.
+
+## 30. Mentor reviewed task history
+
+**Surface:** `src/app/(authenticated)/mentor/task-review-history/page.tsx`; inspected route loading/error, absent not-found/template, inherited Mentor/authenticated layout and rendered shared FilterBar/ResponsiveFilterDrawer, Select/Input/Button, Disclosure, EmptyState and Pagination.
+
+**Problems fixed (9):** four equal-weight filters and two command links obscure history, mobile form becomes a wall of controls, unmatched text/button baselines, detached export/count, oversized task headings, secondary links separated at inconsistent offsets, empty history has no recovery, one-page paginator is inert, route retry is too cramped.
+
+**Changes:** prioritize task/project and decision, disclose priority and chronology with active auto-open, keep original GET field names and options, align full-width phone Filter and compact tablet grid, demote export and pending-review links, combine count/export, compact record titles and wrap both authorized Board/feedback actions, add conditional clear-or-pending empty action and hide one-page pager. Preserve all query semantics, security copy, permissions, roles, URLs and original labels. Existing GracefulPageLoading needed no change; error Retry realigned to 44px on phone. Checked source semantics at 375/768/1280; no browser/CI.
+
+**Files:** page, error, queue, proof.
