@@ -57,11 +57,11 @@ export function LearnerTopbarTools() {
   }, [courses, query]);
 
   return (
-    <div className="flex min-w-0 items-center gap-2" ref={rootRef}
+    <div className="flex min-w-0 items-center gap-[var(--lms-space-2)]" ref={rootRef}
       onBlur={event => {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}>
-      <div className="relative hidden min-w-0 sm:block">
+      <div className="relative hidden min-w-0 flex-1 sm:block">
         <label className="sr-only" htmlFor="learner-global-course-search">
           Search Courses
         </label>
@@ -86,12 +86,12 @@ export function LearnerTopbarTools() {
             }
           }}
           placeholder={LEARNER_COURSE_SEARCH_PLACEHOLDER}
-          className="w-52 lg:w-72"
+          className="w-full min-w-0 min-[768px]:max-w-40 min-[992px]:max-w-52 min-[1280px]:max-w-72"
           autoComplete="off"
         />
         {open ? (
           <PopoverListbox id="learner-topbar-course-results" label="Course search results" onDismiss={() => setOpen(false)}
-            className="absolute left-0 top-[calc(100%+0.5rem)] z-50 max-h-96 w-[min(26rem,80vw)] overflow-y-auto rounded-xl border border-border bg-surface p-2 shadow-xl"
+            className="absolute left-0 top-[calc(100%+0.5rem)] z-50 w-[min(26rem,calc(100vw-2rem))] min-w-0 max-h-96 overflow-y-auto p-2"
           >
             {loadFailed?<div className="p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/></div>:null}
             {matches.length > 0 ? (
@@ -103,12 +103,12 @@ export function LearnerTopbarTools() {
                     setOpen(false);
                     setQuery("");
                   }}
-                  className="block min-h-11 rounded-lg px-3 py-2.5 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]"
+                  className="block min-h-11 min-w-0 px-3 py-2.5 hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)]"
                 >
-                  <p className="m-0 text-sm font-semibold text-foreground">
+                  <p className="m-0 break-words text-sm font-semibold text-foreground">
                     {course.courseName}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 min-w-0 break-words text-xs text-muted-foreground">
                     {course.courseCode} · {course.sectionName}
                   </p>
                 </Link>

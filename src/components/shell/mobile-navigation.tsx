@@ -30,7 +30,7 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
   return <>
     <Button type="button" aria-label="Open navigation menu"
       aria-expanded={open} aria-haspopup="dialog" onClick={() => setOpen(true)}
-      className="w-11 shrink-0 md:hidden">
+      variant="secondary" size="icon" className="w-11 shrink-0 md:hidden">
       <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"
         fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
         <path d="M4 6h16 M4 12h16 M4 18h16" />
@@ -38,7 +38,7 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
     </Button>
     <Drawer open={open} onOpenChange={setOpen} side="left" title="Navigation menu"
       headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar md:hidden"
-      bodyClassName="!px-3 !pt-2 !pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
+      bodyClassName="!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
       <SidebarNav items={items} onNavigate={() => setOpen(false)} />
     </Drawer>
   </>;
