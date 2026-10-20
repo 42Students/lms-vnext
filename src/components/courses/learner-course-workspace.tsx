@@ -794,7 +794,7 @@ export function LearnerCourseWorkspace({
                 <li key={lesson.id}>
                   <Link
                     href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${activeFilter}&lesson=${encodeURIComponent(lesson.id)}#lesson-${encodeURIComponent(lesson.id)}`}
-                    className="flex min-h-11 md:min-h-9 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-muted">
+                    className="flex min-h-11 items-center justify-between gap-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                     <span className="min-w-0 break-words">{index+1}. {lesson.name}</span>
                     <span className="shrink-0 text-xs text-muted-foreground">{lesson.count} items</span>
                   </Link>
@@ -877,26 +877,26 @@ export function LearnerCourseWorkspace({
                     ) : (
                       <StatusBadge tone="neutral">Not started</StatusBadge>
                     )}
-                    <Badge  tone="neutral">
+                    <Badge tone="neutral">
                       {lessonProgress.completed} of {lessonProgress.total} complete
                     </Badge>
                     {contentCounts.lectures > 0 ? (
-                      <Badge  tone="neutral">
+                      <Badge tone="neutral">
                         {contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}
                       </Badge>
                     ) : null}
                     {contentCounts.resources > 0 ? (
-                      <Badge  tone="neutral">
+                      <Badge tone="neutral">
                         {contentCounts.resources} resource{contentCounts.resources === 1 ? "" : "s"}
                       </Badge>
                     ) : null}
                     {contentCounts.assessments > 0 ? (
-                      <Badge  tone="neutral">
+                      <Badge tone="neutral">
                         {contentCounts.assessments} assessment{contentCounts.assessments === 1 ? "" : "s"}
                       </Badge>
                     ) : null}
                     {contentCounts.liveSessions > 0 ? (
-                      <Badge  tone="neutral">
+                      <Badge tone="neutral">
                         {contentCounts.liveSessions} live
                       </Badge>
                     ) : null}
@@ -913,17 +913,17 @@ export function LearnerCourseWorkspace({
                 {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
                    className="mb-4 flex flex-wrap items-center gap-3 text-sm">
                   <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
-                    className="font-semibold text-primary-text underline">Back to Learning Path</Link>
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to Learning Path</Link>
                   {workspace.lessons[lessonIndex-1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
-                    className="font-semibold text-primary-text underline">Previous lesson</Link>:null}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Previous lesson</Link>:null}
                   {workspace.lessons[lessonIndex+1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
-                    className="font-semibold text-primary-text underline">Next lesson</Link>:null}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Next lesson</Link>:null}
                   <span>{lessonProgress.completed} of {lessonProgress.total} complete</span>
                 </nav>:null}
                 {visibleItems.length === 0 ? (
-                  <div className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">
+                  <div className="border-t border-border py-4 text-sm text-muted-foreground">
                     {activeFilter==="lectures"?"No lectures in this lesson.":
                       activeFilter==="all"?"No content in this lesson yet.":"No lesson content yet"}
                   </div>

@@ -53,7 +53,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const lastHref = showBoundaryLinks && lastShown < total ? safePageHref(hrefForPage, total) : null;
   const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] motion-reduce:transition-none";
   return (
-    <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]", className)}>
+    <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center justify-center gap-1 md:justify-start md:gap-[var(--lms-space-2)]", className)}>
       {!previousHref ?
         <span aria-disabled="true" className={cx(buttonClass, "cursor-not-allowed opacity-50")}>Previous</span> :
         <Link className={buttonClass} href={previousHref} scroll={scroll} aria-label="Previous page">Previous</Link>}
@@ -65,7 +65,7 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
       </> : null}
       {pageLinks.map(({item,href}) => item === current ?
         <span key={item} aria-current="page" aria-label={`Current page ${item} of ${total}`}
-          className={cx(buttonClass, "cursor-default border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]")}>{item}</span> :
+          className={cx(buttonClass, "cursor-default border-[var(--lms-primary)] bg-white text-[var(--lms-primary)] hover:border-[var(--lms-primary)] hover:bg-white")}>{item}</span> :
         href ? <Link key={item} href={href} scroll={scroll}
           aria-label={`Page ${item} of ${total}`}
           className={cx(buttonClass, "hidden md:inline-flex hover:bg-[var(--lms-primary-subtle)]")}>

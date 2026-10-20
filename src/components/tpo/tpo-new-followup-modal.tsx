@@ -87,7 +87,12 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
   }catch{setError("Could not save the follow-up");}
  }
  return <>
-  <Button variant="ghost" type="button" onClick={()=>void show()}
+  <Button variant="ghost" type="button" onClick={event=>{
+    if(loading||saving)return;
+    const menu=event.currentTarget.closest("details");
+    if(menu){menu.open=false;menu.querySelector("summary")?.focus();}
+    void show();
+   }}
    className="lms-inline-link block min-h-11 w-full rounded-[8px] px-2 py-2 text-left text-sm text-link hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
    Follow-up
   </Button>

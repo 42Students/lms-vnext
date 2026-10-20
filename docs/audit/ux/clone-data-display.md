@@ -557,3 +557,72 @@ grep -nA20 '^\.monthDay' src/components/academics/learner-class-schedule.module.
 E4 and the general buttons category remain **unticked** under STRICT TICK RULE: source-scoped conversion is not a repo-wide census, and side-by-side phone/tablet/desktop pointer/focus/active computed styles are not verified. No code execution, TS typecheck, unit test, CI or browser screenshot took place.
 
 **Next exact file:** `src/components/tpo/grid/grid-selection.ts` (E8: selection visible versus authorized and hidden-filter behavior). Existing AG Grid manifest dependency blockage remains documented in `clone-sheets.md`.
+
+
+## 2026-10-20 chat-14 — legacy source-value sweep, 768px handoff and true tab/pager geometry
+
+Baseline: the lane was fast-forwarded to inspected main `9880c6d` (it was a clean ancestor, 0 ahead/838 behind), then newer main `002ac31` was merged without replacing any lane work. All writes stayed on `chatgpt/chat-14-b`. This is a full-file, GitHub-fetched **static code audit**, not an application execution or viewport screenshot. Source line numbers are for this authored state and may move when other lanes merge.
+
+### Exact E1 shared table phone/tablet value matrix
+
+| Property / state | Old LMS source: exact value | vNext file: value | Verdict |
+|---|---|---|---|
+| Phone/tablet boundary | `docs/design/old-lms-shell.css:23,73,89`: mobile up to 767px, desktop from 768px | `src/components/ui/data-table.tsx:40,96-143`: all **42** `sm:` (640px) responsive qualifiers changed to `md:` (768px) | Breakpoint matches old shell; no computed screenshot |
+| Desktop headings | `legacy-styles/components___common.scss:831-837,858-860`: neutral-400 header ink, white header background | `data-table.tsx:99-101`: neutral-400, white; header becomes a table header at md | Token values match |
+| Standard table hairline | `old-lms-pages.md:6`: 1px compact row separators; shell `#e5e9f0` | `data-table.tsx:96,100,110`: `--lms-canvas-border` (#e5e9f0 in `src/app/globals.css:339`) | Source token match |
+| Table row background and hover | `legacy-styles/components___common.scss:851-855`: no painted row-hover cells | `data-table.tsx:105`: white background/white hover on md+, primary-subtle keyboard focus-within | Hover paint matched against white default; keyboard focus state added, old focus details unverified |
+| Zebra variant | `legacy-styles/components___common.scss:809-815`: **#f8fbff** odd-row exam background | `src/components/ui/table.tsx`: optional `striped` sets `#f8fbff`; DataTable remains non-zebra | Exact optional exam paint; not a claim all exams use striped |
+| Phone visibility/cell role | `old-lms-shell.css` mobile <=767; whole-page table cards for narrow screens | `data-table.tsx:97-143`: `block` card projection and `md:table`; full desktop semantics preserved at 768px | Source breakpoint match, card pixel treatment unverified |
+| Empty state | Old page content maintains one white canvas | `data-table.tsx:40`: preserves existing empty callback with border/background; only responsive padding changes at 768px | Behavior unchanged, text varies by caller |
+
+### Exact E2 shared pagination value matrix (static)
+
+| Property / state | Old LMS SCSS | vNext source | Result |
+|---|---|---|---|
+| Phone hit box | `legacy-styles/components___antddesign.scss:250-256`: **44×44px**, radius **8px**, number line-height **42px** | `ui/pagination.tsx:54`, `ui/action-pagination.tsx:27`: `min-h-11 min-w-11 rounded-[8px] leading-[42px]` | Exact sizes/line-height match |
+| Phone container geometry | `components___antddesign.scss:243-248`: **flex-wrap**, **4px** gap, centered | Both shared pagination components use `flex-wrap justify-center gap-1` until `md`, retaining 8px gap and start alignment from 768px | Exact phone gap and alignment |
+| Numeric density | `components___antddesign.scss:272-280`: hide every number except active; no jumps | `pagination.tsx:60-84`, `action-pagination.tsx:37-50`: `hidden md:inline-flex` for other page numbers and boundary jumps; current stays visible | Phone rule matched |
+| Active color | `components___antddesign.scss:233-239`: `$clrThird = #26bac7`, border and ink; no tinted active-fill rule | `pagination.tsx:68` and `action-pagination.tsx:43`: `border-[var(--lms-primary)] bg-white text-[var(--lms-primary)]`; `globals.css:21` maps exact #26bac7 | Exact active border/ink on white source |
+| Disabled ends | Ant Prev/Next unavailable at first/last | Link pager has disabled spans for unsafe/edge href; action pager buttons disabled at boundaries | Static behavior preserved |
+| Keyboard focus | Legacy Ant keyboard focus visible | Link pager focus-visible 2px outline; action pager forwarded through Button with same outline | Semantic focus expected; old focus outline computed value not exhaustively proven |
+| Client filter scroll | Caller `learner-applications-browse.tsx` requires scroll:false | Existing Pagination `scroll` default true and caller opts out; unchanged in this batch | Navigation preserved |
+
+### Exact E3 tabs value matrix (static)
+
+| Property/state | Legacy reference | `src/components/ui/tabs.tsx` | Result |
+|---|---|---|---|
+| Typeface | `components___common.scss:365-375,461-471` 13px/600, line-height 16px, inactive `$neutral-400` = #a9a7ae | Lines 83,89,90 `text-[13px] leading-4 font-semibold`, `--lms-neutral-400` | Exact source values |
+| Bottom padding / top | `components___common.scss:369,465`: `padding:0 0 13px 0` | Three shared tab variants now `px-0 pb-[13px] pt-0` | Exact desktop authored padding |
+| Tab height | 16px content + 13px bottom padding = **29px**; phone touch needs >=44px | Three variants `min-h-11 md:min-h-[29px]`, 44px until 767, 29px from 768 | Exact desktop content box and mobile touch floor; flex alignment should be inspected in browser |
+| Active indicator | `components___common.scss:381-391,477-488`: centered 3px underline, animates width and opacity 0.2s ease-in-out | Two interactive/link variants `after:h-[3px] after:left-1/2 ... after:duration-200 after:ease-in-out`; separate accidental 3px border removed | Exact source shape and animation parameters |
+| Inactive/active label colors | `components___variables.scss:10,27`: inactive neutral-400 #a9a7ae; active/hover `$clrThird` **#26bac7** | Now use `--lms-neutral-400` and `--lms-primary` (#26bac7); replaced former darker `--lms-primary-text` | Exact mapped colors |
+| Horizontal tab spacing | `.ln-tab` SCSS: 20px until 1599, 40px >=1600 | `gap-[var(--lms-tab-gap)]` (20px) and `min-[1600px]:gap-[40px]` | Matches breakpoint/source pixels |
+| Navigation and panel semantics | Old Ant Tabs active tab, disabled, and keyboard arrows | Controlled UI retains tablist, `aria-selected`, arrow/Home/End; route mode retains real Link hrefs | Behavioral implementation unchanged; no keyboard browser proof |
+| Mobile overflow | `components___common.scss:444-451`: horizontal scroll with hidden scrollbar | Tabs `ScrollCue axis=x` preserves horizontal navigation | Structural match; scrollbar appearance not browser-verified |
+
+### File-scoped coverage/source grep-equivalent after writes
+
+| File | Source count evidence from full GitHub file | Responsive proof |
+|---|---|---|
+| `src/components/ui/data-table.tsx` | **42 `md:` tokens, 0 `sm:`**. One raw semantic table INSIDE the shared component; 1 Disclosure open/close pair, 0 raw buttons | phone <=767 card; tablet >=768 table, header sticky |
+| `src/components/ui/tabs.tsx` | **3 `md:min-h-[29px]`**, 0 `border-b-[3px]`, 0 `pt-[13px]`; one raw button only INSIDE the shared tab primitive; label active teal across link/tab modes | phone 44px, desktop 29px, >=1600 40px gap |
+| `src/components/ui/pagination.tsx` | One `justify-center gap-1 md:justify-start`, one white active color `text-[var(--lms-primary)]`; no raw button | phone 4px gap, 44px target, active-only numeric |
+| `src/components/ui/action-pagination.tsx` | Same phone container/active color; **3 Button opening/3 closing** shared JSX tags, no raw buttons | phone/desktop split matches link pager |
+
+Reproduce in an actual checkout (these shell commands were **not** run in this connector-only turn):
+
+```sh
+grep -nE 'sm:|md:table-header-group|md:table-row-group|<table([ >])|<Disclosure([ >])' src/components/ui/data-table.tsx
+grep -nE 'min-h-11 md:min-h-\[29px\]|pt-0|pb-\[13px\]|after:h-\[3px\]|duration-200|border-b-\[3px\]' src/components/ui/tabs.tsx
+grep -nE 'justify-center gap-1|leading-\[42px\]|border-\[var\(--lms-primary\)\]|aria-current' src/components/ui/pagination.tsx src/components/ui/action-pagination.tsx
+```
+
+### STRICT TICK RULE outcome and next queued file
+
+- [ ] E1 incomplete: no exhaustive table instances/hover/default/error/empty coverage, phone/tablet rendered comparisons or all-column/scroll validation.
+- [ ] E2 incomplete: not every custom pager/page-size selector inspected, full hover/focus/disabled provenance and rendered proof unavailable.
+- [ ] E3 incomplete: global census of navigation strips and all states (including mixed disabled, long counts, viewport scrolling) and browser snapshots outstanding.
+- [ ] E4/E5 unchanged global open status: filtered badges, timelines, stepper, nested accordions and CSS state matrices require further coverage.
+- [ ] E8 documented separately in clone-sheets.md: selection model fixed but native runtime blocked by undeclared AG Grid dependencies and inaccessible legacy source.
+
+**Next exact file:** `src/components/tpo/grid/view-memory.ts` (finish saved per-column width/pin/hidden state parity while respecting URL visibility and server authorization).

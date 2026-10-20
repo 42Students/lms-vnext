@@ -46,11 +46,11 @@ export default async function MentorTaskReviewHistoryPage({
     </section> : <>
       <form action="/mentor/task-review-history" method="get"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Task or project
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Decision
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Decision
           <Select name="decision" defaultValue={data.query.decision}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground">
             <option value="ALL">All reviews</option>
@@ -58,7 +58,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Task priority
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
@@ -66,7 +66,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Review chronology
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Review chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Most recently reviewed</option>
