@@ -123,7 +123,7 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="TASK_PROGRESS">Least registered task progress first</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>

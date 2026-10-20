@@ -54,7 +54,7 @@ export default async function MentorReviewOverviewPage({
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
   </label>
-  <Button type="submit" variant="primary">
+  <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
    Filter
   </Button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}

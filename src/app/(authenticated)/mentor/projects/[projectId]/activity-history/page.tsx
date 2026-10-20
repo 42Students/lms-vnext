@@ -89,7 +89,7 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="50">50 events</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={mentorProjectActivityHref({...data.query,importance:"ALL",view:"ALL",window:"ALL",order:"NEWEST",pageSize:20,page:1})}

@@ -76,7 +76,7 @@ export default async function MentorTeamHistoryPage({
               <option value="NEWEST">Most recent started first</option>
             </Select>
           </label>
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
             Filter role
           </Button>
         </form>

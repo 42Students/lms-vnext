@@ -72,7 +72,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
       <option value="SEQUENCE">Recorded sequence</option><option value="TITLE">Title (A–Z)</option>
      </Select>
     </label>
-    <Button type="submit" variant="primary">
+    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
      Filter
     </Button>
     <Link href={base+"/resources-directory" } className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

@@ -78,7 +78,7 @@ export default async function MentorBoardReviewPage({
             {data.sprints.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>

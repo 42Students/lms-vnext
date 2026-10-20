@@ -98,7 +98,7 @@ export default async function MentorTeamCoveragePage({
               <option value="TITLE">Project title A–Z</option><option value="FEWEST_LEARNERS">Fewest learners first</option><option value="MOST_LEARNERS">Most learners first</option><option value="MOST_MENTORS">Most Mentors first</option><option value="FEWEST_MENTORS">Fewest Mentors first</option>
             </Select>
           </label>
-          <Button type="submit" variant="primary">Filter</Button>
+          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
           <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"

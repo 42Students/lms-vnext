@@ -85,7 +85,7 @@ export default async function MentorReviewsPage({
         </label>
         <PageSizeSelect label="Page size" name="pageSize"
           defaultValue={String(data.pageSize)} options={[20,50]} />
-        <Button type="submit" variant="primary">Filter</Button>
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>
         <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">

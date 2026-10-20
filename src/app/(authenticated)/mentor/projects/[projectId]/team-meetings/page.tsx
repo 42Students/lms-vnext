@@ -99,7 +99,7 @@ export default async function MentorTeamMeetingsPage({
             defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}

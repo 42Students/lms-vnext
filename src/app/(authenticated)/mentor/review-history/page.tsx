@@ -84,7 +84,7 @@ export default async function MentorReviewHistoryPage({
             <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">Search</Button>
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
         <Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <Tabs ariaLabel="Review decision filter" renderPanel={false} value={data.query.decision} items={([["ALL","All decisions"],["APPROVED","Approved"],["CHANGES_REQUESTED","Changes requested"]] as const).map(([decision,label])=>({value:decision,label,href:mentorReviewHistoryHref({...data.query,decision,page:1})}))}/>
