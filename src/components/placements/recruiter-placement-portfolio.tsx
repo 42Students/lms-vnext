@@ -41,6 +41,7 @@ export function RecruiterPlacementPortfolio({
       <EmptyState
         title="No employer opportunities yet"
         description="Published or closed opportunities appear here only after a college grants your employer account access to that exact relationship."
+        action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Request a drive</Link>}
       />
     );
   }
@@ -97,10 +98,10 @@ export function RecruiterPlacementPortfolio({
       {sortedJobs.map((item) => (
         <article
           key={item.job.id}
-          className={cx("min-w-0 border-b border-[var(--lms-canvas-border)] py-4", (unansweredRequests[item.job.id]??0)>0 ? "border-warning" : "border-border")}
+          className={cx("min-w-0 border-b border-[var(--lms-canvas-border)] py-4 first:pt-0", (unansweredRequests[item.job.id]??0)>0 ? "border-warning" : "border-border")}
         >
-          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-            <div className="min-w-0">
+          <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+            <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <StatusBadge
                   tone={
@@ -116,10 +117,10 @@ export function RecruiterPlacementPortfolio({
                   {item.collegeName}
                 </span>
               </div>
-              <h2 className="mt-3 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="mt-2 break-words text-lg font-semibold leading-7 text-foreground min-[992px]:text-xl">
                 {item.job.title}
               </h2>
-              <p className="mt-1 text-sm text-body">
+              <p className="mt-1 break-words text-sm text-body">
                 {item.companyName} ·{" "}
                 {item.job.employmentType
                   .toLowerCase()
@@ -141,10 +142,10 @@ export function RecruiterPlacementPortfolio({
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
                 {item.job.description}
               </p>
-              <nav aria-label={"Drive metrics for "+item.job.title}
-                className="mt-2 flex flex-wrap gap-3 text-sm">
+              {counts?<nav aria-label={"Drive metrics for "+item.job.title}
+                className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm">
                 <Link
-                  className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                   href={"/recruiter/drives/"+item.job.id+"?tab=applicants"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.sharedApplicants??0} shared applicants
                 </Link>
@@ -153,13 +154,13 @@ export function RecruiterPlacementPortfolio({
                   href={"/recruiter/drives/"+item.job.id+"?tab=offers"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.offers??0} offers
                 </Link>
-              </nav>
+              </nav>:null}
               {(unansweredRequests[item.job.id]??0)>0?<Link
                 href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
                 className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
-              <p className="mt-2 text-sm text-body">
+              {(unansweredRequests[item.job.id]??0)>0||counts?<p className="mt-2 text-sm text-body">
                 Next: {(unansweredRequests[item.job.id]??0)>0?
                   "The placement cell asked for a change. Answer the open request.":item.job.status==="CLOSED"
                   ? "Hire again with a new request."
@@ -168,7 +169,7 @@ export function RecruiterPlacementPortfolio({
                     : item.job.applicationDeadline&&item.job.applicationDeadline<now
                       ? "Review shared applicants and hiring rounds after the deadline."
                       : "Review shared applicants and prepare the next hiring step."}
-              </p>
+              </p>:null}
             </div>
             <Link
               href={"/recruiter/drives/" + item.job.id +
@@ -179,9 +180,9 @@ export function RecruiterPlacementPortfolio({
             </Link>
           </div>
           <nav aria-label={"Actions for "+item.job.title}
-            className="mt-3 flex min-w-0 flex-col gap-2 border-t border-[var(--lms-canvas-border)] pt-3 min-[768px]:flex-row min-[768px]:flex-wrap">
+            className="mt-2 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-1">
             <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
             </Link>
             <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"/messages"}
