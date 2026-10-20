@@ -52,10 +52,10 @@ export function DepartmentCreateForm({
     <form
       onSubmit={submit}
       aria-label={DEPARTMENT_COPY.createCardTitle}
-      className="flex flex-wrap items-end gap-3 print:hidden"
+      className="flex min-w-0 flex-col items-stretch gap-3 print:hidden sm:flex-row sm:items-end"
     >
       <h2 className="m-0 w-full text-base font-semibold text-foreground">{DEPARTMENT_COPY.createCardTitle}</h2>
-      <div className="min-w-48 flex-1">
+      <div className="min-w-0 w-full flex-1">
         <label
           htmlFor="department-name"
           className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
@@ -71,7 +71,7 @@ export function DepartmentCreateForm({
           placeholder={DEPARTMENT_COPY.namePlaceholder}
         />
       </div>
-      <Button type="submit" className="min-h-11 md:min-h-9" disabled={pending || !name.trim()}>
+      <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : DEPARTMENT_COPY.createButton}
       </Button>
       {notice ? <p role="status" className="m-0 w-full text-sm text-body">{notice}</p> : null}

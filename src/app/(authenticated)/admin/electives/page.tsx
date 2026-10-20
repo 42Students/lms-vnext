@@ -12,6 +12,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { adminElectiveQuerySchema } from "@/modules/electives/admin-directory-model";
 import { listSuperAdminElectives } from "@/modules/electives/admin-directory-service";
 
@@ -38,7 +39,7 @@ export default async function SuperAdminElectivesPage({
       description="Choose a college in the header above to see its electives." /> :
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
-      <form aria-label="Filter elective slots" className="grid min-w-0 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 xl:grid-cols-5">
+      <form aria-label="Filter elective slots" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 md:min-h-9" />
@@ -49,6 +50,7 @@ export default async function SuperAdminElectivesPage({
             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
           </Select>
         </label>
+        <Disclosure title="More filters" className="min-w-0 sm:col-span-2 xl:col-span-1" contentClassName="grid min-w-0 gap-3 pb-3 pt-2 sm:grid-cols-2 xl:grid-cols-1">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select name="programId" defaultValue={data.query.programId ?? ""}
             className="min-h-11 md:min-h-9">
@@ -63,7 +65,8 @@ export default async function SuperAdminElectivesPage({
             {Array.from({length:12},(_,i)=>i+1).map(n=><option key={n} value={n}>{n}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 md:min-h-9 self-end">Filter</Button>
+        </Disclosure>
+        <Button type="submit" className="min-h-11 w-full justify-center self-end sm:w-auto md:min-h-9">Filter</Button>
       </form>
       <form method="get" action="/admin/electives" aria-label="Refresh elective directory">
         {data.query.q ? <Input type="hidden" name="q" value={data.query.q} /> : null}
@@ -73,30 +76,32 @@ export default async function SuperAdminElectivesPage({
         <Button variant="secondary" type="submit" className="inline-flex min-h-11 md:min-h-9 items-center px-4">Refresh</Button>
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
-      {data.items.length ? <div className="grid min-w-0 gap-3 md:grid-cols-2">
-        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 border-b border-border py-4">
+      {data.items.length ? <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
+        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 py-5 first:pt-0">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
           </div>
           <p className="mt-1 text-sm text-body">{item.programName} · Semester {item.semesterNumber}</p>
-          <dl className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-body">
+          <Disclosure title="Slot details" className="mt-3" contentClassName="pt-2 pb-2"><dl className="grid grid-cols-2 gap-3 text-sm text-body sm:grid-cols-3">
             <div><dt className="text-xs text-muted-foreground">Academic year</dt><dd>{item.academicYear ?? "Not linked"}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Credits</dt><dd>{item.credits}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Minimum picks</dt><dd>{item.minPick}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Maximum picks</dt><dd>{item.maxPick}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Offerings</dt><dd>{item.offerings ?? 0}</dd></div>
             <div><dt className="text-xs text-muted-foreground">Students</dt><dd>{item.students ?? 0}</dd></div>
-          </dl>
+          </dl></Disclosure>
           {options ? <div className="mt-3 flex flex-wrap gap-2">
+            <Disclosure title="Slot management" className="min-w-0" contentClassName="space-y-2 pb-2 pt-2">
             <CollegeSlotManager options={options} row={{
               id:item.id, name:item.name, description:item.description ?? null,
               version:item.version, credits:item.credits, minPick:item.minPick,
               maxPick:item.maxPick, status:item.status,
             }} />
-            {item.status === "ACTIVE" ? <CollegeElectiveOfferingManager slotId={item.id} /> : null}
             <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
               status={item.status} version={item.version} />
+            </Disclosure>
+            {item.status === "ACTIVE" ? <CollegeElectiveOfferingManager slotId={item.id} /> : null}
           </div> : null}
         </article>; })}
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
