@@ -28,12 +28,12 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      <p className="text-sm text-body">Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.</p>
     </div>
     <div className="flex min-w-0 flex-col items-stretch gap-2 text-sm print:hidden md:flex-row md:items-center">
-     <Link href={collegeHiringAnalyticsHref({...raw})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Refresh</Link>
+     <Link href={collegeHiringAnalyticsHref({...raw})} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Refresh</Link>
      <a href={"/api/college/placements/hiring-analytics/export"+(exportQuery?"?"+exportQuery:"")}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold md:min-h-9 md:w-auto text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>
     </div>
    </div>
-   <details className="min-w-0 border-t border-border pt-2 print:hidden">
+   <details className="min-w-0 border-t border-border pt-2 print:hidden" open={Boolean(q.departmentId||q.programId||q.cohortId||q.from||q.to)||undefined}>
      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
      <form method="get" className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
