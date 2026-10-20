@@ -55,19 +55,19 @@ export function SuperAdminFacultyAssignmentCreate({
    }
   });
  }
- const inputClass="min-h-11 w-full md:min-h-[var(--lms-control-height)]";
- return <section aria-label="Create teaching assignment" className="space-y-3">
+ const inputClass="min-h-11 w-full md:min-h-9";
+ return <section aria-label="Create teaching assignment" className="space-y-3 print:hidden">
    <Button variant="secondary" type="button" disabled={!available.length||!faculty.length||pending}
     onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 md:min-h-[var(--lms-control-height)]">
+    className="min-h-11 md:min-h-9">
     Create teaching assignment
    </Button>
    {!available.length?<p role="status" className="text-sm text-body">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
    {notice?<Alert tone="success">{notice}</Alert>:null}
-   {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 min-[768px]:grid-cols-2">
-    <p className="min-[768px]:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
+   {open?<form onSubmit={e=>void submit(e)} className="grid gap-3 border-b border-border pb-5 md:grid-cols-2">
+    <p className="md:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
     <label className="grid gap-1 text-[13px] font-semibold text-body">Course / Class / Semester
      <Select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
       <option value="">Choose an active class</option>
@@ -76,11 +76,11 @@ export function SuperAdminFacultyAssignmentCreate({
       </option>)}
      </Select>
     </label>
-    {selected?<fieldset className="grid gap-2 border-b border-border pb-3 min-[768px]:col-span-2">
+    {selected?<fieldset className="grid gap-2 border-b border-border pb-3 md:col-span-2">
       <legend className="px-1 text-[13px] font-semibold text-foreground">Course(s)</legend>
       <p className="text-xs text-body">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
-        className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain min-[768px]:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
+        className="grid max-h-48 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
         {sameClass.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
           <Checkbox checked={item.id===deliveryId||otherDeliveryIds.includes(item.id)}
             disabled={pending||item.id===deliveryId||(!otherDeliveryIds.includes(item.id)&&deliveryIds.length>=10)}
@@ -107,13 +107,13 @@ export function SuperAdminFacultyAssignmentCreate({
     {truncated?<p role="status" className="text-xs text-muted-foreground">
      Only the first 500 active faculty members are available here. Use the course workspace to find others.
     </p>:null}
-    {error?<Alert tone="error" className="min-[768px]:col-span-2">{error}</Alert>:null}
-    <div className="flex flex-wrap gap-2 min-[768px]:col-span-2">
-      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-[var(--lms-control-height)]">
+    {error?<Alert tone="error" className="md:col-span-2">{error}</Alert>:null}
+    <div className="flex flex-wrap gap-2 md:col-span-2">
+      <Button variant="primary" type="submit" disabled={pending} className="min-h-11 md:min-h-9">
        {pending?"Assigning…":"Assign faculty"}
       </Button>
       <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-       className="min-h-11 md:min-h-[var(--lms-control-height)]">Cancel</Button>
+       className="min-h-11 md:min-h-9">Cancel</Button>
     </div>
    </form>:null}
  </section>;
@@ -148,15 +148,15 @@ export function SuperAdminTeachingRoleEdit({
    }
   });
  }
- return <div className="min-w-0 space-y-2">
-   <Button variant="secondary" size="md" type="button" className="min-h-11 md:min-h-[var(--lms-control-height)]"
+ return <div className="min-w-0 space-y-2 print:hidden">
+   <Button variant="secondary" size="md" type="button" className="min-h-11 md:min-h-9"
      aria-expanded={open} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
       Edit role
    </Button>
    {open?<div className="grid gap-2">
       <label className="grid gap-1 text-[13px] font-semibold text-body">Teaching role
-       <Select value={role} disabled={pending}
+       <Select className="min-h-11 md:min-h-9" value={role} disabled={pending}
         onChange={e=>setRole(e.target.value as CourseTeachingRole)}
         >
         {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
@@ -164,7 +164,7 @@ export function SuperAdminTeachingRoleEdit({
        </Select>
       </label>
       <Button variant="primary" type="button" disabled={pending||role===initialRole}
-       onClick={()=>void save()} className="min-h-11 md:min-h-[var(--lms-control-height)]">
+       onClick={()=>void save()} className="min-h-11 md:min-h-9">
        {pending?"Saving…":"Save role"}
       </Button>
     </div>:null}
