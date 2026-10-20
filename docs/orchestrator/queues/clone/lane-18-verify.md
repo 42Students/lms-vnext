@@ -40,4 +40,4 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regre
 - [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
 - [x] `src/components/college/college-faculty-assignment-actions.tsx`
 - [x] `src/components/college/college-student-lifecycle-action.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
