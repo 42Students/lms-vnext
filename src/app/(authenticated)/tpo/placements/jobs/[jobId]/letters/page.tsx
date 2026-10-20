@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
-import { Alert } from "@/components/ui/alert";
+import { Banner } from "@/components/ui/banner";
 import { EmptyState } from "@/components/ui/empty-state";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -34,17 +34,17 @@ export default async function TpoOfferLettersPage({
     issuedAt: row.offer.issuedAt, respondedAt: row.offer.respondedAt,
   })));
   const evidenceByOfferId=new Map(offers.map((row,index)=>[row.offer.id,projected[index]] as const));
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-[var(--lms-space-5)]">
     <PageHeader title={job.title+" · Offer letter evidence"}
       description="Persisted offer records are listed below. An issued offer is not proof that an offer letter was generated, sent, received or acknowledged."
       actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(job.id)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Back to drive</Link>} />
-    <Alert tone="warning">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-radius-control)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 print:hidden">← Back to drive</Link>} />
+    <Banner tone="warning">
       Letter-issued and letter-acknowledged states are unavailable: the registered
       placement offer schema has no letter document, delivery or acknowledgement
       record. Bulk letter-status changes are disabled until their owner-approved
       transition contract and registered persistence exist.
-    </Alert>
+    </Banner>
     <DataTable<(typeof offers)[number]> caption="Offer letter evidence"
       rows={offers} getRowKey={row=>row.offer.id}
       empty={<EmptyState title="No persisted offers exist for this drive."/>}
