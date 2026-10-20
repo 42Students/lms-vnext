@@ -27,14 +27,14 @@ export default async function MentorReviewOverviewPage({
  <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
- return <div className="min-w-0 max-w-full space-y-6">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
  <PageHeader eyebrow="Mentor · Project" title="Delivery review overview"
  description={data.project.title+" · "+data.project.status}
  actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+  className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
   Delivery workspace</Link>}/>
  <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} role="search" aria-label="Delivery review filters"
- className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
+ className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto_auto]">
   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery status
    <Select name="status" defaultValue={data.query.status}
     className="min-h-11 min-[768px]:min-h-9">
@@ -55,7 +55,7 @@ export default async function MentorReviewOverviewPage({
     defaultValue={data.query.version??""}
     placeholder="All versions" className="min-h-11 min-[768px]:min-h-9"/>
   </label>
-  <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
+  <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
    Filter
   </Button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
@@ -65,13 +65,13 @@ export default async function MentorReviewOverviewPage({
   <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
+   download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
  </div>
- <section className="border-b border-border pb-6">
- <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recorded review coverage on this page</h2>
+ <section className="min-w-0 border-b border-border pb-4">
+ <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Recorded review coverage on this page</h2>
  <p className="mt-2 text-sm text-body leading-[22px]">{data.counts.reviewed} reviewed version{data.counts.reviewed===1?"":"s"};
  {" "}{data.counts.withFeedback} with written feedback.</p>
  <p className="mt-1 text-xs text-muted-foreground leading-5">
@@ -80,11 +80,11 @@ export default async function MentorReviewOverviewPage({
  </p></section>
  <p className="text-sm text-body leading-[22px]">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
- description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history."/>
+ description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Delivery workspace</Link>}/>
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
  <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
- <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Delivery version {item.version}</h2>
+ <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Delivery version {item.version}</h2>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>
  <p className="mt-2 text-sm text-body leading-[22px]">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
@@ -103,7 +103,7 @@ export default async function MentorReviewOverviewPage({
  }).format(item.reviewedAt)+" IST":"No recorded review instant"}
  </p>
  </li>)}</ol>}
- <Pagination label="Delivery review history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewOverviewHref({...data.query,page})}/>
+ {data.totalPages>1?<Pagination label="Delivery review history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReviewOverviewHref({...data.query,page})}/>:null}
  <p className="text-xs text-muted-foreground leading-5">
  Only registered decision and feedback presence are shown. Historical missing versions,
  former assignments, reviewer authorship and raw private feedback are not inferred or exposed.
