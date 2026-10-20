@@ -73,16 +73,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/home/page.tsx`
 - [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
 - [ ] `src/app/company-share/[token]/error.tsx`
 - [ ] `src/app/company-share/[token]/not-found.tsx`
 - [ ] `src/app/company-share/[token]/page.tsx`
