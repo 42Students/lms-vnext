@@ -2,7 +2,7 @@
 export type GridClipboardCell = string | number | null | undefined;
 
 export function safeGridClipboardCell(value: GridClipboardCell): string {
-  const oneLine = String(value ?? "").replaceAll(/[\u0000-\u001f\u007f]+/g, " ");
+  const oneLine = String(value ?? "").replaceAll(/[\u0000-\u001f\u007f\u2028\u2029]+/gu, " ");
   return /^[\s\u0000-\u001f\u007f\uFEFF]*[=+\-@]/u.test(oneLine) ? "'" + oneLine : oneLine;
 }
 

@@ -42,7 +42,7 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
     rowActions={row=><div className="flex flex-wrap items-center gap-2">
       <StatusBadge tone={row.status==="PUBLISHED"?"success":"neutral"}>{row.status}</StatusBadge>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(row.id)}
-        className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Open drive
       </Link>
     </div>}/>;

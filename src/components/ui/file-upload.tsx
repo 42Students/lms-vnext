@@ -123,7 +123,7 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
       {label}{required ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
       {required ? <span className="sr-only"> required</span> : null}
     </label>
-    {pickerUnavailable ? <p role="status" className="text-[13px] leading-5 text-[var(--lms-body-text)]">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
+    {pickerUnavailable ? <p id={`${id}-unavailable`} role="status" className="text-[13px] leading-5 text-[var(--lms-body-text)]">File selection is unavailable in this app view. {fallback ? "Use the alternative below." : "Open this form in a browser that supports file selection."}</p> :
       <Input {...props} ref={bindInput} id={id} type="file" accept={accept} disabled={disabled} onChange={handleChange}
         aria-invalid={unavailable ? undefined : error ? true : props["aria-invalid"]}
         aria-describedby={describedBy}
@@ -156,6 +156,6 @@ export function FileUpload({ label, maxBytes, onFiles, helper, fallback, pickerU
         </div> : null}
     {error && !unavailable ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error-text)]">{error}</p> : null}
     {fallback ? <div className="min-w-0 space-y-2">{fallback}</div> : null}
-    {(pickerUnavailable || disabled) ? <p id={`${id}-unavailable`} role="alert" className="text-[13px] leading-5 text-[var(--lms-body-text)]">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
+    {disabled && !pickerUnavailable ? <p id={`${id}-unavailable`} role="status" className="text-[13px] leading-5 text-[var(--lms-body-text)]">This upload cannot continue with the file picker disabled. {fallback ? "Use the alternative provided." : "Enable file selection before continuing."}</p> : null}
   </div>;
 }

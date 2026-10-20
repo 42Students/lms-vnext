@@ -17,9 +17,10 @@ export function Textarea({ className, error = false, rows, ...props }: TextareaP
       data-slot="textarea"
       {...props}
       rows={rows}
+      data-explicit-rows={rows === undefined ? undefined : "true"}
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
-        rows === undefined ? "min-h-[112px]" : "min-h-[var(--lms-control-height)]",
+        rows === undefined ? "min-h-[112px]" : "!min-h-[var(--lms-control-height)]",
         "w-full min-w-0 resize-y disabled:resize-none font-[inherit] scroll-mt-3",
         "rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)]",
         "bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[10px]",

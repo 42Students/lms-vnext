@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type ComponentPropsWithRef } from "react";
+import { useEffect, useId, useRef, useState, type ComponentPropsWithRef } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
 import { cx } from "@/lib/class-names";
@@ -16,6 +16,8 @@ export type PasswordInputProps = Omit<ComponentPropsWithRef<"input">, "type"> & 
  */
 export function PasswordInput({ error = false, className, ...props }: PasswordInputProps) {
   const [visible, setVisible] = useState(false);
+  // A disabled password must never remain in a previously revealed text state.
+  useEffect(() => { if (props.disabled) setVisible(false); }, [props.disabled]);
   const fieldRef = useRef<HTMLInputElement | null>(null);
   function bindField(node: HTMLInputElement | null) {
     fieldRef.current = node;
