@@ -95,7 +95,7 @@ export default async function MentorReviewsPage({
           defaultValue={String(data.pageSize)} options={[20,50]} />
           </div>
         </Disclosure>
-        <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        {(Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.assignment!=="ALL"||data.query.projectStatus!=="ALL"||data.query.order!=="NEWEST"||data.query.age!=="ALL"||data.pageSize!==20)?<Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>:null}
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={mentorReviewExportHref(data.query)} download

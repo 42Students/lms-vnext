@@ -105,7 +105,7 @@ export default async function MentorReportsPage({searchParams}:{
             </label>
             </div>
           </Disclosure>
-          <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+          {(data.query.status!=="ALL"||data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"||Boolean(data.query.search))?<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>:null}
         </form>
       </FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
