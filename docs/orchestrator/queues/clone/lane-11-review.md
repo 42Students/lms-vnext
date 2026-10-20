@@ -5,10 +5,10 @@
 - [x] `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx`
 - [x] `src/app/(authenticated)/admin/domains/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/[offerId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/submissions/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/page.tsx`
 - [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/new/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/workspaces/[workspaceId]/[section]/page.tsx`

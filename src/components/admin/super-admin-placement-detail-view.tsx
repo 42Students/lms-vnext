@@ -5,7 +5,7 @@ import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import type {SuperAdminPlacementDetail} from "@/modules/admin-ui/super-admin-placement-detail-model";
 export function SuperAdminPlacementDetailView({data,extraActions}:{data:SuperAdminPlacementDetail;extraActions?:ReactNode}){
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title={data.title} description={data.subtitle}
    actions={<>
     <PageBackLink href={data.backHref} label="Back to directory" className="print:hidden" />

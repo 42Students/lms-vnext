@@ -102,12 +102,12 @@ export default async function SuperAdminTenantSetup({
   {tab==="STRUCTURE"?<>
    <section aria-label="Create organization and college" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
-     <h2 className="font-semibold text-foreground">Create an organization</h2>
+     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Create an organization</h2>
      {orgCreate?<OrganizationCreateForm/>:
       <Banner tone="warning">Organization creation is not permitted in your selected administrative scope.</Banner>}
     </div>
     <div className="min-w-0 space-y-3 border-b border-border pb-5">
-     <h2 className="font-semibold text-foreground">Create a college</h2>
+     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Create a college</h2>
      {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
       <Banner tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Banner>}
     </div>
@@ -115,8 +115,8 @@ export default async function SuperAdminTenantSetup({
    <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
-      <h2 className="font-semibold">Organizations</h2>
-      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Manage all</Link>
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Organizations</h2>
+      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {organizations.slice(0,20).map(o=><li key={o.id} className="border-b border-border py-2">{o.name}</li>)}
@@ -125,8 +125,8 @@ export default async function SuperAdminTenantSetup({
     </div>
     <div className="border-b border-border pb-4">
      <div className="flex items-center justify-between gap-3">
-      <h2 className="font-semibold">Colleges</h2>
-      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Manage all</Link>
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Colleges</h2>
+      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {list?.items.map(item=><li key={item.id} className="border-b border-border py-2">
@@ -160,7 +160,7 @@ export default async function SuperAdminTenantSetup({
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="text-lg font-semibold">Launch checklist</h2>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Inspect persisted readiness →</Link>
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-5 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
