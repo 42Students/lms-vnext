@@ -32,7 +32,7 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
      className="min-h-11 md:min-h-9"
      onChange={e=>onLinksChange(links.map((item,i)=>i===index?{...item,caption:e.target.value}:item))}/>
    </label>
-   <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={disabled}
+   <Button type="button" size="sm" variant="danger" className="min-h-11 md:min-h-9" disabled={disabled}
     onClick={()=>onLinksChange(links.filter((_,i)=>i!==index))}>Remove link</Button>
   </div>)}
   <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={disabled||links.length>=20}
