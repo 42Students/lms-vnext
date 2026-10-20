@@ -81,3 +81,12 @@
 ## Verify2 surface 4 — `src/components/placements/tpo-joining-update-form.tsx`
 - Regressions fixed: 2. Correcting a DEFERRED/DID_NOT_JOIN result reopened with JOINED silently selected, potentially submitting an unintended outcome; initialize the selection from existing recorded status. Prevent confirmation onOpenChange changing the dialog while a save is pending. Reviewed useGuardedAction/apiFetch, ConfirmationDialog, Disclosure, form fields, joining tracker page/loading/error and parent TPO layout; original lane-1 polish proof.
 - Clutter/alignment: verified, no extra changes; two-column corrected form, full-width 44px mobile CTA and optional notes are preserved. Files: joining form, queue and proof; source only, no CI.
+
+
+## Verify2 surface 5 — `src/components/tpo/tpo-batch-invitation-control.tsx`
+- Regressions fixed: 1. Explicitly prevent clear-deadline confirmation state from toggling while save is pending (in addition to shared ConfirmDialog's pending dismiss guard). Reviewed eligibility/invitable, first invite/move/clear/reopen, reminder notice/error, min-date/version input, TPO batches/[batchId] caller, modal and shared Input/Checkbox/Button against lane-1 batch polish and batch rules evidence.
+- Extra clutter/alignment: verified, no change. Responsive one-column date and mobile full-width action rows and non-competing reminder controls intact; legacy copy and endpoint payload unchanged. Files: invitation control, queue, proof; no CI.
+
+## Verify2 surface 6 — `src/components/placements/college-drive-legacy-nav.tsx`
+- Regressions fixed: 0. Read CollegeDriveLegacyNav, route tab model, shared Tabs/ScrollCue, college/placements/jobs/[jobId]/layout, inherited college layout and the previous lane-18 polish entry. Model paths, aria-current, label, nav landmark and print exclusion remain valid.
+- Extra clutter/alignment: verified, no change; 16px bottom rhythm, tablet/phone scroll and one tab strip match legacy hierarchy. Files: queue/proof only; source-only, no CI.
