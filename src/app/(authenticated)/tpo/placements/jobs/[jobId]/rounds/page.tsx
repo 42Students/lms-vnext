@@ -44,7 +44,7 @@ export default async function TpoDriveRoundsPage({
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="TPO · Drive workspace" title="Rounds and schedule"
       description="Plan the drive rounds, check bookings and record company results." />
-    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+    <Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
       Manage and reorder rounds
     </Link>
     {drive.rounds.length === 0
@@ -53,7 +53,7 @@ export default async function TpoDriveRoundsPage({
         {drive.rounds.map((round) => {
           const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
           const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
-          return <article key={round.id} className="border-b border-border py-5">
+          return <article key={round.id} className="min-w-0 border-b border-border py-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold text-body">Round {round.sequence} · {round.kind}</p>
@@ -61,7 +61,7 @@ export default async function TpoDriveRoundsPage({
                 <p className="mt-1 text-sm text-body">{round.status} · {round.mode} · {date(round.scheduledAt)}</p>
               </div>
               <Link href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                 See who / record results
               </Link>
             </div>
@@ -82,7 +82,7 @@ export default async function TpoDriveRoundsPage({
               <div><dt className="text-body">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes + " minutes" : "Not specified"}</dd></div>
             </dl>
             {round.kind==="INTERVIEW"?<Link href={root+"/rounds/"+encodeURIComponent(round.id)+"/slots"}
-              className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+              className="mt-3 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
               Slots and rooms · {countFor(proposals,round.id)+countFor(requests,round.id)} need review
             </Link>:null}
             {round.whatToBring ? <p className="mt-3 text-sm text-body">Bring: {round.whatToBring}</p> : null}
