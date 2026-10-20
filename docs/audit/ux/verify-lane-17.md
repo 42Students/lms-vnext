@@ -108,3 +108,13 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Prior proof: `docs/audit/ux/polish-lane-7.md`, Surface 18. Read route/loading/error, shared subview and full `SuperAdminTemplatePlanEditor` task path, sprint prereq/link, validation, movement/removal, statuses, wide/phone layouts and error recovery.
 - Regressions found/fixed: 0. Required task fields, status badges, accessibility and routes still match their models. Focusable 44px phone buttons and wrapped texts are preserved.
 - Extra clutter/alignment fixes: 0. No task-specific edits; proof/queue only, no runtime tests.
+
+## Surface 19 — `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 19. Inspected complete comparison route, loading/error, rollback client control, two-column/current-selected diff, ProjectTemplateView, parameter validation, access/not-found, version comparison result and its href.
+- Regressions found/fixed: 0. Prior title/back-link separation and 1024px comparison grid remain, preformatted version content is wrapped, scrollable and keyboard-focusable with region aria; rollback is scoped, disabled for archived/current and has 44px mobile target.
+- Extra clutter/alignment fixes: 0. No additional code edits. Files changed: queue and this proof; no runtime/CI.
+
+## Surface 20 — `src/app/(authenticated)/admin/projects/templates/[templateId]/versions/page.tsx`
+- Original evidence: `docs/audit/ux/polish-lane-7.md`, Surface 20. Inspected route and typed historyQuery, parent template subview rendering, separate loading/error, version pagination schema/service, comparison link model, statuses and 25-per-page hint.
+- Regressions found/fixed: 0. Invalid/multi-value page is rejected by strict schema, history page and compare links retain their destinations; mobile count and paging wrap, titles and notes break safely and template version labels remain unchanged.
+- Extra clutter/alignment fixes: 0. Files changed: queue and proof. No browser/CI.
