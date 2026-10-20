@@ -33,7 +33,7 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
  }
  return <div className="min-w-0 space-y-2">
   <p className="text-sm text-body">{action==="FINISH"?
-   "It leaves the working set: hidden from Placement eligibility by default and left out of counts. Its students can&apos;t apply on their own; you can still add them to a drive.":
+   "It leaves the working set: hidden from Placement eligibility by default and left out of counts. Its students can't apply on their own; you can still add them to a drive.":
    "It comes back into the working set and its eligible students can use placements again."}</p>
   <label className="flex min-h-11 items-start gap-2 text-sm text-body">
    <Checkbox checked={reviewed} disabled={busy}
