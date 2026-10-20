@@ -84,7 +84,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
             <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
               className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{item.submissionUrl}</a>
           ) : (
-            <p role="status" className="break-all text-body">Saved link unavailable. Open the original submission from a trusted HTTPS source.</p>
+            <Alert tone="warning" className="break-all">Saved link unavailable. Open the original submission from a trusted HTTPS source.</Alert>
           )
         ) : <AssignmentFileOpenControl key={item.submissionId}
           submissionId={item.submissionId} enabled={assignmentFilesRuntimeEnabled()} />}
