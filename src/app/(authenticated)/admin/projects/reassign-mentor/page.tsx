@@ -27,6 +27,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
         <PageHeader
           title="Bulk mentor reassignment"
           description="A selected college scope is required."
+          actions={<PageBackLink href="/admin/projects" label="Project workspaces" />}
         />
         <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
         <EmptyState
@@ -42,7 +43,7 @@ export default async function SuperAdminProjectReassignMentorRoute({
     collegeId,
   })){
     return <div className="min-w-0 space-y-6">
-      <PageHeader title="Bulk mentor reassignment"/>
+      <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href="/admin/projects" label="Project workspaces" />}/>
       <ProjectAdminNav basePath="/admin/projects" active="workspaces"/>
       <ErrorState title="Mentor reassignment access denied"
         description="This account cannot manage projects in the selected college."
