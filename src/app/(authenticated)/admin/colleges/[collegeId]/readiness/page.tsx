@@ -10,6 +10,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { StatTile } from "@/components/ui/stat-tile";
+import collegeStyles from "@/components/admin/legacy-college-stat.module.css";
 import { EmptyState } from "@/components/ui/empty-state";
 import {readinessRemediationLink} from "@/modules/colleges/readiness-remediation-links";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -174,7 +175,7 @@ export default async function CollegeReadinessPage({
             label: "Total checks",
             count: evaluation.counts.total,
           },
-        ].map(metric => <StatTile key={metric.label} label={metric.label} value={metric.count}/>)}
+        ].map(metric => <StatTile className={collegeStyles.tile} key={metric.label} label={metric.label} value={metric.count}/>)}
       </section>
 
       <section aria-label="Must fix before launch" className="min-w-0 space-y-3 border-t border-border pt-5">
