@@ -16,17 +16,17 @@ These 28 page routes were moved to chat-16 from the end of other lanes' review q
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
 - [x] `src/app/e2e/superadmin-login/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/privacy-policy/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/mentor/fileExplorer/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
+- [x] `src/app/privacy-policy/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`

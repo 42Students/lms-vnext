@@ -48,7 +48,7 @@ export default async function TpoByBranchReportPage({
   });
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="By branch"
@@ -60,7 +60,7 @@ export default async function TpoByBranchReportPage({
 
       <Link
         href="/tpo/reports/branch-season"
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
       >
         View applicant and accepted-offer evidence by season →
       </Link>

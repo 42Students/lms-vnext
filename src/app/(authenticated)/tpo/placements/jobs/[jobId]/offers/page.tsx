@@ -45,16 +45,16 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const csvHref="/api/placements/tpo/jobs/"+encodeURIComponent(data.job.id)+"/offers/export?"+csvFilters.toString();
  const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn],["EXPIRED","Expired",data.counts.expired]] as const;
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-  <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Back to drive</Link>
+  <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Back to drive</Link>
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
-   actions={<a href={csvHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Export filtered CSV</a>}/>
+   actions={<a href={csvHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export filtered CSV</a>}/>
   <Banner tone="info">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>
   <Tabs ariaLabel="Offer status" renderPanel={false} value={data.status}
     items={tabs.map(([value,label,count])=>({
       value,label,count,href:root+"/offers?status="+value+searchSuffix,
     }))}/>
   <form method="get" action={root+"/offers"} className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-   <input type="hidden" name="status" value={data.status}/>
+   <Input type="hidden" name="status" value={data.status}/>
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Joining outcome
     <Select name="joining" defaultValue={parsed.data.joining} >
      <option value="ALL">All joining outcomes</option><option value="PENDING">Accepted / pending</option>
@@ -90,7 +90,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
     <Input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="w-full min-w-0"/>
    </label><Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
-   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Clear filters</Link>:null}
+   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>:null}
   </form>
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<EmptyState title="No offers match this filter."/>:
@@ -105,9 +105,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <div><dt>Offer expiry</dt><dd>{row.expires?<time dateTime={row.expires}>{formatIst(row.expires)}</time>:"Not recorded"}</dd></div><div><dt>Respond by</dt><dd>{row.respondByHours===null?"Not applicable":row.respondByHours===0?"Time is up":row.respondByHours+" h left"}</dd></div>
     <div><dt>Email</dt><dd>{row.email??"Not recorded"}</dd></div><div><dt>Phone</dt><dd>{row.phone??"Not recorded"}</dd></div><div><dt>Rules check</dt><dd title="Offer state only; consult the college placement rules for eligibility and held-offer limits.">{row.ruleCheck}</dd></div>
     {row.expiryIndicator!=="NOT_APPLICABLE"?<div><dt>Issued-offer expiry state</dt><dd>{row.expiryIndicator.replaceAll("_"," ").toLowerCase()}</dd></div>:null}</dl>
-    <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>
-    <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
-    {row.status==="ACCEPTED"?<Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
+    <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>
+    <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
+    {row.status==="ACCEPTED"?<Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={root+"/joining"}>Joining tracker →</Link>:null}</div>
    </article>)}</section>}
   <Pagination label="Offer register pages" page={data.page} pageCount={data.totalPages}
     hrefForPage={target=>root+"/offers?status="+data.status+"&page="+target+searchSuffix}/>
