@@ -60,21 +60,21 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
  const selectedView=views.find(view=>view.id===selected);
  return <section aria-label="BATCH_STUDENTS saved views" className="min-w-0 space-y-2">
   <Button variant="secondary" type="button" aria-expanded={open} onClick={toggle}
-   >Saved batch views</Button>
-  {open?<div className="min-w-0 space-y-3 border-b border-border py-4">
+   className="min-h-11 w-full sm:w-auto md:min-h-9">Saved batch views</Button>
+  {open?<div className="min-w-0 space-y-3 border-y border-border py-4">
    <h3 className="font-semibold">Saved views</h3>
    <p className="text-xs text-body">These filters are private to your account and this batch. Pin up to five views.</p>
-   <div className="flex flex-wrap gap-2" aria-label="Pinned batch views">
-    {views.filter(view=>view.pinned).map(view=><Button variant="secondary" type="button" key={view.id}
+   {pinnedViews.length?<div className="flex min-w-0 flex-wrap gap-2" aria-label="Pinned batch views">
+    {pinnedViews.map(view=><Button variant="secondary" type="button" key={view.id}
       disabled={busy||guarded} onClick={()=>void openSaved(view)}
       >{view.name}</Button>)}
-   </div>
-   <label className="block text-sm">View name
+   </div>:null}
+   <label className="block min-w-0 text-sm">View name
     <Input value={name} onChange={e=>setName(e.target.value)} maxLength={100}
      className="mt-1 min-h-11 w-full md:min-h-9"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
-   <div className="flex flex-wrap gap-2">
+   <div className="grid min-w-0 grid-cols-2 gap-2">
     <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
     })} >Save current filters</Button>
@@ -82,9 +82,9 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
      action:"UPDATE",id:selected,name:name.trim(),pinned,filters:current(),
     })} >Update selected</Button>
    </div>
-   <ul className="grid min-w-0 grid-cols-1 gap-2 md:grid-cols-2">{views.map(view=><li key={view.id}
-    className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border py-3 text-sm">
-    <label className="flex min-h-11 min-w-0 items-center gap-2 break-words">
+   <ul className="grid min-w-0 grid-cols-1 gap-2">{views.map(view=><li key={view.id}
+    className="grid min-w-0 grid-cols-2 gap-2 border-b border-border py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
+    <label className="col-span-2 flex min-h-11 min-w-0 items-center gap-2 break-words sm:col-span-1">
      <Radio  name="selected-batch-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      {view.name}{view.pinned?" · Pinned":""}
