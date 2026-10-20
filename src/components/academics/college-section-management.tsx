@@ -54,6 +54,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(pending)return;
     setNotice("");
     const result = createCollegeSectionSchema.safeParse({
       cohortId, academicPeriodId, name, code:derivedCode, capacity: Number(capacity), description: description.trim() || null,
@@ -126,7 +127,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
-            className="min-h-11 w-full md:min-h-9" />
+            className="min-h-24 w-full" />
         </label>
         <p className="text-xs text-muted-foreground md:col-span-2">Moving a student into a full section is refused.</p>
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
@@ -135,7 +136,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
           </Button>
         </div>
       </form>}
-    {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+    {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body">{notice}</p> : null}
     <p className="mt-2 text-xs text-muted-foreground">
       The server validates that the period belongs to the batch timeline and this college.
     </p>
@@ -162,6 +163,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(pending)return;
     setNotice("");
     const parsed = updateCollegeSectionSchema.safeParse({ ...draft, confirm: true });
     if (!parsed.success) {
@@ -180,10 +182,10 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
     });
   }
 
-  return <div>
+  return <div className="min-w-0">
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      >
+      className="min-h-11 w-full sm:w-auto md:min-h-9">
       Edit
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
@@ -208,7 +210,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
           <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
-            className="min-h-11 w-full md:min-h-9" />
+            className="min-h-24 w-full" />
         </label>
         <p className="text-xs text-muted-foreground md:col-span-2">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body md:col-span-2">{notice}</p> : null}

@@ -64,6 +64,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(pending)return;
     setNotice("");
     if(dateInvalid){setNotice("End date cannot be before start date.");return;}
     const parsed = createCollegeCohortSchema.safeParse({
@@ -98,44 +99,44 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         </>}
       </p>
       : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Select required value={programId} onChange={e => setProgramId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Choose program</option>
             {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
           <Select required value={startPeriodId} onChange={e => setStartPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Choose period</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
           <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
             placeholder="2026–2027" className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
           <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
           <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
@@ -151,7 +152,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
           </Button>
         </div>
       </form>}
-    {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+    {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body">{notice}</p> : null}
   </Disclosure>;
 }
 
@@ -181,6 +182,7 @@ export function CollegeCohortRowActions({ row, periods }: {
   const endDateLocked = row.activeSections > 0 || row.activeEnrolledLearners > 0;
 
   function graduate() {
+    if(pending)return;
     if(pendingLifecycleAction!=="GRADUATE") {setPendingLifecycleAction("GRADUATE");return;}
     setPendingLifecycleAction(null);setNotice("");
     startTransition(async () => {
@@ -197,7 +199,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     });
   }
   function retire() {
-    if(row.status!=="PLANNED")return;
+    if(pending||row.status!=="PLANNED")return;
     if(pendingLifecycleAction!=="RETIRE") {setPendingLifecycleAction("RETIRE");return;}
     setPendingLifecycleAction(null);setNotice("");
     startTransition(async()=>{
@@ -219,6 +221,7 @@ export function CollegeCohortRowActions({ row, periods }: {
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(pending)return;
     setNotice("");
     const parsed = updateCollegeCohortSchema.safeParse({ ...draft, confirm: true });
     if (!parsed.success) {
@@ -239,7 +242,7 @@ export function CollegeCohortRowActions({ row, periods }: {
   }
 
   return <div className="min-w-0">
-    <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+    <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
     <Button variant="secondary" type="button" disabled={pending || blocked}
       onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
       >
@@ -280,15 +283,15 @@ export function CollegeCohortRowActions({ row, periods }: {
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2">Program and starting period cannot change after creation.</p>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period
           <Select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Not specified</option>
@@ -297,13 +300,13 @@ export function CollegeCohortRowActions({ row, periods }: {
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
           <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
           <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
           <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground md:col-span-2">

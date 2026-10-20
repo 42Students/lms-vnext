@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -68,9 +69,13 @@ export function CollegeArchiveButton({
   const [open, setOpen] = useState(false);
   const [pending, startTransition] =
     useTransition();
+  const inFlightRef=useRef(false);
 
   function archive() {
+    if(inFlightRef.current||pending)return;
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(
         `/api/colleges/${collegeId}`,
         { method: "DELETE" },
@@ -108,6 +113,11 @@ export function CollegeArchiveButton({
           `${name} is no longer active.`,
       });
       router.refresh();
+      } catch {
+        showToast({tone:"error",title:"Archive blocked",description:"The college could not be archived."});
+      } finally {
+        inFlightRef.current=false;
+      }
     });
   }
 
@@ -116,21 +126,23 @@ export function CollegeArchiveButton({
       <Button
         variant="danger"
         size="sm"
-        className="min-h-11 md:min-h-9 print:hidden"
+        className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
+        disabled={pending}
         onClick={() => setOpen(true)}
       >
         Archive
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(!pending)setOpen(next);}}
+        dismissible={!pending}
         title="Archive college"
         description={`Archive ${name}? This disables the tenant boundary and is allowed only after all live dependencies are cleared.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
-              className="min-h-11 md:min-h-9 print:hidden"
+              className="min-h-11 w-full md:min-h-9 print:hidden"
               disabled={pending}
               onClick={() => setOpen(false)}
             >
