@@ -45,8 +45,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-11.md: surface | regre
 - [x] `src/components/placements/college-interview-status-actions.tsx`
 - [x] `src/components/placements/learner-placement-requests.tsx`
 - [x] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-job-lifecycle-controls.tsx`
-- [ ] `src/components/placements/placement-season-manager.tsx`
+- [x] `src/components/placements/placement-job-lifecycle-controls.tsx`
+- [x] `src/components/placements/placement-season-manager.tsx`
 - [ ] `src/components/placements/report-interactive-table.tsx`
 - [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [ ] `src/components/placements/tpo-drive-change-requests.tsx`
