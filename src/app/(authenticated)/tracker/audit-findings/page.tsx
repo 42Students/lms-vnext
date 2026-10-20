@@ -53,7 +53,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
       className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
-    <p className="mt-1 max-w-md break-words text-body">{item.title}</p>
+    <p className="mt-1 max-w-md break-words [overflow-wrap:anywhere] text-sm leading-5 text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
   {key:"severity",header:"Severity",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.severity==="CRITICAL"?"error":item.severity==="HIGH"?"warning":"neutral"}>{item.severity}</StatusBadge>},
@@ -62,8 +62,57 @@ export default async function IndependentFindingsPage({searchParams}:{
   {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
  ];
  return <div className="min-w-0 space-y-5">{header}
-  <section aria-label="Findings import status" className="border-b border-border pb-4 text-sm">
-   <h2 className="font-semibold">Findings import status</h2>
+  <Tabs renderPanel={false} ariaLabel="Finding views" value={parsed.view}
+   items={([
+     {value:"OPEN",label:"Open"},
+     {value:"RELEASE",label:"Release (critical & high)"},
+     {value:"ALL",label:"All"},
+   ] as const).map(item=>({...item,
+    href:independentFindingHref({...parsed,view:item.value,page:1})}))}/>
+  <NeedsDoingChips label={"Critical open: "+data.criticalOpen}
+   items={FINDING_STATUSES.map(status=>({
+    key:status,label:status.replaceAll("_"," "),
+    count:data.statusCounts[status]??0,
+    href:independentFindingHref({...parsed,statuses:[status],page:1}),
+   }))}/>
+  <form role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
+   <Input type="hidden" name="view" value={parsed.view}/>
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
+    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
+   <div className="flex min-w-0 items-center gap-3 max-[767px]:[&>button]:flex-1">
+    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
+    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
+   </div>
+   <details open={Boolean(parsed.area || parsed.statuses.length || parsed.severities.length || parsed.kinds.length)}
+    className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2 lg:col-span-3">
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
+    <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
+    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas"/></label>
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
+    <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
+     {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
+    </Select></label>
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Severity (multiple)
+    <Select name="severity" multiple size={4} defaultValue={parsed.severities}>
+     {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
+    </Select></label>
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind (multiple)
+    <Select name="kind" multiple size={4} defaultValue={parsed.kinds}>
+     {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
+    </Select></label>
+    </div>
+   </details>
+  </form>
+  <p role="status" className="text-sm text-body">
+   {data.total} matching independent findings · page {data.page} of {data.pages} · 50 per page.
+  </p>
+  <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
+   caption="Independent audit findings"
+   empty={<EmptyState title="No matching audit findings" description="No independent audit findings match these filters." action={<Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear</Link>}/>}/>
+  <Pagination label="Audit findings pages" page={data.page} pageCount={data.pages} hrefForPage={page=>independentFindingHref(parsed,page)}/>
+  <details aria-label="Findings import status" className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
+   <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-[var(--lms-heading)] md:min-h-9">Findings import status</summary>
    <p role="status" className="mt-1 text-body">
     {sync?.lastResult==="SUCCESS"?"Last sync succeeded.":
       sync?.lastResult==="FAILED"?"The last sync failed. Existing imported findings remain available.":
@@ -82,49 +131,6 @@ export default async function IndependentFindingsPage({searchParams}:{
      Showing the first {sync.refusedFiles.length} of {sync.refusedCount} refused files. Review importer logs for the remaining details.
     </p>:null}
    </section>:null}
-  </section>
-  <Tabs renderPanel={false} ariaLabel="Finding views" value={parsed.view}
-   items={([
-     {value:"OPEN",label:"Open"},
-     {value:"RELEASE",label:"Release (critical & high)"},
-     {value:"ALL",label:"All"},
-   ] as const).map(item=>({...item,
-    href:independentFindingHref({...parsed,view:item.value,page:1})}))}/>
-  <NeedsDoingChips label={"Critical open: "+data.criticalOpen}
-   items={FINDING_STATUSES.map(status=>({
-    key:status,label:status.replaceAll("_"," "),
-    count:data.statusCounts[status]??0,
-    href:independentFindingHref({...parsed,statuses:[status],page:1}),
-   }))}/>
-  <form role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 gap-2 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-3">
-   <Input type="hidden" name="view" value={parsed.view}/>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
-    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas"/></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
-    <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
-     {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
-    </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Severity (multiple)
-    <Select name="severity" multiple size={4} defaultValue={parsed.severities}>
-     {FINDING_SEVERITIES.map(v=><option key={v} value={v}>{v}</option>)}
-    </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind (multiple)
-    <Select name="kind" multiple size={4} defaultValue={parsed.kinds}>
-     {FINDING_KINDS.map(v=><option key={v} value={v}>{v}</option>)}
-    </Select></label>
-   <div className="flex items-end gap-3">
-    <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
-    <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
-   </div>
-  </form>
-  <p role="status" className="text-sm text-body">
-   {data.total} matching independent findings · page {data.page} of {data.pages} · 50 per page.
-  </p>
-  <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
-   caption="Independent audit findings"
-   empty={<EmptyState title="No matching audit findings" description="No independent audit findings match these filters."/>}/>
-  <Pagination label="Audit findings pages" page={data.page} pageCount={data.pages} hrefForPage={page=>independentFindingHref(parsed,page)}/>
+  </details>
  </div>;
 }
