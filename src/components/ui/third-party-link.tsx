@@ -38,11 +38,11 @@ export function ThirdPartyLink({ href, label, ariaLabel }: { href: string; label
     {safeHref ? <span className="flex flex-wrap gap-3">
       <Button variant="link" size="sm" type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
         aria-expanded={showFallback}
-        className="min-h-11 md:min-h-[var(--lms-control-height)] px-2 text-[13px] font-semibold underline underline-offset-2 hover:bg-[var(--lms-primary-subtle)] aria-expanded:bg-[var(--lms-primary-subtle)] aria-expanded:text-[var(--lms-primary-text)]">
+        className="min-h-11 md:min-h-[var(--lms-control-height)] px-2 text-[13px] font-semibold underline! hover:underline! focus-visible:underline! underline-offset-2 hover:bg-[var(--lms-primary-subtle)] aria-expanded:bg-[var(--lms-primary-subtle)] aria-expanded:text-[var(--lms-primary-text)]">
         {showFallback ? "Hide link" : "Show link to copy"}
       </Button>
       <Button variant="link" size="sm" type="button" onClick={() => void copyLink()}
-        className="min-h-11 md:min-h-[var(--lms-control-height)] px-2 text-[13px] font-semibold underline underline-offset-2 hover:bg-[var(--lms-primary-subtle)]">
+        className="min-h-11 md:min-h-[var(--lms-control-height)] px-2 text-[13px] font-semibold underline! hover:underline! focus-visible:underline! underline-offset-2 hover:bg-[var(--lms-primary-subtle)]">
         Copy link
       </Button>
     </span> : null}
