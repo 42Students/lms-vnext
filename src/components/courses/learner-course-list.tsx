@@ -373,7 +373,7 @@ export function LearnerCourseList({
                   <div className="min-w-0">
                     <Link
                     href={`/learn/courses/${row.course.deliveryId}/home`}
-                    className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                    className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
                       <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
