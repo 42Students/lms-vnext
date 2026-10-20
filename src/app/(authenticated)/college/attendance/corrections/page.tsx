@@ -23,7 +23,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
   const raw=Object.fromEntries(Object.entries(values).filter(([,value])=>value!==undefined));
   const query=collegeCorrectionReadSchema.safeParse(raw);
   if(!query.success) return <div className="space-y-4">
-    <PageHeader title="Correction windows"/>
+    <PageHeader title="Attendance correction windows"/>
     <ErrorState title="Invalid date range"
       description="Enter both valid IST calendar dates, up to 31 days, without duplicate or unrelated filters."
       action={<Link href="/college/attendance/corrections" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Reset filters</Link>}/>
@@ -32,13 +32,13 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader title="Attendance correction windows"
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
-      actions={<Link href="/college/attendance/settings" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Policy settings</Link>}/>
+      actions={<Link href="/college/attendance/settings" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Policy settings</Link>}/>
     <section className="border-t border-border pt-5">
-      <h2 className="font-semibold text-foreground">Policy evidence</h2>
-      <dl className="mt-3 grid min-w-0 gap-3 text-sm md:grid-cols-3">
-        <div><dt>Eligibility threshold</dt><dd>{data.policy.eligibilityThresholdPercent}%</dd></div>
-        <div><dt>Faculty correction window</dt><dd>{data.policy.correctionWindowHours} hours after class end</dd></div>
-        <div><dt>Policy source</dt><dd>{data.policySource==="SAVED"?"Saved college policy":"System defaults (no saved college row)"}</dd></div>
+      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Policy evidence</h2>
+      <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility threshold</dt><dd className="mt-2 font-semibold tabular-nums text-[var(--lms-heading)]">{data.policy.eligibilityThresholdPercent}%</dd></div>
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty correction window</dt><dd className="mt-2 text-[var(--lms-body-text)]">{data.policy.correctionWindowHours} hours after class end</dd></div>
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Policy source</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{data.policySource==="SAVED"?"Saved college policy":"System defaults (no saved college row)"}</dd></div>
       </dl>
       <p className="mt-3 text-xs text-muted-foreground">
         This window describes Faculty marking eligibility. College Admin correction permissions have separate rules.
@@ -46,11 +46,11 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       </p>
     </section>
     <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-t border-border pt-4">
-      <label className="grid min-w-0 w-full flex-1 gap-2 text-sm font-semibold text-body md:min-w-40">From (IST)
+      <label className="grid min-w-0 w-full flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-40">From (IST)
         <Input name="from" type="date" required defaultValue={data.query.from??""}
           className="min-h-11 md:min-h-9"/>
       </label>
-      <label className="grid min-w-0 w-full flex-1 gap-2 text-sm font-semibold text-body md:min-w-40">To (IST)
+      <label className="grid min-w-0 w-full flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-40">To (IST)
         <Input name="to" type="date" required defaultValue={data.query.to??""}
           className="min-h-11 md:min-h-9"/>
       </label>
