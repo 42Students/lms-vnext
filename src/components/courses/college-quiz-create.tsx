@@ -193,7 +193,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     Create another quiz after saving
    </label>
    <div className="flex flex-wrap gap-2">
-    <Button variant="primary" type="button" disabled={busy} onClick={()=>void create()} className="min-h-11 md:min-h-9"
+    <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 md:min-h-9"
      >
      {busy?"Saving…":"Create quiz draft"}</Button>
     <Button variant="secondary" type="button" disabled={busy} onClick={async()=>{
