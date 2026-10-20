@@ -47,23 +47,24 @@ export function TpoMobileFooter() {
         if(link.label==="More")return <Button key="more" variant="ghost" type="button"
           aria-label="More TPO workspaces" aria-expanded={moreOpen} aria-pressed={moreOpen}
           aria-current={moreActive?"page":undefined} onClick={()=>setMoreOpen(open=>!open)}
-          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 w-full flex-col items-center justify-center rounded-none px-1 py-1 "+(moreOpen||moreActive?"active":"")}>
+          className={"lms-tpo-mobile-footer-item flex h-full min-h-16 min-w-0 w-full flex-col items-center justify-center rounded-none px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(moreOpen||moreActive?"active":"")}>
           <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">More</span>
         </Button>;
         return <Link key={link.label} href={link.href}
           aria-current={active?"page":undefined}
-          className={"lms-tpo-mobile-footer-item flex min-h-16 flex-col items-center justify-center px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
+          className={"lms-tpo-mobile-footer-item flex min-h-16 min-w-0 flex-col items-center justify-center px-1 py-1 text-center focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary)] "+(active?"active":"")}>
           <Image src={link.icon} alt="" width={24} height={24} className="lms-tpo-mobile-footer-icon"/>
           <span className="lms-tpo-mobile-footer-label">{link.label}</span>
         </Link>;
       })}
     </nav>
     <BottomSheet open={moreOpen} onOpenChange={setMoreOpen} title="More TPO workspaces">
-      <nav aria-label="More TPO destinations" className="grid grid-cols-2 gap-2">
+      <nav aria-label="More TPO destinations" className="grid min-w-0 grid-cols-1">
         {moreLinks.map(([label,href])=><Link key={href} href={href}
           onClick={()=>setMoreOpen(false)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{label}</Link>)}
+          aria-current={pathname===href||pathname.startsWith(href+"/")?"page":undefined}
+          className={"flex min-h-11 min-w-0 items-center break-words border-b border-[var(--lms-canvas-border)] px-3 py-3 text-sm font-semibold leading-5 text-[var(--lms-body-text)] last:border-b-0 hover:bg-[var(--lms-neutral-100)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary "+(pathname===href||pathname.startsWith(href+"/")?"bg-[#eff8fa] text-link":"")}>{label}</Link>)}
       </nav>
     </BottomSheet>
   </>;
