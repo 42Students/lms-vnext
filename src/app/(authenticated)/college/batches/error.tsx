@@ -9,5 +9,5 @@ export default function CollegeBatchesError({ reset }: {
 }) {
   return <ErrorState title="Batches unavailable"
     description="The college batch list could not be loaded. No empty-result conclusion is assumed."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset} className="min-h-11 md:min-h-9">Retry</Button>} />;
 }

@@ -17,11 +17,11 @@
 - [ ] `src/app/(authenticated)/college-admin/programs/error.tsx`
 - [ ] `src/app/(authenticated)/college-admin/programs/loading.tsx`
 - [ ] `src/app/(authenticated)/college-admin/programs/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/error.tsx`
-- [ ] `src/app/(authenticated)/college/academics/loading.tsx`
-- [ ] `src/app/(authenticated)/college/academics/page.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx`
+- [ ] `src/app/(authenticated)/college/academics/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/academics/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/academics/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/activity/[eventId]/error.tsx`
 - [ ] `src/app/(authenticated)/college/activity/[eventId]/loading.tsx`
@@ -50,43 +50,43 @@
 - [ ] `src/app/(authenticated)/college/batch-promotion/error.tsx`
 - [ ] `src/app/(authenticated)/college/batch-promotion/loading.tsx`
 - [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/error.tsx`
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/batches/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/batches/loading.tsx`
-- [ ] `src/app/(authenticated)/college/batches/page.tsx`
+- [ ] `src/app/(authenticated)/college/batches/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/branding/error.tsx`
 - [ ] `src/app/(authenticated)/college/branding/loading.tsx`
 - [ ] `src/app/(authenticated)/college/branding/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/error.tsx`
+- [ ] `src/app/(authenticated)/college/classes/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/classes/loading.tsx`
-- [ ] `src/app/(authenticated)/college/classes/page.tsx`
+- [ ] `src/app/(authenticated)/college/classes/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/classes/recurring-preview/error.tsx`
 - [ ] `src/app/(authenticated)/college/classes/recurring-preview/loading.tsx`
 - [ ] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/error.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/loading.tsx`
-- [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/companies/error.tsx`
-- [ ] `src/app/(authenticated)/college/companies/loading.tsx`
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/error.tsx`
+- [ ] `src/app/(authenticated)/college/college-profile/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/college-profile/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/college-profile/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/companies/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/companies/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/companies/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
+- [ ] `src/app/(authenticated)/college/contacts/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/contacts/loading.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
+- [ ] `src/app/(authenticated)/college/contacts/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/course-progress/error.tsx`
 - [ ] `src/app/(authenticated)/college/course-progress/loading.tsx`
 - [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/error.tsx`
+- [ ] `src/app/(authenticated)/college/courses/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/courses/loading.tsx`
 - [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
 - [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx`
 - [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx`
 - [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/page.tsx`
+- [ ] `src/app/(authenticated)/college/courses/page.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/departments/error.tsx`
 - [ ] `src/app/(authenticated)/college/departments/loading.tsx`
 - [ ] `src/app/(authenticated)/college/departments/page.tsx`
@@ -103,7 +103,7 @@
 - [ ] `src/app/(authenticated)/college/electives/loading.tsx`
 - [ ] `src/app/(authenticated)/college/electives/page.tsx`
 - [ ] `src/app/(authenticated)/college/error.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/error.tsx`
+- [ ] `src/app/(authenticated)/college/faculty-assignment/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/faculty-assignment/loading.tsx`
 - [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
 - [ ] `src/app/(authenticated)/college/faculty/[membershipId]/error.tsx`
@@ -146,7 +146,7 @@
 - [ ] `src/app/(authenticated)/college/loading.tsx`
 - [ ] `src/app/(authenticated)/college/not-found.tsx`
 - [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/error.tsx`
+- [ ] `src/app/(authenticated)/college/people/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/people/loading.tsx`
 - [ ] `src/app/(authenticated)/college/people/manage/error.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
 - [ ] `src/app/(authenticated)/college/people/manage/loading.tsx` — **SOURCE PASS (replacement chat-4), strict parity open**
@@ -1560,3 +1560,392 @@ Shared component references from inspected source: `src/components/admin/managed
 **Strict checkboxes remain open.** PageHeader 28px legacy vs 30px shared desktop, DataTable 640px vs old LMS 767px card threshold, old-LMS exact state values, full-scope grep, browser interaction and responsive visual comparison prevent certification. All thirteen are **SOURCE PASS only**, not full pixel-matched clones.
 
 **Exact next file:** `src/app/(authenticated)/college/people/page.tsx`, then `src/app/(authenticated)/college/people/loading.tsx` and `src/app/(authenticated)/college/people/error.tsx`; continue the Work queue for contacts and roster.
+
+
+### Replacement chat-4 College Admin route fallback and loading surfaces — 2026-10-20
+
+**Source-refactored:** fifteen error/loading files across contact details, batch students, academics, academic section, companies, college profile and faculty assignments, plus contacts/people directory retry actions. Generic public error boundaries replaced by scoped shared ErrorState, custom animate-pulse page loaders replaced with GracefulPageLoading(card/directory), and retry/clear-filter targets use the 767/768px contract. Original error page has no mutation semantics. No shared UI files changed. No app, tests, TypeScript compiler, browser or CI executed.
+
+**Bounded full-blob grep expressions:** `/<(button|input|select|textarea|table)\b/g`; `/#[a-f0-9]{3,8}\b/gi`; `/fixed inset-0|role=["']dialog["']/g`; `/<h1\b/g`. Checked JSX family closing counts and allowed documented shared props (GracefulPageLoading `shape="card"|"directory"`, ErrorState title/description/action). This does not certify global source grep.
+
+| File | Native controls | Hex colours | Custom overlays | Native h1 | md / sm source tokens |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/people/error.tsx` | 0 | 0 | 0 | 0 | 2 / 0 |
+| `src/app/(authenticated)/college/contacts/error.tsx` | 0 | 0 | 0 | 0 | 2 / 0 |
+| `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/companies/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/companies/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/academics/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/college-profile/loading.tsx` | 0 | 0 | 0 | 0 | 0 / 0 |
+| `src/app/(authenticated)/college/academics/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/college-profile/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+| `src/app/(authenticated)/college/faculty-assignment/error.tsx` | 0 | 0 | 0 | 0 | 1 / 0 |
+
+#### `src/app/(authenticated)/college/people/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/contacts/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/contacts/[membershipId]/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/batches/[cohortId]/students/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/academics/sections/[sectionId]/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/companies/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared GracefulPageLoading is transparent, no inner canvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Descriptive route-specific aria label in shared skeleton | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | Shared Skeleton with card or directory layout; no error claims | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | GracefulPageLoading uses shared Skeleton and eventual recovery CTA | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Fluid skeleton width, no nested custom fixed dimensions | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA busy/status owned by shared loader; props restricted to card/directory | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared GracefulPageLoading is transparent, no inner canvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Descriptive route-specific aria label in shared skeleton | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | Shared Skeleton with card or directory layout; no error claims | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | GracefulPageLoading uses shared Skeleton and eventual recovery CTA | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Fluid skeleton width, no nested custom fixed dimensions | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA busy/status owned by shared loader; props restricted to card/directory | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/academics/sections/[sectionId]/loading.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared GracefulPageLoading is transparent, no inner canvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Descriptive route-specific aria label in shared skeleton | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | Shared Skeleton with card or directory layout; no error claims | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | GracefulPageLoading uses shared Skeleton and eventual recovery CTA | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Fluid skeleton width, no nested custom fixed dimensions | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA busy/status owned by shared loader; props restricted to card/directory | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/companies/loading.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared GracefulPageLoading is transparent, no inner canvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Descriptive route-specific aria label in shared skeleton | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | Shared Skeleton with card or directory layout; no error claims | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | GracefulPageLoading uses shared Skeleton and eventual recovery CTA | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Fluid skeleton width, no nested custom fixed dimensions | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA busy/status owned by shared loader; props restricted to card/directory | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/academics/loading.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared GracefulPageLoading is transparent, no inner canvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Descriptive route-specific aria label in shared skeleton | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | Shared Skeleton with card or directory layout; no error claims | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | GracefulPageLoading uses shared Skeleton and eventual recovery CTA | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Fluid skeleton width, no nested custom fixed dimensions | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA busy/status owned by shared loader; props restricted to card/directory | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/college-profile/loading.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared GracefulPageLoading is transparent, no inner canvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Descriptive route-specific aria label in shared skeleton | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | Shared Skeleton with card or directory layout; no error claims | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | GracefulPageLoading uses shared Skeleton and eventual recovery CTA | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Fluid skeleton width, no nested custom fixed dimensions | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA busy/status owned by shared loader; props restricted to card/directory | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/academics/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/college-profile/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+#### `src/app/(authenticated)/college/faculty-assignment/error.tsx`
+
+| Property/state | Legacy file/value | VNext file/value | Strict verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white #ffffff 12px radius canvas, border #e5e9f0 1px, padding 24px | Shared ErrorState rendered within parent's PageCanvas | **Structural match, actual computed padding not measured** |
+| Heading and copy | legacy-styles/components___listing-page-header.scss:52-58: 28px/600/1.3 desktop title, 20px on phone | Route-specific semantic ErrorState title and safe no-false-empty description | **Full heading typography governed by shared UI and known desktop mismatch** |
+| Default and error | old-lms-pages.md:6,11: error state inside canvas without masquerading as empty results | ErrorState with secondary Retry action and preserved scope boundaries | **Source behaviour copied; detailed legacy fallback screenshot missing** |
+| Loading/disabled/focus | legacy-styles/components___button.scss:13-24 focus transition 150ms, 49-51 disabled; form.scss:22-36 focus-visible halo | Shared Button with focus-visible 2px, retries via reset() | **Shared state source only; no focus/disabled/timeout replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: <=767px stacked, 44px phone touch target | Retry/clear-filter controls min-h-11 below md, md:min-h-9 >=768px | **Source breakpoint aligns, browser viewport proof pending** |
+| Accessibility/JSX | old-lms-pages.md:6: readable page content and recovery | ARIA role alert/description owned by ErrorState, Button keyboard action | **Source pattern reviewed, TypeScript parser and browser not run** |
+
+**Strict ticks: 0.** These files have scoped source value/grep/responsive tables but the global grep across all 434 queue items, exact every-state computed legacy CSS, actual mobile/tablet rendered screenshots and TSX compiler/interaction proof remain open. Do not mark these pixel-perfect based on local source-only checks.
+
+**Next exact file:** `src/app/(authenticated)/college/contacts/page.tsx` (then `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`, remaining College Admin views).
+
+
+### Replacement chat-4 College Admin contacts directory and detail source audit — 2026-10-20
+
+Both routes were updated and fetched again. Existing College Admin/tenant access checks, read-only masking, filtered CSV, row links, pagination, IST dates and semantic navigation preserved. The contacts directory keeps two native **`type="hidden"`** input fields solely to persist tab and membership selection in GET filters; they are nonvisual form transport, **documented exemptions** rather than hand-rolled user controls.
+
+**Bounded scoped grep:** `/<(button|select|input|textarea|table)\b/g`; `/#[a-f0-9]{3,8}\b/gi`; `/fixed inset-0|role=["']dialog["']/g`; `/<h1\b/g`. For contacts page, raw-control count is exactly the two hidden inputs named tab and membershipId; do not report a fake zero. Name closing/open JSX tag families compared, no orphan closing families observed. Not a whole-route or repository grep.
+
+| Route | Raw controls | Explicit hidden exemptions | Hex literals | Custom overlay | Native h1 | md / sm source prefixes |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/contacts/page.tsx` | 2 | 2 | 0 | 0 | 0 | 13 / 0 |
+| `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx` | 0 | 0 | 0 | 0 | 0 | 1 / 0 |
+
+#### `src/app/(authenticated)/college/contacts/page.tsx`
+
+| Property/state | Legacy source/value | Current value/source | Strict comparison |
+| --- | --- | --- | --- |
+| Single page canvas | old-lms-shell-spec.md:18-20: one #fff canvas with #e5e9f0 border 1px, radius 12px, 24px padding | Both routes inherit PageCanvas; no extra nested PageCanvas added | **Source matches inherited canvas, exact runtime coordinates not measured** |
+| Heading/title | legacy-styles/components___listing-page-header.scss:33-58: 28px/600/1.3 desktop, 20px mobile | Shared PageHeader; detail redundant eyebrow removed; back action PageBackLink | **Shared desktop 30px vs legacy SCSS 28px upstream mismatch** |
+| Filters, forms and tabs | legacy-styles/components___form.scss:117-143: radius 10px input, 14px/20px typography, teal focus shadow | Directory shared FilterBar, Tabs, Disclosure, Input/Select with token chrome; 2 hidden transport inputs | **Interactive shared states source reviewed; exact legacy tab underline/focus mismatch not cleared** |
+| States/empty/error | old-lms-pages.md:6,11: slim banners, shared empty copy inside single canvas | Directory bookmark banner => Alert(info), zero results => EmptyState with reset; invalid filters => ErrorState | **Exact legacy warning/empty heights not measured** |
+| Row/status detail | old-lms-pages.md:6,11: hairline rows and compact pills | Shared DataTable rows, StatusBadge; contact detail StatusBadge(active/warning) | **Pill values inherited; old LMS contact row precise padding not measured** |
+| Buttons/hover/focus | old-lms-shell-spec.md:22-24: 36px desktop CTA, radius 9px, 14px/650, 150ms transitions in button.scss:13-24 | Links 44px min-height phone, 36px md+; PageBackLink 44px with focus-visible; shared Button | **Source token contract only; no pressed/hover/disabled browser comparisons** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: stacked <=767px and 44px mobile targets, md from 768px | Contact filter grid now single column under 768px, 2 cols at md, 4 lg; DataTable own mobile card threshold 640px | **Known DataTable cutoff discrepancy; mobile/tablet visual proof open** |
+| Data/permission no regression | old-lms-pages.md:6: copy and content unaffected by skin work | Two hidden inputs preserve active tab/selected record; private learner contacts remain masked; links remain scoped | **Code path source intact; service calls not executed** |
+
+#### `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+
+| Property/state | Legacy source/value | Current value/source | Strict comparison |
+| --- | --- | --- | --- |
+| Single page canvas | old-lms-shell-spec.md:18-20: one #fff canvas with #e5e9f0 border 1px, radius 12px, 24px padding | Both routes inherit PageCanvas; no extra nested PageCanvas added | **Source matches inherited canvas, exact runtime coordinates not measured** |
+| Heading/title | legacy-styles/components___listing-page-header.scss:33-58: 28px/600/1.3 desktop, 20px mobile | Shared PageHeader; detail redundant eyebrow removed; back action PageBackLink | **Shared desktop 30px vs legacy SCSS 28px upstream mismatch** |
+| Filters, forms and tabs | legacy-styles/components___form.scss:117-143: radius 10px input, 14px/20px typography, teal focus shadow | Directory shared FilterBar, Tabs, Disclosure, Input/Select with token chrome; 2 hidden transport inputs | **Interactive shared states source reviewed; exact legacy tab underline/focus mismatch not cleared** |
+| States/empty/error | old-lms-pages.md:6,11: slim banners, shared empty copy inside single canvas | Directory bookmark banner => Alert(info), zero results => EmptyState with reset; invalid filters => ErrorState | **Exact legacy warning/empty heights not measured** |
+| Row/status detail | old-lms-pages.md:6,11: hairline rows and compact pills | Shared DataTable rows, StatusBadge; contact detail StatusBadge(active/warning) | **Pill values inherited; old LMS contact row precise padding not measured** |
+| Buttons/hover/focus | old-lms-shell-spec.md:22-24: 36px desktop CTA, radius 9px, 14px/650, 150ms transitions in button.scss:13-24 | Links 44px min-height phone, 36px md+; PageBackLink 44px with focus-visible; shared Button | **Source token contract only; no pressed/hover/disabled browser comparisons** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: stacked <=767px and 44px mobile targets, md from 768px | Contact filter grid now single column under 768px, 2 cols at md, 4 lg; DataTable own mobile card threshold 640px | **Known DataTable cutoff discrepancy; mobile/tablet visual proof open** |
+| Data/permission no regression | old-lms-pages.md:6: copy and content unaffected by skin work | Two hidden inputs preserve active tab/selected record; private learner contacts remain masked; links remain scoped | **Code path source intact; service calls not executed** |
+
+**Strict tick: 0.** Runtime keyboard/phone/tablet, exact legacy hover/focus/disabled/loading geometry and full-scope grep all remain open. The two native hidden fields are explicitly exempted as invisible transport controls; every other source control delegates to shared UI. This confirms source migration, not a pixel clone.
+
+**Exact next file:** `src/app/(authenticated)/college/contacts/[membershipId]/loading.tsx` is source-migrated; continue with `src/app/(authenticated)/college/college-profile/page.tsx`, then remaining Academic and Super Admin queue pages.
+
+
+### Replacement chat-4 College profile, academics and companies screens — 2026-10-20
+
+Three route screens source-migrated. Service calls, tenant/role scope and existing content intact. `college/companies/page.tsx` explicitly migrated the lone native **checkbox** to the existing shared Checkbox component with `name="showDeleted"`, `value="1"`, and uncontrolled checked state unchanged. No native raw controls remain in these three files. No app execution, CI, compiler, browser resize or keyboard replay.
+
+**Scoped grep:** `/<(button|input|select|textarea|table)\b/g`, `/#[a-f0-9]{3,8}\b/gi`, `/fixed inset-0|role=["']dialog["']/g`, `/<h1\b/g`. Full-file text from GitHub after updates. JSX shared/native opening vs closing tag names compared; source scan only, not whole-repo proof.
+
+| File | Native controls | Hex literals | Hand overlays | Native h1 | md/sm source tokens |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/college-profile/page.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+| `src/app/(authenticated)/college/academics/page.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+| `src/app/(authenticated)/college/companies/page.tsx` | 0 | 0 | 0 | 0 | 5/0 |
+
+#### `src/app/(authenticated)/college/college-profile/page.tsx`
+
+| State/property | Legacy file/value | Current source/value | Strict status |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white canvas, 1px #e5e9f0 border, 12px radius, 24px padding | PageHeader and section inside authenticated page canvas, no additional nested PageCanvas | **Shared source structure, precise coordinates unmeasured** |
+| Header and heading | legacy-styles/components___listing-page-header.scss:33-58: bottom hairline and h1 28px/600/1.3 desktop, 20px phone | Single PageHeader and scoped description; no native h1 | **Shared PageHeader desktop 30px vs legacy 28px unresolved** |
+| Buttons and links | old-lms-shell-spec.md:22-24: 36px / radius 9 / 14px / 650, primary teal #0a7c88 with white text | Shared Button/Link styling and tokenized focus, 44px phone min-height, 36px md+ | **Source values largely delegated; all hover/active focus visuals not live measured** |
+| Forms and disabled | legacy-styles/components___form.scss:117-143: field radius 10px, 14px/20px, teal focus shadow | Embedded workspace delegates forms to existing shared components | **Source-only; full disabled/focus data not captured** |
+| Errors/empty | old-lms-pages.md:6,11: in-canvas errors and no fake empty results | Informational support policy uses Alert(info) | **Shared source contract; legacy exact state palette unknown** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked and touch 44px; desktop >=768 | Branding workspace action min-h-11/md:min-h-9 | **CSS source breakpoint aligned, actual phone/tablet rendering unverified** |
+
+#### `src/app/(authenticated)/college/academics/page.tsx`
+
+| State/property | Legacy file/value | Current source/value | Strict status |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white canvas, 1px #e5e9f0 border, 12px radius, 24px padding | PageHeader and section inside authenticated page canvas, no additional nested PageCanvas | **Shared source structure, precise coordinates unmeasured** |
+| Header and heading | legacy-styles/components___listing-page-header.scss:33-58: bottom hairline and h1 28px/600/1.3 desktop, 20px phone | Single PageHeader and scoped description; no native h1 | **Shared PageHeader desktop 30px vs legacy 28px unresolved** |
+| Buttons and links | old-lms-shell-spec.md:22-24: 36px / radius 9 / 14px / 650, primary teal #0a7c88 with white text | Shared Button/Link styling and tokenized focus, 44px phone min-height, 36px md+ | **Source values largely delegated; all hover/active focus visuals not live measured** |
+| Forms and disabled | legacy-styles/components___form.scss:117-143: field radius 10px, 14px/20px, teal focus shadow | Embedded workspace delegates forms to existing shared components | **Source-only; full disabled/focus data not captured** |
+| Errors/empty | old-lms-pages.md:6,11: in-canvas errors and no fake empty results | Academics workspace delegates loading/empty/error behavior to module | **Shared source contract; legacy exact state palette unknown** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked and touch 44px; desktop >=768 | Program directory link min-h-11/md:min-h-9 | **CSS source breakpoint aligned, actual phone/tablet rendering unverified** |
+
+#### `src/app/(authenticated)/college/companies/page.tsx`
+
+| State/property | Legacy file/value | Current source/value | Strict status |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: one white canvas, 1px #e5e9f0 border, 12px radius, 24px padding | PageHeader and section inside authenticated page canvas, no additional nested PageCanvas | **Shared source structure, precise coordinates unmeasured** |
+| Header and heading | legacy-styles/components___listing-page-header.scss:33-58: bottom hairline and h1 28px/600/1.3 desktop, 20px phone | Single PageHeader and scoped description; no native h1 | **Shared PageHeader desktop 30px vs legacy 28px unresolved** |
+| Buttons and links | old-lms-shell-spec.md:22-24: 36px / radius 9 / 14px / 650, primary teal #0a7c88 with white text | Shared Button/Link styling and tokenized focus, 44px phone min-height, 36px md+ | **Source values largely delegated; all hover/active focus visuals not live measured** |
+| Forms and disabled | legacy-styles/components___form.scss:117-143: field radius 10px, 14px/20px, teal focus shadow | Companies uses shared Input, Select and Checkbox; GET name/value transport and query untouched | **Source-only; full disabled/focus data not captured** |
+| Errors/empty | old-lms-pages.md:6,11: in-canvas errors and no fake empty results | Invalid filters show ErrorState with clear-filter Link; company list delegated to employer relationships | **Shared source contract; legacy exact state palette unknown** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked and touch 44px; desktop >=768 | Company filter flex-wrap, action links min-h-11/md:min-h-9 | **CSS source breakpoint aligned, actual phone/tablet rendering unverified** |
+
+**Strict tick remains 0.** Complete every-state legacy comparison, global grep, responsive screenshots and typechecking absent under lane rules. Checkbox substitution in company filters retains native GET semantics through shared wrapper; not user-tested. No additional page content was added.
+
+**Next exact file:** `src/app/(authenticated)/college/companies/loading.tsx` has shared source proof; continue `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx` and other College Admin workspace pages.
+
+### Replacement chat-4 College batch student roster — 2026-10-20
+
+Full-file source grep proof: `/<(button|input|select|textarea|table)\b/g` → 0; `/#[a-f0-9]{3,8}\b/gi` → 0; `/fixed inset-0|role=["']dialog["']/g` → 0; `/<h1\b/g` → 0. Changed JSX shared tags appear balanced in source scan, not parser proven.
+
+| Property/state | Legacy value and file | VNext value and source | Verification |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: white single #fff canvas, 1px #e5e9f0, radius 12px padding 24px | Page owns no nested PageCanvas; filter form now hairline border-t instead of separate custom card | **Inherited layout source matches structure, computed pixel still open** |
+| Header/back | legacy-styles/components___listing-page-header.scss:33-58: one heading and hairline title row; mobile back affordance | Shared PageHeader title 'Students · cohort', shared PageBackLink to /college/batches | **Shared desktop 30px vs legacy 28px discrepancy** |
+| Filter controls | legacy-styles/components___form.scss:117-143: 10px radius, 14px/20px, teal 2px focus shadow | Shared Input and Select for name + class, Button shared search | **Legacy control family matches shared token model** |
+| Empty/table | old-lms-pages.md:6,11: hairline table and scoped no-record state inside canvas | Shared DataTable and EmptyState, no hand-rolled table | **DataTable mobile switch 640px vs 767px legacy remains** |
+| Disabled/focus/hover | legacy-styles/components___button.scss:13-24 150ms transition, 49-51 disabled | Shared Button focus-visible, no native button; scoped action renders only when class membership exists | **Source states reviewed, no keyboard/hover replay** |
+| Responsive phone/tablet | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px, 44px target | Filter flex-wrap, Button min-h-11 md:min-h-9, PageBackLink 44px, DataTable responsive | **Source breakpoint partial match, live 375/767/768 views unverified** |
+
+**Strict tick left open.** No app/runtime, CI, TSX parser or responsive screenshots. Full global grep and exact legacy all-state value table remain absent. Original college-scoped query, UUID verification, filters and max 500 rows remain unchanged.
+
+**Next exact file:** `src/app/(authenticated)/college/batches/[cohortId]/students/loading.tsx` is source-refactored; continue to `src/app/(authenticated)/college/classes/page.tsx` and the next unreviewed academic screen.
+
+
+### Replacement chat-4 academic directories and recovery controls — 2026-10-20
+
+Six College Admin route files (Classes, Batches, Courses index and their error screens) were updated/re-read. Existing query validators, export URLs/limits, related creation forms and directory actions kept. No shared UI or page content changes except normalized PageHeader JSX whitespace. Raw controls remain delegated to underlying child workspace components; no changes to them. No runtime/CI/TSX parser/browser.
+
+**Full file grep for each named route:** `/<(button|input|select|textarea|table)\b/g`; `/#[a-f0-9]{3,8}\b/gi`; `/fixed inset-0|role=["']dialog["']/g`; `/<h1\b/g`. These are exact source-pattern counts, not whole-tree grep; JSX closing tag names compared with openings for page-owned elements.
+
+| Route | Raw styled controls | Hex | Hand overlay | Native h1 | md/sm prefixes |
+| --- | ---: | ---: | ---: | ---: | --- |
+| `src/app/(authenticated)/college/classes/page.tsx` | 0 | 0 | 0 | 0 | 3/0 |
+| `src/app/(authenticated)/college/batches/page.tsx` | 0 | 0 | 0 | 0 | 2/0 |
+| `src/app/(authenticated)/college/courses/page.tsx` | 0 | 0 | 0 | 0 | 0/0 |
+| `src/app/(authenticated)/college/classes/error.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+| `src/app/(authenticated)/college/batches/error.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+| `src/app/(authenticated)/college/courses/error.tsx` | 0 | 0 | 0 | 0 | 1/0 |
+
+#### `src/app/(authenticated)/college/classes/page.tsx`
+
+| Property/state | Legacy file/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: single #ffffff, 1px #e5e9f0, radius 12px, padding 24px | Inherited PageCanvas/transparent content wrapper, no nested PageCanvas | **Inherited structure; exact screen measurements absent** |
+| Page title/hairline | legacy-styles/components___listing-page-header.scss:33-58: title 28px/600/1.3 with hairline row | Index uses shared PageHeader where owned, details delegated to workspace; errors share ErrorState | **Shared PageHeader title 30px vs legacy 28px still blocked** |
+| Action geometry | old-lms-shell-spec.md:22-24: CTA 36px/9px/14px/650, secondary outlined; button.scss:13-24 transition 150ms | Classes/Batches export, preview, clear-filter links have min-h-11 md:min-h-9; Courses PageHeader normalized | **Source touch/focus contract; exact computed hover not checked** |
+| Error/default/empty | old-lms-pages.md:6,11: errors distinct from empty rows | Existing validators and directory child own empty/error; page does not manufacture no-data claims | **Source semantics kept; legacy screen-specific empty copy sizes unverified** |
+| Loading/disabled | legacy-styles/components___button.scss:49-51 disabled, form.scss:22-36 keyboard focus | Underlying child components and route loading.tsx unchanged; shared UI handles loading | **Only source static review, no state replay** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked, 44px touch | Action links 44px <=767, 36px >=768; child pages use shared layout | **Source values align for touched controls; tablet/phone browser render unverified** |
+
+#### `src/app/(authenticated)/college/batches/page.tsx`
+
+| Property/state | Legacy file/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: single #ffffff, 1px #e5e9f0, radius 12px, padding 24px | Inherited PageCanvas/transparent content wrapper, no nested PageCanvas | **Inherited structure; exact screen measurements absent** |
+| Page title/hairline | legacy-styles/components___listing-page-header.scss:33-58: title 28px/600/1.3 with hairline row | Index uses shared PageHeader where owned, details delegated to workspace; errors share ErrorState | **Shared PageHeader title 30px vs legacy 28px still blocked** |
+| Action geometry | old-lms-shell-spec.md:22-24: CTA 36px/9px/14px/650, secondary outlined; button.scss:13-24 transition 150ms | Classes/Batches export, preview, clear-filter links have min-h-11 md:min-h-9; Courses PageHeader normalized | **Source touch/focus contract; exact computed hover not checked** |
+| Error/default/empty | old-lms-pages.md:6,11: errors distinct from empty rows | Existing validators and directory child own empty/error; page does not manufacture no-data claims | **Source semantics kept; legacy screen-specific empty copy sizes unverified** |
+| Loading/disabled | legacy-styles/components___button.scss:49-51 disabled, form.scss:22-36 keyboard focus | Underlying child components and route loading.tsx unchanged; shared UI handles loading | **Only source static review, no state replay** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked, 44px touch | Action links 44px <=767, 36px >=768; child pages use shared layout | **Source values align for touched controls; tablet/phone browser render unverified** |
+
+#### `src/app/(authenticated)/college/courses/page.tsx`
+
+| Property/state | Legacy file/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: single #ffffff, 1px #e5e9f0, radius 12px, padding 24px | Inherited PageCanvas/transparent content wrapper, no nested PageCanvas | **Inherited structure; exact screen measurements absent** |
+| Page title/hairline | legacy-styles/components___listing-page-header.scss:33-58: title 28px/600/1.3 with hairline row | Index uses shared PageHeader where owned, details delegated to workspace; errors share ErrorState | **Shared PageHeader title 30px vs legacy 28px still blocked** |
+| Action geometry | old-lms-shell-spec.md:22-24: CTA 36px/9px/14px/650, secondary outlined; button.scss:13-24 transition 150ms | Classes/Batches export, preview, clear-filter links have min-h-11 md:min-h-9; Courses PageHeader normalized | **Source touch/focus contract; exact computed hover not checked** |
+| Error/default/empty | old-lms-pages.md:6,11: errors distinct from empty rows | Existing validators and directory child own empty/error; page does not manufacture no-data claims | **Source semantics kept; legacy screen-specific empty copy sizes unverified** |
+| Loading/disabled | legacy-styles/components___button.scss:49-51 disabled, form.scss:22-36 keyboard focus | Underlying child components and route loading.tsx unchanged; shared UI handles loading | **Only source static review, no state replay** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked, 44px touch | Action links 44px <=767, 36px >=768; child pages use shared layout | **Source values align for touched controls; tablet/phone browser render unverified** |
+
+#### `src/app/(authenticated)/college/classes/error.tsx`
+
+| Property/state | Legacy file/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: single #ffffff, 1px #e5e9f0, radius 12px, padding 24px | Inherited PageCanvas/transparent content wrapper, no nested PageCanvas | **Inherited structure; exact screen measurements absent** |
+| Page title/hairline | legacy-styles/components___listing-page-header.scss:33-58: title 28px/600/1.3 with hairline row | Index uses shared PageHeader where owned, details delegated to workspace; errors share ErrorState | **Shared PageHeader title 30px vs legacy 28px still blocked** |
+| Action geometry | old-lms-shell-spec.md:22-24: CTA 36px/9px/14px/650, secondary outlined; button.scss:13-24 transition 150ms | Shared secondary Retry Button explicit min-h-11 md:min-h-9 | **Source touch/focus contract; exact computed hover not checked** |
+| Error/default/empty | old-lms-pages.md:6,11: errors distinct from empty rows | Scoped ErrorState retains existing message and retry action | **Source semantics kept; legacy screen-specific empty copy sizes unverified** |
+| Loading/disabled | legacy-styles/components___button.scss:49-51 disabled, form.scss:22-36 keyboard focus | Retry Button retains shared focus/disabled; no route mutation | **Only source static review, no state replay** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked, 44px touch | Retry 44px <=767, 36px >=768 | **Source values align for touched controls; tablet/phone browser render unverified** |
+
+#### `src/app/(authenticated)/college/batches/error.tsx`
+
+| Property/state | Legacy file/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: single #ffffff, 1px #e5e9f0, radius 12px, padding 24px | Inherited PageCanvas/transparent content wrapper, no nested PageCanvas | **Inherited structure; exact screen measurements absent** |
+| Page title/hairline | legacy-styles/components___listing-page-header.scss:33-58: title 28px/600/1.3 with hairline row | Index uses shared PageHeader where owned, details delegated to workspace; errors share ErrorState | **Shared PageHeader title 30px vs legacy 28px still blocked** |
+| Action geometry | old-lms-shell-spec.md:22-24: CTA 36px/9px/14px/650, secondary outlined; button.scss:13-24 transition 150ms | Shared secondary Retry Button explicit min-h-11 md:min-h-9 | **Source touch/focus contract; exact computed hover not checked** |
+| Error/default/empty | old-lms-pages.md:6,11: errors distinct from empty rows | Scoped ErrorState retains existing message and retry action | **Source semantics kept; legacy screen-specific empty copy sizes unverified** |
+| Loading/disabled | legacy-styles/components___button.scss:49-51 disabled, form.scss:22-36 keyboard focus | Retry Button retains shared focus/disabled; no route mutation | **Only source static review, no state replay** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked, 44px touch | Retry 44px <=767, 36px >=768 | **Source values align for touched controls; tablet/phone browser render unverified** |
+
+#### `src/app/(authenticated)/college/courses/error.tsx`
+
+| Property/state | Legacy file/value | vNext source/value | Result |
+| --- | --- | --- | --- |
+| Canvas | old-lms-shell-spec.md:18-20: single #ffffff, 1px #e5e9f0, radius 12px, padding 24px | Inherited PageCanvas/transparent content wrapper, no nested PageCanvas | **Inherited structure; exact screen measurements absent** |
+| Page title/hairline | legacy-styles/components___listing-page-header.scss:33-58: title 28px/600/1.3 with hairline row | Index uses shared PageHeader where owned, details delegated to workspace; errors share ErrorState | **Shared PageHeader title 30px vs legacy 28px still blocked** |
+| Action geometry | old-lms-shell-spec.md:22-24: CTA 36px/9px/14px/650, secondary outlined; button.scss:13-24 transition 150ms | Shared secondary Retry Button explicit min-h-11 md:min-h-9 | **Source touch/focus contract; exact computed hover not checked** |
+| Error/default/empty | old-lms-pages.md:6,11: errors distinct from empty rows | Scoped ErrorState retains existing message and retry action | **Source semantics kept; legacy screen-specific empty copy sizes unverified** |
+| Loading/disabled | legacy-styles/components___button.scss:49-51 disabled, form.scss:22-36 keyboard focus | Retry Button retains shared focus/disabled; no route mutation | **Only source static review, no state replay** |
+| Responsive | legacy-styles/components___listing-page-header.scss:130-153: mobile <=767px stacked, 44px touch | Retry 44px <=767, 36px >=768 | **Source values align for touched controls; tablet/phone browser render unverified** |
+
+**Strict ticks: 0 newly checked.** Child directory/modal states, all computed CSS properties, global zero grep and actual phone/tablet/browser focus remain unverified. Keep open per STRICT TICK RULE.
+
+**Next exact file:** `src/app/(authenticated)/college/academics/sections/[sectionId]/page.tsx` (currently delegates to AcademicsSectionPage), then `src/app/(authenticated)/college/classes/recurring-preview/page.tsx` and remaining Academic screens.
