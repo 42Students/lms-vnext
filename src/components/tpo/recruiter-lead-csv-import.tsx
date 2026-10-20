@@ -163,19 +163,14 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
          title="Import recruiter leads" dismissible={!busy}
          description="Review every imported row before creating any recruiter leads.">
           <section className="min-w-0 space-y-4">
-            <div className="flex items-start justify-between gap-4">
-              <div>
+            <div className="min-w-0">
                 <p id="recruiter-import-help" className="text-sm text-body">
                   Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
-              </div>
-              <Button variant="secondary" type="button" className="min-h-11 shrink-0 md:min-h-9 print:hidden" onClick={close} disabled={busy}>
-                Close
-              </Button>
             </div>
-            <p aria-label="Recruiter import steps" className="border-b border-border pb-3 text-xs text-muted-foreground">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p>
+            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
             <a
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
@@ -195,13 +190,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
                 <p className="text-sm text-body" role="status">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
-                <div className="flex flex-wrap gap-2 print:hidden">
-                  <Button className="min-h-11 md:min-h-9" type="button" variant="secondary" disabled={busy||Boolean(result)}
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap print:hidden">
+                  <Button className="w-full sm:w-auto min-h-11 md:min-h-9" type="button" variant="secondary" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);
                       setSkipRows(preview.rows.filter(row=>row.lead&&!existingNumbers.has(row.row)).map(row=>row.row));}}>
                     Skip all new rows
                   </Button>
-                  <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={busy||Boolean(result)}
+                  <Button type="button" variant="secondary" className="w-full sm:w-auto min-h-11 md:min-h-9" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);setSkipRows([]);}}>
                     Include all new rows
                   </Button>
@@ -213,7 +208,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     {value:"EXISTING",label:"Already recruiters",count:existingNumbers.size},
                     {value:"INVALID",label:"To fix",count:preview.invalid},
                     {value:"SKIPPED",label:"Skipped",count:skipRows.length}]}/></div>
-                <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-56 print:max-h-none print:overflow-visible">
+                <ScrollCue axis="y" label="Recruiter import preview rows" viewportClassName="max-h-72 print:max-h-none print:overflow-visible">
                   <DataTable rows={previewRows} getRowKey={item=>String(item.row)} caption="Recruiter import preview"
                     empty={<p>No rows in this group.</p>}
                     columns={[
@@ -238,7 +233,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     type="button"
                     variant="primary"
                     disabled={busy || previewStatus!=="ready" || newRows <= 0}
-                    className="min-h-11 md:min-h-9 print:hidden"
+                    className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden"
+                    loading={busy}
                     onClick={() => void commit()}
                   >
                     {busy ? "Importing…" : reviewReady ? "Confirm import" : "Review and confirm import"}
@@ -248,7 +244,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             ) : null}
             {result ? (
               <div className="space-y-3" aria-live="polite">
-                <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>{
+                <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap print:hidden">
+                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" onClick={()=>{
                   const header="Row,Status,Reason";
                   const cell=safeReportCsvCell;
                   const lines=result.results.map(item=>[String(item.row),item.status,item.reason??""].map(cell).join(","));
@@ -259,19 +256,20 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   try { link.click(); }
                   finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
                 }}>Download row results CSV</Button>
-                <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" onClick={()=>void navigator.clipboard.writeText(
+                <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" onClick={()=>void navigator.clipboard.writeText(
                   result.results.filter(item=>item.status!=="created").map(item=>
                     "Row "+item.row+": "+item.status+(item.reason?" — "+item.reason:"")).join("\n")
                 ).then(()=>setCopyNotice("Non-created rows copied."),()=>setCopyNotice("Could not copy these results."))}>
                   Copy rows not imported
                 </Button>
+                </div>
                 {copyNotice?<p role="status" aria-live="polite" className="text-xs text-body">{copyNotice}</p>:null}
                 <h3 className="font-semibold text-foreground">Import results</h3>
                 <p className="text-sm text-body">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
                   {" "}{result.counts.invalid} invalid, {result.counts.skipped??0} skipped. {result.counts.total} rows processed.
                 </p>
-                <ScrollCue axis="y" label="Recruiter import result rows" viewportClassName="max-h-56 print:max-h-none print:overflow-visible">
+                <ScrollCue axis="y" label="Recruiter import result rows" viewportClassName="max-h-72 print:max-h-none print:overflow-visible">
                   <DataTable rows={result.results} getRowKey={item=>String(item.row)} caption="Recruiter import results"
                     empty={<p>No import results to display.</p>}
                     columns={[
@@ -286,11 +284,11 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                 </ScrollCue>
               </div>
             ) : null}
-            <p className="text-xs text-muted-foreground">
+            <details className="border-t border-border pt-3 text-xs text-muted-foreground"><summary className="cursor-pointer min-h-11 py-3 font-semibold md:min-h-9">Import safety and audit details</summary><p>
               Imports cannot change an existing contact. Invalid and duplicate rows are skipped.
               Imported leads receive a staff-attributed audit entry; a failed transaction
               does not leave half-written lead/audit pairs.
-            </p>
+            </p></details>
           </section>
       </Dialog>
     </>
