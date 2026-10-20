@@ -17,6 +17,7 @@ import {getTpoBatchInvitationPreview} from "@/modules/placements/tpo-batch-invit
 import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-model";
 import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
 import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-state-model";
 import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
 export const dynamic="force-dynamic";
@@ -36,7 +37,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    eligible:summary.complete?summary.eligible:null,undecided:summary.complete?summary.undecided:null,
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
- return <div className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
+ return <div className="min-w-0 space-y-5"><PageHeader title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
  <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Placement eligibility</Link>
  {undoable?<Disclosure title="Undo last decision"
     summaryTitle={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}
@@ -72,10 +73,10 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </div>
   {decision.status==="INELIGIBLE"?<p className="text-sm text-warning">The batch is ineligible: {decision.reason??"No reason recorded"}. Classes or students set to Eligible are still in placements.</p>:null}
  </section>
- <p className="inline-flex rounded-[var(--lms-control-radius)] border border-border px-3 py-1 text-sm font-semibold" role="status">
+ <Badge tone="info" role="status">
   {ready?tpoBatchPlacementState({finishedAt:lifecycle?.finishedAt??null,
    eligible:summary.complete?summary.eligible:null}):"Status unavailable"}
- </p>
+ </Badge>
  {ready && registrations.available ? <section id="batch-invite" aria-label="Invite learners to register"><TpoBatchInvitationControl
   batchId={batchId} invitedAt={lifecycle?.invitedAt?.toISOString() ?? null}
   finishedAt={lifecycle?.finishedAt?.toISOString() ?? null}

@@ -54,7 +54,7 @@ export default async function TpoCompanyContactLogPage({
   }).toString();
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-5">
       <Link
         href={"/tpo/companies/" + encodeURIComponent(companyId)}
         className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
@@ -62,7 +62,7 @@ export default async function TpoCompanyContactLogPage({
         ← Company details
       </Link>
       <PageHeader
-        eyebrow="TPO · Companies"
+        
         title={log.companyName + " · Contact log"}
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
       />
