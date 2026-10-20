@@ -113,7 +113,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Why this learner sees a module
             </h2>
             <p className="mt-1 text-sm leading-6 text-body">
@@ -141,7 +141,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             key={decision.module}
             className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6"
           >
-            <h2 className="m-0 text-sm font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               {decision.label}
             </h2>
             <div className="mt-3">
@@ -168,7 +168,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section className="border-t border-border pt-6" aria-label="Placements college access impact">
-        <h2 className="text-base font-semibold text-foreground">Placements: college-level access impact</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Placements: college-level access impact</h2>
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
             <p>Effective policy in {college.name}: <strong>{decision.enabled?"On":"Off"}</strong></p>
@@ -180,30 +180,30 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <form method="get" className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:flex-col max-[767px]:items-stretch" aria-label="Filter stored module overrides">
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored descendant module
           <Select name="module" defaultValue={result.moduleFilter ?? ""} className="min-h-11 sm:min-h-9">
             <option value="">All modules</option>
             {OPTIONAL_MODULE_KEYS.map(key => <option key={key} value={key}>{ADMIN_MODULE_LABELS[key]}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored scope
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored scope
           <Select name="scope" defaultValue={result.scopeFilter ?? ""} className="min-h-11 md:min-h-9">
             <option value="">All descendant scopes</option>
             {(["DEPARTMENT","PROGRAM","COHORT","SECTION","MEMBERSHIP"] as const).map(key =>
               <option key={key} value={key}>{MODULE_SCOPE_LABELS[key]}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lock state
           <Select name="locks" defaultValue={result.lockFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">All stored rules</option><option value="LOCKED">Locked rules only</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored value
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored value
           <Select name="storedState" defaultValue={result.stateFilter} className="min-h-11 md:min-h-9">
             <option value="ALL">Any stored value</option><option value="ON">Stored On</option><option value="OFF">Stored Off</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact scope ID (optional)
           <Input name="scopeId" type="text" defaultValue={result.scopeIdFilter ?? ""} placeholder="UUID; select scope type" maxLength={36} className="min-h-11 md:min-h-9"/>
         </label>
         <Button type="submit" className="min-h-11 sm:min-h-9">Filter overrides</Button>
@@ -212,7 +212,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section className="min-w-0 space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             College inheritance
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
@@ -246,7 +246,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section aria-label="Academic module rules" className="border-t border-border pt-6">
-        <h2 className="font-semibold text-foreground">Department, Program, Batch and Class access</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
         <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
@@ -254,7 +254,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
       <section className="min-w-0 space-y-3">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Persisted lower-level overrides
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
