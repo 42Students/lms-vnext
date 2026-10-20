@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { SummaryStrip } from "@/components/ui/summary-strip";
+import { Alert } from "@/components/ui/alert";
 import {
   CollegeRulePreviewError,
   previewCollegeGroupRule,
@@ -33,15 +34,16 @@ export default async function CollegeGroupRulePreviewPage({
     throw error;
   }
   const { group, criteria, projection } = result;
-  return <div className="min-w-0 overflow-x-clip space-y-6">
+  return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader
       title={"Rule preview · " + group.name}
       description="Read-only eligibility preview. No membership changes, refresh or rule edits are performed."
       actions={<PageBackLink href={"/college/groups/" + encodeURIComponent(group.id)} label="Back to group"/>}
     />
     {projection.incomplete ? (
-      <ErrorState title="Preview candidate cap reached"
-        description="More than 1,000 active learners were eligible for evaluation. Counts below describe only the first 1,000 records; they are not college-wide totals." />
+      <Alert tone="warning" title="Preview candidate cap reached">
+        More than 1,000 active learners were eligible for evaluation. Counts below describe only the first 1,000 records; they are not college-wide totals.
+      </Alert>
     ) : null}
     <SummaryStrip label="Rule eligibility summary" steps={[
       {label:"Candidates examined",value:projection.examined},
@@ -49,8 +51,10 @@ export default async function CollegeGroupRulePreviewPage({
       {label:"Matches already active",value:projection.alreadyActive},
       {label:"Matches not currently active",value:projection.potentiallyNew},
     ]}/>
-    <section aria-label="Configured criteria" className="space-y-3 border-t border-border pt-5">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Persisted rule criteria</h2>
+    <section aria-label="Configured criteria" className="min-w-0 border-t border-border pt-3">
+      <details className="min-w-0">
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Persisted rule criteria</summary>
+        <div className="min-w-0 space-y-3 pt-3">
       <dl className="grid min-w-0 gap-3 md:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Programs allowed</dt>
           <dd className="font-semibold text-foreground">{criteria.allowedProgramIds.length || "Not restricted"}</dd></div>
@@ -70,8 +74,10 @@ export default async function CollegeGroupRulePreviewPage({
           ? "Last persisted rule run: " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(result.lastRunAt)+" IST" + " · " + (result.lastRunMatched ?? "unknown") + " matches"
           : "No completed rule refresh is recorded."}
       </p>
+        </div>
+      </details>
     </section>
-    <p className="text-sm text-muted-foreground">
+    <p className="max-w-3xl text-sm text-muted-foreground">
       Matching learners are not automatically members. Capacity, waitlist order, manual overrides,
       locked membership, current group lifecycle and promotion of existing waitlisted members
       are enforced by the actual refresh workflow, not simulated by this eligibility-only preview.
