@@ -1,4 +1,5 @@
 import { Pagination } from "@/components/ui/pagination";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
@@ -28,15 +29,15 @@ export default async function FacultyResponseFollowUpsPage({
   const context = await getCurrentRequestContext();
   const data = await getFacultyResponseFollowUps(context, parsed.data);
   const emptyState = facultyFollowupEmptyState(data.query,data.sections.length);
-  return <div className="min-w-0 max-w-full space-y-6">
+  return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
-      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
+      className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-4 lg:items-end">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
         <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
           placeholder="Course, Section or assessment"
@@ -50,6 +51,7 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="QUIZ">Quizzes</option>
         </Select>
       </label>
+      <Disclosure title="More filters" defaultOpen={Boolean(data.query.deliveryId || data.query.sort !== "RECENT_DUE" || data.query.pageSize !== 5)} className="min-w-0 sm:col-span-2 lg:col-span-4" contentClassName="grid min-w-0 gap-3 py-3 md:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
         <Select name="deliveryId" defaultValue={data.query.deliveryId ?? ""}
           className="min-h-11 md:min-h-9">
@@ -73,28 +75,29 @@ export default async function FacultyResponseFollowUpsPage({
           <option value="5">5</option><option value="10">10</option>
         </Select>
       </label>
-      <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
+      </Disclosure>
+      <Button type="submit" variant="primary" className="w-full sm:w-auto">
         Filter
       </Button>
       <Link href="/teacher/response-followups"
-        className="inline-flex min-h-11 md:min-h-9 items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
+        className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
     </form>
-    <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]">
         {data.total} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Export this page counts (no learner details)
       </Link>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
       description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear follow-up filters</Link> : null}</div>
-    : <div className="grid gap-3">{data.items.map(item =>
+    : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
-        className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary motion-reduce:transition-none md:p-6">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.title}</h2>
+        className="min-w-0 space-y-3 bg-transparent py-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div><h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.title}</h2>
             <p className="mt-1 text-sm text-body leading-[22px]">{item.courseName} · {item.sectionName} · {item.kind}</p>
           </div>
           <span className="text-sm font-semibold text-body">{item.missingCount} without a recorded response</span>
@@ -102,11 +105,10 @@ export default async function FacultyResponseFollowUpsPage({
         {item.missingCount === 0 ? <p className="mt-3 text-sm text-body leading-[22px]">
           Every learner in the current Section roster has a recorded response.
         </p>
-        : <>
-          <h3 className="mt-4 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Learners without a recorded response</h3>
+        : <Disclosure title="Learners without a recorded response" className="mt-2 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 pb-3">
           <ul className="mt-2 grid gap-2 md:grid-cols-2">
             {item.missingPreview.map(learner =>
-              <li key={learner.id} className="rounded-[var(--lms-control-radius)] bg-surface-subtle px-3 py-2 text-sm text-body">
+              <li key={learner.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2 text-sm leading-6 text-body">
                 {learner.displayName}
                 {learner.rollNumber ? " · Roll " + learner.rollNumber : ""}
               </li>)}
@@ -114,14 +116,14 @@ export default async function FacultyResponseFollowUpsPage({
           {item.hiddenCount > 0 ? <p className="mt-2 text-xs text-muted-foreground leading-5">
             {item.hiddenCount} additional learners; open the Section report for the complete list.
           </p> : null}
-        </>}
+        </Disclosure>}
         <Link href={item.reportHref}
-          className="mt-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Open authorized Section report →
         </Link>
       </article>)}</div>}
     <Pagination label="Assessment follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyResponseFollowUpHref({...data.query,page})} />
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="max-w-prose text-xs leading-5 text-muted-foreground">
       Missing means no persisted submission or quiz attempt for a currently enrolled learner.
       It does not establish misconduct, failure or a notification being sent. No messages are sent
       from this view; up to ten assessments per page are expanded to keep work bounded.
