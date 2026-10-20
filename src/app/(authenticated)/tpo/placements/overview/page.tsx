@@ -15,9 +15,9 @@ export default async function TpoPlacementsOverviewPage() {
     redirect("/dashboard");
   }
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader
-        eyebrow="TPO"
+        
         title={TPO_OWNER_PAGE_COPY.placementOperations}
         description="One prioritized command center for screening, drives, results and upcoming rounds."
         actions={
@@ -34,7 +34,7 @@ export default async function TpoPlacementsOverviewPage() {
             </Link>
             <Link
               href="/tpo/placements/new"
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] transition hover:border-primary-hover hover:bg-primary-hover text-primary-foreground"
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-[650] text-on-primary transition-colors hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
               New opportunity
             </Link>
