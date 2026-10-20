@@ -53,7 +53,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="College Admin · Courses & Content" title="Lessons" />
       <ErrorState title="Invalid lesson filters"
         description="The search, lesson status or page is invalid. No lesson data was loaded."

@@ -36,7 +36,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  const range=collegeContactsPageRange(filter.page,results.pageSize,results.total);
  const roleCounts=collegeContactPageRoleCounts(results.items);
  if(filter.page>pageCount)redirect(collegeContactsHref({...filter,page:pageCount}));
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <PageHeader title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
    actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Student accounts</Link><Link href="/college/faculty" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Faculty accounts</Link><Link href="/college/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Teaching assignments</Link></div>}/>
