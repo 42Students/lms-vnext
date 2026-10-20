@@ -11,7 +11,7 @@ export default function Error({ reset }: {
     <p className="m-0 text-sm text-body">
       This request failed. The absence of results is not assumed.
     </p>
-    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>
+    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>
       Retry
     </Button>
   </section>;
