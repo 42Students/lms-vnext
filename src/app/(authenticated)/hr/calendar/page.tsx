@@ -210,7 +210,7 @@ function RecruiterCalendarEventCard({
             tone={
               event.status === "COMPLETED"
                 ? "success"
-                : "neutral"
+                : event.status === "PROPOSED" ? "warning" : event.status === "CANCELLED" ? "error" : "neutral"
             }
           >
             {event.status === "PROPOSED" && event.kind === "INTERVIEW_SLOT"
