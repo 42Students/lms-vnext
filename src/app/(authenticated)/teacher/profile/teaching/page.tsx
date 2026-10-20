@@ -49,13 +49,13 @@ export default async function FacultyTeachingProfilePage({
       </p>
     </section>
     <form method="get" action="/teacher/profile/teaching"
-      className="flex flex-wrap items-end gap-3">
+      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
       <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Search current teaching
         <Input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
       </label>
-      <Button type="submit" variant="primary">
+      <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
         Search
       </Button>
       <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -82,7 +82,7 @@ export default async function FacultyTeachingProfilePage({
             Open assigned course →
           </Link>
         </article>)}</div>}
-    <nav aria-label="Teaching profile pagination" className="flex items-center justify-between gap-3">
+    <nav aria-label="Teaching profile pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1 && <Link href={ownFacultyTeachingHref({...data.query,page:data.page-1})}
