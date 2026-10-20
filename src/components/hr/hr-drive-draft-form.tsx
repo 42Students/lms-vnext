@@ -1,5 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -270,13 +271,13 @@ export function HrDriveDraftForm({
       ) : null}
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Role and work</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <label className="grid gap-1 text-sm text-body sm:col-span-2">
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <label className="grid gap-1 text-sm text-body md:col-span-2">
             Role title
             <Input className="w-full" value={draft.title} maxLength={200}
               onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
           </label>
-          <label className="grid gap-1 text-sm text-body sm:col-span-2">
+          <label className="grid gap-1 text-sm text-body md:col-span-2">
             Job description
             <Textarea className="min-h-28" rows={5} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
@@ -302,7 +303,7 @@ export function HrDriveDraftForm({
               <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
             </Select>
           </label>
-          {draft.driveMode==="OFF_CAMPUS"?<label className="grid gap-1 text-sm text-body sm:col-span-2">
+          {draft.driveMode==="OFF_CAMPUS"?<label className="grid gap-1 text-sm text-body md:col-span-2">
             Application website (HTTPS)
             <Input className="w-full" type="url" inputMode="url" maxLength={2000}
               placeholder="https://example.com/apply" value={draft.externalApplicationUrl??""}
@@ -326,7 +327,7 @@ export function HrDriveDraftForm({
 
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Compensation and eligibility</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
           <label className="grid gap-1 text-sm text-body">
             CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
             <Input className="w-full" inputMode="decimal" value={draft.ctcLpa??""}
@@ -342,14 +343,14 @@ export function HrDriveDraftForm({
             <Input className="w-full" inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
-          <p className="text-xs text-muted-foreground sm:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
+          <p className="text-xs text-muted-foreground md:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
           {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid gap-1 text-sm text-body">
             Stipend per month (₹)
             <Input className="w-full" inputMode="numeric" value={draft.stipendMonthlyInr??""}
               onChange={event=>setDraft(current=>({...current,stipendMonthlyInr:event.target.value}))}/>
           </label>:null}
         </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
           {([
             ["minimumAnnualCtcInr", "Minimum annual CTC (₹)"],
             ["maximumAnnualCtcInr", "Maximum annual CTC (₹)"],
@@ -367,7 +368,7 @@ export function HrDriveDraftForm({
             </label>
           ))}
         </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
           <label className="grid gap-1 text-sm text-body">
             Branches
             <Input className="w-full" list="recruiter-eligible-branches"
@@ -413,7 +414,7 @@ export function HrDriveDraftForm({
         <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 space-y-3">
           {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 sm:grid-cols-[10rem_minmax(0,1fr)_auto]">
+            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 md:grid-cols-[10rem_minmax(0,1fr)_auto]">
               <label className="grid gap-1 text-sm text-body">
                 Kind
                 <Select className="w-full" value={round.kind}
@@ -512,7 +513,7 @@ export function HrDriveDraftForm({
               ))}
             </ol>
             <h4 className="pt-3 font-semibold text-foreground">Compensation & eligibility</h4>
-            <dl className="grid gap-2 sm:grid-cols-2">
+            <dl className="grid gap-2 md:grid-cols-2">
               {HR_DRAFT_PREVIEW_FIELDS.map(([field,label])=>(
                 <div key={field}>
                   <dt className="text-xs text-muted-foreground">{label}</dt>
@@ -532,7 +533,7 @@ export function HrDriveDraftForm({
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
           </div>
-        {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
+        {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
