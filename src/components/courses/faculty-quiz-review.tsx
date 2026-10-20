@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Disclosure } from "@/components/ui/disclosure";
 import { LoadingState } from "@/components/ui/loading-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
@@ -123,6 +124,7 @@ export function FacultyQuizReview({
     setOpen(true);
     setError(null);
     setLoading(true);
+    setAttempts(null);
 
     try {
       const response = await fetch(
@@ -203,52 +205,12 @@ export function FacultyQuizReview({
   return (
     <>
       {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
-      <div className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:flex sm:flex-wrap sm:items-center [&_button]:w-full sm:[&_button]:w-auto">
-        <Button
-          size="md"
-          className="min-h-11 md:min-h-[var(--lms-control-height)]"
-          variant="secondary"
-          onClick={load}
-        >
-          Submissions
-        </Button>
-
-        {actions.canPublishResults ? (
-          <Button
-            size="md"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
-            disabled={savingResults}
-            onClick={() =>
-              setConfirmPublished(true)
-            }
-          >
-            {savingResults
-              ? "Publishing…"
-               : "Release results"}
-          </Button>
-        ) : null}
-
-        {actions.canHideResults ? (
-          <Button
-            size="md"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
-            variant="ghost"
-            disabled={savingResults}
-            onClick={() =>
-              setConfirmPublished(false)
-            }
-          >
-            {savingResults
-              ? "Saving…"
-              : "Withhold results"}
-          </Button>
-        ) : null}
-
-        {status === "CLOSED" &&
-        !deliveryOwned ? (
+      <div className="mt-3 flex min-w-0 items-center gap-2">
+        <Button size="md" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
+          variant="secondary" onClick={load}>Submissions</Button>
+        {status === "CLOSED" && !deliveryOwned ? (
           <span className="text-xs text-muted-foreground">
-            Shared-Offering result publication
-            remains admin-owned.
+            Shared-Offering result publication remains admin-owned.
           </span>
         ) : null}
       </div>
@@ -301,6 +263,7 @@ export function FacultyQuizReview({
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
+            loading={loading}
             onClick={load}
           >
             Refresh
@@ -319,7 +282,7 @@ export function FacultyQuizReview({
         <EmptyState title="No submissions yet" action={<Button type="button" variant="secondary" onClick={()=>void load()} className="min-h-11 md:min-h-9">Refresh</Button>} />
       ) : null}
 
-      {!loading && attempts ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
+      {!loading && attempts && attempts.length > 0 ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
       {!loading && attempts &&
       attempts.length > 0 ? (
         <div className="mt-3 min-w-0 divide-y divide-border">
@@ -352,7 +315,7 @@ export function FacultyQuizReview({
                 </StatusBadge>
               </div>
 
-              <div className="mt-4 min-w-0 divide-y divide-border">
+              <Disclosure title="Review answers" className="mt-3" contentClassName="min-w-0 divide-y divide-border">
                 {attempt.answers.map(
                   (answer, index) => (
                     <div
@@ -424,7 +387,7 @@ export function FacultyQuizReview({
                     </div>
                   ),
                 )}
-              </div>
+              </Disclosure>
             </section>
           ))}
         </div>
