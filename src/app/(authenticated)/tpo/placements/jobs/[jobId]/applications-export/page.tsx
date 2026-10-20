@@ -23,13 +23,13 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
  const query=new URLSearchParams({stage:result.stage,search:result.search,channel:result.channel,eligibility:result.eligibility,flag:result.flag,sort:result.sort,submittedWithin:result.submittedWithin}).toString();
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  return <div className="min-w-0 space-y-6">
-  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline">← Applicants</Link>
+  <Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?"+query} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">← Applicants</Link>
   <PageHeader eyebrow="TPO · Export applicants" title={result.job.title+" · Applications"}
    description="Read-only college-scoped export preview without internal screening notes."
    actions={<a href={"/api/placements/tpo/jobs/"+jobId+"/applications/export?"+query} download
     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary md:min-h-9">
      Download all matching CSV</a>}/>
-  <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+  <form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <label className="min-w-40 flex-1 text-sm text-body">Stage
     <Select name="stage" defaultValue={result.stage} className="mt-1 w-full">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
@@ -75,7 +75,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <h2 className="font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
      <p className="text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-     <dl className="mt-3 grid grid-cols-2 gap-2 text-xs text-body sm:grid-cols-4">
+     <dl className="mt-3 grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] text-xs text-body min-[768px]:grid-cols-4">
       <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
       <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>
