@@ -26,7 +26,7 @@ type Props = {
 type Sprint = ProjectTemplateBlueprint["sprints"][number];
 type Task = ProjectTemplateBlueprint["tasks"][number];
 const field = "mt-1 w-full";
-const label = "block text-xs font-semibold text-body";
+const label = "block text-[13px] font-semibold text-body";
 
 export function SuperAdminTemplatePlanEditor(props: Props) {
   const router = useRouter();
@@ -159,7 +159,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
           }))}>Add release</Button>
         {draft.sprints.map((sprint, index) => <fieldset key={index}
           className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
-          <legend className="px-1 text-sm font-semibold">Sprint {index + 1}</legend>
+          <legend className="px-1 text-[13px] font-semibold text-foreground">Sprint {index + 1}</legend>
           <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} value={sprint.key}
@@ -213,7 +213,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         </p> : null}
         {draft.tasks.map((task, index) => <fieldset key={index}
           className="grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
-          <legend className="px-1 text-sm font-semibold">Task {index + 1}</legend>
+          <legend className="px-1 text-[13px] font-semibold text-foreground">Task {index + 1}</legend>
           <div className="grid gap-3 md:grid-cols-2">
             <label className={label}>Key (optional)
               <Input className={field} required maxLength={64} disabled={pending}
