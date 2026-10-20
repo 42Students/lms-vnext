@@ -102,7 +102,7 @@ export default async function TpoNoShowReportPage({
       ) : null}
       <section className="min-w-0">
         <div className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-          <h2 className="text-lg font-semibold text-foreground">Explicitly absent learners</h2>
+          <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Explicitly absent learners</h2>
           <p className="mt-1 text-sm text-body">
             Based on persisted ABSENT marks among current, progression-eligible round applicants.
           </p>
