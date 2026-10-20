@@ -24,7 +24,7 @@ export default async function MentorReviewOverviewPage({
  );
  if(!parsed.success)return <section role="alert">
  <PageHeader title={"Invalid project review filters"} />
- <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Projects</Link>
+ <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
  </section>;
  const data=await getMentorDeliveryReviewOverview(await getCurrentRequestContext(),parsed.data);
  return <div className="min-w-0 max-w-full space-y-6">
@@ -59,7 +59,7 @@ export default async function MentorReviewOverviewPage({
    Filter
   </Button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>
  </form></FilterBar>
  <div className="flex flex-wrap items-center gap-3 text-sm">
   <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
@@ -89,7 +89,7 @@ export default async function MentorReviewOverviewPage({
  <p className="mt-2 text-sm text-body">{item.reviewLabel}</p>
  <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
   "/deliveries/"+encodeURIComponent(item.id)+"/review"}
-  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+  className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
   View recorded review details
  </Link>
  <p className="mt-1 text-xs text-muted-foreground">

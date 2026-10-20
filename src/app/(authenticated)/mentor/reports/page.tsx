@@ -27,7 +27,7 @@ export default async function MentorReportsPage({searchParams}:{
   });
   if(duplicated||!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Mentor report filters"} />
-    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const data=await getMentorReports(await getCurrentRequestContext(),parsed.data);
   const statusMetrics=[
@@ -127,7 +127,7 @@ export default async function MentorReportsPage({searchParams}:{
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
-        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
+        <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>
       </form></FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/mentor/reports/export?"+
@@ -166,9 +166,9 @@ export default async function MentorReportsPage({searchParams}:{
             </p>
             <div className="mt-3 flex flex-wrap gap-3 text-sm">
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open project</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Open project</Link>
               <Link href={"/mentor/projects/"+encodeURIComponent(project.id)+"/risk-readiness"}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Risk / readiness</Link>
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Risk / readiness</Link>
             </div>
           </li>)}</ol>}
       <Pagination label="Mentor report pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorReportsHref({...data.query,page})}/>
