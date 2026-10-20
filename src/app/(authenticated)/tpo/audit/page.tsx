@@ -237,12 +237,12 @@ export default async function TpoAuditPage({
           action="/tpo/audit"
           className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5"
         >
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             About
             <Select
               name="kind"
               defaultValue={query.kind}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
+              className="min-h-11 md:min-h-9"
             >
               <option value="ALL">
                 All events
@@ -258,27 +258,27 @@ export default async function TpoAuditPage({
             </Select>
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
             <Input
               type="date"
               name="from"
               defaultValue={query.from ?? ""}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
+              className="min-h-11 md:min-h-9"
             />
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
             <Input
               type="date"
               name="to"
               defaultValue={query.to ?? ""}
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
+              className="min-h-11 md:min-h-9"
             />
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
             <Input
               type="search"
@@ -286,13 +286,13 @@ export default async function TpoAuditPage({
               maxLength={120}
               defaultValue={query.q}
               placeholder="What happened, job or who"
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)] "
+              className="min-h-11 md:min-h-9"
             />
           </label>
 
-          <label className="grid gap-1 text-sm font-semibold text-body">Who
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
-              placeholder="Actor name contains…" className="min-h-11 rounded-[var(--lms-field-radius)] border border-border bg-[var(--lms-form-bg)] px-3 text-sm text-[var(--lms-form-ink)]"/>
+              placeholder="Actor name contains…" className="min-h-11"/>
           </label>
           <PageSizeSelect name="pageSize" defaultValue={String(pageSize)} options={[25,50,100]} />
 

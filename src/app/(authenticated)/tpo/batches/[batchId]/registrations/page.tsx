@@ -36,19 +36,19 @@ export default async function BatchRegistrations({params,searchParams}:{
    <form action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-3">
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find learner
      <Input type="search" name="q" maxLength={100} defaultValue={data.filters.q}
-      className="mt-1 min-h-11 w-full md:min-h-9"/>
+      className="min-h-11 w-full md:min-h-9 mt-[6px] block"/>
     </label>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choice
      <Select name="choice" defaultValue={data.filters.choice}
-      className="mt-1 min-h-11 w-full md:min-h-9">
+      className="min-h-11 w-full md:min-h-9 mt-[6px] block">
       <option value="ALL">All choices</option><option value="UNRECORDED">Not recorded</option>
       {TPO_REGISTRATION_CHOICES.map(choice=><option value={choice} key={choice}>{choice.replaceAll("_"," ")}</option>)}
      </Select>
     </label>
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded source<Select name="source" defaultValue={data.filters.source} className="mt-1 min-h-11 w-full md:min-h-9"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></Select></label>
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last recorded update<Select name="recency" defaultValue={data.filters.recency} className="mt-1 min-h-11 w-full md:min-h-9"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></Select></label>
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="order" defaultValue={data.filters.order} className="mt-1 min-h-11 w-full md:min-h-9"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="UPDATED_NEWEST">Recently updated first</option><option value="UPDATED_OLDEST">Oldest updates first</option></Select></label>
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page<Select name="pageSize" defaultValue={String(data.filters.pageSize)} className="mt-1 min-h-11 w-full md:min-h-9"><option value="25">25</option><option value="50">50</option><option value="100">100</option></Select></label>
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded source<Select name="source" defaultValue={data.filters.source} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="ALL">Any source</option><option value="SELF">Learner self-service</option><option value="TPO">Placement cell</option><option value="BACKFILL">Backfill</option><option value="UNRECORDED">Not recorded</option></Select></label>
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last recorded update<Select name="recency" defaultValue={data.filters.recency} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="ALL">Any date</option><option value="UPDATED_7_DAYS">Within 7 days</option><option value="OLDER_30_DAYS">Older than 30 days</option><option value="NO_RECORD">No recorded choice</option></Select></label>
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order<Select name="order" defaultValue={data.filters.order} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="UPDATED_NEWEST">Recently updated first</option><option value="UPDATED_OLDEST">Oldest updates first</option></Select></label>
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page<Select name="pageSize" defaultValue={String(data.filters.pageSize)} className="min-h-11 w-full md:min-h-9 mt-[6px] block"><option value="25">25</option><option value="50">50</option><option value="100">100</option></Select></label>
     <Button type="submit" className="min-h-11 md:min-h-9 justify-self-start">Filter</Button>
    </form>
    {data.limited?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Limited to the first 500 active learners. Filter totals and CSV describe this sample only.</p>:null}
