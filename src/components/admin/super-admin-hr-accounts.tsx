@@ -179,6 +179,8 @@ export function SuperAdminHrAccounts({
   const [optionsError, setOptionsError] =
     useState<string | null>(null);
 
+  const savingRef=useRef(false);
+  const actionRef=useRef(false);
   const detailRequestVersion = useRef(0);
   const optionsRequestVersion = useRef(0);
 
@@ -295,12 +297,14 @@ export function SuperAdminHrAccounts({
   }
 
   function openCreate() {
+    if(saving||pending)return;
     setFormError(null);
     setDialog({ kind: "create" });
     void loadRelationships();
   }
 
   function openEdit(account: HrAccount) {
+    if(saving||pending)return;
     closeDetail();
     setFormError(null);
     setDialog({
@@ -312,10 +316,11 @@ export function SuperAdminHrAccounts({
   async function saveAccount(
     values: HrAccountFormValues,
   ) {
-    if (!dialog || saving) {
+    if (!dialog || saving || savingRef.current) {
       return;
     }
 
+    savingRef.current=true;
     setSaving(true);
     setFormError(null);
 
@@ -439,6 +444,7 @@ export function SuperAdminHrAccounts({
     } catch (error) {
       setFormError(errorText(error));
     } finally {
+      savingRef.current=false;
       setSaving(false);
     }
   }
@@ -455,12 +461,13 @@ export function SuperAdminHrAccounts({
   ): Promise<boolean> {
     if (
       !selectedUserId ||
-      pending ||
+      pending || actionRef.current ||
       !companyRelationshipId
     ) {
       return false;
     }
 
+    actionRef.current=true;
     setPending(true);
     setActionError(null);
 
@@ -485,16 +492,18 @@ export function SuperAdminHrAccounts({
       setActionError(errorText(error));
       return false;
     } finally {
+      actionRef.current=false;
       setPending(false);
     }
   }
 
   async function confirmAction() {
-    if (!confirmation || pending) {
+    if (!confirmation || pending || actionRef.current) {
       return;
     }
 
     const target = confirmation;
+    actionRef.current=true;
     setPending(true);
     setActionError(null);
 
@@ -543,16 +552,17 @@ export function SuperAdminHrAccounts({
     } catch (error) {
       setActionError(errorText(error));
     } finally {
+      actionRef.current=false;
       setPending(false);
     }
   }
 
   const accountActions = (account: HrAccount, mobile = false) => (
     <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden lg:justify-end">
-      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" onClick={() => openDetail(account)}>View</Button>
+      <Button variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||saving} onClick={() => openDetail(account)}>View</Button>
       <Dropdown label="Recruiter actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
         <Menu className="w-full min-w-0">
-          <MenuItem disabled={!account.accountManageable}
+          <MenuItem disabled={pending || saving || !account.accountManageable}
             title={!account.accountManageable ? mobile
               ? "Active grants exist outside the selected administrative scope"
               : "This recruiter has grants outside the selected administrative scope"
@@ -653,7 +663,7 @@ export function SuperAdminHrAccounts({
         title="Recruiter accounts"
         description="Recruiter accounts: manage company links and college access. Account actions follow the current administrative scope."
         actions={
-          <Button className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" onClick={openCreate}>
+          <Button className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={saving||pending} onClick={openCreate}>
             Add recruiter
           </Button>
         }
@@ -682,7 +692,7 @@ export function SuperAdminHrAccounts({
         action="/admin/recruiters"
         className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto_auto_auto]"
       >
-        <label className="col-span-2 grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body lg:col-span-1">
+        <label className="col-span-2 grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body lg:col-span-1">
           Search
           <Input
             className="min-h-11 md:min-h-9" name="q"
@@ -693,7 +703,7 @@ export function SuperAdminHrAccounts({
           />
         </label>
 
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">
           Status
           <Select
             className="min-h-11 md:min-h-9" name="status"
@@ -708,7 +718,7 @@ export function SuperAdminHrAccounts({
 
         <Disclosure title="Rows per page" className="min-w-0"
           contentClassName="pb-2 pt-2">
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">
           Rows per page
           <Select
             className="min-h-11 md:min-h-9" name="pageSize"
@@ -776,7 +786,7 @@ export function SuperAdminHrAccounts({
                     Clear filters
                   </Link>
                 ) : (
-                  <Button className="min-h-11 md:min-h-9 print:hidden" onClick={openCreate}>
+                  <Button className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={saving||pending} onClick={openCreate}>
                     Add recruiter
                   </Button>
                 )
