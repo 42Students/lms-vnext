@@ -29,7 +29,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <PageHeader title="Analytics"/>
   <ErrorState title="Invalid analytics filters"
    description="Check the selected dates or filters."
-   action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear all</Link>}/>
+   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -128,7 +128,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <div className="grid min-w-0 gap-3 lg:grid-cols-2">{groups.map(group=>
      <article key={group.companyName} className="min-w-0 border-b border-border py-4">
       <h3 className="break-words text-base font-semibold">{group.companyName}</h3>
-      <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+      <dl className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
        {metricKeys.map(key=><div key={key} className="min-w-0">
         <dt className="break-words text-body">{hiringMetricLabel(key)}</dt>
         <dd className="tabular-nums font-semibold text-foreground">{group[key]}</dd>

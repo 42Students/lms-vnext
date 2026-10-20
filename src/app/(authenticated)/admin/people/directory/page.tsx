@@ -33,7 +33,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query.success) return <div className="space-y-4"><PageHeader eyebrow="Super Admin" title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] hover:underline">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary)] hover:underline">Clear filters</Link>}/>
  </div>;
  const loaded=await listSuperAdminUsers(context,query.data)
   .then(value=>({ok:true as const,value}))
@@ -46,7 +46,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     ?"Your account can no longer view these membership records."
     :"These membership records could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
    </Link>}/>
  </div>;
