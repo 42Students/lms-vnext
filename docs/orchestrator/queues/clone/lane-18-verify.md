@@ -33,7 +33,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-18.md: surface | regre
 - [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/page.tsx`
 - [x] `src/app/(authenticated)/college/courses/page.tsx`
 - [x] `src/app/(authenticated)/college/departments/page.tsx`
-- [ ] `src/app/(authenticated)/college/domains/page.tsx`
+- [x] `src/app/(authenticated)/college/domains/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/page.tsx`
