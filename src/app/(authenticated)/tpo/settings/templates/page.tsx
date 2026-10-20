@@ -14,11 +14,11 @@ export default async function TpoCommunicationTemplatesPage() {
     <div className="print:hidden"><TpoSettingsNav active="templates" /></div>
     <PageHeader title="Communication templates" />
     <p className="text-sm text-body">Safe draft text for manual use. These are source-provided examples, not stored college templates. Copying text does not send email, SMS, WhatsApp or a portal notice.</p>
-    <div className="grid gap-4 lg:grid-cols-2">{TPO_MANUAL_MESSAGE_TEMPLATES.map(item=><section key={item.kind} className="min-w-0 space-y-3 border-t border-border pt-5">
-      <h2 className="font-semibold">{item.label}</h2>
-      <label className="block text-sm print:hidden">Subject<Input readOnly value={item.subject} className="mt-1 min-h-11 md:min-h-9 w-full"/></label>
+    <div className="grid min-w-0 grid-cols-1 gap-4 min-[992px]:grid-cols-2">{TPO_MANUAL_MESSAGE_TEMPLATES.map(item=><section key={item.kind} className="min-w-0 space-y-3 border-t border-border pt-5">
+      <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.label}</h2>
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Subject<Input readOnly value={item.subject} className="mt-1 w-full min-h-11 min-[768px]:min-h-9"/></label>
       <p className="hidden text-sm print:block"><strong>Subject:</strong> {item.subject}</p>
-      <label className="block text-sm print:hidden">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-1 w-full"/></label>
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Draft text<Textarea readOnly value={item.body} rows={5} className="mt-1 w-full"/></label>
       <p className="hidden whitespace-pre-wrap break-words text-sm print:block">{item.body}</p>
       <p className="text-xs text-muted-foreground">No recipients are selected or contacted.</p>
     </section>)}</div>
