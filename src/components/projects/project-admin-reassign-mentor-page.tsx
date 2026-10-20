@@ -13,6 +13,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
+import { Disclosure } from "@/components/ui/disclosure";
+import { FilterBar } from "@/components/ui/filter-bar";
 import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref} from "@/modules/projects/admin-reassign-mentor-query-model";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
@@ -69,21 +71,20 @@ export async function ProjectAdminReassignMentorPage({
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="min-w-0 space-y-[16px]">
-      <PageHeader
-        title="Bulk mentor reassignment"
-        description="Move selected non-archived project workspaces to a new primary mentor."
-        actions={<PageBackLink href={basePath} label="Back to workspaces" />}
-      />
+      <div className="min-w-0">
+        <PageBackLink href={basePath} label="Back to workspaces" />
+        <PageHeader title="Bulk mentor reassignment"
+          description="Move selected non-archived project workspaces to a new primary mentor." />
+      </div>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
-      <section className="border-b border-border pb-[16px]">
-        <h2 className="text-base font-semibold text-foreground">Mentor workload</h2>
-        <div className="mt-[8px] grid gap-[8px] md:grid-cols-2 xl:grid-cols-3">
+      <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
+        <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
           {workload.map(row => {
             const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 rounded-[8px] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
@@ -92,8 +93,9 @@ export async function ProjectAdminReassignMentorPage({
             </Link>;
           })}
         </div>
-      </section>
-      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-[16px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
+      </Disclosure>
+      <Disclosure title="Filters" className="border-b border-border pb-4" contentClassName="pt-3">
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
         aria-label="Search all eligible mentors">
         {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
@@ -108,8 +110,8 @@ export async function ProjectAdminReassignMentorPage({
         {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear mentor search</Link>:null}
         <p className="min-w-0 text-xs text-muted-foreground md:col-span-full">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
-      <ProjectAdminFilters query={query} />
-      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-[16px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <FilterBar title="Workspace filters"><ProjectAdminFilters query={query} /></FilterBar>
+      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
@@ -128,6 +130,7 @@ export async function ProjectAdminReassignMentorPage({
           Apply mentor filter
         </Button>
       </form>
+      </Disclosure>
       <ProjectMentorReassignment
         collegeId={collegeId}
         initialProjectId={initialProjectId}
