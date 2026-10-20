@@ -6,10 +6,10 @@ export type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
 };
 const tones = {
   neutral: "bg-[var(--lms-neutral-100)] text-[var(--lms-neutral-700)]",
-  info: "bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]",
-  success: "bg-[var(--lms-success-subtle)] text-[var(--lms-success-text)]",
-  warning: "bg-[var(--lms-warning-subtle)] text-[var(--lms-warning-text)]",
-  error: "bg-[var(--lms-error-subtle)] text-[var(--lms-error-text)]",
+  info: "bg-[var(--lms-info-subtle)] text-[var(--lms-info)]",
+  success: "bg-[var(--lms-success-subtle)] text-[var(--lms-success)]",
+  warning: "bg-[var(--lms-warning-subtle)] text-[var(--lms-warning)]",
+  error: "bg-[var(--lms-error-subtle)] text-[var(--lms-error)]",
 } as const;
 
 export function Badge({ tone = "neutral", className, children, ...props }: BadgeProps) {
