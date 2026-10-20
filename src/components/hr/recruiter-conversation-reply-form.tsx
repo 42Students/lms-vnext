@@ -104,7 +104,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
   <div className="flex flex-wrap items-center gap-3">
-  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 min-[768px]:min-h-9">
+  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 md:min-h-9">
    {sending?"Sending…":"Send reply"}
   </Button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
