@@ -100,68 +100,68 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-52 flex-1 gap-1 text-xs font-semibold text-body">
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
-              className="min-h-11" />
+              className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Exact course code
             <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11" />
+              className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
-              className="min-h-11"/>
+              className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
-              className="min-h-11"/>
+              className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
             </Select>
           </label>
-          {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          {!isAssignment?<label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Quiz results
             <Select name="results" defaultValue={data.query.results}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
               <option value="HIDDEN">Results hidden</option>
             </Select>
           </label>:null}
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Due-date configuration
             <Select name="duePresence" defaultValue={data.query.duePresence}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
               <option value="UNSCHEDULED">No deadline</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Deadline window
             <Select name="dueWindow" defaultValue={data.query.dueWindow}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
               <option value="FUTURE">Deadline upcoming</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Academic period code
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
-              className="min-h-11"/>
+              className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
