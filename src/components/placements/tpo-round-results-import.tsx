@@ -57,21 +57,22 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
   }catch(e){setError(e instanceof Error?e.message:"Import failed");}
   finally{setBusy(false);}
  }
- return <section className="space-y-4 border-b border-border pb-6">
+ return <section className="min-w-0 space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
    Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
-  <a href={url} download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Download CSV template</a>
+  <a href={url} download className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 sm:w-auto text-sm font-semibold text-primary-text hover:bg-primary-subtle underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Download CSV template</a>
   <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Company results file"
      accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
      disabled={busy} onFiles={files=>{setFile(files?.[0]??null);setPreview(null);setReport(null);setOverrides({});setSkips([]);setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/>
-  <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
+  {file?<p role="status" className="min-w-0 break-all text-xs text-muted-foreground">Selected file: {file.name}</p>:null}
+  <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy||!file} onClick={()=>void send("PREVIEW")}
    >
    {busy?"Checking…":"Preview matching results"}</Button>
-  {preview?<div className="space-y-4 border-t border-border pt-4">
+  {preview?<div className="min-w-0 space-y-4 border-t border-border pt-4">
    <h3 className="font-semibold">Import preview</h3>
    <p role="status" className="text-sm">{preview.sourceRows} source rows · {preview.matched.length} matched · {preview.unmatched.length} unmatched · {preview.notInFile.length} not in file</p>
-   <div className="max-h-44 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
+   <div className="max-h-64 min-w-0 overflow-auto print:max-h-none print:overflow-visible">
     <DataTable<Match> caption="Imported round matched rows" rows={preview.matched}
      getRowKey={row=>String(row.line)} empty={<EmptyState title="No matching rows were found."/>}
      columns={[
@@ -89,8 +90,8 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
        {key:"row",header:"Row",cell:row=>row.line,mobilePriority:"primary"},
        {key:"identity",header:"Identity",cell:row=>row.identity||"No ID",mobilePriority:"secondary"},
        {key:"reason",header:"Reason",cell:row=>row.reason,mobilePriority:"secondary"},
-       {key:"review",header:"Review",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
-         <Select aria-label={"Match row "+row.line} className="min-h-11 min-w-36 flex-1 md:min-h-9 print:hidden"
+       {key:"review",header:"Review",mobilePriority:"action",cell:row=><div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+         <Select aria-label={"Match row "+row.line} className="min-h-11 min-w-0 w-full sm:flex-1 md:min-h-9 print:hidden"
            value={overrides[row.line]??""} disabled={busy}
            onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
            <option value="">Do not match this row</option>
@@ -120,12 +121,12 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      </label>
     </div>:null}
    </fieldset>
-   <Button variant="primary" type="button" className="min-h-11 md:min-h-9 print:hidden" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
+   <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy||(missingPolicy==="MARK_NOT_CLEARED"&&!confirmMissingFailure)||
     (!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&!Object.values(overrides).some(Boolean))} onClick={()=>setConfirmOpen(true)}
     >
     {busy?"Staging…":"Confirm and stage results"}</Button>
   </div>:null}
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
     title="Stage this reviewed result import?"
     description={(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."}
     confirmLabel="Confirm and stage results"
