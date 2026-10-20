@@ -221,7 +221,7 @@ function RecruiterCalendarEventCard({
       {href ? (
         <Link
           href={href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold md:min-h-9 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold min-[768px]:min-h-9 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
         >
           Open hiring drive →
         </Link>
@@ -315,18 +315,18 @@ export default async function HrCalendarPage({
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={<>
           <Link href="/hr/placements"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 md:w-auto">
             Drives →
           </Link>
           {!noCollegeAccess?<Link href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 md:w-auto">
             Export calendar CSV
           </Link>:null}
         </>}
       />
       {noCollegeAccess ? (
-        <section className="border-b border-border pb-6">
-          <h2 className="text-lg font-semibold text-foreground">
+        <section className="border-b border-[var(--lms-canvas-border)] pb-6">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Open this on your college&apos;s placement address
           </h2>
           <p className="mt-2 text-sm text-body">
@@ -339,7 +339,7 @@ export default async function HrCalendarPage({
 
           <Link
             href="/hr/home"
-            className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold md:min-h-9 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+            className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold min-[768px]:min-h-9 text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           >
             Return to Today →
           </Link>
@@ -354,10 +354,10 @@ export default async function HrCalendarPage({
             {label:"Results due",value:calendar.resultsDue.length},
           ]} />
 
-          <section className="border-b border-border pb-4 md:pb-5">
-            <h2 className="text-base font-semibold text-foreground">Results due in this period</h2>
+          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-5">
+            <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Results due in this period</h2>
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
-            {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 md:grid-cols-2">
+            {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
               {calendar.resultsDue.map(item => (
                 <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
                   className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -369,10 +369,10 @@ export default async function HrCalendarPage({
             </div> : <EmptyState title="No results due" description="No results deadlines are recorded in this calendar period."/>}
           </section>
 
-          <section className="border-b border-border pb-4 md:pb-5">
+          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-5">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-base font-semibold text-foreground">
+                <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                   Calendar controls
                 </h2>
                 <p className="mt-1 text-sm text-body">
@@ -403,14 +403,14 @@ export default async function HrCalendarPage({
                     ? "Previous week"
                     : "Previous month"
                 }
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 ← Previous
               </Link>
 
               <Link
                 href={calendarHref(today, view, category)}
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 Today
               </Link>
@@ -422,7 +422,7 @@ export default async function HrCalendarPage({
                     ? "Next week"
                     : "Next month"
                 }
-                className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
               >
                 Next →
               </Link>
@@ -435,7 +435,7 @@ export default async function HrCalendarPage({
             <form
               action="/hr/calendar"
               method="get"
-              className="mt-5 flex flex-wrap items-end gap-3 border-t border-border pt-5"
+              className="mt-5 flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-4"
             >
               <Input
                 type="hidden"
@@ -443,7 +443,7 @@ export default async function HrCalendarPage({
                 value={view}
               />
 
-              <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+              <label className="flex min-w-0 flex-col gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Jump to date
                 <Input
                   key={anchor}
@@ -455,7 +455,7 @@ export default async function HrCalendarPage({
                 />
               </label>
 
-              <Button type="submit" className="min-h-11 md:min-h-9">Go to date</Button>
+              <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Go to date</Button>
             </form>
           </section>
 
@@ -622,7 +622,7 @@ export default async function HrCalendarPage({
               className="space-y-5"
             >
               <div>
-                <h2 className="text-lg font-semibold text-foreground">
+                <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                   Agenda
                 </h2>
 
@@ -644,7 +644,7 @@ export default async function HrCalendarPage({
                   key={day.day}
                   className="space-y-3"
                 >
-                  <h3 className="border-b border-border pb-2 text-sm font-semibold text-foreground">
+                  <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 text-sm font-semibold text-foreground">
                     {dateLabel(day.day)}
                     {day.day === today
                       ? " · Today"
