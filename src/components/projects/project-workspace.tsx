@@ -1,4 +1,3 @@
-import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import { Tabs } from "@/components/ui/tabs";
@@ -154,7 +153,11 @@ function Metric({
   value: string;
   detail: string;
 }) {
-  return <StatTile label={metricLabel} value={value} detail={detail} />;
+  return <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-1 py-3">
+    <p className="text-xs font-medium leading-5 text-body">{metricLabel}</p>
+    <p className="mt-1 break-words text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</p>
+    <p className="mt-1 break-words text-xs leading-5 text-muted-foreground">{detail}</p>
+  </div>;
 }
 
 function safeHttpHref(value: string | null) {
@@ -359,7 +362,7 @@ export function ProjectWorkspace({
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
         project={workspace.project}/>:null}
       {show("summary") || show("readiness") || (mode === "MENTOR" && show("overview")) ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
             label="Tasks"
             value={
