@@ -67,7 +67,7 @@ export function ProjectReadinessOverrideForm({
 
   return (
     <>
-      <form onSubmit={requestSave} className="space-y-3 border-b border-border pb-5">
+      <form onSubmit={requestSave} className="min-w-0 space-y-4 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">{copy.overrideTitle}</h2>
         {hasSubmission && state !== "CLEAR" ? (
           <Alert tone="warning">
@@ -106,7 +106,7 @@ export function ProjectReadinessOverrideForm({
             />
           </>
         ) : null}
-        <Button type="submit" variant="primary" disabled={pending}>
+        <Button type="submit" variant="primary" disabled={pending} className="w-full md:w-auto">
           {copy.submit}
         </Button>
         {feedback ? <Alert tone={feedback === copy.failed ? "error" : "success"} role="status">{feedback}</Alert> : null}

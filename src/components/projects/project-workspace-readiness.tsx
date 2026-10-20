@@ -36,11 +36,16 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
   const readiness=result.value;
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-5 md:space-y-6">
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <PageHeader title={copy.title} eyebrow="Projects"
       description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
-      actions={<PageBackLink href={basePath} label="Back to workspaces" />} />
+      actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+        <StatusBadge tone={readiness.finalSubmission.canSubmitDraft?"success":"warning"}>
+          {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
+        </StatusBadge>
+        <PageBackLink href={basePath} label="Back to workspaces" />
+      </div>} />
     <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"
       items={([
         ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
@@ -50,12 +55,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         value: segment, label, href: basePath+"/"+projectId+"/"+segment,
       }))} />
     <section className="border-b border-border py-5">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Current readiness</h2>
-        <StatusBadge tone={readiness.finalSubmission.canSubmitDraft?"success":"warning"}>
-          {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
-        </StatusBadge>
-      </div>
+      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Current readiness</h2>
       <dl className="mt-4 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.state??"Automatic"}</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason</dt><dd className="mt-2 whitespace-pre-wrap break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.note??
@@ -79,12 +79,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         value={item.done} maximum={item.total||1} />
       </div>)}
     </section>
-    <div className="grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
-      <p className="px-4 py-3 text-[14px] leading-5 text-[var(--lms-body-text)]">Tasks completed: {readiness.execution.tasks.done}/{readiness.execution.tasks.total}</p>
-      <p className="px-4 py-3 text-[14px] leading-5 text-[var(--lms-body-text)]">Sprints completed: {readiness.execution.sprints.completed}/{readiness.execution.sprints.total}</p>
-      <p className="px-4 py-3 text-[14px] leading-5 text-[var(--lms-body-text)]">Releases shipped: {readiness.execution.releases.shipped}/{readiness.execution.releases.total}</p>
-    </div>
-    <ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}
-      hasSubmission={readiness.finalSubmission.latest!==null}/>
+    <div className="min-w-0 max-w-2xl"><ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}
+      hasSubmission={readiness.finalSubmission.latest!==null}/></div>
   </div>;
 }
