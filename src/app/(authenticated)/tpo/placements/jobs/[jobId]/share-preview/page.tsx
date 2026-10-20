@@ -53,31 +53,29 @@ export default async function TpoShortlistSharePreviewPage({
   const shares = await listTpoCompanyApplicantShares(context, data.job.id,shareStatus,linkPage.page);
   const path = "/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/share-preview";
   const preservedHistory=companySharePreviewSearchState(shareStatus,linkPage.page);
-  return <div className="min-w-0 space-y-5">
-    <Link
-      href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
-      className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:underline md:min-h-9">
-      ← Current internal shortlist
-    </Link>
+  return <div className="min-w-0 space-y-4">
+
     <PageHeader eyebrow="TPO · Placements"
       title={data.job.title + " · Recruiter-visible shortlist preview"}
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
-      actions={<a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-        Export capped CSV
-      </a>}
+      actions={<>
+        <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Current internal shortlist</Link>
+        <a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Export capped CSV</a>
+      </>}
     />
-    <form action={path} method="get" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+    <form action={path} method="get" className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:items-end sm:gap-3">
       {preservedHistory.shareStatus?<Input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
       {preservedHistory.sharePage?<Input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
       <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
         <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" />
       </label>
-      <Button type="submit" >
+      <Button type="submit" className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">
         Search
       </Button>
-      <Link href={path} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
+      <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link sm:w-auto underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} currently shortlisted application(s) in this drive.
@@ -85,6 +83,8 @@ export default async function TpoShortlistSharePreviewPage({
       the fields exposed by the current recruiter round workspace. The CSV is capped
       at 500 application rows with an explicit notice if truncated. It performs no sharing.
     </p>
+    <section aria-label="Read-only shortlist preview" className="min-w-0 space-y-3">
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Recruiter-visible shortlist</h2>
     <DataTable<(typeof data.rows)[number]> caption="Shortlisted applicant cards"
       rows={data.rows} getRowKey={item=>item.applicationId}
       empty={<EmptyState title="No recruiter-visible shortlisted applications are recorded on this page. Screening state may have changed; absence here is not proof of no applicants." />}
@@ -93,15 +93,16 @@ export default async function TpoShortlistSharePreviewPage({
         {key:"learner",header:"Learner",mobilePriority:"primary",cell:item=><strong>{item.displayName}</strong>},
         {key:"email",header:"Email",mobilePriority:"secondary",cell:item=><span className="break-all">{item.email??"Not recorded"}</span>},
       ]}/>
+    </section>
     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(data.job.id)+"/share-audit"}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
      View company-share access history
     </Link>
     <nav aria-label="Company-share link status filters"
-      className="flex min-w-0 flex-wrap gap-2 text-sm">
+      className="flex min-w-0 gap-2 overflow-x-auto pb-1 text-sm">
       {companyShareStatusSchema.options.map(status=><Link key={status}
        aria-current={shareStatus===status?"page":undefined}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)]"
+       className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)] aria-[current=page]:text-[var(--lms-primary-text)]"
        href={companyShareLinksHref(data.job.id,status,1,parsed.data.q,data.page)}>
        {companyShareStatusLabel(status)}
       </Link>)}
@@ -115,7 +116,7 @@ export default async function TpoShortlistSharePreviewPage({
         revokedAt: link.revokedAt?.toISOString() ?? null,
         audit:link.audit,
       }))} />
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2 border-t border-border pt-3">
       <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{shares.total.toLocaleString("en-IN")} matching link(s)</p>
       <Pagination label="Company-share link pages" page={shares.page} pageCount={shares.totalPages}
         hrefForPage={target=>companyShareLinksHref(data.job.id,shareStatus,target,parsed.data.q,data.page)}/>
