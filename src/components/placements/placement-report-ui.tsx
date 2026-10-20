@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input";
 import {TpoReportPresentation} from "./tpo-report-presentation";
 import {TpoReportSavedFilters} from "./tpo-report-saved-filters";
 import {ReportInteractiveTable} from "./report-interactive-table";
@@ -90,7 +91,7 @@ export function ReportFilters({
 
       <form action={path} method="get" className="flex flex-wrap items-end gap-3">
         {workspace.selectedSeasonId ? (
-          <input
+          <Input
             type="hidden"
             name="seasonId"
             value={workspace.selectedSeasonId}

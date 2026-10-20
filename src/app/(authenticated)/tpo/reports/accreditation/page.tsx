@@ -1,10 +1,11 @@
+import { Input } from "@/components/ui/input";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -66,8 +67,6 @@ export default async function TpoAccreditationReportPage({
 
   return (
     <div data-tpo-presentation-report className="space-y-6">
-      <TpoReportPresentation />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader
         eyebrow="TPO · Reports"
         title="Accreditation export"
@@ -82,12 +81,9 @@ export default async function TpoAccreditationReportPage({
           </span>
         }
       />
-      <Link
-        href="/tpo/reports"
-        className="text-sm font-semibold text-link hover:underline"
-      >
-        ← All reports
-      </Link>
+      <PageBackLink href="/tpo/reports" label="All reports" />
+      <TpoReportPresentation />
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <section id="accreditation-batch" className="space-y-3 border-t border-border pt-5">
        <h2 className="font-semibold">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
@@ -98,8 +94,8 @@ export default async function TpoAccreditationReportPage({
           {batches.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
          </Select>
         </label>
-        {report.selectedSeasonId&&<input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
-        {report.selectedJobId&&<input type="hidden" name="jobId" value={report.selectedJobId}/>}
+        {report.selectedSeasonId&&<Input type="hidden" name="seasonId" value={report.selectedSeasonId}/>}
+        {report.selectedJobId&&<Input type="hidden" name="jobId" value={report.selectedJobId}/>}
         <Button variant="secondary" type="submit" className="min-h-11 sm:min-h-9">Show students</Button>
        </form>
        {batchId&&!selectedBatch&&<Alert tone="error">Choose a batch from this college.</Alert>}
