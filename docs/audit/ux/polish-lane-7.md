@@ -36,3 +36,21 @@
 **Files changed:** src/app/(authenticated)/admin/programs/page.tsx; src/components/admin/admin-program-directory.tsx; src/app/(authenticated)/admin/programs/loading.tsx; docs/orchestrator/queues/clone/lane-7-polish.md; docs/audit/ux/polish-lane-7.md.
 
 **States covered:** missing college/permission and service failure, no departments, no programs, populated/filtered page, create validation/pending/response, edit/discard/archive modal/disabled, mobile 375, tablet 768, 1280, route load/retry. Source review; no browser screenshots or CI.
+
+
+## Surface 4 — src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx
+
+**Problems found (7):** route overflow clipping could cut off controls and overlays; back action crowded the header on phone; heading/breadcrumbs/tabs used inconsistent large gaps; ten workspace tabs were confined by an unnecessary parent clip; release/sprint nesting created double cards; delivery cards added a second outlined surface; loading skeleton was generic.
+
+**Fixed:** Removed route-level overflow clipping, leaving horizontal tab overflow to existing ScrollCue. Added an opt-in `polishAdminSection` passed only by this route through AdminProjectSectionPage to ProjectWorkspace; keeps existing ProjectWorkspace unchanged in other contexts. Moves the same back link before the heading with its route and aria label intact, preserves status/archive controls and breadcrumbs, reduces section rhythm to 16px. Flattens admin release, sprint and delivery nested bordered cards into hairline-separated rows on the white canvas; all existing labels, controls, permissions, calls and dialogs remain. Shared directory-style loading skeleton; route 404/error states unchanged.
+
+**Files changed:** src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx; src/components/projects/admin-project-section-page.tsx; src/components/projects/project-workspace.tsx; src/app/(authenticated)/admin/projects/[projectId]/[section]/loading.tsx; docs/orchestrator/queues/clone/lane-7-polish.md; docs/audit/ux/polish-lane-7.md. **States reviewed:** all ten named sections, filled/empty, archived/read-only, risk reason, all action affordances and existing dialog flows, mobile 375/tablet 768/desktop 1280. Source inspection only; no screenshot or CI.
+
+
+## Surface 5 — src/app/(authenticated)/admin/projects/[projectId]/page.tsx
+
+**Problems found (1):** this URL is a validated, access-checked redirect to the canonical summary, not a rendered page; the transient loading fallback used a generic card skeleton inconsistent with the destination. No clutter, duplicated actions or responsive content exists in this redirect-only route to remove without changing behavior.
+
+**Fixed:** Left the Super Admin guard, exact project validation, project permission verification, notFound, and redirect URI entirely unchanged. Reused GracefulPageLoading with a project-specific label and the directory skeleton so the transient fallback is calm and consistent. Existing retryable error boundary and not-found behavior preserved. No new UI or route behavior invented.
+
+**Files changed:** src/app/(authenticated)/admin/projects/[projectId]/loading.tsx; docs/orchestrator/queues/clone/lane-7-polish.md; docs/audit/ux/polish-lane-7.md. **States covered:** loading, project access denied, invalid ID not-found, authorized redirect, route error recovery. 375/768/1280 share the same canonical destination. Source review only, no CI.

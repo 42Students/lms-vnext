@@ -220,6 +220,7 @@ export function ProjectWorkspace({
   riskReason = null,
   readOnlyOverride = false,
   hidePageHeader = false,
+  polishAdminSection = false,
 }: {
   workspace: Workspace;
   backHref: string;
@@ -232,6 +233,7 @@ export function ProjectWorkspace({
   riskReason?: string | null;
   readOnlyOverride?: boolean;
   hidePageHeader?: boolean;
+  polishAdminSection?: boolean;
 }) {
   const { readiness } = workspace;
   const authoredBrief=parseWorkspaceBrief(workspace.project.authoredBrief);
@@ -308,10 +310,11 @@ export function ProjectWorkspace({
   );
 
   return (
-    <div className="min-w-0 space-y-4 md:space-y-6">
+    <div className={polishAdminSection && mode==="ADMIN" ? "min-w-0 space-y-4" : "min-w-0 space-y-4 md:space-y-6"}>
       {mode!=="ADMIN"?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
+      {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
-      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"?backHref:undefined} backLabel={backLabel} /> : null}
+      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" && !sectionBaseHref ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
@@ -843,7 +846,7 @@ export function ProjectWorkspace({
             <article
               key={release.id}
               id={"project-release-"+release.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className={polishAdminSection && mode==="ADMIN" ? "min-w-0 border-y border-border py-4" : "rounded-xl border border-border bg-surface p-5"}
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -898,7 +901,7 @@ export function ProjectWorkspace({
                   []).map((sprint) => (
                   <section
                     key={sprint.id}
-                    className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"
+                    className={polishAdminSection && mode==="ADMIN" ? "min-w-0 border-t border-border py-4" : "rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
@@ -1246,7 +1249,7 @@ export function ProjectWorkspace({
                 return (
                   <article
                     key={submission.id}
-                    className="rounded-xl border border-border bg-surface p-5"
+                    className={polishAdminSection && mode==="ADMIN" ? "min-w-0 border-y border-border py-4" : "rounded-xl border border-border bg-surface p-5"}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-3">
                       <div>
