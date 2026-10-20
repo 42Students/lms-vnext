@@ -82,8 +82,9 @@ export function CollegeGroupDetailWrites({
         </li>)}</ul>}
       {!hasSpace?<Alert tone="warning">Group capacity is full. No manual promotion is available.</Alert>:null}
     </div>
-    <div className="space-y-3 border-t border-border pt-4">
-      <h2 className="text-lg font-semibold text-foreground">Eligibility rule</h2>
+    <details className="min-w-0 border-t border-border pt-3">
+      <summary className="min-h-11 cursor-pointer py-2 text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Eligibility rule</summary>
+      <div className="min-w-0 space-y-3 pt-3">
       <p className="text-sm text-body">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Rule criteria
         <Textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
@@ -91,11 +92,12 @@ export function CollegeGroupDetailWrites({
       </label>
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
-      <Button variant="primary" type="button" loading={busy} className="min-h-11 md:min-h-9" disabled={busy} onClick={saveRule}
+      <Button variant="primary" type="button" loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy} onClick={saveRule}
         >
         {busy?"Saving…":"Confirm rule update"}
       </Button>
-    </div>
+      </div>
+    </details>
     {error?<Alert tone="error">{error}</Alert>:null}
     {notice?<Alert tone="success">{notice}</Alert>:null}
     <ConfirmDialog open={confirmation!==null} onOpenChange={value=>{if(!value&&!busy)setConfirmation(null);}}
