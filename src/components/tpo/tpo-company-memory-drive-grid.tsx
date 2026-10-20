@@ -14,19 +14,25 @@ const statusLabel=(status:string)=>({
  PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",
  CANCELLED:"Cancelled",
 } as Record<string,string>)[status]??status;
-const year=(value:string)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",year:"numeric",
-}).format(new Date(value));
-const date=(value:string)=>new Intl.DateTimeFormat("en-IN",{
- timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-}).format(new Date(value));
+const year=(value:string)=>{
+ const instant=Date.parse(value);
+ return Number.isFinite(instant)?new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",year:"numeric",
+ }).format(new Date(instant)):"Not recorded";
+};
+const date=(value:string)=>{
+ const instant=Date.parse(value);
+ return Number.isFinite(instant)?new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+ }).format(new Date(instant)):"Not recorded";
+};
 const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"role",label:"Role",read:row=>row.jobTitle},
  {key:"status",label:"Status",read:row=>statusLabel(row.status)},
- {key:"year",label:"Year",read:row=>year(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
+ {key:"year",label:"Year",read:row=>year(row.createdAt),sortKind:"date",sortValue:row=>{const instant=Date.parse(row.createdAt);return Number.isFinite(instant)?instant:null;}},
  {key:"applied",label:"Applied",sortKind:"number",sortValue:row=>row.applied,
   read:row=>row.applied+" · "+row.offers+" offers"},
- {key:"created",label:"Created",read:row=>date(row.createdAt),sortKind:"date",sortValue:row=>new Date(row.createdAt).getTime()},
+ {key:"created",label:"Created",read:row=>date(row.createdAt),sortKind:"date",sortValue:row=>{const instant=Date.parse(row.createdAt);return Number.isFinite(instant)?instant:null;}},
 ];
 /** Quartz sheet mounts in the browser; rows remain the server-scoped company's drives. */
 const TpoGrid=dynamic<TpoSpreadsheetGridProps<CompanyMemoryDriveRow>>(
