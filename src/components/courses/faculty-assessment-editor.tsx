@@ -204,7 +204,7 @@ export function FacultyAssessmentEditor({
     <>
       <Button
         size="md"
-        className="min-h-11 md:min-h-[var(--lms-control-height)]"
+        
         variant="secondary"
         onClick={() => {
           // Reset from latest server props every time: cancelled edits and
