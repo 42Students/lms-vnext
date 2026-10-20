@@ -16,7 +16,7 @@ export default async function SuperAdminProgramsPage() {
     <PageHeader title="Programs"/>
     <ErrorState title="Program access denied"
       description="Your account cannot access Super Admin programs."
-      action={<Link href="/dashboard" className="font-semibold text-primary-text underline">Back to dashboard</Link>}/>
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Back to dashboard</Link>}/>
   </div>;
   const collegeId = context.adminScope?.collegeId ?? null;
 
@@ -46,7 +46,7 @@ export default async function SuperAdminProgramsPage() {
     <PageHeader title="Programs"/>
     <ErrorState title="Programs unavailable"
       description="The selected college's program directory could not be verified. No changes were made."
-      action={<Link href="/admin/programs" className="font-semibold text-primary-text underline">Retry loading programs</Link>}/>
+      action={<Link href="/admin/programs" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry loading programs</Link>}/>
   </div>;
   const {programs,departments,contents}=outcome.value;
 
@@ -57,7 +57,7 @@ export default async function SuperAdminProgramsPage() {
         title="Programs"
         description="Manage programs within the selected college safety scope."
         actions={<Link href="/admin/academics"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Open Academic Setup overview →</Link>}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open Academic Setup overview →</Link>}
       />
       <AdminProgramDirectory
         programs={programs.map((program) => ({
