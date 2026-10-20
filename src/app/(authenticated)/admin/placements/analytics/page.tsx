@@ -78,9 +78,9 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
    actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
     Export report (CSV) →</a>}/>
-  <form method="get" action="/admin/placements/analytics" role="search" aria-label="Placement analytics filters" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
+  <form method="get" action="/admin/placements/analytics" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
     <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0"/></label>
    {select("jobId","Job",filters.jobs)}

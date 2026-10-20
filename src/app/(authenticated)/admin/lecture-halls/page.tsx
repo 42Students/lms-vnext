@@ -69,7 +69,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
     <section aria-label="Lecture hall filters" className="space-y-4 border-b border-border pb-4">
-      <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-4">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
           <Input type="search" name="q" maxLength={100} defaultValue={query.q}
             placeholder="Search halls" className="min-h-11 w-full md:min-h-9"/>

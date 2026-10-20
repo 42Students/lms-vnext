@@ -83,7 +83,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Create drive →</Link>
    </div>} />
   <form action="/admin/placements/drives" method="get" aria-label="Filter placement drives"
-   className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
+   className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <label className="grid w-full min-w-0 flex-1 gap-[6px] md:w-auto md:min-w-44 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by drive or company
     <Input type="search" maxLength={100} name="q" defaultValue={parsed.data.q}
      className="min-h-11 w-full md:min-h-9"/>
