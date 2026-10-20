@@ -139,8 +139,15 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
+      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
+        <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search announcement title or message
+          <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
+        </label>
+        <div className="min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-4">
+          <details className="group min-w-0 border-t border-[var(--lms-canvas-border)]">
+            <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Filters <span aria-hidden="true">⌄</span></summary>
+            <div className="grid min-w-0 gap-3 pb-4 min-[768px]:grid-cols-2 min-[1200px]:grid-cols-4">
         <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Visibility
           <Select name="visibility" defaultValue={params.visibility ?? ""} className="mt-1">
             <option value="">All visible states</option>
@@ -166,22 +173,12 @@ export default async function AnnouncementsPage({
             {(["COLLEGE","PROGRAM","DEPARTMENT","CLASS","LEARNER","FACULTY"] as const).map(type => <option key={type} value={type}>{type}</option>)}
           </Select>
         </label>
-        <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-56">Search announcement title or message
-          <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
-        </label>
-        <Button type="submit">Search</Button>
-        <Link href="/admin/announcements" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
+            </div>
+          </details>
+        </div>
+        <Button type="submit" className="w-full min-[768px]:w-auto">Search</Button>
+        <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 min-[768px]:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
       </form>
-      <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
-        ...(includeDeleted ? {deleted:"1"} : {}),
-        ...(params.q ? {q:params.q} : {}),
-        ...(params.receiverType ? {receiverType:params.receiverType} : {}),
-        ...(params.visibility ? {visibility:params.visibility} : {}),
-        ...(params.pinned ? {pinned:params.pinned} : {}),
-        ...(params.senderType ? {senderType:params.senderType} : {}),
-        ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
-        ...(params.beforeId ? {beforeId:params.beforeId} : {}),
-      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Placement-cell read receipts</h2>
@@ -199,6 +196,16 @@ export default async function AnnouncementsPage({
         emptyMessage={announcementHistoryEmptyMessage({
           hasFilters:Boolean(params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted),
         })}/>
+      <Link href={"/api/admin/announcements/export?" + new URLSearchParams({
+        ...(includeDeleted ? {deleted:"1"} : {}),
+        ...(params.q ? {q:params.q} : {}),
+        ...(params.receiverType ? {receiverType:params.receiverType} : {}),
+        ...(params.visibility ? {visibility:params.visibility} : {}),
+        ...(params.pinned ? {pinned:params.pinned} : {}),
+        ...(params.senderType ? {senderType:params.senderType} : {}),
+        ...(params.beforeCreatedAt ? {beforeCreatedAt:params.beforeCreatedAt} : {}),
+        ...(params.beforeId ? {beforeId:params.beforeId} : {}),
+      }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export this filtered page (CSV)</Link>
       {next ? (
         <div className="flex justify-center">
           <Link href={next} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
