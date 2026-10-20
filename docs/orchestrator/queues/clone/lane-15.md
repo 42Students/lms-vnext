@@ -24,12 +24,12 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/hr/round-results/page.tsx`
 - [x] `src/app/(authenticated)/learn/allAssignments/page.tsx`
 - [x] `src/app/(authenticated)/learn/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/app/(authenticated)/tracker/page.tsx`
