@@ -763,3 +763,107 @@ grep -nE 'isDescending|descending\?|sortValue&&|selectedVisible|selection\?\.sel
 ```
 
 **Next exact file:** `src/components/tpo/grid/grid-workspace.tsx` — source-count audit of toolbar/filter/views/export controls and 44px phone hit areas, then E8 legacy runtime/dependency gate.
+
+
+### 2026-10-20 chat-14 — TPO GridWorkspace and FilterPanel source completion
+
+After main advanced, the lane merged it while preserving the newer per-row mobile dropdown labels from upstream, the upstream mobile filter panel borders/heights, and both lanes' audit history. Only chatgpt/chat-14-b was written.
+
+| Value/state | Legacy value/source | New source | Source-only verification |
+|---|---|---|---|
+| Toolbar composition | old-lms-pages.md:5-6 — Search, Filters, Views, Columns, Export and Act on N | grid-workspace.tsx:174-204,244-262: same grouping, aria-expanded/controls and selected count | Same source structure, render untested |
+| Active filter chip | components___antddesign.scss:1092-1100 — 44px min-height and 12px mobile padding | grid-workspace.tsx:206 and tpo-grid-filter-panel.tsx:30 — FilterChip with aria-pressed=true, shared min-h-11 and px-[12px] | Exact phone geometry, selected semantics |
+| Mobile filter sheet | old-lms-shell.css:23,73 — <=767 phone and >=768 desktop | tpo-grid-filter-panel.tsx:35-55 — Select 16px/44px on phone, 14px/36px from md; phone BottomSheet, desktop aside | Exact cutoff, OS select popup untested |
+| Filter region ID | aria-controls must name the controlled visible region | tpo-grid-filter-panel.tsx:15,47,53 — useId filterPanelId on trigger and panel | Matching unique IDs from source |
+| Filter scroll | Filtering/reset in place must not jump to top | tpo-grid-filter-panel.tsx:20,42 — router.replace with scroll:false; GridWorkspace uses scroll:false on URL changes | Source preserves viewport |
+| XLSX export link | components___antddesign.scss:1081-1100 — actionable 44px mobile target | grid-workspace.tsx:232 — min-h-11 md:min-h-9 (44px/36px) and same authorized xlsxHref | Match for phone tap geometry |
+| TSV copy | E8 clipboard copies only authorized visible/selected rows | grid-workspace.tsx:143-150 — common gridClipboardTsv with existing status/error notices | No extra rows/columns fetched |
+
+Full-file GitHub-fetched grep equivalents, NOT shell commands executed locally:
+- grid-workspace.tsx: 14 Button opening/closing pairs, 1 FilterChip pair, 1 self-closing Input and 1 self-closing Textarea; 0 raw button/input/select/textarea/details; 5 scroll:false occurrences.
+- tpo-grid-filter-panel.tsx: 2 Button pairs, 1 FilterChip pair, 1 Select pair, 1 BottomSheet pair, 0 raw controls, 2 scroll:false calls, 3 references to the same filterPanelId.
+- tpo-spreadsheet-grid.tsx retains newer upstream row-specific mobile action dropdown labels, the 48px selection column and the partial-selection checkbox.
+
+Reproduce in checkout (commands not run):
+```sh
+grep -nE '<(button|input|select|textarea|details)([[:space:]>])|<Button|</Button>|<FilterChip|</FilterChip>|scroll:false|aria-pressed=' src/components/tpo/grid/grid-workspace.tsx src/components/tpo/tpo-grid-filter-panel.tsx
+grep -nE 'filterPanelId|min-h-11|md:text-sm|<BottomSheet|aria-expanded|aria-controls' src/components/tpo/tpo-grid-filter-panel.tsx
+```
+
+Phone <=767px: chip and Select have 44px touch floor, active chips selected and mobile sheet shown. Tablet >=768px: 36px controls and inline aside; saved filter/column state and server exports are unchanged. Error messages for clipboard/unknown filters and loading states remain intact.
+
+E8 stays [ ]: no browser screenshot, compilation, CI, tests or full old TpoGrid value comparison; AG Grid packages are still undeclared in package.json. This section certifies source changes only.
+
+Next exact file: src/components/tpo/tpo-students-spreadsheet.tsx — verify E8 roster header and its authorized 48px selection, sorting, toolbar and phone cards.
+
+
+### 2026-10-20 chat-14 — roster selection visuals and caller coverage
+
+| Property/state | Old-LMS source / required value | Current file & value | Static result |
+|---|---|---|---|
+| Selection column | `ui-clone-checklist.md:57` pinned 48px, filtered selectable rows | `tpo-students-spreadsheet.tsx:228` delegates server-scoped `allIds` to `TpoGrid`, whose native and fallback selection columns are exactly 48px | Source contract matched |
+| Mobile grid breakpoint | `old-lms-shell.css:23,73` phone <=767px, desktop >=768px | `tpo-students-spreadsheet.tsx:31-34` browser-only `next/dynamic ssr:false`, TpoGrid fallback `md:hidden` and Quartz `md:block` | Responsive boundary matched; no viewport screenshot |
+| Bulk note checkbox partial state | Legacy Ant checkbox distinguishes checked/indeterminate; max 100 notes per action | `tpo-students-spreadsheet.tsx:200-204` page checkbox now `indeterminate` for partly selected visible roster, including when 100-of-more-than-100 are selected | Partial/checked semantics source matched |
+| Bulk note phone layout | Interactive controls have 44px target at <=767px (`components___antddesign.scss:1081-1100`) | `tpo-students-spreadsheet.tsx:200-210` 44px row labels and checkboxes; note list one column phone, md two, xl three; max-height 176px with scroll | Touch floor and responsive source proof |
+| Page export authorization | No TPO export outside authorized IDs | `tpo-students-spreadsheet.tsx:115-142` `selectedScoped` validated against shared authorized IDs; 200-ID XLSX safety rule; CSV uses selected visible page rows only | API routes and permissions unchanged |
+| Empty/loading/error | Spreadsheets show a busy placeholder, blocked export and recoverable selection | `tpo-students-spreadsheet.tsx:31-34,126-142,191-197,248-252` loading status, CSV error, selection count and off-page student recovery | States preserved, browser interaction untested |
+
+Full-file fetched-source grep equivalents: `tpo-students-spreadsheet.tsx` has **3 Button open/3 close**, **2 self-closing Checkbox**, **1 Disclosure pair**, **1 Select pair**, **0 native button/table/details**; `indeterminate` is applied only to the bulk note visible-page chooser. Old per-student action links and keyboard copy/edit controls remain. `GridWorkspace` / `TpoGrid` call sites use the same authorized data `rows` / `sortedRows` and existing per-storageKey `tpo-students-columns-v1`.
+
+Reproduce in checkout (not executed by this connector-only lane):
+```sh
+grep -nE 'indeterminate|checked=\{rows.length|<TpoGrid|<GridWorkspace|ssr:false|mobilePrimaryKeys|selectedScoped|<Disclosure' src/components/tpo/tpo-students-spreadsheet.tsx
+grep -nE '<(button|table|details)([[:space:]>])|<Button|</Button>|<Checkbox|<Select|</Select>' src/components/tpo/tpo-students-spreadsheet.tsx
+```
+
+Phone <=767px: 44px choice labels, one-column note list, fallback card grid. Tablet >=768px: two-column note list and Quartz grid; wide >=1280px: three-column note choices. Checked/indeterminate, keyboard focus, loading and error remain source-backed. Exact legacy per-cell colors/row heights and rendered hover/selected state are not certified. No CI, compiler, app or browser executed; E8 remains [ ] because AG Grid packages are undeclared and legacy TpoGrid source is unavailable.
+
+**Next exact file:** `src/components/tpo/tpo-applications-spreadsheet.tsx` for applicants' E8 role-safe selection, 48px column, footer/action link semantics and 768px card fallback.
+
+
+### 2026-10-20 chat-14 — applicant sheet timestamp sort and responsive row actions
+
+| Property/state | Old-LMS source / requirement | Applicant sheet current source | Source result |
+|---|---|---|---|
+| Numeric/date sortable only | `ui-clone-checklist.md:57` numeric/date sort only; formatted display values stay unchanged | `tpo-applications-spreadsheet.tsx:30-44` 5 numeric sort columns + Submitted IST date. Date sort uses Date.parse(submittedAt) through `sortValue`, not the displayed IST string | Correct source comparator with blank-last behavior from shared TpoGrid |
+| Role-safe review actions | TPO applicant sheet actions must follow existing access-controlled workflow | `tpo-applications-spreadsheet.tsx:64-70` original review drawer, previous/next scoped row IDs and encoded 'Open applicant' URL retained | No server data/permissions or action flow changed |
+| Mobile tap geometry | `components___antddesign.scss:1081-1100` 44px phone action floor | Applicant detail Link line 69: `min-h-11 md:min-h-9` (44/36), shared TpoGrid fallback uses md:hidden cards | Phone and breakpoint values match |
+| Grid desktop/phone | `old-lms-shell.css:23,73` phone <=767px and desktop >=768px | Caller lines 17-19 uses `next/dynamic` ssr:false; native TpoGrid wraps Quartz as hidden md:block and cards md:hidden | Exact source cutoff; no viewport screenshot |
+| Selection column | E8 48px pinned column applies to views with supported selection actions | This applicant detail view intentionally supplies no `selection` prop; its drawer and detail links are the authorized actions | No invented bulk selector/unauthorized mutation |
+| Loading and empty | Need loading status while client-only sheet resolves | Loader line 19 retains 'Loading applicant spreadsheet…', GridWorkspace and shared TpoGrid maintain no-rows state | Existing output preserved |
+
+Complete fetched-file source grep equivalent: `tpo-applications-spreadsheet.tsx` has **1 TpoGrid self-closing caller**, **1 GridWorkspace wrapper**, **1 ssr:false dynamic boundary**, **6 sortKind columns (5 number, 1 date)**, **1 explicit sortValue**, **0 raw button/input/select/textarea/table/details tags**. Column labels, filters and authorized row fields are unchanged except added sort metadata. Source inspection only; no TypeScript execution, CI or browser proof.
+
+Reproduce in checkout (not executed):
+```sh
+grep -nE 'ssr:false|sortKind|sortValue|<TpoGrid|<GridWorkspace|mobileActionsCollapsible|rowActions|md:min-h-9' src/components/tpo/tpo-applications-spreadsheet.tsx
+grep -nE '<(button|input|select|textarea|table|details)([[:space:]>])' src/components/tpo/tpo-applications-spreadsheet.tsx
+```
+
+E8 remains [ ] pending native AG Grid dependency resolution, legacy renderer source, all-grid coverage, computed state matrices and phone/tablet/desktop screenshots.
+
+**Next exact file:** `src/components/tpo/tpo-companies-spreadsheet.tsx` — reconcile Companies grid columns, selection, saved layout and compact mobile display with the same legacy E8 value table.
+
+
+### 2026-10-20 chat-14 — companies sheet status and 768px row-action details
+
+| Property/state | Legacy exact/reference | Updated source | Static result |
+|---|---|---|---|
+| Status pill dimensions | components___common.scss:995-1005 — minimum width 90px, radius 6px, padding 2px/15px, 12px bold | tpo-companies-spreadsheet.tsx:60-61 now uses shared StatusBadge for both warning 'CRM name only · not linked' and success 'Linked employer' (contents unchanged); shared StatusBadge uses the legacy geometry | Both states receive common status-pill skin |
+| Header and numeric sorting | E8 only numeric/date columns sort | tpo-companies-spreadsheet.tsx:27-32 has 5 numeric sort columns (Contacts with nullable sortValue) and company name without sortKind | Sorting contract preserved; blank-last comparator in native grid |
+| Safe website action | Authorized employer sites can open only safe URLs | tpo-companies-spreadsheet.tsx:62-67 retains safeTpoCompanyWebsiteUrl validation, target blank with rel noopener noreferrer | URL behavior unchanged |
+| Mobile action height | components___antddesign.scss:1081-1100 — >=44px clickable controls on <=767px | tpo-companies-spreadsheet.tsx:66,71 website and Create drive Links `min-h-11 md:min-h-9` (44/36px) | Exact mobile control floor |
+| Responsive grid/fallback | old-lms-shell.css:23,73 — 767px phone ceiling | tpo-companies-spreadsheet.tsx:16-19 dynamic ssr:false with shared TpoGrid cards below md, desktop Quartz from 768px | Exact breakpoint in source |
+| Column scope | TPO company directory owns a local saved visibility set and only currently authorized rows | tpo-companies-spreadsheet.tsx:37-57 GridWorkspace `columnScope=local`, selection whitelist of non-action visible columns, `storageKey` per directory | No new data fetch or extra columns |
+
+Whole-file GitHub-fetched JSX grep equivalent: `tpo-companies-spreadsheet.tsx` has **2 opening/2 closing StatusBadge**, **1 TpoGrid** and **1 GridWorkspace**, **5 numeric sortKind columns / 1 nullable sortValue**, **0 native button/input/select/textarea/table/details**. Role-safe external URL guards occur on both rendering and href. These are static source facts only.
+
+Reproduce in a checkout (not executed here):
+```sh
+grep -nE 'StatusBadge|sortKind|sortValue|ssr:false|<TpoGrid|<GridWorkspace|safeTpoCompanyWebsiteUrl|md:min-h-9' src/components/tpo/tpo-companies-spreadsheet.tsx
+grep -nE '<(button|input|select|textarea|table|details)([[:space:]>])' src/components/tpo/tpo-companies-spreadsheet.tsx
+```
+
+Responsive source: <=767px same card actions with 44px website/Create-drive links, >=768px native Quartz with compact 36px links; status pill geometry is constant. Tooltip/focus/hover, colored status token computed CSS and actual rendered page not verified. No app, CI, tests or TypeScript compilation. E4 and E8 still [ ] until all strict proofs pass.
+
+**Next exact file:** `src/components/tpo/tpo-company-memory-drive-grid.tsx` — validate E8 company/drive chronological sorting, action/status pills, and phone/desktop responsive continuity.
