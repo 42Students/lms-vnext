@@ -34,7 +34,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       description={"Persisted scheduled sessions and the current college policy for "+data.collegeName+"."}
       actions={<Link href="/college/attendance/settings" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold leading-5 text-[var(--lms-body-text)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Policy settings</Link>}/>
     <section className="border-t border-border pt-5">
-      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Policy evidence</h2>
+      <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[18px] leading-[1.4]">Policy evidence</h2>
       <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility threshold</dt><dd className="mt-2 font-semibold tabular-nums text-[var(--lms-heading)]">{data.policy.eligibilityThresholdPercent}%</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty correction window</dt><dd className="mt-2 text-[var(--lms-body-text)]">{data.policy.correctionWindowHours} hours after class end</dd></div>

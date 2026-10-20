@@ -120,7 +120,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
         </section>
       )}
       <section className="border-b border-border py-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Version history
         </h2>
         <div className="mt-3 space-y-2">
