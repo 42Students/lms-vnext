@@ -3,6 +3,8 @@ import {z} from "zod";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
+import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoMessagingBatch} from "@/modules/messaging/receipt-detail-service";
 export default async function BatchDetail({params}:{params:Promise<{batchId:string}>}){
@@ -18,12 +20,11 @@ export default async function BatchDetail({params}:{params:Promise<{batchId:stri
   <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text">Back to history</Link>
   <section className="border-b border-border py-5">
    <p className="text-sm text-body">{batch.finalizedAt?"Finalized":"Not finalized"} · {batch.actualReceipts} persisted receipts of {batch.total} intended</p>
-   <dl className="mt-4 grid grid-cols-2 gap-4 min-[768px]:grid-cols-4">
+   <section aria-label="Delivery receipts" className="mt-4 grid grid-cols-2 gap-3 min-[768px]:grid-cols-4">
     {([["Queued",batch.actualQueued],["Provider accepted",batch.actualSent],
       ["Failed",batch.actualFailed],["Suppressed",batch.actualSuppressed]] as const).map(([label,count])=>
-     <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="text-2xl font-bold tabular-nums">{count}</dd></div>)}
-   </dl>
+      <StatTile key={label} label={label} value={count} className={tpoTileStyles.tile} />)}
+   </section>
   </section>
   <p className="text-xs text-muted-foreground">For privacy, individual addresses, phone numbers, template variables, invitation links, and opaque recipient keys are not displayed.</p>
  </div>;
