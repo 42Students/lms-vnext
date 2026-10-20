@@ -47,11 +47,11 @@ export default async function MentorTaskReviewHistoryPage({
     </section> : <>
       <FilterBar title="Filters"><form action="/mentor/task-review-history" method="get"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task or project
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task or project
           <Input type="search" name="search" defaultValue={data.query.search} maxLength={120}
             className="min-h-11 min-[768px]:min-h-9" />
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Decision
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Decision
           <Select name="decision" defaultValue={data.query.decision}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All reviews</option>
@@ -59,7 +59,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CHANGES_REQUESTED">Changes requested</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Task priority
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Task priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All priorities</option><option value="LOW">Low</option>
@@ -67,7 +67,7 @@ export default async function MentorTaskReviewHistoryPage({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Review chronology
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 min-[768px]:min-h-9">
             <option value="NEWEST">Most recently reviewed</option>

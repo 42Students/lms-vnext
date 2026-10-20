@@ -55,33 +55,33 @@ export default async function MentorReviewHistoryPage({
       <FilterBar title="Filters"><form method="get" action="/mentor/review-history"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-[var(--lms-canvas-border)] pb-4">
         <Input type="hidden" name="decision" value={data.query.decision}/>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 min-[768px]:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
+            className="min-h-11 min-[768px]:min-h-9"/>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
-          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 min-[768px]:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned project
+          <Select name="projectId" defaultValue={data.query.projectId??""} className="min-h-11 min-[768px]:min-h-9">
             <option value="">All assigned projects</option>
             {data.projects.map(project=><option key={project.id} value={project.id}>{project.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project lifecycle
-          <Select name="projectState" defaultValue={data.query.projectState} className="min-h-11 min-[768px]:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Project lifecycle
+          <Select name="projectState" defaultValue={data.query.projectState} className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">Any project state</option><option value="PLANNED">Planned</option>
             <option value="ACTIVE">Active</option><option value="COMPLETED">Completed</option>
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery submission version
-          <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-full max-w-full border border-[var(--lms-canvas-border)] px-3 min-[768px]:min-h-9 md:w-36"/>
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Delivery submission version
+          <Input name="version" type="number" min={1} max={100000} defaultValue={data.query.version??""} placeholder="All versions" className="min-h-11 w-full max-w-full min-[768px]:min-h-9 md:w-36"/>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
-          <Select name="order" defaultValue={data.query.order} className="min-h-11 min-[768px]:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Review chronology
+          <Select name="order" defaultValue={data.query.order} className="min-h-11 min-[768px]:min-h-9">
             <option value="NEWEST">Latest decision first</option><option value="OLDEST">Earliest decision first</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded decision within
-          <Select name="window" defaultValue={data.query.window} className="min-h-11 min-[768px]:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded decision within
+          <Select name="window" defaultValue={data.query.window} className="min-h-11 min-[768px]:min-h-9">
             <option value="ALL">All registered dates</option><option value="LAST_7_DAYS">Last 7 days</option><option value="LAST_30_DAYS">Last 30 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option>
           </Select>
         </label>

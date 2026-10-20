@@ -45,10 +45,10 @@ export default async function RecruiterDriveProposalHistory({
     <Input type="hidden" name="collegeId" value={data.collegeId??""}/>
     <label className="min-w-0 flex-[1_1_12rem] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role title
      <Input type="search" name="q" maxLength={100} defaultValue={input.data.q}
-       className="mt-1 w-full" placeholder="Role title" />
+       className="w-full mt-[6px] block" placeholder="Role title" />
     </label>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
-      <Select name="sort" defaultValue={input.data.sort} className="mt-1">
+      <Select name="sort" defaultValue={input.data.sort} className="mt-[6px] block">
         <option value="LATEST">Most recent</option>
         <option value="OLDEST">Oldest first</option>
       </Select>
