@@ -80,3 +80,9 @@ Cross-checked polish-lane-6.md evidence against the route, job/date service, Sup
 
 ## 27. src/app/(authenticated)/admin/placements/joining/[offerId]/page.tsx
 Read polish-lane-6.md entry, the joining detail page and selected-college joining service, integrity note, shared SuperAdminPlacementDetailView and its header/back/badge/related link, route loading/error/not-found and parent admin layout. No broken TSX/duplicate attribute/prop/import, dropped route/aria text or scope/copy regression detected. Joining status/integrity/sparse detail/not-found remain read-only, with a 375/768-friendly fact grid and reachable recovery. No extra adjustment required. Source-only, no CI. Files: queue/proof.
+
+## 28. src/app/(authenticated)/admin/placements/joining/page.tsx
+Compared other-lane polish-lane-6.md entry against route, joining scoped read service/model and complete shared AdminScopedReadPage including LiveSearch/Select/Pagination, CsvControl and status/empty/error/read-only states; checked local loading/error and admin layout. Confirmed status names, query defaults, selected-college boundaries, persisted-only integrity messaging, detail destinations, GET field names and 375/768 list layout. No changed copy, broken imports/tags or regression requiring an edit. Source only; no CI. Files: queue/proof.
+
+## 29. src/app/(authenticated)/admin/placements/new/page.tsx
+Read prior polish-lane-6.md proof, Super Admin new-drive route, create workspace (companies/season/academic options/clone disclosure), creation-form props, field groups, local backup/uncertain-submit safeguards, validation/create-round flows and route loading/error/admin layout. Checked no-scope, no-season, workspace data failure, edit/company mode, missing company, draft restore and responsive 375/768 action layout. No confirmed JSX/import/field-name or permission regression or extra alignment issue needing a code edit; existing create form retained. Source-only; no CI. Files: queue/proof.
