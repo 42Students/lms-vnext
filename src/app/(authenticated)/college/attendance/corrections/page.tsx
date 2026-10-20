@@ -41,7 +41,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Policy source</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{data.policySource==="SAVED"?"Saved college policy":"System defaults (no saved college row)"}</dd></div>
       </dl>
       <p className="mt-3 text-xs text-muted-foreground">
-        This window describes Faculty marking eligibility. College Admin correction permissions have separate rules.
+        This window describes faculty marking eligibility. College Admin correction permissions have separate rules.
         No separate correction-request table is registered; request history and request totals are unavailable.
       </p>
     </section>
@@ -56,7 +56,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
       </label>
       <Button variant="primary" type="submit" className="min-h-11 md:min-h-9">View sessions</Button>
     </form>
-    {!data.queried?<Alert tone="info">Select an IST date range to inspect recorded sessions and their Faculty marking windows.</Alert>:<section className="space-y-3">
+    {!data.queried?<Alert tone="info">Select an IST date range to inspect recorded sessions and their faculty marking windows.</Alert>:<section className="space-y-3">
       {data.truncated?<Alert tone="warning">More than 250 sessions match. Results are truncated; narrow the date range.</Alert>:null}
       {data.items.length===0?<EmptyState title="No scheduled sessions" description="No persisted scheduled sessions overlap this date range. This does not mean no attendance corrections occurred."/>:<DataTable rows={data.items} getRowKey={item=>item.id}
         caption="Recorded attendance correction windows"

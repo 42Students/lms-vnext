@@ -35,7 +35,7 @@ export default async function AnnouncementsPage({
       <div className="min-w-0 overflow-x-clip space-y-6">
         <PageHeader
           title="Announcements"
-          description="Scheduling and audience management are staged, but DB10 announcement migrations are not verified yet."
+          description="College-wide announcements are temporarily unavailable. Personal notifications are still available below."
         />
       <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -57,8 +57,8 @@ export default async function AnnouncementsPage({
           </li>)}</ul>}
         <Link href="/notifications" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{ownInbox.capped ? "View the full personal inbox (only 50 latest shown)" : "Open personal notifications"}</Link>
       </section>
-        <Alert tone="warning" title="Announcements database is not enabled.">
-          The college-wide announcements table is not registered; no broadcast announcement reads or writes are attempted. Personal notifications above are stored separately in the registered inbox.
+        <Alert tone="warning" title="College-wide announcements are unavailable">
+          You can still view your personal college notifications above. Creating and managing college-wide announcements is currently unavailable.
         </Alert>
       </div>
     );
