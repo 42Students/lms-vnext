@@ -30,11 +30,9 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
    className="min-h-11 md:min-h-9">Profile</Button>
-  <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name}>
-    <div className="flex justify-end">
-     <Button variant="secondary" type="button" onClick={()=>setOpen(false)}
-      className="min-h-11 md:min-h-9">Close</Button>
-    </div>
+  <Dialog open={open} onOpenChange={setOpen} title={"Profile for "+name} footer={<Button variant="secondary" type="button" onClick={()=>setOpen(false)}
+      className="min-h-11 md:min-h-9">Close</Button>}>
+    
     {loading?<Skeleton variant="row" count={3} label="Loading profile"/>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
     {data?<div className="space-y-4">

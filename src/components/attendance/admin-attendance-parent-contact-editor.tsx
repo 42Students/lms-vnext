@@ -92,12 +92,12 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
     <input type="checkbox" checked={verified} onChange={e=>setVerified(e.target.checked)}/>
     Parent phone verified independently
    </label>
-   <Button variant="primary" type="button" disabled={!valid||pending} onClick={()=>void save()}
-    className="min-h-10 rounded bg-primary px-3 text-on-primary">Save verified contact</Button>
+   <Button variant="primary" type="button" loading={pending} disabled={!valid||pending} onClick={()=>void save()}
+    className="min-h-11 px-3 md:min-h-9">Save verified contact</Button>
    <Button variant="secondary" type="button" disabled={pending||retrying} onClick={()=>void retry()}
-    className="min-h-10 rounded border border-border px-3">Retry queued guardian SMS (up to 25)</Button>
+    className="min-h-11 px-3 md:min-h-9">Retry queued guardian SMS (up to 25)</Button>
    <Button variant="secondary" type="button" disabled={pending||retrying||!membershipId} onClick={()=>void revoke()}
-    className="min-h-10 rounded border border-border px-3">Disable guardian SMS for selected learner</Button>
+    className="min-h-11 px-3 md:min-h-9">Disable guardian SMS for selected learner</Button>
    {success?<p role="status" className="sm:col-span-2">{success}</p>:null}
    {error?<p role="alert" className="sm:col-span-2">{error}</p>:null}
   </div>:null}

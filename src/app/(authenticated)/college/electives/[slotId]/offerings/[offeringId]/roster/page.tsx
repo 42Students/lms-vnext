@@ -176,7 +176,7 @@ export default async function ElectiveRoster({
           { key: "source", header: "Source", mobilePriority: "secondary",
             cell: member => member.source },
           { key: "since", header: "Since", mobilePriority: "secondary",
-            cell: member => member.joinedAt?.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }) ?? "—" },
+            cell: member => member.joinedAt ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(member.joinedAt) : "—" },
           { key: "actions", header: "Actions", mobilePriority: "action",
             cell: member => !archived && ["ACTIVE", "WAITLISTED"].includes(member.state)
               ? <div className="grid gap-2">

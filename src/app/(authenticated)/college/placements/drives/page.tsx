@@ -1,3 +1,4 @@
+import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -56,7 +57,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
-        <Input name="q" defaultValue={query.q} maxLength={100}
+        <Input type="search" name="q" defaultValue={query.q} maxLength={100}
           />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
@@ -78,11 +79,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
         </Select>
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
-        <Input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
+        <DateInput mode="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
           />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline on or before
-        <Input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
+        <DateInput mode="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
           />
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">At least N applicants
@@ -96,7 +97,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
       </label>
-      <Button type="submit" className="self-end">Filter</Button>
+      <Button type="submit" className="w-full self-end min-[768px]:w-auto">Filter</Button>
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
@@ -107,8 +108,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.total===0?"No drives match these filters in this college.":"No rows on this page. Choose an earlier page."}
         </p>} />
     </section>
-    <nav aria-label="Drive pages" className="flex justify-between gap-3 text-sm">
-      <span>Page {data.query.page} of {data.totalPages}</span><div className="flex gap-3">
+    <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
+      <span>Page {data.query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
         {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>

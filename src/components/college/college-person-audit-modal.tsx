@@ -23,11 +23,9 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
  return <>
   <Button variant="secondary" type="button" onClick={()=>void show()}
    className="min-h-11 md:min-h-9">Audit trail</Button>
-  <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name}>
-    <div className="flex justify-end">
-     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
-      onClick={()=>setOpen(false)}>Close</Button>
-    </div>
+  <Dialog open={open} onOpenChange={setOpen} title={"Audit trail for "+name} footer={<Button variant="secondary" type="button" className="min-h-11 md:min-h-9"
+      onClick={()=>setOpen(false)}>Close</Button>}>
+    
     {busy?<Skeleton variant="row" count={3} label="Loading audit trail"/>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
     {!events.length&&!busy&&!error?<EmptyState title="No recorded activity" description="No recorded activity for this person."/>:null}

@@ -335,7 +335,7 @@ export function LoginForm({
       {collegeName && (errorCode === "NO_ACCOUNT_FOR_DOMAIN" || errorCode === "WRONG_TENANT") ? (
         <p className="mt-2 text-sm text-body">
           This account may belong to another college.{" "}
-          <a href="https://42lms.com/login" className="font-semibold text-primary-text underline">
+          <a href="https://42lms.com/login" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Use the main sign-in page (42lms.com)
           </a>
         </p>
@@ -563,9 +563,9 @@ function LoginConsent() {
     <p className="text-xs leading-5 text-muted-foreground">
       By continuing, you agree to the{" "}
       <a href="/assets/static/terms-and-conditions-view.html"
-        className="text-primary-text underline" target="_blank" rel="noopener noreferrer">Terms of Use</a>
+        className="text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" target="_blank" rel="noopener noreferrer">Terms of Use</a>
       {" "}and{" "}
-      <a href="/privacy-policy" className="text-primary-text underline">Privacy Policy</a>.
+      <a href="/privacy-policy" className="text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Privacy Policy</a>.
     </p>
   );
 }

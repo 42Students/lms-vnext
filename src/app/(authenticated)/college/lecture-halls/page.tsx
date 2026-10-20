@@ -103,12 +103,12 @@ export default async function CollegeLectureHallsPage({
         Export CSV
       </Link>
       <section aria-label="Lecture hall filters" className="border-t border-border pt-4">
-        <form action="/college/lecture-halls" method="get" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <form action="/college/lecture-halls" method="get" className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-5">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room name
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
               placeholder="Search halls"
-              className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
+              className="w-full" />
           </label>
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
@@ -158,9 +158,9 @@ export default async function CollegeLectureHallsPage({
               defaultValue={query.maximumCapacity ?? ""} placeholder="Any capacity"
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <div className="flex min-w-0 flex-wrap items-end gap-2">
+          <div className="flex min-w-0 flex-wrap items-end gap-2 max-[767px]:flex-col max-[767px]:items-stretch">
             <Button variant="primary" type="submit"
-              className="min-h-11 px-4 md:min-h-9">
+              className="min-h-11 w-full px-4 md:min-h-9 md:w-auto">
               Filter
             </Button>
             <Link href="/college/lecture-halls"

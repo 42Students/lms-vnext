@@ -658,6 +658,7 @@ export function FacultyAttendanceWorkspace({
                         <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(membershipId)}
+                          variant="link"
                           aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
                           className="text-left text-primary-text hover:underline"
                         >
@@ -719,6 +720,7 @@ export function FacultyAttendanceWorkspace({
                         <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(learner.membershipId)}
+                          variant="link"
                           aria-label={`View attendance details for ${learnerName(learner)}`}
                           className="m-0 text-left text-primary-text hover:underline focus-visible:rounded"
                         >
@@ -1079,7 +1081,7 @@ export function FacultyAttendanceWorkspace({
         title="Reload saved attendance?"
         description="This reloads marks recorded on the server and discards any unsaved selections in this page."
         confirmLabel="Reload roster"
-        confirmVariant="primary"
+        confirmVariant="danger"
         onConfirm={() => window.location.reload()}
       />
       {selectedLearner ? (

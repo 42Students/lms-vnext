@@ -80,13 +80,10 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
     </Button>
     {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
-        <div className="flex justify-end">
-          <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-            className="min-h-11 md:min-h-9">Close</Button>
-        </div>
-        {loading&&<Skeleton variant="form" count={4} label="Loading profile" className="mt-4"/>}
+        
+        {loading&&<Skeleton variant="form" count={4} label="Loading profile"/>}
         {error&&<Alert tone="error" className="my-2">{error}</Alert>}
-        {person&&<form onSubmit={submit} className="mt-4 grid min-w-0 gap-3 md:grid-cols-2">
+        {person&&<form onSubmit={submit} className="grid min-w-0 gap-3 md:grid-cols-2">
           <p className="md:col-span-2 text-xs text-muted-foreground">
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
           </p>
