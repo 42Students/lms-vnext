@@ -118,8 +118,8 @@ export default async function TpoCompanyDetailPage({
       <TpoCompanyTeamConversation companyId={route.companyId} companyName={company.name} actorMembershipId={context.membership.id} />
 
       <section aria-label="College company relationship" className="border-b border-border py-5">
-        <h2 className="text-base font-semibold text-foreground">College relationship and trust</h2>
-        <p className="mt-2 text-sm text-body">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">College relationship and trust</h2>
+        <p className="mt-2 text-sm text-body leading-[22px]">
           Trust is this college&apos;s recorded relationship setting, not a platform-wide employer verification.
         </p>
         <div className="mt-3 flex flex-wrap gap-3">
@@ -197,7 +197,7 @@ export default async function TpoCompanyDetailPage({
       </section>
 
       <section aria-label="College employer hiring pulse" className="border-b border-border py-5">
-        <h2 className="text-base font-semibold text-foreground">Employer hiring pulse</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Employer hiring pulse</h2>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
           Current college-linked drives and stored offer versions. Season counts reflect drives,
           not confirmed hires. A later activity timestamp is unavailable when no event exists.
@@ -214,14 +214,14 @@ export default async function TpoCompanyDetailPage({
               : "Not recorded"],
           ].map(([name, value]) => (
             <div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 last:border-r-0">
-              <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</dt>
-              <dd className={name==="Latest recorded event"?"mt-2 break-words text-[13px] font-semibold leading-5 text-[var(--lms-body-text)]":"mt-2 break-words text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]"}>{value}</dd>
+              <dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</dt>
+              <dd className={name==="Latest recorded event"?"mt-2 break-words text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-body-text)]":"mt-2 break-words text-[var(--lms-font-2xl)] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]"}>{value}</dd>
             </div>
           ))}
         </dl>
         <div className="mt-5 border-t border-border pt-4">
-          <h3 className="text-sm font-semibold text-foreground">Students placed, by year</h3>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Students placed, by year</h3>
+          <p className="mt-1 text-xs text-muted-foreground leading-5">
             Distinct confirmed JOINED learners by recorded joining year (IST), not offers issued.
             {hiringPulse.yearsHiring>=2
               ?" Repeat hiring relationship across "+hiringPulse.yearsHiring+" recorded years."
@@ -247,21 +247,21 @@ export default async function TpoCompanyDetailPage({
       <div className="grid gap-6 xl:grid-cols-2">
         <section className="min-w-0 border-b border-border py-3">
           <div className="border-b border-border px-5 py-4">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Recruiter contacts
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               Contacts explicitly linked to this college-company
               relationship.
             </p>
           </div>
 
           {!contactsAvailable ? (
-            <p className="p-5 text-sm text-body">
+            <p className="p-5 text-sm text-body leading-[22px]">
               Contact data is unavailable.
             </p>
           ) : contacts.length === 0 ? (
-            <p className="p-5 text-sm text-body">
+            <p className="p-5 text-sm text-body leading-[22px]">
               No recruiter contacts are linked to this
               company relationship.
             </p>
@@ -278,17 +278,17 @@ export default async function TpoCompanyDetailPage({
                         {contact.name}
                       </Link>
                       {contact.designation ? (
-                        <p className="mt-1 text-sm text-body">
+                        <p className="mt-1 text-sm text-body leading-[22px]">
                           {contact.designation}
                         </p>
                       ) : null}
-                      <p className="mt-1 break-all text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground leading-5">
                         {[contact.email, contact.phone]
                           .filter(Boolean)
                           .join(" · ") || "No contact details"}
                       </p>
                       {contact.source ? (
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="mt-1 text-xs text-muted-foreground leading-5">
                           Source: {contact.source}
                         </p>
                       ) : null}
@@ -311,17 +311,17 @@ export default async function TpoCompanyDetailPage({
 
         <section className="min-w-0 border-b border-border py-3">
           <div className="border-b border-border px-5 py-4">
-            <h2 className="text-lg font-semibold text-foreground">
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Placement drives
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               All persisted jobs associated with this
               company relationship, including archived history.
             </p>
           </div>
 
           {drives.length === 0 ? (
-            <p className="p-5 text-sm text-body">
+            <p className="p-5 text-sm text-body leading-[22px]">
               No placement drives are recorded for this company.
             </p>
           ) : (
@@ -335,7 +335,7 @@ export default async function TpoCompanyDetailPage({
                    cell:drive=><div className="min-w-0">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}
                      className="lms-inline-link inline-flex min-h-11 items-center break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{drive.title}</Link>
-                    <p className="mt-1 text-xs text-muted-foreground">{drive.employmentType.replaceAll("_"," ")}</p>
+                    <p className="mt-1 text-xs text-muted-foreground leading-5">{drive.employmentType.replaceAll("_"," ")}</p>
                    </div>},
                   {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
                    cell:drive=><StatusBadge tone={drive.status==="PUBLISHED"?"success":"neutral"}>
@@ -352,10 +352,10 @@ export default async function TpoCompanyDetailPage({
 
       <section className="min-w-0 border-y border-border">
         <div className="border-b border-border px-5 py-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Hiring history
           </h2>
-          <p className="mt-1 text-sm text-body">
+          <p className="mt-1 text-sm text-body leading-[22px]">
             Recorded offers and joining outcomes across this
             company&apos;s placement drives. An accepted offer
             does not automatically mean the learner joined.
@@ -363,7 +363,7 @@ export default async function TpoCompanyDetailPage({
         </div>
 
         {hiringHistory.length === 0 ? (
-          <p className="p-5 text-sm text-body">
+          <p className="p-5 text-sm text-body leading-[22px]">
             No placement offers are recorded for this company.
           </p>
         ) : (
@@ -402,17 +402,17 @@ export default async function TpoCompanyDetailPage({
 
       <section className="min-w-0 border-y border-border">
         <div className="border-b border-border px-5 py-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
             Company timeline
           </h2>
-          <p className="mt-1 text-sm text-body">
+          <p className="mt-1 text-sm text-body leading-[22px]">
             Most recent 100 recorded contact, drive,
             offer and joining events.
           </p>
         </div>
 
         {timeline.length === 0 ? (
-          <p className="p-5 text-sm text-body">
+          <p className="p-5 text-sm text-body leading-[22px]">
             No persisted timeline events are available.
           </p>
         ) : (
@@ -421,10 +421,10 @@ export default async function TpoCompanyDetailPage({
               <li key={event.id} className="px-5 py-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-foreground">
+                    <p className="text-sm font-semibold text-foreground leading-[22px]">
                       {event.type.replaceAll("_", " ")}
                     </p>
-                    <p className="mt-1 whitespace-pre-wrap text-sm text-body">
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-body leading-[22px]">
                       {event.description}
                     </p>
                     {event.href ? (

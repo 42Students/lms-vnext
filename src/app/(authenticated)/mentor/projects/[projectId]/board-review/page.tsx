@@ -46,31 +46,31 @@ export default async function MentorBoardReviewPage({
          {(["TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(status=>
            <StatTile key={status} label={status.replaceAll("_"," ")} value={data.totals[status]} className="min-h-[104px]" />)}
        </section>
-      <p className="text-sm text-body">{data.count} registered tasks ·
+      <p className="text-sm text-body leading-[22px]">{data.count} registered tasks ·
         {data.completedPercent===null?" Completion unknown (no tasks)":
           " "+data.completedPercent+"% recorded DONE tasks"}
       </p>
       <FilterBar title="Filters"><form method="get" action={base+"/board-review"} role="search" aria-label="Task board review filters"
         className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search tasks or sprints
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 w-full md:min-h-9"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={data.query.status}
             className="min-h-11 w-full md:min-h-9">
             {(["ALL","TODO","IN_PROGRESS","BLOCKED","IN_REVIEW","DONE"] as const).map(state=>
               <option key={state} value={state}>{state.replaceAll("_"," ")}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Priority
           <Select name="priority" defaultValue={data.query.priority??"ALL"}
             className="min-h-11 w-full md:min-h-9">
             {(["ALL","LOW","MEDIUM","HIGH","CRITICAL"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint
           <Select name="sprintId" defaultValue={data.query.sprintId??"ALL"}
             className="min-h-11 w-full md:min-h-9">
             <option value="ALL">All sprints</option>
@@ -95,7 +95,7 @@ export default async function MentorBoardReviewPage({
       </div>
       <section aria-label="Sprint status summaries" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-foreground">Sprint summaries</h2>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Sprint summaries</h2>
           <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
@@ -103,35 +103,35 @@ export default async function MentorBoardReviewPage({
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground leading-5">
           These counts use the current Board filters. Completion is unknown when no tasks match.
           Every Sprint also shows its total registered task count.
         </p>
         {data.sprintSummaries.length===0?
-          <p className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body">
+          <p className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body leading-[22px]">
             No registered Sprint matches the selected Sprint filter.
           </p>:
           <div className="grid gap-3 md:grid-cols-2">
             {data.sprintSummaries.slice(0,6).map(sprint=>
               <article key={sprint.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-                <h3 className="break-words font-semibold">{sprint.title}</h3>
-                <p className="mt-2 text-sm text-body">{sprint.matchingTasks} matching of
+                <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{sprint.title}</h3>
+                <p className="mt-2 text-sm text-body leading-[22px]">{sprint.matchingTasks} matching of
                   {" "}{sprint.registeredTasks} registered tasks</p>
-                <p className="mt-1 text-sm text-body">
+                <p className="mt-1 text-sm text-body leading-[22px]">
                   Done {sprint.done} · Blocked {sprint.blocked} · Awaiting review {sprint.awaitingReview}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs text-muted-foreground leading-5">
                   Matching completion: {sprint.matchingDonePercent===null?"Unknown":
                     sprint.matchingDonePercent+"%"}
                 </p>
               </article>)}
           </div>}
         {data.sprintSummaries.length>6?
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground leading-5">
             Showing the first six of {data.sprintSummaries.length} Sprints.
             Download the capped CSV for more recorded summaries.
           </p>:null}
-        {data.sprintSummaryExportOmitted>0?<p role="status" className="text-xs text-body">
+        {data.sprintSummaryExportOmitted>0?<p role="status" className="text-xs text-body leading-5">
           CSV omits {data.sprintSummaryExportOmitted} Sprints beyond the 100-row cap.
         </p>:null}
       </section>
@@ -142,13 +142,13 @@ export default async function MentorBoardReviewPage({
           "The stored tasks do not match your filters. Clear filters to view the whole board."}/>:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
           className="py-[var(--lms-space-3)]">
-          <h2 className="break-words font-semibold">{row.title}</h2>
-          <p className="mt-2 text-sm text-body">{row.status.replaceAll("_"," ")} ·
+          <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.title}</h2>
+          <p className="mt-2 text-sm text-body leading-[22px]">{row.status.replaceAll("_"," ")} ·
             {row.priority} priority · {row.sprintTitle}</p>
         </li>)}</ol>}
       <Pagination label="Board status pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorBoardReviewHref({...data.query,page})}/>
     </>}
-    <p className="text-xs text-muted-foreground">Only registered task status, priority
+    <p className="text-xs text-muted-foreground leading-5">Only registered task status, priority
       and sprint linkage are shown. No task assignee, effort or workload values
       are persisted in this DB version. Use the full workspace for authorized actions.</p>
   </div>;

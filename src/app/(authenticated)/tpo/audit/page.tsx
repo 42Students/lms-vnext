@@ -215,7 +215,7 @@ export default async function TpoAuditPage({
         ))}
       </section>
 
-      <p role="note" className="text-xs text-muted-foreground">Audit totals count source records, not necessarily unique actions. Related records are retained so no recorded decision is silently discarded.</p>
+      <p role="note" className="text-xs text-muted-foreground leading-5">Audit totals count source records, not necessarily unique actions. Related records are retained so no recorded decision is silently discarded.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
       <nav aria-label="Quick looks" className="flex flex-wrap gap-2">
@@ -227,17 +227,17 @@ export default async function TpoAuditPage({
        </Link>)}
       </nav>
       <Tabs ariaLabel="Filter audit by category" renderPanel={false} value={query.kind} items={[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))].map(item=>({value:item.kind,label:item.label,count:item.count??undefined,href:tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}))}/>
-      <section className="min-w-0 border-b border-border pb-5">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+      <section aria-labelledby="section-audit-filters" className="min-w-0 border-b border-border pb-5">
+        <h2 id="section-audit-filters" className="m-0 text-base font-semibold text-foreground">
           Audit filters
         </h2>
 
-        <form
+        <form role="search" aria-label="tpo audit filters"
           method="get"
           action="/tpo/audit"
           className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5"
         >
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             About
             <Select
               name="kind"
@@ -258,7 +258,7 @@ export default async function TpoAuditPage({
             </Select>
           </label>
 
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
             <Input
               type="date"
@@ -268,7 +268,7 @@ export default async function TpoAuditPage({
             />
           </label>
 
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
             <Input
               type="date"
@@ -278,7 +278,7 @@ export default async function TpoAuditPage({
             />
           </label>
 
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
             <Input
               type="search"
@@ -290,7 +290,7 @@ export default async function TpoAuditPage({
             />
           </label>
 
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Who
             <Input type="search" name="who" maxLength={100} defaultValue={query.who}
               placeholder="Actor name contains…" className="min-h-11"/>
           </label>
@@ -325,10 +325,10 @@ export default async function TpoAuditPage({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Event history
             </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
               {summary.total === 0
                 ? "Nothing logged yet"
                 : firstItem > summary.total
@@ -336,7 +336,7 @@ export default async function TpoAuditPage({
                   : `Showing ${firstItem}–${lastItem} of ${summary.total} records`}
             </p>
           </div>
-          <p className="m-0 text-xs text-muted-foreground">
+          <p className="m-0 text-xs text-muted-foreground leading-5">
             Most recent first · IST
           </p>
         </div>
@@ -362,7 +362,7 @@ export default async function TpoAuditPage({
           aria-label="Audit pagination"
           className="flex flex-wrap items-center justify-between gap-3"
         >
-          <p className="m-0 text-sm text-muted-foreground">
+          <p className="m-0 text-sm text-muted-foreground leading-[22px]">
             Page {page} of {totalPages}
           </p>
 

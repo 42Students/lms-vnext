@@ -88,11 +88,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <Link href="/tpo/placements/overview" className="text-sm font-semibold text-primary-text hover:underline">Operations overview</Link>
       <nav aria-label="Drive creation paths" className="flex flex-wrap items-center gap-3">
         <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Recorded outside · history</Link>
-      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9">Create drive</Link>
+      <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-[3px] focus-visible:outline-[rgba(38,186,199,0.35)] md:min-h-9">Create drive</Link>
       <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Recorded outside (history)</Link>
       </nav>
     </div>
-    <form action="/tpo/placements/lifecycle" method="get"
+    <form role="search" aria-label="placements lifecycle filters" action="/tpo/placements/lifecycle" method="get"
       className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
         <Select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
@@ -267,17 +267,17 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
                 className="text-primary-text underline">Open draft</Link>:null}
           </article>)}
-        <nav className="flex justify-between">
-          {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous</Link>:<span/>}
-          {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next</Link>:null}
+        <nav aria-label="Drive request pagination" className="flex justify-between">
+          {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Previous</Link>:<span/>}
+          {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next</Link>:null}
         </nav>
       </section>
     ) : <>
-      <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 md:grid-cols-4">
+      <section aria-label="Drive lifecycle counts" className="grid min-w-0 grid-cols-2 gap-0 border-y border-[var(--lms-canvas-border)] min-[768px]:grid-cols-4">
         {metrics.map(([name,n]) =>
-          <div key={name} className="border-r border-border px-3 py-2 last:border-r-0">
-            <p className="text-xs text-body">{name}</p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">{n}</p>
+          <div key={name} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0">
+            <p className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{name}</p>
+            <p className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{n}</p>
           </div>)}
       </section>
       <p className="text-sm text-body">Requests are tracked separately from drafts and published drives.</p>

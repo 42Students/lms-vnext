@@ -76,37 +76,37 @@ export default async function TpoActorAuditPage({
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Export matching CSV (first 2,000)
       </a>} />
-    <p className="text-sm leading-6 text-body">
+    <p className="text-sm text-body leading-[22px]">
       Only the canonical PLACEMENTS activity stream has consistent actor/entity attribution.
       Domain-history and share events remain on the original Audit log. An empty result
       does not prove no action occurred in a domain without an activity writer.
     </p>
-    <form action="/tpo/audit/actors" method="get"
+    <form role="search" aria-label="audit actors filters" action="/tpo/audit/actors" method="get"
       className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-3">
       {([
         ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],
         ["entityType", "Entity type", "placement_offer"],
         ["entityId", "Entity ID", "Stored subject ID"],
       ] as const).map(([name, label, placeholder]) => <label key={name}
-        className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {label}
         <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
           className="min-h-11 md:min-h-9 w-full"/>
       </label>)}
       {(["from", "to"] as const).map((name) => <label key={name}
-        className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {name === "from" ? "From (IST)" : "Through (IST)"}
         <Input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-11 md:min-h-9 w-full"/>
       </label>)}
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
        Sort date
        <Select name="sort" defaultValue={parsed.data.sort}
         className="min-h-11 md:min-h-9 w-full">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
        </Select>
       </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Page size
         <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
           className="min-h-11 md:min-h-9 w-full">
@@ -121,14 +121,14 @@ export default async function TpoActorAuditPage({
       </div>
     </form>
     <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
         {data.total} matching canonical record(s)
       </h2>
       <DataTable
         caption="Matching canonical placement audit records"
         rows={data.rows}
         getRowKey={(row)=>row.id}
-        empty={<p role="status" className="text-sm text-body">
+        empty={<p role="status" className="text-sm text-body leading-[22px]">
           {data.total===0
             ?"No canonical placement events match these exact filters."
             :"This page is outside the available records. Choose an earlier page."}
@@ -153,7 +153,7 @@ export default async function TpoActorAuditPage({
       />
       <Pagination label="Actor audit pagination" page={data.page} pageCount={data.totalPages} hrefForPage={page=>urlForPage(page)}/>
     </section>
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       TPO-only tenant scope. Export is capped at 2,000 rows and uses neutralized CSV
       formula cells. No private metadata, IP addresses or free-text notes are exported.
     </p>

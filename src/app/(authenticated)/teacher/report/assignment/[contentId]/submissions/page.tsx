@@ -54,7 +54,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       {query.filter!=="ALL"?<Input type="hidden" name="filter" value={query.filter}/>:null}
       {query.order!=="NEWEST"?<Input type="hidden" name="order" value={query.order}/>:null}
       {query.publication!=="ALL"?<Input type="hidden" name="publication" value={query.publication}/>:null}
-      <label className="grid min-w-0 flex-1 basis-56 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 w-full flex-1 basis-full gap-[6px] md:w-auto md:basis-56 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner submissions
         <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
@@ -77,7 +77,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       items={[{value:"NEWEST",label:"Newest first",href:facultySubmissionListHref({...query,order:"NEWEST",page:1})},
        {value:"OLDEST",label:"Oldest first",href:facultySubmissionListHref({...query,order:"OLDEST",page:1})}]}/>
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
@@ -94,19 +94,19 @@ export default async function FacultyAssignmentSubmissionsPage({
           const late=report.assignment.dueAt!==null&&
             row.submittedAt.getTime()>report.assignment.dueAt.getTime();
           return <li key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 last:border-b-0">
-            <h2 className="font-semibold text-foreground">
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               {row.learnerDisplayName||row.learnerEmail||"Learner"}
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               {row.gradingStatus==="GRADED"?"Graded":"Pending"} · {late?"Late":"On time / no due date"}
             </p>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               Recorded score: {row.gradingStatus==="GRADED"&&row.pointsAwarded!==null
                 ? row.pointsAwarded+"/"+report.assignment.maxPoints:"Grade pending"}
               {" · "}{row.gradePublished?"Published":"Private"}
             </p>
             {row.submissionType==="FILE"?<FacultySubmissionFileReview submissionId={row.id}/>:null}
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground leading-5">
               Submitted {new Intl.DateTimeFormat("en-IN",{
                 dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
               }).format(row.submittedAt)} IST

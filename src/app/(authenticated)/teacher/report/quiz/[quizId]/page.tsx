@@ -75,7 +75,7 @@ export default async function FacultyQuizReportPage({
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Download question accuracy CSV
         </Link>
-        <p className="text-xs text-muted-foreground">Question export includes aggregate accuracy only, capped at 500 questions.</p>
+        <p className="text-xs text-muted-foreground leading-5">Question export includes aggregate accuracy only, capped at 500 questions.</p>
       </div>
       <FacultyReportCsvDownload
         notice="CSV contains at most 500 learner result rows; larger exports include an explicit omitted-row notice."
@@ -136,11 +136,11 @@ export default async function FacultyQuizReportPage({
         </span>
       </div>
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <section aria-labelledby="section-score-distribution" className="border-b border-border py-4">
+        <h2 id="section-score-distribution" className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
-        {metrics.submittedLearners===0?<p role="status" className="mt-3 text-sm text-muted-foreground">
+        {metrics.submittedLearners===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
           No quiz attempts yet. Scores will appear after students submit.
         </p>:null}
         <div
@@ -175,19 +175,19 @@ export default async function FacultyQuizReportPage({
         </div>
       </section>
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <section aria-labelledby="section-question-accuracy" className="border-b border-border py-4">
+        <h2 id="section-question-accuracy" className="text-lg font-semibold text-foreground">
           Question accuracy
         </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
           Worst-answered first. Accuracy uses each learner&apos;s latest attempt only.
         </p>
         {questions.length === 0 ? (
-          <p className="mt-4 text-sm text-body">
+          <p className="mt-4 text-sm text-body leading-[22px]">
             This quiz has no questions yet.
           </p>
         ) : (
-          <ol className="mt-4 space-y-3">
+          <ol aria-label="quiz entries" className="mt-4 space-y-3">
             {questions.map((question, index) => (
               <li
                 key={question.id}
@@ -195,10 +195,10 @@ export default async function FacultyQuizReportPage({
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="m-0 text-xs font-semibold uppercase text-muted-foreground">
+                    <p className="m-0 text-xs font-semibold uppercase text-muted-foreground leading-5">
                       Question {index + 1}
                     </p>
-                    <p className="mt-1 text-sm font-semibold text-foreground">
+                    <p className="mt-1 text-sm font-semibold text-foreground leading-[22px]">
                       {question.prompt}
                     </p>
                   </div>
@@ -210,7 +210,7 @@ export default async function FacultyQuizReportPage({
                 </div>
                 <MetricBar className={styles.accuracyTrack+" mt-3 "+(question.accuracyPercent===null?styles.accuracyUnanswered:question.accuracyPercent<50?styles.accuracyPoor:question.accuracyPercent<75?styles.accuracyFair:styles.accuracyGood)} label="Question answer accuracy"
                   value={question.accuracyPercent ?? 0} maximum={100} unit="percent" />
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-muted-foreground leading-5">
                   {question.answeredCount > 0
                     ? `${question.correctCount}/${question.answeredCount} correct`
                     : "No answers submitted"}
@@ -230,12 +230,12 @@ export default async function FacultyQuizReportPage({
         note: "Attempt " + attempt.attemptNumber,
       }))} />
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">
+      <section aria-labelledby="section-not-attempted" className="border-b border-border py-4">
+        <h2 id="section-not-attempted" className="text-lg font-semibold text-foreground">
           Not attempted
         </h2>
         {notAttemptedLearners.length === 0 ? (
-          <p className="mt-3 text-sm text-body">
+          <p className="mt-3 text-sm text-body leading-[22px]">
             Every currently eligible learner has at least one attempt.
           </p>
         ) : (
@@ -245,7 +245,7 @@ export default async function FacultyQuizReportPage({
                 key={learner.membershipId}
                 className="border-b border-[var(--lms-canvas-border)] py-3"
               >
-                <p className="m-0 text-sm font-semibold text-foreground">
+                <p className="m-0 text-sm font-semibold text-foreground leading-[22px]">
                   {facultyReportLearnerName(learner.displayName)}
                 </p>
               </li>
@@ -254,8 +254,8 @@ export default async function FacultyQuizReportPage({
         )}
       </section>
 
-      <section className="border-b border-border py-4">
-        <h2 className="text-lg font-semibold text-foreground">Review individual attempts</h2>
+      <section aria-labelledby="section-review-individual-attempts" className="border-b border-border py-4">
+        <h2 id="section-review-individual-attempts" className="text-lg font-semibold text-foreground">Review individual attempts</h2>
         <p className="mt-1 text-sm text-body">Inspect submitted answers and manage results visibility for this Section.</p>
         <FacultyQuizReview
           quizId={quiz.id}

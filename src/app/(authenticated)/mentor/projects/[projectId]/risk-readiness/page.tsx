@@ -54,9 +54,9 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
             <p className="mt-2 text-2xl font-bold tabular-nums">{value}</p>
           </article>)}
       </section>
-      <p className="text-sm text-body">{data.riskCount} recorded attention items ·
+      <p className="text-sm text-body leading-[22px]">{data.riskCount} recorded attention items ·
         {" "}{data.readinessGapCount} outstanding readiness checkpoints</p>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
         Signals are persisted workflow states, not a failure prediction or readiness score.
         Priority filters affect task drill-ins only; project totals and non-task signals stay unchanged.
         A project without tasks is never assumed complete.
@@ -89,12 +89,12 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
       <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=>
         <li key={row.key} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <h2 className="break-words font-semibold text-foreground">{row.title}</h2>
+            <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.title}</h2>
             <span className="text-xs font-semibold text-body">
               {row.category==="RISK"?"Attention":"Readiness"}
             </span>
           </div>
-          <p className="mt-2 break-words text-sm text-body">{row.detail}</p>
+          <p className="mt-2 break-words text-sm text-body leading-[22px]">{row.detail}</p>
           <Link href={row.href}
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
             Open exact project workspace →

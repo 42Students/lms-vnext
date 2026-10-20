@@ -60,7 +60,7 @@ function companiesHref(
 function invalidCompanyFilters(){
  return <section role="alert" className="space-y-3">
   <PageHeader title="Invalid companies filters" />
-  <p className="mt-2 text-sm text-body">
+  <p className="mt-2 text-sm text-body leading-[22px]">
    The requested search or pagination values are invalid. No company data was loaded.
   </p>
   <Link href="/tpo/companies" className="lms-inline-link mt-4 inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -166,7 +166,7 @@ export default async function TpoCompanyMemoryPage({
             key={label}
             className="min-w-0 border-b border-r border-border bg-surface px-4 py-3 last:border-r-0 md:border-b-0"
           >
-            <p className="text-sm font-semibold text-body">{label}</p>
+            <p className="text-sm font-semibold text-body leading-[22px]">{label}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
               {value}
             </p>
@@ -175,12 +175,12 @@ export default async function TpoCompanyMemoryPage({
       </div>
 
       <section className="space-y-4">
-        <form
+        <form role="search" aria-label="tpo companies filters"
           action="/tpo/companies"
           method="get"
           className="grid gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
-          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search companies
             <Input
               type="search"
@@ -192,7 +192,7 @@ export default async function TpoCompanyMemoryPage({
             />
           </label>
 
-          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Sort by
             <Select name="sort" defaultValue={query.sort}
               className="min-h-11 md:min-h-9">
@@ -202,7 +202,7 @@ export default async function TpoCompanyMemoryPage({
               <option value="JOINS">Most confirmed joins</option>
             </Select>
           </label>
-          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
@@ -230,12 +230,12 @@ export default async function TpoCompanyMemoryPage({
             }).toString()}
             className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link">
             Export companies CSV ({page.total})
-          </Link>:<p role="status" className="text-xs text-muted-foreground">
+          </Link>:<p role="status" className="text-xs text-muted-foreground leading-5">
             Narrow your search to 2,000 companies to export all matching rows.
           </p>}
         </div>
         <div className="flex flex-wrap justify-between gap-3">
-          <p className="text-sm text-body">
+          <p className="text-sm text-body leading-[22px]">
             {page.total} matching company
             {page.total === 1 ? "" : " records"}
           </p>
@@ -249,7 +249,7 @@ export default async function TpoCompanyMemoryPage({
 
         {page.items.length === 0 ? (
           <div className="border-y border-border py-8">
-            <p className="text-sm text-body">
+            <p className="text-sm text-body leading-[22px]">
               {page.total > 0
                 ? "This page is outside the available results."
                 : "No companies match these filters."}
@@ -273,7 +273,7 @@ export default async function TpoCompanyMemoryPage({
           aria-label="Companies pagination"
           className="flex flex-wrap items-center justify-between gap-3"
         >
-          <p className="text-sm text-body">
+          <p className="text-sm text-body leading-[22px]">
             Page {page.page} of {Math.max(1, page.totalPages)}
           </p>
           <div className="flex gap-2">

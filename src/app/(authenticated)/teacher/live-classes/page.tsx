@@ -34,7 +34,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       expectedUpdatedAt:item.updatedAt?.toISOString()??null,
     }))}
   />
-  <form action="/teacher/live-classes" method="get"
+  <form role="search" aria-label="teacher live classes filters" action="/teacher/live-classes" method="get"
    className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
     <Select name="view" defaultValue={data.query.view}
@@ -43,7 +43,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </Select></label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+   <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Section
     <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
      className="text-sm">
      <option value="">All assigned Sections</option>
@@ -51,8 +51,8 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
       {c.courseName} · {c.sectionName}
      </option>)}
     </Select></label>
-   <Button type="submit" className="min-h-11 md:min-h-9">Filter</Button>
-   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+   <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
+   <Link href="/teacher/live-classes" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center p-2 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
   </form>
   <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
