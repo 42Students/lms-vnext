@@ -19,23 +19,21 @@ export default async function AdminDeviceSessionsPage({params}:{
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(new Date(value));
- return <div className="min-w-0 max-w-full space-y-4">
+ return <div className="min-w-0 max-w-full space-y-[var(--lms-space-6)]">
   <PageHeader title={data.target.name+" · Active sessions"}
    description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."
-   actions={<div className="flex flex-wrap items-center gap-2">
-    <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="Admins"/>
-    <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Administrator activity history →</Link>
-   </div>}/>
-  <p role="status" className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
+   actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="Admins"/>}/>
+  <p role="status" className="text-sm text-muted-foreground tabular-nums">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}
     empty={<EmptyState title="No active sessions" description="No active sessions for this account."/>}
     columns={[
-      {key:"device",header:"Device",mobilePriority:"primary",cell:row=><div className="min-w-0 break-words"><strong>{row.device_name??"Unknown device"}</strong><p className="text-xs text-muted-foreground">{row.user_agent??"Unknown browser"}</p></div>},
+      {key:"device",header:"Device",mobilePriority:"primary",cell:row=><div className="min-w-0 break-words"><strong>{row.device_name??"Unknown device"}</strong><p className="mt-1 break-all text-xs text-muted-foreground">{row.user_agent??"Unknown browser"}</p></div>},
       {key:"ip",header:"IP",mobilePriority:"secondary",cell:row=>row.ip_address??"Unknown"},
       {key:"last",header:"Last used",mobilePriority:"secondary",cell:row=>format(row.last_seen_at)},
       {key:"expires",header:"Expires",mobilePriority:"secondary",cell:row=>format(row.expires_at)},
     ]}/>
+  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Administrator activity history →</Link>
   <AdminRevokeSessions collegeId={collegeId} userId={userId} count={data.devices.length}/>
  </div>;
 }
