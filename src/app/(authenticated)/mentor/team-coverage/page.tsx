@@ -102,7 +102,7 @@ export default async function MentorTeamCoveragePage({
           <Link href="/mentor/team-coverage" className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
         </form>
         <section aria-label="Registered team coverage summary"
-          className="grid gap-3 sm:grid-cols-3">
+          className="grid gap-3 md:grid-cols-3">
           {([
             ["Current assigned projects",data.projectCount],
             ["Projects with no active learners",data.summary.zeroLearnerProjects],
@@ -128,7 +128,7 @@ export default async function MentorTeamCoveragePage({
                 <h2 className="font-semibold text-foreground">{item.title}</h2>
                 <span className="text-xs font-semibold text-body">{item.status}</span>
               </div>
-              <dl className="mt-4 grid gap-3 sm:grid-cols-3">
+              <dl className="mt-4 grid gap-3 md:grid-cols-3">
                 <div>
                   <dt className="text-xs font-semibold text-muted-foreground">Active learners</dt>
                   <dd className="mt-1 text-xl font-semibold tabular-nums">{item.learners}</dd>

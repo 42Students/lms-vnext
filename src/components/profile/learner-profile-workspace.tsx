@@ -531,7 +531,7 @@ export function LearnerProfileWorkspace(props: {
 
   return (
     <div className="min-w-0 space-y-5">
-      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 sm:hidden">
+      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 min-[768px]:hidden">
         <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
@@ -550,7 +550,7 @@ export function LearnerProfileWorkspace(props: {
         </Button>
       </div>
       <section id="profile-introduction" className="scroll-mt-24 border-b border-border pb-5">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-5 min-[768px]:flex-row min-[768px]:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
           <div className="min-w-0 flex-1">
             <PageHeader
@@ -578,7 +578,7 @@ export function LearnerProfileWorkspace(props: {
         </div>
       </section>
 
-      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 sm:p-5" aria-labelledby="learner-profile-checklist-title">
+      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 min-[768px]:p-5" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
@@ -756,7 +756,7 @@ export function LearnerProfileWorkspace(props: {
                         <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
                       </div>
-                      <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+                      <div className="flex w-full flex-wrap gap-2 min-[768px]:w-auto">
                         <Button size="sm" variant="secondary" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
                           className="min-h-11 flex-1 min-[768px]:flex-none" onClick={() => openCollection(section, item)}>Edit</Button>
                         <Button size="sm" variant="danger" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}

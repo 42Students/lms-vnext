@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Alert} from "@/components/ui/alert";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {getTpoPrepSelectionState} from "@/modules/placements/tpo-prep-selection-model";
@@ -58,12 +59,12 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
     placeholder="Search course name or code" className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
   </label>
   <p className="text-xs text-muted-foreground">With none picked, nobody is marked as needing prep.</p>
-  {missing.length>0?<p role="alert" className="rounded-[var(--lms-canvas-radius)] border border-warning-border bg-warning-subtle p-3 text-sm">
+  {missing.length>0?<Alert tone="warning">
    {missing.length} previously selected preparation course(s) are no longer active or available in this college.
    Remove the unavailable selections before saving; the existing policy has not been changed.
    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setSelected(current=>current.filter(id=>available.has(id)))}
     className="ml-2 min-h-11 min-[768px]:min-h-9">Remove unavailable courses</Button>
-  </p>:null}
+  </Alert>:null}
   <fieldset disabled={busy} className="max-h-72 space-y-2 overflow-y-auto">
    <legend className="text-sm">Courses used for readiness</legend>
    {choices.filter(course=>(course.name+" "+course.code).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))).map(course=>
@@ -84,6 +85,6 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
    {busy?"Saving…":"Save readiness policy"}
   </Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
 }

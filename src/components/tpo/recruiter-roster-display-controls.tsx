@@ -11,7 +11,7 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
  return <section className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border py-3"
   aria-label="Recruiter table display">
   <label className="min-w-0 flex-1 text-sm md:flex-none">Sort by
-   <Select className="mt-1 block min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3"
+   <Select className="mt-1 block min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
     value={sort} onChange={e=>onSort(e.target.value as EngageSort)}>
     <option value="LAST_ACTIVITY">Last activity</option>
     <option value="NEXT_FOLLOWUP">Next follow-up</option>
@@ -27,8 +27,8 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
   {showColumns?<Dropdown align="end" label="Roster columns" trigger="Columns">
    <div className="max-h-72 min-w-[min(13rem,calc(100vw_-_5rem))] max-w-full space-y-1 overflow-auto overscroll-contain">
     {ENGAGE_COLUMNS.map(column=><label key={column}
-      className={"flex min-h-11 items-center gap-2 rounded-[8px] px-2 py-1 text-sm transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none "+
-        (column==="Contact"?"cursor-not-allowed opacity-50":"hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)]")}>
+      className={"flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] px-2 py-1 text-sm transition-colors motion-reduce:transition-none "+
+        (column==="Contact"?"cursor-not-allowed opacity-50":"hover:bg-muted active:bg-primary-subtle")}>
       <Checkbox checked={columns.includes(column)} disabled={column==="Contact"}
        onChange={e=>onColumns(e.target.checked?[...columns,column]:columns.filter(x=>x!==column))}/>
       {column}

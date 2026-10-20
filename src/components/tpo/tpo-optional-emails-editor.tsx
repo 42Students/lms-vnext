@@ -3,6 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 type Preferences={notifyDriveOpenEmail:boolean;notifyResultApplied:boolean;notifyNudges:boolean;notifyPrepAssigned:boolean};
 const fields=[
  ["notifyDriveOpenEmail","A drive opens or changes","Email to eligible students."],
@@ -56,7 +57,7 @@ export function TpoOptionalEmailsEditor({initial,version}:{initial:Preferences;v
   <p className="text-xs text-muted-foreground">These are college preferences; sending requires verified mail templates and an enabled delivery provider.</p>
   <Button type="button" disabled={busy||!dirty} onClick={()=>void save()}
    className="min-h-11 md:min-h-9 print:hidden">Save changes</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {status?<p role="status" className="text-sm">{status}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {status?<InlineNotice tone="success" message={status}/>:null}
  </section>;
 }

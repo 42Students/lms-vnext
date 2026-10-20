@@ -184,10 +184,10 @@ export function TpoSpreadsheetGrid<Row>({
      event.preventDefault();event.stopPropagation();
      copyVisibleRows();
     }}><Table scrollLabel="TPO spreadsheet columns" className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
-    <thead className="bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-700)]"><tr>{selection?<th scope="col" className="sticky left-0 z-30 w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2" style={{width:48,minWidth:48,maxWidth:48,paddingInline:8}}><Checkbox aria-label="Select all filtered students" checked={fullySelected} indeterminate={partlySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)} aria-sort={sort?.key===col.key?(sort.direction==="asc"?"ascending":"descending"):undefined}>
+    <thead className="bg-[var(--lms-white)] text-[var(--lms-neutral-400)]"><tr>{selection?<th scope="col" className="sticky left-0 z-30 w-12 min-w-12 bg-[var(--lms-table-header)] px-2 py-2" style={{width:48,minWidth:48,maxWidth:48,paddingInline:8}}><Checkbox aria-label="Select all filtered students" checked={fullySelected} indeterminate={partlySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)} aria-sort={sort?.key===col.key?(sort.direction==="asc"?"ascending":"descending"):undefined}>
      {col.sortKind?<Button variant="ghost" type="button" aria-label={"Sort "+col.label}
       aria-pressed={sort?.key===col.key}
-      className="inline-flex min-h-9 items-center gap-1 font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary"
+      className="inline-flex min-h-11 md:min-h-9 items-center gap-1 font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary"
       onClick={()=>setSort(previous=>previous?.key===col.key
         ? previous.direction==="asc"?{key:col.key,direction:"desc"}:null
         : {key:col.key,direction:"asc"})}>
@@ -195,9 +195,9 @@ export function TpoSpreadsheetGrid<Row>({
      </Button>:<span>{col.label}</span>}
      {viewKey?<div className="mt-1 flex flex-wrap gap-2 text-xs font-normal">
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.max(100,colWidth(col.key)-40)})}
-       disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11">−</Button>
+       disabled={colWidth(col.key)<=100} aria-label={"Narrow "+col.label} className="min-h-11 min-w-11 md:min-h-9 md:min-w-9">−</Button>
       <Button variant="secondary" type="button" onClick={()=>updateLayout(col.key,{width:Math.min(500,colWidth(col.key)+40)})}
-       disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="min-w-11">+</Button>
+       disabled={colWidth(col.key)>=500} aria-label={"Widen "+col.label} className="min-h-11 min-w-11 md:min-h-9 md:min-w-9">+</Button>
       <FilterChip type="button" onClick={()=>updateLayout(col.key,{pinned:!columnView[col.key]?.pinned})}
        aria-pressed={Boolean(columnView[col.key]?.pinned)} aria-label={(columnView[col.key]?.pinned?"Unpin ":"Pin ")+col.label}
        className="min-w-11">{columnView[col.key]?.pinned?"Unpin":"Pin"}</FilterChip>

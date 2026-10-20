@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import { Textarea } from "@/components/ui/textarea";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -48,7 +49,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    className="">
    Review
   </Button>
-  {message?<p role="status" className="mt-2 text-sm text-body">{message}</p>:null}
+  {message?<Banner tone="success">{message}</Banner>:null}
   <Dialog open={open} onOpenChange={setOpen} title={"Review — "+(workspaceTitle??"project submission")}
    description="Review the current submission and record feedback for the learner."
    footer={<>
@@ -70,7 +71,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
       className="mt-2 w-full"
       placeholder="Optional for Accept/Lock — required for Request changes"/>
    </label>
-   {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+   {error?<Banner tone="error">{error}</Banner>:null}
    {!feedback.trim()?<p className="mt-2 text-xs text-muted-foreground">
      Add feedback explaining what needs to change before requesting changes.</p>:null}
   </Dialog>

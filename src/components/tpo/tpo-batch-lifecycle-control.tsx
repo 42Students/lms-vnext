@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -44,7 +45,7 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
    className="min-h-11 px-4 md:min-h-9">
    {busy?"Updating…":action==="FINISH"?"Mark finished":"Reopen batch"}
   </Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {success?<p role="status" className="text-sm text-success">{success}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {success?<InlineNotice tone="success" message={success}/>:null}
  </div>;
 }

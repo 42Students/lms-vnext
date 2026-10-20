@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
@@ -13,6 +15,7 @@ const cls="mt-1 w-full";
 export function SuperAdminTemplateResourceEditor({templateId,title,summary,currentVersion,blueprint}:{
  templateId:string;title:string;summary:string|null;currentVersion:number;blueprint:ProjectTemplateBlueprint;
 }){
+ const {askConfirm,dialog}=useConfirmFlow();
  const router=useRouter(),[open,setOpen]=useState(false),[pending,setPending]=useState(false),
  [version,setVersion]=useState(currentVersion),[rows,setRows]=useState(blueprint.resources),
  [error,setError]=useState(""),[message,setMessage]=useState("");
@@ -27,7 +30,7 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
   const ordered=rows.map((row,i)=>({...row,sequence:i}));
   const parsed=projectTemplateBlueprintSchema.safeParse({...blueprint,resources:ordered});
   if(!parsed.success){setError(parsed.error.issues[0]?.message??"Invalid resources");return;}
-  if(!window.confirm("Save resource changes as a new template version?"))return;
+  if(!(await askConfirm("Save resource changes as a new template version?")))return;
   setPending(true);setError("");setMessage("");
   try{
    const result=await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId),"PATCH",{
@@ -91,7 +94,8 @@ export function SuperAdminTemplateResourceEditor({templateId,title,summary,curre
      {pending?"Saving…":"Save as new version"}</Button>
    </div>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm text-success">{message}</p>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
+  {message?<Banner tone="success">{message}</Banner>:null}
+  {dialog}
  </section>;
 }

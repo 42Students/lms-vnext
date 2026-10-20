@@ -41,22 +41,23 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  }
  return <section aria-label="Attendance policy" className="space-y-3 border-b border-border pb-5">
   <h2 className="font-semibold text-foreground">Attendance policy</h2>
-  <div className="grid gap-4 min-[768px]:grid-cols-2">
+  <div className="grid gap-4 md:grid-cols-2 print:hidden">
    <label className="grid gap-1 text-[13px] font-semibold text-body">Late marking allowed for
     <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
-     className="w-full"/>
+     className="min-h-11 w-full md:min-h-9"/>
     <span id="late-marking-help" className="text-xs font-normal text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
    </label>
    <label className="grid gap-1 text-[13px] font-semibold text-body">Minimum attendance
     <Input type="number" min={1} max={100} step={1} value={threshold}
      onChange={e=>setThreshold(e.target.value)} aria-describedby="minimum-attendance-help"
-     className="w-full"/>
+     className="min-h-11 w-full md:min-h-9"/>
     <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </label>
   </div>
+  <p className="hidden text-sm text-body print:block">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
   <Button variant="primary" type="button" loading={saving} disabled={saving} onClick={requestSave}
-   className="min-h-11 md:min-h-[var(--lms-control-height)]">{saving?"Saving…":"Save attendance policy"}</Button>
+   className="min-h-11 md:min-h-9 print:hidden">{saving?"Saving…":"Save attendance policy"}</Button>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
    description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"

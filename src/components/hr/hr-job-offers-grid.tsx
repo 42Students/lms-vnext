@@ -33,6 +33,6 @@ export function HrJobOffersGrid({rows,scopeKey}:{
   scopeKey:string;
 }) {
   return <TpoGrid rows={rows} columns={columns} rowKey={row=>row.id}
-    mobilePrimaryKeys={["candidate","kind","status","deadline"]}
+    mobilePrimaryKeys={["candidate","kind","ctc","status","deadline"]}
     storageKey={"hr-offers:"+scopeKey}/>;
 }

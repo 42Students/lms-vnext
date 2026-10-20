@@ -48,8 +48,8 @@ export function SuperAdminFacultyScheduleReassignAction({
       }
     });
   }
-  return <div className="space-y-2">
-    <Button variant="secondary" size="md" disabled={pending||choices.length===0}
+  return <div className="space-y-2 print:hidden">
+    <Button variant="secondary" size="md" className="min-h-11 md:min-h-9" disabled={pending||choices.length===0}
       onClick={()=>{setOpen(true);setError("");}}>
       Reassign class schedules
     </Button>
@@ -62,11 +62,11 @@ export function SuperAdminFacultyScheduleReassignAction({
       title="Reassign class schedules"
       description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked."}
       footer={<>
-        <Button variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
-        <Button disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
+        <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
+        <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
       </>}>
       <label htmlFor={id} className="mb-2 block text-[13px] font-semibold text-body">Replacement faculty</label>
-      <Select id={id} className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"
+      <Select id={id} className="min-h-11 w-full md:min-h-9"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>
         {choices.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}

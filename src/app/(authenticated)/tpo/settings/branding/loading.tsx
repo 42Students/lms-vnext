@@ -6,7 +6,7 @@ export default function TpoPlacementBrandingLoading() {
       <Skeleton variant="row" height={48} label="Loading placement branding" />
       <Skeleton variant="row" height={160} label="Loading placement branding" />
       <Skeleton variant="row" height={192} label="Loading placement branding" />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 min-[768px]:grid-cols-2">
         {Array.from({ length: 2 }, (_, index) => (
           <Skeleton key={index} variant="row" height={144} label="Loading placement branding" />
         ))}

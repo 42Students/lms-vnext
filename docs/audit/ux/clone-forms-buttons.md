@@ -774,3 +774,73 @@ Phone: <=767px uses 24px/32px h1, 20px/30px h2, 16px/26px h3, 44px raw form/acti
 | Missing picker with alternate | No exact legacy WebView fallback surface established | `file-upload.tsx:126,159` status + optional fallback, unchanged by global error paint | Mismatch cannot be ticked without old WebView reference |
 
 These are static whole-file code comparisons only. The file-owning change is pushed as `[chat-17]`; there is no new layout, no API behavior change, and no fabricated browser evidence. **A1–A4, C1–C7, D remain 0/12 strictly ticked.**
+
+
+### A2 special-theme selected text, after foundation pass
+
+The separate tracker opt-in `data-tracker-theme="dark"` now retains legible selected text through `src/styles/legacy-skin.css`'s tracker-only `::selection` override. The old LMS light canvas keeps the original neutral-900 text on `--lms-primary-subtle`. This corrects the low-contrast dark-on-dark selection combination without changing user-visible content, caret position or ordinary light-theme styling. This is a **source-only contrast guard**, not evidence of a rendered browser comparison.
+
+The attempted repository-subtree-wide source inventory could not be completed within the connected source reader's request limit; only the previously listed complete-file regex results are verified. Do not imply the required `grep -rlE ... src` commands ran. **A2 and A4 stay unticked; all 12 strict category items stay open.**
+
+Next exact source file: `src/styles/legacy-skin.css` — finish remaining label/error/link A2 contrast and A4 scroll/focus exceptions with legacy declarations, then audit `src/app/globals.css` again.
+
+
+## 2026-10-20 — 16 complete shared forms/controls source passes (work-product count, not commit count)
+
+**Source scope:** 16 files in `src/components/ui/`. All source files were retrieved **in full** after their edits. Each row below gives the exact old design reference/value, changed implementation, phone/tablet CSS behavior and prop/JSX compatibility. This source review does **not** establish pixel-level clone completion: no screenshots, computed styles, interactive browser, TypeScript, tests, CI or full-`src` grep were executed. The twelve strict A1–A4/C1–C7/D checkboxes remain unticked, as required by `docs/design/ui-clone-checklist.md`.
+
+### File-level legacy value tables and source responsive review
+
+| Completed source file | Section | Legacy file + exact value | Updated vNext behavior | Phone/tablet source proof | Props/ARIA compatibility |
+| --- | --- | --- | --- | --- | --- |
+| `src/components/ui/textarea.tsx` | C1 | form.scss:117–143 | 10px radius, 14/400/20px, red focus halo | Explicit `rows` no longer inherits fixed 112px minimum; default still 112px | Long text: 112px default or caller rows; 44px touch baseline inherited | rows, cols, name, ref, disabled, readOnly, aria-invalid |
+| `src/components/ui/form-field.tsx` | C6 | form.scss:110–115; global.scss:60–69 | 13px/600/16px; red 12px error | Accessible required label now includes a spoken separator; helper and error IDs preserved | Single-column field; shared inputs 44px on phone / 36px on tablet | HTML for/id, required, aria-describedby, aria-errormessage |
+| `src/components/ui/form-section.tsx` | C6 | form.scss:110–115 | 13px/600 labels; fieldset legend role is 14px | Disabled fieldset no longer compounds nested control opacity; muted legend only | Fieldset is fluid min-w-0; nested native controls own 44px mobile targets | fieldset disabled/legend, description aria-describedby |
+| `src/components/ui/search-field.tsx` | C1 | form.scss:38–61 | clamp(180px,20vw,280px), 14px | Search has fallback accessible name from caller label / placeholder / submit label | <=767px stacks input+button and expands input to 100%; >=768px inline clamp | ref, Enter/form submit, disabled, caller onSearch |
+| `src/components/ui/file-upload.tsx` | C5 | form.scss:117–143, button.scss:304–318 | 10px field; 175x194px cover profile | One unavailable status with a stable id; real validation error stays 12px red | <=767px picker/removal 44px; responsive image max-width 100%; tablet native | input ref, accept/size, required, fallback, selected files/progress |
+| `src/components/ui/selection-controls.tsx` | C4 | antddesign.scss:123–131 | teal #26bac7; variables.scss:139 | 44px target | Visible+screen-reader required markers added to checkbox/radio/switch labels | Controls have 44px label hit areas on both phone and tablet | native checked/name/onChange, disabled, readOnly, switch role |
+| `src/components/ui/range-slider.tsx` | C4 | variables.scss:10,139; form.scss:110–115 | teal, 44px, label 13/600 | Required label indicator added, aria readOnly and red invalid previously preserved | <=767px slider min 44px; >=768px min 36px | native input range, step,min,max, name, ref, keyboard |
+| `src/components/ui/date-range-picker.tsx` | C3 | form.scss:110–143 | labels 13/600/16; error 12px red | Both required labels have spoken indicator; existing order error described to both fields | <=767px one column; >=768px two columns; error spans both | controlled start/end, per-input bounds, disabled, aria error |
+| `src/components/ui/calendar-grid.tsx` | C3 | antddesign.scss:191–203 | teal chosen day; variables.scss:139 | 44px touch | Seven-day spaced grid scrolls horizontally rather than clipping <=767px | Phone: seven columns each >=44px; >=768px 7 equal columns; hairline variant unaffected | children, ref/props, no calendar event/timezone mutation |
+| `src/components/ui/button-group.tsx` | D | old-lms-shell-spec.md:23–24 | 36px/9px/14px/650 buttons | Joined group retains adjacent action borders; phone overflow scroll preserves every action | <=767px overflow-x-auto; >=768px inline joined controls | role group/label, native child actions, group forwarded props |
+| `src/components/ui/password-input.tsx` | C1 | form.scss:117–143 | 10px/14px; old-lms-shell-spec.md:23 | 36px action | Disabling an exposed password returns to masked type; ref/Show/Hide retained | <=767px field and Show button >=44px; tablet desktop control-height 36px | password autocomplete/name/ref, aria-controls/pressed, disabled |
+| `src/components/ui/checkbox.tsx` | C4 | antddesign.scss:123–131 | teal checked, neutral disabled; variables.scss:139 | Read-only pointer now visibly has noneditable cursor; native mixed/checked semantics retained | 16px native glyph, 44px via selection-controls label on phone/tablet | native checkbox/indeterminate/ARIA/ref/keyboard |
+| `src/components/ui/radio.tsx` | C4 | variables.scss:10 | teal selected, 27–32 neutral disabled | Read-only pointer cursor now communicates noneditable radio state | 16px native glyph, 44px via selection-controls label; tablet same | native group/name/checked/ref and readonly key interception |
+| `src/components/ui/file-dropzone.tsx` | C5 | form.scss:117–143; button.scss:304–318 | 10px/175x194/8px crop | Required passed to picker+group; unavailable drag message avoids misleading prompt | <=767px choose/remove 44px, fluid drop frame; tablet pointer hover/dashed state | onFiles, multiple, accept/size, preview, disabled/fallback/progress |
+| `src/components/ui/searchable-select.tsx` | C2 | form.scss:64–93 | 200px popup, 12px radius, 44px option, hover #d1f1f1 | Preserve caller aria-errormessage when local choice error clears; native validity retained | <=767px clear icon 44px, popup 100% width; >=768px option min44px | controlled/uncontrolled value, onChange, typeahead, option key navigation |
+| `src/components/ui/split-button.tsx` | D | old-lms-shell-spec.md:23–24 | 36px/9px primary; variables.scss:139 | 44px touch | Role group now exposes loading/busy and disabled semantics in addition to child disabled | <=767px action+menu >=44px; >=768px menu min36px and joined actions | onClick, on-menu, loading/disabled, aria-label per control |
+
+### Complete-file raw JSX grep evidence
+
+All 16 exact files were read, not just indexed snippets. Count regexes: `/<button(?=[\\s>])/g`, `/<input(?=[\\s>])/g`, `/<select(?=[\\s>])/g`, `/<textarea(?=[\\s>])/g`. This is a **bounded owner-scope grep**, not a shell `grep -rl src` claim.
+
+| File | Full lines | Raw button/input/select/textarea | Raw hex literals outside block comments | Responsive/state-relevant source line numbers |
+| --- | ---: | --- | ---: | --- |
+| `textarea.tsx` | 49 | 0/0/0/1 | 0 | 17, 24, 35, 36, 37 |
+| `form-field.tsx` | 41 | 0/0/0/0 | 0 | 6, 9, 13, 15, 18, 22 |
+| `form-section.tsx` | 29 | 0/0/0/0 | 0 | 21, 22, 24 |
+| `search-field.tsx` | 25 | 0/0/0/0 | 0 | 19, 20, 21, 22 |
+| `file-upload.tsx` | 162 | 0/0/0/0 | 0 | 39, 40, 45, 52, 60, 61 |
+| `selection-controls.tsx` | 31 | 0/0/0/0 | 0 | 13, 15, 24, 26, 27 |
+| `range-slider.tsx` | 42 | 0/1/0/0 | 0 | 16, 20, 21, 22, 23, 24 |
+| `date-range-picker.tsx` | 79 | 0/0/0/0 | 0 | 16, 19, 27, 28, 33, 34 |
+| `calendar-grid.tsx` | 29 | 0/0/0/0 | 0 | 15, 20 |
+| `button-group.tsx` | 21 | 0/0/0/0 | 0 | 15, 16 |
+| `password-input.tsx` | 45 | 0/0/0/0 | 0 | 19, 20, 31, 34, 38 |
+| `checkbox.tsx` | 16 | 0/1/0/0 | 0 | 7, 8, 9, 10, 11, 12 |
+| `radio.tsx` | 15 | 0/1/0/0 | 0 | 6, 7, 8, 9, 10, 11 |
+| `file-dropzone.tsx` | 96 | 0/0/0/0 | 0 | 16, 17, 24, 26, 64, 70 |
+| `searchable-select.tsx` | 181 | 0/0/0/0 | 2 | 13, 26, 44, 45, 55, 75 |
+| `split-button.tsx` | 40 | 0/0/0/0 | 0 | 13, 21, 25, 27, 30, 31 |
+
+The only raw native elements in this batch are the **owning primitives** `checkbox.tsx` and `radio.tsx` (one `<input>` each), `range-slider.tsx` (one native `<input type="range">`) and `textarea.tsx` (one `<textarea>`). No form composition in the other twelve files adds another raw input/button/select/textarea. These counts are direct JSX scans and do not count names inside Markdown comments or native DOM created at runtime.
+
+### Responsive/strict-tick caveats
+
+Canonical breakpoints `legacy-styles/components___variables.scss:139,145-157`: phone through **767px**, tablet **768–991px**, desktop from **992px**; interactive hit target **44px**. Font and form color `components___form.scss:110–143`: 13px/600 label, 14px/400/20px text, 10px form radius, `#fbfcfd` surface, teal `#26bac7` 15%-opacity focus halo, `#ef4444` invalid border/20%-opacity focus halo. TPO measured primary action `old-lms-shell-spec.md:23–24`: `#0a7c88` white, 36px high, 9px radius, 14px/650, darker `#086873` hover.
+
+The calendar grid's 7×44px phone width can exceed a narrow viewport and uses overflow scrolling intentionally; the actual phone focus order and clipping need rendered proof. Native checkbox/radio glyph remains 16px with a 44px parent label via `selection-controls.tsx`; isolated primitive callers may still have a small tap target and need a whole-tree caller inventory. Raw hover/disabled styling remains a source-level approximation of OS-rendered pickers and the old AntD portal. Profile-photo crop is opt-in; caller migration remains pending. Each row above therefore denotes **reviewed and updated at file level**, not a verified pixel-level or category-wide completion.
+
+**STRICT CATEGORY TICKS: 0/12**, unchanged. Missing whole-`src` raw control/hard-code grep, all portals' caller inventories, 375px/768px/1280px screenshots, computed typography/box/focus styles, and real keyboard/drag/file/date/browser testing.
+
+**Next exact source file:** `src/components/ui/input-group.tsx` — audit a single group halo, adornment focus, error/readonly, 44px phone touch, then `src/components/ui/multi-select.tsx`.

@@ -17,7 +17,7 @@ export function CalendarGrid({
         "grid grid-cols-7",
         variant === "hairline"
           ? "gap-px rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-200)]"
-          : "gap-1",
+          : "gap-1 max-[767px]:overflow-x-auto max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]",
         className,
       )}
       {...props}

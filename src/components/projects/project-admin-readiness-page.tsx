@@ -85,16 +85,13 @@ export async function ProjectAdminReadinessPage({
 
   return (
     <div className="space-y-6">
-      <ProjectAdminNav
-        basePath={basePath}
-        active="readiness"
-      />
       <PageHeader
         title="Submission readiness"
         description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to."
         actions={<a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Export overrides CSV</a>}
       />
+      <ProjectAdminNav basePath={basePath} active="readiness" />
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold text-foreground">Active overrides ({activeOverrides.length})</h2>
@@ -198,7 +195,7 @@ export async function ProjectAdminReadinessPage({
                 </div>
               </div>
 
-              <div className="mt-4 grid min-w-0 grid-cols-1 border-t border-border md:grid-cols-2 min-[1366px]:grid-cols-4">
+              <div className="mt-4 grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[1366px]:grid-cols-4">
                 <Metric
                   label="Progress"
                   value={
@@ -262,7 +259,7 @@ function Metric({
   value: string;
 }) {
   return (
-    <div className="min-w-0 border-l-2 border-border bg-surface px-3 py-2">
+    <div className="min-w-0 px-3 py-3">
       <p className="m-0 text-xs font-semibold text-muted-foreground">
         {label}
       </p>

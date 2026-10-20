@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Banner } from "@/components/ui/banner";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -67,7 +68,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
   <Button variant="secondary" type="button" onClick={()=>setOpen(v=>!v)} >
    Edit workspace summary</Button>
   {open?<div className="mt-4 space-y-4">
-   <div className="grid gap-3 sm:grid-cols-2">
+   <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",200)}
     <label className="text-sm font-semibold">Status<Select className={style}
      value={form.status} onChange={e=>change("status",e.target.value)}>
@@ -105,7 +106,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
     className="ml-2">Cancel</Button>
   </div>:null}
-  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {error?<Banner tone="error">{error}</Banner>:null}
   {dialog}
  </section>;
 }

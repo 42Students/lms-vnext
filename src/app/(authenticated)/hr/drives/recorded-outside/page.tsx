@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {redirect,notFound} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -34,7 +34,7 @@ export default async function HrRecordedOutsidePage({searchParams}:{
  return <div className="min-w-0 max-w-full space-y-5">
   <PageHeader title="Record an outside-platform drive"
    description="Historical employer-college record only. This cannot publish a student-visible job."/>
-  <Link href={"/hr/drives/new?collegeId="+collegeId} className="inline-flex min-h-9 items-center text-sm font-medium text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive request</Link>
+  <PageBackLink href={"/hr/drives/new?collegeId="+collegeId} label="Back to drive request"/>
   {saved?<InlineNotice tone="success" message="External drive record saved. It was not published as a job."/>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
  </div>;

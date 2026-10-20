@@ -310,6 +310,7 @@ main :where([role="button"]:not(button), [data-slot="card"][tabindex],
     animation: lms-micro-notification-panel-enter 200ms ease-out both;
   }
 }
+
 /* Legacy: components___antddesign.scss:48-64 (tooltip charcoal #1a1d21,
  * 8px radius, 12px/16px text and 2px/8px shadow); already exact in
  * legacy-overlays.css. SCSS does not prescribe a mouseEnterDelay.

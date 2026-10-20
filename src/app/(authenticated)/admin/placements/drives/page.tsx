@@ -4,6 +4,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -75,12 +76,12 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader title="All drives"
    description="Review and open every persisted non-archived drive in the selected college."
-   actions={<Link href="/admin/placements/new"
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Create drive →</Link>} />
-  <div className="flex flex-wrap gap-3">
-   <Link href="/admin/placements" className="text-sm font-semibold text-primary-text">← Placement overview</Link>
-   <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:min-h-9">Look up a student&apos;s placement status →</Link>
-  </div>
+   actions={<>
+    <PageBackLink href="/admin/placements" label="Placement overview" />
+    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/new"
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Create drive →</Link>
+   </>} />
   <form action="/admin/placements/drives" method="get"
    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
    <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company

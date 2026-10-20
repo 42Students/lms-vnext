@@ -140,7 +140,7 @@ export function ProgramActions({
     <>
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button
-          size="sm"
+          size="md"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
@@ -148,7 +148,7 @@ export function ProgramActions({
           Edit
         </Button>
         <Button
-          size="sm"
+          size="md"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="ghost"
           disabled={programHasLinkedRecords}
@@ -330,7 +330,7 @@ export function AcademicPeriodActions({
 
   if (period.status === "CLOSED") {
     return <>
-      <Button size="sm" variant="secondary" onClick={() => setReopenOpen(true)}>
+      <Button size="md" variant="secondary" onClick={() => setReopenOpen(true)}>
         Reopen
       </Button>
       <ConfirmDialog
@@ -356,14 +356,14 @@ export function AcademicPeriodActions({
         {period.status === "PLANNED" ? (
           <>
             <Button
-              size="sm"
+              size="md"
               variant="secondary"
               onClick={openEdit}
             >
               Edit
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -383,7 +383,7 @@ export function AcademicPeriodActions({
           </>
         ) : (
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() => setCloseOpen(true)}
@@ -573,14 +573,14 @@ export function CohortActions({
         {cohort.status === "PLANNED" ? (
           <>
             <Button
-              size="sm"
+              size="md"
               variant="secondary"
               onClick={openEdit}
             >
               Edit
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="secondary"
               disabled={pending}
               onClick={() =>
@@ -598,7 +598,7 @@ export function CohortActions({
               Activate
             </Button>
             <Button
-              size="sm"
+              size="md"
               variant="ghost"
               onClick={() =>
                 setConfirmAction("ARCHIVE")
@@ -609,7 +609,7 @@ export function CohortActions({
           </>
         ) : cohort.status === "ACTIVE" ? (
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="secondary"
             onClick={() =>
@@ -620,7 +620,7 @@ export function CohortActions({
           </Button>
         ) : (
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             onClick={() =>
@@ -819,7 +819,7 @@ export function SectionActions({
           Open
         </Link>
         <Button
-          size="sm"
+          size="md"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={openEdit}
@@ -827,7 +827,7 @@ export function SectionActions({
           Edit
         </Button>
         <Button
-          size="sm"
+          size="md"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="ghost"
           onClick={() => setArchiveOpen(true)}

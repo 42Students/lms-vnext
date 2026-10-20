@@ -28,7 +28,7 @@ export function RecruiterDesignationEditor({initialTitle,updatedAt}:{initialTitl
   }catch{setError("Could not save designation. Check your connection and try again.");}
   finally{setSaving(false);}
  }
- return <div className="sm:col-span-2">
+ return <div className="min-[768px]:col-span-2">
   <form onSubmit={event=>void save(event)} className="space-y-2">
    <label htmlFor="hr-recruiter-designation" className="block text-xs font-medium uppercase tracking-wide text-muted-foreground">Designation</label>
    <div className="flex flex-wrap gap-2">

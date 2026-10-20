@@ -79,10 +79,10 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    </Button>
   </div>
   <form onSubmit={event=>{event.preventDefault();void post();}}
-   className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   className="min-w-0 space-y-3 border-y border-border py-4">
    <h2 className="font-semibold">Write to Everyone</h2>
    <label className="block text-sm">Message
-    <Textarea className="mt-2" name="body" required maxLength={4000} rows={4} value={message}
+    <Textarea className="mt-2 min-h-32 w-full min-w-0" name="body" required maxLength={4000} rows={4} value={message}
      onChange={event=>updateMessage(event.target.value)} disabled={busy}
      
      placeholder="Share an update with the placement team"/>
@@ -94,6 +94,6 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
    </Button>
   </form>
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-  {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
+  {error?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>:null}
  </div>;
 }

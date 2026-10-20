@@ -116,7 +116,7 @@ export function SuperAdminHrDetailDrawer({
       footer={
         <>
           {account ? (
-            <Button
+            <Button className="min-h-11 md:min-h-9"
               variant="secondary"
               disabled={pending||!account.accountManageable}
               onClick={() => onEdit(account)}
@@ -124,7 +124,7 @@ export function SuperAdminHrDetailDrawer({
               Edit account
             </Button>
           ) : null}
-          <Button
+          <Button className="min-h-11 md:min-h-9"
             variant="secondary"
             disabled={pending}
             onClick={onClose}
@@ -141,7 +141,7 @@ export function SuperAdminHrDetailDrawer({
           title="Could not load recruiter"
           description={error}
           action={
-            <Button
+            <Button className="min-h-11 md:min-h-9"
               variant="secondary"
               onClick={onReload}
             >
@@ -173,7 +173,7 @@ export function SuperAdminHrDetailDrawer({
               </StatusBadge>
             </div>
 
-            <dl className="mt-4 grid gap-4 text-sm min-[768px]:grid-cols-2">
+            <dl className="mt-4 grid gap-4 text-sm md:grid-cols-2">
               <div>
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Mobile
@@ -192,7 +192,7 @@ export function SuperAdminHrDetailDrawer({
                 </dd>
               </div>
 
-              <div className="min-[768px]:col-span-2">
+              <div className="md:col-span-2">
                 <dt className="text-xs font-semibold text-muted-foreground">
                   Company
                 </dt>
@@ -237,7 +237,7 @@ export function SuperAdminHrDetailDrawer({
                         {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=currentTimeMs()?"Expired":grant.verificationStatus}
                       </p>
                     </div>
-                    <Button
+                    <Button className="min-h-11 md:min-h-9"
                       variant="secondary"
                       size="sm"
                       disabled={pending}
@@ -300,7 +300,7 @@ export function SuperAdminHrDetailDrawer({
                 <label className="mb-1.5 mt-3 block text-[13px] font-semibold text-body">
                  Until (optional)
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
-                  className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
+                  className="mt-1 min-h-11 w-full md:min-h-9"/>
                  {expiryError?<span role="alert" className="mt-1 block text-error">{expiryError}</span>:null}
                  <span className="mt-1 block font-normal text-muted-foreground">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
                 </label>
@@ -321,7 +321,7 @@ export function SuperAdminHrDetailDrawer({
                     >
                       {optionsError}
                     </p>
-                    <Button
+                    <Button className="min-h-11 md:min-h-9"
                       variant="secondary"
                       size="sm"
                       onClick={onReloadOptions}
@@ -341,7 +341,7 @@ export function SuperAdminHrDetailDrawer({
                 ) : null}
 
                 <Button
-                  className="mt-3"
+                  className="mt-3 min-h-11 md:min-h-9"
                   disabled={
                     pending ||
                     optionsLoading ||
@@ -388,7 +388,7 @@ export function SuperAdminHrDetailDrawer({
             </p>
             {!account.accountManageable?<p role="status" className="mt-2 text-sm text-warning">Account-wide actions are unavailable: this recruiter has active access grants beyond your selected college or organization.</p>:null}
             <Button
-              className="mt-4"
+              className="mt-4 min-h-11 md:min-h-9"
               variant="danger"
               disabled={pending||!account.accountManageable}
               onClick={() =>

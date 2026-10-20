@@ -7,6 +7,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {tpoPrepDueAtUtc} from "@/modules/placements/tpo-prep-due-date";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useTpoStudentsSelection} from "./tpo-students-selection";
 type Course={id:string;cohortId:string;name:string;code:string};
 type Result={id:string;status:"assigned"|"duplicate"|"skipped"};
@@ -56,7 +57,7 @@ export function TpoStudentsAssignPrep(){
     <Input type="datetime-local" value={dueAt} onChange={e=>setDueAt(e.target.value)} />
    </label>
   </div>
-  {dueAt&&!tpoPrepDueAtUtc(dueAt)?<p role="alert" className="text-error">Choose a valid IST due date.</p>:null}
+  {dueAt&&!tpoPrepDueAtUtc(dueAt)?<InlineNotice tone="error" message="Choose a valid IST due date."/>:null}
   <Button variant="secondary" type="button" disabled={pending||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>setConfirm(true)}
    >Review prep assignments</Button>
   <Dialog open={confirm} onOpenChange={v=>{if(!pending)setConfirm(v);}}
@@ -66,8 +67,8 @@ export function TpoStudentsAssignPrep(){
     <Button disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button></>}>
    <p className="text-sm">Due date: {dueAt?dueAt+" IST":"No due date"}. Review the learner roster and course before confirming.</p>
   </Dialog>
-  {notice?<p role="status" aria-live="polite" className="text-sm">{notice}</p>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   {results.some(row=>row.status==="skipped")?<p className="text-sm">Some students belong to another cohort or are no longer active. No cross-college assignment was created.</p>:null}
-  {error?<p role="alert" className="text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

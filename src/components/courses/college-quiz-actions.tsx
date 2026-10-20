@@ -89,21 +89,21 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     Delete</Button>
   </div>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
-  {editing?<div className="grid gap-2 border-y border-border p-3">
-   <label className="grid gap-1 text-xs font-semibold">Quiz title
+  {editing?<div className="grid gap-2 border-y border-border py-3">
+   <label className="grid gap-1 text-xs font-semibold text-body">Quiz title
     <Input required maxLength={255} value={title} disabled={busy}
-     onChange={e=>setTitle(e.target.value)} className="min-h-11"/></label>
-   <label className="grid gap-1 text-xs font-semibold">Description
+     onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
+   <label className="grid gap-1 text-xs font-semibold text-body">Description
     <Textarea maxLength={10000} rows={3} value={description} disabled={busy}
-     onChange={e=>setDescription(e.target.value)} className="min-h-11"/>
+     onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/>
    </label>
-   {quiz.status==="DRAFT"?<label className="grid gap-1 text-xs font-semibold">Maximum attempts
+   {quiz.status==="DRAFT"?<label className="grid gap-1 text-xs font-semibold text-body">Maximum attempts
     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
-     onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-11"/>
+     onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-11 md:min-h-9"/>
    </label>:null}
-   <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
+   <label className="grid gap-1 text-xs font-semibold text-body">Deadline (IST)
     <DateInput mode="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
-     className="min-h-11"/></label>
+     className="min-h-11 md:min-h-9"/></label>
    {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
     <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>

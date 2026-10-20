@@ -171,10 +171,6 @@ export async function ProjectAdminAuditPage({
 
   return (
     <div className="space-y-6">
-      <ProjectAdminNav
-        basePath={basePath}
-        active="audit"
-      />
       <PageHeader
         title="Project audit"
         description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
@@ -183,6 +179,7 @@ export async function ProjectAdminAuditPage({
           {basePath === "/admin/projects" ? <a href="/admin/audit" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">View activity log</a> : null}
         </div>}
       />
+      <ProjectAdminNav basePath={basePath} active="audit" />
 
       {filters.ignoredInvalidFilters ? (
         <Banner tone="warning" role="alert">
@@ -286,7 +283,7 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
-      <section aria-label="Audit page summary" className="grid min-w-0 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
+      <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
         {([
           {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
           {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
