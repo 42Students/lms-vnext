@@ -219,3 +219,23 @@
 - Regressions fixed: 1. Scheduling/cancel showed a success-like state and cleared round selection on any 2xx response without confirming the returned round. Read full control, scheduling API, round service, layout/caller, shared Select/Input/Textarea/Alert/ConfirmDialog/EmptyState and lane-4 polish proof. Require returned round id and intended SCHEDULED/CANCELLED status; leave controls and safe error visible on uncertain response. Original optimistic token, blocked-date double acknowledgement, venue/mode fields, labels and 4-state workflow preserved.
 - Extra clutter/alignment fixes: 0. Phone actions, 768px two-column date form and cancellation disclosure already meet existing hierarchy.
 - Files changed: `src/components/placements/tpo-round-calendar-control.tsx`. Static inspection; no runtime or CI.
+
+## Verify2 — 3. `src/components/tpo/tpo-campaign-send-control.tsx`
+- Regressions fixed: 1 — send handler lacked a synchronous in-flight guard and trusted missing receipt counts as zeros, even when server response was malformed. Read draft/send page, dispatch route and service, shared ConfirmDialog/Alert/InlineNotice/Button, and lane-3/lane-4 polish proof. Added ref lock and finite nonnegative integer receipt validation before showing provider acceptance; kept message copy, irreversible confirmation, unavailable-provider warning, recipient count and role-gated API.
+- Extra fixes: 0. Existing full-width phone action and bound explanation are consistent at 375/768.
+- Files changed: `src/components/tpo/tpo-campaign-send-control.tsx`; static inspection, no runtime/CI.
+
+## Verify2 — 4. `src/components/placements/tpo-drive-change-requests.tsx`
+- Regressions fixed: 1 — any successful POST response could clear entered change proposals or decision comments without a confirmed mutation; COMMENT receipt is legitimately COMMENTED but wasn't handled by existing status mapping. Read entire editor/conversation, role/optimistic-token API service and route, shared Disclosure/ConfirmDialog/Select/Textarea/Button/StatusBadge/EmptyState, and lane-1/lane-2 proof. Now require action-appropriate id/status receipt before clearing form/dismissing confirmation; preserve original field names, read-only state, routing and copy.
+- Extra fixes: 0. Progressive creation and discussion disclosures, hairlines and phone action grid remain clear.
+- Files changed: `src/components/placements/tpo-drive-change-requests.tsx`; source-only, no CI.
+
+## Verify2 — 5. `src/components/placements/tpo-selection-import.tsx`
+- Regressions fixed: 1 — importer trusted 2xx responses and counted selected rows even when server provided no matching persisted receipt, while rapid repeated clicks could start overlapping batch loops. Inspected CSV preparation, FileUpload, both DataTables, Disclosure, ConfirmDialog, selection import API and 100-row transactional service, plus lane-1 proof. Added synchronous lock and chunk receipt check before advancing the total; partial-write warning and no-release promise unchanged.
+- Extra fixes: 0. Bounded preview and unmatched disclosure, with phone-sized controls, remain aligned.
+- Files changed: `src/components/placements/tpo-selection-import.tsx`. Static only; no CI/browser.
+
+## Verify2 — 6. `src/components/tpo/tpo-mobile-footer.tsx`
+- Regressions fixed: 0. Read five-destination footer, live shell alias, BottomSheet, Button, legacy footer CSS and both lane-1/lane-20 proof entries. Destinations, icons, labels, safe-area footer, path/resize dismissal, Escape and ARIA/current-page behavior remain wired; no invalid TSX or missing props.
+- Extra fixes: 0. Five shrink-safe cells and a single-column More sheet already balance at 375; footer hidden at 768.
+- Files changed: verified, no change. Source review only, no CI.
