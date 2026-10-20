@@ -60,7 +60,7 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
      if(event.key==="ArrowDown"){event.preventDefault();setActiveIndex(index=>(index+1)%items.length);}
      else if(event.key==="ArrowUp"){event.preventDefault();setActiveIndex(index=>index<=0?items.length-1:index-1);}
      else if(event.key==="Enter"&&activeIndex>=0&&items[activeIndex]){
-       event.preventDefault();selectedSkill.current=items[activeIndex]!.displayName;onChange(items[activeIndex]!.displayName);setItems([]);setActiveIndex(-1);
+       event.preventDefault();selectedSkill.current=items[activeIndex]!.displayName;onChange(items[activeIndex]!.displayName);setPopupOpen(false);setActiveIndex(-1);
      }else if(event.key==="Escape"){event.preventDefault();event.stopPropagation();setPopupOpen(false);setActiveIndex(-1);}
    }}
    placeholder="Search and select skills..."
@@ -80,8 +80,8 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
     <ul className="m-0 divide-y divide-[var(--lms-canvas-border)] list-none p-0">
     {items.map((item,index)=><li id={id+"-choice-"+index} key={item.id} role="option" aria-selected={activeIndex===index||item.displayName===value} className="min-h-11">
       <Button type="button" variant="ghost" className="!min-h-11 w-full min-w-0 justify-start !rounded-none !px-[var(--lms-space-3)] !py-[var(--lms-space-2)] text-left text-[13px] !transition-[background-color] !duration-[200ms] !ease-in-out hover:!bg-[var(--lms-primary-subtle)]"
-       onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setPopupOpen(false);setItems([]);setActiveIndex(-1);}}>
-       <span className="min-w-0 flex-1 truncate">{item.displayName}</span>{item.category?<span className="ml-[var(--lms-space-2)] shrink-0 text-xs text-muted-foreground">{item.category}</span>:null}
+       onClick={()=>{selectedSkill.current=item.displayName;onChange(item.displayName);setPopupOpen(false);setActiveIndex(-1);}}>
+       <span className="min-w-0 flex-1 truncate">{item.displayName}</span>{item.category?<span className="ml-[var(--lms-space-2)] max-w-[45%] min-w-0 truncate text-xs text-muted-foreground">{item.category}</span>:null}
       </Button>
     </li>)}
   </ul>
