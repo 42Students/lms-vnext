@@ -39,7 +39,7 @@ export default async function PublicPlacementsPage() {
     { label: "Recruiting employers", count: published?.employers ?? null },
   ]);
   return (
-    <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)] shadow-none min-[768px]:p-6">
+    <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-none min-[768px]:p-6">
       <header className="space-y-3">
         <PageHeader title={college?.collegeName??"College placements"} />
       </header>
@@ -65,7 +65,7 @@ export default async function PublicPlacementsPage() {
        <p className="whitespace-pre-wrap break-words text-sm text-body">{content.about}</p>
       </section>:null}
       {published?<p className="mt-8 text-xs text-muted-foreground">Live numbers over the last 12 months.</p>:null}
-      <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-3">
+      <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
         {metricKeys.map(key=><StatTile key={key} label={PUBLIC_METRIC_LABELS[key]} value={formatPublicPlacementMetric(key,{population:published?.population??null,placed:published?.placed??null,offers:published?.offers??null,employers:published?.employers??null,highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null})} className="min-h-[104px]" />)}
       </section>
       <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
