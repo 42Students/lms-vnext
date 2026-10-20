@@ -215,15 +215,15 @@ export function LearnerApplicationsBrowse({
       ) : null}
       {attention.rows.length>0 ? (
         <section aria-label="Application screening updates" role="status"
-          className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-6">
+          className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3 md:py-4">
           <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Application screening updates</h2>
           <p className="mt-1 text-sm text-body">
             {attention.shortlistedCount} shortlisted · {attention.underReviewCount} under review.
             These are saved placement-team stages, not application deadlines.
           </p>
-          <ul className="mt-3 space-y-2">
+          <ul className="mt-3 divide-y divide-border">
             {attention.rows.map(row=>(
-              <li key={row.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] py-3">
+              <li key={row.id} className="flex min-w-0 flex-col items-start gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <span className="min-w-0 text-sm text-body">
                   <strong className="break-words text-foreground">{row.title}</strong>
                   <span className="ml-2 text-xs text-muted-foreground">{row.detail}</span>
@@ -304,11 +304,11 @@ export function LearnerApplicationsBrowse({
         </div>
         </div>
       </section>
-      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
+      <div className="flex min-w-0 flex-col items-start gap-2 text-sm text-body sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <p role="status">{rows.length} of {items.length} applications</p>
         {rows.length>0 ? (
           <Button variant="secondary" type="button" onClick={downloadOwnApplications}
-            className="min-h-[var(--lms-control-height)] max-[767px]:min-h-11 px-3">
+            className="min-h-11 w-full px-3 sm:w-auto md:min-h-[var(--lms-control-height)]">
             Export matching applications CSV
           </Button>
         ) : null}
@@ -334,7 +334,7 @@ export function LearnerApplicationsBrowse({
       {emptyKind==="NO_APPLICATIONS" ? (
         <div className="space-y-3">
           <LearnerPlacementJourney items={[]} />
-          <div className="rounded-lg border border-border bg-surface p-4">
+          <div className="border-t border-border py-4">
             <p className="text-sm text-body">No applications have been recorded for this learner yet.
               Browse your published college drives and check eligibility before applying.</p>
             <Link href="/learn/my-placements/jobs"
@@ -394,7 +394,7 @@ export function LearnerApplicationsBrowse({
           ) : null}
           {selected?.applicationStatus === "SUBMITTED" ? (
             <Button
-              variant="secondary"
+              variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={withdrawPending}
               onClick={() => {
                 setWithdrawTarget(selected);
@@ -413,7 +413,7 @@ export function LearnerApplicationsBrowse({
           <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
-          <Button onClick={() => updateQuery({applicationId:null})}>Got it</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => updateQuery({applicationId:null})}>Got it</Button>
         </>}>
         {selected ? (
           <div className="space-y-5">
@@ -432,7 +432,7 @@ export function LearnerApplicationsBrowse({
               <div><dt className="text-xs font-semibold text-muted-foreground">Screening</dt>
                 <dd className="mt-1 text-sm text-foreground">{humanize(learnerApplicationStage(selected))}</dd></div>
             </dl>
-            <section aria-label="Selection process" className="rounded-xl border border-border p-4">
+            <section aria-label="Selection process" className="border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="font-semibold text-foreground">Selection process</h3>
                 <Link href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">See in schedule</Link>
@@ -440,7 +440,7 @@ export function LearnerApplicationsBrowse({
               <ol className="mt-3 space-y-2 text-sm text-body">
                 {scheduledRounds.filter(round=>round.applicationId===selected.applicationId)
                   .sort((a,b)=>Date.parse(a.scheduledAt??"9999-12-31")-Date.parse(b.scheduledAt??"9999-12-31"))
-                  .map(round=><li key={round.roundId} className="rounded-[var(--lms-control-radius)] border border-border p-3">
+                  .map(round=><li key={round.roundId} className="border-b border-border py-3">
                     <p className="font-semibold text-foreground">{round.roundName} · Booked</p>
                     <p>{round.scheduledAt?formatDate(new Date(round.scheduledAt)):"Date to be told"}
                       {" · "}{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":round.mode}
@@ -453,7 +453,7 @@ export function LearnerApplicationsBrowse({
                 </li>:null}
               </ol>
             </section>
-            <section aria-label="Application milestones" className="rounded-xl border border-border bg-surface-subtle p-4">
+            <section aria-label="Application milestones" className="border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="text-sm font-semibold text-foreground">Recent recorded milestones</h3>
                 <Link href={"/learn/my-placements/applications/"+
@@ -487,7 +487,7 @@ export function LearnerApplicationsBrowse({
               {selected.results.length ? selected.results
                 .slice().sort((a,b)=>a.roundSequence-b.roundSequence)
                 .map((result)=>(
-                  <article key={result.resultId} className="rounded-[var(--lms-control-radius)] border border-border p-4">
+                  <article key={result.resultId} className="border-b border-border py-3">
                     <p className="text-sm font-semibold text-foreground">Round {result.roundSequence} · {result.roundName}</p>
                     <p className="mt-1 text-sm text-body">
                       {humanize(result.outcome)} · {formatDate(result.appliedAt)}
@@ -521,11 +521,11 @@ export function LearnerApplicationsBrowse({
           :"This changes the official status of your submitted application. This action cannot be undone here."}
         footer={
           <>
-            <Button variant="secondary" disabled={withdrawPending}
+            <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={withdrawPending}
               onClick={() => { setWithdrawTarget(null); setWithdrawError(null); }}>
               Keep application
             </Button>
-            <Button
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={withdrawPending || !learnerApplicationWithdrawalSchema.safeParse({
                 action: "WITHDRAW", confirmed: true, reason: withdrawReason,
               }).success}

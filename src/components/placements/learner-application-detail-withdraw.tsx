@@ -33,15 +33,15 @@ export function LearnerApplicationDetailWithdraw({applicationId,requiresRequest=
     finally{setPending(false);}
   }
   return <>
-    <Button className="max-md:min-h-11" variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>{requiresRequest?"Ask to withdraw":"Withdraw application"}</Button>
+    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" onClick={()=>{setError(null);setOpen(true);}}>{requiresRequest?"Ask to withdraw":"Withdraw application"}</Button>
     <Dialog open={open} onOpenChange={next=>{if(!next&&!pending)setOpen(false);}}
       title={requiresRequest?"Ask to withdraw":"Confirm application withdrawal"}
       description={requiresRequest?
         "The placement cell must review your withdrawal request because a round was booked. This does not immediately withdraw the application.":
         "Your account and current application state are checked before withdrawal is recorded."}
       footer={<>
-        <Button className="max-md:min-h-11" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep application</Button>
-        <Button className="max-md:min-h-11" disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":requiresRequest?"Send withdrawal request":"Confirm withdrawal"}</Button>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Keep application</Button>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>void submit()}>{pending?"Saving…":requiresRequest?"Send withdrawal request":"Confirm withdrawal"}</Button>
       </>}>
       <label htmlFor="own-application-withdraw-reason" className="block text-sm font-semibold text-foreground">
         Reason for withdrawal
