@@ -34,14 +34,11 @@ export default async function SuperAdminProjectAtRiskRoute({
   if (!collegeId) {
     return (
       <div className="min-w-0 space-y-6">
-        <ProjectAdminNav
-          basePath="/admin/projects"
-          active="at-risk"
-        />
         <PageHeader
           title="At-risk projects"
           description="A selected college scope is required."
         />
+        <ProjectAdminNav basePath="/admin/projects" active="at-risk" />
         <EmptyState
           title="Select a college to continue"
           description="Choose a college in the header above to see its at-risk projects."
