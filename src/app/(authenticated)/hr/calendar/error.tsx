@@ -13,7 +13,7 @@ export default function RouteError({ reset }: {
     <ErrorState
       title="Couldn't load your recruiter calendar"
       description="Your authorized hiring events could not be retrieved. This is a loading error, not evidence that your calendar is empty."
-      action={<Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={reset}>Retry</Button>}
+      action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>}
     />
   </>;
 }
