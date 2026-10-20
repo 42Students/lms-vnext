@@ -51,7 +51,7 @@
 .menu { position:absolute; top:calc(100% + 9px); right:0; z-index:60; box-sizing:border-box; width:min(280px,calc(100vw - 24px)); min-height:150px; border:1px solid var(--lms-header-border); border-radius:6px; padding:16px 24px; background:var(--lms-white); box-shadow:9px 11px 28px rgba(0,0,0,.10); }
 .menuItem { display:flex; align-items:center; width:100%; min-height:44px; padding:8px 11px; border-radius:6px; color:var(--topbar-ink); font-family:inherit; font-size:13px; font-weight:600; line-height:1.4; text-align:left; }
 .menuItem:hover { background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
-.menuItem:focus-visible { outline:2px solid var(--lms-button-primary); outline-offset:2px; background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
+.menuItem:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; background:var(--lms-primary-subtle); color:var(--lms-button-primary); }
 .menuDivider { border:0; border-top:1px solid var(--lms-header-border); margin:8px 0; }
 .bellAdapter { position:relative; width:36px; height:36px; flex:none; }
 .bellAdapter > div { width:36px; height:36px; }
@@ -128,8 +128,8 @@
 .menuItem:focus-visible,
 .suggestion:focus-visible,
 .iconButton:focus-visible {
-  outline:2px solid var(--lms-button-primary);
-  outline-offset:2px;
+  outline:2px solid var(--lms-primary-text);
+  outline-offset:3px;
 }
 .recruiterBell > div > section,
 .learnerBell > div > section {
