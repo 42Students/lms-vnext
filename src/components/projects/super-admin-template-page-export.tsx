@@ -12,7 +12,7 @@ export function SuperAdminTemplatePageExport({items}:{items:Template[]}){
   a.href=url;a.download="project-templates-page.csv";a.click();URL.revokeObjectURL(url);
  }
  return <Button variant="secondary" type="button" disabled={!items.length} onClick={exportCsv}
-  className="">
+  className="min-h-11 md:min-h-9">
   Export templates · CSV
  </Button>;
 }

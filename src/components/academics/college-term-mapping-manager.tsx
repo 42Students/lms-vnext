@@ -127,12 +127,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   return <section className="space-y-4 border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
-    <form onSubmit={prepare} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <form onSubmit={prepare} className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <Select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
-        }} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
           {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
@@ -142,7 +142,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <Select required value={termId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
-        }} className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
+        }} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>
           {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
         </Select>
