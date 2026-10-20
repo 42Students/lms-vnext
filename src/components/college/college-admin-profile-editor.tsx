@@ -61,7 +61,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
       {profile.photoUrl?<div className="mt-3 flex flex-wrap items-center gap-3">
         {/* The signed-in administrator supplied this HTTPS image URL. No private document URL is synthesized. */}
         <img src={profile.photoUrl} alt={profile.displayName+" profile photo"} referrerPolicy="no-referrer"
-          className="h-16 w-16 rounded-full border border-border bg-muted object-cover"/>
+          className="h-16 w-16 rounded-lg border border-border bg-muted object-cover"/>
         <a href={profile.photoUrl} rel="noreferrer"
           className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View profile photo</a>
       </div>:null}
