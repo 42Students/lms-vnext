@@ -210,25 +210,27 @@ export default async function ActivityPage({
         title="Activity Log"
         description="Meaningful college changes, grouped to reduce noise. Low-value request logs stay out of this workspace."
         actions={isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN") ? (
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
           <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
-            className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] md:min-h-9">
             Export
           </a>
+          {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            Open audit findings board →
+          </Link> : null}
+          </div>
         ) : undefined}
       />
 
       {isSuperAdmin(context)?<p role="status" aria-label="Activity scope"
-        className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-body">
+        className="border-y border-border py-3 text-sm text-body">
         {one(params.collegeId)? "College: "+(collegeOptions.find(college=>college.id===one(params.collegeId))?.name??"Selected college")
          :context.adminScope?.collegeId?"Activity restricted to the selected college."
          :context.adminScope?.organizationId?"Organization-wide activity."
          :"Platform-wide activity."}
       </p>:null}
-      {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-        Open audit findings board →
-      </Link> : null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="space-y-2">
        <div className="flex flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{link.name}</Link>)}</div>
@@ -241,7 +243,7 @@ export default async function ActivityPage({
        ].map(link=><Link key={link.label} href={link.href}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{link.label}</Link>)}</div>
       </nav>:null}
-      <form className="grid min-w-0 grid-cols-1 gap-4 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 sm:p-6 xl:grid-cols-4">
+      <form className="grid min-w-0 grid-cols-1 gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label>
             <span className="mb-1 block text-xs font-semibold text-body">College</span>
