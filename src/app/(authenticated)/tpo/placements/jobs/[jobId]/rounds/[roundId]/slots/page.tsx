@@ -15,11 +15,12 @@ export default async function SlotsPage({params}:{params:Promise<{jobId:string;r
  let data:Awaited<ReturnType<typeof getTpoInterviewSlotWorkspace>>;
  try{data=await getTpoInterviewSlotWorkspace(context,jobId,roundId);}
  catch(e){if(e instanceof PlacementsServiceError&&e.code==="PLACEMENT_ROUND_NOT_FOUND")notFound();throw e;}
- return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+ return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader eyebrow="TPO · Interviews" title={data.round.name+" · Slots and rooms"}
-   description="Generate interview slots, book candidates and resolve room assignments before the drive day."/>
-  <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Candidate schedule</Link>
+   description="Generate interview slots, book candidates and resolve room assignments before the drive day."
+   actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule"}
+     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto md:min-h-9">← Candidate schedule</Link>}/>
+
   {!data.storageReady?<Alert tone="warning">
    Candidate-specific interview slot storage has not been registered. The orchestrator must register
    docs/proposed-migrations/chat-5-interview-candidate-slots.sql before booking or changing slots.</Alert>
