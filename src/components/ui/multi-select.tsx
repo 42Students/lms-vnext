@@ -85,7 +85,7 @@ export function MultiSelect({
     <div data-slot="multi-select-field" className={cx("min-w-0", className)}>
       <Select {...props} ref={bindRef} multiple disabled={disabled} aria-readonly={readOnly || undefined} aria-describedby={describedBy}
         value={value} defaultValue={defaultValue} size={rows} error={error}
-        data-slot="multi-select" onChange={change} onKeyDown={keyDown}>
+        data-slot="multi-select" className="aria-[readonly=true]:cursor-default [&_option:checked]:bg-[var(--lms-primary)] [&_option:checked]:text-white [&_option:disabled]:text-[var(--lms-neutral-400)] [&_option:hover]:bg-[#d1f1f1] max-[767px]:[&_option]:min-h-11" onChange={change} onKeyDown={keyDown}>
         {options.map(option => (
           <option key={option.value} value={option.value} disabled={option.disabled}>
             {typeof option.label === "string" || typeof option.label === "number" ? option.label : option.value}
