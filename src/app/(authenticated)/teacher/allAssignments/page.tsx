@@ -11,7 +11,7 @@ export default async function FacultyAllAssignmentsPage() {
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="My Assignments" actions={<Link href="/teacher/results"
-          className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           Assessment results overview →
         </Link>} />
       <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="ASSIGNMENT" />
