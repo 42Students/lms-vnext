@@ -37,7 +37,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
     {!data.enabled ? <div role="status" className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
-      <form action="/mentor/activity" method="get" className={mentorActivityFormLayout+" !rounded-none !border-0 !bg-transparent !p-0 md:!grid-cols-2 xl:!grid-cols-4"}>
+      <form action="/mentor/activity" method="get" className={mentorActivityFormLayout+" !rounded-none !border-0 !bg-transparent !p-0 min-[768px]:!grid-cols-2 min-[1280px]:!grid-cols-4"}>
         <label className="grid gap-1 text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Assigned project title
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             placeholder="Search your project names" className="min-h-11 md:min-h-9 w-full min-w-0" />

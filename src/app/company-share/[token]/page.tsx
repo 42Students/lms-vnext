@@ -24,7 +24,7 @@ export default async function CompanySharePage({
  if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-4 py-10`}>
   <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try again."
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Try again</Link>}/>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Try again</Link>}/>
  </main>;
  if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 py-8 pb-[max(2rem,env(safe-area-inset-bottom))] md:py-10`}>
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 md:p-6">
@@ -47,7 +47,7 @@ export default async function CompanySharePage({
   <section role="alert" className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
    <PageHeader title="This link is not valid any more." />
    <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
-   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Home</Link>
+   <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Home</Link>
   </section>
  </main>;
  const columns=safeCompanyShareColumns(result.selectedColumns);
@@ -87,7 +87,7 @@ export default async function CompanySharePage({
       className="w-full md:w-64" placeholder="Name contains..." />
     </label>
     <Button type="submit">Apply search</Button>
-    <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</a>
+    <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
   <p role="status" className="text-sm text-body">
    {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
@@ -97,11 +97,11 @@ export default async function CompanySharePage({
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
     <p className="text-sm text-body">No current shortlist records on this page.</p>
     {result.search?<Link href={companyShareApplicantHref(token,1,"")}
-      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear</Link>:null}
+      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
    </div>}/>
   <Pagination page={result.page} pageCount={result.totalPages}
    hrefForPage={href} label="Share pages"/>
-  <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+  <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
    href={publicApplicantExportHref(token,result.search)}>
    Download list (CSV, up to 500 applicants)
   </a>

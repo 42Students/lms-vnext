@@ -361,7 +361,7 @@ export function LearnerCareerRoundsWorkspace({
           </div>
         ) : null}
         <div className="grid min-w-0 gap-3 md:grid-cols-3">
-          <label className="text-xs font-semibold text-body">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search employers or rounds
             <Input
               type="search" value={filters.search}
@@ -371,7 +371,7 @@ export function LearnerCareerRoundsWorkspace({
               className={selectClass}
             />
           </label>
-          <label className="text-xs font-semibold text-body">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Urgency
             <Select value={filters.urgency}
               onChange={(event) => setFilter("urgency", event.target.value as LearnerRoundBrowseFilters["urgency"])}
@@ -381,7 +381,7 @@ export function LearnerCareerRoundsWorkspace({
               <option value="week">Within seven days</option>
             </Select>
           </label>
-          <label className="text-xs font-semibold text-body">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Order
             <Select value={filters.sort}
               onChange={(event) => setFilter("sort", event.target.value as LearnerRoundBrowseFilters["sort"])}

@@ -34,17 +34,17 @@ export default async function MentorReviewOverviewPage({
   className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:py-0 bg-white hover:bg-[var(--lms-primary-subtle)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
   Delivery workspace</Link>}/>
  <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
- className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4 max-[767px]:[&_label]:w-full">
+ className="flex flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full border-b border-border pb-4">
   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Delivery status
    <Select name="status" defaultValue={data.query.status}
-    className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+    className="min-h-11 min-[768px]:min-h-9">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
-    className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
+    className="min-h-11 min-[768px]:min-h-9">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
@@ -53,7 +53,7 @@ export default async function MentorReviewOverviewPage({
   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
-    placeholder="All versions" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
+    placeholder="All versions" className="min-h-11 min-[768px]:min-h-9"/>
   </label>
   <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
    Filter

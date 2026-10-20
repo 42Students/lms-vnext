@@ -19,21 +19,21 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
  const data=await getTpoInterviewReadiness(context,{days:days||14,page:first(query.page)||1,q:first(query.q)||""});
  const href=(page:number)=>"/tpo/calendar/interviews?"+new URLSearchParams({days:String(data.days),page:String(page),...(data.q?{q:data.q}:{})}).toString();
- return <div className="space-y-6">
+ return <div className="min-w-0 space-y-6">
   <PageHeader eyebrow="TPO · Interview rounds" title="Interview schedule readiness"
    description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here."/>
-  <Link href="/tpo/calendar" className="text-sm font-semibold text-link hover:underline lms-inline-link">← Calendar</Link>
+  <Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">← Calendar</Link>
   <form action="/tpo/calendar/interviews" method="get"
-    className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+    className="flex flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
    <label className="text-sm font-semibold text-body">Search company, drive or round
     <Input name="q" type="search" maxLength={100} defaultValue={data.q}
-     className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3" />
+     className="mt-2 block min-h-11 md:min-h-9 w-full" />
    </label>
    <label className="text-sm font-semibold text-body">Lookahead
-    <Select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+    <Select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 md:min-h-9 w-full">
       {[7,14,30,60,90].map(n=><option key={n} value={n}>{n} days</option>)}
     </Select></label>
-   <Button type="submit" className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white">Apply</Button>
+   <Button type="submit" className="min-h-11 md:min-h-9">Apply</Button>
   </form>
   <section aria-label="Interview readiness counts" className="grid grid-cols-2 gap-3 min-[768px]:grid-cols-3">
    {Object.entries(data.counts).map(([key,n])=><StatTile key={key} className={tpoTileStyles.tile}

@@ -41,7 +41,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend }: {
           </Link>
         }
       />
-      {leading ? <section aria-label="Batch actions" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
+      {prepend ? <section aria-label="Batch actions" className="min-w-0 border-b border-border pb-4">{prepend}</section> : null}
       {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
       {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
       <FilterBar title="Filters"><section aria-label={title + " filters"} className="border-t border-border pt-4">

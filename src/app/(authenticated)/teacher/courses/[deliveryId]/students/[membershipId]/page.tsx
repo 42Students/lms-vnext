@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable } from "@/components/ui/data-table";
 import { getFacultyStudentDetail } from "@/modules/courses/faculty-student-detail-service";
@@ -25,7 +26,7 @@ export default async function FacultyStudentDetailPage({
       description={[data.course.courseName, data.course.sectionName,
         data.course.academicPeriodName].join(" · ")}
       actions={<Link href={root + "/students"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Students</Link>} />
-    <section aria-label="Student details" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+    <section aria-label="Student details" className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
       {[
         ["Roll number", data.student.rollNumber ?? "Not assigned"],
         ["Email", data.student.email ?? "Not available"],
@@ -40,15 +41,12 @@ export default async function FacultyStudentDetailPage({
     </section>
     <section className="border-y border-[var(--lms-canvas-border)] bg-transparent py-5">
       <h2 className="text-lg font-semibold text-foreground">Course attendance</h2>
-      <div className="mt-4 grid gap-3 md:grid-cols-4">
+      <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
         {[
           ["Present", data.summary.present], ["Absent", data.summary.absent],
           ["Unmarked", data.summary.unmarked], ["Upcoming", data.summary.upcoming],
         ].map(([label, value]) =>
-          <div key={label} className="min-w-0 border-b border-border py-3">
-            <p className="text-xs text-body">{label}</p>
-            <p className="mt-1 text-xl font-semibold tabular-nums">{value}</p>
-          </div>)}
+          <StatTile key={label} label={label} value={value} className="min-h-[104px]" />)}
       </div>
       <p className="mt-4 text-xs leading-5 text-muted-foreground">
         Attendance percentage uses recorded Present/Absent marks only.
