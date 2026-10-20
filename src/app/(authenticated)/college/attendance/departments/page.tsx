@@ -34,5 +34,5 @@ export default async function CollegeDepartmentAttendancePage({
     listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data),
     getCollegeAttendancePolicy(context, collegeId),
   ]);
-  return <CollegeDepartmentInsights data={data} correctionPolicy={policy.policy} />;
+  return <div className="min-w-0 max-w-full overflow-x-clip"><CollegeDepartmentInsights data={data} correctionPolicy={policy.policy}/></div>;
 }

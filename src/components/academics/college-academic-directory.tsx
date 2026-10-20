@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
@@ -20,9 +21,10 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
   | Awaited<ReturnType<typeof listCollegeBatches>>;
 
-export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
+export function CollegeAcademicDirectory({ data, batchPeriods = [], leading }: {
   data: DirectoryData;
   batchPeriods?: { id: string; name: string; code: string }[];
+  leading?: ReactNode;
 }) {
   const semesters = data.kind === "SEMESTERS";
   const title = semesters ? "Semesters" : "Batches";
@@ -38,6 +40,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
           </Link>
         }
       />
+      {leading ? <section aria-label="Batch actions" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
       {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
       <section aria-label={title + " filters"} className="border-t border-border pt-4">
         <form action={path} method="get" className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">

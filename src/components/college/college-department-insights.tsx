@@ -70,7 +70,7 @@ export function CollegeDepartmentInsights({
           These settings are policy context, not department attendance percentages.
         </p>
         <Link href="/college/attendance/settings"
-          className="mt-2 inline-block font-semibold text-link">Attendance policy settings</Link>
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Attendance policy settings</Link>
       </Alert>
     ) : null}
     <section aria-label="Department filters" className="border-t border-border pt-4">
@@ -86,7 +86,7 @@ export function CollegeDepartmentInsights({
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0">
-      <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
+      <p className="border-b border-border py-3 text-sm text-muted-foreground">
         {data.total} matching department{data.total === 1 ? "" : "s"}
       </p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
