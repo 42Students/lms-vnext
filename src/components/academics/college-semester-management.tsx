@@ -72,8 +72,8 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
-        <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-5">
-          <label className="grid gap-1 text-sm font-medium text-body">
+        <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.programLabel}
             <Select required value={programId} onChange={e => setProgramId(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
@@ -82,13 +82,13 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
               </option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm font-medium text-body">
+          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.numberLabel}
             <Input required type="number" min={1} max={12} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => setTermNumber(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid gap-1 text-sm font-medium text-body">
+          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
@@ -188,7 +188,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         <form onSubmit={save} className="space-y-2">
           <h3 className="m-0 text-sm font-semibold text-foreground">{SEMESTER_COPY.editTitle}</h3>
           <p className="text-xs text-muted-foreground">{SEMESTER_COPY.promotionNote}</p>
-          <label className="grid gap-1 text-xs font-semibold text-body">
+          <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
