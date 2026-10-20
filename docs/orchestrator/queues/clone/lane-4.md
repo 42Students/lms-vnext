@@ -45,11 +45,11 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/college/attendance/page.tsx`
 - [x] `src/app/(authenticated)/college/attendance/settings/page.tsx`
 - [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/page.tsx`
-- [ ] `src/app/(authenticated)/college/branding/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/page.tsx`
+- [x] `src/app/(authenticated)/college/branding/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/page.tsx`
+- [x] `src/app/(authenticated)/college/classes/recurring-preview/page.tsx`
 - [ ] `src/app/(authenticated)/college/college-profile/page.tsx`
 - [ ] `src/app/(authenticated)/college/companies/page.tsx`
 - [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`

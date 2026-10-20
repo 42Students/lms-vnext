@@ -31,7 +31,10 @@ export default async function CollegeBrandingPage() {
       <Alert tone="info">
         College contact details are managed in College profile. Sign-in branding, domains and logo changes are controlled by a Super Admin.
       </Alert>
+      <section aria-label="College logo settings" className="min-w-0">
       <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>
+      </section>
+      <section aria-label="Sign-in branding settings" className="min-w-0 border-t border-border pt-4">
       <CollegeBrandingForm
         key={membership.collegeId}
         collegeId={membership.collegeId}
@@ -52,6 +55,7 @@ export default async function CollegeBrandingPage() {
           privacyUrl: branding.privacyUrl,
         }}
       />
+      </section>
     </div>
   );
 }
