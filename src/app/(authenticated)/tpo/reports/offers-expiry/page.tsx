@@ -65,8 +65,8 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       ) : (
         <section aria-label="Expiring offer records" className="grid gap-3">
           {data.rows.map((row) => (
-            <article key={row.offerId} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-              <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
+            <article key={row.offerId} className="min-w-0 border-b border-border px-1 py-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <h2 className="font-semibold text-foreground">
                     {row.companyName} · {row.roleTitle}

@@ -8,6 +8,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -76,16 +77,7 @@ export default async function TpoBranchSeasonPage({
         <EmptyState title="No placement seasons are recorded for this college." description="No branch rate can be calculated."/>
       ) : (
         <>
-          <section className="grid gap-3 sm:grid-cols-2">
-            <div className="border-b border-border px-1 py-5">
-              <p className="text-sm text-body">Distinct applicants (all application states)</p>
-              <p className="mt-2 text-3xl font-bold tabular-nums">{dashboard.totalApplicants}</p>
-            </div>
-            <div className="border-b border-border px-1 py-5">
-              <p className="text-sm text-body">Distinct learners with currently accepted offers</p>
-              <p className="mt-2 text-3xl font-bold tabular-nums">{dashboard.totalAcceptedLearners}</p>
-            </div>
-          </section>
+          <section className="grid gap-3 sm:grid-cols-2" aria-label="Season branch totals"><StatTile label="Distinct applicants (all application states)" value={dashboard.totalApplicants} className="min-h-[104px]" /><StatTile label="Distinct learners with currently accepted offers" value={dashboard.totalAcceptedLearners} className="min-h-[104px]" /></section>
           {!dashboard.registrationAvailable ? (
             <Alert tone="warning">No migrated placement-pool registration table is available. Registered denominator and placement rate are unknown, not zero. The accepted-applicants / applicant ratio below is an explicitly different metric.</Alert>
           ) : null}
