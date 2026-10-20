@@ -622,7 +622,7 @@ export function RecruiterLeadDetailWorkspace({
             <h2 className="text-lg font-semibold">Follow-ups</h2>
             <form className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] lg:items-end"
               onSubmit={e => void addFollowup(e)}>
-              <div className="flex flex-wrap gap-2 md:col-span-3">
+              <div className="flex min-w-0 flex-wrap gap-2 sm:col-span-2 lg:col-span-3">
                 {([["Tomorrow",1],["In 3 days",3],["In a week",7]] as const).map(([label,days])=>
                   <Button type="button" key={label} variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>{
                     const dt=new Date();dt.setDate(dt.getDate()+days);
