@@ -6,6 +6,7 @@ import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, col
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Pagination } from "@/components/ui/pagination";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
@@ -100,68 +101,68 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex flex-wrap items-end gap-3">
-          <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-52 flex-1 gap-1 text-xs font-semibold text-body">
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
-              className="min-h-11" />
+              className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Exact course code
             <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11" />
+              className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
-              className="min-h-11"/>
+              className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
-              className="min-h-11"/>
+              className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All scopes</option><option value="SHARED">Shared offering</option>
               <option value="SECTION">Section-specific</option>
             </Select>
           </label>
-          {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          {!isAssignment?<label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Quiz results
             <Select name="results" defaultValue={data.query.results}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">Any visibility</option><option value="PUBLISHED">Results published</option>
               <option value="HIDDEN">Results hidden</option>
             </Select>
           </label>:null}
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Due-date configuration
             <Select name="duePresence" defaultValue={data.query.duePresence}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All deadlines</option><option value="SCHEDULED">Deadline configured</option>
               <option value="UNSCHEDULED">No deadline</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Deadline window
             <Select name="dueWindow" defaultValue={data.query.dueWindow}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">Any deadline</option><option value="PAST">Deadline passed</option>
               <option value="FUTURE">Deadline upcoming</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Academic period code
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
-              className="min-h-11"/>
+              className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-1 text-xs font-semibold text-body">
             Status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11">
+              className="min-h-11 md:min-h-9">
               <option value="ALL">All statuses</option>
               <option value="DRAFT">Draft</option>
               <option value="PUBLISHED">Published</option>
@@ -221,7 +222,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <dd>{item.submittedLearners}/{item.eligibleLearners}</dd></div>
                   {isAssignment?<div><dt className="font-semibold text-muted-foreground">Graded</dt>
                     <dd>{item.gradedLearners} graded</dd></div>:null}
-                  {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
+                  {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd><StatusBadge tone={item.resultsPublished?"success":"warning"}>{item.resultsPublished?"Published":"Hidden"}</StatusBadge></dd></div>:null}
                 </dl>
                 {!isAssignment?<><QuizListActions item={item}/><CollegeQuizActions quiz={item}/><CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId} specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries} status={item.status}/></>:null}
                 {isAssignment?<CollegeAssignmentActions assignment={item}/>:null}
@@ -259,7 +260,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                       {collegeStatusLabel(item.status)}
                     </StatusBadge>},
                   ...(!isAssignment?[{key:"results",header:COLLEGE_COURSE_TAB_COPY.assessmentColumns.results,
-                    mobilePriority:"secondary" as const,cell:(item:CollegeAssessmentAggregateItem)=>collegeResultsLabel(Boolean(item.resultsPublished))}]:[]),
+                    mobilePriority:"secondary" as const,cell:(item:CollegeAssessmentAggregateItem)=><StatusBadge tone={item.resultsPublished?"success":"warning"}>{collegeResultsLabel(Boolean(item.resultsPublished))}</StatusBadge>}]:[]),
                   {key:"due",header:"Due (IST)",mobilePriority:"secondary" as const,cell:(item)=>formatDue(item.dueAt)},
                   {key:"submitted",header:"Submitted / eligible",mobilePriority:"secondary" as const,
                     cell:(item)=>item.submittedLearners+"/"+item.eligibleLearners+" submitted"},
@@ -284,26 +285,14 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
         )}
       </section>
 
-      <nav aria-label={name + " pagination"}
-        className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
           Page {data.page} of {data.totalPages} · {data.total} records · 25/page
         </p>
-        <div className="flex gap-2">
-          {data.page > 1 ? (
-            <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page - 1 })}
-              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-              Previous
-            </Link>
-          ) : null}
-          {data.page < data.totalPages ? (
-            <Link href={collegeAssessmentHref(data.kind, { ...data.query, page: data.page + 1 })}
-              className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-              Next
-            </Link>
-          ) : null}
-        </div>
-      </nav>
+        <Pagination page={data.page} pageCount={data.totalPages}
+          hrefForPage={page=>collegeAssessmentHref(data.kind,{...data.query,page})}
+          label={name+" pagination"} showBoundaryLinks={false}/>
+      </div>
 
       <p className="text-xs leading-5 text-muted-foreground">
         Submitted means distinct active enrolled learners with a submission or attempt.
