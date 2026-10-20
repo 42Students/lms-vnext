@@ -15,7 +15,7 @@ export default function LearnerProjectDetailError({
         Please check your connection, then try again. Your project activity has not been changed.
       </p>
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <Button className="max-md:min-h-11" onClick={reset}>Retry</Button>
+        <Button type="button" className="max-md:min-h-11" onClick={reset}>Retry</Button>
         <Link href="/learn/projects" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body">Back to Projects</Link>
       </div>
     </section>
