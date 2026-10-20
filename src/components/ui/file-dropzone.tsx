@@ -14,13 +14,14 @@ export type FileDropzoneProps = {
   showImagePreview?: boolean;
   imagePreviewKind?: "attachment" | "profile";
   disabled?:boolean;
+  required?:boolean;
   pickerUnavailable?:boolean;
   helper?:string;
   fallback?:ReactNode;
   className?:string;
 };
 /** Drag and picker both enforce the same client-side validation before delegation. */
-export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,showSelectedFiles=false,showImagePreview=false,imagePreviewKind="attachment",disabled=false,pickerUnavailable=false,helper,fallback,className}:FileDropzoneProps) {
+export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,showSelectedFiles=false,showImagePreview=false,imagePreviewKind="attachment",disabled=false,required=false,pickerUnavailable=false,helper,fallback,className}:FileDropzoneProps) {
   const errorId = useId();
   const unavailable = disabled || pickerUnavailable;
   const [dragging,setDragging]=useState(false);
@@ -60,14 +61,14 @@ export function FileDropzone({label,onFiles,accept,multiple,maxBytes,progress,sh
     setDropError(null);
     onFiles(null);
   }
-  return <div data-slot="file-dropzone" role="group" aria-label={label}
+  return <div data-slot="file-dropzone" role="group" aria-label={label} aria-required={required || undefined}
     aria-invalid={dropError ? true : undefined} aria-describedby={dropError ? errorId : undefined}
     onDragOver={event=>{if(!unavailable && Array.from(event.dataTransfer.types).includes("Files")){event.preventDefault();setDragging(true);}}}
     onDragLeave={event => { const next = event.relatedTarget; if (!(next instanceof Node) || !event.currentTarget.contains(next)) setDragging(false); }}
     onDrop={onDrop}
     className={cx("min-w-0 rounded-[var(--lms-field-radius)] border border-dashed border-[var(--lms-neutral-300)] bg-[var(--lms-neutral-50)] p-4 transition-colors duration-150",dragging?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)]":"",unavailable?"opacity-50":"",className)}>
-    <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} imagePreviewKind={imagePreviewKind} disabled={disabled} pickerUnavailable={pickerUnavailable} helper={helper} fallback={fallback}/>
-    <p className="mt-2 text-[12px] text-[var(--lms-muted-text)]">Drag a file here or use the file picker.</p>
+    <FileUpload key={pickerResetToken} label={label} onFiles={files=>{droppedRef.current=false;setDroppedNames([]);setDropPreviewFile(null);setDropError(null);onFiles(files);}} accept={accept} multiple={multiple} maxBytes={maxBytes} progress={progress} showSelectedFiles={showSelectedFiles} showImagePreview={showImagePreview} imagePreviewKind={imagePreviewKind} disabled={disabled} required={required} pickerUnavailable={pickerUnavailable} helper={helper} fallback={fallback}/>
+    <p className="mt-2 text-[12px] text-[var(--lms-muted-text)]">{unavailable ? "File selection is currently unavailable." : "Drag a file here or use the file picker."}</p>
     {showSelectedFiles && droppedNames.length>0 && !unavailable
       ? <ul aria-label="Dropped files" className="mt-2 space-y-1 text-[13px] leading-5 text-[var(--lms-body-text)]">
           {droppedNames.map((name,index)=><li key={`${index}-${name}`} className="break-all">{name}</li>)}
