@@ -45,7 +45,7 @@ export default async function CollegeCompaniesPage({
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives."
       actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>} />
     <CollegeCompanyCreate collegeId={collegeId}/>
-    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-4">
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <label className="grid min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9" />
       </label>
