@@ -7,6 +7,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { Alert } from "@/components/ui/alert";
@@ -88,20 +89,13 @@ export default async function TpoCompanyDetailPage({
   const maxYearlyHires=Math.max(1,...hiringPulse.hiredPerYear.map(row=>row.joinedLearners));
 
   return (
-    <div className="space-y-6">
-      <Link
-        href="/tpo/companies"
-        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-      >
-        ← All companies
-      </Link>
-
+    <div className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Company detail"
         title={company.name}
         description="College-linked contacts, placement drives, hiring records and a timeline drawn from persisted events only."
         actions={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
               className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
               Create drive
@@ -110,15 +104,19 @@ export default async function TpoCompanyDetailPage({
               className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Add contact
             </Link>
+      <Link
+        href="/tpo/companies"
+        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+      >
+        ← All companies
+      </Link>
+
           </div>
         }
       />
 
-      <TpoPublicJoinLinkCard initial={companyLink} scope="COMPANY" companyId={route.companyId} companyName={detail.company.name} />
-      <TpoCompanyTeamConversation companyId={route.companyId} companyName={company.name} actorMembershipId={context.membership.id} />
-
-      <section aria-label="College company relationship" className="border-b border-border py-5">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">College relationship and trust</h2>
+      <section aria-label="College company relationship" className="border-b border-[var(--lms-canvas-border)] py-4">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">College relationship and trust</h2>
         <p className="mt-2 text-sm text-body leading-[22px]">
           Trust is this college&apos;s recorded relationship setting, not a platform-wide employer verification.
         </p>
@@ -136,6 +134,41 @@ export default async function TpoCompanyDetailPage({
            initialTrusted={lifecycle.isTrusted} updatedAt={lifecycle.updatedAt}/>:null}
       </section>
 
+      {!contactsAvailable ? (
+        <Alert tone="warning">
+          Recruiter CRM data is unavailable in this database.
+          Contact counts and interaction history cannot be
+          verified; the drive and hiring sections remain sourced
+          from persisted placement records.
+        </Alert>
+      ) : null}
+
+      {contactsAvailable && !activitiesAvailable ? (
+        <Alert tone="warning">
+          Recruiter contact activity storage is unavailable.
+          The timeline below contains only available drive,
+          offer and joining events.
+        </Alert>
+      ) : null}
+
+      <section className="grid min-w-0 grid-cols-2 gap-3 xl:grid-cols-5">
+        {[
+          ["Contacts", company.contacts ?? "Unavailable"],
+          ["Drives", company.drives],
+          ["Offers", company.offers],
+          ["Accepted offers", company.acceptedOffers],
+          ["Confirmed joined learners", company.confirmedJoinedLearners],
+        ].map(([label, value]) => (
+          <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />
+        ))}
+      </section>
+
+      <Disclosure title="Company access and Team conversation" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+      <TpoPublicJoinLinkCard initial={companyLink} scope="COMPANY" companyId={route.companyId} companyName={detail.company.name} />
+      <TpoCompanyTeamConversation companyId={route.companyId} companyName={company.name} actorMembershipId={context.membership.id} />
+
+      </Disclosure>
+      <Disclosure title="Company CRM views" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
         <Link href={"/tpo/companies/"+encodeURIComponent(route.companyId)+"/team"}
          className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
@@ -167,37 +200,10 @@ export default async function TpoCompanyDetailPage({
         </Link>
       </nav>
 
-      {!contactsAvailable ? (
-        <Alert tone="warning">
-          Recruiter CRM data is unavailable in this database.
-          Contact counts and interaction history cannot be
-          verified; the drive and hiring sections remain sourced
-          from persisted placement records.
-        </Alert>
-      ) : null}
-
-      {contactsAvailable && !activitiesAvailable ? (
-        <Alert tone="warning">
-          Recruiter contact activity storage is unavailable.
-          The timeline below contains only available drive,
-          offer and joining events.
-        </Alert>
-      ) : null}
-
-      <section className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
-        {[
-          ["Contacts", company.contacts ?? "Unavailable"],
-          ["Drives", company.drives],
-          ["Offers", company.offers],
-          ["Accepted offers", company.acceptedOffers],
-          ["Confirmed joined learners", company.confirmedJoinedLearners],
-        ].map(([label, value]) => (
-          <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />
-        ))}
-      </section>
-
-      <section aria-label="College employer hiring pulse" className="border-b border-border py-5">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Employer hiring pulse</h2>
+      </Disclosure>
+      <Disclosure title="Employer hiring pulse" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+      <section aria-label="College employer hiring pulse" className="border-b border-[var(--lms-canvas-border)] py-4">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7" className="sr-only">Employer hiring pulse</h2>
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
           Current college-linked drives and stored offer versions. Season counts reflect drives,
           not confirmed hires. A later activity timestamp is unavailable when no event exists.
@@ -244,10 +250,11 @@ export default async function TpoCompanyDetailPage({
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <section className="min-w-0 border-b border-border py-3">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      </Disclosure>
+      <div className="grid min-w-0 gap-4 xl:grid-cols-2">
+        <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
+          <div className="border-b border-[var(--lms-canvas-border)] py-4">
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
               Recruiter contacts
             </h2>
             <p className="mt-1 text-sm text-body leading-[22px]">
@@ -257,18 +264,18 @@ export default async function TpoCompanyDetailPage({
           </div>
 
           {!contactsAvailable ? (
-            <p className="p-5 text-sm text-body leading-[22px]">
+            <p className="py-4 text-sm text-body leading-[22px]">
               Contact data is unavailable.
             </p>
           ) : contacts.length === 0 ? (
-            <p className="p-5 text-sm text-body leading-[22px]">
+            <p className="py-4 text-sm text-body leading-[22px]">
               No recruiter contacts are linked to this
               company relationship.
             </p>
           ) : (
-            <ul className="divide-y divide-border">
+            <ul className="divide-y divide-[var(--lms-canvas-border)]">
               {contacts.map((contact) => (
-                <li key={contact.id} className="px-5 py-4">
+                <li key={contact.id} className="py-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
                       <Link
@@ -309,9 +316,9 @@ export default async function TpoCompanyDetailPage({
           )}
         </section>
 
-        <section className="min-w-0 border-b border-border py-3">
-          <div className="border-b border-border px-5 py-4">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+        <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
+          <div className="border-b border-[var(--lms-canvas-border)] py-4">
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
               Placement drives
             </h2>
             <p className="mt-1 text-sm text-body leading-[22px]">
@@ -321,7 +328,7 @@ export default async function TpoCompanyDetailPage({
           </div>
 
           {drives.length === 0 ? (
-            <p className="p-5 text-sm text-body leading-[22px]">
+            <p className="py-4 text-sm text-body leading-[22px]">
               No placement drives are recorded for this company.
             </p>
           ) : (
@@ -350,9 +357,9 @@ export default async function TpoCompanyDetailPage({
         </section>
       </div>
 
-      <section className="min-w-0 border-y border-border">
-        <div className="border-b border-border px-5 py-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
+        <div className="border-b border-[var(--lms-canvas-border)] py-4">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
             Hiring history
           </h2>
           <p className="mt-1 text-sm text-body leading-[22px]">
@@ -363,7 +370,7 @@ export default async function TpoCompanyDetailPage({
         </div>
 
         {hiringHistory.length === 0 ? (
-          <p className="p-5 text-sm text-body leading-[22px]">
+          <p className="py-4 text-sm text-body leading-[22px]">
             No placement offers are recorded for this company.
           </p>
         ) : (
@@ -400,9 +407,10 @@ export default async function TpoCompanyDetailPage({
         </p>
       </section>
 
-      <section className="min-w-0 border-y border-border">
-        <div className="border-b border-border px-5 py-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+      <Disclosure title="Company timeline" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+      <section className="min-w-0 border-y border-[var(--lms-canvas-border)]">
+        <div className="border-b border-[var(--lms-canvas-border)] py-4">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">
             Company timeline
           </h2>
           <p className="mt-1 text-sm text-body leading-[22px]">
@@ -412,13 +420,13 @@ export default async function TpoCompanyDetailPage({
         </div>
 
         {timeline.length === 0 ? (
-          <p className="p-5 text-sm text-body leading-[22px]">
+          <p className="py-4 text-sm text-body leading-[22px]">
             No persisted timeline events are available.
           </p>
         ) : (
-          <ol className="divide-y divide-border">
+          <ol className="divide-y divide-[var(--lms-canvas-border)]">
             {timeline.map((event) => (
-              <li key={event.id} className="px-5 py-4">
+              <li key={event.id} className="py-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-semibold text-foreground leading-[22px]">
@@ -447,7 +455,7 @@ export default async function TpoCompanyDetailPage({
             ))}
           </ol>
         )}
-      </section>
+      </section>      </Disclosure>
 
       <p className="text-xs leading-5 text-muted-foreground">
         Only canonical company relationships and explicitly
