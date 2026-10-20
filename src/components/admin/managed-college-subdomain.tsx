@@ -39,7 +39,7 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
   }catch(err){setMessageTone("error");setMessage(err instanceof Error?err.message:"Unable to update address");}
   finally{setBusy(false);}
  }
- return <section className="space-y-3 border-t border-border pt-5" aria-label="Managed college web address">
+ return <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-5)]" aria-label="Managed college web address">
   <h2 className="font-semibold">Web address · Managed subdomain</h2>
   {!state.ready?<Alert tone="warning">
    One-click allotment requires an operator-confirmed wildcard DNS and HTTPS configuration; it is not enabled on this deployment.</Alert>:
@@ -47,18 +47,18 @@ export function ManagedCollegeSubdomain({collegeId,initial}:{collegeId:string;in
     <p className="text-sm">Platform domain: {state.baseDomain}</p>
     <p className="text-sm">Current: {state.currentHost??"Not allotted"}</p>
     <label className="grid max-w-md gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Subdomain
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
        <Input value={label} maxLength={63} autoCapitalize="none" spellCheck={false}
         onChange={e=>setLabel(e.target.value)} className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
-       <span>.{state.baseDomain}</span>
+       <span className="min-w-0 break-all text-sm text-body">.{state.baseDomain}</span>
       </div>
     </label>
-    <div className="flex flex-wrap gap-2">
+    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:items-center">
      <Button type="button" disabled={busy||!label.trim()} onClick={()=>setPendingAction(state.currentHost?"CHANGE":"ALLOT")}
-      className="min-h-11 md:min-h-9">
+      className="min-h-11 w-full md:min-h-9 md:w-auto">
       {state.currentHost?"Change":"Allot"}</Button>
      {state.currentHost&&<Button type="button" variant="secondary" disabled={busy} onClick={()=>setPendingAction("REMOVE")}
-      className="min-h-11 md:min-h-9">Remove</Button>}
+      className="min-h-11 w-full md:min-h-9 md:w-auto">Remove</Button>}
     </div>
     <p className="text-xs text-muted-foreground">A managed address is routed only when the configured wildcard DNS and TLS infrastructure is operational.</p>
    </>}
