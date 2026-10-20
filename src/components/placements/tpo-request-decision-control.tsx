@@ -68,38 +68,37 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
     finally{setPending(false);}
   }
   function decide(){if(!mode||!valid||guardedPending)return;void runGuarded(()=>decideWith(mode,decisionNote));}
-  return <div className="flex flex-col gap-2 text-sm">
-    <div className="flex flex-wrap gap-2">
-      <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
-        >Approve</Button>
-      <Button variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
-        >Reject</Button>
+  return <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm">
+    <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
+      <Button className="w-full sm:w-auto" type="button" loading={pending||guardedPending} disabled={pending||guardedPending} onClick={()=>open("APPROVE")}>Approve</Button>
+      <Button className="w-full sm:w-auto" variant="secondary" type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}>Reject</Button>
     </div>
     {!mode&&error?<InlineNotice tone="error" message={error}/>:null}
     <Dialog open={mode!==null} onOpenChange={value=>{if(!value&&!pending)setMode(null);}}
       title={mode==="APPROVE"?"Approve this request?":"Reject this request"}
       description={mode==="APPROVE"?impact(requestType):
         "The learner's current application, round or offer remains unchanged when this request is rejected."}
-      footer={<>
-        <Button variant="secondary" disabled={pending||guardedPending} onClick={()=>setMode(null)}>Cancel</Button>
-        <Button disabled={pending||guardedPending||!valid} onClick={decide}>
+      footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
+        <Button className="w-full sm:w-auto" variant="secondary" disabled={pending||guardedPending} onClick={()=>setMode(null)}>Cancel</Button>
+        <Button className="w-full sm:w-auto" loading={pending||guardedPending} disabled={pending||guardedPending||!valid} onClick={decide}>
           {pending?"Saving…":mode==="APPROVE"?"Approve request":"Reject request"}
         </Button>
-      </>}>
-      {mode==="REJECT"?<div className="space-y-3">
+      </div>}>
+      
+      {mode==="REJECT"?<div className="min-w-0 space-y-[var(--lms-space-4)]">
         <p className="text-sm font-semibold">Reason for rejection</p>
-        <div role="group" aria-label="Rejection reasons" className="flex flex-wrap gap-2">
+        <div role="group" aria-label="Rejection reasons" className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]">
           {rejectionReasons.map(choice=><FilterChip key={choice} type="button" disabled={pending||guardedPending}
             aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}>{choice}</FilterChip>)}
         </div>
-        {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
+        {reason==="Other"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Explain the rejection
           <Textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
-            disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
+            disabled={pending||guardedPending} rows={3} />
         </label>:null}
-        {!valid&&reason?"Enter a rejection reason of at least 3 characters.":null}
-      </div>:mode==="APPROVE"?<label className="block text-sm font-semibold">Approval note (optional)
+        {!valid&&reason?<p role="status" className="text-[13px] leading-5 text-[var(--lms-error-text)]">Enter a rejection reason of at least 3 characters.</p>:null}
+      </div>:mode==="APPROVE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Approval note (optional)
         <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-          disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm"/>
+          disabled={pending||guardedPending} rows={3}/>
       </label>:null}
       {error?<InlineNotice tone="error" message={error}/>:null}
     </Dialog>
