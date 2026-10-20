@@ -266,10 +266,10 @@
   .summary { grid-template-columns: 1fr; }
   .upcomingList { grid-template-columns: 1fr; }
   .calendarCard {
-    margin-left: -16px;
-    margin-right: -16px;
-    width: calc(100% + 32px);
-    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+    max-width: 100%;
     border-radius: 12px 12px 0 0;
     border-right: 0;
     border-left: 0;
@@ -281,11 +281,12 @@
    */
   .toolbar { padding: 16px; gap: 12px; }
   .nav { width: 100%; justify-content: space-between; }
-  .period { min-width: 120px; font-size: 14px; margin-inline: 4px; }
+  .period { order: -1; flex-basis: 100%; min-width: 0; font-size: 14px; margin-inline: 0; text-align: left; }
   .actions { justify-content: flex-end; width: 100%; }
   .filters,.courseFilter { padding: 16px; }
   .courseSelect { width: 100%; max-width: none; }
   .month { margin-top: 16px; padding: 0; }
+  .monthGrid { overflow-x: auto; }
   .monthDay { min-height: 64px; padding: 4px; }
   .weekday { font-size: 10px; padding: 4px; }
   .content { min-height: 320px; }
