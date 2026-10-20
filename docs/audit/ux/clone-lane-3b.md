@@ -20,3 +20,16 @@ Source: docs/design/old-lms-pages.md and legacy-styles; parent shell supplies on
 - [x] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx` — interview page uses shared PageHeader and rounded workspace warning flattened; grep raw controls=0, hard-coded hex=0 (page route); responsive at 1280/768/375 reviewed by source classes and shared components
 
 Rendered components reviewed/updated: `src/components/courses/learner-course-list.tsx`, `src/components/placements/learner-career-calendar.tsx`, `src/components/placements/learner-career-rounds-workspace.tsx`, `src/components/placements/learner-applications-browse.tsx`.
+
+## Remaining lane-3b items
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx` — job detail delegates PageHeader to shared detail component; role options compact hairline rows; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx` — drives PageHeader/control height 36px desktop and 44px mobile; shared browse filters inspected; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx` — shared notification preference toggles use legacy radius and compact line-height; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx` — offer controls and empty surfaces align with legacy canvas; rendered offer rows flattened; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx` — placement dashboard section rhythm changed to old LMS 24px; controls normalized; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx` — preparation filters/CTA matched legacy controls; assignment rows flattened into canvas; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx` — rules back links and focus/tap sizes normalized; divider-led read-only panels preserved; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx` — schedule upcoming/past round cards flattened into hairline rows; empty surfaces flattened; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+- [x] `src/app/(authenticated)/learn/notifications/page.tsx` — inbox PageHeader and responsive shared controls; notifications component audited; grep raw controls=0, hard-coded hex=0 (route); 1280/768/375 classes reviewed, no app run
+
+Rendered components: `src/components/placements/learner-placement-job-detail.tsx`, `learner-jobs-browse.tsx`, `learner-placement-notification-settings.tsx`, `learner-placement-offers.tsx`, `learner-prep-assignment-cards.tsx`, `src/components/activity/learner-notifications-inbox.tsx` updated using old-LMS borders/controls; controls stay in shared UI kit.

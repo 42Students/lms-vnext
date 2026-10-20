@@ -279,7 +279,7 @@ export function LearnerPlacementOffers({
           <article
             key={item.offerId}
             id={learnerOfferAnchor(item.offerId) ?? undefined}
-            className="scroll-mt-24 min-w-0 rounded-xl border border-border bg-surface p-4 transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] motion-reduce:transition-none md:p-6"
+            className="scroll-mt-24 min-w-0 border-b border-border py-4 md:py-6"
           >
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
@@ -341,7 +341,7 @@ export function LearnerPlacementOffers({
             <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-body">
               {item.letterHref ? (
                 <a href={item.letterHref} rel="noopener noreferrer"
-                  className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
                   View offer letter
                 </a>
               ) : null}
@@ -354,13 +354,13 @@ export function LearnerPlacementOffers({
 
             {learnerOfferApplicationHref(item.applicationId) ? (
               <Link href={learnerOfferApplicationHref(item.applicationId)!}
-                className="mt-3 mr-4 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                className="mt-3 mr-4 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
                 View related application
               </Link>
             ) : null}
             {learnerOfferHref(item.offerId) ? (
               <Link href={learnerOfferHref(item.offerId)!}
-                className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                className="mt-3 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text underline">
                 Link to this offer
               </Link>
             ) : null}
@@ -397,7 +397,7 @@ export function LearnerPlacementOffers({
                   Number.isFinite(Date.parse(item.acceptedDisputableUntil)) &&
                   Number.isFinite(Date.parse(snapshotNowIso)) &&
                   Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso) ? (
-                    <Link className="mt-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline"
+                    <Link className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline"
                       href={"/learn/my-placements/placement?"+new URLSearchParams({
                         request:"acceptance-dispute",offerId:item.offerId,
                       }).toString()+"#requests"}>
@@ -590,7 +590,7 @@ export function LearnerPlacementOffers({
             {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
               <Button className="max-md:min-h-11" type="button" variant="link" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Retry impact preview</Button>
             </p>:null}
-            {acceptImpact?<div className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3">
+            {acceptImpact?<div className="space-y-2 border-b border-border py-3">
               <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>
               {([
                 ["Withdrawn",acceptImpact.withdrawn],

@@ -17,12 +17,12 @@ Your original queue was reassigned to other lanes. These 24 items were moved to 
 - [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/page.tsx`
