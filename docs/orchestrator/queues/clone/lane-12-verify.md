@@ -13,8 +13,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/messages/page.tsx`
 - [x] `src/app/(authenticated)/tpo/more/page.tsx`
 - [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
+- [x] `src/app/(authenticated)/tpo/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/page.tsx`
