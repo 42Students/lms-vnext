@@ -126,7 +126,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         {pending?"Registering…":"Register student"}
       </Button>
       {result&&<Alert tone={result.startsWith("Partially")?"warning":"success"}>{result}</Alert>}
-      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open registered student profile →</Link>:null}
+      {savedMemberId?<Link href={"/college/students/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open registered student profile →</Link>:null}
       {error&&<Alert tone="error">{error}</Alert>}
     </div>
   </form></>;

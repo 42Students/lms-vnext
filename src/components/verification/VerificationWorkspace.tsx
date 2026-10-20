@@ -24,11 +24,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  decidedAt?:Date|null;decidedByName?:string|null;
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true,hideHeader=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
- disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;legacyCollegeCopy?:boolean;legacyTpoCopy?:boolean;showTabCounts?:boolean;
+ disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;legacyCollegeCopy?:boolean;legacyTpoCopy?:boolean;showTabCounts?:boolean;hideHeader?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -39,7 +39,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
  ),sort,preserveServerOrder),[rows,tab,kind,query,sort,preserveServerOrder]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
-  {legacyTpoCopy ? <p className="text-sm text-body">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p> :
+  {hideHeader ? null : legacyTpoCopy ? <p className="text-sm text-body">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p> :
    <PageHeader title="Profile verification" description={legacyCollegeCopy
      ? collegeVerificationLegacyCopy.subtitle
      : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."} />}
