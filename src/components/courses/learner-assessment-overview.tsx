@@ -342,20 +342,22 @@ export function LearnerAssessmentOverview({
         </label>
       </Disclosure>
 
-      {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
-        <Button type="button" onClick={() => {
-          setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
-          if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
-        }} variant="secondary" className="min-h-11 md:min-h-9">
-          Clear assessment filters
-        </Button>
-      ) : null}
-      <p role="status" className="text-sm text-muted-foreground">
-        {learnerAssessmentPageSummary({
-          filteredCount:filtered.length,totalCount:items.length,
-          currentPage,pageSize:PAGE_SIZE,label:kind==="ASSIGNMENT"?"assignments":"quizzes",
-        })}
-      </p>
+      <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <p role="status" className="min-w-0 text-sm text-muted-foreground">
+          {learnerAssessmentPageSummary({
+            filteredCount:filtered.length,totalCount:items.length,
+            currentPage,pageSize:PAGE_SIZE,label:kind==="ASSIGNMENT"?"assignments":"quizzes",
+          })}
+        </p>
+        {learnerAssessmentFiltersActive({courseId:activeCourseId,search,stateFilter,sort}) ? (
+          <Button type="button" onClick={() => {
+            setCourseId("");setSearch("");setStateFilter("ALL");setSort("DUE");setPage(1);
+            if(initialCourseId)router.push(learnerAssessmentCourseHref(kind,null));
+          }} variant="secondary" className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9">
+            Clear assessment filters
+          </Button>
+        ) : null}
+      </div>
       {filtered.length === 0 ? (
         <EmptyState
           {...learnerAssessmentEmptyMessage({kind,courseSelected:Boolean(activeCourseId),search,stateFilter})}
