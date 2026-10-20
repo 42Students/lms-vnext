@@ -110,7 +110,7 @@ export function PersonOnboardDialog({
 
   return (
     <>
-      <Button className="min-h-11 md:min-h-9" onClick={() => setOpen(true)}>
+      <Button className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => setOpen(true)}>
         {forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
       </Button>
       <Dialog

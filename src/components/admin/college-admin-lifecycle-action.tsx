@@ -33,13 +33,13 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
  }
  if(status!=="ACTIVE"&&status!=="SUSPENDED")return null;
  if(hasMentorRole&&action==="SUSPEND")return <Alert tone="warning">Also assigned to mentoring. Review active project assignments before changing access.</Alert>;
- return <div className="min-w-44 space-y-2 print:hidden">
+ return <div className="min-w-0 space-y-[var(--lms-space-2)] print:hidden">
   {action==="SUSPEND"?<label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Suspension reason
    <Input value={reason} maxLength={1000} disabled={busy} onChange={event=>setReason(event.target.value)}
     className="min-h-11 md:min-h-9" placeholder="Reason for suspension"/>
   </label>:null}
   <Button type="button" variant="secondary" loading={busy} disabled={busy||(action==="SUSPEND"&&reason.trim().length<3)}
-   onClick={()=>setConfirmOpen(true)} className="min-h-11 md:min-h-9">
+   onClick={()=>setConfirmOpen(true)} className="min-h-11 w-full md:min-h-9 md:w-auto">
     {busy?"Saving…":action==="SUSPEND"?"Suspend":"Reactivate"}
   </Button>
   {error?<Alert tone="error">{error}</Alert>:null}
