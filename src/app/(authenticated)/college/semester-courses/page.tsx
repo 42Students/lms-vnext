@@ -9,12 +9,12 @@ export default async function CollegeSemesterCoursesPage() {
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const curriculumData = await listCollegeTermMappings(context);
-  return <main className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader title="Semester–Course Mapping"
       actions={<Link href="/college/courses"
-        className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none">
         Course offerings
       </Link>} />
     <CollegeTermMappingManager data={curriculumData} />
-  </main>;
+  </div>;
 }
