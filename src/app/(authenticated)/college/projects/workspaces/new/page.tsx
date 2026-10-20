@@ -25,7 +25,7 @@ export default async function CollegeClassProjectWorkspacePage() {
   </div>;
   const templates = templatesResult.value;
   return (
-    <div className="w-full min-w-0 space-y-6">
+    <div className="w-full min-w-0 space-y-5">
       <PageHeader title="Create workspaces from a class" description="Split active learners into balanced teams, review assignments, or add the whole class to a single Project workspace." />
       {templates.length === 0 ? <Banner tone="warning"
         action={<Link href="/college/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 lms-inline-link">Project templates</Link>}>

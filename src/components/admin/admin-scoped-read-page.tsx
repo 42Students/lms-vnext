@@ -30,7 +30,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const heading=(eyebrow:string,detail?:string,exportAction?:ReactNode)=>headingMode==="section"
   ? <div><h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
      {detail?<p className="mt-1 text-sm text-body">{detail}</p>:null}</div>
-  : <PageHeader eyebrow={eyebrow} title={title} description={detail}
+  : <PageHeader title={title} description={detail ?? eyebrow}
      actions={backHref||exportAction||headerActions?<>{headerActions}{backHref?<PageBackLink href={backHref} label="Placement overview" />:null}{exportAction}</>:undefined}/>;
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
