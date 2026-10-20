@@ -3,13 +3,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
-import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
-import {Suspense} from "react";
-import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
+import {Disclosure} from "@/components/ui/disclosure";
 import { redirect } from "next/navigation";
 import {getTpoReportDriveDimensions} from "@/modules/placements/tpo-report-drive-dimensions-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -75,7 +72,7 @@ export default async function TpoPlacementSummaryPage({
   }):[];
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Placement summary"
@@ -85,20 +82,16 @@ export default async function TpoPlacementSummaryPage({
         }
       />
 
-      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
         userId={context.user.id}
         path="/tpo/reports/placement-summary"
       />
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/placement-summary" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <ReportMetrics metrics={metrics} />
 
-      <section
-        aria-label="Detailed placement metrics"
-        className="grid gap-3 md:grid-cols-2 xl:grid-cols-4"
-      >
+      <Disclosure title="Detailed placement metrics" ariaLabel="Detailed placement metrics" className="border-y border-border py-3">
+        <div className="grid min-w-0 grid-cols-2 gap-3 pt-3 lg:grid-cols-4">
         {[
           { label: "Registered", value: reportNumber(metrics.registered) },
           { label: "Unique applicants", value: reportNumber(metrics.applicants) },
@@ -121,12 +114,14 @@ export default async function TpoPlacementSummaryPage({
             </p>
           </div>
         ))}
-      </section>
-
+              </div>
+      </Disclosure>
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <section aria-label="Offers by current status" className="space-y-3 border-t border-border pt-4">
+      <Disclosure title="Offer statuses and lifecycle" className="border-y border-border py-3">
+        <div className="min-w-0 space-y-4 pt-3">
+      <section aria-label="Offers by current status" className="min-w-0 space-y-3 pt-3">
        <h2 className="text-lg font-semibold">Offers by status</h2>
-       <dl className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+       <dl className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
         {([
          ["Released (all issued histories)",workspace.details.offers.totals.released],
          ["Waiting for student",workspace.details.offers.totals.outstanding],
@@ -143,8 +138,6 @@ export default async function TpoPlacementSummaryPage({
       </section>
 
 
-      <ReportBarChart title="Placed learners by company" units="learners"
-       rows={byCompany.map(row=>({label:row.companyName,value:row.placed}))}/>
       <ReportBarChart title="Offers by recorded status" units="offers"
        rows={[
         {label:"Accepted",value:workspace.details.offers.totals.accepted},
@@ -152,6 +145,11 @@ export default async function TpoPlacementSummaryPage({
         {label:"Withdrawn",value:workspace.details.offers.totals.withdrawn},
         {label:"Waiting for student",value:workspace.details.offers.totals.outstanding},
        ]}/>
+
+        </div>
+      </Disclosure>
+      <ReportBarChart title="Placed learners by company" units="learners"
+       rows={byCompany.map(row=>({label:row.companyName,value:row.placed}))}/>
       {workspace.noSeason ? (
         <EmptyState
           title="No placement season available"
@@ -159,7 +157,7 @@ export default async function TpoPlacementSummaryPage({
         />
       ) : (
         <>
-          <form method="get" className="flex flex-wrap items-end gap-3 border-b border-border pb-4" aria-label="Filter drive rows">
+          <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end" aria-label="Filter drive rows">
             {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
             {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
             <label className="grid min-w-40 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
@@ -181,7 +179,7 @@ export default async function TpoPlacementSummaryPage({
               <option value="NOT_RECORDED">Not recorded</option>
              </Select>
             </label>
-            <Button type="submit" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">Apply</Button>
+            <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-9">Apply</Button>
             {(companyId||workMode||payCategory)?<a href={"/tpo/reports/placement-summary?"+
              new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
@@ -237,6 +235,8 @@ export default async function TpoPlacementSummaryPage({
             emptyDescription="No reportable drives match the selected season and drive filters."
           />:null}
 
+          <Disclosure title="Company performance" className="border-b border-border py-3">
+            <div className="min-w-0 pt-3">
           <ReportTable
             title="Company performance"
             headings={[
@@ -263,6 +263,8 @@ export default async function TpoPlacementSummaryPage({
             ])}
             emptyDescription="No company placement results match the selected filters."
           />
+            </div>
+          </Disclosure>
         </>
       )}
     </div>
