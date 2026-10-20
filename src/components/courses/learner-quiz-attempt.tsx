@@ -349,7 +349,7 @@ export function LearnerQuizAttempt() {
     return (
       <div className="min-w-0 space-y-3">
         <PageHeader title="Something went wrong" />
-        <p className="mt-2 text-sm text-body">{error}</p>
+        <Alert tone="error" className="mt-2">{error}</Alert>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
           <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover md:min-h-9">All Quizzes</Link>
@@ -391,7 +391,7 @@ export function LearnerQuizAttempt() {
               :"Quiz submitted. Results will be visible after faculty releases them."}
           </Alert>
         ) : null}
-        {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
+        {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
           <div role="status" className="mt-6 rounded-xl border border-border bg-surface-subtle p-5">
             <p className="text-sm text-body">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
@@ -554,7 +554,7 @@ export function LearnerQuizAttempt() {
               </section>
             ) : null}
           </div>
-          {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}
+          {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
           <div className="mt-7 flex flex-wrap justify-between gap-2">
             <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>
             {step < questions.length - 1 ? (
