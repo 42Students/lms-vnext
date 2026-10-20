@@ -18,11 +18,11 @@ export default async function DriveDayForOneDrive({
   const { jobId } = await params;
   const drive = await getPlacementDriveDay(context, jobId);
   const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
-  return <div className="min-w-0 space-y-6">
+  return <div className="min-w-0 space-y-5">
     <PageHeader eyebrow="TPO · Drive day" title={drive.job.title + " · Drive day"}
       description="The campus-day rounds, attendance and result readiness for this drive."
       actions={<Link href="/tpo/drive-day"
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         Open drive day / attendance
       </Link>} />
     {drive.rounds.length ? (
@@ -41,9 +41,9 @@ export default async function DriveDayForOneDrive({
               : "Date to be confirmed"}</p>
             <p className="mt-1 text-sm text-body">{round.venue || "Venue to be told"}</p>
             <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
-              <Link className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]"
+              <Link className="inline-flex min-h-11 items-center text-link underline underline-offset-4 hover:text-primary-hover lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
                 href={root + "/rounds/" + encodeURIComponent(round.id) + "/results"}>See attendance and results</Link>
-              <Link className="inline-flex min-h-11 items-center text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]" href="/tpo/drive-day">Open drive day</Link>
+              <Link className="inline-flex min-h-11 items-center text-link underline underline-offset-4 hover:text-primary-hover lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/tpo/drive-day">Open drive day</Link>
             </div>
           </article>;
         })}

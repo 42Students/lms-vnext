@@ -48,7 +48,7 @@ export default async function TpoPerformanceIntelligencePage({
           description="The selected reporting filters were invalid." />
         <Alert tone="error">
           No reports were loaded. <Link href="/tpo/reports/intelligence"
-            className="font-semibold text-link hover:underline">Clear filters</Link>
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>
         </Alert>
       </div>
     );
@@ -62,7 +62,7 @@ export default async function TpoPerformanceIntelligencePage({
     (paramsCsv.size ? "?" + paramsCsv.toString() : "");
 
   return (
-    <div data-tpo-presentation-report className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-5">
       <TpoReportPresentation />
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/intelligence" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader
@@ -71,7 +71,7 @@ export default async function TpoPerformanceIntelligencePage({
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
           <a href={csvHref}
-            className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
             Export intelligence CSV
           </a>
         }
@@ -117,7 +117,7 @@ export default async function TpoPerformanceIntelligencePage({
           highest accepted full-time CTC. Unknown packages are excluded from
           averages, not treated as zero.
         </p>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {([
             ["Accepted full-time offer versions", compensation.acceptedFullTimeOfferVersions],
             ["Versions with known CTC", compensation.knownPackageOfferVersions],
@@ -130,7 +130,7 @@ export default async function TpoPerformanceIntelligencePage({
             ["Best-per-learner highest annual CTC", reportCurrency(compensation.uniqueLearnerBestHighestInr)],
           ] as const).map(([name, value]) => (
             <article key={name} className="border-b border-border py-4">
-              <h3 className="text-xs font-semibold text-body">{name}</h3>
+              <h3 className="text-xs font-semibold text-muted-foreground">{name}</h3>
               <p className="mt-2 text-xl font-bold tabular-nums text-foreground">{value}</p>
             </article>
           ))}

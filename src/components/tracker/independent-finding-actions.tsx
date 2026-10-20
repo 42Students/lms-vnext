@@ -53,27 +53,27 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
   finally{lock.current=false;setPending(false);setConfirmOpen(false);}
  }
  return <section className="space-y-3 border-b border-border pb-4" aria-label="Finding actions">
-  <h2 className="font-semibold">Update finding</h2>
-  <label className="grid min-w-0 w-full gap-1 text-sm">Action
+  <h2 className="font-semibold text-foreground">Update finding</h2>
+  <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
    <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as Action)}
     className="min-h-11 text-sm md:min-h-9">
     {(["STATUS","SEVERITY","ASSIGNEE","DUPLICATE","FIX_COMMIT","COMMENT"] as const).map(value=><option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
-  {action==="STATUS"?<label className="grid min-w-0 w-full gap-1 text-sm">Status
+  {action==="STATUS"?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
    <Select value={nextStatus} disabled={pending} onChange={e=>setNextStatus(e.target.value)} className="min-h-11 text-sm md:min-h-9">
     {FINDING_STATUSES.map(value=><option key={value} value={value}
       disabled={!canTransitionIndependentFinding(status as IndependentFindingStatus,value,"Reason supplied")}>
       {value.replaceAll("_"," ")}</option>)}
    </Select></label>:null}
-  {action==="SEVERITY"?<label className="grid min-w-0 w-full gap-1 text-sm">Severity
+  {action==="SEVERITY"?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Severity
    <Select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="min-h-11 text-sm md:min-h-9">
     {FINDING_SEVERITIES.map(value=><option key={value}>{value}</option>)}
    </Select></label>:null}
-  {action==="ASSIGNEE"?<label className="grid min-w-0 w-full gap-1 text-sm">Assignee
+  {action==="ASSIGNEE"?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assignee
    <Input value={assignee} disabled={pending} maxLength={150} onChange={e=>setAssignee(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
    </label>:null}
-  {action==="DUPLICATE"?<label className="grid min-w-0 w-full gap-1 text-sm">Duplicate of finding UUID
+  {action==="DUPLICATE"?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duplicate of finding UUID
    <Input value={duplicateOf} list="finding-duplicate-candidates" disabled={pending}
     onChange={e=>setDuplicateOf(e.target.value)}
     placeholder="Select a matching finding"
@@ -82,12 +82,12 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
      value={item.id}>{item.externalId} · {item.title}</option>)}</datalist>
    </label>:null}
   {action==="FIX_COMMIT"?<div className="grid gap-2">
-   <label className="grid min-w-0 w-full gap-1 text-sm">Repository
+   <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Repository
     <Input value={repo} disabled={pending} onChange={e=>setRepo(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
-   <label className="grid min-w-0 w-full gap-1 text-sm">Commit SHA
+   <label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Commit SHA
     <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
    </div>:null}
-  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-1 text-sm">Note or reason
+  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note or reason
     <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
    </label>:null}
   <Button variant="primary" type="button" onClick={()=>void submit()} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">{pending?"Saving…":"Save details"}</Button>

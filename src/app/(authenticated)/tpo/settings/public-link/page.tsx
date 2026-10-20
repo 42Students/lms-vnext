@@ -13,9 +13,9 @@ export default async function TpoRecruiterPublicLinkPage() {
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const initial = await getTpoPublicJoinLinkStatus(context, "COLLEGE");
   return (
-    <div className="min-w-0 space-y-6">
-      <TpoSettingsNav active="public-link" />
+    <div className="min-w-0 space-y-5">
       <PageHeader title="Public recruiter link" description="Control the college recruiter invitation link and verify access before sharing." />
+      <TpoSettingsNav active="public-link" />
       <TpoPublicJoinLinkCard initial={initial} scope="COLLEGE" />
     </div>
   );
