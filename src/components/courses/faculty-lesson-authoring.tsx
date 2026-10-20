@@ -1,5 +1,4 @@
 "use client";
-import { CourseChoiceControl } from "./course-choice-control";
 import { Radio } from "@/components/ui/radio";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

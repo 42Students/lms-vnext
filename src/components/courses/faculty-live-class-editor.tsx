@@ -101,7 +101,7 @@ export function FacultyLiveClassEditor({
     <section aria-label="Manage Faculty live classes" aria-busy={pending}
       className="min-w-0 max-w-4xl space-y-[var(--lms-space-4)]">
       <div className="min-w-0">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="sr-only">
           Schedule or manage a live class
         </h2>
         <p className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">
