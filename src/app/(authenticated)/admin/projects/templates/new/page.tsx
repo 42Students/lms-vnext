@@ -7,14 +7,14 @@ import {SuperAdminTemplateCreateForm} from "@/components/projects/super-admin-te
 export default async function NewSuperAdminTemplatePage(){
  const ctx=await getCurrentRequestContext();
  if (!can(ctx,"project-template.manage")) return <div className="min-w-0 max-w-full space-y-5">
-  <PageHeader title="New project template"
-   actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue"/>}/>
+  <PageHeader title="Create project template"
+   actions={<PageBackLink href="/admin/projects/templates" label="Back to templates"/>}/>
   <ErrorState title="Access denied" description="Global project templates can only be created outside a selected college or organization scope."/>
  </div>;
  return <div className="min-w-0 space-y-5">
-  <PageHeader title="New project template"
-   description="Create a global draft with a valid starting blueprint. College-scoped administrators cannot publish global templates."
-   actions={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
+  <PageHeader title="Create project template"
+   description="Define the reusable blueprint for workspaces. College-scoped administrators cannot publish global templates."
+   actions={<PageBackLink href="/admin/projects/templates" label="Back to templates" />}/>
   <SuperAdminTemplateCreateForm/>
  </div>;
 }

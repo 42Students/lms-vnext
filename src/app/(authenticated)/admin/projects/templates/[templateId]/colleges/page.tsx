@@ -30,7 +30,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <PageHeader title="College availability" />
     <ErrorState title="College availability access denied"
       description="Only an active Super Admin can read global project template assignments."
-      action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />} />
+      action={<PageBackLink href="/admin/projects/templates" label="Back to templates" />} />
   </div>;
   const raw = await searchParams;
   const parsed = templateCollegeAvailabilityQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });

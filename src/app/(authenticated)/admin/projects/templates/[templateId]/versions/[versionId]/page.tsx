@@ -23,7 +23,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history access denied"
         description="Only an authorized administrator can read global template version snapshots."
-        action={<PageBackLink href="/admin/projects/templates" label="Template catalogue" />}/>
+        action={<PageBackLink href="/admin/projects/templates" label="Back to templates" />}/>
     </div>;
   }
   let detail;
