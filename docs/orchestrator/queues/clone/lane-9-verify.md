@@ -19,10 +19,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-9.md: surface | regres
 - [x] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
 - [x] `src/components/tpo/tpo-notice-composer-dialog.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/tpo/tpo-student-saved-views.tsx`
 - [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`

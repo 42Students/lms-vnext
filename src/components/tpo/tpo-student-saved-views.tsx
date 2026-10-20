@@ -122,7 +122,10 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="danger" loading={busy||guardedPending} disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{
         if(!deleteTarget)return;
         const result=await send({action:"DELETE",id:deleteTarget.id});
-        if(result)setDeleteTarget(null);
+        if(result){
+          if(selected===deleteTarget.id){setSelected(null);setName("");setPinned(false);}
+          setDeleteTarget(null);
+        }
       })}>Delete view</Button></div>}>
       <p className="text-sm">The saved view will be removed. Student records will not be changed.</p>
    </Dialog>
