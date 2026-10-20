@@ -1,6 +1,7 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { getCollegeActivityDetail } from "@/modules/activity/college-activity-service";
 
 export default async function CollegeActivityDetailPage({
@@ -15,10 +16,8 @@ export default async function CollegeActivityDetailPage({
   return <div className="min-w-0 overflow-x-clip space-y-6">
     <PageHeader title="Activity detail"
       description={event.summary}
-      actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">
-        Back to Activity Log
-      </Link>} />
-    <dl className="grid gap-4 rounded-[8px] border border-border bg-surface p-5 text-sm sm:grid-cols-2">
+      actions={<PageBackLink href="/college/activity" label="Back to Activity Log"/>} />
+    <dl className="grid min-w-0 gap-4 border-t border-border pt-4 text-sm md:grid-cols-2">
       <div><dt className="font-semibold text-muted-foreground">Occurred (IST)</dt>
         <dd className="mt-1 text-body">{date}</dd></div>
       <div><dt className="font-semibold text-muted-foreground">Actor</dt>
@@ -26,7 +25,7 @@ export default async function CollegeActivityDetailPage({
       <div><dt className="font-semibold text-muted-foreground">Event type</dt>
         <dd className="mt-1 break-all text-body">{event.eventType}</dd></div>
       <div><dt className="font-semibold text-muted-foreground">Importance</dt>
-        <dd className="mt-1 text-body">{event.importance}</dd></div>
+        <dd className="mt-1 text-body"><StatusBadge tone={event.importance==="CRITICAL"?"error":event.importance==="HIGH"?"warning":"neutral"}>{event.importance}</StatusBadge></dd></div>
       <div><dt className="font-semibold text-muted-foreground">Entity type</dt>
         <dd className="mt-1 text-body">{event.subjectType}</dd></div>
       <div><dt className="font-semibold text-muted-foreground">Entity reference</dt>

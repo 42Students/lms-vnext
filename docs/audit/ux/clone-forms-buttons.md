@@ -693,3 +693,71 @@ The old LMS breakpoint comes from `legacy-styles/components___variables.scss:139
 **Exact fetched-file grep:** both `file-upload.tsx` and `file-dropzone.tsx` have **0 raw buttons, 0 raw inputs, 0 raw selects, 0 raw textareas**. Both use shared Input/Button; all new JSX opening and closing names remain paired. **C5 remains [ ]** because image cropping, adoption by real profile pages, actual file-picker/browser interactions, accessible preview sizing and full-portal screenshot parity are not verified.
 
 **Current work-queue next:** `src/app/globals.css` (foundations A1–A4), then `src/styles/legacy-skin.css`. Full-stack grep, visual/browser proof and the twelve strict category closures are still pending.
+
+
+## 2026-10-20 — latest-main foundation A1–A4 and C3/C4 source reconciliation
+
+The lane was fast-forwarded to current `main` at the start, without rewriting previous `[chat-17]` work. File-level checkboxes below mean **source completed/reviewed**, not a passed STRICT CATEGORY TICK.
+
+### Work queue: exact files
+
+- [x] `src/styles/legacy-skin.css` — source-accurate responsive h1/h2/h3 *line heights*, alongside existing font sizes; missing native number spinner chrome; tracker-only dark heading-ink exception. Scoped old-LMS paint stays within the authenticated canvas and respects `data-unskin`.
+- [x] `src/app/globals.css` — preserved Gecko/macOS grayscale font rendering; mobile native action/text/select touch-target fallback at the old 767px boundary; filled out the exact legacy eight-level stacking token ramp and the six legacy calendar color tokens. Existing measured TPO 36px/9px button versus 10px field distinction stays intact.
+- [x] `src/components/ui/segmented-control.tsx` — fixed compounded label+child disabled opacity while preserving Radio control, checked value, keyboard, `readOnly`, error and 44px phone choice hit area.
+- [x] `src/components/ui/date-input.tsx` — legacy Sunday heading/date color token `#ff7576` with selected (teal/white), today (teal underline), off-month (muted), disabled, and touch rows remaining higher precedence.
+
+### A1/A2 value proof: legacy versus current file and line (effective values)
+
+| Property / state | Legacy source:line and value | vNext source:line and value | Result |
+| --- | --- | --- | --- |
+| Old body font paint | `legacy-styles/components___global.scss:9-12` no synthesized weight, WebKit antialias, macOS grayscale, optimizeLegibility | `src/app/globals.css:160-170,1087-1100` real font loading, antialiased, `-moz-osx-font-smoothing:grayscale`, no synthetic weight/style | Rasterization declarations match; **Lato in SCSS versus measured Inter still conflicts** |
+| Base body size | `components___global.scss:15,18-20` body 16px, paragraphs 16px/24px | `globals.css:1095-1100` body 16px, 1.5 leading =24px | Base metrics align; per-page paragraphs need full CSS cascade proof |
+| h1 measured shell | `old-lms-shell-spec.md:27` 30px/600; legacy `components___typo.scss:3-10` `.h1` 36px/44px desktop versus 24px/32px phone | `legacy-skin.css:276-280,337-343` generic 30px/600 and phone 24px/32px | Phone line box matches; **desktop measured-vs-class typography conflict remains** |
+| h2 phone | `components___typo.scss:13-15` 20px/30px | `legacy-skin.css:287-292` 20px/30px | Source match |
+| h2 tablet 768–991px | `components___typo.scss:17-20` 22px/32px | `legacy-skin.css:345-351` 22px/32px | Source match |
+| h2 desktop >=992px | `components___typo.scss:22-25` 30px/40px | `legacy-skin.css:359-365` 30px/40px | Source match |
+| h3 phone | `components___typo.scss:28-30` 16px/26px | `legacy-skin.css:299-304` 16px/26px | Source match |
+| h3 tablet 768–991px | `components___typo.scss:32-35` 18px/28px | `legacy-skin.css:345-357` 18px/28px | Source match |
+| h3 desktop >=992px | `components___typo.scss:37-40` 20px/30px | `legacy-skin.css:359-371` 20px/30px | Source match |
+| Calendar selected color | `components___variables.scss:270,272` selected ink `#000`, selected day `#26bac7` | `globals.css:60,62` `--lms-calendar-selected-ink:#000000`, `--lms-calendar-active-day:#26bac7` | Exact token correspondence |
+| Calendar Sunday | `components___variables.scss:273` `#ff7576` | `globals.css:63` `--lms-calendar-sunday:#ff7576`; `date-input.tsx:350-374` applies it only to ordinary Sunday/day header, not selected/today/outside | Correct source color and state precedence |
+| Calendar legend light | `components___variables.scss:271` `#a8e3e9` | `globals.css:61` `--lms-calendar-legend-light:#a8e3e9` | Token match; consumer-specific adoption pending |
+| Calendar heading muted | `components___variables.scss:274` `#a9a7ae` | `globals.css:64` `--lms-calendar-title-muted:#a9a7ae` | Token match |
+| Calendar table hairline | `components___variables.scss:275` `#dddddd52` | `globals.css:65` `--lms-calendar-table-border:#dddddd52` | Token match; rendered border geometry unverified |
+| Tracker dark-mode heading contrast | Old white LMS has no tracker dark-mode rule | `legacy-skin.css:373-387` tracker-only `--lms-foreground` / `--lms-body-text` restores legible h2–h6, leaves standard LMS untouched | Nonlegacy compatibility guard, not strict clone proof |
+
+### A3/A4 and C4: spacing/effects/native/mobile state proof
+
+| Property / state | Old LMS source:line/value | vNext file:line/value | Result |
+| --- | --- | --- | --- |
+| Effective spacing 1–8 | `components___variables.scss:208-215` 4/8/12/16/24/32/48/64px (later values override earlier 40/48 aliases) | `globals.css:359-366` same eight values | Source match |
+| Corner radii by role | `components___variables.scss:129-136` 6/12/18/999px standard; `components___form.scss:120` 10px input; measured TPO button 9px | `globals.css:344-345,831-840` scoped 9px Button, 10px Field, 6px generic and 12px card | Source match for differentiated roles; not every caller |
+| All eight z-levels | `components___variables.scss:281-288` -1/0/10/100/200/500/800/1000 | `globals.css:846-853` `--lms-z-below/base/raised/dropdown/sticky/drawer/modal/toast` | Exact declarations; consumers still must use them |
+| Elevation 1–4 | `components___variables.scss:226-229` two stacked shadow layers per level | `globals.css:860-863` dual-layer matching opacity/spread | Token match; actual modal/card assignment outside lane |
+| Motion | `components___variables.scss:252-259` 150ms,250ms,350ms; cubic-bezier(0.2,0,0,1) | `globals.css:205-210` matching fast/base/slow/ease | Declaration match |
+| Native number spinner | `components___form.scss:14-20` hide WebKit spinner and zero margin | `legacy-skin.css:143-153`, plus `globals.css:1127-1129` for shared native input | Match hidden chrome; arrow-key native validity unaffected |
+| Focus ring | `components___accessibility.scss:19-23` teal-text 2px offset 3px; `components___form.scss:130-143` 2px teal/red form shadow | Existing `micro-details.css:19-35` and `legacy-skin.css:166-181` retain focus-visible styling | Static rule match; no keyboard browser proof |
+| Scrolling | `components___common.scss:303-311` hidden chrome; `variables.scss:48` gray thumb #c4c4c4 | `globals.css:194-200,1027-1035` hidden default; opt-in thin; `legacy-skin.css:531-540` thumb | Same tokens/policy where opt-in; Firefox and actual overflow unverified |
+| 44px phone controls | `components___variables.scss:139,148-156` 44px tap target through 767px, tablet starts 768px | `globals.css:1143-1161` shared + unconverted native action/text/select mobile min-height | Source breakpoint and min-height match; excludes checkbox/radio/range/file inner boxes deliberately |
+| Segmented disabled ink and touch | `components___variables.scss:28,139` #a9a7ae muted, 44px mobile; `components___antddesign.scss:176-185` single 50% disabled paint | `segmented-control.tsx:19-25` label muted and one child disabled opacity; min-height 44px <=767px | Source declaration/state match; browser selected glyph unverified |
+
+### Coverage grep/static check — complete fetched files only
+
+The connected-repository source was read in full and counted with regex equivalents of `/<(button|input|select|textarea)(?=[\\s>])/g` and `/#[0-9a-fA-F]{3,8}\\b/g` after removing CSS comments. This is **not** the required whole-`src` command execution and deliberately cannot close the 12 strict categories.
+
+| File | Lines | Raw JSX button/input/select/textarea | Hex literal count | Open/close braces (comment-stripped) |
+| --- | ---: | --- | ---: | --- |
+| `src/app/globals.css` | 1252 | 0 / 0 / 0 / 0 | 155 | 243 / 243 |
+| `src/styles/legacy-skin.css` | 763 | 0 / 0 / 0 / 0 | 0 | 77 / 77 |
+| `src/components/ui/segmented-control.tsx` | 29 | 0 / 0 / 0 / 0 | 0 | 24 / 24 |
+| `src/components/ui/date-input.tsx` | 396 | 0 / 0 / 0 / 0 | 0 | 190 / 190 |
+
+Notes: `globals.css` legitimately includes hard-coded canonical color definitions and portal/shell exceptions from other lanes. **155 is not zero**; arbitrary CSS colors across `src` remain open. Brace equality is a limited static sanity check, not a compiler, browser, JS/TSX parser or CSS validation. Shared primitive composition was inspected; no test, typecheck, lint, CI or rendered screenshot was run.
+
+### Responsive proof boundaries and unresolved strict work
+
+Phone: <=767px uses 24px/32px h1, 20px/30px h2, 16px/26px h3, 44px raw form/action target, 44px calendar day and segmented label target. Tablet: 768–991px uses 22px/32px h2, 18px/28px h3, native 36px button baseline and two-column forms. Desktop >=992px uses 30px/40px h2, 20px/30px h3, measured 36px shell buttons and three-column form layouts as configured. These are **source breakpoint proofs only**; no 375/768/1280px rendered before/after viewport measurement was performed.
+
+**STRICT LEDGER: A1–A4, C1–C7 and D remain [ ] (0/12 ticked).** Missing: full tree button/input/select/textarea/hex grep and exemptions, computed style and browser focus comparisons, per-page source/caller migration, the old 36px/44px desktop `.h1` vs measured 30px portal-heading conflict, native picker OS differences, rich-text editor parity, image/upload flow and actual responsive screenshots.
+
+**Next exact file for lane chat-17:** `src/styles/legacy-skin.css` — continue A1/A2 audit of remaining caption/helper/long-form, label/checkbox, form error states and readable contrast without altering other lanes' overlay/table ownership.

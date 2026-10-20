@@ -34,37 +34,37 @@ export default async function MentorReviewOverviewPage({
   Delivery workspace</Link>}/>
  <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
  className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-  <label className="grid gap-1 text-sm font-semibold text-body">Delivery status
+  <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Delivery status
    <Select name="status" defaultValue={data.query.status}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+    className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
     {(["ALL","DRAFT","SUBMITTED","APPROVED","CHANGES_REQUESTED"] as const).map(status=>
      <option key={status} value={status}>{status.replaceAll("_"," ")}</option>)}
    </Select>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Written feedback
+  <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Written feedback
    <Select name="feedback" defaultValue={data.query.feedback}
-    className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+    className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
     <option value="ALL">Any</option>
     <option value="WITH">Recorded</option>
     <option value="WITHOUT">Not recorded</option>
    </Select>
   </label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Exact delivery version
+  <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Exact delivery version
    <Input type="number" name="version" min={1} max={1000000}
     defaultValue={data.query.version??""}
-    placeholder="All versions" className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
+    placeholder="All versions" className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
   </label>
-  <Button type="submit" variant="primary">
+  <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
    Filter
   </Button>
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"}
    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
  </form>
  <div className="flex flex-wrap items-center gap-3 text-sm">
-  <Link href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
+  <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-delivery-review-export?"+
    new URLSearchParams({status:data.query.status,feedback:data.query.feedback,
     ...(data.query.version===undefined?{}:{version:String(data.query.version)})}).toString()}
-   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   download className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
    Export filtered delivery review CSV (max 200)
   </Link>
   {data.total>200?<p role="status">CSV omits {data.total-200} versions beyond the cap.</p>:null}
@@ -80,8 +80,8 @@ export default async function MentorReviewOverviewPage({
  <p className="text-sm text-body">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
  description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history."/>
- :<ol className="divide-y divide-border">{data.items.map(item=>
- <li key={item.id} className="py-4">
+ :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
+ <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">
  <h2 className="font-semibold">Delivery version {item.version}</h2>
  <span className="text-xs font-semibold text-body">{item.status}</span></div>

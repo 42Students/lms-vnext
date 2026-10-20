@@ -1,6 +1,8 @@
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
+import { EmptyState } from "@/components/ui/empty-state";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -44,10 +46,10 @@ export default async function TpoPerformanceIntelligencePage({
       <div className="space-y-4">
         <PageHeader eyebrow="TPO · Reports" title="Company funnel and compensation"
           description="The selected reporting filters were invalid." />
-        <p role="alert" className="border-t border-border py-5 text-sm text-body">
+        <Alert tone="error">
           No reports were loaded. <Link href="/tpo/reports/intelligence"
             className="font-semibold text-link hover:underline">Clear filters</Link>
-        </p>
+        </Alert>
       </div>
     );
   }
@@ -78,9 +80,7 @@ export default async function TpoPerformanceIntelligencePage({
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/intelligence" />
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {workspace.noSeason ? (
-        <p role="status" className="border-t border-border py-5 text-sm text-body">
-          No placement season exists. No company funnel or package performance is inferred.
-        </p>
+        <EmptyState title="No placement season exists." description="No company funnel or package performance is inferred."/>
       ) : null}
       <section aria-label="Company funnel">
         <h2 className="mb-2 text-lg font-semibold text-foreground">Company funnel</h2>

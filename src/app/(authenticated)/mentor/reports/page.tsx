@@ -50,7 +50,7 @@ export default async function MentorReportsPage({searchParams}:{
     </section>:<>
       <section aria-label="Project status totals" className="space-y-3">
         <h2 className="font-semibold">Registered project status</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           {statusMetrics.map(([label,count])=>
             <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -64,7 +64,7 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <section aria-label="Recorded attention totals" className="space-y-3">
         <h2 className="font-semibold">Recorded project attention</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           {attentionMetrics.map(([label,count])=>
             <article key={label} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
               <h3 className="text-xs font-semibold text-muted-foreground">{label}</h3>
@@ -78,20 +78,20 @@ export default async function MentorReportsPage({searchParams}:{
       </section>
       <form method="get" action="/mentor/reports"
         className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">Project title
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Project title
           <Input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3"/>
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3"/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Status
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Status
           <Select name="status" defaultValue={data.query.status}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             {(["ALL","PLANNED","ACTIVE","COMPLETED","ARCHIVED"] as const).map(value=>
               <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Attention
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Attention
           <Select name="attention" defaultValue={data.query.attention}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All</option>
             <option value="REVIEW">Review</option>
             <option value="STALLED">Stalled</option>
@@ -100,43 +100,43 @@ export default async function MentorReportsPage({searchParams}:{
             <option value="NONE">No currently recorded attention</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Recorded tasks
-          <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recorded tasks
+          <Select name="taskCoverage" defaultValue={data.query.taskCoverage} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All tasks</option><option value="NO_TASKS">No tracked tasks</option>
             <option value="OPEN_TASKS">Unfinished tasks</option><option value="ALL_DONE">All registered tasks done</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Mentor assignment
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All assigned projects</option>
             <option value="PRIMARY">Primary Mentor</option>
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Report order
+        <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Report order
           <Select name="order" defaultValue={data.query.order}
-            className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-3">
+            className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="UPDATED">Recently updated</option>
             <option value="TITLE_AZ">Project title A–Z</option>
             <option value="TITLE_ZA">Project title Z–A</option>
             <option value="TASK_PROGRESS">Least registered task progress first</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
       </form>
       <div className="flex flex-wrap items-center gap-3 text-sm">
-        <Link href={"/api/mentor/reports/export?"+
+        <Link data-unskin="" href={"/api/mentor/reports/export?"+
           new URLSearchParams({
             taskCoverage:data.query.taskCoverage,
             status:data.query.status,attention:data.query.attention,
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary text-sm font-[650] text-[var(--lms-body-text)] bg-white md:min-h-9 hover:bg-[rgba(38,186,199,0.05)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] transition-colors duration-150 motion-reduce:transition-none">
           Export filtered project report CSV (max 100)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -148,7 +148,7 @@ export default async function MentorReportsPage({searchParams}:{
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
           "Clear filters to see the other currently assigned project records."}/>:
-        <ol className="grid gap-3 sm:grid-cols-2">{data.items.map(project=>
+        <ol className="grid gap-3 md:grid-cols-2">{data.items.map(project=>
           <li key={project.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h3 className="break-words font-semibold text-foreground">{project.title}</h3>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Pagination } from "@/components/ui/pagination";
 
 export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";
@@ -73,7 +74,7 @@ export function ProjectAdminFilters({
       method="get"
       className="flex flex-wrap items-end gap-3 border-b border-border pb-4"
     >
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">
         Search
         <Input
           name={legacyWorkspaces ? "search" : "q"}
@@ -83,7 +84,7 @@ export function ProjectAdminFilters({
           className="min-w-56"
         />
       </label>
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">
         Workspace status
         <Select
           name="status"
@@ -102,7 +103,7 @@ export function ProjectAdminFilters({
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeRiskSort ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
             className="">
@@ -113,7 +114,7 @@ export function ProjectAdminFilters({
         </label>
       ) : null}
       {includeSubmissionStatus ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
           Submission status
           <Select
             name="submissionStatus"
@@ -131,7 +132,7 @@ export function ProjectAdminFilters({
           </Select>
         </label>
       ) : null}
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[13px] font-semibold text-body">
         Rows
         <Select
           name="pageSize"
@@ -208,41 +209,12 @@ export function ProjectAdminPagination({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
-      <p className="m-0">
-        {total} result{total === 1 ? "" : "s"} ·
-        Page {page} of {totalPages}
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm text-body">
+      <p className="m-0 tabular-nums">
+        {total} result{total === 1 ? "" : "s"} · Page {page} of {totalPages}
       </p>
-      <div className="flex flex-wrap gap-2">
-        <Link
-          href={href(Math.max(1, page - 1))}
-          aria-disabled={page <= 1}
-          tabIndex={page <= 1 ? -1 : undefined}
-          className={
-            "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 " +
-            (page <= 1
-              ? "pointer-events-none opacity-50"
-              : "hover:bg-muted")
-          }
-        >
-          Previous
-        </Link>
-        <Link
-          href={href(
-            Math.min(totalPages, page + 1),
-          )}
-          aria-disabled={page >= totalPages}
-          tabIndex={page >= totalPages ? -1 : undefined}
-          className={
-            "inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 " +
-            (page >= totalPages
-              ? "pointer-events-none opacity-50"
-              : "hover:bg-muted")
-          }
-        >
-          Next
-        </Link>
-      </div>
+      <Pagination page={page} pageCount={totalPages} hrefForPage={href}
+        label="Project workspaces pages" />
     </div>
   );
 }

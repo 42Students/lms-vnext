@@ -55,7 +55,7 @@ export default async function LearnerProjectsPage({
 
   // LEARNER-projects-24/25: deny bookmark/direct-route access if disabled.
   if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
-    return <section className="space-y-3" role="status">
+    return <section className="min-w-0 space-y-4" role="status">
       <PageHeader title="Projects" description="This module is currently disabled for your college." />
       <p className="text-sm text-body">This module is currently disabled for your college.</p>
     </section>;
@@ -198,7 +198,7 @@ export default async function LearnerProjectsPage({
         emptyDescription={emptyState.description}
       />
 
-      <div className="[&_a]:inline-flex [&_a]:min-h-11 md:[&_a]:min-h-9 [&_a]:items-center [&_a]:justify-center">
+      <div className="min-w-0 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a]:justify-center md:[&_a]:min-h-9">
         <ProjectParticipantPagination
           basePath="/learn/projects"
           query={query}

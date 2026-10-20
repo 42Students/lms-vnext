@@ -1394,3 +1394,482 @@ grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
 ```
 
 **Responsive source**: 0–767px classes target 44px, 768px+ target 36px. **Print**: interactive creation forms hidden. No runtime app, TypeScript strict pass, CI or screenshot; G4/G5 remain `[ ]`.
+
+## Replacement chat-6 continued — Super Admin tenant, policy and navigation screens
+
+**Work queue (source remediation, not final G4/G5 pixel-parity ticks):**
+- [x] `src/components/admin/tenant-domain-manager.tsx` — Tenant domain GET state/list, verified/primary badges and last DNS-check dates retained; edit, Verify/Make primary/Delete controls suppressed in print, TXT verification value suppressed in print, input and dangerous confirmation focus/touch sized.
+- [x] `src/components/admin/managed-college-subdomain.tsx` — Managed hostname current-state paragraphs retained in print while editable subdomain input and allot/change/remove are paper-hidden; wildcard warning remains.
+- [x] `src/components/admin/college-edit-dialog.tsx` — College edit launcher paper-hidden and all eight edit modal inputs sized; saved college details and API behavior unchanged.
+- [x] `src/components/admin/college-setup-checklist.tsx` — Setup list ActionLink has exact local teal 2px/3px focus, 44px/36px and no printed Open nav controls.
+- [x] `src/components/admin/college-dashboard-section-failure.tsx` — Failure retry link has 2px teal/3px outline and print exclusion; shared ErrorState retained.
+- [x] `src/components/admin/academic-setup-steps.tsx` — Academic setup step links, disabled step labels, and refresh action excluded on paper; 44px/36px targets and 2px teal/3px focus.
+- [x] `src/components/admin/department-actions.tsx` — Department Rename/Archive action group excluded from print; input 44px/36px; custom ConfirmDialog/discard/archival dependency logic retained.
+- [x] `src/components/admin/organization-actions.tsx` — Organization action group excluded from print, edit input 44px/36px; archival and rename dialogs retained.
+- [x] `src/components/admin/person-membership-actions.tsx` — Member roles/suspend/reactivate/end row actions excluded on paper, text areas and Buttons 44px/36px; permission and state guards unchanged.
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx` — Descendant feature rule selectors/actions excluded on paper; six breakpoint modifiers normalized to md 36px; original guarded policy actions untouched.
+- [x] `src/components/admin/student-rule-editor.tsx` — Student module override editing hidden on paper; Select/Checkbox/action minimums match 44px mobile and 36px desktop; ConfirmDialog remains guarded.
+- [ ] **Next exact file:** `src/components/admin/admin-dashboard-actions.tsx` — focus of Quick Actions cards and keyboard/hover states; then `src/components/admin/tenant-settings-editor.tsx`, `src/components/admin/super-admin-platform-block-action.tsx`.
+
+Legacy numeric design constraints: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` = 44px min phone through 767px; `docs/design/ui-clone-checklist.md:46-47` = 36px desktop, 9px radius, font 14px/650; `docs/design/legacy-styles/components___accessibility.scss:18-21` = 2px solid teal, offset 3px; `docs/design/old-lms-pages.md:9` = compact table/borders, status and badges. Domain verification TXT values are deliberately **not printed**; they are editable tenant proof, not historical report output. We neither printed them nor changed access-control behavior.
+
+### Individual legacy/vNext property matrices
+
+#### `src/components/admin/tenant-domain-manager.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/tenant-domain-manager.tsx:193, 207, 274, 293, 305, 405` `min-h-11` (6 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/tenant-domain-manager.tsx:193, 207, 274, 293, 305, 405` `md:min-h-9` (6 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/tenant-domain-manager.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/tenant-domain-manager.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/tenant-domain-manager.tsx:182, 269, 320` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Tenant domain GET state/list, verified/primary badges and last DNS-check dates retained; edit, Verify/Make primary/Delete controls suppressed in print, TXT verification value suppressed in print, input and dangerous confirmation focus/touch sized | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/managed-college-subdomain.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/managed-college-subdomain.tsx:52, 58, 61` `min-h-11` (3 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/managed-college-subdomain.tsx:52, 58, 61` `md:min-h-9` (3 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/managed-college-subdomain.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/managed-college-subdomain.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/managed-college-subdomain.tsx:49, 56` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Managed hostname current-state paragraphs retained in print while editable subdomain input and allot/change/remove are paper-hidden; wildcard warning remains | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/college-edit-dialog.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/college-edit-dialog.tsx:92, 115, 124, 140, 151, 169, 187, 205` `min-h-11` (8 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/college-edit-dialog.tsx:92, 115, 124, 140, 151, 169, 187, 205` `md:min-h-9` (8 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/college-edit-dialog.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/college-edit-dialog.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/college-edit-dialog.tsx:92` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | College edit launcher paper-hidden and all eight edit modal inputs sized; saved college details and API behavior unchanged | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/college-setup-checklist.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/college-setup-checklist.tsx:35` `min-h-11` (1 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/college-setup-checklist.tsx:35` `md:min-h-9` (1 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/college-setup-checklist.tsx:35` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/college-setup-checklist.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/college-setup-checklist.tsx:35` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Setup list ActionLink has exact local teal 2px/3px focus, 44px/36px and no printed Open nav controls | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/college-dashboard-section-failure.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/college-dashboard-section-failure.tsx:9` `min-h-11` (1 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/college-dashboard-section-failure.tsx:9` `md:min-h-9` (1 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/college-dashboard-section-failure.tsx:9` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/college-dashboard-section-failure.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/college-dashboard-section-failure.tsx:9` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Failure retry link has 2px teal/3px outline and print exclusion; shared ErrorState retained | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/academic-setup-steps.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/academic-setup-steps.tsx:28, 30, 32, 34, 36` `min-h-11` (5 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/academic-setup-steps.tsx:28, 30, 32, 34, 36` `md:min-h-9` (5 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/academic-setup-steps.tsx:28, 30, 34` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/academic-setup-steps.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/academic-setup-steps.tsx:21` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Academic setup step links, disabled step labels, and refresh action excluded on paper; 44px/36px targets and 2px teal/3px focus | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/department-actions.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/department-actions.tsx:188, 229` `min-h-11` (2 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/department-actions.tsx:188, 229` `md:min-h-9` (2 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/department-actions.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/department-actions.tsx:none` status and `:229` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/department-actions.tsx:133` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Department Rename/Archive action group excluded from print; input 44px/36px; custom ConfirmDialog/discard/archival dependency logic retained | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/organization-actions.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/organization-actions.tsx:146` `min-h-11` (1 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/organization-actions.tsx:146` `md:min-h-9` (1 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/organization-actions.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/organization-actions.tsx:none` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/organization-actions.tsx:92` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Organization action group excluded from print, edit input 44px/36px; archival and rename dialogs retained | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/person-membership-actions.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/person-membership-actions.tsx:213, 224, 236, 252, 277, 311, 319, 347` `min-h-11` (8 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/person-membership-actions.tsx:213, 224, 236, 252, 277, 311, 319, 347` `md:min-h-9` (8 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/person-membership-actions.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/person-membership-actions.tsx:292` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/person-membership-actions.tsx:202` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Member roles/suspend/reactivate/end row actions excluded on paper, text areas and Buttons 44px/36px; permission and state guards unchanged | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/descendant-feature-rule-editor.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/descendant-feature-rule-editor.tsx:45, 54, 59, 61, 64, 65` `min-h-11` (6 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/descendant-feature-rule-editor.tsx:45, 54, 59, 61, 64, 65` `md:min-h-9` (6 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/descendant-feature-rule-editor.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/descendant-feature-rule-editor.tsx:67` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/descendant-feature-rule-editor.tsx:43` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Descendant feature rule selectors/actions excluded on paper; six breakpoint modifiers normalized to md 36px; original guarded policy actions untouched | File reviewed, no runtime or TypeScript tests |
+
+
+#### `src/components/admin/student-rule-editor.tsx`
+
+| State or property | Exact old LMS file:line value | vNext file:line value / modifier | Proof status |
+|---|---|---|---|
+| Phone interactive target | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/student-rule-editor.tsx:72, 76, 82, 83` `min-h-11` (4 source lines) or shared inherited target | Source token proof only; no device computed height |
+| Desktop tablet target | `ui-clone-checklist.md:46-47`: 36px height/9px radius, 14px font weight 650 | `src/components/admin/student-rule-editor.tsx:72, 82, 83` `md:min-h-9` (3 source lines) | Source token proof only; full exact skin states not measured |
+| Keyboard focus | `components___accessibility.scss:18-21`: solid teal 2px, offset 3px | `src/components/admin/student-rule-editor.tsx:none` explicit 3px focus links/forms where present; remaining shared Button inherits | Exact globally computed ring/disabled/hover OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: compact rows and warning/status badges | `src/components/admin/student-rule-editor.tsx:85` status and `:none` alert, table `:none` if used | Controls/guards preserved; full historical states not available |
+| Print appearance | Historical authenticated PDF/print template missing | `src/components/admin/student-rule-editor.tsx:68` source print:hidden modifier(s); shared authenticated-print.css | Conservative screen→paper separation, not certified legacy print parity |
+| Business action | No historical action recording in checked-in legacy styles | Student module override editing hidden on paper; Select/Checkbox/action minimums match 44px mobile and 36px desktop; ConfirmDialog remains guarded | File reviewed, no runtime or TypeScript tests |
+
+### Whole-file scoped grep and JSX pairing source proof
+
+| Scoped TSX file | Native button/input/select/textarea/table | Local CSS hex literals | Shared Button open/close | Print-hide markers |
+|---|---|---:|---:|---:|
+| `src/components/admin/tenant-domain-manager.tsx` | 0/0/0/0/0 | 0 | 4/4 | 3 |
+| `src/components/admin/managed-college-subdomain.tsx` | 0/0/0/0/0 | 0 | 2/2 | 2 |
+| `src/components/admin/college-edit-dialog.tsx` | 0/0/0/0/0 | 0 | 3/3 | 1 |
+| `src/components/admin/college-setup-checklist.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/college-dashboard-section-failure.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/academic-setup-steps.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/department-actions.tsx` | 0/0/0/0/0 | 0 | 7/7 | 1 |
+| `src/components/admin/organization-actions.tsx` | 0/0/0/0/0 | 0 | 4/4 | 1 |
+| `src/components/admin/person-membership-actions.tsx` | 0/0/0/0/0 | 0 | 6/6 | 1 |
+| `src/components/admin/descendant-feature-rule-editor.tsx` | 0/0/0/0/0 | 0 | 2/2 | 1 |
+| `src/components/admin/student-rule-editor.tsx` | 0/0/0/0/0 | 0 | 2/2 | 1 |
+
+Source counts obtained from complete fetched file content for **exactly these eleven paths**, not global `src` coverage. `<Button>` open/close equality is lexical evidence, not JSX compilation.
+
+Reproduction commands, documented but **not run**:
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/tenant-domain-manager.tsx' \
+ 'src/components/admin/managed-college-subdomain.tsx' \
+ 'src/components/admin/college-edit-dialog.tsx' \
+ 'src/components/admin/college-setup-checklist.tsx' \
+ 'src/components/admin/college-dashboard-section-failure.tsx' \
+ 'src/components/admin/academic-setup-steps.tsx' \
+ 'src/components/admin/department-actions.tsx' \
+ 'src/components/admin/organization-actions.tsx' \
+ 'src/components/admin/person-membership-actions.tsx' \
+ 'src/components/admin/descendant-feature-rule-editor.tsx' \
+ 'src/components/admin/student-rule-editor.tsx'
+```
+
+**Responsive source proof:** 44px `min-h-11` is in force through 767px where set locally; `md:min-h-9` yields 36px from 768px. Flex-wrapping navigations and dialogs persist; screen-only actions use `print:hidden`. Full screen/device pixel match, state-specific hover/active/disabled visual comparison, print/PDF sample, and hosted email typography are **not verified**. Do not tick G4 or G5. No app, compile, tests, lint or CI run.
+
+## Replacement chat-6 continued — report links, safe CSV, platform action and grouped tabs
+
+- [x] **Source remediation only** — 14 full TSX files: `src/components/admin/admin-dashboard-actions.tsx`, `src/components/admin/tenant-settings-editor.tsx`, `src/components/admin/admin-scoped-live-search.tsx`, `src/components/admin/college-closing-quizzes-card.tsx`, `src/components/admin/super-admin-platform-block-action.tsx`, `src/components/admin/learner-module-access-drawer.tsx`, `src/components/admin/super-admin-legacy-group-tabs.tsx`, `src/components/admin/college-branding-preview.tsx`, `src/components/admin/super-admin-placement-oversight-nav.tsx`, `src/components/admin/super-admin-learning-filter-fields.tsx`, `src/components/admin/super-admin-today-board.tsx`, `src/components/admin/super-admin-people-csv-control.tsx`, `src/components/admin/tenant-directory-csv-control.tsx`, `src/components/admin/admin-scoped-read-page.tsx`.
+  - `src/components/admin/admin-dashboard-actions.tsx`: Quick Actions cards preserve route and hover; keyboard focus now follows elevated 2px/2px old-LMS card treatment with supporting halo.
+  - `src/components/admin/tenant-settings-editor.tsx`: Tenant configuration fields align 44px/36px; entire confidential override editor excluded from paper output, grouped key/status and high-impact confirmation preserved.
+  - `src/components/admin/admin-scoped-live-search.tsx`: Debounced Super Admin directory search uses 44px phone/36px tablet input; search editor hidden in print.
+  - `src/components/admin/college-closing-quizzes-card.tsx`: Quizzes closing list remains printable while navigation CTA uses 2px/3px teal keyboard outline and hides on paper.
+  - `src/components/admin/super-admin-platform-block-action.tsx`: Native window.confirm replaced with shared ConfirmDialog for global account block/reactivate; same reason guard and request, 44px/36px Button, paper action hidden.
+  - `src/components/admin/learner-module-access-drawer.tsx`: Student module access search input and recheck/close Buttons sized, trace link uses 2px/3px teal outline; original trace reader, drawer content and server permissions unchanged.
+  - `src/components/admin/super-admin-legacy-group-tabs.tsx`: Grouped Super Admin account tabs excluded in paper view; Tabs component retained without custom element skin.
+  - `src/components/admin/college-branding-preview.tsx`: Brand preview email, phone, terms and privacy links use 44px/36px targets and teal 2px/3px focus, remain legible in print.
+  - `src/components/admin/super-admin-placement-oversight-nav.tsx`: Repaired previously undefined `active`/`items` helpers and unimported `Link` code in placement oversight nav; route-aware native Tabs, default-open for additional active reports, and print hide.
+  - `src/components/admin/super-admin-learning-filter-fields.tsx`: Learning filter Course/Batch selects retain chosen value and 44px/36px responsive size.
+  - `src/components/admin/super-admin-today-board.tsx`: Today metrics six-card links use elevated legacy keyboard focus (teal 2px/2px plus shared halo) while counts/empty evidence intact.
+  - `src/components/admin/super-admin-people-csv-control.tsx`: Super Admin filtered people CSV uses 44px/36px shared Button, print-hidden wrapper, and try/finally Blob anchor removal with delayed revocation.
+  - `src/components/admin/tenant-directory-csv-control.tsx`: Tenant directory CSV controls hidden on paper and anchor cleaned via try/finally with delayed revocation.
+  - `src/components/admin/admin-scoped-read-page.tsx`: Shared read directory inputs/selects and Filter/Refresh are 44px phone/36px tablet; details links teal 2px/3px, read-only rows still print but per-row actions do not.
+- [ ] **Next exact file:** `src/components/admin/college-branding-preview.tsx` is source-checked; continue with `src/components/admin/tenant-domain-manager.tsx` if concurrent revisions land, otherwise the next open administrative report `src/components/admin/super-admin-hr-accounts.tsx`. Remaining G4/G5 category-level tasks still blocked on complete historical PDFs/provider-hosted email HTML and global/responsive screenshots.
+
+**Historical style reference values:** `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214`: ≥44px mobile targets to width 767px; `docs/design/ui-clone-checklist.md:46-47`: desktop button 36px, 9px radius, text 14px/650; `docs/design/legacy-styles/components___accessibility.scss:18-21`: generic 2px solid teal outline +3px offset; `components___accessibility.scss:25-35`: elevated card outline 2px/offset 2px with outer halo. No original authenticated print/PDF/email templates checked in. Shared `src/components/ui/*` remains unmodified.
+
+### Per-source legacy property/value comparison tables
+
+#### `src/components/admin/admin-dashboard-actions.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/admin-dashboard-actions.tsx:none` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/admin-dashboard-actions.tsx:none` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/admin-dashboard-actions.tsx:none` generic 3px links; `:36` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/admin-dashboard-actions.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/admin-dashboard-actions.tsx:none` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Quick Actions cards preserve route and hover; keyboard focus now follows elevated 2px/2px old-LMS card treatment with supporting halo | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/tenant-settings-editor.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/tenant-settings-editor.tsx:61, 67, 75` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/tenant-settings-editor.tsx:61, 67, 75` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/tenant-settings-editor.tsx:89, 97` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/tenant-settings-editor.tsx:none` error, `:95` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/tenant-settings-editor.tsx:48` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Tenant configuration fields align 44px/36px; entire confidential override editor excluded from paper output, grouped key/status and high-impact confirmation preserved | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/admin-scoped-live-search.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/admin-scoped-live-search.tsx:23` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/admin-scoped-live-search.tsx:23` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/admin-scoped-live-search.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/admin-scoped-live-search.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/admin-scoped-live-search.tsx:19` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Debounced Super Admin directory search uses 44px phone/36px tablet input; search editor hidden in print | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/college-closing-quizzes-card.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/college-closing-quizzes-card.tsx:11` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/college-closing-quizzes-card.tsx:11` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/college-closing-quizzes-card.tsx:11` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/college-closing-quizzes-card.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/college-closing-quizzes-card.tsx:11` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Quizzes closing list remains printable while navigation CTA uses 2px/3px teal keyboard outline and hides on paper | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/super-admin-platform-block-action.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/super-admin-platform-block-action.tsx:39, 42` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/super-admin-platform-block-action.tsx:39, 42` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/super-admin-platform-block-action.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/super-admin-platform-block-action.tsx:51` error, `:52` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/super-admin-platform-block-action.tsx:34` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Native window.confirm replaced with shared ConfirmDialog for global account block/reactivate; same reason guard and request, 44px/36px Button, paper action hidden | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/learner-module-access-drawer.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/learner-module-access-drawer.tsx:59, 67, 79, 100, 105` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/learner-module-access-drawer.tsx:59, 79, 100, 105` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/learner-module-access-drawer.tsx:105` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/learner-module-access-drawer.tsx:72` error, `:61` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/learner-module-access-drawer.tsx:55` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Student module access search input and recheck/close Buttons sized, trace link uses 2px/3px teal outline; original trace reader, drawer content and server permissions unchanged | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/super-admin-legacy-group-tabs.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/super-admin-legacy-group-tabs.tsx:none` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/super-admin-legacy-group-tabs.tsx:none` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/super-admin-legacy-group-tabs.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/super-admin-legacy-group-tabs.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/super-admin-legacy-group-tabs.tsx:14` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Grouped Super Admin account tabs excluded in paper view; Tabs component retained without custom element skin | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/college-branding-preview.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/college-branding-preview.tsx:199, 211, 223, 232` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/college-branding-preview.tsx:199, 211, 223, 232` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/college-branding-preview.tsx:199, 211, 223, 232` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/college-branding-preview.tsx:none` error, `:239` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/college-branding-preview.tsx:none` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Brand preview email, phone, terms and privacy links use 44px/36px targets and teal 2px/3px focus, remain legible in print | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/super-admin-placement-oversight-nav.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/super-admin-placement-oversight-nav.tsx:none` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/super-admin-placement-oversight-nav.tsx:none` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/super-admin-placement-oversight-nav.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/super-admin-placement-oversight-nav.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/super-admin-placement-oversight-nav.tsx:25` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Repaired previously undefined `active`/`items` helpers and unimported `Link` code in placement oversight nav; route-aware native Tabs, default-open for additional active reports, and print hide | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/super-admin-learning-filter-fields.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/super-admin-learning-filter-fields.tsx:7` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/super-admin-learning-filter-fields.tsx:7` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/super-admin-learning-filter-fields.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/super-admin-learning-filter-fields.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/super-admin-learning-filter-fields.tsx:none` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Learning filter Course/Batch selects retain chosen value and 44px/36px responsive size | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/super-admin-today-board.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/super-admin-today-board.tsx:none` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/super-admin-today-board.tsx:none` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/super-admin-today-board.tsx:none` generic 3px links; `:16` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/super-admin-today-board.tsx:none` error, `:10` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/super-admin-today-board.tsx:none` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Today metrics six-card links use elevated legacy keyboard focus (teal 2px/2px plus shared halo) while counts/empty evidence intact | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/super-admin-people-csv-control.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/super-admin-people-csv-control.tsx:25` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/super-admin-people-csv-control.tsx:25` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/super-admin-people-csv-control.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/super-admin-people-csv-control.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/super-admin-people-csv-control.tsx:24` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Super Admin filtered people CSV uses 44px/36px shared Button, print-hidden wrapper, and try/finally Blob anchor removal with delayed revocation | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/tenant-directory-csv-control.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/tenant-directory-csv-control.tsx:22` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/tenant-directory-csv-control.tsx:22` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/tenant-directory-csv-control.tsx:none` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/tenant-directory-csv-control.tsx:none` error, `:none` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/tenant-directory-csv-control.tsx:22` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Tenant directory CSV controls hidden on paper and anchor cleaned via try/finally with delayed revocation | File fetched and compared post-commit; **no application or TypeScript run** |
+
+
+#### `src/components/admin/admin-scoped-read-page.tsx`
+
+| Property/state | Old LMS file:line & value | vNext file:line & source property | Verification |
+|---|---|---|---|
+| Mobile action/field | `pages___admin-list-pages.scss:8,193-214`: 44px minimum until 767px | `src/components/admin/admin-scoped-read-page.tsx:94, 103, 109, 114, 119, 126, 132, 138, 147 (+8 more)` `min-h-11` if locally declared | Source min-height match; actual computed hit box not measured |
+| Tablet/desktop | `ui-clone-checklist.md:46-47`: 36px height, 9px radius, font 14px/650 | `src/components/admin/admin-scoped-read-page.tsx:94, 103, 109, 114, 119, 126, 132, 138, 147 (+8 more)` `md:min-h-9` if locally declared | Source minimum match; inherited shared control may differ |
+| Focus/hover | `components___accessibility.scss:18-21`: teal 2px/3px; `:25-35` elevated card teal 2px/2px+halo | `src/components/admin/admin-scoped-read-page.tsx:191, 192` generic 3px links; `:none` card 2px; shared Button defaults elsewhere | Source-focused props; active/disabled/computed hover and all permutations still OPEN |
+| Error/loading/empty | `old-lms-pages.md:9`: hairline table, status and notices | `src/components/admin/admin-scoped-read-page.tsx:none` error, `:70, 84, 171, 181` status, `:none` DataTable if any | Existing per-screen states untouched or made semantic; pixel comparisons outstanding |
+| Print/HTML emails | No checked-in old authenticated print/PDF and hosted-provider email HTML | `src/components/admin/admin-scoped-read-page.tsx:87, 159, 190, 197` print-hidden lines for interactive chrome and values where appropriate | Conservative PDF browser print separation only, not old template proof |
+| Behavior/no regression | Historical trace/user sessions missing from SCSS | Shared read directory inputs/selects and Filter/Refresh are 44px phone/36px tablet; details links teal 2px/3px, read-only rows still print but per-row actions do not | File fetched and compared post-commit; **no application or TypeScript run** |
+
+### Whole-source grep counts, JSX balance and responsive reproduction
+
+| File | Native button/input/select/textarea/table | Hardcoded CSS hex | Shared Button open/close | Print-hidden source lines |
+|---|---|---:|---:|---:|
+| `src/components/admin/admin-dashboard-actions.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0 |
+| `src/components/admin/tenant-settings-editor.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/admin/admin-scoped-live-search.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/college-closing-quizzes-card.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/super-admin-platform-block-action.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/admin/learner-module-access-drawer.tsx` | 0/0/0/0/0 | 0 | 3/3 | 1 |
+| `src/components/admin/super-admin-legacy-group-tabs.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/college-branding-preview.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0 |
+| `src/components/admin/super-admin-placement-oversight-nav.tsx` | 0/0/0/0/0 | 0 | 0/0 | 1 |
+| `src/components/admin/super-admin-learning-filter-fields.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0 |
+| `src/components/admin/super-admin-today-board.tsx` | 0/0/0/0/0 | 0 | 0/0 | 0 |
+| `src/components/admin/super-admin-people-csv-control.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/admin/tenant-directory-csv-control.tsx` | 0/0/0/0/0 | 0 | 1/1 | 1 |
+| `src/components/admin/admin-scoped-read-page.tsx` | 0/0/0/0/0 | 0 | 2/2 | 4 |
+
+The counts came from **complete GitHub file reads** for these 14 paths, not a checkout-global grep; opening/closing counts are lexical only. The `Tabs` components in the placement oversight navigation are the existing routed shared implementation, not newly handwritten raw buttons. Reproduction command (documented only, **not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/admin-dashboard-actions.tsx' \
+ 'src/components/admin/tenant-settings-editor.tsx' \
+ 'src/components/admin/admin-scoped-live-search.tsx' \
+ 'src/components/admin/college-closing-quizzes-card.tsx' \
+ 'src/components/admin/super-admin-platform-block-action.tsx' \
+ 'src/components/admin/learner-module-access-drawer.tsx' \
+ 'src/components/admin/super-admin-legacy-group-tabs.tsx' \
+ 'src/components/admin/college-branding-preview.tsx' \
+ 'src/components/admin/super-admin-placement-oversight-nav.tsx' \
+ 'src/components/admin/super-admin-learning-filter-fields.tsx' \
+ 'src/components/admin/super-admin-today-board.tsx' \
+ 'src/components/admin/super-admin-people-csv-control.tsx' \
+ 'src/components/admin/tenant-directory-csv-control.tsx' \
+ 'src/components/admin/admin-scoped-read-page.tsx'
+```
+
+**Responsive source coverage:** CSS `min-h-11` = 44px for 0–767px and `md:min-h-9` = 36px at 768px+, per locally overridden controls. Wrapped link groups stay flex-wrapped; table/panel print exclusions do not change client behavior. The platform-wide account block now uses a shared ConfirmDialog instead of browser `window.confirm` (single confirmed mutation remains). The original code for `super-admin-placement-oversight-nav.tsx` contained undefined `active`/`items` and an unimported `Link`, corrected in the shared-Tabs consumer without changing shared UI. **No actual phone/tablet/print screenshot, browser tests, strict TypeScript, lint, CI, or native PDFs rendered. G4/G5 category items remain `[ ]`.**
+
+## Replacement chat-6 continued — Recruiter accounts and company identity actions
+
+- [x] **Source-complete** `src/components/admin/super-admin-hr-accounts.tsx`: Recruiter accounts: search/status/page-size filters 44px phone/36px desktop, action Buttons 44/36, CSV-style legacy pager links with teal 2px/3px focus; mobile cards avoid double print and DataTable is printable. Roles and account actions unchanged. Readback corrected one missing disabled JSX brace.
+- [x] **Source-complete** `src/components/admin/super-admin-company-merge.tsx`: Company merge: native browser window.confirm replaced by shared ConfirmDialog with dangerous confirmation, server POST and eligibility checks untouched; selectors 44px/36px, mutating controls paper-hidden; success closes modal.
+- [x] **Source-complete** `src/components/admin/super-admin-college-company-actions.tsx`: Scoped company create and relationship trust/archive action controls 44px/36px, create form inputs 44px/36px, mutation controls print-hidden; ConfirmDialog guards retained.
+- [ ] **Next exact file:** `src/components/admin/super-admin-hr-account-dialog.tsx` — continue through its form/Select/Checkbox focus/disabled/loading states, then `src/components/admin/super-admin-hr-detail-drawer.tsx`.
+
+Legacy references and measured values: `docs/design/legacy-styles/pages___admin-list-pages.scss:8,193-214` specifies mobile 44px minimum until 767px; `docs/design/ui-clone-checklist.md:46-47` documents desktop 36px/9px control and 14px/650 label; `docs/design/legacy-styles/components___accessibility.scss:18-21` generic keyboard focus is teal solid 2px, offset 3px. These **do not** include authenticated PDF, email or actual legacy recruiter account dialog screenshots.
+
+
+#### `src/components/admin/super-admin-hr-accounts.tsx`
+| State/property | Old LMS file:line exact value | vNext file:line source property | Evidence |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/super-admin-hr-accounts.tsx:614, 622, 629, 631, 657, 672, 690, 701, 714, 723 (+11 more)` `min-h-11` where locally sized | Source property only |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14px/650 | `src/components/admin/super-admin-hr-accounts.tsx:614, 622, 629, 631, 657, 672, 690, 701, 714, 723 (+11 more)` `md:min-h-9` where locally sized | Source property only |
+| Keyboard focus | `components___accessibility.scss:18-21`: 2px teal, 3px offset | `src/components/admin/super-admin-hr-accounts.tsx:727, 772, 836, 852` explicit 3px focus anchor where present; inherited shared Button otherwise | Exact computed styles, all hover/disabled states OPEN |
+| Loading/error/empty | `old-lms-pages.md:9`: compact hairline result/table state | `src/components/admin/super-admin-hr-accounts.tsx:813` DataTable if present, alerts `:974`, statuses `:663, 670` | Existing data/logic preserved; no runtime execution |
+| Print separation | No checked-in historical email/PDF/offer print fixture | `src/components/admin/super-admin-hr-accounts.tsx:610, 657, 685, 777, 785, 799, 821` screen interaction chrome hidden, result data still available | G5 provider template and paper visual parity OPEN |
+| Regression scope | No complete historical behavioral fixtures | Recruiter accounts: search/status/page-size filters 44px phone/36px desktop, action Buttons 44/36, CSV-style legacy pager links with teal 2px/3px focus; mobile cards avoid double print and DataTable is printable. Roles and account actions unchanged. Readback corrected one missing disabled JSX brace. | Static source diff/readback; no CI |
+
+
+#### `src/components/admin/super-admin-company-merge.tsx`
+| State/property | Old LMS file:line exact value | vNext file:line source property | Evidence |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/super-admin-company-merge.tsx:35, 41, 47` `min-h-11` where locally sized | Source property only |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14px/650 | `src/components/admin/super-admin-company-merge.tsx:35, 41, 47` `md:min-h-9` where locally sized | Source property only |
+| Keyboard focus | `components___accessibility.scss:18-21`: 2px teal, 3px offset | `src/components/admin/super-admin-company-merge.tsx:none` explicit 3px focus anchor where present; inherited shared Button otherwise | Exact computed styles, all hover/disabled states OPEN |
+| Loading/error/empty | `old-lms-pages.md:9`: compact hairline result/table state | `src/components/admin/super-admin-company-merge.tsx:none` DataTable if present, alerts `:55`, statuses `:56` | Existing data/logic preserved; no runtime execution |
+| Print separation | No checked-in historical email/PDF/offer print fixture | `src/components/admin/super-admin-company-merge.tsx:33` screen interaction chrome hidden, result data still available | G5 provider template and paper visual parity OPEN |
+| Regression scope | No complete historical behavioral fixtures | Company merge: native browser window.confirm replaced by shared ConfirmDialog with dangerous confirmation, server POST and eligibility checks untouched; selectors 44px/36px, mutating controls paper-hidden; success closes modal. | Static source diff/readback; no CI |
+
+
+#### `src/components/admin/super-admin-college-company-actions.tsx`
+| State/property | Old LMS file:line exact value | vNext file:line source property | Evidence |
+|---|---|---|---|
+| Phone hit-area | `pages___admin-list-pages.scss:8,193-214`: ≥44px at width ≤767px | `src/components/admin/super-admin-college-company-actions.tsx:31, 35, 37, 39, 42, 45, 78, 83` `min-h-11` where locally sized | Source property only |
+| Tablet/desktop button | `ui-clone-checklist.md:46-47`: 36px, radius 9px, 14px/650 | `src/components/admin/super-admin-college-company-actions.tsx:31, 35, 37, 39, 42, 45, 78, 83` `md:min-h-9` where locally sized | Source property only |
+| Keyboard focus | `components___accessibility.scss:18-21`: 2px teal, 3px offset | `src/components/admin/super-admin-college-company-actions.tsx:none` explicit 3px focus anchor where present; inherited shared Button otherwise | Exact computed styles, all hover/disabled states OPEN |
+| Loading/error/empty | `old-lms-pages.md:9`: compact hairline result/table state | `src/components/admin/super-admin-college-company-actions.tsx:none` DataTable if present, alerts `:none`, statuses `:none` | Existing data/logic preserved; no runtime execution |
+| Print separation | No checked-in historical email/PDF/offer print fixture | `src/components/admin/super-admin-college-company-actions.tsx:31, 33, 75` screen interaction chrome hidden, result data still available | G5 provider template and paper visual parity OPEN |
+| Regression scope | No complete historical behavioral fixtures | Scoped company create and relationship trust/archive action controls 44px/36px, create form inputs 44px/36px, mutation controls print-hidden; ConfirmDialog guards retained. | Static source diff/readback; no CI |
+
+### Source grep proof (complete three-file reads)
+
+| File | Native button/input/select/textarea/table | Literal hex CSS | Shared Button open/close |
+|---|---|---:|---:|
+| `src/components/admin/super-admin-hr-accounts.tsx` | 0/0/0/0/0 | 0 | 13/13 |
+| `src/components/admin/super-admin-company-merge.tsx` | 0/0/0/0/0 | 0 | 1/1 |
+| `src/components/admin/super-admin-college-company-actions.tsx` | 0/0/0/0/0 | 0 | 5/5 |
+
+Checkout reproduction (**not executed**):
+```sh
+grep -En '<(button|input|select|textarea|table)[ >]|#[[:xdigit:]]{3,8}' \
+ 'src/components/admin/super-admin-hr-accounts.tsx' \
+ 'src/components/admin/super-admin-company-merge.tsx' \
+ 'src/components/admin/super-admin-college-company-actions.tsx'
+```
+
+**Responsive proof:** vNext source classes use 44px `min-h-11` before 768px, `md:min-h-9` 36px at 768px and above. Recruiter list's phone cards are hidden from print while the canonical `DataTable` prints, but print cannot include filtered records not in the current page. Native company merge confirmation was deliberately converted to shared `ConfirmDialog` so it uses the old-style modal skin rather than browser chrome. Modal copy and server mutation endpoint preserved. Raw native tag, hardcoded hex, and Button pair counts cover exactly these sources only.
+
+**Still open / no G4/G5 tick:** Complete old visual state tables, screenshot comparisons, global grep, provider-hosted HTML and actual PDF/email output. No application, TypeScript strict, lint, tests, CI or browser print executed.

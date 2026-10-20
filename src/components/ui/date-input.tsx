@@ -347,7 +347,11 @@ export function DateInput({
                     })}
                   </div>
                 : <CalendarGrid variant="spaced" role="group" aria-label={monthYear} className="overflow-x-auto overscroll-x-contain text-center max-[767px]:[grid-template-columns:repeat(7,minmax(44px,1fr))]">
-              {weekdayLabels.map(day => <span key={day} aria-hidden="true" className="py-1 text-[12px] font-semibold text-[var(--lms-muted-text)]">{day}</span>)}
+              {weekdayLabels.map(day => <span key={day} aria-hidden="true"
+                className={cx("py-1 text-[12px] font-semibold",
+                  day === "Su" ? "text-[var(--lms-calendar-sunday)]" : "text-[var(--lms-muted-text)]")}>
+                {day}
+              </span>)}
               {days.map(day => {
                 const iso = localISO(day);
                 const candidate = weekMode ? isoWeek(day) : iso;
@@ -363,7 +367,10 @@ export function DateInput({
                   className={cx("!min-h-9 !h-9 !w-full !min-w-0 !rounded-[6px] !border-0 !p-0 !text-[13px] max-[767px]:!min-h-11 max-[767px]:!h-11",
                     outsideMonth ? "!text-[var(--lms-neutral-400)]" : "",
                     (mode === "datetime-local" ? draftDate === candidate : selected === candidate) ? "!bg-[var(--lms-primary)] !text-white" :
-                    iso === today ? "!text-[var(--lms-primary-text)] !underline" : "hover:!bg-[var(--lms-primary-subtle)]")}>
+                    iso === today ? "!text-[var(--lms-primary-text)] !underline" :
+                    !outsideMonth && day.getDay() === 0
+                      ? "!text-[var(--lms-calendar-sunday)] hover:!bg-[var(--lms-primary-subtle)]"
+                      : "hover:!bg-[var(--lms-primary-subtle)]")}>
                   {day.getDate()}
                 </Button>;
               })}

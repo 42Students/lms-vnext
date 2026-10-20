@@ -32,7 +32,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
               ? `${step.count} qualifying record${step.count === 1 ? "" : "s"}`
               : "No qualifying records"}
             action={step.href ? <Link href={step.href}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:underline md:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
               Open
             </Link> : <span className="text-xs text-muted-foreground">Page unavailable</span>} />)}
         </ul>

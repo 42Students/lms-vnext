@@ -402,14 +402,14 @@ export function LearnerCourseDiscussion({
       </div>
 
       {loadError && messages.length > 0 && loadedOnce.current ? (
-        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3">
+        <Alert tone="warning" role="alert" className="flex-row flex-wrap items-center gap-3">
           <p className="m-0 flex-1 text-sm text-warning-text">
             Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
           </p>
-          <Button type="button" size="sm" variant="secondary" onClick={() => void load(true)}>
+          <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load(true)}>
             Retry discussion refresh
           </Button>
-        </div>
+        </Alert>
       ) : null}
 
       {pinned ? (
@@ -459,7 +459,7 @@ export function LearnerCourseDiscussion({
           ref={scrollRef}
           onScroll={handleScroll}
           role="region" aria-label="Course discussion messages" tabIndex={0}
-          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain p-3 sm:max-h-[34rem] sm:min-h-80 sm:p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain p-3 md:max-h-[34rem] md:min-h-80 md:p-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           {loading ? (
             <div className="space-y-4" aria-busy="true">
@@ -514,9 +514,9 @@ export function LearnerCourseDiscussion({
                     onClick={() => void loadOlder()}>
                     {loadingOlder ? "Loading earlier messages…" : "Load earlier messages"}
                   </Button>
-                  {olderError ? <p role="alert" className="text-xs font-semibold text-error">
+                  {olderError ? <Alert tone="error" className="w-full">
                     Earlier messages could not be loaded. Retry to continue.
-                  </p> : null}
+                  </Alert> : null}
                 </div>
               ) : null}
               {feed.map((row) =>
@@ -617,7 +617,7 @@ export function LearnerCourseDiscussion({
           className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-5 bg-gradient-to-t from-surface to-transparent"/>:null}
         {learnerDiscussionMobileJumpVisible(atBottom,unseenCount,messages.length) ? (
           <Button type="button" onClick={()=>scrollToBottom()}
-            variant="secondary" className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-9 -translate-x-1/2 shadow-md sm:hidden">
+            variant="secondary" className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-11 -translate-x-1/2 shadow-md md:hidden">
             Jump to latest
           </Button>
         ) : null}
@@ -625,7 +625,7 @@ export function LearnerCourseDiscussion({
           <Button
             type="button"
             onClick={() => scrollToBottom()}
-            className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-9 -translate-x-1/2 shadow-md"
+            className="absolute bottom-[10.5rem] left-1/2 z-10 min-h-11 -translate-x-1/2 shadow-md md:min-h-9"
           >
             ↓ {unseenCount} new {unseenCount === 1 ? "message" : "messages"}
           </Button>
@@ -665,13 +665,13 @@ export function LearnerCourseDiscussion({
             placeholder="Write a message..."
             className="mt-1.5 w-full"
           />
-          <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-3 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <span className="text-xs text-muted-foreground">
-              <span className="sm:hidden">Tap Send to post · Enter adds a new line</span>
-              <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
+              <span className="md:hidden">Tap Send to post · Enter adds a new line</span>
+              <span className="hidden md:inline">Enter to send · Shift+Enter for a new line</span>
               {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             </span>
-            <Button type="submit" className="min-h-9 sm:min-h-9 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
+            <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Sending…" : "Send"}
             </Button>
           </div>

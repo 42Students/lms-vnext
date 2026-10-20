@@ -206,7 +206,7 @@ export function FacultyQuizReview({
       {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
         <Button
-          size="sm"
+          size="md"
           className="min-h-11 md:min-h-[var(--lms-control-height)]"
           variant="secondary"
           onClick={load}
@@ -216,7 +216,7 @@ export function FacultyQuizReview({
 
         {actions.canPublishResults ? (
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             disabled={savingResults}
             onClick={() =>
@@ -231,7 +231,7 @@ export function FacultyQuizReview({
 
         {actions.canHideResults ? (
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={savingResults}
@@ -273,7 +273,7 @@ export function FacultyQuizReview({
         <div className="flex flex-wrap gap-2">
           {actions.canPublishResults ? (
             <Button
-              size="sm"
+              size="md"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               disabled={savingResults}
               onClick={() =>
@@ -287,7 +287,7 @@ export function FacultyQuizReview({
           ) : null}
           {actions.canHideResults ? (
             <Button
-              size="sm"
+              size="md"
               className="min-h-11 md:min-h-[var(--lms-control-height)]"
               variant="secondary"
               disabled={savingResults}
@@ -301,7 +301,7 @@ export function FacultyQuizReview({
             </Button>
           ) : null}
           <Button
-            size="sm"
+            size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}

@@ -7,6 +7,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Alert } from "@/components/ui/alert";
+import { LoadingState } from "@/components/ui/loading-state";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -71,6 +74,7 @@ export function FacultyQuizQuestionEditor({
     useState(false);
   const [saving, setSaving] =
     useState(false);
+  const [confirmSave, setConfirmSave] = useState(false);
   const [error, setError] =
     useState<string | null>(null);
 
@@ -329,7 +333,7 @@ export function FacultyQuizQuestionEditor({
     return null;
   }
 
-  async function save() {
+  async function save(confirmed = false) {
     if (saving || loading) return;
     if (!expectedUpdatedAt) {setError("Load the current draft before saving.");return;}
     const validation = validate();
@@ -337,7 +341,8 @@ export function FacultyQuizQuestionEditor({
       setError(validation);
       return;
     }
-    if (!window.confirm("Confirm replacement of this draft quiz question bank?")) return;
+    if (!confirmed) { setConfirmSave(true); return; }
+    setConfirmSave(false);
     setError(null);
     setSaving(true);
     try {
@@ -406,7 +411,7 @@ export function FacultyQuizQuestionEditor({
   return (
     <>
       <Button
-        size="sm"
+        size="md"
         variant="secondary"
         onClick={() => void load()}
       >
@@ -432,9 +437,7 @@ export function FacultyQuizQuestionEditor({
         }
       >
         {loading ? (
-          <p className="text-sm text-muted-foreground">
-            Loading questions…
-          </p>
+          <LoadingState label="Loading questions…" />
         ) : (
           <div className="space-y-4">
             {questions.map(
@@ -454,7 +457,7 @@ export function FacultyQuizQuestionEditor({
                     {questions.length >
                     1 ? (
                       <Button
-                        size="sm"
+                        size="md"
                         variant="ghost"
                         onClick={() =>
                           setQuestions(
@@ -491,7 +494,7 @@ export function FacultyQuizQuestionEditor({
                     />
                   </label>
 
-                  <div className="mt-3 grid gap-3 sm:grid-cols-[1fr_8rem]">
+                  <div className="mt-3 grid gap-3 md:grid-cols-[1fr_8rem]">
                     <label className="text-xs font-semibold text-body">
                       Question type
                       <Select
@@ -610,7 +613,7 @@ export function FacultyQuizQuestionEditor({
                             maxLength={2000}
                           />
                           <Button
-                            size="sm"
+                            size="md"
                             variant="ghost"
                             disabled={
                               question
@@ -630,7 +633,7 @@ export function FacultyQuizQuestionEditor({
                       ),
                     )}
                     <Button
-                      size="sm"
+                      size="md"
                       variant="secondary"
                       disabled={
                         question.options
@@ -664,17 +667,19 @@ export function FacultyQuizQuestionEditor({
               + Question
             </Button>
 
-            {error ? (
-              <p
-                role="alert"
-                className="text-sm font-semibold text-error"
-              >
-                {error}
-              </p>
-            ) : null}
+            {error ? <Alert tone="error">{error}</Alert> : null}
           </div>
         )}
       </Drawer>
+      <ConfirmDialog
+        open={confirmSave}
+        onOpenChange={next => { if (!next && !saving) setConfirmSave(false); }}
+        title="Confirm replacement of this draft quiz question bank?"
+        confirmLabel="Replace questions"
+        confirmVariant="primary"
+        pending={saving}
+        onConfirm={() => void save(true)}
+      />
     </>
   );
 }

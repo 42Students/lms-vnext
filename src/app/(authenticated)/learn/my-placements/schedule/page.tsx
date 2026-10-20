@@ -89,7 +89,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
          <LearnerRoundConfirmAttendance applicationId={row.applicationId}
            roundId={row.roundId} confirmed={Boolean(row.learnerConfirmedAt)}/>:null}
       {outcomeText==="Marked absent" ? (
-        <p className="rounded-lg border border-warning bg-surface-subtle p-3 text-sm text-body">
+        <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           Marked absent. If this is wrong, tell the placement cell.
           <Link href="/learn/my-placements/placement#requests"
             className="ml-2 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">
@@ -104,7 +104,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Schedule" description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice." />
-      {needsConfirmation>0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
+      {needsConfirmation>0?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
       <Tabs ariaLabel="Schedule view" value={view} renderPanel={false} items={[
         { value: "coming", label: "Coming up", href: "/learn/my-placements/schedule?view=coming" },
         { value: "past", label: "Past", href: "/learn/my-placements/schedule?view=past" },
@@ -112,11 +112,11 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       ]} />
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
         <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length} dated)</h2>
-        {ahead.length === 0 && undated.length === 0 ? <p className="text-body">Nothing coming up. When a company&apos;s round is planned, it shows here.</p> : null}
+        {ahead.length === 0 && undated.length === 0 ? <p role="status" className="flex min-h-[180px] items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">Nothing coming up. When a company&apos;s round is planned, it shows here.</p> : null}
         {ahead.length === 0 && undated.length > 0 ? <p role="status" className="text-sm text-body">
           {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
         </p> : null}
-        {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+        {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none md:p-6">
           <p className="mb-1 text-xs font-semibold uppercase text-primary-text">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
@@ -124,10 +124,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
             mode={(row.exception?.mode??row.mode)==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS"} venue={row.exception?.venue??row.venue}
             meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/>
-          <Link className="text-sm font-semibold text-primary-text underline" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
+          <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}
-        {ahead.length === 0 ? <Link className="text-sm font-semibold text-primary-text underline" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
-        {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+        {ahead.length === 0 ? <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
+        {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none md:p-6">
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">Date to be told</p>
           {details(row)}
@@ -141,8 +141,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       </section>:null}
       {view==="past"?<section className="space-y-3">
         <h2 className="text-lg font-semibold text-foreground">Past</h2>
-        {past.length === 0 ? <p className="text-body">No past rounds yet.</p> : past.map(row =>
-          <article key={row.roundId+":"+row.applicationId} className="rounded-xl border border-border bg-surface p-4">
+        {past.length === 0 ? <p role="status" className="flex min-h-[180px] items-center justify-center rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">No past rounds yet.</p> : past.map(row =>
+          <article key={row.roundId+":"+row.applicationId} className="min-w-0 rounded-xl border border-border bg-surface p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-[border-color,box-shadow] duration-200 hover:border-[rgba(38,186,199,0.25)] hover:shadow-[0_2px_6px_rgba(0,0,0,0.06)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none md:p-6">
             <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
             <p className="text-sm text-body">{fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
             {details(row)}

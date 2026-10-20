@@ -9,7 +9,7 @@ export default async function LearnerAcademicRecordPage(){
  const context=await getCurrentRequestContext();
  const record=await getOwnLearnerAcademicSummary(context);
  return <div className="min-w-0 space-y-6">
-  <Link href="/learn/profile" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
+  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
   <section className="border-t border-border pt-5">
    <h2 className="text-base font-semibold text-foreground">Current academic enrollment</h2>

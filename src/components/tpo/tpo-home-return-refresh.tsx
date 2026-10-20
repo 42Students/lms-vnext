@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 
@@ -57,10 +58,10 @@ export function TpoHomeReturnRefresh(){
  },[router]);
  return <div aria-live="polite" className="space-y-2">
   {busy?<p role="status" className="text-xs text-muted-foreground">Refreshing placement home…</p>:null}
-  {failed?<div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3 text-sm">
+  {failed?<Alert tone="error" className="flex-row flex-wrap items-center gap-3">
     <span>Home refresh failed. Showing the last successful snapshot.</span>
     <Button variant="secondary" type="button" disabled={busy} onClick={()=>void refresh()}
       className="min-h-9">Retry</Button>
-  </div>:null}
+  </Alert>:null}
  </div>;
 }

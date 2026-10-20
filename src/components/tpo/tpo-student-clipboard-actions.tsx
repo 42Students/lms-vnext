@@ -1,5 +1,6 @@
 "use client";
 import {Textarea} from "@/components/ui/textarea";
+import { Alert } from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -41,7 +42,7 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
     >
     Select matching students on this page
    </Button>
-   {missing.length?<p role="alert" className="text-sm text-warning-text">Not on this page: {missing.slice(0,30).join(", ")}{missing.length>30?" and "+(missing.length-30)+" more":""}.</p>:null}
+   {missing.length?<Alert tone="warning">Not on this page: {missing.slice(0,30).join(", ")}{missing.length>30?" and "+(missing.length-30)+" more":""}.</Alert>:null}
   </div>:null}
   {message?<p role="status" className="text-xs text-muted-foreground">{message}</p>:null}
  </section>;

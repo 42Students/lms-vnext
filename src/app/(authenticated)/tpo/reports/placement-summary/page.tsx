@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
 import {TpoReportInvalidFilters} from "@/components/placements/tpo-report-invalid-filters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
@@ -189,17 +190,17 @@ export default async function TpoPlacementSummaryPage({
              </a>:null}
 
           </form>
-          {!validFilters?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-warning-text">
+          {!validFilters?<Alert tone="error">
            One or more selected drive dimensions are invalid for this college. Clear the filters.
-          </p>:null}
-          {!dimensions?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-4 text-sm">
+          </Alert>:null}
+          {!dimensions?<Alert tone="warning" className="flex-row flex-wrap items-center justify-between">
             <p className="text-warning-text">Batch filter unavailable. Drive dimension details could not be loaded; the season report remains available, but no drive-row totals are inferred.</p>
             <Link href={"/tpo/reports/placement-summary?"+new URLSearchParams({
               ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
               ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
               ...(companyId?{companyId}:{}),...(workMode?{workMode}:{}),...(payCategory?{payCategory}:{}),
             }).toString()} className="inline-flex min-h-11 sm:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-2 font-semibold text-link">Retry</Link>
-          </section>:null}
+          </Alert>:null}
           {dimensions?<p role="status" className="text-xs text-muted-foreground">
            Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.
            Summary figures, charts, company table and standard report CSV keep the selected season/drive scope.

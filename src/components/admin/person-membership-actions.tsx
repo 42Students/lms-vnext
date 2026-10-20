@@ -199,7 +199,7 @@ export function PersonMembershipActions({
 
   return (
     <>
-      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
         <PersonProfileDialog
           membershipId={membershipId}
           collegeId={collegeId}
@@ -210,7 +210,7 @@ export function PersonMembershipActions({
         <Button
           variant="secondary"
           size="sm"
-          className="min-h-11 md:min-h-[var(--lms-control-height)]"
+          className="min-h-11 md:min-h-9"
           disabled={currentStatus === "ENDED" || lifecyclePending || Boolean(rolePending) || roleRequestPending.current}
           onClick={() => setRolesOpen(true)}
         >
@@ -221,7 +221,7 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-9"
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setSuspendOpen(true)}
           >
@@ -233,7 +233,7 @@ export function PersonMembershipActions({
           <Button
             variant="secondary"
             size="sm"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-9"
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() =>
               lifecycle({ action: "REACTIVATE" })
@@ -249,7 +249,7 @@ export function PersonMembershipActions({
           <Button
             variant="ghost"
             size="sm"
-            className="min-h-11 md:min-h-[var(--lms-control-height)]"
+            className="min-h-11 md:min-h-9"
             disabled={lifecyclePending || Boolean(rolePending) || lifecycleRequestPending.current}
             onClick={() => setEndOpen(true)}
           >
@@ -274,7 +274,7 @@ export function PersonMembershipActions({
             return (
               <label
                 key={role}
-                className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-4)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:bg-[var(--lms-primary-subtle)] md:min-h-[var(--lms-control-height)]"
+                className="flex min-h-11 cursor-pointer items-center justify-between gap-[var(--lms-space-4)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-primary-subtle)] focus-within:bg-[var(--lms-primary-subtle)] md:min-h-9"
               >
                 <span className="text-sm font-semibold text-body">
                   {roleLabel(role)}
@@ -308,7 +308,7 @@ export function PersonMembershipActions({
           <>
             <Button
               variant="secondary"
-              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-9"
               disabled={lifecyclePending}
               onClick={() => setSuspendOpen(false)}
             >
@@ -316,7 +316,7 @@ export function PersonMembershipActions({
             </Button>
             <Button
               variant="danger"
-              className="min-h-11 md:min-h-[var(--lms-control-height)]"
+              className="min-h-11 md:min-h-9"
               loading={lifecyclePending}
               disabled={
                 lifecyclePending ||
@@ -344,6 +344,7 @@ export function PersonMembershipActions({
           Suspension reason
         </label>
         <Textarea
+          className="min-h-11 md:min-h-9"
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}
           onChange={(event) =>

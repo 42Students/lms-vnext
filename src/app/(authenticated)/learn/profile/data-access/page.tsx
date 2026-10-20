@@ -12,13 +12,13 @@ export default async function LearnerProfileDataAccessPage(){
   getOwnLearnerAcademicSummary(context),
  ]);
  return <div className="min-w-0 space-y-6">
-  <Link href="/learn/profile" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
+  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
   <PageHeader title="Who has my data" description="Your saved academic details, access boundaries and recorded changes."/>
   <section className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Academic record</h2>
    <p className="mt-2 text-sm text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
    <p className="mt-2 text-sm text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
-   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline">View academic record →</Link>
+   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">View academic record →</Link>
   </section>
   <section className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Who may use your information</h2>
@@ -27,7 +27,7 @@ export default async function LearnerProfileDataAccessPage(){
     <li>Authorized placement staff may use relevant profile details when checking eligibility and managing placement participation.</li>
     <li>Recruiters receive only information deliberately shared through college-authorized placement workflows, subject to their access permissions.</li>
    </ul>
-   <p role="status" className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">This page is a summary of access permissions, not a list of people who opened your profile. A complete record of profile views is not available; no view or consent is inferred.</p>
+   <p role="status" className="mt-3 border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm leading-[1.5] text-body">This page is a summary of access permissions, not a list of people who opened your profile. A complete record of profile views is not available; no view or consent is inferred.</p>
   </section>
   <section className="border-t border-border pt-5">
    <h2 className="font-semibold text-foreground">Recent recorded profile-related changes</h2>

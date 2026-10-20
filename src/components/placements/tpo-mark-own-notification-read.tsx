@@ -3,12 +3,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   async function markRead() {
-    if (busy || !window.confirm("Mark this placement notification as read?")) return;
+    if (busy) return;
+    setConfirmOpen(false);
     setBusy(true); setError(null);
     try {
       const response = await fetch("/api/placements/tpo/messages/notifications/read", {
@@ -23,10 +26,15 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
     } finally { setBusy(false); }
   }
   return <div>
-    <Button type="button" disabled={busy} onClick={() => void markRead()}
-      variant="secondary" className="min-h-11 sm:min-h-9">
+    <Button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}
+      variant="secondary" className="min-h-11 md:min-h-9">
       {busy ? "Saving..." : "Mark read"}
     </Button>
     {error ? <InlineNotice tone="error" message={error}/> : null}
+    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+      title="Mark placement notification as read?"
+      description="Mark this placement notification as read?"
+      confirmLabel="Mark read" confirmVariant="primary"
+      pending={busy} onConfirm={() => void markRead()}/>
   </div>;
 }

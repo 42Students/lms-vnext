@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -32,12 +32,7 @@ export default async function CollegeAttendanceSettingsPage() {
         title="Attendance policy"
         description={`Set the attendance eligibility threshold and correction window for ${college.name}.`}
         actions={
-          <Link
-            href="/college/attendance"
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle"
-          >
-            Back to Attendance
-          </Link>
+          <PageBackLink href="/college/attendance" label="Back to Attendance"/>
         }
       />
 
