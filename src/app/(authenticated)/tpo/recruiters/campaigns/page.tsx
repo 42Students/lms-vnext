@@ -31,7 +31,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
      .map(([value,label])=><Link key={value} href={"/tpo/recruiters?view="+value}
        aria-current={value==="campaigns"?"page":undefined}
        className={value==="campaigns"
-         ?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-foreground"
+         ?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary"
          :"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body"}>
        {label}
      </Link>)}
