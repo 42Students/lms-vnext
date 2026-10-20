@@ -11,6 +11,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { ReportTable, reportNumber } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoSeasonPipeline } from "@/modules/placements/tpo-season-pipeline-service";
@@ -63,7 +64,7 @@ export default async function TpoSeasonPipelinePage({
           Placement season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
             disabled={!report.seasons.length}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full">
             {report.seasons.length === 0 ? <option value="">No season</option> : null}
             {report.seasons.map((s) => (
               <option key={s.id} value={s.id}>{s.name} · {s.code}</option>
@@ -74,7 +75,7 @@ export default async function TpoSeasonPipelinePage({
           Drive
           <Select name="jobId" defaultValue={report.selectedJobId ?? ""}
             disabled={!report.season}
-            className="mt-2 min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+            className="mt-2 min-h-11 sm:min-h-9 w-full">
             <option value="">All drives</option>
             {report.jobs.map((job) => (
               <option key={job.id} value={job.id}>{job.companyName} · {job.title}</option>
@@ -82,7 +83,7 @@ export default async function TpoSeasonPipelinePage({
           </Select>
         </label>
         <Button type="submit" disabled={!report.season}
-          className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 font-[650] text-on-primary disabled:opacity-50">
+          className="min-h-11 sm:min-h-9">
           Apply filters
         </Button>
       </form>
@@ -93,12 +94,7 @@ export default async function TpoSeasonPipelinePage({
         <>
           <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" aria-label="Season pipeline counts">
             {cards.map(([label, value]) => (
-              <div key={label} className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-                <p className="text-xs font-semibold uppercase text-body">{label}</p>
-                <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
-                  {value === null ? "Unavailable" : reportNumber(value)}
-                </p>
-              </div>
+              <StatTile key={label} label={label} value={value === null ? "Unavailable" : reportNumber(value)} className="min-h-[104px]" />
             ))}
           </section>
           <p className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm leading-6 text-body">

@@ -10,6 +10,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import {
   ReportFilters,
   ReportScopeNote,
@@ -129,10 +130,7 @@ export default async function TpoPerformanceIntelligencePage({
             ["Best-per-learner median annual CTC", reportCurrency(compensation.uniqueLearnerBestMedianInr)],
             ["Best-per-learner highest annual CTC", reportCurrency(compensation.uniqueLearnerBestHighestInr)],
           ] as const).map(([name, value]) => (
-            <article key={name} className="border-b border-border py-4">
-              <h3 className="text-xs font-semibold text-body">{name}</h3>
-              <p className="mt-2 text-xl font-bold tabular-nums text-foreground">{value}</p>
-            </article>
+            <StatTile key={name} label={name} value={value} className="min-h-[104px]" />
           ))}
         </div>
         <ReportTable

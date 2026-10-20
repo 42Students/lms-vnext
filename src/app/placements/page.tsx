@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { StatTile } from "@/components/ui/stat-tile";
 import { headers } from "next/headers";
 import {notFound} from "next/navigation";
 import { PublicRecruitFromUs } from "@/components/placements/public-recruit-from-us";
@@ -65,17 +66,7 @@ export default async function PublicPlacementsPage() {
       </section>:null}
       {published?<p className="mt-8 text-xs text-muted-foreground">Live numbers over the last 12 months.</p>:null}
       <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
-        {metricKeys.map(key=><article key={key}
-         className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
-         <h2 className="text-sm font-medium text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</h2>
-         <p className="mt-3 break-words text-lg font-semibold text-foreground">
-          {formatPublicPlacementMetric(key,{
-           population:published?.population??null,placed:published?.placed??null,
-           offers:published?.offers??null,employers:published?.employers??null,
-           highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null,
-          })}
-         </p>
-        </article>)}
+        {metricKeys.map(key=><StatTile key={key} label={PUBLIC_METRIC_LABELS[key]} value={formatPublicPlacementMetric(key,{population:published?.population??null,placed:published?.placed??null,offers:published?.offers??null,employers:published?.employers??null,highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null})} className="min-h-[104px]" />)}
       </section>
       <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
         enabled={Boolean(published) && process.env.DB09_TPO_API_READY === "DB09_VERIFIED" &&
