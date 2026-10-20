@@ -67,10 +67,10 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   router.push(base+"?"+params.toString());
  };
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-  {activeTab==="WAITING"&&candidates.length>0?<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center"
+  {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" onClick={()=>{
     const picks=candidates.slice(0,20);setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
-   }} className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">
+   }} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
     Review one by one ({Math.min(20,candidates.length)})
    </Button>
    <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
@@ -83,19 +83,19 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
   {activeTab==="WAITING"&&candidates.length>0?<Disclosure ariaLabel="Super Admin bulk verification" title={<h2 className="font-semibold">Act on selected verification requests</h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
-   <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap"
+   <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
-     className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">Select first 20 waiting</Button>
+     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
-     className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">Clear selection</Button>
+     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Clear selection</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
-     className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">Verify without opening</Button>
+     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Verify without opening</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
-     className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">Send back</Button>
+     className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Send back</Button>
    </div>
-   <ul className="max-h-52 min-w-0 divide-y divide-border overflow-y-auto overscroll-contain">
-    {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)} className="min-w-0 py-[var(--lms-space-2)]">
-      <label className="flex min-h-11 items-center gap-[var(--lms-space-2)] break-words text-sm">
+   <ul className="max-h-44 space-y-2 overflow-y-auto">
+    {candidates.slice(0,50).map(row=><li key={verificationSelectionKey(row)}>
+      <label className="flex items-center gap-2 text-sm">
        <Checkbox disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
         checked={selectedKeys.includes(verificationSelectionKey(row))}
         onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
@@ -103,18 +103,18 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       </label>
     </li>)}
    </ul>
-   {bulkAction?<div className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)]">
+   {bulkAction?<div className="space-y-2 rounded-md border border-border p-3">
     <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
     {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
     {bulkAction==="SEND_BACK"?<label className="block text-sm">Reason for sending back
      <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500}
-      className="mt-[var(--lms-space-2)] w-full"/></label>:
+      className="mt-2 w-full"/></label>:
      <label className="flex items-start gap-2 text-sm">
       <Checkbox checked={acknowledged} onChange={e=>setAcknowledged(e.target.checked)}/>
       I have checked their documents by another method. Each verification will be recorded with my name.
      </label>}
     <Button variant="primary" type="button" disabled={bulkBusy||!applicable.length||bulkAction==="VERIFY"&&!acknowledged||bulkAction==="SEND_BACK"&&reason.trim().length<3}
-     onClick={()=>void submitBulk()} className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">
+     onClick={()=>void submitBulk()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
     </Button>
    </div>:null}
@@ -122,9 +122,9 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   </Disclosure>:null}
   <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)]">
    <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
-   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] md:w-auto">Refresh</Button>
+   <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
   </div>
-  <nav aria-label="Verification pages" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] text-sm">
+  <nav aria-label="Verification pages" className="flex flex-wrap gap-3 text-sm">
    <span>Showing {rows.length} of {total} in this status</span>
    {page>1?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page-1)})} className="min-h-[var(--lms-control-height)] underline">Previous</Button>:null}
    {hasMore?<Button variant="ghost" type="button" onClick={()=>navigate({page:String(page+1)})} className="min-h-[var(--lms-control-height)] underline">Next</Button>:null}
