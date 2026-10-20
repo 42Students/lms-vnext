@@ -691,7 +691,7 @@ export function PlacementJobCreateForm({
       </p>
       <nav aria-label="Drive setup review" className="border-b border-border pb-6">
         <h2 className="text-base font-semibold text-foreground">Setup review</h2>
-        <ol className="mt-3 grid gap-3 border-y border-border sm:grid-cols-4">
+        <ol className="mt-3 grid gap-3 border-y border-border md:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
             <li key={label} className="border-l-2 border-border py-3 pl-3 text-sm">
               <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
@@ -785,7 +785,7 @@ export function PlacementJobCreateForm({
 
           {companyMode === "EXISTING" ? (
             <div className="space-y-3">
-              <label className="block text-xs font-semibold text-body">
+              <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Find employer by name or website domain
                 <Input type="search" value={companySearch} maxLength={100}
                   onChange={event=>setCompanySearch(event.target.value)}
@@ -793,7 +793,7 @@ export function PlacementJobCreateForm({
                   className={inputClass+" mt-2"}/>
               </label>
               <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Employer
               </span>
               <Select
@@ -843,9 +843,9 @@ export function PlacementJobCreateForm({
               </section>:null}
             </div>
           ) : (
-            <div className="grid gap-4 lg:grid-cols-2">
+            <div className="grid gap-4 min-[992px]:grid-cols-2">
               <label>
-                <span className="mb-1.5 block text-xs font-semibold text-body">
+                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Company name
                 </span>
                 <Input
@@ -858,7 +858,7 @@ export function PlacementJobCreateForm({
                 />
               </label>
               <label>
-                <span className="mb-1.5 block text-xs font-semibold text-body">
+                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Primary domain
                 </span>
                 <Input
@@ -870,7 +870,7 @@ export function PlacementJobCreateForm({
                 />
               </label>
               <label>
-                <span className="mb-1.5 block text-xs font-semibold text-body">
+                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Website
                 </span>
                 <Input
@@ -908,9 +908,9 @@ export function PlacementJobCreateForm({
             Create the learner-facing job opportunity and application window.
           </p>
         </div>
-        <div className="grid gap-4 pt-4 lg:grid-cols-2">
+        <div className="grid gap-4 pt-4 min-[992px]:grid-cols-2">
           <label className="lg:col-span-2">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
             </span>
             <Input
@@ -925,7 +925,7 @@ export function PlacementJobCreateForm({
             />
           </label>
           <label className="lg:col-span-2">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Description
             </span>
             <Textarea
@@ -936,7 +936,7 @@ export function PlacementJobCreateForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employment type
             </span>
             <Select
@@ -957,7 +957,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list. Skills the employer requires are not configured on this form yet.</span>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Work mode
             </span>
             <Select
@@ -978,7 +978,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">These describe work location, not a pool or campus-hosted interview event. Pool reporting time and travel arrangements must be coordinated separately.</span>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Locations
             </span>
             <Input
@@ -988,7 +988,7 @@ export function PlacementJobCreateForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Openings
             </span>
             <Input
@@ -1001,7 +1001,7 @@ export function PlacementJobCreateForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
             </span>
             <Input
@@ -1014,7 +1014,7 @@ export function PlacementJobCreateForm({
             />
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum CTC (LPA)
             </span>
             <Input
@@ -1026,13 +1026,13 @@ export function PlacementJobCreateForm({
               step="0.1"
             />
           </label>
-          <label><span className="mb-1.5 block text-xs font-semibold text-body">
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Fixed CTC (LPA)
           </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
-          <label><span className="mb-1.5 block text-xs font-semibold text-body">
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Variable CTC (LPA)
           </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
-          <label><span className="mb-1.5 block text-xs font-semibold text-body">
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Stipend per month (INR)
           </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
           <label className="flex items-center gap-3 text-sm font-semibold text-body">
@@ -1040,7 +1040,7 @@ export function PlacementJobCreateForm({
             Dream drive (college held-offer cap exception)
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
             </span>
             <Select
@@ -1061,7 +1061,7 @@ export function PlacementJobCreateForm({
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </label>
           <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employer application URL
             </span>
             <Input
@@ -1074,7 +1074,7 @@ export function PlacementJobCreateForm({
           </label>
           <div>
             <label>
-              <span className="mb-1.5 block text-xs font-semibold text-body">
+              <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Application deadline
               </span>
               <Input id="tpo-drive-application-deadline"
@@ -1214,7 +1214,7 @@ export function PlacementJobCreateForm({
               Choose specific programs, batches and classes below to narrow the audience.
             </span>
           </label>
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="grid gap-4 min-[992px]:grid-cols-2">
             <fieldset className="rounded-[var(--lms-canvas-radius)] border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
@@ -1370,7 +1370,7 @@ export function PlacementJobCreateForm({
           ].map(
             ([name, label, step]) => (
               <label key={name}>
-                <span className="mb-1.5 block text-xs font-semibold text-body">
+                <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   {label}
                 </span>
                 <Input
@@ -1387,7 +1387,7 @@ export function PlacementJobCreateForm({
             ),
           )}
           <label className="sm:col-span-2">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Passing years
             </span>
             <Input
@@ -1401,7 +1401,7 @@ export function PlacementJobCreateForm({
             Only students whose marks are verified
           </label>
           <label className="sm:col-span-2">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Missing evidence
             </span>
             <Select
