@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
@@ -231,7 +232,7 @@ export function LearnerCourseOverview({
   return (
     <div className="space-y-5">
       <nav aria-label="Course overview sections"
-        className="sticky top-[68px] z-10 -mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none md:hidden">
+        className="flex min-w-0 gap-2 overflow-x-auto border-b border-border bg-surface py-2 shadow-none md:hidden">
         {jumpLinks.map(item=>(
           <a key={item.id} href={"#"+item.id}
             className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none">
@@ -245,6 +246,47 @@ export function LearnerCourseOverview({
           See progress, next steps, and updates for this course at a glance.
         </p>
       </div>
+
+      <section id="course-overview-next"
+        className="scroll-mt-24 rounded-xl border border-primary bg-primary-subtle p-4 md:p-5"
+        aria-label="Next action"
+      >
+        <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+          <div>
+            <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
+              {learnerCourseHomeActionLabel({
+                readOnly,priorityType:priorityActivity?.type ?? null,
+                overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
+                hasNext:Boolean(nextAction),hasTrackable:summary.itemsTotal>0,
+                hasIncomplete:summary.itemsCompleted<summary.itemsTotal,
+                hasMissed:summary.itemsMissed>0,
+              })}
+            </p>
+            <h3 className="mt-2 text-xl font-semibold text-foreground">
+              {nextAction
+                ? nextAction.title
+                : homeCompletion.title}
+            </h3>
+            <p className="mt-1 text-sm text-body">
+              {nextAction
+                ? nextAction.detail
+                : homeCompletion.detail}
+            </p>
+          </div>
+          <Link
+            href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
+            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] sm:w-auto bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] md:min-h-9"
+          >
+            {readOnly
+              ? "View Learning Path"
+              : priorityActivity
+                ? priorityActivity.type === "Live Session" ? "View session" : "Open task"
+                : nextAction
+                  ? "Continue"
+                   : "Start learning"}
+          </Link>
+        </div>
+      </section>
 
       {(aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
@@ -366,46 +408,6 @@ export function LearnerCourseOverview({
         </p>:null}
       </section>
 
-      <section id="course-overview-next"
-        className="scroll-mt-24 rounded-xl border border-primary bg-primary-subtle p-4 md:p-5"
-        aria-label="Next action"
-      >
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.1em] text-primary-text">
-              {learnerCourseHomeActionLabel({
-                readOnly,priorityType:priorityActivity?.type ?? null,
-                overdue:Boolean(priorityActivity && "overdue" in priorityActivity && priorityActivity.overdue),
-                hasNext:Boolean(nextAction),hasTrackable:summary.itemsTotal>0,
-                hasIncomplete:summary.itemsCompleted<summary.itemsTotal,
-                hasMissed:summary.itemsMissed>0,
-              })}
-            </p>
-            <h3 className="mt-2 text-xl font-semibold text-foreground">
-              {nextAction
-                ? nextAction.title
-                : homeCompletion.title}
-            </h3>
-            <p className="mt-1 text-sm text-body">
-              {nextAction
-                ? nextAction.detail
-                : homeCompletion.detail}
-            </p>
-          </div>
-          <Link
-            href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] md:min-h-9"
-          >
-            {readOnly
-              ? "View Learning Path"
-              : priorityActivity
-                ? priorityActivity.type === "Live Session" ? "View session" : "Open task"
-                : nextAction
-                  ? "Continue"
-                   : "Start learning"}
-          </Link>
-        </div>
-      </section>
 
       {!progressAvailability.hasDenominator ? (
         <Alert tone="warning" role="status" aria-label="Course progress availability"
@@ -414,7 +416,8 @@ export function LearnerCourseOverview({
         </Alert>
       ) : null}
 
-      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-24 grid gap-4 border-t border-border pt-4 md:grid-cols-2 xl:grid-cols-4">
+      <Disclosure title="Course progress summary" className="border-b border-border" contentClassName="pb-4">
+      <div id="course-overview-progress" aria-label="Course progress summary" className="scroll-mt-24 grid gap-4 pt-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
           value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
@@ -436,6 +439,7 @@ export function LearnerCourseOverview({
           detail="Completed quizzes."
         />
       </div>
+      </Disclosure>
 
       {unifiedUpdates.length > 0 ? (
         <section id="course-overview-updates" className="scroll-mt-24 border-b border-border pb-5">
@@ -468,7 +472,7 @@ export function LearnerCourseOverview({
               <article key={update.key} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    <Link href={update.href} className="block break-words text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                       {update.title}
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>
