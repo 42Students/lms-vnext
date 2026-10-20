@@ -195,7 +195,7 @@ export function LearnerCareerCalendar({
               const day=parseLearnerCareerDate(event.target.value);
               if(day)changeCalendar({date:day});
             }}
-            className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
+            className="mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground"/>
         </label>
         <div className={styles.legend} role="group" aria-label="Filter career events">
           {filters.map((option) => (
@@ -261,7 +261,7 @@ export function LearnerCareerCalendar({
       ) : null}
 
       {dayTimeline ? (
-        <section className="rounded-xl border border-border bg-surface p-4" aria-label="Selected day schedule summary">
+        <section className="border-b border-border py-4" aria-label="Selected day schedule summary">
           <h3 className="m-0 text-base font-semibold text-foreground">{prettyDay(anchor)} · Day schedule</h3>
           <p role="status" className="mt-2 text-sm text-body">
             {dayTimeline.events.length} scheduled round{dayTimeline.events.length===1?"":"s"} on this IST date.
@@ -293,7 +293,7 @@ export function LearnerCareerCalendar({
                         Event details
                       </Button>
                       <Link href={learnerCareerCalendarEventTarget(event)}
-                        className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
+                        className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text">
                         Open exact round →
                       </Link>
                     </div>
@@ -345,7 +345,7 @@ export function LearnerCareerCalendar({
                 Event details
               </Button>
               <Link href={hrefForEvent(event)}
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
                 View application →
               </Link>
             </div>
@@ -358,7 +358,7 @@ export function LearnerCareerCalendar({
         footer={
           <>
             {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
               Open exact round
             </Link>:null}
             <Button className="max-md:min-h-11" variant="secondary" type="button" onClick={()=>setSelectedKey(null)}

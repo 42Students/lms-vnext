@@ -1,3 +1,4 @@
+import { Banner } from "@/components/ui/banner";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 import type { ReactNode } from "react";
 import Link from "next/link";
@@ -167,28 +168,28 @@ export default async function LearnerCourseTabPage({
           <div className="flex flex-wrap gap-2">
             <Link
               href="/learn/courses"
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition hover:border-primary hover:bg-primary-subtle"
             >
               {LEARNER_BACK_TO_COURSES}
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/progress`}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
             >
               Detailed progress
             </Link>
             <Link
               href={`/learn/courses/${encodeURIComponent(deliveryId)}/attendance-summary`}
-              className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
+              className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle"
             >
               Attendance history
             </Link>
           </div>
         }
       />
-      {readOnly?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3 text-sm text-body">
+      {readOnly?<Banner tone="info">
         Past semester course · Read only. Submitted work remains accessible.
-      </p>:null}
+      </Banner>:null}
       <LearnerCourseDocumentTitle courseName={workspace.course.name}
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
        <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
