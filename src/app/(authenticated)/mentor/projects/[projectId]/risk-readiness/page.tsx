@@ -77,7 +77,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
             <option value="MEDIUM">Medium</option><option value="LOW">Low</option>
           </Select>
         </label>
-        <Button type="submit" variant="primary">
+        <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
         <Link href={base+"/risk-readiness"}
