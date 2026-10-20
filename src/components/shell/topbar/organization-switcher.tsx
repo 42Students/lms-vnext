@@ -7,7 +7,7 @@ import type {AdminScope} from "@/modules/identity/context";
 import type {AdminScopeChoices} from "@/modules/admin-scope/service";
 import type {MembershipChoice} from "@/modules/identity/context-service";
 import {AdminScopeSwitcher} from "../admin-scope-switcher";
-import {MembershipSwitcher} from "../membership-switcher";
+import {MembershipSwitcher, workspaceChoices} from "../membership-switcher";
 import {ChevronIcon} from "./icons";
 import style from "./topbar.module.css";
 
@@ -25,12 +25,13 @@ export function TopbarOrganizationSwitcher({
   const [open,setOpen]=useState(false);
   const root=useRef<HTMLDivElement>(null);
   const trigger=useRef<HTMLButtonElement>(null);
-  const canSwitch=Boolean(choices)||memberships.filter(item=>item.status==="ACTIVE").length>1;
+  // One active college may still have several independent role workspaces.
+  const canSwitch=Boolean(choices)||workspaceChoices(memberships).length>1;
   useEffect(()=>{
     if(!open)return;
-    const first = root.current?.querySelector<HTMLElement>(
-      '[data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled), [data-slot="popover"] button:not(:disabled)'
-    );
+    const first = Array.from(root.current?.querySelectorAll<HTMLElement>(
+      '[data-slot="popover"] summary, [data-slot="popover"] input:not(:disabled), [data-slot="popover"] select:not(:disabled), [data-slot="popover"] button:not(:disabled)'
+    ) ?? []).find(element => element.getClientRects().length > 0);
     (first ?? root.current?.querySelector<HTMLElement>('[data-slot="popover"]'))?.focus();
     const onPointer=(event:PointerEvent)=>{
       if(root.current&&!root.current.contains(event.target as Node))setOpen(false);

@@ -25,14 +25,14 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/shell/shell-nav-icons.tsx`
 - [x] `src/components/shell/shell-widget-boundary.tsx`
 - [x] `src/components/shell/sidebar-nav.tsx`
-- [ ] `src/components/shell/topbar/account-menu.tsx`
-- [ ] `src/components/shell/topbar/command-search.tsx`
-- [ ] `src/components/shell/topbar/icons.tsx`
-- [ ] `src/components/shell/topbar/legacy-topbar.tsx`
-- [ ] `src/components/shell/topbar/notification-actions.tsx`
-- [ ] `src/components/shell/topbar/notification-empty.tsx`
-- [ ] `src/components/shell/topbar/organization-switcher.tsx`
-- [ ] `src/components/shell/topbar/tpo-find-suggestions.tsx`
+- [x] `src/components/shell/topbar/account-menu.tsx`
+- [x] `src/components/shell/topbar/command-search.tsx`
+- [x] `src/components/shell/topbar/icons.tsx`
+- [x] `src/components/shell/topbar/legacy-topbar.tsx`
+- [x] `src/components/shell/topbar/notification-actions.tsx`
+- [x] `src/components/shell/topbar/notification-empty.tsx`
+- [x] `src/components/shell/topbar/organization-switcher.tsx`
+- [x] `src/components/shell/topbar/tpo-find-suggestions.tsx`
 - [ ] `src/components/shell/topbar/tpo-notification-cluster.tsx`
 - [ ] `src/components/shell/topbar/tpo-quick-create.tsx`
 - [ ] `src/components/shell/tpo-mobile-footer.tsx`
