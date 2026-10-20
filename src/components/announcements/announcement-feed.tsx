@@ -46,7 +46,7 @@ export function AnnouncementFeed({
             database rollout is pending.
           </p>
         </div>
-        <div className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+        <div className="border-y border-border bg-surface px-3 py-4 text-sm text-body">
           Personal workflow notifications below remain available.
         </div>
       </section>
@@ -77,15 +77,15 @@ export function AnnouncementFeed({
       </div>
 
       {items.length === 0 ? (
-        <div className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
+        <div className="border-y border-border bg-surface px-3 py-4 text-sm text-body">
           No active announcements for you right now.
         </div>
       ) : (
-        <div className="grid gap-3">
+        <div className="divide-y divide-border border-y border-border">
           {items.map((item) => (
             <article
               key={item.id}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="min-w-0 py-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
