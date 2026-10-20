@@ -50,7 +50,7 @@ export default async function SuperAdminModuleAccessPage({
       </dl>
     </section>
     <form method="get" className="grid grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
-      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold text-body">
+      <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         College
         <Input type="search" name="q" maxLength={100} defaultValue={result.q}
           className="w-full"/>
