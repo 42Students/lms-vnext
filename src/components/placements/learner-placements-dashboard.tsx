@@ -71,8 +71,8 @@ export function LearnerPlacementsDashboard({
     applications:display.applications,
   });
   return (
-    <section className="space-y-5" aria-label="Placement dashboard">
-      {next ? <div className="min-w-0 rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle p-4 md:p-6">
+    <section className="min-w-0 space-y-4" aria-label="Placement dashboard">
+      {next ? <div className="min-w-0 border-l-2 border-primary bg-primary-subtle px-4 py-4 md:py-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="max-w-3xl">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
@@ -185,7 +185,7 @@ export function LearnerPlacementsDashboard({
       </section>
       {display.urgentAssessment ? (
         <aside aria-label="Upcoming assessment action"
-          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          className="flex flex-col items-start gap-2 border-b border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase text-primary-text">Assessment in the next seven IST days</p>
             <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentAssessment.roundName} · {display.urgentAssessment.companyName}</p>
@@ -199,7 +199,7 @@ export function LearnerPlacementsDashboard({
       ) : null}
       {display.urgentInterview ? (
         <aside aria-label="Upcoming interview action"
-          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          className="flex flex-col items-start gap-2 border-b border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase text-primary-text">Interview in the next seven IST days</p>
             <p className="mt-1 break-words text-sm font-semibold text-foreground">{display.urgentInterview.roundName} · {display.urgentInterview.companyName}</p>
@@ -229,7 +229,7 @@ export function LearnerPlacementsDashboard({
 
       {display.nextScheduledEvent ? (
         <aside aria-label="Next scheduled placement calendar event"
-          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
+          className="flex flex-col items-start gap-2 border-b border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <div className="min-w-0">
             <p className="text-xs font-semibold uppercase text-primary-text">Next scheduled placement event</p>
             <p className="mt-1 break-words text-sm font-semibold text-foreground">

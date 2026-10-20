@@ -37,16 +37,16 @@ export default async function LearnerPlacementCellPage({
       <section id="registration" className="scroll-mt-24" aria-label="Registration">
         <LearnerPlacementRegistration registration={registration}/>
       </section>
-      <section className="border-b border-border pb-6">
+      <section className="border-b border-border pb-4">
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Need help with a placement decision?</h2>
         <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
         <Link href="/learn/my-placements/support" className="mr-4 mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">My support-request history →</Link>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Read placement rules →</Link>
       </section>
-      <nav aria-label="Placement cell resources" className="flex min-w-0 flex-wrap gap-2">
-        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Read all college notices →</Link>
-        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Placement-cell authored notices →</Link>
-        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Notification preferences →</Link>
+      <nav aria-label="Placement cell resources" className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Read all college notices →</Link>
+        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement-cell authored notices →</Link>
+        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Notification preferences →</Link>
       </nav>
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
         <Alert tone="warning" role="alert">
@@ -88,7 +88,7 @@ export default async function LearnerPlacementCellPage({
           initialOfferId={prefillAcceptance?validUuid(query.offerId):""}
         />
       </section>
-      <section id="rules" className="scroll-mt-24 border-b border-border pb-6">
+      <section id="rules" className="scroll-mt-24 border-b border-border pb-4">
         <h2 className="font-semibold text-[var(--lms-heading)]">Placement rules</h2>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Read placement rules</Link>
       </section>

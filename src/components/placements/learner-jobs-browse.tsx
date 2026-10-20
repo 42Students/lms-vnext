@@ -101,7 +101,7 @@ export function LearnerJobsBrowse({
 
   const selectClass = "mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11";
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-4">
       <SegmentedControl label="Drive bookmarks"
         className="w-fit max-w-full"
         value={savedOnly ? "saved" : "all"}
@@ -111,16 +111,7 @@ export function LearnerJobsBrowse({
           { value: "saved", label: "Saved (" + savedSummary.saved + ")" },
         ]} />
       <section className="border-t border-border pt-4" aria-label="Find placement drives">
-        <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
-          onClick={()=>setMobileOpen(value=>!value)}
-          className="min-h-11 w-full md:hidden">
-          <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
-          <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
-        </Button>
-        <div id="learner-drive-filters"
-          className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
+        <div className="mb-3">          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search drives, companies and roles
             <Input
               type="search"
@@ -131,6 +122,17 @@ export function LearnerJobsBrowse({
               className={selectClass}
             />
           </label>
+        </div>
+        <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
+          onClick={()=>setMobileOpen(value=>!value)}
+          className="min-h-11 w-full justify-between md:hidden">
+          <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
+          <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
+        </Button>
+        <div id="learner-drive-filters"
+          className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
+        <div className="grid gap-3 sm:grid-cols-2">
+
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Employment type
             <Select value={filters.employmentType}
@@ -188,7 +190,7 @@ export function LearnerJobsBrowse({
             />
             Closing in 7 days
           </label>
-          <label className="ml-auto inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center gap-2 text-sm text-body">
+          <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-1 text-sm text-body sm:ml-auto sm:w-auto sm:flex-row sm:items-center sm:gap-2 md:min-h-[var(--lms-control-height)]">
             Sort by
             <Select value={filters.sort}
               aria-label="Sort placement drives"
@@ -210,7 +212,7 @@ export function LearnerJobsBrowse({
         </div>
       </section>
 
-      <section aria-label="All published drives summary" className="min-w-0 border-b border-border pb-4 pt-3">
+      <section aria-label="All published drives summary" className="min-w-0 border-b border-border pb-3 pt-2">
         <h2 className="text-base font-semibold text-foreground">All drives</h2>
         <p className="mt-1 text-sm text-body">
           {allDrives.drives} published {allDrives.drives===1?"drive":"drives"} · {allDrives.roles} role options
@@ -273,7 +275,7 @@ export function LearnerJobsBrowse({
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
           {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenRoleCards.length+" roles on this page) · See reasons"}
              defaultOpen={filters.availability==="not-open"} ariaLabel="Not open to you"
-             className="rounded-xl border border-border bg-surface p-4 [&>summary]:min-h-11 [&>summary]:text-foreground">
+             className="border-t border-border py-3 [&>summary]:min-h-11 [&>summary]:text-foreground">
             <p className="mb-3 mt-2 text-sm text-body">
               These published roles target your cohort but a registration, academic,
               deadline, or college policy check currently prevents self-application.
