@@ -54,7 +54,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-20.md: surface | probl
 - [x] `src/app/superadmin-login/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/universities/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/components/auth/device-list.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
-- [ ] `src/components/ui/bottom-sheet.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
+- [x] `src/components/ui/bottom-sheet.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/ui/dialog.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/ui/dropdown.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
 - [ ] `src/components/ui/filter-bar.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)
