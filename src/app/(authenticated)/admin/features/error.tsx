@@ -10,7 +10,7 @@ export default function SuperAdminFeaturesError({
   reset: () => void;
 }) {
   return (
-    <ErrorState
+    <section className="min-w-0"><ErrorState
       title="Could not load Feature Controls"
       description="The persisted module rules could not be retrieved. Missing data is not interpreted as a source default when the database read fails."
       action={
@@ -21,6 +21,6 @@ export default function SuperAdminFeaturesError({
           Retry
         </Button>
       }
-    />
+    /></section>
   );
 }

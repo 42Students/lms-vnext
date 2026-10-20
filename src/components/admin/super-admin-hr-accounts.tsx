@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dropdown } from "@/components/ui/dropdown";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import {
   DataTable,
@@ -547,7 +548,7 @@ export function SuperAdminHrAccounts({
   }
 
   const accountActions = (account: HrAccount, mobile = false) => (
-    <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)] print:hidden">
+    <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden lg:justify-end">
       <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9" onClick={() => openDetail(account)}>View</Button>
       <Dropdown label="Recruiter actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
         <Menu className="w-full min-w-0">
@@ -599,15 +600,14 @@ export function SuperAdminHrAccounts({
       header: "Colleges",
       cell: (account) =>
         account.grants.length > 0 ? (
-          <div className="space-y-1">
+          <div className="min-w-0">
             <p className="m-0 text-sm font-semibold text-body">
               {account.grants.length} active
             </p>
-            <p className="m-0 max-w-64 text-xs leading-5 text-muted-foreground">
-              {account.grants
-                .map((grant) => grant.collegeName)
-                .join(", ")}
-            </p>
+            <Disclosure title="College grants" className="mt-1 min-w-0"
+              contentClassName="max-w-64 break-words pb-2 pt-1 text-xs leading-5 text-muted-foreground">
+              {account.grants.map((grant) => grant.collegeName).join(", ")}
+            </Disclosure>
           </div>
         ) : (
           <span className="text-muted-foreground">
@@ -660,12 +660,10 @@ export function SuperAdminHrAccounts({
       />
 
       <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
-      <section aria-label="Recruiter account lifecycle" className="space-y-1 border-b border-border pb-4">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
-        <h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>
+      <Disclosure title="Recruiter account lifecycle" className="border-b border-border pb-3"
+        contentClassName="pb-2 pt-2">
         <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
-      </section>
-      <h2 className="text-base font-semibold text-foreground">Recruiter accounts</h2>
+      </Disclosure>
       {!statusSummary&&<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         Account totals are temporarily unavailable. The directory is still usable.
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
@@ -681,7 +679,7 @@ export function SuperAdminHrAccounts({
         ].join("|")}
         method="get"
         action="/admin/recruiters"
-        className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]"
+        className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto_auto_auto]"
       >
         <label className="col-span-2 grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body lg:col-span-1">
           Search
@@ -707,6 +705,8 @@ export function SuperAdminHrAccounts({
           </Select>
         </label>
 
+        <Disclosure title="Rows per page" className="min-w-0"
+          contentClassName="pb-2 pt-2">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-body">
           Rows per page
           <Select
@@ -718,6 +718,8 @@ export function SuperAdminHrAccounts({
             <option value="100">100</option>
           </Select>
         </label>
+
+        </Disclosure>
 
         <Button type="submit" className="min-h-11 w-full lg:min-h-9 lg:w-auto">Apply filters</Button>
 
@@ -781,9 +783,9 @@ export function SuperAdminHrAccounts({
             />
           ) : (
             <>
-              <div className="grid min-w-0 gap-3 lg:hidden print:hidden" aria-label="Recruiter account cards">
+              <div className="min-w-0 divide-y divide-border border-y border-border lg:hidden print:hidden" aria-label="Recruiter account cards">
                 {list.items.map((account) => (
-                  <article key={account.userId} className="min-w-0 border-b border-border py-4 last:border-b-0">
+                  <article key={account.userId} className="min-w-0 py-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
                         <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
@@ -793,7 +795,11 @@ export function SuperAdminHrAccounts({
                     </div>
                     <dl className="mt-3 grid min-w-0 gap-2 text-sm">
                       <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>
-                      <div><dt className="text-xs text-muted-foreground">Colleges</dt><dd className="m-0 break-words">{account.grants.length ? account.grants.map((grant) => grant.collegeName).join(", ") : "No visible grants"}</dd></div>
+                      <div><dt className="text-xs text-muted-foreground">Colleges</dt>
+                        <dd className="m-0">{account.grants.length ? <Disclosure title={account.grants.length+" active"}
+                          contentClassName="break-words pb-2 pt-1">
+                          {account.grants.map((grant) => grant.collegeName).join(", ")}
+                        </Disclosure> : "No visible grants"}</dd></div>
                     </dl>
                     {accountActions(account, true)}
                   </article>
@@ -808,7 +814,7 @@ export function SuperAdminHrAccounts({
           {list.total > 0 ? (
             <nav
               aria-label="Recruiter account pages"
-              className="flex flex-wrap items-center justify-between gap-3 text-sm text-body print:hidden"
+              className="flex min-w-0 flex-col items-stretch gap-3 text-sm text-body print:hidden sm:flex-row sm:items-center sm:justify-between"
             >
               <p className="m-0">
                 Showing {firstResult}–{lastResult}{" "}
@@ -816,7 +822,7 @@ export function SuperAdminHrAccounts({
                 of {list.totalPages}
               </p>
 
-              <div className="flex gap-2">
+              <div className="flex min-w-0 flex-wrap gap-2">
                 {list.page > 1 ? (
                   <Link
                     href={pageHref(

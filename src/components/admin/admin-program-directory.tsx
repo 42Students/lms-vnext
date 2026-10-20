@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { Disclosure } from "@/components/ui/disclosure";
 import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { useToast } from "@/components/ui/toast";
 import {
@@ -43,7 +44,7 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
     key: "name", header: "Program", mobilePriority: "primary",
     cell: (item) => (
       <div>
-        <p className="m-0 font-semibold text-foreground">{item.name}</p>
+        <p className="m-0 min-w-0 break-words font-semibold text-foreground">{item.name}</p>
         <p className="m-0 text-xs text-muted-foreground">{item.code}</p>
       </div>
     ),
@@ -54,9 +55,12 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
     key: "contents",
     header: "Contents",
     cell: (item) => item.contents
-      ? <span title="Archived records are also counted because they may block deletion">
-          {item.contents.semesters} semesters · {item.contents.batches} batches · {item.contents.classes} classes
-        </span>
+      ? <Disclosure title="Linked records" className="min-w-0"
+          contentClassName="max-w-60 break-words pb-2 pt-1 text-xs leading-5 text-muted-foreground">
+          <span title="Archived records are also counted because they may block deletion">
+            {item.contents.semesters} semesters · {item.contents.batches} batches · {item.contents.classes} classes
+          </span>
+        </Disclosure>
       : <span className="text-muted-foreground">—</span>,
   },
   {
@@ -187,30 +191,34 @@ export function AdminProgramDirectory({
         </form>
       </details>
       <section className="min-w-0 space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
-        <div className="flex min-w-0 flex-col gap-3 print:hidden md:flex-row md:items-end md:justify-between">
+        <div className="flex min-w-0 flex-col gap-3 print:hidden sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full min-w-0 md:max-w-xl md:flex-1">
             <label htmlFor="admin-program-search" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search programs or departments</label>
             <Input type="search" className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search program, code or department" />
           </div>
-          <div className="flex w-full min-w-0 flex-wrap items-end gap-2 md:w-auto">
+          <Disclosure title="View options" className="min-w-0 sm:self-end" contentClassName="flex min-w-0 flex-col items-stretch gap-2 pb-3 pt-2 sm:flex-row sm:flex-wrap sm:items-end">
             <PageSizeSelect id="admin-program-page-size" label="Rows per page"
               options={[10, 25, 50, 100]} value={pageSize}
               onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
-              wrapperClassName="min-w-0 flex-1 md:w-28 md:flex-none" />
+              wrapperClassName="min-w-0 flex-1 sm:w-28 sm:flex-none" />
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
-                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-base)] font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:flex-none"
+                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-base)] font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:min-h-9 sm:flex-none"
               >Export CSV</a>
             ) : <Button variant="secondary" disabled>Export CSV</Button>}
-            <Button variant="secondary" className="min-h-11 flex-1 md:min-h-9 md:flex-none" onClick={() => router.refresh()}>Refresh</Button>
-          </div>
+            <Button variant="secondary" className="min-h-11 flex-1 sm:min-h-9 sm:flex-none" onClick={() => router.refresh()}>Refresh</Button>
+          </Disclosure>
         </div>
-        <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
-          {result.total} of {programs.length} {programs.length === 1 ? "result" : "results"}
-        </p>
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+          <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
+            {result.total} of {programs.length} {programs.length === 1 ? "result" : "results"}
+          </p>
+          {search.trim() ? <Button variant="ghost" className="min-h-11 md:min-h-9"
+            onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
+        </div>
         <DataTable columns={columns(departments)} rows={result.items}
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
@@ -223,7 +231,7 @@ export function AdminProgramDirectory({
         {result.total > 0 ? (
           <div className="flex min-w-0 flex-col gap-3 text-sm text-muted-foreground print:hidden md:flex-row md:items-center md:justify-between">
             <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
-            <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 md:justify-end">
+            <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 md:justify-end">
               <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === 1}
                 onClick={() => setPage(result.page - 1)}>Previous</Button>
               <span aria-live="polite">Page {result.page} of {result.pages}</span>

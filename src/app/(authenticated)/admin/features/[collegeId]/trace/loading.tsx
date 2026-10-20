@@ -9,7 +9,7 @@ export default function SuperAdminModuleTraceLoading() {
         title="Learner access trace"
         description="Reading college-scoped learner membership and module rules."
       />
-      <GracefulPageLoading label="Resolving learner module access…" />
+      <GracefulPageLoading label="Resolving learner module access…" shape="directory" />
     </div>
   );
 }

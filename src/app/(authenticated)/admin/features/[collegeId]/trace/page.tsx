@@ -14,6 +14,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   collegeIdSchema,
 } from "@/modules/colleges/validation";
@@ -165,9 +166,9 @@ export default async function SuperAdminLearnerAccessTracePage({
         actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← {college.name} access hierarchy</Link>}
       />
 
-      <section className="min-w-0 space-y-4 border-t border-border pt-6">
+      <section className="min-w-0 space-y-4 border-t border-border pt-4">
         <div>
-          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+          <h2 className="m-0 text-lg font-semibold leading-6 text-foreground">
             Find a learner
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
@@ -181,7 +182,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         <FilterBar title="Filters"><form
           action={basePath}
           method="get"
-          className="flex flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
+          className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:flex-row sm:flex-wrap sm:items-end"
         >
           <label className="grid min-w-0 w-full flex-1 gap-[6px] md:min-w-60 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Name or roll number
@@ -214,7 +215,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </label>
           <Button
             type="submit"
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
           >
             Search
           </Button>
@@ -258,13 +259,13 @@ export default async function SuperAdminLearnerAccessTracePage({
 
         <nav
           aria-label="Learner search pagination"
-          className="flex flex-wrap items-center justify-between gap-3"
+          className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
         >
           <p className="m-0 text-sm text-muted-foreground">
             Maximum {result.pageSize} learners per page
           </p>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-wrap gap-2">
             {page > 1 ? (
               <Link
                 href={adminModuleTraceHref(
@@ -273,6 +274,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                     q: query.q,
                     page: page - 1,
                     overridesOnly: query.overridesOnly,
+                    overridesModule: query.overridesModule,
+                    storedValue: query.storedValue,
                     membershipId:
                       query.membershipId,
                   },
@@ -291,6 +294,8 @@ export default async function SuperAdminLearnerAccessTracePage({
                     q: query.q,
                     page: page + 1,
                     overridesOnly: query.overridesOnly,
+                    overridesModule: query.overridesModule,
+                    storedValue: query.storedValue,
                     membershipId:
                       query.membershipId,
                   },
@@ -306,7 +311,7 @@ export default async function SuperAdminLearnerAccessTracePage({
 
       {selected ? (
         <section
-          className="min-w-0 space-y-6"
+          className="min-w-0 space-y-5 scroll-mt-24"
           aria-label="Selected learner module access"
         >
           <div className="border-b border-border pb-6">
@@ -391,14 +396,14 @@ export default async function SuperAdminLearnerAccessTracePage({
           {selected.modules.map((module) => (
             <article
               key={module.module}
-              className="min-w-0 space-y-4 border-t border-border pt-6"
+              className="min-w-0 space-y-3 border-t border-border pt-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h3 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
                     {module.label}
                   </h3>
-                  <p className="mt-2 text-sm leading-6 text-body">
+                  <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">
                     {module.explanation}
                   </p>
                 </div>
@@ -415,6 +420,9 @@ export default async function SuperAdminLearnerAccessTracePage({
                 </StatusBadge>
               </div>
 
+              <Disclosure title="View resolution chain" defaultOpen={module.module==="projects"}
+                className="min-w-0"
+                contentClassName="min-w-0 pt-3 pb-2">
               <DataTable<(typeof module.steps)[number]>
                 caption={module.label+" access resolution chain"}
                 rows={module.steps}
@@ -436,6 +444,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                 ]}
                 empty={<EmptyState title="No resolution steps" description="No stored rules or fallback steps were found for this module."/>}
               />
+              </Disclosure>
             </article>
           ))}
 
