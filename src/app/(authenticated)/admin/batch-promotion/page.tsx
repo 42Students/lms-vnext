@@ -66,7 +66,7 @@ export default async function SuperAdminBatchPromotionPage({
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
         </Select>
       </label>
-      <Disclosure title="More filters" defaultOpen={Boolean(input.data.yearStart || showCompleted)} className="min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-4"
+      <Disclosure title="More filters" defaultOpen={Boolean(input.data.yearStart || showCompleted)} className="order-last min-w-0 min-[768px]:col-span-2 min-[1200px]:col-span-3"
         contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic year start override
         <Input name="yearStart" type="number" min={1900} max={9998} step={1}
