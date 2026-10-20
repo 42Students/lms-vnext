@@ -176,3 +176,59 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (1):** `Reload saved choices` only called `router.refresh()`; React retains unsaved `useState` toggle values if the server snapshot's `updatedAt` key is unchanged, leaving visible unsaved choices after Reload. Reset both checkbox states to the authenticated `initial` snapshot and dismiss confirmation before refreshing, retaining server freshness for cross-tab updates.
 - **Extra clutter/alignment fixes (0):** reviewed two-choice Checkbox/label associations, pending Dialog/Toast/PUT expected-snapshot protections, 44px actions, loading/error/parent layout; existing legacy section density works at 375/768.
 - **Files changed:** `src/components/placements/learner-placement-notification-settings.tsx`; verification proof and queue.
+
+## Surface 26 — Learner official offers
+- **Surface:** `src/app/(authenticated)/learn/my-placements/offers/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 26.
+- **Regressions found/fixed (0):** read the offer browse route, all local loading/error routes, nearest placement and learner layouts, `LearnerPlacementOffers` accepting/declining/extending dialogs, status, pagination, typed filtering, URL focus recovery, restricted offer letter links, CSV, and their shared Button/Tabs/Input/Select/Dialog/StatusBadge/ErrorState props. No mismatched import/export, duplicate TSX attribute, removed IDs/aria labels or copy loss was identified in the inspected sources.
+- **Extra clutter/alignment fixes (0):** default status tabs and search remain above a single More offer filters disclosure; verified phone-wrapping dialog footer controls, hairline offer list, visible error recovery and 375/768 breakpoint classes. No source edit needed.
+- **Files changed:** verification proof and queue only (verified, no change to source).
+
+## Surface 27 — Learner placements home
+- **Surface:** `src/app/(authenticated)/learn/my-placements/page.tsx`.
+- **Originating proof:** no matching Surface 27 entry in `docs/audit/ux/polish-lane-11.md` (its entries jump from Surface 26 to 28); reviewed current source independently.
+- **Regressions found/fixed (0):** inspected account/participation guards, page loading/error and parent layouts, source-failure boundaries and own-resource mapping, LearnerPlacementsTabs, dashboard and snapshot module CSS, registration, academic evidence, job actions, application journey, offers, requests, preferences, general requests, notices, activity and shared UI controls. No malformed JSX, missing import/export, removed id/aria or incompatible component prop identified.
+- **Extra clutter/alignment fixes (0):** retains one page heading, compact text navigation, primary action in dashboard, bordered one-dimensional activity lists, responsive snapshot grid and 44px mobile hit areas; no safe additional visual change warranted without changing page content.
+- **Files changed:** verification proof and queue only (verified, no change to source).
+
+## Surface 28 — Placement cell
+- **Surface:** `src/app/(authenticated)/learn/my-placements/placement/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 28.
+- **Regressions found/fixed (1):** nested `id="registration"` on the page wrapper and `LearnerPlacementRegistration` section produced duplicate document IDs, ambiguous fragment navigation and duplicate labeled regions. Removed redundant outer region, retained the inner anchor, and gave that anchor `scroll-mt-24` for #registration deep links. Reviewed offers, alerts, general requests, request history, registration actions, URL-prefill validators, error/loading and nearest placement/learner layouts; no other TSX/import/prop regression found.
+- **Extra clutter/alignment fixes (1):** eliminated the redundant registration wrapper while retaining legacy section spacing and focus/scroll alignment at narrow viewport widths.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/placement/page.tsx`, `src/components/placements/learner-placement-registration.tsx`; verification proof and queue.
+
+## Surface 29 — Placement preparation
+- **Surface:** `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 29.
+- **Regressions found/fixed (0):** read preparation page and query/view schema usage, staging switch, LearnerPrepAssignmentCards async loading/read-error/empty result and guarded cleanup, Tabs/EmptyState/StatusBadge/PageHeader, local loading/error and parent layouts. No duplicate JSX attributes, removed aria labels, incompatible props, imports or dropped filter destinations found.
+- **Extra clutter/alignment fixes (0):** a single filter tab row and hairline checklist survive narrow breakpoints; empty/unavailable preparation cards stay distinguishable. Verified, no source change.
+- **Files changed:** proof and queue only.
+
+## Surface 30 — Placement rules
+- **Surface:** `src/app/(authenticated)/learn/my-placements/rules/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 30.
+- **Regressions found/fixed (0):** read route, loading/error, Rules view authorization/query fallback, policy-first summary, criterion list, Badge/PageHeader/shared links and placement/learner layouts. Verified exact existing copy, anchors, warning state, empty/unconfigured policy, no JSX/import/prop/aria regressions.
+- **Extra clutter/alignment fixes (0):** policy-first hierarchy and flat evidence rows retain readable 375/768 spacing; source unchanged.
+- **Files changed:** proof and queue only.
+
+## Surface 31 — Placement schedule
+- **Surface:** `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 31.
+- **Regressions found/fixed (2):** calendar view still rendered duplicate route `Calendar` heading directly above `LearnerCareerCalendar`'s own `Career calendar` h2, despite polish proof; removed the redundant heading without removing the section landmark. `ThirdPartyLink` still exposed every full destination URL unconditionally despite intended Show/Copy disclosure; removed always-visible raw URL, retaining explicit Show/Copy, HTTPS validation, copy failure fallback, link accessibility. Inspected schedule rounds, authorised results, IST date-only handling, confirm-attendance pending/errors, reschedule form, Calendar/Grid, loading/error/nearest layouts; no missing TSX exports or removed IDs identified.
+- **Extra clutter/alignment fixes (1):** made reschedule Submit 44px and full-width on phones, preserving desktop/phone button labels and existing request validation.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`, `src/components/ui/third-party-link.tsx`, `src/components/placements/learner-schedule-reschedule.tsx`; proof and queue.
+
+## Surface 32 — Placement support request history
+- **Surface:** `src/app/(authenticated)/learn/my-placements/support/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 32.
+- **Regressions found/fixed (1):** route error fallback had lost the previously polished phone-width Retry/Placement Cell recovery layout, with controls cramped in a wrapping horizontal row and no explicit alert landmark; restored stacked 44px controls and error alert semantics. Reviewed status/type query and pagination, request version token, pending-only LearnerSupportCancel dialog, loading/error/placement layouts and shared Dialog/Badge/EmptyState controls.
+- **Extra clutter/alignment fixes (1):** flattened remaining overlarge explanatory and result row headings from 18px to legacy text-base while retaining identical words and hierarchy.
+- **Files changed:** `src/app/(authenticated)/learn/my-placements/support/page.tsx`, `src/app/(authenticated)/learn/my-placements/support/error.tsx`; proof and queue.
+
+## Surface 33 — Personal notification history
+- **Surface:** `src/app/(authenticated)/learn/notifications/history/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 33.
+- **Regressions found/fixed (0):** read cursor/unread query fallback and history service mapping, local loading/error/not-found, grouped NotificationList, read/open/Toast/StatusBadge interactions and nearest learner layout; no broken JSX, missing imports, role/aria, URL, or component props discovered.
+- **Extra clutter/alignment fixes (0):** two compact filter pills, hairline grouped history and mobile stacked pagination/read actions conform to the legacy density; verified with no source change.
+- **Files changed:** proof and queue only.

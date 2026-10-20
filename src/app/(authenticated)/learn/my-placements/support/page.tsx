@@ -22,7 +22,7 @@ export default async function LearnerSupportHistory({searchParams}:{
     <PageHeader title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
     <section className="border-b border-border pb-6">
-      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">What is covered?</h2>
+      <h2 className="font-semibold text-base leading-6 text-[var(--lms-heading)]">What is covered?</h2>
       <p className="mt-2 text-sm leading-[1.6] text-body">
         Only persisted placement requests are shown. General helpdesk tickets and free-form feedback are not yet available because their data source is not registered.
       </p>
@@ -50,7 +50,7 @@ export default async function LearnerSupportHistory({searchParams}:{
       description={data.status==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}/>:<ol className="divide-y divide-border border-y border-border">
       {data.items.map(row=><li key={row.request.id} className="min-w-0 bg-transparent px-1 py-4">
         <div className="flex flex-wrap justify-between gap-2">
-          <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{placementRequestTypeLabel(row.request.requestType)}</h2>
+          <h2 className="font-semibold text-base leading-6 text-[var(--lms-heading)]">{placementRequestTypeLabel(row.request.requestType)}</h2>
           <StatusBadge tone={row.request.status==="PENDING"?"warning":row.request.status==="APPROVED"?"success":"neutral"}>{row.request.status}</StatusBadge>
         </div>
         <p className="mt-2 text-sm text-body">{row.company.name} · {row.roleOption.title}</p>
