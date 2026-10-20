@@ -94,7 +94,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: flex-start;
   align-items: center;
 }
 .action {
@@ -114,12 +114,12 @@
 }
 .empty {
   margin: 0;
-  padding: 12px;
-  border: 1px dashed var(--lms-canvas-border);
+  padding: 12px 0;
+  border-top: 1px solid var(--lms-canvas-border);
   border-radius: 8px;
   color: var(--lms-muted-text);
   font-size: 13px;
-  font-weight: 750;
+  font-weight: 400;
 }
 .expand { justify-self: start; }
 @media (max-width: 767px) {
