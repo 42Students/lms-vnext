@@ -29,4 +29,4 @@ These 28 page routes were moved to chat-12 from the end of other lanes' review q
 - [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
 - [x] `src/app/(authenticated)/tracker/mine/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
