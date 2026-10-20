@@ -60,6 +60,7 @@ export function TenantDomainManager({
 
   function createDomain() {
     startCreate(async () => {
+      try {
       const response = await fetch("/api/tenant-domains", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -90,6 +91,13 @@ export function TenantDomainManager({
           "Publish the displayed TXT record, then verify the domain.",
       });
       router.refresh();
+      } catch {
+        showToast({
+          tone: "error",
+          title: "Domain could not be added",
+          description: "The domain action could not be completed.",
+        });
+      }
     });
   }
 
@@ -174,6 +182,13 @@ export function TenantDomainManager({
       });
 
       router.refresh();
+    } catch {
+      showToast({
+        tone: "error",
+        title: action === "verify" ? "Verification failed" :
+          action === "primary" ? "Primary domain not changed" : "Domain not deleted",
+        description: "The domain action could not be completed.",
+      });
     } finally {
       setPendingAction(null);
     }
@@ -182,7 +197,8 @@ export function TenantDomainManager({
   return (
     <div className="space-y-5">
       <section className="border-t border-border pt-5 print:hidden">
-        <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <form onSubmit={(event) => { event.preventDefault(); if (!creating && host.trim()) createDomain(); }}
+          className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
           <div>
             <label
               htmlFor="tenant-domain-host"
@@ -206,14 +222,15 @@ export function TenantDomainManager({
             </p>
           </div>
           <Button
-            className="min-h-11 w-full md:min-h-9 md:w-auto"
+            type="submit"
+            className="min-h-11 w-full justify-center md:min-h-9 md:w-auto"
             loading={creating}
              disabled={creating || !host.trim()}
             onClick={createDomain}
           >
             {creating ? "Adding…" : "Add domain"}
           </Button>
-        </div>
+        </form>
       </section>
 
       {domains.length === 0 ? (
@@ -235,9 +252,9 @@ export function TenantDomainManager({
             return (
               <section
                 key={domain.id}
-                className="border-t border-border pt-5"
+                className="min-w-0 border-t border-border pt-5"
               >
-                <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h2 className="m-0 break-all text-base font-semibold text-foreground">
@@ -322,7 +339,7 @@ export function TenantDomainManager({
 
                 {!domain.isVerified &&
                 domain.verificationToken ? (
-                  <Disclosure ariaLabel="DNS ownership record" title={<h3 className="m-0 text-sm font-semibold text-foreground">DNS ownership record</h3>} className="mt-[var(--lms-space-4)] print:hidden" contentClassName="pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]">
+                  <Disclosure ariaLabel="DNS ownership record" defaultOpen={domains.length === 1} title={<h3 className="m-0 text-sm font-semibold text-foreground">DNS ownership record</h3>} className="mt-[var(--lms-space-4)] print:hidden" contentClassName="pt-[var(--lms-space-2)] pb-[var(--lms-space-4)]">
                     <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
                       provider. Verification requires an exact
