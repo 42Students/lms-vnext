@@ -48,12 +48,12 @@ export function SuperAdminFacultyScheduleReassignAction({
       }
     });
   }
-  return <div className="space-y-2 print:hidden">
-    <Button variant="secondary" size="md" className="min-h-11 md:min-h-9" disabled={pending||choices.length===0}
+  return <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
+    <Button variant="secondary" size="md" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||choices.length===0}
       onClick={()=>{setOpen(true);setError("");}}>
       Reassign class schedules
     </Button>
-    {report?<Alert tone="success">
+    {report?<Alert tone="success" className="max-w-prose">
       Reassigned {report.reassigned} of {report.total} upcoming session(s).
       {report.skippedConflicts>0?" "+report.skippedConflicts+" conflicting session(s) kept with the original faculty.":""}
     </Alert>:null}
@@ -61,10 +61,10 @@ export function SuperAdminFacultyScheduleReassignAction({
     <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}}
       title="Reassign class schedules"
       description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked."}
-      footer={<>
+      footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
         <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
-      </>}>
+      </div>}>
       <label htmlFor={id} className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement faculty</label>
       <Select id={id} className="min-h-11 w-full md:min-h-9"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>

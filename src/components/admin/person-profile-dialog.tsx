@@ -214,7 +214,7 @@ export function PersonProfileDialog({
         title={`Profile · ${displayName}`}
         description="Profile fields are membership-scoped and do not change authorization roles."
         footer={
-          <>
+          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               className="min-h-11 md:min-h-9"
@@ -235,7 +235,7 @@ export function PersonProfileDialog({
             >
               {pending ? "Saving…" : "Save profile"}
             </Button>
-          </>
+          </div>
         }
       >
         {loading ? (
@@ -243,16 +243,16 @@ export function PersonProfileDialog({
         ) : loadError ? (
           <Alert tone="error">{loadError}</Alert>
         ) : (
-          <div className="min-w-0 space-y-[var(--lms-space-5)]">
+          <div className="min-w-0 space-y-[var(--lms-space-4)]">
             {hasLearner ? (
               <fieldset className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-                <legend className="mb-3 text-sm font-semibold text-[var(--lms-heading)]">
+                <legend className="mb-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)]">
                   Learner profile
                 </legend>
                 <div>
                   <label
                     htmlFor={`roll-${membershipId}`}
-                    className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Roll number
                   </label>
@@ -268,7 +268,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`registration-${membershipId}`}
-                    className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Registration number
                   </label>
@@ -286,13 +286,13 @@ export function PersonProfileDialog({
 
             {hasFaculty ? (
               <fieldset className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-                <legend className="mb-3 text-sm font-semibold text-[var(--lms-heading)]">
+                <legend className="mb-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)]">
                   Faculty profile
                 </legend>
                 <div className="md:col-span-2">
                   <label
                     htmlFor={`department-${membershipId}`}
-                    className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Primary department
                   </label>
@@ -317,7 +317,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`employment-${membershipId}`}
-                    className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Employment type
                   </label>
@@ -334,7 +334,7 @@ export function PersonProfileDialog({
                 <div>
                   <label
                     htmlFor={`title-${membershipId}`}
-                    className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+                    className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
                   >
                     Academic title
                   </label>
