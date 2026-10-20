@@ -21,19 +21,21 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
  const raw=Object.fromEntries(Object.entries(q).filter(([,v])=>typeof v==="string")) as Record<string,string>;
  const exportQuery=new URLSearchParams(raw).toString();
  const total=Math.max(1,data.totalApplications);
- return <div className="space-y-6">
-  <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
-   <div className="flex flex-wrap items-center justify-between gap-3">
+ return <div className="min-w-0 space-y-4">
+  <section className="min-w-0 space-y-4 border-b border-border pb-4">
+   <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
     <div><h2 className="font-semibold">Placement Analytics</h2>
      <p className="text-sm text-body">Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.</p>
     </div>
-    <div className="flex flex-wrap gap-3 text-sm print:hidden">
+    <div className="flex min-w-0 flex-col items-stretch gap-2 text-sm print:hidden md:flex-row md:items-center">
      <Link href={collegeHiringAnalyticsHref({...raw})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Refresh</Link>
      <a href={"/api/college/placements/hiring-analytics/export"+(exportQuery?"?"+exportQuery:"")}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>
     </div>
    </div>
-   <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 print:hidden">
+   <details className="min-w-0 border-t border-border pt-2 print:hidden">
+     <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+     <form method="get" className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
     <label className="grid gap-1 text-sm">Department
@@ -60,21 +62,25 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     <label className="grid gap-1 text-sm">Applied to
      <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
     </label>
-    <div className="flex gap-3 sm:col-span-2 lg:col-span-5">
-     <Button type="submit" className="min-h-11 md:min-h-9">Apply filters</Button>
+    <div className="flex min-w-0 flex-col items-stretch gap-2 md:col-span-2 md:flex-row md:items-center min-[992px]:col-span-5">
+     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
      <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear all</Link>
     </div>
-   </form>
+     </form>
+   </details>
   </section>
-  <section className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5" aria-label="Placement status metrics">
+  <details className="min-w-0 border-b border-border pb-3" aria-label="Placement status metrics">
+    <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Placement status metrics</summary>
+    <section className="grid min-w-0 grid-cols-2 gap-3 pt-3 md:grid-cols-3 min-[992px]:grid-cols-5">
    {[["Total Applications",data.totalApplications],...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
     .map(([name,value])=><StatTile key={name} label={name} value={value} />)}
    <StatTile label="Avg. time to shortlist"
     value={data.averageHoursToShortlist==null?"No recorded transitions":
       data.averageHoursToShortlist.toFixed(1)+" hours"} />
-  </section>
-  <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    </section>
+  </details>
+  <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Hiring Funnel</h2>
    {data.totalApplications===0?<div className="space-y-2">
     <p>No data for the selected filters</p>
@@ -90,7 +96,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    </div>}
    <p className="text-xs text-muted-foreground">Counts show current pipeline stages, not cumulative conversion. A candidate can occupy only one current stage.</p>
   </section>
-  <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-5">
+  <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
    <DataTable
     caption="Company-wise hiring report"
@@ -108,13 +114,13 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     empty={<p role="status" className="text-body">No data for the selected filters</p>}
    />
    {data.companyRows.length>0?
-    <section aria-label="Company-wise report totals" className="space-y-3">
-     <h3 className="font-semibold text-foreground">All drives · Totals</h3>
+    <details aria-label="Company-wise report totals" className="min-w-0 border-t border-border pt-2">
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">All drives · Totals</summary>
      <SummaryStrip label="Company-wise report totals"
       steps={[["Total",data.totalApplications] as const,
         ...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
         .map(([name,value])=>({label:name,value}))} />
-    </section>:null}
+    </details>:null}
   </section>
  </div>;
 }
