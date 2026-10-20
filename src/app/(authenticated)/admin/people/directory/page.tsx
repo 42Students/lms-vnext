@@ -56,49 +56,61 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
  const tabForm=adminPeopleSearchState(data.query);
- return <div className="min-w-0 space-y-6">
+ return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
   <PageHeader title="People Directory"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
-   actions={<SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />}/>
-  {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
-   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Users without college memberships →</Link> : null}
+   actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-start">
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">← Membership management</Link>
+    <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />
+   </div>}/>
   <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
    items={tabs.map(tab=>({value:tab.id,label:tab.label,
     href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}))}/>
-  <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
+  <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
+   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Related people views</summary>
+     {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
+   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Users without college memberships →</Link> : null}
+  <nav aria-label="Related people views" className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] pt-[var(--lms-space-2)] text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-[var(--lms-space-4)]">
    <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">Student accounts</Link>
    <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">Faculty accounts</Link>
    <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">Teaching assignments</Link>
   </nav>
+
+  </details>
   <p className="text-xs text-muted-foreground">
    {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·
    {" "}
    {data.contactVisible?"Contact shown within the explicitly selected college.":"Email and phone are masked outside a selected college."}
   </p>
-  <form method="get" className="grid gap-[var(--lms-space-2)] md:grid-cols-2 min-[992px]:grid-cols-5">
+  <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <Input type="hidden" name="tab" value={tabForm.hiddenTab} />
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or college
-    <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
-     className="min-h-11 w-full md:min-h-9"/>
-   </label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
-    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-9">
-     {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
-    </Select>
-   </label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
-    <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
-     className="min-h-11 w-full md:min-h-9">
-     {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
-    </Select>
-   </label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform
-    <Select name="platformStatus" defaultValue={query.data.platformStatus}
-     className="min-h-11 w-full md:min-h-9">
-     {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
-    </Select>
-   </label>
-   <Button type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
+   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or college
+     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q} className="min-h-11 w-full md:min-h-9"/>
+    </label>
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
+     <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-9">
+      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
+     </Select>
+    </label>
+    <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
+   </div>
+   <details className="min-w-0" open={query.data.membershipStatus!=="ALL" || query.data.platformStatus!=="ALL"}>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
+      <Select name="membershipStatus" defaultValue={query.data.membershipStatus} className="min-h-11 w-full md:min-h-9">
+       {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
+      </Select>
+     </label>
+     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform
+      <Select name="platformStatus" defaultValue={query.data.platformStatus} className="min-h-11 w-full md:min-h-9">
+       {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
+      </Select>
+     </label>
+    </div>
+   </details>
+   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length ? <DataTable<(typeof data.items)[number]>
@@ -129,8 +141,8 @@ export default async function SuperAdminUserDirectory({searchParams}:{
       className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View membership →</Link>},
    ]}/>
    :<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
-  <Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
-    hrefForPage={page=>adminUsersHref({...data.query,page})}/>
-  <Link href="/admin/people" className="inline-flex min-h-11 items-center font-semibold text-primary-text md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] hover:underline">← Membership management</Link>
+  <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
+    hrefForPage={page=>adminUsersHref({...data.query,page})}/></div>
+
  </div>;
 }

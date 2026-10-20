@@ -8,6 +8,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import {
   ReportFilters,
   ReportMetrics,
@@ -61,7 +62,7 @@ export default async function TpoReportsPage({
       jobId: first(query.jobId) || undefined,
     });
   } catch {
-    return <div className="min-w-0 space-y-6">
+    return <div className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Reports" title="Reports"
         description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
       <Alert tone="error">
@@ -191,7 +192,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
             Open management view
           </Link>
@@ -199,38 +200,8 @@ export default async function TpoReportsPage({
       />
 
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports" />
-      <ReportMetrics metrics={workspace.report.metrics} />
-      <ReportScopeNote note={workspace.registrationScopeNote} />
-      <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-5">
-       <h2 className="font-semibold">Placement journey</h2>
-       <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
-       <div className="grid gap-3 md:grid-cols-3">
-        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-         <strong className="block">Looking for a job</strong>
-         <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
-        </Link>
-        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-         <strong className="block">Placed</strong>
-         <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
-        </Link>
-        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-         <strong className="block">Accepted</strong>
-         <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
-        </Link>
-       </div>
-       <p className="text-xs text-muted-foreground">These are different populations: registered learners, placement-rule students, and offer records. Do not interpret their counts as a single conversion funnel.</p>
-      </nav>
-
-
-      {workspace.noSeason ? (
-        <EmptyState
-          title="No placement season available"
-          description="Create a placement season before reviewing season-level outcomes. No placement performance is inferred without a season."
-        />
-      ) : null}
-
       <form method="get" action="/tpo/reports"
-        className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
+        className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end">
         {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -247,12 +218,24 @@ export default async function TpoReportsPage({
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
+        <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Search</Button>
         <Link href={reportHref("/tpo/reports",workspace)}
           className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
           Clear
         </Link>
       </form>
+      <ReportMetrics metrics={workspace.report.metrics} />
+
+
+
+      {workspace.noSeason ? (
+        <EmptyState
+          title="No placement season available"
+          description="Create a placement season before reviewing season-level outcomes. No placement performance is inferred without a season."
+        />
+      ) : null}
+
+
       <p role="status" className="text-sm text-body">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>
       {visibleGroups.length===0?<EmptyState title="No matching reports"
         description="No available report matches this search and category. Clear filters to see the full gallery."/>:null}
@@ -296,6 +279,30 @@ export default async function TpoReportsPage({
           )}
         </section>
       ))}
+      <Disclosure title="Placement journey and methodology" className="border-t border-border py-3">
+        <div className="min-w-0 space-y-4 pt-3">
+      <ReportScopeNote note={workspace.registrationScopeNote} />
+      <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-5">
+       <h2 className="font-semibold">Placement journey</h2>
+       <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
+       <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+         <strong className="block">Looking for a job</strong>
+         <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
+        </Link>
+        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+         <strong className="block">Placed</strong>
+         <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
+        </Link>
+        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+         <strong className="block">Accepted</strong>
+         <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
+        </Link>
+       </div>
+       <p className="text-xs text-muted-foreground">These are different populations: registered learners, placement-rule students, and offer records. Do not interpret their counts as a single conversion funnel.</p>
+      </nav>
+        </div>
+      </Disclosure>
     </div>
   );
 }

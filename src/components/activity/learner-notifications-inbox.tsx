@@ -117,7 +117,7 @@ export function LearnerNotificationsInbox({
   }
 
   return (
-    <section className="space-y-5" aria-label="Learner notifications inbox">
+    <section className="min-w-0 space-y-[var(--lms-space-4)]" aria-label="Learner notifications inbox">
       <p role="status" className="text-sm text-body min-[768px]:hidden">{mobileSummary}</p>
       <nav aria-label="Filter notifications by type" className="min-w-0">
         <div className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
@@ -137,8 +137,8 @@ export function LearnerNotificationsInbox({
           ))}
         </div>
       </nav>
-      <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto] min-[768px]:items-end">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
+        <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:col-span-1">
           Search notifications
           <Input type="search" value={search} maxLength={100}
             onChange={event=>setSearch(event.target.value)}
@@ -148,25 +148,25 @@ export function LearnerNotificationsInbox({
         </label>
         <FilterChip type="button" aria-pressed={unread==="unread"}
           onClick={()=>selectUnread(unread==="unread"?"all":"unread")}
-          className={"!min-h-11 rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+
+          className={"!min-h-11 w-full min-[768px]:w-auto rounded-[8px] px-4 py-2 !text-[14px] !font-medium !leading-[1.3] "+
             (unread==="unread"
               ? "!border-[var(--lms-primary)] !bg-[var(--lms-primary)] !text-white enabled:hover:!border-[var(--lms-primary-hover)] enabled:hover:!bg-[var(--lms-primary-hover)] enabled:hover:!text-white"
               : "!border-[var(--lms-canvas-border)] !bg-transparent !text-[var(--lms-neutral-500)] enabled:hover:!border-[rgba(38,186,199,0.4)] enabled:hover:!bg-[rgba(38,186,199,0.05)] enabled:hover:!text-[var(--lms-primary)]")}>
           {unread==="unread"?"Unread only ✓":"Unread only"}
         </FilterChip>
         <Button type="button" onClick={applySearch}
-          variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11">
+          variant="secondary" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">
           Apply search
         </Button>
         <Button type="button" disabled={!filtered} onClick={resetFilters}
-          variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11">
+          variant="secondary" className="col-span-2 min-h-11 w-full min-[768px]:col-span-1 min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">
           Clear filters
         </Button>
       </div>
       {unreadPersonalCount>0 ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3">
+        <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
           <p className="text-sm text-body">{unreadPersonalCount} unread personal notifications</p>
-          <Button variant="secondary" size="sm" className="min-h-[var(--lms-control-height)] max-md:min-h-11" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
+          <Button variant="secondary" size="sm" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto" onClick={()=>{setMarkAllError(null);setConfirmReadAll(true);}}>
             Mark all personal as read
           </Button>
         </div>
@@ -181,7 +181,7 @@ export function LearnerNotificationsInbox({
       </p>
 
       {sourceStatus.state==="PARTIAL" ? (
-        <div role="alert" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
+        <div role="alert" className="border-y border-border py-[var(--lms-space-3)] text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
           <Button size="sm" variant="secondary" className="min-h-[var(--lms-control-height)] max-md:min-h-11" onClick={()=>router.refresh()}>
@@ -190,7 +190,7 @@ export function LearnerNotificationsInbox({
         </div>
       ):null}
       {!announcementsEnabled && (active === "all" || active === "general") ? (
-        <div role="status" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-sm text-body">
+        <div role="status" className="border-y border-border py-[var(--lms-space-3)] text-sm text-body">
           College announcements are temporarily unavailable while their
           database rollout is being verified. Personal notifications remain available.
         </div>
@@ -220,12 +220,12 @@ export function LearnerNotificationsInbox({
       <Dialog open={confirmReadAll} onOpenChange={value=>{if(!markingAll)setConfirmReadAll(value);}}
         title="Mark all personal notifications as read?"
         description="This acknowledges all unread notifications in your current college, including older pages. College announcements have no personal read status."
-        footer={<>
+        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:justify-end [&>button]:w-full min-[768px]:[&>button]:w-auto">
           <Button variant="secondary" disabled={markingAll} onClick={()=>setConfirmReadAll(false)}>Keep unread</Button>
           <Button disabled={markingAll} onClick={()=>void markAllRead()}>
             {markingAll?"Updating…":"Confirm mark all read"}
           </Button>
-        </>}>
+        </div>}>
         {markAllError?<p role="alert" className="text-sm text-error">{markAllError}</p>:null}
       </Dialog>
       <Dialog
@@ -235,7 +235,7 @@ export function LearnerNotificationsInbox({
         
         description={selected?.source === "ANNOUNCEMENT" ? "College announcement" : "Personal notification"}
         footer={
-          <>
+          <div className="flex w-full flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:justify-end">
             {learnerNotificationPlacementAction(selected?.actionHref) ? (
               <Link
                 href={learnerNotificationPlacementAction(selected?.actionHref)!.href}
@@ -251,7 +251,7 @@ export function LearnerNotificationsInbox({
                 {selected.externalCta.label} ↗
               </a>:null}
             <Button className="w-full min-[768px]:w-auto max-[767px]:min-h-11" onClick={() => setSelected(null)}>Got it</Button>
-          </>
+          </div>
         }
       >
         {selected ? (

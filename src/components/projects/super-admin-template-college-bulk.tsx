@@ -8,6 +8,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Disclosure} from "@/components/ui/disclosure";
 
 type College={id:string;name:string;assigned:boolean;canAssign:boolean};
 type BulkOperation="assign"|"remove";
@@ -51,8 +52,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    currentOperation==="assign"?"Selected colleges assigned":"Selected colleges removed");
   inFlight.current=false;setPending(false);router.refresh();
  }
- return <section aria-label="Template college bulk assignment" className="space-y-3 border-b border-border pb-5">
-  <h2 className="text-base font-semibold text-foreground">College availability</h2>
+ return <Disclosure title="College availability" ariaLabel="Template college bulk assignment" className="border-b border-border pb-4" contentClassName="min-w-0 space-y-3 pt-3">
   <p className="text-xs text-muted-foreground">Select colleges on this page to update availability; existing workspaces remain unchanged.</p>
   <div className="flex flex-wrap gap-3 text-sm">
    <Button type="button" variant="secondary" disabled={pending||!allowed.length}
@@ -65,7 +65,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   {colleges.length===0?<EmptyState title="No colleges available" description="There are no college assignments to manage on this page."/>:null}
   <ul className="grid min-w-0 gap-x-4 md:grid-cols-2">
    {colleges.map(college=><li key={college.id}>
-    <label className="flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-sm text-body transition-colors hover:border-primary hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:min-h-9">
+    <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 border-b border-border px-3 py-2 text-sm text-body transition-colors hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:min-h-9">
      <Checkbox checked={selected.includes(college.id)} disabled={pending||!college.canAssign}
       onChange={e=>setSelected(current=>e.target.checked?[...current,college.id]:current.filter(id=>id!==college.id))}/>
      <span className="min-w-0 flex-1 break-words">{college.name}</span>
@@ -73,8 +73,8 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     </label>
    </li>)}
   </ul>
-  <div className="flex flex-wrap gap-2">
-   <Button type="button" variant="primary" disabled={pending||!published||!selectedItems.some(row=>!row.assigned)}
+  <div className="flex min-w-0 flex-wrap gap-2">
+   <Button type="button" variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!published||!selectedItems.some(row=>!row.assigned)}
     onClick={()=>setOperation("assign")} >Assign selected</Button>
    <Button type="button" variant="secondary" disabled={pending||!selectedItems.some(row=>row.assigned)}
     onClick={()=>setOperation("remove")} >Remove selected</Button>
@@ -86,5 +86,5 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    confirmLabel={operation==="remove"?"Remove selected":"Assign selected"}
    confirmVariant={operation==="remove"?"danger":"primary"} pending={pending}
    onConfirm={()=>{void apply();}}/>
- </section>;
+ </Disclosure>;
 }

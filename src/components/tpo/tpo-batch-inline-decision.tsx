@@ -45,22 +45,25 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
   });
  }
- return <div className="mt-2 flex min-w-0 flex-wrap items-end gap-2">
-  <label className="min-w-0 flex-1 text-xs">Learner override
+ return <div className="mt-2 flex min-w-0 flex-wrap items-end gap-3">
+  <label className="w-full min-w-0 text-xs md:max-w-xs md:flex-1">Learner override
    <Select className="mt-1 min-h-11 w-full md:min-h-9" aria-label="Learner eligibility override" 
     value={decision} disabled={busy} onChange={event=>{setDecision(event.target.value as Decision);setReviewed(false);}}>
     <option value="NOT_DECIDED">Inherit class/batch</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
   </label>
-  {decision==="INELIGIBLE"?<div className="min-w-0 flex-1 space-y-2">
-   <p className="text-xs">Reason: {reason.trim()||"Not selected"}</p>
+  {decision==="INELIGIBLE"?<div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-1">
+   <p className="min-w-0 break-words text-xs text-body">Reason: {reason.trim()||"Not selected"}</p>
    <Button variant="secondary" type="button" disabled={busy} onClick={()=>setReasonOpen(true)}
-    >
+    className="w-full md:w-fit">
     Pick ineligibility reason
    </Button>
    <Dialog open={reasonOpen} onOpenChange={setReasonOpen} dismissible={!busy}
-    title="Mark learner ineligible"><div className="space-y-3">
-    <p className="text-sm">Pick the reason. Students never see this. You can undo it straight after.</p>
+    title="Mark learner ineligible" description="Pick the reason. Students never see this. You can undo it straight after."
+    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+      <Button variant="secondary" type="button" className="w-full sm:w-auto" onClick={()=>setReasonOpen(false)}>Cancel</Button>
+      <Button variant="primary" type="button" className="w-full sm:w-auto" disabled={!valid} onClick={()=>setReasonOpen(false)}>Use reason</Button>
+    </div>}><div className="space-y-3">
     <div className="flex flex-wrap gap-2" role="group" aria-label="Common ineligibility reasons">
      {LEGACY_INELIGIBLE_REASONS.map(preset=><FilterChip type="button" key={preset}
       aria-pressed={!other&&reason===preset} disabled={busy}
@@ -75,24 +78,19 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
        maxLength={200}
       value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);setReviewed(false);}}/>
     </label>:null}
-    {!valid?<InlineNotice tone="error" message="Enter a reason of at least 3 characters."/>:null}
-    <div className="flex gap-2">
-     <Button variant="secondary" type="button" onClick={()=>setReasonOpen(false)} >Cancel</Button>
-     <Button variant="primary" type="button" disabled={!valid} onClick={()=>setReasonOpen(false)}
-      >Use reason</Button>
-    </div>
+    {other&&reason.trim().length>0&&!valid?<InlineNotice tone="error" message="Enter a reason of at least 3 characters."/>:null}
    </div></Dialog>
   </div>:null}
-  <label className="flex min-h-11 w-full items-center gap-2 text-xs text-body">
+  <label className="flex min-h-11 w-full min-w-0 items-start gap-3 text-xs leading-5 text-body">
    <Checkbox checked={reviewed} disabled={busy}
-    onChange={event=>setReviewed(event.target.checked)}/>
+    onChange={event=>setReviewed(event.target.checked)} className="mt-1 shrink-0"/>
    I reviewed this learner eligibility decision; it will be audited.
   </label>
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={!valid||busy||!reviewed}
-   className="min-h-11 md:min-h-9">
+   className="min-h-11 w-full md:min-h-9 md:w-auto">
    {busy?"Saving…":"Save decision"}</Button>
-  {error?<InlineNotice tone="error" message={error}/>:null}
-  {notice?<InlineNotice tone="success" message={notice}/>:null}
+  {error?<div className="w-full"><InlineNotice tone="error" message={error}/></div>:null}
+  {notice?<div className="w-full"><InlineNotice tone="success" message={notice}/></div>:null}
   {actionId?<div className="w-full"><TpoBatchUndoControl batchId={batchId} actionId={actionId}/></div>:null}
  </div>;
 }

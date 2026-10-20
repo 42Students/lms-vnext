@@ -114,3 +114,15 @@ Files: `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`, `
 Problems fixed (7): equal-priority setup links were buried beneath eight read-only metadata cells; Activity CSV competed with the College tab; seven settings links wrapped unevenly at 375; no clear grid scan path on tablet; archived restore warning competed with navigation; density drift between top sections; utility export overshadowed primary setup. Moved authorized college setup destinations ahead of identity metadata, aligned the same links into a full-width mobile/2-col tablet/3-col desktop grid, retained all lifecycle checks and archived warnings, and moved CSV export after the identity overview. Reviewed page, TenantRestoreAction (pending/success/failure/confirm), Tabs, PageHeader/PageBackLink and route notFound/error/loading. Source layout checked 375/768/1280; permissions, labels, routes, wording, tokens and REST lifecycle unchanged. No CI or browser verification.
 
 Files: `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`, queue, proof.
+
+## Surface 16 — College Readiness Gate
+
+Problems fixed (8): export CTA displaced readiness counts; recheck and export competed; ten-check list overwhelmed optional explanatory evidence; suggested setup and secondary data looked as important as failed requirements; filters wrapped inconsistently at 375; reference-only interpretation consumed the primary reading path; list gutters drifted; mobile filter action mismatched widths. Kept status verdict, counts and Must fix before launch visible, moved CSV download/caveat to the end, grouped Recommended setup, Additional setup evidence and Readiness interpretation under separate accessible shared disclosures with their original headings and copy, and aligned filtered checks for 375/768/1280. Inspected page, route error/loading/not-found, StatTile, StatusBadge, Disclosure, ErrorState, EmptyState, Select/Button and pass/fail/unknown/filter states. All permission gates, counts, evidence, URLs, remediation, and wording preserved. No CI/browser validation.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`, queue, proof.
+
+## Surface 17 — College Sign-in Methods
+
+Problems fixed (5): a short four-option form stretched across the entire desktop canvas; notice and Save action separated at wide widths; radio hint text could crowd 375px; saved status had weak visual grouping; phone action lacked full-width alignment. Constrained sign-in controls and their messages to a readable max-w-3xl column, aligned the four options and their hints with flexible min-width, kept the Save button full-width at 375 and intrinsic on tablet/desktop. Inspected page, CollegeSigninMethodForm including invalid/migration-disabled/success/stale/pending, ConfirmDialog/Radio/Alert, route not-found/loading/error; checked source classes at 375/768/1280. No changes to allowed methods, business copy, IDs, labels, permission, expectedVersion, or API. No CI/browser validation.
+
+Files: `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`, `src/components/admin/college-signin-method-form.tsx`, queue, proof.

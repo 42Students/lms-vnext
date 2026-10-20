@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import { PageHeader } from "@/components/ui/page-header";
@@ -26,10 +27,10 @@ export default async function TpoPlacementSeasonSettingsPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <TpoSettingsNav active="season" />
+      <PageHeader title="Placement Season" />
+      <TpoSettingsNav active="season" compact />
 
       <section className="space-y-2">
-        <PageHeader title="Placement Season" />
         <p className="text-sm leading-6 text-body">
           College-specific placement seasons and their
           recorded dates and lifecycle status. A season
@@ -39,6 +40,8 @@ export default async function TpoPlacementSeasonSettingsPage() {
         </p>
       </section>
 
+      <TpoSeasonControls seasons={seasons} />
+      <Disclosure title="Season totals" className="min-w-0" contentClassName="pt-3">
       <div
         aria-label="Season summary"
         className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3"
@@ -60,8 +63,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
           <StatTile className={tpoTileStyles.tile} key={metric.label} label={metric.label} value={metric.value} />
         ))}
       </div>
-
-      <TpoSeasonControls seasons={seasons} />
+      </Disclosure>
 
       {seasons.length === 0 ? (
         <EmptyState
@@ -132,6 +134,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
         </section>
       )}
 
+      <Disclosure title="Season data and registration notes" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Source: persisted placement_seasons records.
         No registration deadline, blocked academic dates,
@@ -140,6 +143,7 @@ export default async function TpoPlacementSeasonSettingsPage() {
         confirmation. Closing uses the existing season lifecycle; registration-opening
         remains unavailable until the registration lifecycle is verified.
       </p>
+      </Disclosure>
     </div>
   );
 }
