@@ -67,6 +67,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   const [uploadDescription,setUploadDescription]=useState("");
   const [linkedResourceId,setLinkedResourceId]=useState("");
   const [progress,setProgress]=useState<number|null>(null);
+  const [uploadPhase,setUploadPhase]=useState<"PUT"|null>(null);
+  const uploadingRef=useRef(false);
   const [busy,setBusy]=useState(false);
   const [feedback,setFeedback]=useState<string|null>(null);
   const [editing,setEditing]=useState<string|null>(null);
@@ -97,12 +99,13 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   }
   async function upload(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
-    if(!selected)return;
+    if(!selected||busy||uploadingRef.current)return;
     const declaration=projectResourceFileDeclaration(selected);
-    if(!declaration.ok){setFeedback(storageErrorMessage(declaration.error));return;}
+    if(!declaration.ok){setFeedbackTone("error");setFeedback(storageErrorMessage(declaration.error));return;}
     if(files.length>=PROJECT_FILE_LIMIT){
-      setFeedback(storageErrorMessage("STORAGE_FILE_LIMIT_REACHED"));return;
+      setFeedbackTone("error");setFeedback(storageErrorMessage("STORAGE_FILE_LIMIT_REACHED"));return;
     }
+    uploadingRef.current=true;
     setBusy(true);setFeedback(null);setProgress(0);
     try{
       const response=await jsonRequest<GrantResponse>(endpoint,"POST",{
@@ -117,8 +120,10 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         throw new FileApiError("STORAGE_UPLOAD_EXPIRED");
       }
       setFiles(current=>[...current.filter(row=>row.id!==response.file.id),response.file]);
+      setUploadPhase("PUT");
       await putWithProgress(selected,response.grant.uploadUrl,response.grant.requiredHeaders,
         setProgress,xhr=>{xhrRef.current=xhr;});
+      setUploadPhase(null);
       const completed=await jsonRequest<FileResponse>(fileEndpoint(response.file.id)+"/complete","POST");
       setFiles(current=>current.map(row=>row.id===completed.file.id?completed.file:row));
       await refresh();
@@ -130,7 +135,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       problem(error);
       // An UPLOADING record remains discoverable; Retry calls complete after the PUT has landed.
       try{await refresh();}catch{/* Keep the latest known row; never expose the grant. */}
-    }finally{setBusy(false);setProgress(null);}
+    }finally{uploadingRef.current=false;setBusy(false);setProgress(null);setUploadPhase(null);}
   }
   async function retryComplete(file:ProjectResourceFile){
     setBusy(true);setFeedback(null);
@@ -218,7 +223,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           className="min-h-11 w-full md:min-h-9 sm:w-auto">
           {busy?"Uploading…":"Upload file"}
         </Button>
-        {busy&&<Button variant="secondary" type="button" disabled={!xhrRef.current} onClick={()=>xhrRef.current?.abort()}
+        {uploadPhase==="PUT"&&<Button variant="secondary" type="button" disabled={!xhrRef.current} onClick={()=>xhrRef.current?.abort()}
           className="min-h-11 w-full md:min-h-9 sm:w-auto">Cancel</Button>}
       </div>
     </form>}
