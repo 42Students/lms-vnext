@@ -43,7 +43,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-5.md: surface | proble
 - [x] `src/app/(authenticated)/admin/departments/page.tsx` (Admin page)
 - [x] `src/app/(authenticated)/admin/domains/page.tsx` (Admin page)
 - [x] `src/app/(authenticated)/admin/electives/page.tsx` (Admin page)
-- [ ] `src/app/(authenticated)/admin/faculty-assignment/page.tsx` (Admin page)
+- [x] `src/app/(authenticated)/admin/faculty-assignment/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/faculty/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx` (Admin page)
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx` (Admin page)
