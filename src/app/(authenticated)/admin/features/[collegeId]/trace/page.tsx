@@ -436,7 +436,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                     step.source==="PERSISTED"?<StatusBadge tone="neutral">Not selected</StatusBadge>:"—"},
                   {key:"reason",header:"Why",mobilePriority:"secondary",cell:step=><span className="text-xs text-body">{step.reason}</span>},
                 ]}
-                empty={<p role="status" className="text-sm text-body">No stored rules or fallback steps were found for this module.</p>}
+                empty={<EmptyState title="No resolution steps" description="No stored rules or fallback steps were found for this module."/>}
               />
             </article>
           ))}

@@ -140,12 +140,12 @@ export default async function CollegeReadinessPage({
         </div>}
       />
 
-      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export all persisted readiness checks (CSV) →</Link>
+      <Link href={"/api/admin/colleges/"+encodeURIComponent(college.id)+"/readiness/export"} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Export all persisted readiness checks (CSV) →</Link>
       <p className="text-xs text-muted-foreground">Export includes all ten persisted checks even when the page filter hides some; runtime verification is not certified.</p>
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
-          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text"
+          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           Recheck persisted readiness →
         </Link>
@@ -214,12 +214,12 @@ export default async function CollegeReadinessPage({
         </div>
 
         <form method="get" className="mt-4 flex flex-wrap items-end gap-3">
-          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-40">Show checks
+          <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-40">Show checks
             <Select name="status" defaultValue={parsed.status} className="min-h-11 min-[768px]:min-h-9">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>
             </Select>
           </label>
-          <label className="grid w-full min-w-0 gap-1 text-sm font-semibold text-body md:w-auto md:min-w-40">Setup area
+          <label className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-40">Setup area
             <Select name="area" defaultValue={parsed.area} className="min-h-11 min-[768px]:min-h-9">
               <option value="ALL">Every area</option><option value="LIFECYCLE">Tenant lifecycle</option><option value="ACADEMICS">Academic structure</option><option value="PEOPLE">College people</option><option value="PLACEMENTS">Placement readiness</option><option value="DOMAINS">Login domains</option>
             </Select>
