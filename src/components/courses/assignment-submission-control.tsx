@@ -9,6 +9,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import {FilterChip} from "@/components/ui/filter-chip";
 import { Input } from "@/components/ui/input";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
@@ -200,12 +201,7 @@ export function AssignmentSubmissionControl({
 
   if (success) {
     return (
-      <div
-        role="status"
-        className="mt-4 rounded-[var(--lms-control-radius)] bg-[var(--lms-success-subtle)] px-3 py-2 text-sm font-semibold text-success"
-      >
-        Assignment submitted successfully.
-      </div>
+      <Alert tone="success" role="status" className="mt-4">Assignment submitted successfully.</Alert>
     );
   }
 
@@ -228,6 +224,7 @@ export function AssignmentSubmissionControl({
           aria-label="Submission type"
         >
           <FilterChip
+            className="min-h-11 md:min-h-9"
             type="button"
             disabled={submitting||!methodsLoaded||!mayWrite}
             aria-pressed={
@@ -240,6 +237,7 @@ export function AssignmentSubmissionControl({
             Written response
           </FilterChip>
           <FilterChip
+            className="min-h-11 md:min-h-9"
             type="button"
             disabled={submitting||!methodsLoaded||!mayLink}
             aria-pressed={
@@ -251,23 +249,23 @@ export function AssignmentSubmissionControl({
           >
             External Link
           </FilterChip>
-          <FilterChip type="button" disabled={!methodsLoaded || submitting ||
+          <FilterChip type="button" className="min-h-11 md:min-h-9" disabled={!methodsLoaded || submitting ||
               (multipartEnabled ? !(mayWrite&&mayLink) && !(fileUploadsEnabled&&mayUpload) : !fileUploadsEnabled || !mayUpload)}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
             {multipartEnabled?"Combine work":"File Upload"}
           </FilterChip>
         </div>
 
-        {methodsError?<p role="alert" className="mt-2 text-sm text-error">{methodsError}</p>:null}
+        {methodsError?<Alert tone="error" className="mt-2">{methodsError}</Alert>:null}
         {methodsEnabled&&!methodsLoaded&&!methodsError?<p role="status" className="mt-2 text-xs">Loading allowed submission methods…</p>:null}
-        {!fileUploadsEnabled&&mayUpload ? <p role={!mayWrite&&!mayLink?"alert":"status"} className="mt-2 text-xs text-muted-foreground">
+        {!fileUploadsEnabled&&mayUpload ? <Alert tone={mayWrite||mayLink?"warning":"error"} role={!mayWrite&&!mayLink?"alert":"status"} className="mt-2">
           {mayWrite||mayLink?"File uploads are currently unavailable. You can submit a written response or an HTTPS link.":
             "This assignment requires a PDF or file, but private uploads are unavailable. Ask your Faculty or college administrator to enable private file storage."}
-        </p> : null}
+        </Alert> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
-          <label className="mt-3 grid gap-1 text-sm">Link type
+          <label className="mt-3 grid gap-1 text-xs font-semibold text-body">Link type
             <Select value={linkKind} disabled={submitting}
-              className="min-h-11"
+              className="min-h-11 md:min-h-9"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
               {allowedMethods.includes("REPOSITORY_LINK")?<option value="REPOSITORY_LINK">Repository Link</option>:null}
               {allowedMethods.includes("EXTERNAL_LINK")?<option value="EXTERNAL_LINK">Website / External Link</option>:null}
@@ -301,17 +299,10 @@ export function AssignmentSubmissionControl({
           </label>
         )}
 
-        {error ? (
-          <p
-            role="alert"
-            className="mt-3 text-sm font-semibold text-error"
-          >
-            Assignment was not submitted. {error}
-          </p>
-        ) : null}
+        {error ? <Alert tone="error" className="mt-3">Assignment was not submitted. {error}</Alert> : null}
 
         {submissionType !== "FILE" ? <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Button type="submit" disabled={!methodsLoaded||Boolean(methodsError)}>
+          <Button type="submit" className="min-h-11 md:min-h-9" disabled={!methodsLoaded||Boolean(methodsError)}>
             {submitting
               ? "Submitting…"
               : error?"Retry":"Submit"}
@@ -325,8 +316,8 @@ export function AssignmentSubmissionControl({
       <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
         title="Discard this submission?" description="Your unsent answer will be lost."
         footer={<>
-          <Button type="button" variant="secondary" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
-          <Button type="button" onClick={()=>{
+          <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
+          <Button type="button" variant="danger" className="min-h-11 md:min-h-9" onClick={()=>{
             if(submitting)return;
             const href=discardHref;
             setDiscardHref(null);setTextContent("");setSubmissionUrl("");
