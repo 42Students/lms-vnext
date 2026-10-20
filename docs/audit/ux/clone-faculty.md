@@ -740,3 +740,21 @@ This inventory reads every named queued file through the connected GitHub reposi
 | `src/app/(authenticated)/teacher/layout.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 17 |
 | `src/app/(authenticated)/teacher/live-classes/page.tsx` | 82 | 0 (0 hidden) | 0 | 1/1 | 21,25,39 |
 | `src/app/(authenticated)/teacher/notifications/page.tsx` | 123 | 0 (0 hidden) | 0 | 0/0 | 73,98,112 |
+
+
+### Source inventory routes, part 4/4 (37–46 of 46)
+
+| Path | Lines | Native/confirm/hex hits (hidden) | `sm:` | Shared Button open/close | Source value example lines |
+|---|---:|---:|---:|---:|---|
+| `src/app/(authenticated)/teacher/profile/contacts/page.tsx` | 38 | 0 (0 hidden) | 0 | 0/0 | 9,11 |
+| `src/app/(authenticated)/teacher/profile/details/page.tsx` | 27 | 0 (0 hidden) | 0 | 0/0 | 18,20 |
+| `src/app/(authenticated)/teacher/profile/page.tsx` | 56 | 0 (0 hidden) | 0 | 0/0 | 21,25,27 |
+| `src/app/(authenticated)/teacher/profile/teaching/page.tsx` | 101 | 0 (0 hidden) | 0 | 1/1 | 25,26,33 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` | 223 | 0 (0 hidden) | 0 | 0/0 | 48,51,63 |
+| `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` | 134 | 4 (4 hidden) | 0 | 1/1 | 27,28,45 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx` | 134 | 3 (3 hidden) | 0 | 1/1 | 27,28,41 |
+| `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` | 272 | 0 (0 hidden) | 0 | 0/0 | 50,53,56 |
+| `src/app/(authenticated)/teacher/response-followups/page.tsx` | 139 | 0 (0 hidden) | 0 | 1/1 | 24,25,32 |
+| `src/app/(authenticated)/teacher/results/page.tsx` | 163 | 0 (0 hidden) | 0 | 1/1 | 26,27,34 |
+
+**All 46 queued route/layout files are now covered by a whole-file static scan.** The only raw control tags in the four route tables are `type="hidden"` GET-state fields; no visible native form controls, no native `window.confirm`, no hard-coded hex and no remaining 640px `sm:` variants in these route blobs. Delegation/redirects are marked, not misrepresented as missing page heads. A full transitive component scan follows. This is source-only evidence: no owner-safe runtime pixel comparison, no interactive keyboard/hover/disabled validation and no claim of strict H closure.
