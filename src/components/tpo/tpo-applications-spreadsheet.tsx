@@ -16,7 +16,7 @@ type Row={
 /** Keep the authorized page snapshot unchanged across the client-only grid boundary. */
 const TpoGrid = dynamic<TpoSpreadsheetGridProps<Row>>(
  () => import("./grid/tpo-grid").then(module => module.TpoGrid<Row>),
- {ssr:false, loading:() => <div role="status" className="min-h-16 py-4 text-sm text-muted-foreground">Loading applicant spreadsheet…</div>},
+ {ssr:false, loading:() => <div role="status" aria-live="polite" className="min-h-24 border-y border-border py-4 text-sm text-muted-foreground">Loading applicant spreadsheet…</div>},
 );
 
 const columns:readonly TpoGridColumn<Row>[]=[
@@ -57,16 +57,16 @@ const filters:TpoFilterField[]=[
   {value:"LAST_7_DAYS",label:"Last 7 days"},{value:"LAST_30_DAYS",label:"Last 30 days"}]},
 ];
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
+ const rowPositions=new Map(rows.map((row,index)=>[row.id,index] as const));
  return <GridWorkspace rows={rows} columns={columns} rowKey={row=>row.id}
   filters={filters} filterTitle="Filter applicants" exportName="tpo-drive-applications">
   <TpoGrid integratedWorkspace rows={rows} columns={columns} rowKey={row=>row.id}
    mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
-   rowActions={row=><div className="space-y-1">
+   rowActions={row=><div className="flex min-w-0 flex-col gap-2">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
-      previousId={rows.findIndex(candidate=>candidate.id===row.id)>0?
-        rows[rows.findIndex(candidate=>candidate.id===row.id)-1]?.id:undefined}
-      nextId={rows[rows.findIndex(candidate=>candidate.id===row.id)+1]?.id}/>
-    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open applicant</Link>
+      previousId={rows[(rowPositions.get(row.id)??0)-1]?.id}
+      nextId={rows[(rowPositions.get(row.id)??-1)+1]?.id}/>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants/"+encodeURIComponent(row.id)} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">Open applicant</Link>
    </div>}/>
  </GridWorkspace>;
 }
