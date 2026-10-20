@@ -12,10 +12,10 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-4.md: surface | regres
 
 - [x] `src/components/placements/super-admin-drive-duplicate.tsx`
 - [x] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/tpo/tpo-campaign-send-control.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-selection-import.tsx`
-- [ ] `src/components/tpo/tpo-mobile-footer.tsx`
+- [x] `src/components/tpo/tpo-campaign-send-control.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-selection-import.tsx`
+- [x] `src/components/tpo/tpo-mobile-footer.tsx`
 - [ ] `src/components/public/public-page-loading.tsx`
 - [ ] `src/app/(authenticated)/teach/error.tsx`
 - [ ] `src/app/(authenticated)/admin/not-found.tsx`
