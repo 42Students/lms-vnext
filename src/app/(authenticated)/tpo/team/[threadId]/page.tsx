@@ -97,8 +97,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
      {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
      <div className={own?
-      "ml-auto w-fit max-w-[90%] rounded-[13px] rounded-br-[5px] border border-border bg-surface-secondary px-3 py-[9px] sm:max-w-[86%] lg:max-w-[76%]":
-      "mr-auto w-fit max-w-[90%] rounded-[13px] rounded-bl-[5px] border border-border bg-surface px-3 py-[9px] sm:max-w-[86%] lg:max-w-[76%]"}>
+      "ml-auto w-fit max-w-[90%] rounded-[13px] rounded-br-[5px] border border-border bg-surface-secondary px-3 py-[9px] min-[768px]:max-w-[86%] min-[1024px]:max-w-[76%]":
+      "mr-auto w-fit max-w-[90%] rounded-[13px] rounded-bl-[5px] border border-border bg-surface px-3 py-[9px] min-[768px]:max-w-[86%] min-[1024px]:max-w-[76%]"}>
       <p className="text-xs text-muted-foreground">
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST

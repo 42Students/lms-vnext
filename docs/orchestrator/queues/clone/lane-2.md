@@ -54,4 +54,4 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/tpo/team/page.tsx`
 - [x] `src/app/e2e/superadmin-login/page.tsx`
 - [x] `src/app/placements/page.tsx`
-- [ ] `src/app/superadmin-login/page.tsx`
+- [x] `src/app/superadmin-login/page.tsx`
