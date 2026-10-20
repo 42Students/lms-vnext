@@ -18,7 +18,7 @@ export default async function FacultyDiscussionHistoryPage({
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid discussion history filters"} />
-    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Back to Courses</Link>
+    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Back to Courses</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyDiscussionHistory(context,parsed.data);
@@ -26,7 +26,7 @@ export default async function FacultyDiscussionHistoryPage({
     <PageHeader eyebrow="Faculty · Discussion audit" title="Discussion moderation history"
       description={[data.delivery.courseName,data.delivery.sectionName].join(" · ")}
       actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Discussions
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">

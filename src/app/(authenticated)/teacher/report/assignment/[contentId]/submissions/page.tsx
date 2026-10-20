@@ -25,7 +25,7 @@ export default async function FacultyAssignmentSubmissionsPage({
   });
   if(!parsed.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid Section submission filters"} />
-    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    <Link href="/teacher/allAssignments" className="text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
       Back to All Assignments
     </Link>
   </section>;
@@ -46,7 +46,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Full Section report
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
@@ -61,7 +61,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       </label>
       <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear search</Link>
     </form>
     <Tabs ariaLabel="Submission grading filters" value={query.filter} renderPanel={false}
       items={(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>({
@@ -81,7 +81,7 @@ export default async function FacultyAssignmentSubmissionsPage({
         {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
-        <Link href={csvHref} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+        <Link href={csvHref} className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
         </Link>
         <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>
@@ -120,9 +120,9 @@ export default async function FacultyAssignmentSubmissionsPage({
       </span>
       <div className="flex gap-3">
         {data.page>1?<Link href={facultySubmissionListHref({...query,page:data.page-1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Previous</Link>:null}
         {data.page<data.totalPages?<Link href={facultySubmissionListHref({...query,page:data.page+1})}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Next</Link>:null}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

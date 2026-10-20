@@ -105,7 +105,7 @@ export default async function TpoAuditPage({
           action={
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
             >
               Clear filters
             </Link>
@@ -222,7 +222,7 @@ export default async function TpoAuditPage({
        <span className="self-center text-sm font-semibold">Quick looks</span>
        {quickLooks.map(look=><Link key={look.label} href={quickHref(look.from,look.to)}
         aria-current={query.from===look.from&&query.to===look.to?"page":undefined}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">
         {look.label}
        </Link>)}
       </nav>
@@ -305,7 +305,7 @@ export default async function TpoAuditPage({
             </Button>
             <Link
               href="/tpo/audit"
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
             >
               Clear filters
             </Link>
@@ -373,7 +373,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
               >
                 ← Previous
               </Link>
@@ -385,7 +385,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
               >
                 First page
               </Link>
@@ -397,7 +397,7 @@ export default async function TpoAuditPage({
                   ...paginationFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9"
+                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-[var(--lms-teal-deep)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]"
               >
                 Next →
               </Link>
