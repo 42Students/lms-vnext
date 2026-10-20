@@ -62,6 +62,6 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   {job.status!=="ARCHIVED"?<SuperAdminDriveArchive jobId={jobId} title={job.title}/>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
-  <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Platform placement policy →</Link>
+  <Link href="/admin/placements" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Platform placement policy →</Link>
  </div>;
 }
