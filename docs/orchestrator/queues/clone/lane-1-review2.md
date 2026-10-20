@@ -22,12 +22,12 @@ These 29 page routes were moved to chat-1 from the end of other lanes' review qu
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx`
 - [x] `src/app/forbidden/page.tsx`
 - [x] `src/app/(authenticated)/teacher/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/more/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/page.tsx`
+- [x] `src/app/(authenticated)/tpo/more/page.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/profile/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`

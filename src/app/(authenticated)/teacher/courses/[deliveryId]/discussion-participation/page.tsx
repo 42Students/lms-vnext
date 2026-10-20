@@ -14,7 +14,7 @@ export default async function FacultyDiscussionParticipationPage({
   return <div className="min-w-0 max-w-full space-y-5">
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={base+"/discussions"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Discussions</Link>} />
+      actions={<Link href={base+"/discussions"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Discussions</Link>} />
     <section aria-label="Recorded participation" className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
       {([["Messages",data.counts.total],["Faculty messages",data.counts.faculty],
         ["Learner messages",data.counts.learner],["Pinned messages",data.counts.pinned]] as const)
