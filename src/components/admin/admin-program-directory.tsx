@@ -138,7 +138,7 @@ export function AdminProgramDirectory({
 
   return (
     <div className="min-w-0 space-y-5">
-      <details className="group border-b border-border pb-5 print:hidden">
+      <details open={programs.length === 0} className="group border-b border-border pb-5 print:hidden">
         <summary className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-3 font-semibold text-foreground marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
           <span>Create New Program</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
         </summary>
