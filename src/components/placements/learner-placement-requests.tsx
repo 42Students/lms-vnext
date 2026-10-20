@@ -343,7 +343,7 @@ export function LearnerPlacementRequests({
   return (
     <section className="border-b border-border pb-5">
       <div className="border-b border-border py-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
               New request
@@ -364,11 +364,12 @@ export function LearnerPlacementRequests({
         </div>
       </div>
 
-      <div role="group" aria-label="What do you need?" className="grid min-w-0 gap-4 py-4 xl:grid-cols-2">
-        <div id="round-reschedule" className="min-w-0 scroll-mt-24 border-t border-border pt-4">
-          <h3 className="m-0 text-sm font-semibold text-foreground">
-            Round reschedule
-          </h3>
+      <div role="group" aria-label="What do you need?" className="min-w-0 divide-y divide-border py-2">
+        <details id="round-reschedule" open={Boolean(initialRoundId) || undefined} className="group min-w-0 scroll-mt-24 py-2">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+            Round reschedule <span aria-hidden="true" className="text-link">⌄</span>
+          </summary>
+          <div className="min-w-0 max-w-3xl px-2 pb-4">
           <p className="mt-1 text-xs text-muted-foreground">
             Creates a candidate-specific schedule exception; it never moves the shared round for everyone.
           </p>
@@ -496,7 +497,7 @@ export function LearnerPlacementRequests({
                   )
                 }
               />
-              <Button className="max-md:min-h-11"
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                 size="sm"
                 disabled={pendingKey !== null}
                 onClick={submitRound}
@@ -507,12 +508,14 @@ export function LearnerPlacementRequests({
               </Button>
             </div>
           )}
-        </div>
+          </div>
+        </details>
 
-        <div className="min-w-0 border-t border-border pt-4">
-          <h3 className="m-0 text-sm font-semibold text-foreground">
-            Offer deadline extension
-          </h3>
+        <details className="group min-w-0 py-2">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-foreground hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+            Offer deadline extension <span aria-hidden="true" className="text-link">⌄</span>
+          </summary>
+          <div className="min-w-0 max-w-3xl px-2 pb-4">
           <p className="mt-1 text-xs text-muted-foreground">
             Only issued offers with an existing response deadline can be extended.
           </p>
@@ -589,7 +592,7 @@ export function LearnerPlacementRequests({
                   )
                 }
               />
-              <Button className="max-md:min-h-11"
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                 size="sm"
                 disabled={pendingKey !== null}
                 onClick={submitOffer}
@@ -600,7 +603,8 @@ export function LearnerPlacementRequests({
               </Button>
             </div>
           )}
-        </div>
+          </div>
+        </details>
       </div>
 
       {requests.length > 0 ? (
@@ -608,11 +612,11 @@ export function LearnerPlacementRequests({
           <h3 className="m-0 text-sm font-semibold text-foreground">
             Request history
           </h3>
-          <div className="mt-3 grid gap-3">
+          <div className="mt-3 divide-y divide-border border-y border-border">
             {requests.map((item) => (
               <article
                 key={item.id}
-                className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4"
+                className="min-w-0 py-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
@@ -658,7 +662,7 @@ export function LearnerPlacementRequests({
                     </StatusBadge>
                     {item.status ===
                     "PENDING" ? (
-                      <Button className="max-md:min-h-11"
+                      <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                         size="sm"
                         variant="secondary"
                         disabled={
