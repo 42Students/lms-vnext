@@ -1,5 +1,4 @@
 "use client";
-import { StatTile } from "@/components/ui/stat-tile";
 
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -444,10 +443,10 @@ export function LearnerAttendanceWorkspace({
       ) : null}
 
       <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
-        <Disclosure title="Course overview" className="border-b border-border" contentClassName="pb-4">
+        <Disclosure title="Course overview" contentClassName="pb-4">
         <div className="mt-3 grid min-w-0 gap-2 md:grid-cols-2 xl:grid-cols-3">
           {summaries.map((item) => (
-            <Button className="max-md:min-h-11" variant="secondary"
+            <Button className="min-h-11 w-full flex-col items-start text-left md:min-h-9" variant="secondary"
               key={item.deliveryId}
               type="button"
               onClick={() =>
@@ -457,14 +456,14 @@ export function LearnerAttendanceWorkspace({
               }
               
             >
-              <p className="m-0 text-sm font-semibold text-foreground">
+              <span className="block max-w-full break-words text-sm font-semibold text-foreground">
                 {item.courseName}
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              </span>
+              <span className="mt-1 block max-w-full break-words text-xs text-muted-foreground">
                 {item.courseCode} ·{" "}
                 {item.sectionName}
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
+              </span>
+              <span className="mt-2 flex max-w-full flex-wrap gap-2">
                 <StatusBadge
                   tone={
                     item.percentage === null
@@ -485,7 +484,7 @@ export function LearnerAttendanceWorkspace({
                     unmarked
                   </StatusBadge>
                 ) : null}
-              </div>
+              </span>
             </Button>
           ))}
         </div>
