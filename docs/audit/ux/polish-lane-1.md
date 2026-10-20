@@ -311,3 +311,11 @@
 **Problems fixed (6):** the shared ghost Button gave More a nonlegacy hovered fill; footer items lacked consistent full-height alignment; active destination was hard-coded rather than tokenized; selected sheet destination lacked a clear current-location cue; sheet row dividers were fragmented; footer links relied only on path-change effects to close the menu. Preserved all destination names/icons/ARIA/safe-area behavior and used the legacy transparent control, contiguous sheet dividers, tokenized current-page rail and explicit close-on-navigation.
 
 **Files:** `src/components/tpo/tpo-mobile-footer.tsx`, polish queue, proof. Shared shell and sheet unchanged; no tests/CI.
+
+## Surface 50 — Assign unowned placement work
+
+**Reviewed:** no-unowned-work return, drives-only/companies-only/mixed totals, empty eligible member list, staff selection and selector changes, confirmation/cancel, pending/failed/partial assignment and success, optimistic double-submit guard and refresh. Read parent Team People page, `ConfirmActionDialog`, `ConfirmDialog`, Select/Button/InlineNotice at 375/768 from source. No app execution or CI.
+
+**Problems fixed (9):** assignment confirmation inherited destructive red UI; original modal closed as soon as saving started; a failed request showed its error behind a closed modal; no-member state had a selectable empty control without explanation; selector and action wrapped irregularly on 375px; action lacked consistent full-width touch affordance; changes in assignee did not clear stale errors; empty reassignment result hid the success message on refresh; content hierarchy and text bounds were loose. Used positive primary shared confirmation, retained modal while pending, surfaced retryable errors inside the modal, added eligible-member empty feedback, a one/two-column action row and 44px phone controls. Endpoint, target ID, protected ownership semantics, existing copy and double-submit guard retained.
+
+**Files:** `src/components/tpo/tpo-team-assign-unowned.tsx`, polish queue, proof. Team People parent and shared dialog inspected, unchanged. No tests/CI.
