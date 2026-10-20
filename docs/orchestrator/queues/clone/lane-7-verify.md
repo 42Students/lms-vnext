@@ -9,12 +9,12 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-7-b with [chat-7] after every 2 surfaces.
 
-- [ ] `src/components/courses/college-content-preview.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-assessment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-content-editor.tsx`
+- [x] `src/components/courses/college-content-preview.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-assessment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-content-editor.tsx`
 - [ ] `src/components/courses/faculty-course-roster.tsx`
 - [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
 - [ ] `src/components/courses/faculty-quiz-review.tsx`
