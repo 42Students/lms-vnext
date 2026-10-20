@@ -43,7 +43,7 @@ export default async function AnnouncementsPage({
   if (!params) {
     return <div className="min-w-0 space-y-6">
       <PageHeader eyebrow="Super Admin" title="Announcements" description="Review and publish college notices." />
-      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Reset filters</Link></p>
+      <p role="alert" className="border-l-2 border-warning-border bg-warning-subtle px-3 py-2 text-body">Invalid announcement filters or pagination cursor. <Link href="/admin/announcements" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Reset filters</Link></p>
     </div>;
   }
 
