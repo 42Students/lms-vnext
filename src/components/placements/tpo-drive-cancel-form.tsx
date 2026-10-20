@@ -73,22 +73,22 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   }
 
   return (
-    <form onSubmit={(e) => void submit(e)} className="space-y-4 border-b border-border pb-5">
+    <form onSubmit={(e) => void submit(e)} className="min-w-0 space-y-4 border-b border-border pb-6">
       <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
-      <p className="text-sm text-body">
+      <p className="max-w-prose text-sm text-body">
         Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
       </p>
-      <dl className="grid grid-cols-1 gap-3 min-[768px]:grid-cols-2">
+      <dl className="grid min-w-0 grid-cols-2 gap-x-6 border-t border-border min-[768px]:grid-cols-4">
         {rows.map(([label, n]) => (
-          <div key={label} className="border-b border-border px-1 py-4">
+          <div key={label} className="min-w-0 border-b border-border px-1 py-4">
             <dt className="text-xs text-body">{label}</dt>
-            <dd className="text-2xl font-semibold tabular-nums">{n}</dd>
+            <dd className="break-words text-2xl font-semibold tabular-nums">{n}</dd>
           </div>
         ))}
       </dl>
-          <div className="space-y-3">
+          <div className="min-w-0 space-y-3">
             <p className="text-sm font-semibold text-body">Reason for cancellation (audited)</p>
-            <div className="flex flex-wrap gap-2" aria-label="Common cancellation reasons">
+            <div className="flex min-w-0 flex-wrap gap-2" aria-label="Common cancellation reasons">
               {CANCEL_REASONS.map((preset) => (
                 <FilterChip
                   key={preset}
@@ -101,7 +101,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 </FilterChip>
               ))}
             </div>
-            <label className="block text-sm font-semibold text-body">
+            <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">
               Reason shown to students
               <Textarea
                 required
@@ -112,7 +112,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 maxLength={1000}
                 rows={3}
                 disabled={pending}
-                className="mt-2 min-h-11 w-full min-[768px]:min-h-9"
+                className="min-h-11 w-full min-[768px]:min-h-9"
               />
             </label>
             <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
@@ -125,7 +125,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
             I reviewed the affected applications, rounds and offers. I understand cancellation
             will notify affected learners and cannot be silently undone.
           </label>
-          <Button variant="primary" type="submit" disabled={pending || !reviewed} className="min-h-11 md:min-h-9 px-5">
+          <Button variant="primary" type="submit" disabled={pending || !reviewed} className="min-h-11 w-full px-5 min-[768px]:min-h-9 min-[768px]:w-auto">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </Button>
     </form>
