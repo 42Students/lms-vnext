@@ -15,7 +15,7 @@ Route files rule: when you polish a PAGE surface, ALSO polish the loading.tsx, e
 Proof: ONE entry per surface in docs/audit/ux/polish-lane-16.md: surface | problems found (clutter, misalignment, hierarchy, density, mobile) | what you removed, merged, moved or realigned | files changed. Push to chatgpt/chat-16-b with [chat-16], ticking [x] in this queue in the same push.
 
 - [x] `src/components/academics/academics-actions.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/academics/college-cohort-management.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/academics/college-cohort-management.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/academics/college-section-management.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/academics/college-semester-management.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/activity/learner-notifications-inbox.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
