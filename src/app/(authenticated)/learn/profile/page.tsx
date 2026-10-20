@@ -77,7 +77,7 @@ export default async function LearnerProfilePage({
           <p>Your academic summary is temporarily unavailable. Your saved profile remains available below; no missing enrollment has been inferred.</p>
           <LearnerProfileAcademicRetry />
         </div> : academic?.enrollment ? (
-          <dl className="mt-4 grid min-w-0 gap-3 text-sm md:grid-cols-2 xl:grid-cols-3">
+          <dl className="mt-4 grid min-w-0 gap-3 text-sm min-[768px]:grid-cols-2 min-[1280px]:grid-cols-3">
             <div>
               <dt className="font-semibold text-muted-foreground">Program</dt>
               <dd className="mt-1 text-foreground">{academic.enrollment.program}
