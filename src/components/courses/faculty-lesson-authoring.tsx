@@ -62,7 +62,7 @@ function FieldLabel({
   children: React.ReactNode;
 }) {
   return (
-    <span className="mb-1.5 block text-sm leading-4 font-semibold text-body">
+    <span className="mb-1.5 block text-[13px] leading-4 font-semibold text-body">
       {children}
     </span>
   );
@@ -597,15 +597,15 @@ export function FacultyLessonAuthoring({
   }
 
   return (
-    <div className="mt-4 min-w-0 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-3 sm:p-4 max-md:[&_button]:min-h-11">
+    <div className="mt-4 min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4 max-md:[&_button]:min-h-11">
       <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
         <div>
-          <p className="m-0 text-sm font-semibold text-foreground">
+          <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">
             {audience === "OFFERING"
               ? "Add shared learning item"
               : "Add to this Section"}
-          </p>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">
+          </h2>
+          <p className="mt-1 max-w-prose text-[13px] leading-5 text-muted-foreground">
             {audience === "OFFERING"
               ? "New items are DRAFT and shared across every Section Delivery in this Offering."
               : "New items are DRAFT and target only this exact Section delivery."}
@@ -617,6 +617,7 @@ export function FacultyLessonAuthoring({
             variant="ghost"
             onClick={close}
             disabled={submitting}
+            className="w-full sm:w-auto"
           >
             Close
           </Button>
@@ -624,11 +625,12 @@ export function FacultyLessonAuthoring({
       </div>
 
       {!mode ? (
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-3 grid min-w-0 grid-cols-2 gap-2 sm:flex sm:flex-wrap">
           {(!availableModes || availableModes.includes("RESOURCE")) ? (
           <Button
             size="md"
-            variant="secondary"
+            variant="primary"
+            className="w-full sm:w-auto"
             onClick={() =>
               setMode("RESOURCE")
             }
@@ -640,6 +642,7 @@ export function FacultyLessonAuthoring({
           <Button
             size="md"
             variant="secondary"
+            className="w-full sm:w-auto"
             onClick={() =>
               setMode("YOUTUBE")
             }
@@ -651,6 +654,7 @@ export function FacultyLessonAuthoring({
           <Button
             size="md"
             variant="secondary"
+            className="w-full sm:w-auto"
             onClick={() =>
               setMode("LIVE_CLASS")
             }
@@ -661,7 +665,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
             + Assignment · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
@@ -670,7 +674,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("QUIZ")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
             + Quiz · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
@@ -679,11 +683,13 @@ export function FacultyLessonAuthoring({
         </div>
       ) : (
         <form
-          className="mt-4"
+          className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4"
           onSubmit={submit}
         >
           <fieldset disabled={submitting}>
-            <div className="grid min-w-0 gap-3 lg:grid-cols-2">
+            {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
+            {success ? <Alert tone="success" className="mb-4">{success}</Alert> : null}
+            <div className="grid min-w-0 gap-4 md:grid-cols-2">
               <label className="block">
                 <FieldLabel>
                   Title
@@ -701,7 +707,7 @@ export function FacultyLessonAuthoring({
               </label>
 
               {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
-                <label className="block">
+                <label className="block min-w-0">
                   <FieldLabel>Points</FieldLabel>
                   <Input type="number" min={0} max={1000} value={contentPoints}
                     onChange={event=>setContentPoints(event.target.value)} required/>
@@ -771,7 +777,7 @@ export function FacultyLessonAuthoring({
             {mode === "RESOURCE" ||
             mode === "YOUTUBE" ||
             mode === "LIVE_CLASS" ? (
-              <label className="mt-4 block">
+              <label className="mt-4 block min-w-0">
                 <FieldLabel>
                   {mode === "YOUTUBE"
                     ? "YouTube URL"
@@ -804,7 +810,7 @@ export function FacultyLessonAuthoring({
               </label>:null}
             {mode === "LIVE_CLASS" ? (
               <div className="mt-4 space-y-2">
-                <div className="grid gap-4 lg:grid-cols-2">
+                <div className="grid min-w-0 gap-4 xl:grid-cols-2">
                   <FacultyIstQuarterHourPicker label="Starts" value={startsAt} onChange={setStartsAt}/>
                   <FacultyIstQuarterHourPicker label="Ends" value={endsAt} onChange={setEndsAt}/>
                 </div>
@@ -819,7 +825,7 @@ export function FacultyLessonAuthoring({
 
             {mode === "ASSIGNMENT" ||
             mode === "QUIZ" ? (
-              <label className="mt-4 block">
+              <label className="mt-4 block min-w-0">
                 <FieldLabel>
                   Due date (IST, required before publishing)
                 </FieldLabel>
@@ -835,7 +841,12 @@ export function FacultyLessonAuthoring({
               </label>
             ) : null}
 
-            <label className="mt-4 block">
+            <details key={mode} defaultOpen={mode === "RESOURCE" || Boolean(notes)}
+              className="mt-4 min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
+              <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                {mode === "ASSIGNMENT" || mode === "QUIZ" ? "Description (optional)" : "Notes (optional)"}
+              </summary>
+            <label className="block min-w-0 pt-2">
               <FieldLabel>
                 {mode === "ASSIGNMENT" ||
                 mode === "QUIZ"
@@ -857,9 +868,10 @@ export function FacultyLessonAuthoring({
                 }
               />
             </label>
+            </details>
 
             {mode === "QUIZ" ? (
-              <div className="mt-5 space-y-4">
+              <div className="mt-5 min-w-0 space-y-4">
                 {questions.map(
                   (
                     question,
@@ -867,7 +879,7 @@ export function FacultyLessonAuthoring({
                   ) => (
                     <section
                       key={question.id}
-                      className="rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4"
+                      className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] py-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
                         <p className="m-0 text-sm font-semibold text-foreground">
@@ -1013,7 +1025,7 @@ export function FacultyLessonAuthoring({
                               key={
                                 option.id
                               }
-                              className="grid gap-2 md:grid-cols-[auto_1fr_auto] md:items-center"
+                              className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2 md:grid-cols-[auto_minmax(0,1fr)_auto]"
                             >
                               {question.type === "SINGLE_CHOICE" ? <Radio
                                 aria-label={`Correct answer for option ${optionIndex + 1}`}
@@ -1035,7 +1047,7 @@ export function FacultyLessonAuthoring({
                                     },
                                   )
                                 }
-                                className="h-4 w-4 accent-[var(--lms-primary)]"
+                                className="h-5 w-5 accent-[var(--lms-primary)]"
                               /> : <Checkbox
                                 aria-label={`Correct answer for option ${optionIndex + 1}`}
                                 
@@ -1056,7 +1068,7 @@ export function FacultyLessonAuthoring({
                                     },
                                   )
                                 }
-                                className="h-4 w-4 accent-[var(--lms-primary)]"
+                                className="h-5 w-5 accent-[var(--lms-primary)]"
                               />}
                               <Input
                                 aria-label={`Option ${optionIndex + 1}`}
@@ -1078,6 +1090,7 @@ export function FacultyLessonAuthoring({
                                   )
                                 }
                                 maxLength={2000}
+                                className="min-w-0"
                                 placeholder={`Option ${optionIndex + 1}`}
                                 required
                               />
@@ -1088,6 +1101,7 @@ export function FacultyLessonAuthoring({
                                   type="button"
                                   size="md"
                                   variant="ghost"
+                                  className="col-span-2 w-full justify-self-end md:col-auto md:w-auto"
                                   onClick={() =>
                                     removeOption(
                                       question.id,
@@ -1136,19 +1150,16 @@ export function FacultyLessonAuthoring({
               </div>
             ) : null}
 
-            {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
-            {success ? <Alert tone="success" className="mt-4">{success}</Alert> : null}
-
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <Button type="submit">
+            <div className="mt-5 flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 sm:flex-row sm:items-center sm:justify-end">
+              <span className="order-2 text-xs leading-5 text-muted-foreground sm:order-1 sm:mr-auto">
+                Review the draft below, then
+                publish it when ready.
+              </span>
+              <Button type="submit" loading={submitting} className="order-1 w-full sm:order-2 sm:w-auto">
                 {submitting
                   ? "Creating…"
                   : "Create draft"}
               </Button>
-              <span className="text-xs text-muted-foreground">
-                Review the draft below, then
-                publish it when ready.
-              </span>
             </div>
           </fieldset>
         </form>
@@ -1161,7 +1172,7 @@ export function FacultyLessonAuthoring({
           are available.
         </p>
       ) : null}
-      <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
+      <ConfirmDialog open={discardConfirm} onOpenChange={value=>{if(!submitting)setDiscardConfirm(value);}}
         title="Discard this content draft?" confirmLabel="Discard draft"
         description="Any unsaved changes in this content form will be lost."
         onConfirm={discardDraft}>
