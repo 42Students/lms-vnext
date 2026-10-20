@@ -8,7 +8,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 
 ### Mentor pages (32 page.tsx; 86 total TSX)
 
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
 - [x] `src/app/(authenticated)/mentor/allQuizzes/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
 - [ ] `src/app/(authenticated)/mentor/calendar/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
@@ -18,7 +18,7 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/app/(authenticated)/mentor/notifications/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/page.tsx` (greps: complete-page raw/hex/hand-tab/overlay source scan => 0; values: 12 legacy/shared rows match; responsive: 44px phone, 36px tablet+, details below)
 - [x] `src/app/(authenticated)/mentor/profile/page.tsx` (redirect-only; source scan: 0 JSX/HTML, 0 controls, 0 visual properties; 0 applicable pixel values; viewport-independent redirect; evidence below)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/page.tsx` (greps: full-source raw controls, hex, manual modal and tabs=0; values: 19-row table and conditional states below; responsive: 320/767/768px metadata, links and history)
@@ -26,10 +26,10 @@ Inventory source: GitHub recursive tree for `main`, listing TSX paths. This is *
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx` (greps: full-file JSX/hex/manual-dialog/manual-tabs=0; native checkbox exemption on closeout control; values: 18 matched properties + state table; responsive: 320/767px fluid, >=768px md, see audit below)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx` (greps: complete-file source regex raw/hex/hand-dialog/hand-tabs=0; values: 15 rows matched in shared/legacy table below; responsive: <=767px touch and wrap, >=768px standard; no runtime claims)
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx` (greps: whole TSX raw/hex/native confirm/hand-overlay/hand-tab all 0; values: 28 shared + 7 page-specific rows; responsive: 320/767 phone and 768/992 tablet-grid source proof below)
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` (greps: complete-file raw/hex/dialog/hand-tabs=0; values: 18 legacy/source states matched, hairline rows and scoped chip breakpoint; responsive 320/767/768px proof below)
 - [ ] `src/app/(authenticated)/mentor/projects/page.tsx` (missing: value table, remaining judgement-case grep, phone/tablet proof)
@@ -586,3 +586,144 @@ scripts/codemods/chat8-project-control-font-size.cjs was committed and applied t
 ## Next unticked learner workspace component (source fix, no tick)
 
 - `src/components/projects/learner-project-goals.tsx`: added `min-w-0 max-w-full` to its existing border-bottom section, `break-words` to the section title and the two unbounded definition/persona lists. Complete 36-line source scan after the change gives 0 raw form controls, 0 literal hex, 0 hand-built dialogs/overlays, and 6 `break-words` safeguards. The inherited list and type styles (heading font breakpoint, relative text and list indentation) still require exact computed-value matching to the old LMS, so the Work queue entry **remains unticked**. This preserves all existing goal, definition-of-done, deliverable and persona content, including both empty variants. Required later: compare old h2/h3 list typography and actual 320/768px overflow behavior without modifying any shared UI component.
+
+## Verified chat-8 source parity tranche: 5 complete Mentor pages
+This tranche uses full-file GitHub source reads and the measured old-LMS shell/SCSS references. Values below are **source comparisons**, not executed browser pixels. Final side-by-side screenshot acceptance is the separate orchestrator section J; no CI or runtime tasks were run.
+
+### Common 28-property page-surface reference table (applies to all five)
+
+| Property/state | Legacy exact source/value | vNext source/value | Result |
+|---|---|---|---|
+| Canvas backing | shell-spec.md:18-20 — #f1f4f9 shell | authenticated page inherits global shell #f1f4f9 | source match |
+| Canvas surface | shell-spec.md:18-20 — single #ffffff, 1px solid #e5e9f0, radius12, pad24, no shadow | globals.css:339,364-370 PageCanvas; page root transparent min-w-0 (no added painted card) | source match |
+| Heading desktop | shell-spec.md:26-27 — 30px/600/#172033 | ui/page-header.tsx:27-35 30px/600 and --lms-heading #172033 | source match |
+| Heading phone | listing-page-header.scss:130-143 — 20px stacked through 767px | ui/page-header.tsx:28-35 flex column/20px until md768 | source match |
+| Heading subtitle | old-lms-pages.md:7 — compact muted inline desktop | ui/page-header.tsx:23,30,39-45 text13 muted, md baseline | source match |
+| Heading bottom hairline | listing-page-header.scss:26-35 — 1px neutral200, bottom16 | ui/page-header.tsx:28 border-b canvas #e5e9f0, pb-4 | source match |
+| Secondary action face | shell-spec.md:24 — white background, 1px #e5e9f0 border, radius9 | PageHeader Link data-unskin, bg-white border-border rounded --lms-control-radius=9 | source match |
+| Secondary action typography | shell-spec.md:23-24 — 14px/650, neutral | PageHeader Link text-sm font-[650] text-[var(--lms-body-text)] | source match |
+| Secondary hover | listing-page-header.scss:120-127 — teal ink/border and teal 5% fill | Link hover text/border --lms-primary and rgba(38,186,199,.05) fill | source match |
+| Secondary focus | accessibility.scss:18-23 — teal 2px visible outline | Link explicit focus-visible:outline-2 offset-2 primary | source match |
+| Secondary hit area | variables.scss:138-149 — 44px through 767; shell-spec.md:24 36 desktop | min-h-11 md:min-h-9; bordered py-2 also md:py-0 | source match |
+| Filter label font | form.scss:110-115 — 13px/600/16px #a9a7ae | grid/gap label text-[13px] font-semibold leading-4 text neutral400 | source match |
+| Filter field surface | form.scss:117-128 — #fbfcfd background, radius10 | shared Input/Select via globals.css:344,866; conflicting bg-surface/control-radius removed | source match |
+| Filter field ink | form.scss:117-128 — 14px/400/20px #0a0517 letter-space .2px | ui/input.tsx:23-31 and ui/select.tsx:23-30 use same tokens | source match |
+| Filter field focus | form.scss:130-143 — teal ring/shadow 2px at 15% | shared Input/Select focus border --lms-primary and shadow --lms-control-shadow | source match |
+| Field disabled/invalid | form.scss:132-143 — muted disabled and error 20% ring | shared Input/Select aria-invalid and disabled styles delegated; no local raw text control | source match |
+| Primary filter action | shell-spec.md:22-24 — teal #0a7c88 white text, 36px, 9px,14px/650 | shared Button variant primary; local min-h-11 md:min-h-9 preserves phone touch | source match |
+| Primary hover/loading | shell-spec.md:23 and globals.css:25 — #086873 hover, spinner while pending | shared Button.tsx:10-29; no bespoke loading or manual mutation in GET form | source match |
+| Body ink | variables.scss:24-27 — neutral700 #54505d body14 | text-sm text-body / global --lms-body-text | source match |
+| Muted ink | variables.scss:27 — neutral500 #6b7280 | text-xs text-muted-foreground and PageHeader subtitle | source match |
+| Row separators | common.scss:700-713 — 1px #e5e9f0 hairline | border-y/divide-y [var(--lms-canvas-border)] on list | source match |
+| Row padding | common.scss:720-726 — 12px above/below | row py-[var(--lms-space-3)] where --lms-space-3 =12px | source match |
+| Empty and error | old-lms-pages.md:6,11-12 — inline status and truthful absence | invalid query role=alert; disabled role=status; shared EmptyState for zero matches | source match |
+| Pagination geometry | old-lms-pages.md:10 — compact 36px / phone 44px controls | shared ui/pagination.tsx:44-84, previous/next phone, numeric links md | source match |
+| Phone width | listing-page-header.scss:130-159 — min44 controls, wrapping and no horizontal spill | page min-w-0 max-w-full, filter labels wrap, controls <=767 min44 | source match |
+| Tablet alignment | variables.scss:148-156 — 768 starts tablet, 992 desktop grid | md: breakpoint moves 44->36 and columns as per page-specific table | source match |
+| No hand-coded overlay | old-lms-pages.md:12 — shared dialogs only | no raw dialog/confirm/overlay in the whole page | source match |
+| Reduced motion | legacy accessibility reference focus + shared motion | shared Button/Input/Select reduced-motion and PageHeader focus inherited | source match |
+
+### Mentor portfolio activity — src/app/(authenticated)/mentor/activity/page.tsx
+
+Complete branch-head file read: 130 lines; pattern counts {"rawButton":0,"rawInput":0,"rawSelect":0,"rawTextarea":0,"hex":0,"nativeConfirm":0,"manualOverlay":0,"manualTabs":0,"PageHeader":2,"Input":1,"Select":8,"Button":1,"EmptyState":1,"Pagination":1,"Tabs":0}.
+
+| Property/state | Legacy exact source/value | vNext source/value | Result |
+|---|---|---|---|
+| Form columns | Legacy variables.scss:148-156 — 1 phone, 2 tablet, 4 wide desktop | 1 through 767; md:!grid-cols-2 at 768; xl:!grid-cols-4 at 1280; filter layout string with canvas overrides | source match |
+| Filter labels | form.scss:110-115 — muted 13/600/16 | 9 labels with text-[13px] leading-4 neutral400 | source match |
+| Source controls | form.scss:117-143 — shared 14px fields | 1 Input + 8 Select; all min-h-11 md:min-h-9 | source match |
+| Export control | shell-spec.md:24 secondary 14/650 white | download Link data-unskin + md:py-0; export cap 200, warning inline when >200 | source match |
+| Row cards | common.scss:700-726 — 1px borders and 12px rows | single ol border-y/divide-y; event li py-space-3; status label and IST time wrap | source match |
+| State branches | old-lms-pages.md:6-12 — invalid/disabled/empty/rows | invalid filter alert and clear; disabled inline status; enabled EmptyState or persisted row list | source match |
+| Privacy and paging | old-lms-pages.md:10-11 — paged stored data only | Page-specific mentorPortfolioHref, shared Pagination; no fabricated history | source match |
+
+Phone 320px/767px: shared page header stacks at 20px, painted action links and all GET submit/visible form fields stay at least 44px, row text wraps. At 768px: header is 30px inline and controls are 36px; page-specific metric/definition grids use the documented 768/992px boundaries. Source-specific empty, invalid, disabled and populated states are enumerated above. The service calls, query schema, hrefs and role guards are unchanged.
+
+Repro for complete source grep (expected 0 matches; the evidence count is from the full-file GitHub string scan, not a local command):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/activity/page.tsx'
+
+
+### Mentor assigned project activity history — src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx
+
+Complete branch-head file read: 135 lines; pattern counts {"rawButton":0,"rawInput":0,"rawSelect":0,"rawTextarea":0,"hex":0,"nativeConfirm":0,"manualOverlay":0,"manualTabs":0,"PageHeader":2,"Input":0,"Select":5,"Button":1,"EmptyState":1,"Pagination":1,"Tabs":0}.
+
+| Property/state | Legacy exact source/value | vNext source/value | Result |
+|---|---|---|---|
+| Mobile form | listing-page-header.scss:130-159 — no separate card; controls stack through 767 | mentorProjectActivityMobileFilters plus !rounded-none !border-0 !bg-transparent !p-0; max-[767px] label width100% | source match |
+| Filter controls | form.scss:117-143 — shared native select skin | 5 Select options, min-h-11 md:min-h-9, inherited 10px and #fbfcfd | source match |
+| Export button | shell-spec.md:22-24 outlined white 14/650 | download Link data-unskin, bg-white/md:min-h-9/md:py-0 hover teal | source match |
+| Row paint | common.scss:700-726 1px #e5e9f0, padding top/bottom12 | ol border-y/divide-y canvas border; li min-w-0 break-words py-space-3 | source match |
+| Dates | variables.scss:27 captions #6b7280 | time element en-IN/Asia/Kolkata, text-xs muted, same optional records | source match |
+| Disabled/empty/invalid | old-lms-pages.md:6,11-12 inline message | invalid selector alert; module disabled status; no event EmptyState; persisted event list | source match |
+| Pagination | old-lms-pages.md:10 listing page pagination | shared Pagination and mentorProjectActivityHref preserve current filter | source match |
+
+Phone 320px/767px: shared page header stacks at 20px, painted action links and all GET submit/visible form fields stay at least 44px, row text wraps. At 768px: header is 30px inline and controls are 36px; page-specific metric/definition grids use the documented 768/992px boundaries. Source-specific empty, invalid, disabled and populated states are enumerated above. The service calls, query schema, hrefs and role guards are unchanged.
+
+Repro for complete source grep (expected 0 matches; the evidence count is from the full-file GitHub string scan, not a local command):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx'
+
+
+### Mentor recorded delivery review overview — src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx
+
+Complete branch-head file read: 113 lines; pattern counts {"rawButton":0,"rawInput":0,"rawSelect":0,"rawTextarea":0,"hex":0,"nativeConfirm":0,"manualOverlay":0,"manualTabs":0,"PageHeader":2,"Input":1,"Select":2,"Button":1,"EmptyState":1,"Pagination":1,"Tabs":0}.
+
+| Property/state | Legacy exact source/value | vNext source/value | Result |
+|---|---|---|---|
+| Filter layout | listing-page-header.scss:130-159 one column phone | flex-wrap form, mobile label width100 via max-[767px] utility, neutral border-b | source match |
+| Field controls | form.scss:117-143 #fbfcfd radius10 14/400 | 2 shared Select, one numeric Input; all min44 phone /36 md | source match |
+| Export secondary | shell-spec.md:24 white secondary/36 desktop | download Link data-unskin, font650/14 bg-white and teal tint hover | source match |
+| Coverage strip | old-lms-pages.md:6 inline compact metadata | one border-b inline counts section; written feedback count reflects current page | source match |
+| History rows | common.scss:700-726 1px/12px | single ol border-y/divide-y; li py-space-3 | source match |
+| Missing states | old-lms-pages.md:6,12 truthful empty and missing timestamps | invalid query clear, EmptyState, missing submitted/reviewed captions retained | source match |
+| Links | accessibility.scss:18-23 focus and URL navigation | authorized per-version Link remains true href, shared Pagination; no write control | source match |
+
+Phone 320px/767px: shared page header stacks at 20px, painted action links and all GET submit/visible form fields stay at least 44px, row text wraps. At 768px: header is 30px inline and controls are 36px; page-specific metric/definition grids use the documented 768/992px boundaries. Source-specific empty, invalid, disabled and populated states are enumerated above. The service calls, query schema, hrefs and role guards are unchanged.
+
+Repro for complete source grep (expected 0 matches; the evidence count is from the full-file GitHub string scan, not a local command):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx'
+
+
+### Mentor persisted risk and readiness — src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx
+
+Complete branch-head file read: 110 lines; pattern counts {"rawButton":0,"rawInput":0,"rawSelect":0,"rawTextarea":0,"hex":0,"nativeConfirm":0,"manualOverlay":0,"manualTabs":0,"PageHeader":2,"Input":0,"Select":2,"Button":1,"EmptyState":1,"Pagination":1,"Tabs":0}.
+
+| Property/state | Legacy exact source/value | vNext source/value | Result |
+|---|---|---|---|
+| Status tiles | old-lms-shell-spec.md:18-20 genuinely separate objects radius12 border #e5e9f0 | five named persisted tiles, rounded-xl border-border bg-surface p-4 | source match |
+| Tile grid breakpoint | variables.scss:148-156 767 mobile/991 tablet | 1 col through767, 2 from768, 4 from992 (min-[992px]) | source match |
+| Risk filter labels | form.scss:110-115 13/600/#a9a7ae | 2 Select labels with exact muted text; controls min-h-11 md:min-h-9 | source match |
+| Phone filters | listing-page-header.scss:130-159 100% label on phone | GET form flex-wrap, max-[767px]:[&_label]:w-full | source match |
+| Evidence list | common.scss:700-726 1px separator/12px rows | ol border-y/divide-y; li py-space-3, content break-words | source match |
+| Selected and missing | old-lms-pages.md:6-12 persisted or useful empty message | focus and priority query, invalid alert, module disabled status, empty evidence EmptyState | source match |
+| Read-only path | old-lms-pages.md:10 genuine navigation | safe project href per evidence row, shared Pagination, no invented metrics | source match |
+
+Phone 320px/767px: shared page header stacks at 20px, painted action links and all GET submit/visible form fields stay at least 44px, row text wraps. At 768px: header is 30px inline and controls are 36px; page-specific metric/definition grids use the documented 768/992px boundaries. Source-specific empty, invalid, disabled and populated states are enumerated above. The service calls, query schema, hrefs and role guards are unchanged.
+
+Repro for complete source grep (expected 0 matches; the evidence count is from the full-file GitHub string scan, not a local command):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx'
+
+
+### Mentor membership history and views — src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx
+
+Complete branch-head file read: 114 lines; pattern counts {"rawButton":0,"rawInput":0,"rawSelect":0,"rawTextarea":0,"hex":0,"nativeConfirm":0,"manualOverlay":0,"manualTabs":0,"PageHeader":2,"Input":1,"Select":3,"Button":1,"EmptyState":1,"Pagination":1,"Tabs":1}.
+
+| Property/state | Legacy exact source/value | vNext source/value | Result |
+|---|---|---|---|
+| Form labels | form.scss:110-115 13/600/16 muted | 3 Select labels muted neutral400; fields default 10px; hidden Input exemption via shared Input | source match |
+| Filter phone flow | listing-page-header.scss:130-159 full-width labels | flex-wrap GET form and max-[767px] label width100% | source match |
+| View tabs | old-lms-pages.md:9 teal underline tabs | shared Tabs with hrefs for All/Open/Ended, no manual aria tab markup | source match |
+| History separators | common.scss:700-726 1px #e5e9f0 / 12px row padding | div border-y/divide-y; article py-space-3 | source match |
+| Joining dates | variables.scss:27 muted caption and 991px tablet boundary | definition list 1col phone, md:grid-cols-2 tablet; en-IN/Asia-Kolkata; missing end date caption | source match |
+| Missing/access states | old-lms-pages.md:6,11-12 truthful inline empty | invalid query alert, disabled status, EmptyState, persisted joined/ended rows | source match |
+| Navigation | old-lms-pages.md:9-10 tabs and pagination | shared Tabs and Pagination, no changes to role or membership permissions | source match |
+
+Phone 320px/767px: shared page header stacks at 20px, painted action links and all GET submit/visible form fields stay at least 44px, row text wraps. At 768px: header is 30px inline and controls are 36px; page-specific metric/definition grids use the documented 768/992px boundaries. Source-specific empty, invalid, disabled and populated states are enumerated above. The service calls, query schema, hrefs and role guards are unchanged.
+
+Repro for complete source grep (expected 0 matches; the evidence count is from the full-file GitHub string scan, not a local command):
+
+    rg -n '<(button|input|select|textarea)\b|#[0-9a-fA-F]{3,8}\b|window\.confirm|fixed inset-0|role="dialog"|role="tab"|aria-pressed' 'src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx'
+
