@@ -50,7 +50,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
    </label>)}
   </div>
   <Button type="button" disabled={busy||(!dirty&&currentVersion!==null)} onClick={()=>void save()}
-   className="min-h-11 min-[768px]:min-h-9">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
+   className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">{busy?"Saving…":currentVersion===null&&!dirty?"Save default preferences":"Save preferences"}</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
  </section>;
