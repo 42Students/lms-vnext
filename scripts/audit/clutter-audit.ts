@@ -142,19 +142,35 @@ async function measure(page: import("@playwright/test").Page):Promise<Measuremen
     const emptySections=sections.filter(el=>!(el.textContent||"").trim()&&!el.querySelector("button,input,a,img,svg")).length;
     if(emptySections)note(emptySections+" empty sections",emptySections*3);
     const head=main.querySelector('[data-slot=page-header]')||main.querySelector("h1")?.parentElement;
-    const direct=[...main.children].filter(vis);
-    const alignElements=[head,...direct.filter(el=>el.matches("section,article,form,[data-slot=card],[data-slot=tabs]")),
-      ...elements.filter(el=>el.matches("table,form"))].filter((el):el is Element=>!!el);
+    const relevant=elements.filter(el=>el.matches("section,article,form,table,[data-slot=card],[data-slot=tabs]"));
+    const alignElements=[head,...relevant].filter((el):el is Element=>!!el);
     const leftEdges=alignElements.map(el=>({name:label(el),x:Math.round(bounds(el).left)}));
-    const baseline=leftEdges[0]?.x??Math.round(bounds(main).left);
-    const alignmentPx=Math.max(0,...leftEdges.map(x=>Math.abs(x.x-baseline)));
-    if(alignmentPx>2)note("Section and form left edges vary by "+alignmentPx+"px",Math.min(25,Math.ceil(alignmentPx/2)));
-    let unevenGutters=0,unevenGaps=0;
-    const groups=new Map<number,Element[]>();
-    for(const el of direct.filter(el=>el.matches("section,article,[data-slot=card]"))){
-      const y=Math.round(bounds(el).top/4);groups.set(y,[...(groups.get(y)||[]),el]);
+    // Compare vertical siblings only; nested sections or side-by-side cards need not share x.
+    let alignmentPx=0;
+    const siblings=new Map<Element,Element[]>();
+    for(const el of relevant){
+      const parent=el.parentElement;
+      if(parent)siblings.set(parent,[...(siblings.get(parent)||[]),el]);
     }
-    for(const els of groups.values()){
+    for(const els of siblings.values()){
+      const vertical=els.filter(el=>els.some(other=>other!==el&&
+        Math.abs(bounds(other).top-bounds(el).top)>2&&
+        (bounds(other).top>=bounds(el).bottom-2||bounds(el).top>=bounds(other).bottom-2)));
+      if(vertical.length>1){
+        const xs=vertical.map(el=>bounds(el).left);
+        alignmentPx=Math.max(alignmentPx,Math.round(Math.max(...xs)-Math.min(...xs)));
+      }
+    }
+    if(alignmentPx>2)note("Vertically stacked sibling sections start "+alignmentPx+"px apart",Math.min(25,Math.ceil(alignmentPx/2)));
+    let unevenGutters=0,unevenGaps=0;
+    const cardRows=new Map<string,Element[]>();
+    for(const el of cards){
+      const parent=el.parentElement;
+      if(!parent)continue;
+      const key=label(parent)+"@"+Math.round(bounds(parent).left)+"|"+Math.round(bounds(el).top/4);
+      cardRows.set(key,[...(cardRows.get(key)||[]),el]);
+    }
+    for(const els of cardRows.values()){
       if(els.length<2)continue;
       els.sort((a,b)=>bounds(a).left-bounds(b).left);
       const pads=els.map(el=>parseFloat(getComputedStyle(el).paddingLeft));
