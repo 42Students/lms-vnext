@@ -5,7 +5,6 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-type Status="ACTIVE"|"SUSPENDED"|"ENDED";
 export function ScopedMembershipLifecycleActions({membershipId,displayName,status}:{
  membershipId:string;displayName:string;status:string;
 }) {
@@ -33,30 +32,33 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update membership");}
   finally{setBusy(false);}
  }
- return <div className="space-y-2 print:hidden">
+ return <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
   {status==="ACTIVE"?<>
-   <Button variant="secondary" type="button" onClick={()=>setOpen(current=>!current)} disabled={busy}
-    className="min-h-11 md:min-h-9">Suspend</Button>
-   {open?<div className="space-y-2">
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason for suspension
+   <Button variant="secondary" type="button" onClick={()=>{setError(null);setNotice(null);setOpen(current=>!current);}} disabled={busy}
+    className="min-h-11 w-full sm:w-auto md:min-h-9" aria-expanded={open}>Suspend</Button>
+   {open?<div role="region" aria-label="Suspend membership" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
+    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason for suspension
      <Textarea value={reason} maxLength={1000} rows={2}
       onChange={event=>setReason(event.target.value)}
-      className="min-h-11 w-full md:min-h-9"/>
+      className="min-h-24 w-full"/>
     </label>
     <p className="text-xs text-muted-foreground">Suspends only this college membership. Other college access is unaffected.</p>
     <Button variant="danger" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirming("SUSPEND")}
-     className="min-h-11 md:min-h-9">Confirm suspension</Button>
+     className="min-h-11 w-full sm:w-auto md:min-h-9">Confirm suspension</Button>
    </div>:null}
-  </>:status==="SUSPENDED"?<Button variant="secondary" type="button" disabled={busy} onClick={()=>setConfirming("REACTIVATE")}
-   className="min-h-11 md:min-h-9">Reactivate</Button>:
+  </>:status==="SUSPENDED"?<Button variant="secondary" type="button" disabled={busy}
+   className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>{setError(null);setNotice(null);setConfirming("REACTIVATE");}}>Reactivate</Button>:
     <p className="text-xs text-muted-foreground">Ended membership · read only</p>}
   <ConfirmDialog open={confirming!==null} onOpenChange={value=>{if(!value&&!busy)setConfirming(null);}}
    title={confirming==="SUSPEND"?"Suspend college membership?":"Reactivate college membership?"}
    description={(confirming==="SUSPEND"?"Suspend ":"Reactivate ")+displayName+" in this college?"}
    confirmLabel={confirming==="SUSPEND"?"Suspend membership":"Reactivate membership"}
    confirmVariant={confirming==="SUSPEND"?"danger":"primary"} pending={busy}
-   onConfirm={()=>{if(confirming)void change(confirming);}}/>
+   confirmDisabled={confirming==="SUSPEND"&&reason.trim().length<3}
+   onConfirm={()=>{if(confirming)void change(confirming);}}>
+    {error?<p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{error}</p>:null}
+   </ConfirmDialog>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+  {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
  </div>;
 }

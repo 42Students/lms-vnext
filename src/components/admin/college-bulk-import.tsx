@@ -45,33 +45,34 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    showToast({title:"Bulk Import failed",tone:"error"});}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <section aria-busy={busy} className="space-y-3 border-t border-border pt-4">
-  <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy}
-   aria-expanded={open} aria-controls={open?"admin-college-bulk-import-panel":undefined}
+ return <section aria-busy={busy} className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)]">
+  <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy}
+   aria-expanded={open} aria-controls="admin-college-bulk-import-panel"
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
-  {open?<div id="admin-college-bulk-import-panel" className="space-y-3">
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
-    <Select className="min-h-11 md:min-h-9" value={organizationId} disabled={busy}
+  {open?<div id="admin-college-bulk-import-panel" role="region" aria-label="Bulk Import" className="min-w-0 space-y-[var(--lms-space-3)]">
+   <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
+    <Select className="min-h-11 w-full md:min-h-9" value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">CSV (name, code, city, state, country)
+   <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
-     className="min-h-11 font-mono" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
+     className="min-h-32 w-full min-w-0 font-mono text-sm leading-6" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
      placeholder="name,code,city,state,country"/>
    </label>
    <p id="admin-college-bulk-format" className="text-sm text-muted-foreground print:hidden">Header optional. Up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
    {valid>0?<Alert tone="info">{valid} colleges ready</Alert>:null}
+   {!organizations.length?<Alert tone="warning">Choose an organization before importing colleges.</Alert>:null}
    {(error||validation)?<Alert tone="error">{error||validation}</Alert>:null}
-   <div className="flex flex-wrap gap-2 print:hidden">
-    <Button type="button" className="min-h-11 md:min-h-9" loading={busy} disabled={busy||!valid} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
+   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] print:hidden sm:flex-row sm:flex-wrap">
+    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={busy} disabled={busy||!valid||!organizationId||Boolean(validation)} onClick={()=>{confirmedVersionRef.current=versionRef.current;setConfirmImport(true);}}
      >
      {busy?"Importing…":"Import colleges"}</Button>
-    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9 print:hidden" disabled={busy}
+    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy}
      onClick={()=>csv?setConfirmDiscard(true):discard()}>Discard draft</Button>
    </div>
-   {results.length>0?<div role="region" aria-label="College import results" className="min-w-0 space-y-2"><h3 className="font-semibold text-foreground">Import results</h3>
+   {results.length>0?<div role="region" aria-label="College import results" aria-live="polite" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)]"><h3 className="font-semibold text-foreground">Import results</h3>
     <DataTable caption="College bulk import results" rows={results} getRowKey={row=>String(row.line)}
      empty={<EmptyState title="No import results" description="No import results have been recorded."/>}
      columns={[

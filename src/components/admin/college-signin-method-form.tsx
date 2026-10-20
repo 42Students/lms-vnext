@@ -52,23 +52,25 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
     }
   });
  }
- return <section aria-label="College sign-in methods" className="min-w-0 space-y-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-5)]">
-  <h2 className="font-semibold text-foreground">Sign-in method</h2>
+ return <section aria-label="College sign-in methods" className="min-w-0 space-y-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+  <h2 className="text-base font-semibold text-[var(--lms-heading)]">Sign-in method</h2>
+  {!ready?<Alert tone="warning">Sign-in method storage is unavailable; changes are disabled.</Alert>:null}
   <fieldset disabled={!ready||saving} className="grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] print:hidden">
    <legend className="sr-only">Sign-in method</legend>
-   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 items-center gap-3 px-3 py-3 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[-2px] focus-within:outline-[var(--lms-primary-text)] "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"bg-primary-subtle":!ready||saving?"bg-surface":"bg-surface hover:bg-primary-subtle")}>
+   {choices.map(choice=><label key={choice.value} className={"flex min-h-14 min-w-0 items-center gap-[var(--lms-space-3)] px-[var(--lms-space-3)] py-[var(--lms-space-3)] transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[-2px] focus-within:outline-[var(--lms-primary-text)] "+(!ready||saving?"cursor-not-allowed opacity-60 ":"cursor-pointer ")+(selection===choice.value?"bg-primary-subtle":!ready||saving?"bg-surface":"bg-surface hover:bg-primary-subtle")}>
     <Radio className="size-5" name="signin-method" value={choice.value}
      checked={selection===choice.value} onChange={()=>setSelection(choice.value)}/>
     <span className="min-w-0"><strong className="block break-words text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}
   </fieldset>
-  <p className="hidden text-sm print:block">Saved sign-in method: {choices.find(choice=>choice.value===savedMethod)?.label??savedMethod}</p>
-  <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>setConfirmOpen(true)}
+  <p className="text-xs leading-5 text-muted-foreground">Saved sign-in method: {choices.find(choice=>choice.value===savedMethod)?.label??savedMethod}</p>
+  <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>{setMessage("");setConfirmOpen(true);}}
    className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" loading={saving}>
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} onConfirm={()=>void save()}/>
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} confirmDisabled={!ready||selection===savedMethod} onConfirm={()=>void save()}>
+    {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
+  </ConfirmDialog>
   {message?<Alert tone={messageTone}>{message}</Alert>:null}
-  {!ready?<Alert tone="warning">Sign-in method storage is unavailable; changes are disabled.</Alert>:null}
  </section>;
 }
