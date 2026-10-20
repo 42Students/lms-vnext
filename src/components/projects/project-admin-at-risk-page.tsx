@@ -57,10 +57,6 @@ export async function ProjectAdminAtRiskPage({
 
   return (
     <div className="space-y-6">
-      <ProjectAdminNav
-        basePath={basePath}
-        active="at-risk"
-      />
       <PageHeader
         title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
@@ -74,6 +70,7 @@ export async function ProjectAdminAtRiskPage({
           }))}/>
         }
       />
+      <ProjectAdminNav basePath={basePath} active="at-risk" />
       {!result.blockerSignalSupported ? (
         <Banner tone="warning">
           Workspace blocker data is unavailable. Task blockers are still counted.

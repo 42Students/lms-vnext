@@ -1,5 +1,6 @@
 "use client";
 import {FilterChip} from "@/components/ui/filter-chip";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
@@ -37,6 +38,6 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
   {!ready?<p role="status" className="text-xs text-muted-foreground">
    Follow and mute controls are unavailable until team preferences are ready.
   </p>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

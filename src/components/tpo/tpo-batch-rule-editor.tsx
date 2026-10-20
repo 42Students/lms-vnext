@@ -1,5 +1,7 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {Banner} from "@/components/ui/banner";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import {useEffect,useState} from "react";
@@ -127,9 +129,9 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     onClick={()=>void save({})} >
     Follow the college rules</Button>:null}
   </div>
-  {changed?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-xs text-warning-text">Unsaved batch-rule changes. Review before leaving.</p>:null}
-  {error?<p role="alert" className="text-sm text-error">Batch rules were not saved. {error}</p>:null}
-  {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
+  {changed?<Banner tone="warning">Unsaved batch-rule changes. Review before leaving.</Banner>:null}
+  {error?<InlineNotice tone="error" message={"Batch rules were not saved. "+error}/>:null}
+  {notice?<InlineNotice tone="success" message={notice}/>:null}
   <ConfirmDialog open={pendingHref!==null} onOpenChange={open=>{if(!open)setPendingHref(null);}}
     title="Discard your unsaved batch-rule changes?"
     description="Unsaved batch-rule changes. Review before leaving."

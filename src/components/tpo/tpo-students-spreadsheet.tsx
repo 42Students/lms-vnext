@@ -199,6 +199,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
    <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><Checkbox 
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
+     indeterminate={rows.some(r=>noteSelection.includes(r.membershipId))&&
+      !rows.every(r=>noteSelection.includes(r.membershipId))}
      onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</label>
    <div className="my-3 grid max-h-44 min-w-0 grid-cols-1 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 xl:grid-cols-3">
     {rows.map(row=><label className="flex min-h-11 min-w-0 items-center gap-2 break-words text-sm" key={row.membershipId}>

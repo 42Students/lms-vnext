@@ -720,3 +720,55 @@ Complete remote files were read after edits. The following are **source-backed c
 Full HR detail source after write: `<MetricBar` **2** (hiring pipeline and focused review), native `<progress` **0**, `<Link>` **27 opening / 27 closing**, native button/input/select/textarea **0**, duplicate-quote-before-className **0**; `funnelStyles` classes `stage,label,count,track,note,reviewTrack` all resolve. Static scoped checks only; no compilation/browser/app execution.
 
 **Next untouched E7 file:** `src/components/courses/faculty-lesson-video-manager.tsx` (shared upload progress visual) or `src/components/courses/assignment-file-submission-control.tsx`; both already use `MetricBar`, so only change after original upload-specific styles have been found and compared; avoid made-up exact values. E7 category remains **[ ]**.
+
+## 2026-10-20 replacement chat-2 — exact legacy learner snapshot and assessment counter repairs
+
+**Source changes:** `src/components/placements/learner-placement-metrics.module.css`, `learner-placements-dashboard.tsx`, `learner-placement-snapshot-glyph.tsx`; `src/components/courses/learner-assessment-metrics.module.css`, `learner-assessment-overview.tsx`, `learner-assessment-metric-glyph.tsx`. Only local E7 visual CSS and decorative pictograms changed; business metrics, routes, captions, filters and behaviors remain vNext. **Status: individual source comparison, not E7 category certification**.
+
+### Learner placement snapshot: focused-dashboard legacy reference corrected
+
+Earlier audit compared to the original `learn-placements-stat-card` (the *older* stat variant), but `lms2-fe@prod-2026/src/pages/learn/my-placements/index.js:824-853` actually renders `placements-focus-stat`. Matching the *rendered* selector at `src/styles/components/_learn-placements.scss:1909-2002,2472-2513` resolves the previous 12px radius/no-icon mismatch.
+
+| Property/state | Legacy source and value | vNext caller/CSS value | Source status |
+| --- | --- | --- | --- |
+| Desktop grid | `_learn-placements.scss:1910-1914`: 4 equal columns, gap 12px | `learner-placement-metrics.module.css .snapshot`: 4 equal, gap12 | Match |
+| Phone <=767px grid | `:2472-2476`: 2 equal, gap8px | `@media(max-width:767px) .snapshot` 2 equal gap8 | Match |
+| Tile | `:1917-1924`: white, 1px #e5e9f0, radius14, padding16 | `.tile` same | Match |
+| Hover | `:1925-1934`: 150ms cubic-bezier(.2,0,0,1), translateY(-1), rgba(14,124,135,.35), two-layer shadow | `.tile`, `.link:hover .tile` same | Match |
+| Keyboard focus | `:1936-1939`: 2px #0e7c87 offset2 | `.link:focus-visible .tile` same | Match |
+| Icon tile | `:1946-1957`: 34x34, radius10, teal-deep #0e7c87, rgba(38,186,199,.1), 17px glyph, mb12 | `.icon` same; four decorative SVG silhouettes (glyph path shape remains Ant-vs-SVG approximation) | Geometry/paint match; **glyph shape not exact** |
+| Count | `:1965-1969`: 24px/600/1.1/#1a1d21 | `.tile > p:nth-child(2)` same | Match |
+| Caption | `:1972-1977`: margin-top4, 14px/500/1.4/#54505d | `.tile > p:first-child` same | Match |
+| Helper | `:1980-1989`: flex gap4, top4, minheight15, 12px/1.4/#54505d | `.detail` same, original vNext arrow and text preserved | Match |
+| Phone tile | `:2478-2513`: grid icon/value then label/helper, pad12, icon28, count20, caption13 | Local media grid/icon/value/caption same | Match |
+| Loading / failed text | Original local data-fetch skeleton and errors in `my-placements/index.js:828-849` | vNext partial-data read renders em-dash and explanatory helper; existing server-projected data contract retained | **Content-model exception**, not pixel-matched skeleton |
+| Reduced motion | Legacy optional motion suppression elsewhere in file | Local `prefers-reduced-motion:reduce` removes tile transition and hover transform | Match safe behavior |
+
+**File-scope grep proof (complete fetched source, after write):** `grep -o '<StatTile' src/components/placements/learner-placements-dashboard.tsx | wc -l` ⇒ 1 component template for four data slots; `grep -o '<PlacementSnapshotGlyph'` ⇒ 1; four `kind` props (`jobs,applications,assessments,interviews`); native control opening tags ⇒ 0. CSS references `snapshot,tile,icon,detail,link` all exist; SVG paths are local and `aria-hidden`. At <=767, desktop layout becomes 2-up and icon/value row. No browser evaluation, no all-source grep.
+
+### Assessment counter: source-matched icon geometry rather than missing icons
+
+`lms2-fe@prod-2026/src/styles/components/_learn-assessments.scss:1508-1558,1797-1814` is the source for the assessment-card family, which displayed a 40px icon in a horizontal row. The vNext page retains five counts where the old source card group had four.
+
+| Property/state | Legacy value (source:line) | New CSS/caller value | Status |
+| --- | --- | --- | --- |
+| Desktop columns/gap/margin | `_learn-assessments.scss:1508-1513`: 4 columns, gap16, margin24 | `learner-assessment-metrics.module.css .metricGrid`: **5** columns, gap16, margin24 | Column-count exception for fifth vNext counter |
+| Card | `:1515-1523`: horizontal icon/copy gap16, padding16, border1px #e5e9f0, radius12, white | CSS `.tile` grid equivalent icon/copy, gap16, padding16, same paint | Match visual geometry (grid rather than flex DOM) |
+| Icon | `:1530-1541`: 40x40, radius12, #6b7280 text, #fafbfc background, 18px | CSS `.icon`; five local aria-hidden glyph silhouettes | Paint match; SVG paths not verified as Ant-identical |
+| Number | `:1543-1552`: 22px/700, line1, #1a1d21 | CSS `.tile > p:nth-child(2)`: 22/700/1/dark | Match |
+| Label | `:1554-1558`: 12px/700 #6b7280 | `.tile > p:first-child`: same | Match |
+| Tablet <=1100 | `:1797-1801`: 2 columns | CSS media 2 columns | Match |
+| Phone <=767 | `:1804-1814`: 1 column | CSS media 1 column | Match |
+| Zero/empty/loading | Existing vNext scoped counts, notices and empty states unchanged | Same conditional rendering and data values | Source semantics retained; no runtime equivalence claimed |
+
+**File-scope grep:** five `<StatTile` opening / five `</StatTile>` closing pairs, five `<AssessmentMetricGlyph` self-closing children, five CSS `styles.icon` references, zero raw native select/input/textarea/button opening tags in the complete `learner-assessment-overview.tsx` source. Pictograms are decorative, never additional names or data. Breakpoints and reduced-motion media exist in the local CSS. **No TypeScript compiler, test, lint, runtime, responsive screenshot, original Ant icon path extraction, or CI ran**.
+
+### STRICT TICK STATUS
+
+- [ ] E7 stat tiles (missing: category-wide all-portal style/state inventory and full repository grep; original Ant SVG paths; side-by-side computed visual verification).
+- [ ] E7 funnel/progress/charts/calendar (missing: remaining surfaces and source reference/whole-repo coverage proof).
+- [ ] G6 boards (missing: remaining variants and touch/keyboard state proof).
+- [ ] E8 export contracts (ownership now under chat-14 for AG Grid; missing all endpoint contract proof).
+- [ ] Native controls (owner master-queue codemod supersedes manual migration; still needs all-repo native-tag grep).
+
+**Next untouched E7 surface:** `src/components/courses/faculty-lesson-video-manager.tsx` (upload progress) and `src/components/courses/assignment-file-submission-control.tsx` (upload progress). These already render `MetricBar`; locate an exact old upload meter selector before changing their paints. If none exists, leave them unchanged with an explicit legacy reference gap. Then `src/components/placements/placement-calendar-workspace.tsx` for any unreviewed responsive week/day interaction.
