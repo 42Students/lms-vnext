@@ -18,6 +18,8 @@ export default async function CollegeRecurringPreviewPage({
     <PageHeader title="Recurring Schedule Preview"
       description="Preview weekday/time patterns against persisted class, faculty and lecture hall scheduling conflicts in India Standard Time."
       actions={<PageBackLink href="/college/classes" label="Back to classes"/>}/>
+    <section aria-label="Recurring session pattern and conflict preview" className="min-w-0 border-t border-border pt-4">
     <CollegeRecurringPreview key={classId || "unselected"} {...options} defaultSectionId={classId} classes={options.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))} />
+    </section>
   </div>;
 }
