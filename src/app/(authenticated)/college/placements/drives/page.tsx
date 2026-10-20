@@ -55,42 +55,42 @@ export default async function CollegeDrivesPage({ searchParams }: {
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
       actions={<Link href="/college/placements" className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link">Operations workspace</Link>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6">
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
         <Input name="q" defaultValue={query.q} maxLength={100}
           />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
         <Select name="status" defaultValue={query.status}>
           {["PUBLISHED","DRAFT","CLOSED","ARCHIVED","ALL"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
         <Select name="seasonId" defaultValue={query.seasonId ?? ""}>
           <option value="">All seasons</option>
           {data.seasons.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
         <Select name="relationshipId" defaultValue={query.relationshipId ?? ""}
          >
           <option value="">All companies</option>
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </Select>
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline from
         <Input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
           />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline on or before
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline on or before
         <Input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
           />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">At least N applicants
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">At least N applicants
         <Input type="number" name="minimumApplicants" min={0} max={100000}
           defaultValue={query.minimumApplicants??""}
           />
       </label>
-      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={query.sort}>
           <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>

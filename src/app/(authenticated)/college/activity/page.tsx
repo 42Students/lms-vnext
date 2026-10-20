@@ -88,7 +88,7 @@ export default async function CollegeActivityPage({
     </div>
     <section className="border-b border-border pb-4" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-4">
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Module
           <Select name="module" defaultValue={data.query.module ?? ""}
             className="min-h-11 md:min-h-9">
@@ -97,7 +97,7 @@ export default async function CollegeActivityPage({
               <option key={v} value={v}>{v}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Importance
           <Select name="importance" defaultValue={data.query.importance ?? ""}
             className="min-h-11 md:min-h-9">
@@ -106,53 +106,53 @@ export default async function CollegeActivityPage({
               <option key={v} value={v}>{v}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Event type
           <Input name="eventType" defaultValue={data.query.eventType ?? ""}
             maxLength={120} placeholder="identity.membership.suspended"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search audit summary or entity
           <Input name="q" defaultValue={data.query.q ?? ""} maxLength={100}
             placeholder="Summary, entity or action text"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Actor user UUID
           <Input name="actorUserId" defaultValue={data.query.actorUserId ?? ""}
             placeholder="Optional actor UUID"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Actor display name
           <Input name="actorName" defaultValue={data.query.actorName ?? ""} maxLength={100}
             placeholder="Search recorded actor name"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Entity type
           <Input name="subjectType" defaultValue={data.query.subjectType ?? ""}
             maxLength={80} placeholder="course_lesson"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Entity identifier
           <Input name="subjectId" defaultValue={data.query.subjectId ?? ""}
             maxLength={500} placeholder="Persisted entity identifier"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           From date (IST)
           <DateInput name="from" mode="date" defaultValue={data.query.from ?? ""}
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           To date (IST)
           <DateInput name="to" mode="date" defaultValue={data.query.to ?? ""}
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Events per page
           <Select name="pageSize" defaultValue={data.query.pageSize ?? "25"}
             className="min-h-11 md:min-h-9">

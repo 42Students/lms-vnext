@@ -53,7 +53,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
   <FilterBar title="Filters" activeCount={activeCollegeContactFilterCount(filter)}
-    search={<label className="flex min-w-0 flex-col gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or email
+    search={<label className="flex min-w-0 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name or email
       <Input type="search" name="q" form="college-contacts-filters" maxLength={100}
         defaultValue={filter.q} placeholder="Search contacts"
         className="min-h-11 w-full min-w-0 md:min-h-9"/>

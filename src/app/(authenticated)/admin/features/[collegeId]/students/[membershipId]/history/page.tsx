@@ -19,19 +19,19 @@ export default async function StudentModuleRuleHistory({params,searchParams}:{pa
   <PageHeader eyebrow="Super Admin · Module Access" title="Student module-rule history"
    description={"Recent authorized module override and lock changes for "+(result.learnerName||"this learner")+". Changes are shown 40 at a time, newest first. The optional module filter is applied to the scoped audit query."}/>
   <FilterBar title="Filters"><form method="get" className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:[&_label]:w-full">
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module
     <Select name="module" defaultValue={cursor.data.module} className="min-h-11 min-[768px]:min-h-9">
      <option value="all">All modules</option><option value="projects">Projects</option><option value="electives">Electives</option>
     </Select>
    </label>
-   <label className="grid min-w-48 flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor name
+   <label className="grid min-w-48 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Actor name
     <Input name="actorName" maxLength={100} defaultValue={cursor.data.actorName}
      className="min-h-11 min-[768px]:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (India day)
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">From (India day)
     <Input type="date" name="from" defaultValue={cursor.data.from} className="min-h-11 min-[768px]:min-h-9"/>
    </label>
-   <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (India day)
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (India day)
     <Input type="date" name="to" defaultValue={cursor.data.to} className="min-h-11 min-[768px]:min-h-9"/>
    </label>
    <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Filter history</Button>
