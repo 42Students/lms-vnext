@@ -7,39 +7,67 @@ import { Select } from "@/components/ui/select";
 import {apiFetch} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
 
+function roleName(role: string) {
+  return role
+    .toLowerCase()
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+/** One entry per college and role: a person with several roles or colleges switches workspace, never mixes them. */
+export function workspaceChoices(memberships: readonly MembershipChoice[]) {
+  return memberships
+    .filter((membership) => membership.status === "ACTIVE")
+    .flatMap((membership) =>
+      (membership.roles.length > 0 ? membership.roles : [null]).map((role) => ({
+        value: `${membership.id}|${role ?? ""}`,
+        membershipId: membership.id,
+        role,
+        label: role ? `${membership.collegeName} · ${roleName(role)}` : membership.collegeName,
+      })),
+    );
+}
+
 export function MembershipSwitcher({
   memberships,
   activeMembershipId,
+  activeRole = null,
 }: {
   memberships: readonly MembershipChoice[];
   activeMembershipId: string | null;
+  activeRole?: string | null;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const activeChoices = memberships.filter(
-    (membership) => membership.status === "ACTIVE",
-  );
+  const choices = workspaceChoices(memberships);
+  const activeValue = `${activeMembershipId ?? ""}|${activeRole ?? ""}`;
+  const active = choices.find((choice) => choice.value === activeValue)
+    ?? choices.find((choice) => choice.membershipId === activeMembershipId);
 
-  function switchMembership(membershipId: string) {
+  function switchWorkspace(value: string) {
     // PUB-auth-public-23: the placeholder is not a destructive leave-workspace action.
-    if (!membershipId || membershipId === activeMembershipId) return;
+    const choice = choices.find((item) => item.value === value);
+    if (!choice || choice.value === active?.value) return;
     setError(null);
 
     startTransition(async () => {
       try{
         await apiFetch("/api/auth/memberships",{
-          method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({membershipId}),
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify(choice.role?{membershipId:choice.membershipId,role:choice.role}:{membershipId:choice.membershipId}),
         });
+        router.push("/dashboard");
         router.refresh();
       }catch{
-        setError("Could not switch college. Refresh and try again.");
+        setError("Could not switch workspace. Refresh and try again.");
       }
 
     });
   }
 
-  if (activeChoices.length === 0) {
+  if (choices.length === 0) {
     return (
       <p className="m-0 text-xs font-medium text-muted-foreground">
         No active college membership
@@ -47,9 +75,9 @@ export function MembershipSwitcher({
     );
   }
 
-  // PUB-auth-public-22: no interactive chooser is needed for a single college.
-  if (activeChoices.length === 1 && activeMembershipId === activeChoices[0].id) {
-    return <p className="max-w-60 truncate text-sm font-semibold text-body">{activeChoices[0].collegeName}</p>;
+  // PUB-auth-public-22: no interactive chooser is needed for a single workspace.
+  if (choices.length === 1 && active) {
+    return <p className="max-w-60 truncate text-sm font-semibold text-body">{choices[0].label}</p>;
   }
 
   return (
@@ -59,15 +87,15 @@ export function MembershipSwitcher({
       </label>
       <Select
         id="membership-switcher"
-        value={activeMembershipId ?? ""}
+        value={active?.value ?? ""}
         disabled={pending}
-        onChange={(event) => switchMembership(event.target.value)}
+        onChange={(event) => switchWorkspace(event.target.value)}
         className="min-h-10 py-0"
       >
         <option value="" disabled>Switch workspace</option>
-        {activeChoices.map((membership) => (
-          <option key={membership.id} value={membership.id}>
-            {membership.collegeName} · {membership.roles.join(", ")}
+        {choices.map((choice) => (
+          <option key={choice.value} value={choice.value}>
+            {choice.label}
           </option>
         ))}
       </Select>

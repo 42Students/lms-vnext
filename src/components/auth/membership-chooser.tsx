@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -38,6 +39,11 @@ export function MembershipChooser({
   );
   const [error, setError] = useState<string | null>(null);
   const { pending, run } = useGuardedAction({ busyLabel: "Opening…", timeoutMs: 30_000 });
+  /** One card per college and role: a person with several roles chooses a workspace, roles are never mixed. */
+  const entries = useMemo(() => memberships.flatMap((membership) =>
+    membership.status === "ACTIVE" && membership.roles.length > 1
+      ? membership.roles.map((role) => ({ ...membership, id: membership.id + "|" + role, roles: [role] }))
+      : [membership]), [memberships]);
   const [lastUsed,setLastUsed]=useState<string|null>(null);
   const [selectedId,setSelectedId]=useState<string|null>(null);
   useEffect(()=>{
@@ -48,32 +54,33 @@ export function MembershipChooser({
       try{stored=window.sessionStorage.getItem("lms_last_membership_key");}
       catch{/* Storage may be disabled. */}
       setLastUsed(stored);
-      setSelectedId(memberships.some(m=>m.id===stored&&m.status==="ACTIVE")
-        ?stored:memberships.find(m=>m.status==="ACTIVE")?.id??null);
+      setSelectedId(entries.some(m=>m.id===stored&&m.status==="ACTIVE")
+        ?stored:entries.find(m=>m.status==="ACTIVE")?.id??null);
     });
     return ()=>{live=false;};
-  },[memberships]);
-  const active = memberships.filter(membership=>membership.status==="ACTIVE");
-  const sorted=[...memberships].sort((left,right)=>{
+  },[entries]);
+  const active = entries.filter(membership=>membership.status==="ACTIVE");
+  const sorted=[...entries].sort((left,right)=>{
     const status=Number(right.status==="ACTIVE")-Number(left.status==="ACTIVE");
     if(status)return status;
     return Number(right.id===lastUsed)-Number(left.id===lastUsed);
   });
 
-  async function choose(membershipId: string) {
+  async function choose(choiceKey: string) {
     if (pending) return;
+    const [membershipId, role] = choiceKey.split("|");
     setError(null);
-    setPendingId(membershipId);
+    setPendingId(choiceKey);
 
     try {
       await run(async () => {
         await apiFetch("/api/auth/memberships", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ membershipId }),
+          body: JSON.stringify(role ? { membershipId, role } : { membershipId }),
           timeoutMs: 29_000,
         });
-        try { window.sessionStorage.setItem("lms_last_membership_key", membershipId); }
+        try { window.sessionStorage.setItem("lms_last_membership_key", choiceKey); }
         catch { /* The selection still succeeds in private browsing. */ }
         router.push("/dashboard");
         router.refresh();

@@ -4,9 +4,11 @@ import { z } from "zod";
 import { isSameOriginRequest } from "@/auth/origin";
 import {
   MEMBERSHIP_COOKIE_NAME,
+  ROLE_COOKIE_NAME,
   SESSION_MAX_AGE_SECONDS,
   SessionAuthenticationError,
 } from "@/auth/session";
+import { MEMBERSHIP_ROLES } from "@/modules/identity/constants";
 import { headers } from "next/headers";
 import {
   getCurrentIdentityUid,
@@ -23,6 +25,7 @@ export const runtime = "nodejs";
 
 const switchMembershipSchema = z.strictObject({
   membershipId: z.string().uuid(),
+  role: z.enum(MEMBERSHIP_ROLES).optional(),
 });
 
 class MembershipTenantLookupUnavailable extends Error {}
@@ -127,6 +130,7 @@ export async function POST(request: Request) {
     const context = await resolveRequestContext({
       identityUid,
       activeMembershipId: parsed.data.membershipId,
+      activeRole: parsed.data.role ?? null,
     });
 
     const membership = context.membership;
@@ -134,6 +138,9 @@ export async function POST(request: Request) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
     if (collegeScope && membership.collegeId !== collegeScope) {
+      throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
+    }
+    if (parsed.data.role && !membership.roles.includes(parsed.data.role)) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
 
@@ -154,6 +161,15 @@ export async function POST(request: Request) {
       },
     );
 
+    // Only a multi-role person needs a remembered workspace; otherwise the default role applies.
+    response.cookies.set(ROLE_COOKIE_NAME, parsed.data.role ?? "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: parsed.data.role ? SESSION_MAX_AGE_SECONDS : 0,
+    });
+
     return response;
   } catch (error) {
     return authErrorResponse(error);
@@ -170,6 +186,13 @@ export async function DELETE(request: Request) {
 
   const response = privateAuthJson({ ok: true });
   response.cookies.set(MEMBERSHIP_COOKIE_NAME, "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 0,
+  });
+  response.cookies.set(ROLE_COOKIE_NAME, "", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",

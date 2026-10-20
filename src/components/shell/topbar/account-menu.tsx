@@ -18,7 +18,7 @@ import style from "./topbar.module.css";
 
 export function TopbarAccountMenu({
   identityUid, roleLabel, organizationName, variant,
-  memberships, activeMembershipId, adminScopeChoices, scope,
+  memberships, activeMembershipId, activeRole, adminScopeChoices, scope,
 }: {
   identityUid: string;
   roleLabel: string;
@@ -26,6 +26,7 @@ export function TopbarAccountMenu({
   variant: AccountMenuVariant;
   memberships: readonly MembershipChoice[];
   activeMembershipId: string | null;
+  activeRole?: string | null;
   adminScopeChoices: AdminScopeChoices | null;
   scope: AdminScope | null | undefined;
 }) {
@@ -127,7 +128,7 @@ export function TopbarAccountMenu({
         <hr className={style.menuDivider}/>
         <p className={style.accountSectionHeading}>Switch workspace</p>
         {adminScopeChoices ? <AdminScopeSwitcher choices={adminScopeChoices} scope={scope} /> :
-          <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId}/>}
+          <MembershipSwitcher memberships={memberships} activeMembershipId={activeMembershipId} activeRole={activeRole}/>}
       </> : null}
       <hr className={style.menuDivider}/>
       <Button variant="ghost" type="button" disabled={pending} loading={pending} aria-busy={pending}

@@ -113,6 +113,7 @@ export async function AppShell({
           accountVariant={accountVariant}
           memberships={memberships}
           activeMembershipId={context.membership?.id ?? null}
+          activeRole={context.membership?.roles[0] ?? null}
           adminScopeChoices={superAdmin ? adminScopeChoices : null}
           adminScope={context.adminScope}
           tpoCollegeId={hasMembershipRole(context, "TPO") ? context.membership?.collegeId ?? null : null}
