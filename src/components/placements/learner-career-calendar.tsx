@@ -377,9 +377,10 @@ export function LearnerCareerCalendar({
             <dd className="mt-1 text-foreground">{selected.companyName}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Role</dt>
             <dd className="mt-1 text-foreground">{selected.roleTitle}</dd></div>
-          {selected.rescheduled?<p role="status" className="md:col-span-2 text-body">
-            Approved reschedule applied to this event.
-          </p>:null}
+          {selected.rescheduled?<div className="md:col-span-2">
+            <dt className="sr-only">Reschedule notice</dt>
+            <dd role="status" className="text-body">Approved reschedule applied to this event.</dd>
+          </div>:null}
         </dl>:null}
       </Drawer>
     </div>
