@@ -43,7 +43,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <ErrorState title="Project template unavailable"
         description="This template could not be loaded. No version or college assignment details are shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
-          className="font-semibold text-primary-text">Retry template details</Link>}/>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry template details</Link>}/>
     </div>;
   }
 
