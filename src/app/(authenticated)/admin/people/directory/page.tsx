@@ -76,28 +76,28 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   </p>
   <form method="get" className="grid gap-3 md:grid-cols-2 min-[1366px]:grid-cols-5">
    <input type="hidden" name="tab" value={tabForm.hiddenTab} />
-   <label className="grid gap-1 text-sm font-semibold text-body">Name or college
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Name or college
     <Input type="search" name="q" maxLength={100} defaultValue={query.data.q}
-     className="min-h-9 w-full"/>
+     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Role
-    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-9 w-full">
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Role
+    <Select name="role" disabled={!tabForm.showExplicitRoleFilter} defaultValue={query.data.role} className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
      {roleOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Membership
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Membership
     <Select name="membershipStatus" defaultValue={query.data.membershipStatus}
-     className="min-h-9 w-full">
+     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
      {membershipOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-sm font-semibold text-body">Platform
+   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Platform
     <Select name="platformStatus" defaultValue={query.data.platformStatus}
-     className="min-h-9 w-full">
+     className="min-h-11 w-full md:min-h-[var(--lms-control-height)]">
      {platformOptions.map(x=><option key={x} value={x}>{x}</option>)}
     </Select>
    </label>
-   <Button type="submit" className="self-end">Filter</Button>
+   <Button type="submit" className="min-h-11 self-end md:min-h-[var(--lms-control-height)]">Filter</Button>
   </form>
   <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length?<div className="grid gap-3 md:grid-cols-2">
