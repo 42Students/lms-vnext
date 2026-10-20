@@ -1,5 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
@@ -51,8 +52,8 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   </label>:null}
   <Button type="button" onClick={()=>void submit()} disabled={pending||!valid}
    className="min-h-11 md:min-h-9">{pending?"Saving…":"Review and save batch decision"}</Button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
   {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}
   {dialog}
  </section>;
