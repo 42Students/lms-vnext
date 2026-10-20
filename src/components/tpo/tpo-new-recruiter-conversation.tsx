@@ -76,7 +76,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div>
-  <Button variant="secondary" ref={launchRef} type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold sm:w-auto md:min-h-9"
+  <Button variant="primary" ref={launchRef} type="button" className="min-h-11 w-full rounded-[var(--lms-control-radius)] px-4 text-sm font-semibold sm:w-auto md:min-h-9"
    onClick={()=>open?close():openDialog()}>New message</Button>
   <Dialog open={open} onOpenChange={next=>{if(!next)close();}} dismissible={!busy}
    title="New message to a recruiter"

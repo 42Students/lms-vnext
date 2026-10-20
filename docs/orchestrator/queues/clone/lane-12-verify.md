@@ -9,8 +9,8 @@
 
 Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-12-b with [chat-12] after every 2 surfaces.
 
-- [ ] `src/app/(authenticated)/tpo/messages/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/more/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/page.tsx`
