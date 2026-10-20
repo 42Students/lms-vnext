@@ -46,8 +46,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-6.md: surface | regres
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
 - [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
 - [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
-- [ ] `src/components/auth/portal-access-notice.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
+- [x] `src/components/auth/portal-access-notice.tsx`
 - [ ] `src/components/hr/recruiter-designation-editor.tsx`
 - [ ] `src/components/projects/college-project-summary-editor.tsx`
 - [ ] `src/components/public/graceful-error-boundary.tsx`
