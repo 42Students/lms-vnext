@@ -52,13 +52,13 @@ export function DepartmentCreateForm({
     <form
       onSubmit={submit}
       aria-label={DEPARTMENT_COPY.createCardTitle}
-      className="flex min-w-0 flex-col items-stretch gap-3 print:hidden sm:flex-row sm:items-end"
+      className="grid min-w-0 max-w-[920px] grid-cols-1 items-end gap-[var(--lms-space-3)] print:hidden sm:grid-cols-[minmax(0,1fr)_auto]"
     >
-      <h2 className="m-0 w-full text-base font-semibold text-foreground">{DEPARTMENT_COPY.createCardTitle}</h2>
+      <h2 className="m-0 min-w-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] sm:col-span-2">{DEPARTMENT_COPY.createCardTitle}</h2>
       <div className="min-w-0 w-full flex-1">
         <label
           htmlFor="department-name"
-          className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           {DEPARTMENT_COPY.nameLabel}<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
         </label>
@@ -74,9 +74,9 @@ export function DepartmentCreateForm({
       <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : DEPARTMENT_COPY.createButton}
       </Button>
-      {notice ? <p role="status" className="m-0 w-full text-sm text-body">{notice}</p> : null}
+      {notice ? <p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-5 text-body sm:col-span-2">{notice}</p> : null}
       {error ? (
-        <p role="alert" className="m-0 w-full text-xs font-semibold text-error">
+        <p role="alert" className="m-0 w-full min-w-0 break-words text-xs font-semibold leading-5 text-error sm:col-span-2">
           {error}
         </p>
       ) : null}
