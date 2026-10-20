@@ -42,7 +42,6 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
       return;
     }
     if (!reviewOpen) { setReviewOpen(true); return; }
-    setReviewOpen(false);
     setBusy(true);
     setError(null);
     try {
@@ -55,6 +54,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         }),
       });
       if (!response.ok) throw new Error("Season change failed. The current values may be stale; refresh and review.");
+      setReviewOpen(false);
       select(null);
       router.refresh();
     } catch (caught) {
@@ -87,7 +87,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
               className="min-h-11 w-full sm:w-auto md:min-h-9">
               {busy ? "Saving..." : edit ? "Review and confirm edit" : "Review and confirm new season"}
             </Button>
-            {edit ? <Button type="button" variant="secondary" onClick={() => select(null)}
+            {edit ? <Button type="button" variant="secondary" disabled={busy} onClick={() => select(null)}
               className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel edit</Button> : null}
           </div>
         </>
@@ -114,6 +114,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Season code</dt><dd className="break-words">{form.code}</dd></div>
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Dates</dt><dd className="break-words">{form.startDate} – {form.endDate}</dd></div>
         </dl>
+        {error ? <InlineNotice tone="error" message={error} /> : null}
       </ConfirmDialog>
     </section>
   );
