@@ -16,7 +16,6 @@ import {CollegeInterviewStatusActions} from "@/components/placements/college-int
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {StatTile} from "@/components/ui/stat-tile";
-import {StatusBadge} from "@/components/ui/status-badge";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
