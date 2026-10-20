@@ -330,3 +330,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** inspected lesson order state, drag/drop and keyboard Move actions, sequence/index map, CAS payload and optimistic rollback, pending/Toast/Alert and router-refresh reconcile guard with shared Button props. No missing imports, broken JSX or removed labels/IDs.
 - **Extra clutter/alignment fixes (0):** 375px two-action row stays beneath wrapped lesson name; hairline separator, 44px targets, busy announcement and desktop inline layout remain sound.
 - **Files changed:** proof and queue only.
+
+## Surface 48 — Faculty assessment lifecycle
+- **Surface:** `src/components/courses/faculty-item-actions.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md` Surface 48; cross-checked lane-16 Polish2 faculty-item-actions entry.
+- **Regressions found/fixed (1):** opening another Close/Archive confirmation retained the previous mutation failure Alert despite the proof promising stale error reset; clear error synchronously when Publish, Close or Archive is selected. Reviewed action permutations, lifecycle API, active/pending/disable lock, Dropdown/Menu phone sheet, button labels, ConfirmDialog, error mapping and router refresh. No import, lost aria, or type regression found.
+- **Extra clutter/alignment fixes (0):** existing 2-column phone controls, More menu demotion and inline Alert remain compact; handlers/wording unchanged.
+- **Files changed:** `src/components/courses/faculty-item-actions.tsx`, proof and queue.
+
+## Surface 49 — Faculty lesson video manager
+- **Surface:** `src/components/courses/faculty-lesson-video-manager.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-17.md` faculty-lesson-video-manager entry.
+- **Regressions found/fixed (0):** read video-list abort/fetch/update, upload/thumbnail transfer, processing labels and progress MetricBar, guarded publish/lesson-content linkage, preview, reorder, replace/delete ConfirmDialog, duration/title editing and parent Lesson video contract. Checked shared Input/Alert/Button/EmptyState/LoadingState/StatusBadge types, unique per-video IDs, read-only guard and same-origin auth path; no malformed JSX, duplicate attribute or lost aria semantics in source.
+- **Extra clutter/alignment fixes (0):** primary Preview/Publish strip, More actions native disclosure, hairline video rows and full-width phone control sizes already fit old LMS geometry.
+- **Files changed:** proof and queue only.

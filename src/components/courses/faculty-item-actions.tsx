@@ -97,7 +97,7 @@ export function FacultyItemActions({
                 : action === "PUBLISH" ? "primary" : "secondary"
             }
             disabled={active !== null}
-            onClick={() => action === "PUBLISH" ? void run(action) : setConfirmAction(action)}
+            onClick={() => {setError(null);if(action === "PUBLISH")void run(action);else setConfirmAction(action);}}
           >
             {active === action
               ? "Saving…"
@@ -105,7 +105,7 @@ export function FacultyItemActions({
           </Button>
         ))}
         {actions.includes("ARCHIVE") && actions.length > 1 ? <Dropdown trigger="More" label="Item actions" align="end" mobileSheet triggerClassName="w-full md:!min-h-9">
-          <Menu className="w-full min-w-0"><MenuItem disabled={active !== null} onClick={() => setConfirmAction("ARCHIVE")}>Archive</MenuItem></Menu>
+          <Menu className="w-full min-w-0"><MenuItem disabled={active !== null} onClick={() => {setError(null);setConfirmAction("ARCHIVE");}}>Archive</MenuItem></Menu>
         </Dropdown> : null}
       </div>
       {error ? (
