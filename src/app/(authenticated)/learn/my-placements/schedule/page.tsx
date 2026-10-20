@@ -92,7 +92,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           Marked absent. If this is wrong, tell the placement cell.
           <Link href="/learn/my-placements/placement#requests"
-            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
+            className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center font-semibold text-primary-text underline">
             Wrong? Tell the placement cell
           </Link>
         </p>
@@ -111,12 +111,12 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         { value: "calendar", label: "Calendar", href: "/learn/my-placements/schedule?view=calendar" },
       ]} />
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
-        <h2 className="text-lg font-semibold text-foreground">Coming up ({ahead.length} dated)</h2>
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Coming up ({ahead.length} dated)</h2>
         {ahead.length === 0 && undated.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">Nothing coming up. When a company&apos;s round is planned, it shows here.</p> : null}
         {ahead.length === 0 && undated.length > 0 ? <p role="status" className="text-sm text-body">
           {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
         </p> : null}
-        {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-border py-4 md:py-6">
+        {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
           <p className="mb-1 text-xs font-semibold uppercase text-primary-text">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
@@ -127,22 +127,22 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}
         {ahead.length === 0 ? <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
-        {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-border py-4 md:py-6">
+        {undated.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
           <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
           <p className="text-sm text-body">Date to be told</p>
           {details(row)}
         </article>)}
       </section>:null}
       {view==="calendar"?<section aria-label="Calendar" className="space-y-2">
-        <h2 className="text-lg font-semibold text-foreground">Calendar</h2>
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Calendar</h2>
         <Suspense fallback={<p role="status">Calendar</p>}>
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
         </Suspense>
       </section>:null}
       {view==="past"?<section className="space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">Past</h2>
+        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Past</h2>
         {past.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">No past rounds yet.</p> : past.map(row =>
-          <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-border py-4 md:py-6">
+          <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
             <h3 className="font-semibold text-foreground">{row.roundName} · {row.companyName}</h3>
             <p className="text-sm text-body">{fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
             {details(row)}
