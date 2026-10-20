@@ -43,7 +43,7 @@ export default async function LearnerProfilePage({
         title="Profile"
       />
       <LearnerVerificationLiveRefresh/>
-      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4 md:pb-5">
+      <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4 md:pb-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-[var(--lms-heading)]">Profile verification</h2>
           <Badge  tone="neutral">
@@ -70,7 +70,7 @@ export default async function LearnerProfilePage({
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Review verification status</Link>
       </section>
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
-      <section aria-label="Academic identity" className="border-b border-border pb-5">
+      <section aria-label="Academic identity" className="border-b border-border pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
         {!academicOutcome.available ? <Banner tone="info" className="mt-3">
@@ -109,12 +109,12 @@ export default async function LearnerProfilePage({
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Who has my data →
       </Link>
-      <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4 md:pb-5">
+      <section aria-label="Verification status" className="min-w-0 border-b border-border pb-4 md:pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
         {verification?<div className="mt-4 space-y-3">
           <h3 className="text-sm font-semibold text-[var(--lms-heading)]">What is still missing</h3>
-          {missing.length?<ul className="list-disc space-y-1 pl-5 text-sm text-body">
+          {missing.length?<ul className="list-disc space-y-1 pl-6 text-sm text-body">
             {missing.map(row=><li key={row.section+row.message}>
               <strong>{row.section}:</strong> {row.message}
             </li>)}
@@ -131,7 +131,7 @@ export default async function LearnerProfilePage({
         </p>}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View my verification status →</Link>
       </section>
-      <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-5">
+      <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Coding platform profiles</h2>
         <p className="mt-1 text-sm text-body">Saved GitHub and coding-platform links are learner-authored, not verified skill evidence.</p>
         {learnerSavedCodingProfiles(profile.profileDocument).length === 0 ? (

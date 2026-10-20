@@ -26,7 +26,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
  const base="/mentor/projects/"+encodeURIComponent(projectId);
  const current=mentorResourceDirectoryHref({...data.query,page:1});
  const filters=current.includes("?")?"?"+current.split("?")[1]:"";
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-6">
   <PageHeader eyebrow="Mentor · Project resources" title="Registered resource links"
    description={data.projectTitle}
    actions={<Link data-unskin="" href={base+"?tab=resources"}

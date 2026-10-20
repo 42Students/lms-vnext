@@ -39,7 +39,7 @@ export default async function LearnerPlacementPreparationPage({
       </Link>} />
     {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
     <section aria-label="Recorded preparation summary"
-      className="border-b border-border pb-5">
+      className="border-b border-border pb-6">
       <p className="text-sm font-semibold text-foreground">
         {data.recorded} of {data.total} information categories recorded
       </p>
@@ -56,7 +56,7 @@ export default async function LearnerPlacementPreparationPage({
         : "No categories match this filter. Try All categories."}/>
       : <ol className="grid min-w-0 gap-3 md:grid-cols-2">
         {data.items.map(item=>
-          <li key={item.id} className="border-b border-border pb-5">
+          <li key={item.id} className="border-b border-border pb-6">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{item.title}</h2>
               <StatusBadge tone={item.recorded?"success":"neutral"}>{item.recorded?"Recorded":"Not recorded"}</StatusBadge>
