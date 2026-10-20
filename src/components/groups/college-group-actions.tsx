@@ -112,7 +112,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
 
   const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
   return <>
-    {group ? <span className="flex flex-wrap gap-2">
+    {group ? <details className="min-w-0"><summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Manage</summary><div className="flex min-w-0 flex-wrap items-center gap-2 pb-2">
       {group.status !== "ARCHIVED" ? (
         <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => {
           setDraft(draftOf(group)); setError(null); setOpen(true);
@@ -133,7 +133,7 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
           setError(null); setConfirm("ARCHIVE");
         }}>Archive</Button>
       ) : null}
-    </span> : (
+    </div></details> : (
       <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => { setDraft(EMPTY); setError(null); setOpen(true); }}>
         New study group
       </Button>
@@ -141,10 +141,10 @@ export function CollegeGroupActions({ group }: { group?: ManagedStudyGroup }) {
     <Dialog open={open} onOpenChange={(value) => { if (!pending) setOpen(value); }}
       title={group ? "Edit study group" : "New study group"}
       description="This form manages college-owned study groups only."
-      footer={<>
-        <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
-        <Button type="submit" form={editorFormId} loading={pending} className="min-h-11 md:min-h-9" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
-      </>}>
+      footer={<div className="flex w-full min-w-0 flex-col-reverse gap-2 md:flex-row md:justify-end">
+        <Button type="button" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
+        <Button type="submit" form={editorFormId} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending}>{pending ? "Saving…" : "Save group"}</Button>
+      </div>}>
       <form id={editorFormId} onSubmit={(event) => { event.preventDefault(); save(); }} className="space-y-4">
         <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Group name
           <Input required maxLength={150} value={draft.name}
