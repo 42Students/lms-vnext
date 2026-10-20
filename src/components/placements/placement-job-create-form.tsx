@@ -62,7 +62,7 @@ export type PlacementCompanyChoice = {
   memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[];existingRoles:Array<{jobId:string;title:string;status:string}>} | null;
 };
 
-const inputClass = "w-full";
+const inputClass = "min-h-11 w-full md:min-h-9";
 const textareaClass = "min-h-28 w-full";
 
 function splitList(value: string) {
@@ -709,8 +709,8 @@ export function PlacementJobCreateForm({
         </div>
         </nav>
       </details>
-      <section className="border-b border-border pb-6">
-        <div className="border-b border-border pb-3">
+      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Placement season
           </h2>
@@ -739,8 +739,8 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section className="border-b border-border pb-6">
-        <div className="border-b border-border pb-3">
+      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Employer
           </h2>
@@ -748,7 +748,7 @@ export function PlacementJobCreateForm({
             Reuse college relationship memory or create a canonical employer relationship once.
           </p>
         </div>
-        <div className="grid gap-4 pt-4">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)]">
           {companies.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               <Button
@@ -901,8 +901,8 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section className="border-b border-border pb-6">
-        <div className="border-b border-border pb-3">
+      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Opportunity
           </h2>
@@ -910,7 +910,7 @@ export function PlacementJobCreateForm({
             Create the learner-facing job opportunity and application window.
           </p>
         </div>
-        <div className="grid min-w-0 gap-4 pt-4 sm:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
           <label className="lg:col-span-2">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
@@ -1131,13 +1131,13 @@ export function PlacementJobCreateForm({
         <div className="grid gap-4 pt-4 sm:grid-cols-2">
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
-            <label className="grid gap-1 text-sm">Host college
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Host college
               <Input name="poolHostCollege" maxLength={160} className={inputClass} />
             </label>
-            <label className="grid gap-1 text-sm">Reporting time (IST)
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Reporting time (IST)
               <Input name="poolReportingTime" type="datetime-local" className={inputClass} />
             </label>
-            <label className="grid gap-1 text-sm">Travel instructions
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Travel instructions
               <Textarea name="poolTravelNote" maxLength={1000} rows={2} className={inputClass} />
             </label>
             <p className="text-xs text-muted-foreground">Pool logistics are informational and do not create a round, venue booking or student travel authorization.</p>
@@ -1147,10 +1147,10 @@ export function PlacementJobCreateForm({
             <label className="flex items-center gap-2 text-sm">
               <Checkbox name="studentsRegisterSeparately" /> Students also register on the company's portal
             </label>
-            <label className="grid gap-1 text-sm">Portal name
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Portal name
               <Input name="portalName" maxLength={160} className={inputClass} />
             </label>
-            <label className="grid gap-1 text-sm">Portal link (HTTPS)
+            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Portal link (HTTPS)
               <Input name="portalUrl" type="url" maxLength={2000} placeholder="https://..." className={inputClass} />
             </label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
@@ -1162,29 +1162,29 @@ export function PlacementJobCreateForm({
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Responsibilities
             <Textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Assessment URL
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Assessment URL
             <Input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Assessment deadline (IST)
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
             Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
             <Textarea name="importantDates" rows={3} className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Preferred degree
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Preferred degree
             <Input name="preferredDegree" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Specialization
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Specialization
             <Input name="preferredSpecialization" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Graduation year
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Graduation year
             <Input name="preferredGraduationYear" type="number" min={1990} max={2050} className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Minimum GPA (informational)
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Minimum GPA (informational)
             <Input name="preferredMinimumGpa" type="number" min={0} max={10} step="0.01" className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-sm font-semibold">Preferred city
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Preferred city
             <Input name="preferredCity" maxLength={160} className={inputClass}/>
           </label>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
@@ -1194,8 +1194,8 @@ export function PlacementJobCreateForm({
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </details>
-      <section className="border-b border-border pb-6">
-        <div className="border-b border-border pb-3">
+      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
             Eligibility
           </h2>
@@ -1203,8 +1203,8 @@ export function PlacementJobCreateForm({
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
           </p>
         </div>
-        <div className="grid gap-5 pt-4">
-          <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)]">
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Department · Target Audience
             <Select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
               setSelectedCohortIds([]);setSelectedSectionIds([]);
@@ -1320,7 +1320,7 @@ export function PlacementJobCreateForm({
               Leave unselected to include all classes in the selected programs and batches.
               Class targeting uses the persisted section whitelist.
             </p>
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2">
               {visibleSections.slice(0,500).map(section=><label key={section.id}
                 className="flex items-center gap-2 text-sm">
                 <Checkbox checked={selectedSectionIds.includes(section.id)}
@@ -1424,7 +1424,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <section aria-label="Planned rounds" className="border-b border-border pb-6">
+      <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <h2 className="font-semibold text-foreground">Interview rounds</h2>
         <label className="mt-3 block text-sm font-semibold text-body">
           Round template
@@ -1445,16 +1445,16 @@ export function PlacementJobCreateForm({
           venues and dates in the drive workspace before inviting candidates.
         </p>
       </section>
-      <section aria-label="Who this reaches" className="border-b border-border pb-6">
+      <section aria-label="Who this reaches" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
         <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
-      <section className="flex min-w-0 flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-center sm:justify-between">
+      <section className="flex min-w-0 flex-col gap-[var(--lms-space-4)] border-t border-border py-[var(--lms-space-4)] sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
-        <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
-          <Button className="w-full sm:w-auto" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
+        <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
             {pending ? "Creating…" : "Create draft"}
           </Button>
           <Button variant="secondary"

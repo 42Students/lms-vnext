@@ -327,7 +327,7 @@ export function LearnerCareerCalendar({
             data-kind={event.kind}
             className={styles.agendaEvent}
           >
-            <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
               <div>
                 <p className="m-0 text-xs font-bold uppercase text-primary-text">{event.companyName}</p>
                 <h4 className="mt-1 text-base font-semibold text-foreground">{event.title}</h4>

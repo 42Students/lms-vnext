@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { summarizeCollegeCourseContents } from "@/modules/courses/college-course-contents-summary-model";
@@ -73,7 +74,7 @@ function ContentCard({
 
   return (
     <article className="border-b border-[var(--lms-canvas-border)] py-4 last:border-b-0">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+      <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap gap-2">
             <StatusBadge tone="info">
@@ -396,7 +397,7 @@ export function AdminOfferingLearningOverview({
       <section aria-label="In this course" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">In this course</h2>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
-        <div className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
             <StatTile key={item.key} label={item.label} value={item.count} className="p-3" />
           ))}
@@ -435,7 +436,7 @@ export function AdminOfferingLearningOverview({
                 <section
                   id={"lesson-"+lesson.id}
                   key={lesson.id}
-                  className="rounded-xl border border-border bg-surface-subtle p-4 md:p-5"
+                  className="min-w-0 border-b border-[var(--lms-canvas-border)] py-5 first:pt-0 last:border-b-0"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
@@ -455,37 +456,11 @@ export function AdminOfferingLearningOverview({
                       <Badge tone="neutral">
                         {itemCount} items
                       </Badge>
-                      <CollegeLessonReorderActions
-                        learningPathId={learningPath.id}
-                        lessonId={lesson.id}
-                        expectedSequence={lesson.sequence}
-                        canMoveUp={lessonIndex > 0}
-                        canMoveDown={lessonIndex < workspace.lessons.length - 1}
-                      />
-                      <CollegeLessonVisibilityControl lesson={{
-                        id:lesson.id,name:lesson.name,visibleToStudents:lesson.visibleToStudents,
-                        updatedAt:lesson.updatedAt.toISOString(),
-                      }}/>
-                      <LessonActions
-                        lesson={lesson}
-                      />
+
                     </div>
                   </div>
 
-                  <FacultyLessonAuthoring
-                    lessonId={lesson.id}
-                    deliveryId={null}
-                    audience="OFFERING"
-                    nextContentSequence={
-                      lesson.nextContentSequence
-                    }
-                    nextAssignmentSequence={
-                      lesson.nextAssignmentSequence
-                    }
-                    nextQuizSequence={
-                      lesson.nextQuizSequence
-                    }
-                  />
+
 
                   {itemCount === 0 ? (
                     <div className="mt-3 rounded-xl border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
@@ -520,6 +495,38 @@ export function AdminOfferingLearningOverview({
                       )}
                     </div>
                   )}
+                  <Disclosure title="Add learning item" className="mt-4" contentClassName="pt-3 pb-2">
+                  <FacultyLessonAuthoring
+                    lessonId={lesson.id}
+                    deliveryId={null}
+                    audience="OFFERING"
+                    nextContentSequence={
+                      lesson.nextContentSequence
+                    }
+                    nextAssignmentSequence={
+                      lesson.nextAssignmentSequence
+                    }
+                    nextQuizSequence={
+                      lesson.nextQuizSequence
+                    }
+                  />
+                  </Disclosure>
+                  <Disclosure title="Lesson management" className="mt-2" contentClassName="flex min-w-0 flex-wrap items-start gap-3 pt-3 pb-2">
+                      <CollegeLessonReorderActions
+                        learningPathId={learningPath.id}
+                        lessonId={lesson.id}
+                        expectedSequence={lesson.sequence}
+                        canMoveUp={lessonIndex > 0}
+                        canMoveDown={lessonIndex < workspace.lessons.length - 1}
+                      />
+                      <CollegeLessonVisibilityControl lesson={{
+                        id:lesson.id,name:lesson.name,visibleToStudents:lesson.visibleToStudents,
+                        updatedAt:lesson.updatedAt.toISOString(),
+                      }}/>
+                      <LessonActions
+                        lesson={lesson}
+                      />
+                  </Disclosure>
                 </section>
               );
             },

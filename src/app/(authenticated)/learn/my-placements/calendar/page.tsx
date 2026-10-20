@@ -18,7 +18,7 @@ export default async function LearnerCareerCalendarPage({searchParams}:{searchPa
   }
   const today=initialCareerCalendarDay();
   const initial=readLearnerCalendarUrl(params.toString(),today);
-  return <div className="min-w-0 space-y-6"><PageHeader title="Career Calendar" description="Your upcoming assessments, interviews and other scheduled placement rounds." /><Suspense fallback={<PageLoading label="Loading calendar filters" variant="form" count={2} />}><LearnerCareerCalendar
+  return <div className="min-w-0 space-y-5"><PageHeader title="Career Calendar" description="Your upcoming assessments, interviews and other scheduled placement rounds." /><Suspense fallback={<PageLoading label="Loading calendar filters" variant="form" count={2} />}><LearnerCareerCalendar
     initialAnchor={initial.date}
     todayAnchor={today}
     rounds={workspace.rounds.map((row) => ({

@@ -31,7 +31,7 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
   if (!link.valid) notFound();
 
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-5">
       <PageHeader title="Interviews"
         description="Your scheduled placement interview rounds and joining details." />
       <LearnerCareerRoundsWorkspace

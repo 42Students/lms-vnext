@@ -35,43 +35,44 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   const regressions=items.filter(item=>item.regressedAt).length;
   const fixed=items.filter(item=>item.fixStatus==="FIXED").length;
   const muted=items.filter(item=>item.muted).length;
-  return <section className="space-y-3 border-b border-border pb-4">
+  return <section className="min-w-0 space-y-3 border-b border-border pb-4">
     <h2 className="font-semibold">Telegram alerts</h2>
-    <div className="flex flex-wrap gap-3">
-      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(true)}
+    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setOpen(true)}
        >
         Daily digest
       </Button>
-      <Button variant="secondary" type="button" disabled={!configured||pending} onClick={()=>setConfirm("TEST")}
+      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!configured||pending} onClick={()=>setConfirm("TEST")}
        >
         Send test alert
       </Button>
     </div>
     {!configured?<InlineNotice tone="info" message="Telegram alerts are not configured. Manual sends are unavailable."/>:null}
     {notice?<InlineNotice tone={error?"error":"success"} message={notice}/>:null}
-    <Dialog open={open} onOpenChange={setOpen} title="Daily digest"
-      description="This preview covers the latest visible Known Errors only. The sent digest uses up to 100 signatures.">
-      <dl className="grid gap-2 text-sm md:grid-cols-2">
-        <div><dt>Regressions</dt><dd className="font-semibold">{regressions}</dd></div>
-        <div><dt>Marked fixed</dt><dd className="font-semibold">{fixed}</dd></div>
-        <div><dt>Muted types</dt><dd className="font-semibold">{muted}</dd></div>
-        <div><dt>New error types in this window</dt><dd className="font-semibold">{items.length}</dd></div>
-        <div><dt>Deploy</dt><dd>{deploy??"Not recorded"}</dd></div>
+    <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title="Daily digest"
+      description="This preview covers the latest visible Known Errors only. The sent digest uses up to 100 signatures."
+      footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+       <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>setOpen(false)}>Close</Button>
+       <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={!configured||pending} onClick={()=>{setOpen(false);setConfirm("DIGEST");}}>
+        Send to Telegram now
+       </Button>
+      </div>}>
+      <dl className="grid min-w-0 gap-x-4 gap-y-0 text-sm md:grid-cols-2">
+        <div className="min-w-0 border-b border-border py-2"><dt className="text-xs text-muted-foreground">Regressions</dt><dd className="break-words font-semibold">{regressions}</dd></div>
+        <div className="min-w-0 border-b border-border py-2"><dt className="text-xs text-muted-foreground">Marked fixed</dt><dd className="break-words font-semibold">{fixed}</dd></div>
+        <div className="min-w-0 border-b border-border py-2"><dt className="text-xs text-muted-foreground">Muted types</dt><dd className="break-words font-semibold">{muted}</dd></div>
+        <div className="min-w-0 border-b border-border py-2"><dt className="text-xs text-muted-foreground">New error types in this window</dt><dd className="break-words font-semibold">{items.length}</dd></div>
+        <div className="min-w-0 border-b border-border py-2"><dt className="text-xs text-muted-foreground">Deploy</dt><dd className="break-all">{deploy??"Not recorded"}</dd></div>
       </dl>
-      <div className="mt-3 flex flex-wrap gap-3">
-        <Button variant="secondary" type="button" disabled={!configured||pending} onClick={()=>setConfirm("DIGEST")}
-         >
-          Send to Telegram now
-        </Button>
-        <Button variant="secondary" type="button" onClick={()=>setOpen(false)}
-         >Close</Button>
-      </div>
+
     </Dialog>
-    <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value)setConfirm(null);}}
+    <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value&&!pending){setConfirm(null);setError(false);}}}
       title={confirm==="TEST"?"Send a Telegram test alert?":"Send the daily digest to Telegram now?"}
       description="This sends one message to the configured administrator chat. Manual sends are rate-limited."
       confirmLabel={confirm==="TEST"?"Send test alert":"Send digest"}
       pending={pending}
-      onConfirm={()=>{if(confirm)void send(confirm);}}/>
+      onConfirm={()=>{if(confirm)void send(confirm);}}>
+      {error&&notice?<InlineNotice tone="error" message={notice}/>:null}
+    </ConfirmDialog>
   </section>;
 }
