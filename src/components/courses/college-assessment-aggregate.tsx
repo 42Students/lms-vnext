@@ -2,6 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { COLLEGE_COURSE_TAB_COPY, collegeAudienceLabel, collegeResultsLabel, collegeStatusLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -64,7 +65,7 @@ function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){
  </div>;
 }
 
-export function CollegeAssessmentAggregate({ data }: { data: Data }) {
+export function CollegeAssessmentAggregate({ data, leading }: { data: Data; leading?: ReactNode }) {
   const isAssignment = data.kind === "ASSIGNMENT";
   const assignmentFilesEnabled=isAssignment&&assignmentFilesRuntimeEnabled();
   const name = isAssignment ? "Assignments" : "Quizzes";
@@ -97,6 +98,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
           </div>
         }
       />
+      {leading ? <section aria-label="New assessment" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
 
       <section aria-label="Assessment directory filters"
         className="border-b border-border pb-5">
