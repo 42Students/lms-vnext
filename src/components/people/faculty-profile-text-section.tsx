@@ -36,12 +36,12 @@ export function FacultyProfileTextSection({ section, title, description, fields,
     if(!pending && changed) void onSave(section,draft);
   }
   return <form id={facultyProfileAnchor(section)} onSubmit={submit}
-    className="min-w-0 space-y-4 border-b border-border pb-5" aria-label={title} aria-busy={pending}>
+    className="min-w-0 scroll-mt-6 space-y-4 border-b border-[var(--lms-canvas-border)] py-5" aria-label={title} aria-busy={pending}>
     <div>
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       <p className="mt-1 text-sm text-body">{description}</p>
     </div>
-    <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
+    <div className="grid min-w-0 gap-4 sm:grid-cols-2">
       {fields.map(field=>{
         const id=`${facultyProfileAnchor(section)}-${field.name}`;
         return <FormField key={field.name} id={id} label={field.label}>
@@ -55,9 +55,9 @@ export function FacultyProfileTextSection({ section, title, description, fields,
       })}
     </div>
     {changed && issue ? <Alert tone="error">Review {title}: {issue}</Alert> : null}
-    <div className="flex flex-wrap items-center gap-3">
-      {changed ? <Button variant="secondary" disabled={pending} className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
-      <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)} className="min-h-11 md:min-h-[var(--lms-control-height)]">{pending?"Saving…":"Save "+title}</Button>
+    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+      {changed ? <Button variant="secondary" disabled={pending} className="w-full sm:w-auto" onClick={()=>setDiscardOpen(true)}>Discard edits</Button> : null}
+      <Button type="submit" loading={pending} disabled={!changed||Boolean(issue)} className="w-full sm:w-auto">{pending?"Saving…":"Save "+title}</Button>
     </div>
     <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen} title={"Discard unsaved changes to "+title+"?"}
       description={"Discard unsaved changes to "+title+"?"} confirmLabel="Discard edits" onConfirm={()=>{

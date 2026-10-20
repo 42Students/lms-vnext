@@ -1,4 +1,3 @@
-import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -66,7 +65,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-body" role="status">
-        <Disclosure title={`${scopeCount} Teaching assignment(s)`} className="relative rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+        <Disclosure title={`${scopeCount} Teaching assignment(s)`} className="relative min-w-0">
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {assignmentChoices.map(item=><li key={item.deliveryId}>
               <Link className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
@@ -75,7 +74,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
             </li>)}
           </ul></ScrollCue>
         </Disclosure>
-        <Disclosure title={`${sections.length} Section(s)`} className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2">
+        <Disclosure title={`${sections.length} Section(s)`} className="min-w-0">
           <ScrollCue axis="y" label="Teaching Sections" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
             {sections.map(section=><li key={section.id}>{section.name} · {section.count} teaching assignment(s)</li>)}
           </ul></ScrollCue>
@@ -84,7 +83,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
         className="min-w-0 space-y-3">
         <FacultyCourseFilterAutoSubmit />
-        <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Course, code, Section or academic period"
@@ -129,13 +128,13 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9">Clear filters</Link>}
         />
       ) : (
-      <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-3">
+      <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-x-6 gap-y-0 border-y border-[var(--lms-canvas-border)] lg:grid-cols-2">
       {rows.map(({ course, workspace }) => (
         <Link
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-0 min-w-0 flex-col border-b border-border bg-transparent py-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="group flex min-h-0 min-w-0 flex-col border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <div className="flex min-w-0 flex-wrap items-start gap-3">
             <span aria-hidden="true" className="grid size-12 shrink-0 place-items-center rounded-[var(--lms-control-radius)] bg-primary-subtle">
@@ -182,11 +181,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           </div>
 
           <div className="mt-auto pt-4">
-            <SummaryStrip label="Course content summary" steps={[
-              {label:"Content",value:workspace.summary.contents},
-              {label:"Assignments",value:workspace.summary.assignments},
-              {label:"Quizzes",value:workspace.summary.quizzes},
-            ]}/>
+            <dl aria-label="Course content summary" className="grid grid-cols-3 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-xs"><div className="min-w-0"><dt className="text-muted-foreground">Content</dt><dd className="mt-1 text-base font-semibold tabular-nums">{workspace.summary.contents}</dd></div><div className="min-w-0"><dt className="text-muted-foreground">Assignments</dt><dd className="mt-1 text-base font-semibold tabular-nums">{workspace.summary.assignments}</dd></div><div className="min-w-0"><dt className="text-muted-foreground">Quizzes</dt><dd className="mt-1 text-base font-semibold tabular-nums">{workspace.summary.quizzes}</dd></div></dl>
             <div className="mt-4 flex items-center justify-between gap-3">
               <p className="m-0 text-sm font-semibold text-foreground">
                 Open teaching workspace
