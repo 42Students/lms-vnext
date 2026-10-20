@@ -60,7 +60,7 @@ export default async function MentorProjectTimelinePage({
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-semibold text-foreground">
+            <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
               Release {release.sequence+1}: {release.title}
             </h2>
             <StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status}</StatusBadge>
@@ -70,7 +70,7 @@ export default async function MentorProjectTimelinePage({
             :<ol aria-label="Sprints in this release" className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
               <li key={sprint.id} className="min-w-0 py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="font-semibold text-foreground">
+                  <h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">
                     Sprint {sprint.sequence+1}: {sprint.title}
                   </h3>
                   <StatusBadge tone={sprint.status==="COMPLETED"?"success":sprint.status==="ACTIVE"?"info":"neutral"}>{sprint.status}</StatusBadge>

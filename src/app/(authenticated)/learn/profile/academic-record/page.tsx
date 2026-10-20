@@ -12,7 +12,7 @@ export default async function LearnerAcademicRecordPage(){
   <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
   <PageHeader title="Academic record" description="Your college-recorded current program enrollment."/>
   <section className="min-w-0 pt-2">
-   <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Current academic enrollment</h2>
+   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Current academic enrollment</h2>
    {record.enrollment?<dl className="mt-4 grid min-w-0 grid-cols-1 gap-4 text-[14px] min-[768px]:grid-cols-2">
     {([
       ["Learner",record.title],["Program",record.enrollment.program],
