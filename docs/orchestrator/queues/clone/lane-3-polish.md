@@ -14,7 +14,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-3.md: surface | proble
 
 - [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/placements/new/draft/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/placements/new/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx` (TPO page)
