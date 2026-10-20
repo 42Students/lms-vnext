@@ -10,7 +10,7 @@ export default function ProfileChecklistError({reset}:{
     <p className="mt-2 text-sm text-body">We cannot infer profile completion while the read failed.</p>
     <div className="mt-4 flex flex-wrap justify-center gap-3">
       <Button onClick={reset}>Retry</Button>
-      <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text sm:min-h-9">Profile</Link>
+      <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Profile</Link>
     </div>
   </div>;
 }
