@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,7 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeLessons>>
   | Awaited<ReturnType<typeof listCollegeCourseProgress>>;
 
-export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: DirectoryData;courseChoices?:readonly {code:string;name:string}[] }) {
+export function CollegeLearningDirectory({ data, courseChoices=[], prepend }: { data: DirectoryData; courseChoices?:readonly {code:string;name:string}[]; prepend?:ReactNode }) {
   const lessons = data.kind === "LESSONS";
   const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
@@ -36,6 +37,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           </Link>
         }
       />
+      {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
       <section aria-label={title + " filters"} className="border-b border-border pb-5">
         <form method="get" action={href} className="flex flex-wrap items-end gap-3">
           {lessons?<label className="grid min-w-32 gap-1 text-xs font-semibold text-body">

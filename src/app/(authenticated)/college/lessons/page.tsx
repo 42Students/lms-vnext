@@ -62,16 +62,20 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
   const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
-  return <div className="min-w-0 overflow-x-clip space-y-4">
+  return <CollegeLearningDirectory
+    data={await listCollegeLessons(context, parsed.data)}
+    courseChoices={courseChoices}
+    prepend={<div className="min-w-0 space-y-4">
+
     <CollegeLessonCreateControl options={authoringOptions} />
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
       Export filtered lessons CSV
     </Link>
     <Link href="/college/live-classes"
-      className="inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
       View college live classes
     </Link>
-    <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} courseChoices={courseChoices} />
-  </div>;
+    </div>}
+  />;
 }
