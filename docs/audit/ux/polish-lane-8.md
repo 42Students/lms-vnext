@@ -169,3 +169,9 @@ Files: college/domains/page.tsx; components/admin/tenant-domain-manager.tsx; aud
 **6 issues fixed:** Inconsistent page spacing, overly tight field labels, redundant form separators, a short scroll viewport, small row hover feedback and cramped mobile filtering. Aligned 8/12/16px legacy rhythm, removed a duplicate border, expanded the scrollable learner list, and made each 44px checkbox target visibly interactive. Inspected selection/form-submit, capacity and partial outcome states, invalid identifiers, empty options, server redirects, role gates, 375px/768px, loading/error and nearest parent layout. Source-based review only; no test, build or CI.
 
 **Files:** src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx, this proof and the queue.
+
+## Surface 27 — Elective offering roster
+
+**8 issues fixed:** Roster rows appeared below the secondary faculty workflow, density and summary borders competed with the main work, label gutters used nonstandard measurements, the section editor flex-wrapped unpredictably at 375/768px, member movement fields could overflow, removal actions became cramped, faculty action rows lacked mobile alignment, and heading hierarchy was oversized. Moved the existing roster before faculty, preserved all forms and confirmation checkboxes, aligned 8/12/16px gutters, made form grids fluid, standardized 44px controls and narrow mobile action widths. Reviewed active, waitlisted, archived, no offering/faculty, assignment/movement/removal outcomes, empty roster, 500 row cap, loading/error/not-found and college layout. Static source review only; no CI.
+
+**Files:** elective roster page, proof and queue.
