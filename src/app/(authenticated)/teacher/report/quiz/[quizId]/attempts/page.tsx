@@ -1,3 +1,4 @@
+import { Pagination } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
@@ -116,15 +117,7 @@ export default async function FacultyQuizAttemptPage({
                 {result.pointsAwarded}/{result.pointsPossible} points</span>
             </li>)}</ul>}
       </li>)}</ol>}
-    <nav aria-label="Quiz attempt pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
-      <div className="flex gap-3">
-        {data.page>1?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page-1,data.query.order,data.query.q,data.query.view)}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Previous</Link>:null}
-        {data.page<data.totalPages?<Link href={facultyQuizAttemptsHref(quizId,data.query.deliveryId,data.page+1,data.query.order,data.query.q,data.query.view)}
-          className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Next</Link>:null}
-      </div>
-    </nav>
+    <Pagination label="Quiz attempt pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyQuizAttemptsHref(quizId,data.query.deliveryId,page,data.query.order,data.query.q,data.query.view)} />
     <p className="text-xs text-muted-foreground leading-5">
       This report is Faculty-only. Question selections and private learner-facing result links
       are not exposed, and no grade-visibility action is performed.
