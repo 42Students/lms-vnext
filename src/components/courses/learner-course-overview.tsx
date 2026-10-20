@@ -457,18 +457,18 @@ export function LearnerCourseOverview({
           </div>
           <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Assessments</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Assessments</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Discussions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Discussions</Link>
             <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Live Sessions</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none md:min-h-9">Live Sessions</Link>
           </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
               <article key={update.key} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text">
+                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                       {update.title}
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>
