@@ -44,15 +44,15 @@ export function LearnerBoardTaskDetailDialog({
       {task.carriedFromSprintId?<p className="mt-2 text-xs font-semibold text-warning-text">
         Carried over
       </p>:null}
-      <dl className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-3">
+      <dl className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] text-[var(--lms-font-base)] sm:grid-cols-3">
         <div><dt className="text-muted-foreground">Status</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskStatusTone(task.status)}>{learnerBoardTaskStatusLabel(task.status)}</StatusBadge></dd></div>
         <div><dt className="text-muted-foreground">Priority</dt><dd className="mt-1"><StatusBadge tone={learnerBoardTaskPriorityTone(task.priority)}>{learnerBoardTaskPriorityLabel(task.priority)}</StatusBadge></dd></div>
-        <div className="col-span-2 sm:col-span-3"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
+        <div className="sm:col-span-2 lg:col-span-3"><dt className="text-muted-foreground">Sprint</dt><dd className="mt-1 font-semibold">{sprintTitle??"Not assigned"}</dd></div>
         <div><dt className="text-muted-foreground">Assignee</dt><dd>{facts.assignee}</dd></div>
         <div><dt className="text-muted-foreground">Due date</dt><dd>{facts.dueDate}</dd></div>
         <div><dt className="text-muted-foreground">Estimate</dt><dd>{facts.estimate}</dd></div>
         <div><dt className="text-muted-foreground">Task type</dt><dd>{facts.taskType}</dd></div>
-        {facts.blockerReason ? <div className="col-span-2 sm:col-span-3">
+        {facts.blockerReason ? <div className="sm:col-span-2 lg:col-span-3">
           <dt className="text-muted-foreground">Blocker note</dt>
           <dd className="whitespace-pre-wrap break-words">{facts.blockerReason}</dd>
         </div> : null}

@@ -42,7 +42,7 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
  }
  return <section className="space-y-3">
   <Button type="button" onClick={()=>setOpen(x=>!x)}
-   className="min-h-9">
+   className="min-h-11 md:min-h-9">
    Add my task
   </Button>
   {!available.length?<p className="text-sm text-muted-foreground">
@@ -51,10 +51,10 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    className="grid gap-3 border-t border-border py-4 sm:grid-cols-2">
    <label className="text-sm font-semibold">Task title
     <Input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}
-     className="mt-1 min-h-9"/></label>
+     className="mt-1 min-h-11 md:min-h-9"/></label>
    <label className="text-sm font-semibold">Sprint
     <Select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
-     className="mt-1 min-h-9">
+     className="mt-1 min-h-11 md:min-h-9">
      <option value="">Leave blank for the backlog</option>
      {available.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </Select></label>
@@ -69,13 +69,13 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
       className="mt-1"/></label>
    <label className="text-sm font-semibold">Priority
     <Select value={priority} onChange={e=>setPriority(e.target.value)}
-     className="mt-1 min-h-9">
+     className="mt-1 min-h-11 md:min-h-9">
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(x=><option key={x} value={x}>{x}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Status
     <Select value={status} disabled={!sprintId}
       onChange={e=>setStatus(e.target.value as typeof status)}
-      className="mt-1 min-h-9">
+      className="mt-1 min-h-11 md:min-h-9">
       <option value="TODO">To Do</option>
       {sprintId?<><option value="IN_PROGRESS">In Progress</option>
         <option value="BLOCKED">Blocked</option></>:null}
@@ -83,15 +83,15 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    </label>
    <label className="text-sm font-semibold">Type
     <Select value={type} onChange={e=>setType(e.target.value)}
-     className="mt-1 min-h-9">
+     className="mt-1 min-h-11 md:min-h-9">
      <option value="">Not set</option>{["STORY","BUG","CHORE","SPIKE"].map(x=><option key={x} value={x}>{x}</option>)}
     </Select></label>
    <label className="text-sm font-semibold">Estimate points
     <Input type="number" min={0} max={1000} value={estimate} onChange={e=>setEstimate(e.target.value)}
-     className="mt-1 min-h-9"/></label>
+     className="mt-1 min-h-11 md:min-h-9"/></label>
    <label className="text-sm font-semibold">Due date
     <Input type="date" value={due} onChange={e=>setDue(e.target.value)}
-     className="mt-1 min-h-9"/></label>
+     className="mt-1 min-h-11 md:min-h-9"/></label>
    <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
     <Textarea maxLength={4000} value={blockerReason} onChange={e=>setBlockerReason(e.target.value)}
       className="mt-1"/></label>
@@ -103,10 +103,10 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
     <Button type="submit" disabled={busy||!title.trim()||
       (status==="BLOCKED"&&!blockerReason.trim())||
       (estimate!==""&&(!Number.isInteger(Number(estimate))||Number(estimate)<0||Number(estimate)>1000))}
-     className="min-h-9">
+     className="min-h-11 md:min-h-9">
      {busy?"Saving…":"Add task"}</Button>
     <Button type="button" disabled={busy} onClick={()=>setOpen(false)}
-     variant="secondary" className="min-h-9">Cancel</Button>
+     variant="secondary" className="min-h-11 md:min-h-9">Cancel</Button>
    </div>
   </form>:null}
  </section>;
