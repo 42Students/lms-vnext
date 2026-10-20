@@ -3,6 +3,7 @@
 import {useRouter} from "next/navigation";
 import {useMemo,useState} from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
@@ -99,12 +100,12 @@ export function FacultyLiveClassEditor({
   }
   return <section aria-label="Manage Faculty live classes"
     className="space-y-3">
-    <h2 className="font-semibold text-foreground">Schedule or manage a live class</h2>
+    <Disclosure title="Schedule or manage a live class" className="border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-3 px-2 py-4">
     <p className="text-xs text-muted-foreground">
       Enter meeting times in IST (Asia/Kolkata), regardless of your device time zone.
       Each confirmed write is scoped to your assigned Section. HTTPS links only.
     </p>
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="grid gap-1 text-[13px] font-semibold">Action
         <Select value={action} onChange={e=>changeAction(e.target.value as typeof action)}
           className="text-base md:text-sm">
@@ -150,7 +151,7 @@ export function FacultyLiveClassEditor({
     {!ready?<p className="text-sm text-muted-foreground">
       {action==="CREATE"?"No registered lessons are available to schedule.":"No editable published session is available on this page."}
     </p>:null}
-    <Button type="button" loading={pending} disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"}>
+    <Button type="button" loading={pending} disabled={!ready||pending} onClick={()=>void save()} variant={action==="CANCEL"?"danger":"primary"} className="w-full sm:w-auto">
       {pending?"Saving…":"Confirm "+(action==="CREATE"?"schedule":action==="EDIT"?"edit":"cancel")}
     </Button>
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
@@ -160,5 +161,6 @@ export function FacultyLiveClassEditor({
       onConfirm={()=>void save(true)} />
     {error?<Alert tone="error">{error}</Alert>:null}
     {success?<Alert tone="success">{success}</Alert>:null}
+    </Disclosure>
   </section>;
 }
