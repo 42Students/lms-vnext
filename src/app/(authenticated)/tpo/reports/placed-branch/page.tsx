@@ -10,6 +10,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
 import { ReportTable, reportNumber } from "@/components/placements/placement-report-ui";
@@ -30,20 +31,17 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
   if (report.season) csvParams.set("seasonId", report.season.id);
   if (report.selectedJobId) csvParams.set("jobId", report.selectedJobId);
   return (
-    <div data-tpo-presentation-report className="min-w-0 space-y-6">
-      <TpoReportPresentation />
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/placed-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Reports" title="Placed students by branch"
         description="Unique learners with accepted offers and confirmed joins by current branch and season."
-        actions={report.season ? <a
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{report.season ? <a
           href={"/api/placements/reports/placed-branch?" + csvParams}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
           Download CSV
-        </a> : null}
+        </a> : null}</div>}
       />
-      <Link href="/tpo/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Reports</Link>
       <form action="/tpo/reports/placed-branch" method="get"
-        className="grid gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2">
+        className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
           <Select name="seasonId" defaultValue={report.season?.id ?? ""}
             className="mt-2 min-h-11 min-[768px]:min-h-9 w-full">
@@ -58,12 +56,14 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
             {report.jobs.map((item) => <option key={item.id} value={item.id}>{item.companyName} · {item.title}</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 min-[768px]:min-h-9 min-[768px]:col-span-2"
+        <Button type="submit" className="min-h-11 w-full sm:col-span-2 sm:justify-self-start sm:w-auto md:min-h-9"
           disabled={!report.season}>Apply filters</Button>
       </form>
+      <TpoReportPresentation />
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/placed-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       {!report.season ? <EmptyState title="No placement season" description="No results can be inferred without a recorded season." /> : (
         <>
-          <section className="grid gap-3 min-[768px]:grid-cols-3">
+          <section className="grid min-w-0 gap-3 sm:grid-cols-3">
             {([
               ["Placed learners", report.totals.placed],
               ["Confirmed joined learners", report.totals.joined],
@@ -72,7 +72,7 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
               <StatTile key={label} label={label} value={reportNumber(count)} className="min-h-[104px]" />
             ))}
           </section>
-          <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-4 text-sm text-body">{report.branchScopeNote}</p>
+          <Disclosure title="Branch reporting methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body">{report.branchScopeNote}</p></Disclosure>
           <ReportTable title="Branch outcomes" headings={["Current branch", "Placed learners", "Confirmed joined", "Accepted offer versions"]}
             rows={report.rows.map((row) => [row.departmentName, row.placed, row.joined, row.acceptedOfferVersions])}
             emptyDescription="No accepted offers have been recorded in this reporting scope." />

@@ -24,35 +24,32 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
   const data = await getTpoOfferExpiryWatchlist(context,
     first(query.days) === undefined ? {} : { days: first(query.days) });
   return (
-    <div data-tpo-presentation-report className="min-w-0 space-y-6">
-      <TpoReportPresentation />
-      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
+    <div data-tpo-presentation-report className="min-w-0 space-y-4">
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
-        actions={process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
-          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary">
+        actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto"><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">← Reports</Link>{process.env.DB09_TPO_API_READY === "DB09_VERIFIED" ? <a href={"/api/placements/tpo/offers/expiry?days=" + data.days}
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-on-primary">
           Export CSV
-        </a> : null}
+        </a> : null}</div>}
       />
       {process.env.DB09_TPO_API_READY !== "DB09_VERIFIED" ? (
         <Alert tone="warning">CSV export is unavailable until the DB09 verification gate is enabled.</Alert>
       ) : null}
-      <Link href="/tpo/reports" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-link hover:underline lms-inline-link">
-        ← Reports
-      </Link>
       <form action="/tpo/reports/offers-expiry" method="get"
-        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
-        <label className="block w-full min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expiring in the next N calendar days
+        className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+        <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expiring in the next N calendar days
           <Select name="days" defaultValue={String(data.days)}
-            className="mt-2 block w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9">
+            className="mt-2 block min-h-11 w-full md:min-h-9">
             {[1, 3, 7, 14, 30, 60, 90].map((value) =>
               <option key={value} value={value}>{value} days</option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9">
+        <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
           Apply window
         </Button>
       </form>
+      <TpoReportPresentation />
+      <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <p className="border-b border-[var(--lms-canvas-border)] bg-transparent py-4 text-sm text-body">
         {data.scopeNote} Window: {data.asOfIst} through {data.throughIst} (IST, inclusive).
       </p>
@@ -65,7 +62,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       ) : (
         <section aria-label="Expiring offer records" className="grid gap-3">
           {data.rows.map((row) => (
-            <article key={row.offerId} className="min-w-0 border-b border-border px-1 py-4">
+            <article key={row.offerId} className="min-w-0 border-b border-border py-4">
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0">
                   <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
