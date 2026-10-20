@@ -151,25 +151,25 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         Export matching drives CSV
       </Link>
     </div>:null}
-    <form method="get" action="/recruiter/drives" className="flex flex-wrap items-end gap-3">
+    <form method="get" action="/recruiter/drives" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
-      <label className="grid min-w-52 flex-1 gap-1 text-sm text-body">Search role
+      <label className="grid min-w-[180px] flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search role
         <Input name="q" defaultValue={query.data.q} maxLength={100} placeholder="Job title" className="min-h-11 w-full md:min-h-9" /></label>
-      <label className="grid min-w-36 gap-1 text-sm text-body">Employment
+      <label className="grid min-w-[144px] gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment
         <Select name="employment" defaultValue={query.data.employment} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
         </Select></label>
-      <label className="grid min-w-36 gap-1 text-sm text-body">Work mode
+      <label className="grid min-w-[144px] gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
         <Select name="mode" defaultValue={query.data.mode} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">All</option><option value="ONSITE">On-site</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
         </Select></label>
-      <label className="grid min-w-36 gap-1 text-sm text-body">Deadline
+      <label className="grid min-w-[144px] gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline
         <Select name="deadline" defaultValue={query.data.deadline} className="min-h-11 w-full md:min-h-9">
           <option value="ALL">Any</option><option value="TODAY">Today (IST)</option><option value="SOON">Within 7 days</option><option value="PAST">Recorded deadline passed</option><option value="UNKNOWN">Not recorded</option>
         </Select></label>
-      <label className="grid min-w-36 gap-1 text-sm text-body">Sort
+      <label className="grid min-w-[144px] gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={query.data.sort} className="min-h-11 w-full md:min-h-9">
           <option value="RECENT">Newest first</option>
           <option value="DEADLINE">Deadline first</option>
@@ -180,8 +180,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Link href={recruiterDrivesHref({view: "ALL", collegeId: selectedCollege, q: "",employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT"})} className="inline-flex min-h-11 items-center py-2 text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>
     </form>
     {requestView.length>0?<section aria-label="Your drive requests" className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">Your drive requests</h2>
-      <ul className="grid gap-3 md:grid-cols-2">{requestView.map(req=>{
+      <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Your drive requests</h2>
+      <ul className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">{requestView.map(req=>{
         const draft=req.draft&&typeof req.draft==="object"?req.draft:{};
         const title=typeof draft.title==="string"?draft.title:"Drive request";
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
