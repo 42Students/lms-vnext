@@ -37,15 +37,24 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    eligible:summary.complete?summary.eligible:null,undecided:summary.complete?summary.undecided:null,
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
    invitable:invitePreview.invitable,registered:registrations.registered},new Date());
- return <div className="min-w-0 space-y-5"><PageHeader title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
- <Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Placement eligibility</Link>
- {undoable?<Disclosure title="Undo last decision"
-    summaryTitle={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}
-    className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
-  <p className="my-2 text-sm text-muted-foreground leading-[22px]">Only the latest unreversed batch or learner action can be undone. A newer decision will block this request.</p>
-  <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
- </Disclosure>:null}
+ return <div className="min-w-0 space-y-4"><PageHeader title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")} actions={<Link href={backHref} className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Placement eligibility</Link>}/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
+ <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
+  className="scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] py-4 target:animate-pulse">
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Next step</h2>
+  <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{next.title}</h3>
+  <p className="text-sm text-body leading-[22px]">{next.detail}</p>
+  <div className="flex flex-wrap gap-3">
+   <Link href={"/tpo/batches/"+batchId+next.href}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    {next.button} →
+   </Link>
+   {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    {registrations.registered} students registered: continue on Students →
+   </Link>:null}
+  </div>
+ </section>
  {ready&&summary.complete&&summary.undecided>0?<p data-testid="batch.suggest" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
   Suggested: make them eligible <Link href={"/tpo/batches/"+batchId+"/students?decision=NOT_DECIDED"}
    className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" data-testid="batch.suggest-do">Do it</Link>
@@ -63,7 +72,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </Link>:<p role="status" className="text-sm text-body leading-[22px]">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
  <section aria-label="Whole batch eligibility decision" className="space-y-2 border-b border-border py-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
-    <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Whole batch</h2>
+    <div><h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Whole batch</h2>
       <p className="text-sm text-body leading-[22px]">Decision: <strong>{decision.status.replaceAll("_"," ")}</strong></p>
       {decision.reason?<p className="text-xs text-muted-foreground leading-5">Reason: {decision.reason}</p>:null}
     </div>
@@ -85,20 +94,22 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   invitable={invitePreview.invitable} eligible={invitePreview.eligible}
   deadlinePassed={registrations.invitation.stage === "DEADLINE_PASSED"}
   minDate={indianCalendarDate(new Date())} /></section> : null}
+ <Disclosure title="Mark finished · Reopen batch" className="border-t border-[var(--lms-canvas-border)]" contentClassName="pt-3">
  {ready?<TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
  }:null}/>:null}
+ </Disclosure>
  <section aria-label="Batch eligibility snapshot" className="min-w-0 space-y-3 border-b border-border py-4">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Eligibility decisions</h2>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Eligibility decisions</h2>
   <p className="text-sm text-muted-foreground leading-[22px]">{summary.complete?
    "Inherited learner, class and batch decisions for the active roster.":
    "Partial snapshot: only the first "+eligibility.limit+" learners were assessed. Do not treat these counts as batch totals."}</p>
-  <dl className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden border-y border-border md:grid-cols-4">
+  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-[var(--lms-canvas-border)] md:grid-cols-4">
    {[
     ["Eligible",summary.eligible],["Ineligible",summary.ineligible],
     ["Not decided",summary.undecided],["Needs review",summary.needsReview],
-   ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-border px-3 py-3 text-sm [overflow-wrap:anywhere] last:border-r-0 md:border-b-0">
+   ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-[var(--lms-canvas-border)] px-3 py-3 text-sm [overflow-wrap:anywhere] last:border-r-0 md:border-b-0">
     <dt>{label}</dt><dd className="font-semibold tabular-nums">{value}</dd>
    </div>)}
   </dl>
@@ -114,24 +125,15 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <Link href={"/tpo/batches/"+batchId+"/students"} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Students</Link>
  </section>
 
- <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
-  className="scroll-mt-24 space-y-3 border-b border-border py-4 target:animate-pulse">
-  <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Next step</h2>
-  <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{next.title}</h3>
-  <p className="text-sm text-body leading-[22px]">{next.detail}</p>
-  <div className="flex flex-wrap gap-3">
-   <Link href={"/tpo/batches/"+batchId+next.href}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-    {next.button} →
-   </Link>
-   {registrations.available&&(registrations.registered??0)>0?<Link href={"/tpo/batches/"+batchId+"/students"}
-    className="inline-flex min-h-11 items-center text-sm font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-    {registrations.registered} students registered: continue on Students →
-   </Link>:null}
-  </div>
- </section>
 
 
+
+ {undoable?<Disclosure title="Undo last decision"
+    summaryTitle={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}
+    className="border-b border-border py-3 [&>summary]:min-h-11 [&>summary]:text-link">
+  <p className="my-2 text-sm text-muted-foreground leading-[22px]">Only the latest unreversed batch or learner action can be undone. A newer decision will block this request.</p>
+  <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
+ </Disclosure>:null}
  <p className="text-sm text-muted-foreground leading-[22px]">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </div>;
 }
