@@ -18,7 +18,7 @@ export default async function FacultyDiscussionHistoryPage({
   const parsed=parseFacultyDiscussionHistoryLocation(deliveryId,raw);
   if(!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid discussion history filters"} />
-    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Back to Courses</Link>
+    <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 min-[768px]:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Back to Courses</Link>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getFacultyDiscussionHistory(context,parsed.data);
@@ -29,8 +29,8 @@ export default async function FacultyDiscussionHistoryPage({
         className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Discussions
       </Link>} />
-    <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
+    <form method="get" className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+      <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Recorded action
         <Select name="action" defaultValue={data.query.action}
           className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All moderation and reply actions</option>
@@ -39,9 +39,9 @@ export default async function FacultyDiscussionHistoryPage({
           <option value="REPLY">Faculty replies</option>
         </Select>
       </label>
-      <Button type="submit" variant="primary">Filter</Button>
+      <Button type="submit" variant="primary" className="w-full min-[768px]:w-auto">Filter</Button>
       <Link href={facultyDiscussionHistoryHref({...data.query,action:"ALL",page:1})}
-        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
+        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center px-3 text-sm font-semibold text-primary-text underline hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>
     </form>
     <p className="text-sm text-body" role="status" aria-live="polite">{data.total} recorded event{data.total===1?"":"s"}</p>
     {data.items.length===0?<EmptyState title="No registered moderation history"
