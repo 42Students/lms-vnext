@@ -356,3 +356,161 @@ Responsive proof by source: at **375px and 700px**, all action targets are at le
 **Responsive source proof:** calendar module `@media(max-width:767px)` and `@media(min-width:768px)` are unchanged; 44px controls under 768px, 20px heading under 768px, 116px calendar-day grid cells, 2px deep-teal inset focus, 150/200ms transitions and `prefers-reduced-motion:reduce` remain. This is layout-rule inspection, not a phone screenshot. The per-day grid button is exempt only because shared inline-flex Button chrome would change its complex child flow; `learner-career-calendar.module.css:187-206` documents the dimension-sensitive native button.
 
 **Next file:** `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx` (source inventory and missing nested loading/error parity), followed by `src/components/placements/learner-placement-job-detail.tsx` computed-style review. No builds, screenshot runner or CI were executed by this lane.
+
+## Nested jobs, learner placement home, verification, and dashboard — 2026-10-20 source evidence
+
+This batch makes targeted pixel-clone **source** updates to **nine** scoped files (two nested `loading.tsx` included; nested job error already existed). It does **not** change placement records, access checks, active jobs, learner project scopes, API calls or existing business decisions.
+
+### Legacy value comparison
+
+| Property / UI state | Legacy source and exact value | vNext file and source value | Status |
+|---|---|---|---|
+| Page head | `old-lms-pages.md:5-13` / `old-lms-shell-spec.md`: one white canvas; one page title + optional right actions, no extra eyebrow | `learner-placement-job-detail.tsx` removes `eyebrow="Published campus drive"`; historical-only `jobs/[jobId]/page.tsx` receives a conditional single `PageHeader`, but regular detail retains its existing PageHeader | Source structure match; rendered titles not measured |
+| Drive action primary | `components___variables.scss:44+`: button solid #0a7c88, hover #086873, 36px desktop / 44px touch on mobile | `learner-placement-job-detail.tsx`: `--lms-button-primary`, `--lms-button-primary-hover`, `min-h-11 md:min-h-9` | Exact source tokens |
+| Focus | `components___accessibility.scss:19-38`: teal 2px outline, 2px offset | Drive internal/external anchors `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]` | Exact outline source; keyboard visual unverified |
+| Link hover & motion | `components___learn-notifications.scss:88-124`: teal hover, 150ms ease and focus treatment | Drive actions `transition-colors duration-150`, primary hover token, `motion-reduce:transition-none` | Source match |
+| Mobile page breakpoint | `components___learn-notifications.scss:9-10`: 767px max mobile | Placement home, dashboard and verification page use `md:` rather than Tailwind `sm:`; 640–767px stays phone layout | Source match |
+| Touch size | `components___learn-notifications.scss:88-99`: minimum 44px <=767px | Placement home: 11 `min-h-11` values; dashboard: 13; detail: 8; historical journey: 2; error: 2 | Source matches target sizes; parent constraints unmeasured |
+| Section canvas | `old-lms-pages.md:5-13`: avoid card-inside-card; hairline separators, white canvas | Placement home verification/notices and dashboard functional sections use `border-b border-border` instead of redundant nested card wrappers | Structural source match |
+| Block alerts | `components___learn-notifications.scss` warnings use slim pale tint rather than large white tile | Placement debar cue now `border-l-2 border-warning bg-warning-subtle p-4 md:p-5`; historic closed/cancelled notice uses pale status inset | Source match, computed shade unverified |
+| Responsive card spacing | `components___learn-notifications.scss:210-221`: 16px mobile, 24px >=768px | Verification Education/Identity panels `p-4 md:p-6`; dashboard lead panel `p-4 md:p-6` | Source match |
+| Error layout | `old-lms-pages.md:5-13`: no nested center-aligned page card, visible retry and back | `jobs/[jobId]/error.tsx` flattened to `min-w-0 space-y-4`; shared PageHeader, Button retry, 44px back link | Source match |
+| Loading placeholder | `old-lms-pages.md`: one broad directory canvas, hairline content, no boxed dashboard per subsection | Nested job and application `loading.tsx` now use shared `GracefulPageLoading shape="directory"`, labels retained | Source-level; animation/presentation untested |
+| History / archive | Preserve existing learner-only status and no inferred selection outcome | `learner-own-drive-journey.tsx` uses border-b sections with no extra cards and maintains direct own-application links with mobile 44px height | Source no-regression; live links unverified |
+
+### Grep-style full-file proof
+
+GitHub connector returned full content for each file after the changes. Counts below are **source regex counts, not local shell grep or a browser**.
+
+| File | Raw HTML controls | Hex values | Deprecated `sm:` for audited properties | `min-h-11` targets | `md:` tokens | JSX section / Button open-close |
+|---|---:|---:|---:|---:|---:|---|
+| `jobs/[jobId]/page.tsx` | 0 | 0 | 0 | 1 | 1 | 0/0 sections |
+| `jobs/[jobId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0/0 sections |
+| `jobs/[jobId]/error.tsx` | 0 | 0 | 0 | 2 | 2 | 1/1 section, 1/1 Button |
+| `applications/[applicationId]/loading.tsx` | 0 | 0 | 0 | 0 | 0 | 0/0 sections |
+| `learner-own-drive-journey.tsx` | 0 | 0 | 0 | 2 | 5 | 2/2 sections |
+| `learner-placement-job-detail.tsx` | 0 | 0 | 0 | 8 | 22 | 6/6 sections |
+| `my-placements/page.tsx` | 0 | 0 | 0 | 11 | 14 | 5/5 sections |
+| `profile/verification/page.tsx` | 0 | 0 | 0 | 3 | 4 | 3/3 sections |
+| `learner-placements-dashboard.tsx` | 0 | 0 | 0 | 13 | 23 | 6/6 sections |
+
+Source scans: raw `/<(button|input|select|textarea)(?=\\s|>)/g`; six-digit hex `/#[0-9a-f]{6}\\b/gi`; old breakpoints `/\\bsm:(min-h-9|grid-cols-2|grid-cols-3|p-4|p-5|p-6|flex-row|items-center|justify-between|text-2xl)\\b/g`; `<section` vs `</section>` and `<Button` vs `</Button>`. **All zero failures in this selected-file scan.**
+
+Responsive source proof:
+- **375px phone:** one-column grid/stacking, 44px touch links, section separator rather than nested cards; historical title and return link visible when no active job feed.
+- **700px small tablet:** mobile layout continues; corrected `sm:` usages do not switch at 640px.
+- **768px tablet:** `md:` grid, 24px inner card padding, 36px optional desktop links, placement source text wraps.
+- **1024px desktop:** existing `lg:` role breakdown grid and independent placement stat objects retained.
+
+**Strict tick remains open** for LRN-02/04/05/06. Full all-page zero-instance grep, render/computed colour, hover/disabled/loading/error states, phone/tablet screenshots, link/keyboard test, and TypeScript compile are not available in this turn. No code, codemod, tests, or CI executed, and no prior report of commit counts should be interpreted as visual pixel parity.
+
+**Next file:** `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`, then `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`, as pending LRN-02 page-wise inventory. They may require no edits if the current shared components already meet the value table.
+
+## Placement interviews and assessments — source pass (2026-10-20)
+
+Completed source edits to `src/components/placements/learner-career-rounds-workspace.tsx`, `learner-career-rounds.tsx`, and `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`. Both interviews and assessments use the shared round workspace. The parent interviews and career calendar pages were inspected and already use PageHeader, one canvas and shared learner components; no unnecessary changes were made there.
+
+| State/value | Legacy source and value | Actual vNext value | Source result |
+|---|---|---|---|
+| Filter categories | `components___learn-notifications.scss:88-124`: teal pill states, 44px mobile target | Existing shared `FilterChip` controls remain; horizontal row `overflow-x-auto` phone, `md:flex-wrap` after 767px | Source parity for responsive geometry; active/focus rendered proof open |
+| Text input/select | `components___form.scss:117-143`: 14px/20px, pale form bg, 2px teal focus halo | 1 shared `Input`, 2 shared `Select` in rounds workspace, `md:grid-cols-3` filters | Shared source tokens, no local handrolled controls |
+| Card background/border | `components___learn-notifications.scss:184-195`: #fff + #e5e9f0 hairline, radius 12px | Round and official-result articles `rounded-xl border border-border bg-surface` | Source token match |
+| Card padding | `components___learn-notifications.scss:210-221`: 16px phone, 24px desktop from 768px | Round cards and official results `p-4 md:p-6` | Source match |
+| Text mobile overflow | `components___learn-notifications.scss:241-278`: `min-width:0`, wrap string | Round card grid `min-w-0`; heading already `break-words`, action links `break-words` | Source-level match |
+| Row responsive | `components___learn-notifications.scss:9-10` mobile ends at 767px | All three: `md:flex-row`, `md:grid-cols-2`, `md:w-auto`, `md:grid-cols-3` where needed | Source breakpoint match |
+| Phone hit target | `components___learn-notifications.scss:9-10,88-98`: >=44px | Workspace `min-h-11` (21 instances), rounds (4), official results (8) | Source match for targets |
+| Empty state | `components___learn-notifications.scss:304-330`: min-height 180px; padding 48px vertical, 24px horizontal | Workspace filtered empty `min-h-[180px] px-6 py-12`; results empty `min-h-[180px] px-6 py-12` | Source match |
+| Panel nesting | `old-lms-pages.md:5-13`: one canvas; no ordinary card-inside-card | Workspace status sections `border-b ... py-4 md:py-6`; published results candidate feedback `border-t border-border pt-3` | Structural source match |
+| Links and buttons | `components___accessibility.scss:19-38`: visible 2px teal focus; shared Button defaults | Round card external/app links `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]`; existing Button semantics and disabled state preserved | Source implementation match; actual keyboard verification open |
+| Result truth | Owner keeps existing vNext wording and behavior | Applied-results-only service and timezone IST display preserved, no inferred completion or provider submission | Source-level no-regression |
+
+Full source scans after the commits:
+
+| File | Raw HTML controls | 6-digit hex | Legacy `sm:` responsive utilities | 44px target tokens | `md:` responsive tokens | Matched opening/closing tags |
+|---|---:|---:|---:|---:|---:|---|
+| `learner-career-rounds-workspace.tsx` (643 lines) | 0 | 0 | 0 | 21 | 22 | 8/8 Buttons; 4/4 sections |
+| `learner-career-rounds.tsx` (163 lines) | 0 | 0 | 0 | 4 | 10 | 1/1 Button; 1/1 article |
+| `assessments/results/page.tsx` (165 lines) | 0 | 0 | 0 | 8 | 11 | 1/1 Button; 1/1 article; 3/3 sections |
+
+Equivalent source regex for each full file: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:(min-h-9|grid-cols-2|grid-cols-3|p-5|p-6|flex-row|items-start|justify-between|w-auto|hidden|flex-wrap)\\b/g`. This is **connector full-content inspection**, not a shell grep. Rerun checkout command:
+```bash
+grep -En '<(button|input|select|textarea)([ >])|#[[:xdigit:]]{6}|sm:(min-h-9|grid-cols-2|flex-row|w-auto)' \
+ src/components/placements/learner-career-rounds{,-workspace}.tsx \
+ 'src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx'
+```
+
+Responsive source implications: **375px phone** and **700px tablet** show one-column cards, full-width shared actions, scrollable filter chips and 44px links. **768px tablet** enables 2/3-column content and wrapped time filters; **1024px desktop** uses existing learner page canvas without an extra nested wrapper. Zero raw element matches in these three selected files. No DOM, screenshot, test, TypeScript parser or CI was executed; strict LRN-02/04/06 remain unticked.
+
+**Exact next source file:** `src/app/(authenticated)/learn/my-placements/assessments/page.tsx` (was inspected, currently no raw controls/legacy mobile classes; compare its info banner state), then `src/app/(authenticated)/learn/my-placements/interviews/page.tsx` (already one shared PageHeader; no edits expected unless source proves a mismatch).
+
+### Assessment landing and published-results action (2026-10-20)
+
+`src/app/(authenticated)/learn/my-placements/assessments/page.tsx`: moved existing **View official assessment results** action from a separate block into shared `PageHeader.actions` without changing its destination. Changed assessment guidance from nested rounded card to slim info strip. Page still renders the identical `LearnerCareerRoundsWorkspace` and validation; nothing changed in application/round access.
+
+| Property | Legacy value/reference | Source value | Proof |
+|---|---|---|---|
+| Title + right action | `old-lms-pages.md:5-13`: one PageHeader with title/action on one row where space permits | One `PageHeader` with existing results Link in `actions` prop | Static markup |
+| Info strip | `docs/design/legacy-styles/components___learn-notifications.scss`: pale tinted notice, hairline accent | `border-l-2 border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 md:px-6` | Token and padding source |
+| Mobile link | `components___learn-notifications.scss:9-10`: minimum 44px <=767px | `min-h-11 md:min-h-9` | Utility source |
+| Focus | `components___accessibility.scss:19-38`: 2px teal, offset 2px | `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]` | Static markup |
+| Responsive placement | `components___learn-layout.scss:152-163`: 16px mobile horizontal padding, 768px breakpoint | `px-4 md:px-6` strip, shared PageHeader right action | Source match, no screenshot |
+
+This file has 1 shared PageHeader, 1 results destination link, 0 raw button/input/select/textarea, 0 hex literals and 0 deprecated `sm:` utility instances. `assessments/page.tsx` and `interviews/page.tsx` retain the same learner-owned request/schedule services and the combined `learner-career-rounds-workspace.tsx`. Browser rendering, keyboard and mobile screenshots remain outstanding; LRN-02 still unticked.
+
+**Next queued file:** `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`, then nested notification error/loading page inventory. Do not alter courses owned chat-7.
+
+## Learner placement notification preferences — source parity (2026-10-20)
+
+Source-completed `src/app/(authenticated)/learn/my-placements/notification-preferences/{page.tsx,loading.tsx}` and `src/components/placements/learner-placement-notification-settings.tsx`. Inspected existing `notification-preferences/error.tsx` and found its one PageHeader, retry Button, hairline error state already source-compatible; did not rewrite it unnecessarily.
+
+| Property/state | Legacy SCSS / intended value | Current vNext source | Status |
+|---|---|---|---|
+| Page anatomy | `old-lms-pages.md:5-13`: back link, one PageHeader, white canvas | Return link placed before one shared PageHeader; page remains `min-w-0 space-y-6` | Source match |
+| Checkbox affordance | `components___form.scss` / `components___accessibility.scss:19-38`: native input semantics, 2px teal focus, 44px minimum touch area | Two existing shared Checkbox controls inside labels `min-h-12`, `rounded-lg`, `focus-within:outline-2 outline-offset-2` and token focus colour | Source match |
+| Checkbox states | Selected teal surface, neutral unselected, disabled when pending | Conditional `border-primary bg-primary-subtle` vs `border-border bg-surface hover:border-primary`, `disabled={pending}` preserved | Source check, rendered states pending |
+| Selectable row padding | Legacy discrete option/row panels 16px inset with 8px radius | Both rows retain `p-4` and use `rounded-lg` 8px, `min-w-0` | Source match |
+| Button mobile size | `components___learn-notifications.scss:9-10`: 44px through 767px | Review/reload/keep/save: four shared Buttons with `max-md:min-h-11`, normal desktop height | Source match |
+| Motion sensitivity | `components___accessibility.scss`: reduced motion removes effects | Checkbox option transitions retain 150ms and gain `motion-reduce:transition-none` | Source match |
+| Loading state | `old-lms-pages.md:5-13`: single directory canvas | Shared `GracefulPageLoading shape="directory"` rather than legacy-mismatched `shape="card"` | Source match |
+| No-regression | Owner: preserve contents/API choices | Two preference names, optimistic `expected` match, PUT endpoint, pending disable, confirmation Dialog, toast and router refresh unchanged | Source logic review; runtime untested |
+
+GitHub full-file scan, not shell grep:
+
+| File | Raw controls | Hex values | Old `sm:` geometry classes | Header | Shared Button pairs | Checkbox | 44px tokens |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `notification-preferences/page.tsx` (23 lines) | 0 | 0 | 0 | 1 | 0/0 | 0 | 1 |
+| `notification-preferences/loading.tsx` (6 lines) | 0 | 0 | 0 | 0 | 0/0 | 0 | 0 |
+| `notification-preferences/error.tsx` (16 lines; inspected unchanged) | 0 | 0 | 0 | 1 | 1/1 | 0 | 1 |
+| `learner-placement-notification-settings.tsx` (105 lines) | 0 | 0 | 0 | 0 | 4/4 | 2 | 4 |
+
+Scan patterns: `/<(button|input|select|textarea)(?=\\s|>)/g`; `/#[0-9a-f]{6}\\b/gi`; `/\\bsm:(min-h-9|p-5|p-6|grid-cols-2)\\b/g`; opens `/<Button(?=\\s|>)/g`, closes `/<\\/Button>/g`.
+
+Phone **375px** and small tablet **700px**: both selectable option rows stack, have at least 48px selectable height, four actions have >=44px target; 768px+: normal shared Button desktop sizing and preserved label layout. Layout derived from class rules only; computed visual values and manual interaction not measured. LRN-02/04/06 remain strictly unticked.
+
+### Batch codemod note
+`scripts/codemods/chat1-learner-rounds-responsive.cjs` added for the 4 previously source-migrated round/result files: idempotent source substitutions, dry-run default, TypeScript TSX parse guard. The Node codemod was **not run**, as per user dev-only/no-code-execution instruction.
+
+**Next exact file for continuation:** `src/app/(authenticated)/learn/my-placements/preparation/page.tsx` (remaining LRN-02 page type; inspect against existing proof before making any changes); after that `src/app/(authenticated)/learn/my-placements/support/page.tsx`. Full runtime screenshot/keyboard parity and whole-lane grep remain the reason all strict checklist items are open.
+
+## Learner support filters and preparation recovery — source pass (2026-10-20)
+
+`src/app/(authenticated)/learn/my-placements/support/page.tsx` now uses the existing **legacy 44px filter-pill geometry** for two filter navs (status/category), with selected teal background/white text, 14px medium/1.3 type, 8px radius, 16px horizontal inset, 150ms hover, 2px teal focus and horizontal scrolling through viewport 767px. The PageHeader extra eyebrow was removed and nested decision note is a hairline subsection, not another card.
+
+`src/app/(authenticated)/learn/my-placements/preparation/page.tsx` invalid-query recovery now uses the one-canvas `min-w-0` alert and a 44px tappable Clear filters link; its valid branch keeps existing shared Tabs, EmptyState, PageHeader and membership-scoped service.
+
+| Value/state | Legacy SCSS reference | vNext exact property | Source check |
+|---|---|---|---|
+| Support pill height | `components___learn-notifications.scss:88-98`: >=44px | `supportFilterPillClass`: `min-h-11` both phone and desktop | Match |
+| Pill dimensions | Same: 14px, 500, 1.3 line, 8px radius, 16px left/right pad | `text-[14px] font-medium leading-[1.3] rounded-lg px-4` | Match |
+| Selected pill | `components___learn-notifications.scss:117-125`: teal #26bac7 fill, white text | `aria-[current=page]:bg-[var(--lms-primary)]` + `text-[var(--lms-on-primary)]` + border | Match |
+| Pill hover/focus | `components___learn-notifications.scss:101-116`: 0.4-alpha teal border, 0.05 teal bg, 2px focus outline offset2px | `hover:border-[rgba(38,186,199,0.4)]`, `hover:bg-[rgba(38,186,199,0.05)]`, focus teal 2px/offset2px | Source match |
+| Mobile nav | `components___learn-notifications.scss:56-74`: <=767px horizontal overflow, >=768px wrap | `flex-nowrap overflow-x-auto`, `md:flex-wrap md:overflow-visible` | Match |
+| Preparations invalid route | `old-lms-pages.md:5-13`: one canvas, left state, 44px tap target | `role=alert`, `min-w-0 space-y-4`, `Clear filters` `min-h-11 md:min-h-9` | Match |
+
+**Full-file static inventory:** Support 85 lines, raw controls **0**, 6-digit hex **0**, deprecated small-breakpoint **0**, **1** PageHeader, **2** shared pill uses, **2** nav uses, **2/2** section tags; Preparation 79 lines, raw controls **0**, 6-digit hex **0**, deprecated small-breakpoint **0**, **2 conditional PageHeader source occurrences** (exactly one per rendered branch), **2/2** section tags.
+
+Source scans: `/<(button|input|select|textarea)(?=\\s|>)/g`, `/#[0-9a-f]{6}\\b/gi`, `/\\bsm:(min-h-9|grid-cols-2|grid-cols-3|p-5|p-6|flex-wrap)\\b/g`, open/close `<section>` and `</section>`. This is full GitHub-file text inspection, not execution of shell grep.
+
+Responsive source implications: **375px** and **700px** use one horizontal swipeable filter nav row, visible focus/44px targets; **768px+** wraps filter links within the available page width. The preparation error back link reaches 44px on phone and can use desktop height after 768px. No app rendering, screenshots, tests, TypeScript checking or CI in this turn; all 7 owner strict checklist items intentionally remain **unticked** pending executable proof.
+
+**Next exact file:** `src/app/(authenticated)/learn/my-placements/rules/page.tsx`, then `src/app/(authenticated)/learn/my-placements/placement/page.tsx` for remaining LRN-02 value/state verification. Other concurrent lanes may have modified main; sync with main before editing.

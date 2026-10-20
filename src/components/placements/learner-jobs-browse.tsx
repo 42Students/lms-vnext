@@ -99,7 +99,7 @@ export function LearnerJobsBrowse({
   const savedOpen=paged.filter(item=>!item.deadlinePassed);
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
-  const selectClass = "mt-1 min-h-11 sm:min-h-9";
+  const selectClass = "mt-1 min-h-11 md:min-h-9";
   return (
     <div className="space-y-5">
       <SegmentedControl label="Drive bookmarks"
@@ -113,14 +113,14 @@ export function LearnerJobsBrowse({
       <section className="border-t border-border pt-4" aria-label="Find placement drives">
         <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
           onClick={()=>setMobileOpen(value=>!value)}
-          className="w-full sm:hidden">
+          className="min-h-11 w-full md:hidden">
           <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
           <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
         </Button>
         <div id="learner-drive-filters"
-          className={(mobileOpen?"block":"hidden")+" space-y-4 sm:block"}>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <label className="text-xs font-semibold text-body sm:col-span-2">
+          className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+          <label className="text-xs font-semibold text-body md:col-span-2">
             Search drives, companies and roles
             <Input
               type="search"
@@ -168,7 +168,7 @@ export function LearnerJobsBrowse({
             label: label + " (" + availabilityCounts[key] + ")",
           }))} />
         <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
+          <label className="inline-flex min-h-11 md:min-h-9 items-center gap-2 text-sm font-semibold text-body">
             <Checkbox
               checked={filters.eligibleOnly}
               onChange={(event) => updateQuery({
@@ -178,7 +178,7 @@ export function LearnerJobsBrowse({
             />
             Eligible only
           </label>
-          <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
+          <label className="inline-flex min-h-11 md:min-h-9 items-center gap-2 text-sm font-semibold text-body">
             <Checkbox
               checked={filters.closingSoon}
               onChange={(event) => updateQuery({
@@ -188,12 +188,12 @@ export function LearnerJobsBrowse({
             />
             Closing in 7 days
           </label>
-          <label className="ml-auto inline-flex min-h-10 items-center gap-2 text-sm text-body">
+          <label className="ml-auto inline-flex min-h-11 md:min-h-9 items-center gap-2 text-sm text-body">
             Sort by
             <Select value={filters.sort}
               aria-label="Sort placement drives"
               onChange={(event) => updateQuery({ sort: event.target.value })}
-              className="min-h-11 sm:min-h-9">
+              className="min-h-11 md:min-h-9">
               <option value="deadline">Deadline soonest</option>
               <option value="newest">Newest first</option>
               <option value="ctc">Highest CTC</option>
@@ -203,14 +203,14 @@ export function LearnerJobsBrowse({
           <Button variant="link" type="button" onClick={() => {
               setSearch("");
               router.push(pathname, { scroll: false });
-            }} className="min-h-11 px-2 sm:min-h-9">
+            }} className="min-h-11 px-2 md:min-h-9">
             Clear filters
           </Button>
         </div>
         </div>
       </section>
 
-      <section aria-label="All published drives summary" className="rounded-xl border border-border bg-surface p-4">
+      <section aria-label="All published drives summary" className="min-w-0 border-b border-border pb-4 pt-3">
         <h2 className="text-base font-semibold text-foreground">All drives</h2>
         <p className="mt-1 text-sm text-body">
           {allDrives.drives} published {allDrives.drives===1?"drive":"drives"} · {allDrives.roles} role options
@@ -229,13 +229,13 @@ export function LearnerJobsBrowse({
           Your requested results page is no longer available after filtering.
           Showing page {page} instead.
           <Button variant="link" type="button" onClick={()=>updateQuery({page:String(page)})}
-            className="ml-2 min-h-11 px-0 sm:min-h-9">
+            className="ml-2 min-h-11 px-0 md:min-h-9">
             Update page link
           </Button>
         </p>
       ):null}
 
-      {savedOnly && matchingItems.length===0?<div className="space-y-3 rounded-xl border border-border bg-surface p-5">
+      {savedOnly && matchingItems.length===0?<div className="flex min-h-[180px] min-w-0 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
         <h2 className="font-semibold text-foreground">No saved drives yet</h2>
         <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
         <Button variant="link" type="button" className="min-h-11 px-0"
@@ -244,12 +244,12 @@ export function LearnerJobsBrowse({
         <div className="space-y-3">
           <EmptyState title={empty.title} description={empty.description} />
           <Link href="/learn/my-placements"
-            className="inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text">
             Review placement dashboard →
           </Link>
         </div>
       ) : empty.kind==="FILTERED_OUT" ? (
-        <div className="rounded-xl border border-border bg-surface p-6 text-center" role="status">
+        <div className="flex min-h-[180px] flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
           <p className="font-semibold text-foreground">{empty.title}</p>
           <p className="mt-2 text-sm text-body">{empty.description}</p>
           {empty.showReset ? <Button variant="link" type="button"
@@ -286,7 +286,7 @@ export function LearnerJobsBrowse({
 
       {totalPages > 1 ? (
         <Pagination page={page} pageCount={totalPages} label="Drive results pages"
-          className="justify-center sm:justify-between"
+          className="justify-center md:justify-between"
           hrefForPage={target=>{
             const query=learnerDriveQueryWithChanges(params.toString(),{page:String(target)});
             return pathname+(query?"?"+query:"");
