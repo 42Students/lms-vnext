@@ -16,12 +16,10 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
   const data=await listSuperAdminCompanyDriveHistory(context,companyId);
   if(!data)notFound();
   return <div className="min-w-0 space-y-5">
-    <PageHeader eyebrow="Super Admin · Companies" title={data.company.name}
-      description="Drive history and recorded joining outcomes within the selected college only." />
-    <Link href="/admin/companies" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
-      ← Companies
-    </Link>
-    <section aria-label="Company history totals" className="grid grid-cols-2 divide-x divide-border border-y border-border min-[768px]:grid-cols-3">
+    <PageHeader title={data.company.name}
+      description="Drive history and recorded joining outcomes within the selected college only."
+      actions={<Link href="/admin/companies" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors duration-150 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 md:w-auto">← Companies</Link>} />
+    <section aria-label="Company history totals" className="grid grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-3 md:divide-x md:divide-y-0">
       {([["Drives run",data.totals.drives],["Total applications",data.totals.applicants],
         ["Total hired",data.totals.hired]] as const).map(([label,value])=>
         <div key={label} className="min-w-0 bg-surface px-3 py-4">
@@ -39,7 +37,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
         {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:job=>job.deadline?.toISOString().slice(0,10)??"—"},
         {key:"applicants",header:"Applicants",mobilePriority:"secondary",cell:job=>job.applicants},
         {key:"hired",header:"Hired",mobilePriority:"secondary",cell:job=>job.hired},
-        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9"
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
           href={`/admin/placements/jobs/${job.id}`}>Open drive →</Link>},
       ]}/>
     {data.truncated ? <p className="text-sm text-muted-foreground">
