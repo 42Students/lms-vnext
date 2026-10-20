@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type PlacementRoleOptionItem = {
   id: string;
@@ -45,7 +44,7 @@ const emptyDraft: RoleDraft = {
   maximumAnnualCtcInr: "",
 };
 
-const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
+const inputClass = "min-h-11 w-full max-[767px]:min-h-11";
 
 function humanize(value: string) {
   return value
@@ -103,7 +102,6 @@ export function PlacementRoleOptions({
     useState<RoleDraft>(emptyDraft);
   const [pending, setPending] =
     useState(false);
-  const [archiveTarget, setArchiveTarget] = useState<PlacementRoleOptionItem | null>(null);
 
   const activeRoles = useMemo(
     () =>
@@ -246,7 +244,6 @@ export function PlacementRoleOptions({
           role.id,
         "DELETE",
       );
-      setArchiveTarget(null);
       showToast({
         tone: "success",
         title: "Role archived",
@@ -289,7 +286,7 @@ export function PlacementRoleOptions({
         </div>
       </div>
 
-      <div className="grid min-w-0 gap-3 pt-3 md:grid-cols-2">
+      <div className="grid gap-3 pt-4 lg:grid-cols-2">
         {activeRoles.map((role) => (
           <article
             key={role.id}
@@ -316,11 +313,10 @@ export function PlacementRoleOptions({
               </div>
               {editable &&
               !role.isPrimary ? (
-                <div className="flex w-full flex-wrap gap-2 sm:w-auto">
+                <div className="flex gap-2">
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="min-h-11 flex-1 sm:flex-none md:min-h-9"
                     disabled={pending}
                     onClick={() =>
                       startEdit(role)
@@ -331,10 +327,9 @@ export function PlacementRoleOptions({
                   <Button
                     size="sm"
                     variant="secondary"
-                    className="min-h-11 flex-1 sm:flex-none md:min-h-9"
                     disabled={pending}
                     onClick={() =>
-                      setArchiveTarget(role)
+                      archive(role)
                     }
                   >
                     Archive
@@ -375,18 +370,18 @@ export function PlacementRoleOptions({
       </div>
 
       {editable ? (
-        <details open={editingId !== null} className="min-w-0 border-t border-border py-4">
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">
+        <div className="border-t border-border py-5">
+          <div className="mb-4">
+            <h3 className="m-0 text-sm font-semibold text-foreground">
               {editingId
                 ? "Edit additional role"
                 : "Add another role"}
-          </summary>
-          <div className="min-w-0 space-y-3 pt-3">
+            </h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Eligibility and drive rounds remain shared; the application itself is bound to this exact role.
             </p>
           </div>
-          <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 lg:grid-cols-3">
             <label>
               <span className="mb-1 block text-xs font-semibold text-body">
                 Role title
@@ -459,7 +454,7 @@ export function PlacementRoleOptions({
                 </option>
               </Select>
             </label>
-            <label className="sm:col-span-2">
+            <label className="lg:col-span-2">
               <span className="mb-1 block text-xs font-semibold text-body">
                 Locations
               </span>
@@ -535,10 +530,9 @@ export function PlacementRoleOptions({
               />
             </label>
           </div>
-          <div className="mt-4 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+          <div className="mt-4 flex flex-wrap gap-2">
             <Button
               size="sm"
-              className="min-h-11 w-full sm:w-auto md:min-h-9"
               disabled={pending}
               onClick={save}
             >
@@ -552,7 +546,6 @@ export function PlacementRoleOptions({
               <Button
                 size="sm"
                 variant="secondary"
-                className="min-h-11 w-full sm:w-auto md:min-h-9"
                 disabled={pending}
                 onClick={reset}
               >
@@ -560,14 +553,8 @@ export function PlacementRoleOptions({
               </Button>
             ) : null}
           </div>
-          </div>
-        </details>
+        </div>
       ) : null}
-      <ConfirmDialog open={archiveTarget !== null}
-        onOpenChange={open => { if (!open && !pending) setArchiveTarget(null); }}
-        title="Archive this role?" description="The role will no longer be available in this draft drive."
-        confirmLabel="Archive role" pending={pending}
-        onConfirm={() => { if (archiveTarget) void archive(archiveTarget); }} />
     </section>
   );
 }
