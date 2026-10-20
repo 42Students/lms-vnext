@@ -51,12 +51,12 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  }
  function close(){seq.current++;setDetail(null);setMessage("");}
  return <section aria-label="Why a learner sees a module" className="border-b border-border pb-5">
-  <h2 className="font-semibold">Why can&apos;t a student see a module?</h2>
-  <label className="mt-3 grid gap-1 text-sm font-semibold text-body">
+  <h2 className="font-semibold text-foreground">Why can&apos;t a student see a module?</h2>
+  <label className="mt-3 grid gap-1 text-[13px] font-semibold text-body">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"
-    className="min-h-11 w-full sm:min-h-9"/>
+    className="min-h-11 w-full min-[768px]:min-h-9"/>
   </label>
   {loading?<p role="status" className="mt-2 text-sm text-body">Searching learners…</p>:null}
   {search.trim().length>1&&!loading&&!suggestions.length&&!message?
@@ -73,13 +73,13 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
   <Drawer open={detail!==null} onOpenChange={open=>{if(!open)close();}} title="Student module access explanation">
    {detail?<div className="space-y-4">
     <div className="flex items-start justify-between gap-3">
-     <div><h3 className="text-lg font-semibold">{detail.displayName||"Unnamed learner"}</h3>
+     <div><h3 className="text-lg font-semibold text-foreground">{detail.displayName||"Unnamed learner"}</h3>
       <p className="text-sm text-body">{detail.rollNumber||"No roll number"}</p>
      </div>
      <Button type="button" variant="secondary" onClick={close} aria-label="Close student explanation">Close</Button>
     </div>
-    <section aria-label="Placement participation" className="rounded-md border border-border p-3 text-sm">
-     <h4 className="font-semibold">Placement cell decision</h4>
+    <section aria-label="Placement participation" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm">
+     <h4 className="font-semibold text-foreground">Placement cell decision</h4>
      <p className="mt-1">{detail.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
       detail.placementParticipation.status==="ELIGIBLE"?"Eligible":
       "Ineligible"+(detail.placementParticipation.reason?": "+detail.placementParticipation.reason:"")}</p>
@@ -89,8 +89,8 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
      <p className="mt-2 text-xs text-body">Placements requires both an enabled module and an eligible placement decision.</p>
     </section>
     <div className="space-y-4">{detail.modules.map(module=><article key={module.module}
-     className="rounded-md border border-border p-3">
-      <h4 className="font-semibold">{module.label}: {module.enabled?"On":"Off"}</h4>
+     className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+      <h4 className="font-semibold text-foreground">{module.label}: {module.enabled?"On":"Off"}</h4>
       <p className="mt-1 text-xs text-body">{module.explanation}</p>
       {detail.rules.filter(rule=>rule.module===module.module).map(rule=>
        <StudentRuleEditor key={detail.membershipId+":"+rule.module} collegeId={collegeId}
