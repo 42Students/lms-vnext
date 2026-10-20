@@ -94,7 +94,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className={cx("min-w-0", className)}>
     <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 md:rounded-[var(--lms-radius-md)] md:border md:border-[var(--lms-canvas-border)]">
-      <table className="block w-full border-separate border-spacing-0 text-left text-[13px] leading-5 tabular-nums md:table md:border-collapse md:[&_tbody_tr:last-child_td]:border-b-0">
+      <table className="block w-full border-separate border-spacing-0 text-left text-[14px] leading-5 tabular-nums md:table md:border-collapse md:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden md:table-header-group md:bg-[var(--lms-white)]">
           <tr>{columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
@@ -129,13 +129,13 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               <ul className="space-y-[var(--lms-space-2)]" aria-label="Fields on detail page">
                 {recoverable.filter(col=>item.detailLinks.get(col.key)).map(col=>
                   <li key={col.key}><Link href={item.detailLinks.get(col.key)!}
-                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     {col.mobileLabel??col.header} · View details
                   </Link></li>)}
               </ul>
             </td>:null}
             {item.detailHref ? <td className="block min-w-0 py-1 md:hidden">
-              <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View details</Link>
+              <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View details</Link>
             </td>:null}
           </tr>)}
         </tbody>
