@@ -45,18 +45,65 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
  const waiting=roster.filter(r=>!taken.has(r.applicationId));
  const format=(iso:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST";
  return <section className="min-w-0 space-y-4">
+  {error?<InlineNotice tone="error" message={error}/>:null}
+  {message?<InlineNotice tone="success" message={message}/>:null}
+  {reschedules.length?<section className="space-y-3 border-b border-border pb-6">
+   <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
+   <p className="text-sm text-body">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
+   {reschedules.map(req=><div key={req.id} className="space-y-3 border-b border-border py-4">
+    <p className="min-w-0 break-words text-sm"><strong>{req.name??"Learner"}</strong> · {req.reason}</p>
+    <div className="flex flex-wrap gap-3">
+     <Select value={requestTarget[req.id]??""} aria-label={"New slot for "+(req.name??"learner")}
+      onChange={e=>setRequestTarget(p=>({...p,[req.id]:e.target.value}))}
+      className="min-h-11 w-full min-w-0 sm:flex-1 md:min-h-9 text-sm">
+      <option value="">Choose new slot</option>
+      {free.map(slot=><option key={slot.id} value={slot.id}>{format(slot.startsAt)} · {slot.room}</option>)}
+     </Select>
+     <Input placeholder="Decision reason" aria-label={"Reason for "+(req.name??"learner")}
+      value={requestReason[req.id]??""} onChange={e=>setRequestReason(p=>({...p,[req.id]:e.target.value}))}
+      className="min-h-11 w-full min-w-0 sm:flex-1 md:min-h-9 text-sm"/>
+    </div>
+    <div className="flex flex-wrap gap-3">
+     <Button variant="primary" type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
+      onClick={()=>void action({action:"MOVE_REQUEST",requestId:req.id,targetSlotId:requestTarget[req.id],
+       reason:(requestReason[req.id]??"").trim()})}
+      className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Move</Button>
+     <Button variant="secondary" type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
+      onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
+      className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</Button>
+    </div>
+   </div>)}
+  </section>:null}
+  {recruiterProposals.length?<div className="min-w-0 space-y-3 border-y border-border py-4">
+   <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
+   {recruiterProposals.map(p=><div key={p.id} className="grid min-w-0 gap-3 border-b border-border py-3 sm:grid-cols-2">
+    <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
+    <label className="grid gap-1 text-[13px] font-semibold">Venue or meeting link
+     <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
+      className="min-h-11 w-full min-w-0 md:min-h-9"/>
+    </label>
+    <Button variant="primary" type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
+     onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
+      venue:(venue[p.id]??p.meetingLocation??"").trim()})}
+     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">
+     Confirm recruiter proposal
+    </Button>
+   </div>)}
+  </div>:null}
+  <details open={slots.length===0} className="group min-w-0 border-t border-border pt-4">
+   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Interview day setup</summary>
   <div className="min-w-0 border-t border-border pt-4">
    <h2 className="font-semibold text-foreground">Generate interview day</h2>
    <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
-   <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+   <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
     <label className="grid gap-1 text-[13px] font-semibold">Start time (IST)<Input type="datetime-local" required value={date} onChange={e=>setDate(e.target.value)}
-      className="min-h-11 md:min-h-9 "/></label>
+      className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
     <label className="grid gap-1 text-[13px] font-semibold">Room names (comma-separated)<Input value={rooms} onChange={e=>setRooms(e.target.value)}
-      className="min-h-11 md:min-h-9 "/></label>
+      className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
     <label className="grid gap-1 text-[13px] font-semibold">Minutes per slot<Input type="number" min={5} max={240} value={minutes} onChange={e=>setMinutes(Number(e.target.value))}
-      className="min-h-11 md:min-h-9 "/></label>
+      className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
     <label className="grid gap-1 text-[13px] font-semibold">Gap (minutes)<Input type="number" min={0} max={120} value={gap} onChange={e=>setGap(Number(e.target.value))}
-      className="min-h-11 md:min-h-9 "/></label>
+      className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
     <label className="grid gap-1 text-[13px] font-semibold">Slots per room<Input type="number" min={1} max={100} value={count} onChange={e=>setCount(Number(e.target.value))}
       className="min-h-11 md:min-h-9 "/></label>
    </div>
@@ -87,57 +134,15 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
-   <Button variant="secondary" type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
     Previewed · Assign room
    </Button>
   </details>
-  {reschedules.length?<section className="space-y-3 border-b border-border pb-6">
-   <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
-   <p className="text-sm text-body">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
-   {reschedules.map(req=><div key={req.id} className="space-y-3 border-b border-border py-4">
-    <p className="text-sm"><strong>{req.name??"Learner"}</strong> · {req.reason}</p>
-    <div className="flex flex-wrap gap-3">
-     <Select value={requestTarget[req.id]??""} aria-label={"New slot for "+(req.name??"learner")}
-      onChange={e=>setRequestTarget(p=>({...p,[req.id]:e.target.value}))}
-      className="min-h-11 w-full min-w-0 sm:w-auto md:min-h-9 text-sm">
-      <option value="">Choose new slot</option>
-      {free.map(slot=><option key={slot.id} value={slot.id}>{format(slot.startsAt)} · {slot.room}</option>)}
-     </Select>
-     <Input placeholder="Decision reason" aria-label={"Reason for "+(req.name??"learner")}
-      value={requestReason[req.id]??""} onChange={e=>setRequestReason(p=>({...p,[req.id]:e.target.value}))}
-      className="min-h-11 w-full min-w-0 sm:w-auto md:min-h-9 text-sm"/>
-    </div>
-    <div className="flex flex-wrap gap-3">
-     <Button variant="primary" type="button" disabled={busy||!requestTarget[req.id]||(requestReason[req.id]??"").trim().length<3}
-      onClick={()=>void action({action:"MOVE_REQUEST",requestId:req.id,targetSlotId:requestTarget[req.id],
-       reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Move</Button>
-     <Button variant="secondary" type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
-      onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</Button>
-    </div>
-   </div>)}
-  </section>:null}
-  {recruiterProposals.length?<div className="min-w-0 space-y-3 border-y border-border py-4">
-   <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
-   {recruiterProposals.map(p=><div key={p.id} className="grid min-w-0 gap-3 border-b border-border py-3 sm:grid-cols-2">
-    <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
-    <label className="grid gap-1 text-[13px] font-semibold">Venue or meeting link
-     <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
-      className="min-h-11 md:min-h-9 "/>
-    </label>
-    <Button variant="primary" type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
-     onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
-      venue:(venue[p.id]??p.meetingLocation??"").trim()})}
-     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">
-     Confirm recruiter proposal
-    </Button>
-   </div>)}
-  </div>:null}
+  </details>
   <div className="min-w-0 border-t border-border pt-4">
    <h2 className="font-semibold">Interview slots · {booked.length} booked · {free.length} available · {waiting.length} students unassigned</h2>
    <p className="mt-1 text-sm text-body">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
-   <div className="mt-3 divide-y divide-border">{slots.map(slot=>{
+   <div className="mt-3 min-w-0 divide-y divide-border">{slots.map(slot=>{
     const student=roster.find(r=>r.applicationId===slot.applicationId);
     return <article key={slot.id} className="min-w-0 space-y-2 py-4">
      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
@@ -183,7 +188,5 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     description={confirmRequest?.description}
     confirmLabel="Confirm"
     onConfirm={()=>{if(confirmRequest){const body=confirmRequest.body;setConfirmRequest(null);void action(body);}}}/>
-  {message?<InlineNotice tone="success" message={message}/>:null}
-  {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
