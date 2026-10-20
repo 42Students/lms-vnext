@@ -65,7 +65,7 @@ export default async function CollegeActivityPage({
           : data.query.category===category;
         return <Link key={key} aria-current={active?"page":undefined}
           href={collegeActivityHref({...data.query,category,view,module:undefined,importance:undefined})}
-          className={"inline-flex min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold " +
+          className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 " +
             (active ? "border-primary bg-primary-subtle text-link" : "border-border text-body")}>
           {label}
         </Link>;
@@ -192,7 +192,7 @@ export default async function CollegeActivityPage({
         ]}
         empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred."/>}/>
     </section>
-    <nav aria-label="Activity history pagination" className="flex items-center justify-between gap-3 text-sm">
+    <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
       {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">
