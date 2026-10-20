@@ -14,3 +14,10 @@
 - [x] src/app/(authenticated)/college/videos/page.tsx — Video head above editor, no duplicate title/card; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
 - [x] src/app/(authenticated)/hr/colleges/page.tsx — retired HR redirect only, no rendered elements; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
 - [x] src/app/(authenticated)/learn/my-placements/support/page.tsx — support already fixed in item2; grep raw=0,hex=0; 375/768/1280 source rules, no runtime screenshots.
+- [x] src/app/(authenticated)/learn/quizzes/page.tsx — authorized quiz redirect only; no rendered DOM; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
+- [x] src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx — HR editor reexport: single PageHeader actions, shared inputs/selects, 44px phone actions; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
+- [x] src/app/(authenticated)/recruiter/home/page.tsx — HR home reexport: PageHeader/cards; ten 36px-only links corrected to 44px phone; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
+- [x] src/app/(authenticated)/teacher/courses/[deliveryId]/page.tsx — faculty course validation and canonical redirect; no rendered DOM; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
+- [x] src/app/(authenticated)/tpo/reports/page.tsx — Report page head, filter tokens, responsive 768px, typed hidden inputs, journey link hover/focus; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
+- [x] src/app/(authenticated)/tpo/settings/job-types/page.tsx — Settings PageHeader now contains inline subtitle; existing Tabs/DataTable/confirm dialog; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
+- [x] src/app/(authenticated)/tpo/verification/page.tsx — Verification one PageHeader, unboxed filters, 44px mobile controls and pagination, shared drawer; grep raw=0,hex=0,sm=0; 375/768/1280 source rules, no runtime screenshot.
