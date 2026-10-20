@@ -93,6 +93,7 @@ export function PlacementEmployerRelationships({
   ) {
     const draft = drafts[relationshipId];
     if (!draft) return;
+    if(pendingId)return;
     setPendingId(relationshipId);
     try {
       await mutate(
@@ -126,6 +127,7 @@ export function PlacementEmployerRelationships({
   async function archive(
     relationshipId: string,
   ) {
+    if(pendingId)return;
     setPendingId(relationshipId);
     try {
       await mutate(
@@ -168,8 +170,8 @@ export function PlacementEmployerRelationships({
   }
 
   return (
-    <section className="border-b border-border pb-6">
-      <div className="border-b border-border pb-3">
+    <section className="min-w-0 border-b border-border pb-5">
+      <div className="border-b border-border pb-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Companies
         </h2>
@@ -200,11 +202,11 @@ export function PlacementEmployerRelationships({
             return (
               <div
                 key={item.relationshipId}
-                className="grid min-w-0 gap-4 py-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_auto]"
+                className="grid min-w-0 gap-3 py-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-5"
               >
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="m-0 font-semibold text-foreground">
+                  <div className="flex min-w-0 flex-wrap items-center gap-2">
+                    <p className="m-0 min-w-0 break-words font-semibold text-foreground">
                       {item.name}
                     </p>
                     {item.verifiedAt?<StatusBadge tone="success">Verified by 42</StatusBadge>:null}
@@ -243,13 +245,14 @@ export function PlacementEmployerRelationships({
                   ) : null}
                 </div>
 
-                <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1">
                   <label>
                     <span className="mb-1 block text-xs font-semibold text-body">
                       Relationship owner
                     </span>
                     <Select
                       className="min-h-11 w-full md:min-h-9"
+                      disabled={busy||item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED"}
                       value={
                         draft.ownerMembershipId
                       }
@@ -294,6 +297,7 @@ export function PlacementEmployerRelationships({
 
                   <label className="flex items-center gap-2 text-sm font-semibold text-body">
                     <Checkbox
+                      disabled={busy||item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED"}
                       checked={draft.isTrusted}
                       onChange={(event) =>
                         setDrafts(
@@ -314,18 +318,19 @@ export function PlacementEmployerRelationships({
                   </label>
                 </div>
 
-                <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
+                <div className="flex min-w-0 flex-wrap items-center gap-2 border-t border-border pt-3 sm:justify-end lg:col-span-2 lg:border-t-0 lg:pt-0">
                   {item.companyStatus!=null && item.companyStatus!=="ACTIVE" ? (
                     <span role="status" className="text-sm text-muted-foreground">
                       This company is archived on the platform and cannot be restored here.
                     </span>
                   ) : item.relationshipStatus==="ARCHIVED" ? (
-                    <Button size="sm" variant="secondary" disabled={busy}
+                    <Button size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={busy}
                       onClick={()=>setRestoreConfirmId(item.relationshipId)}>Restore</Button>
                   ) : (<>
                   <Button
                     size="sm"
                     variant="secondary"
+                    className="min-h-11 w-full sm:w-auto md:min-h-9"
                     disabled={busy}
                     onClick={() =>
                       save(
@@ -338,48 +343,9 @@ export function PlacementEmployerRelationships({
                       : "Save"}
                   </Button>
 
-                  {archiveConfirmId ===
-                  item.relationshipId ? (
-                    <>
-                      <Button
-                        size="sm"
-                        variant="danger"
-                        disabled={busy}
-                        onClick={() =>
-                          archive(
-                            item.relationshipId,
-                          )
-                        }
-                      >
-                        Confirm archive
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        disabled={busy}
-                        onClick={() =>
-                          setArchiveConfirmId(
-                            null,
-                          )
-                        }
-                      >
-                        Cancel
-                      </Button>
-                    </>
-                  ) : (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      disabled={busy}
-                      onClick={() =>
-                        setArchiveConfirmId(
-                          item.relationshipId,
-                        )
-                      }
-                    >
-                      Archive
-                    </Button>
-                  )}
+                  <Button size="sm" variant="ghost"
+                    className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
+                    onClick={()=>setArchiveConfirmId(item.relationshipId)}>Archive</Button>
                   </>)}
                 </div>
               </div>
@@ -387,6 +353,12 @@ export function PlacementEmployerRelationships({
           })}
         </div>
       )}
+      <ConfirmDialog open={Boolean(archiveConfirmId)}
+        onOpenChange={next=>{if(!next&&!pendingId)setArchiveConfirmId(null);}}
+        title="Archive this company?"
+        description="This company relationship will be archived for this college. Canonical employer identity remains available to other colleges."
+        confirmLabel="Confirm archive" confirmVariant="danger" pending={Boolean(pendingId)}
+        onConfirm={()=>{if(archiveConfirmId)void archive(archiveConfirmId);}}/>
       <ConfirmDialog open={Boolean(restoreConfirmId)} onOpenChange={next=>{if(!next)setRestoreConfirmId(null);}}
         title="Restore this company?"
         description="The archived company relationship will become available to this college again. Its history is preserved."
