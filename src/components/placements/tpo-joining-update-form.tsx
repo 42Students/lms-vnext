@@ -89,13 +89,13 @@ export function TpoJoiningUpdateForm({
   }
 
   return (
-    <div className="mt-3 grid gap-3 border-t border-border pt-3 sm:grid-cols-2">
+    <div className="mt-3 grid min-w-0 gap-3 border-t border-border pt-3 sm:grid-cols-2">
       <label className="text-sm font-medium text-foreground">
         New joining outcome
         <Select
           value={status}
           onChange={(event) => setStatus(event.target.value as JoiningChoice)}
-          className="mt-1 min-h-11 md:min-h-9 w-full "
+          className="mt-1 min-h-11 w-full min-w-0 md:min-h-9"
         >
           <option value="JOINED">Joined</option>
           <option value="DEFERRED">Deferred</option>
@@ -107,7 +107,7 @@ export function TpoJoiningUpdateForm({
           {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
           <Input type="date" value={joiningDate}
             onChange={(event) => setJoiningDate(event.target.value)}
-            className="mt-1 min-h-11 w-full  md:min-h-9" />
+            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" />
         </label>
       ) : null}
       {needsReason ? (
@@ -128,10 +128,10 @@ export function TpoJoiningUpdateForm({
       ) : null}
       <div className="sm:col-span-2">
         <Button variant="primary" type="button" disabled={busy} onClick={() => void save()}
-          className="min-h-11 md:min-h-9">
+          className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
           {busy ? "Saving..." : corrected ? "Confirm corrected outcome" : "Confirm joining outcome"}
         </Button>
-        {error ? <InlineNotice tone="error" message={error}/> : null}
+        {error ? <div className="mt-3"><InlineNotice tone="error" message={error}/></div> : null}
       </div>
       <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
         title={"Record "+status.replaceAll("_"," ")+" for this accepted offer?"}
