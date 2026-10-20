@@ -15,34 +15,34 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-6.md: file, number of i
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/layout.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/auth/page.tsx`
-- [ ] `src/app/(authenticated)/admin/settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/page.tsx`
-- [ ] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/organizations/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/layout.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/auth/page.tsx`
+- [x] `src/app/(authenticated)/admin/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/college/announcements/page.tsx`
+- [x] `src/app/(authenticated)/college/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/college/companies/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/page.tsx`
