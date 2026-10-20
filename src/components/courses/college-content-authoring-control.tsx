@@ -159,7 +159,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
   {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
    <label className="text-xs font-semibold text-body">Lesson
-    <Select className="mt-1" value={selectedLesson?lessonId:""}
+    <Select className="mt-1 min-h-11 md:min-h-9" value={selectedLesson?lessonId:""}
      onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
      {editing&&!selectedLesson?<option value="">Saved Lesson outside authoring picker</option>:null}
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
@@ -170,23 +170,23 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </p>:null}
    <label className="text-xs font-semibold text-body">Section
     <Select value={deliveryId} disabled={Boolean(editing)} onChange={e=>setDeliveryId(e.target.value)}
-      className="mt-1">
+      className="mt-1 min-h-11 md:min-h-9">
      <option value="">All sections taking this course</option>
      {allowedDeliveries.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
     </Select></label>
    <label className="text-xs font-semibold text-body">Title
-    <Input required maxLength={200} className="mt-1"
+    <Input required maxLength={200} className="mt-1 min-h-11 md:min-h-9"
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="text-xs font-semibold text-body">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
-    <Input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-1"
+    <Input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-1 min-h-11 md:min-h-9"
      value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
    {kind==="RESOURCE"?<label className="text-xs font-semibold text-body">Notes
      <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
-       className="mt-1"/>
+       className="mt-1 min-h-11 md:min-h-9"/>
     </label>:kind==="YOUTUBE"?<label className="text-xs font-semibold text-body">Video length (seconds)
     <Input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="mt-1"/></label>:<>
+     className="mt-1 min-h-11 md:min-h-9"/></label>:<>
     <label className="text-xs font-semibold text-body">Time Zone
      <Select value={timeZone} onChange={event=>{
        const next=event.target.value as MeetingZone;
@@ -197,7 +197,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
         setStart(startNext);setEnd(endNext);setTimeZone(next);setError("");
        }catch{setError("Fix the Start and End dates before changing Time Zone.");}
       }}
-      className="mt-1">
+      className="mt-1 min-h-11 md:min-h-9">
       <option value="Asia/Kolkata">India Standard Time (IST)</option>
       <option value="UTC">UTC</option>
      </Select>
@@ -205,10 +205,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     </label>
     <label className="text-xs font-semibold text-body">Start Date and Time
      <Input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
-      className="mt-1"/></label>
+      className="mt-1 min-h-11 md:min-h-9"/></label>
     <label className="text-xs font-semibold text-body">End Date and Time
      <Input type="datetime-local" required value={end} onChange={e=>setEnd(e.target.value)}
-      className="mt-1"/></label>
+      className="mt-1 min-h-11 md:min-h-9"/></label>
    </>}
    {kind==="RESOURCE"&&editing?<label className="flex min-h-11 items-center gap-2 text-xs font-semibold text-body md:col-span-2">
     <Checkbox checked={removeLink} onChange={e=>setRemoveLink(e.target.checked)}/>
