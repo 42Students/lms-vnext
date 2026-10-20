@@ -48,7 +48,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-20.md: surface | probl
 - [x] `src/app/placements/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/platform/page.tsx` (Other page (super admin, public, auth, misc))
 - [x] `src/app/privacy-policy/page.tsx` (Other page (super admin, public, auth, misc))
-- [ ] `src/app/quiz/page.tsx` (Other page (super admin, public, auth, misc))
+- [x] `src/app/quiz/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/recruiter-invite/[token]/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/request-demo/page.tsx` (Other page (super admin, public, auth, misc))
 - [ ] `src/app/superadmin-login/page.tsx` (Other page (super admin, public, auth, misc))
