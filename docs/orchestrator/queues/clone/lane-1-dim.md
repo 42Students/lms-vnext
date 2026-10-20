@@ -133,16 +133,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-1.md: file, number of i
 - [x] `src/app/(authenticated)/college/groups/page.tsx`
 - [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
 - [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/college/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/college/not-found.tsx`
-- [ ] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/page.tsx`
+- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/college/not-found.tsx`
+- [x] `src/app/(authenticated)/college/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
