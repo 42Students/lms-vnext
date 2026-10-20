@@ -49,4 +49,3 @@ export default async function CollegeBatchesPage({
     </div>
     </div>} />;
 }
-}
