@@ -36,7 +36,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           {tpoDriveMoreTabs(jobId).map(tab=>(
             <Link key={tab.href} href={tab.href}
               aria-current={pathname===tab.href.split("#")[0]?"page":undefined}
-              className="min-h-11 rounded-[8px] px-3 py-2 text-sm font-semibold text-primary-text hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
+              className="min-h-11 rounded-[var(--lms-radius-control)] px-3 py-2 text-sm font-semibold text-primary-text hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
               {tab.label}
             </Link>
           ))}
