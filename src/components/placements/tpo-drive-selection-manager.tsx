@@ -93,7 +93,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       {chosen.length} selections · {selections.filter(s=>chosen.includes(s.id)&&s.offerReady).length} ready to verify · {selections.filter(s=>chosen.includes(s.id)&&!s.offerReady).length} need review.
       Successful releases issue official offers and notify learners.
     </Alert>:null}
-    {mode==="RECORD"?<label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Package from this drive
+    {mode==="RECORD"?<label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Package from this drive
      <Select defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
         if(option){setRole(option.title);setLpa(option.annualCtcInr==null?"":String(option.annualCtcInr/100000));}}}>
@@ -101,12 +101,12 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
       {roleOptions.map(o=><option value={o.id} key={o.id}>{o.title}{o.annualCtcInr==null?"":" · ₹"+(o.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</option>)}
      </Select></label>:null}
     {mode==="RECORD"?<div className="grid gap-3 min-[768px]:grid-cols-2">
-     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role<Input required value={role} onChange={e=>setRole(e.target.value)}
+     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Role<Input required value={role} onChange={e=>setRole(e.target.value)}
       maxLength={200} /></label>
-     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Package (LPA, optional)<Input type="number" min={0} max={1000} step="0.01"
+     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Package (LPA, optional)<Input type="number" min={0} max={1000} step="0.01"
       value={lpa} onChange={e=>setLpa(e.target.value)} /></label>
     </div>:null}
-    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find student
+    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-body">Find student
      <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
       placeholder="Search name, email or role" />
     </label>
@@ -130,13 +130,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     {report.length?<div role="status" tabIndex={0} aria-label="Selection release results, scroll for more" className="max-h-32 min-h-0 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 text-sm [mask-image:linear-gradient(to_bottom,black_0%,black_85%,transparent_100%)]">
      {report.map(x=><p key={x.selectionId}>{x.status}: {x.applicationId} {x.reason??""}</p>)}
     </div>:null}
-    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:justify-end">
-     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!chosen.length||(mode==="RECORD"&&!role.trim())}
-      onClick={()=>void submit()} >
-      {pending?"Saving…":mode==="RECORD"?"Record "+chosen.length+" selection(s)":"Verify and release "+chosen.length+" offer(s)"}</Button>
-     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>{setMode(null);setError("");}}
-      >Close</Button>
-    </div>
+
     </div>
   </Dialog>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={pending}
