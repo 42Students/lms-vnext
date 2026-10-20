@@ -48,17 +48,14 @@ export default async function TpoScheduleConflictsPage({
 
   const data = await getTpoScheduleConflicts(context, validated.data);
   return (
-    <div className="space-y-6">
-      <Link href="/tpo/placements"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-        ← Placement operations
-      </Link>
+    <div className="min-w-0 space-y-5">
       <PageHeader
         eyebrow="TPO · Drive scheduling"
         title="Round venue conflicts"
         description="Potential same-venue overlaps in scheduled rounds of published drives. This is not a student timetable conflict detector."
+        actions={<Link href="/tpo/placements" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Placement operations</Link>}
       />
-      <form method="get" className="flex flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+      <form method="get" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,14rem)_auto] sm:items-end">
         <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Upcoming window
           <Select name="days" defaultValue={String(data.days)}
@@ -69,11 +66,11 @@ export default async function TpoScheduleConflictsPage({
           </Select>
         </label>
         <Button variant="primary" type="submit"
-          className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary">
+          className="w-full min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto">
           Apply
         </Button>
       </form>
-      <section aria-label="Schedule assessment" className="grid gap-3 min-[768px]:grid-cols-2 lg:grid-cols-4">
+      <section aria-label="Schedule assessment" className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-4">
         {[
           ["Recorded rounds", data.totalScheduled],
           ["Venue overlaps", data.conflicts.length],
@@ -94,8 +91,8 @@ export default async function TpoScheduleConflictsPage({
         Only non-cancelled and non-completed upcoming rounds on published drives
         count here. Missing venue, mode or duration cannot be considered conflict-free.
       </p>
-      <section className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
-        <div className="border-b border-border p-4 md:p-6">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+        <div className="border-b border-[var(--lms-canvas-border)] pb-3">
           <h2 className="text-lg font-semibold text-foreground">Confirmed venue/time overlaps</h2>
         </div>
         {data.conflicts.length === 0 ? (
@@ -103,7 +100,7 @@ export default async function TpoScheduleConflictsPage({
         ) : (
           <div className="divide-y divide-border">
             {data.conflicts.map(({ left, right, overlapMinutes }) => (
-              <article key={left.id + ":" + right.id} className="space-y-2 p-4 md:p-6">
+              <article key={left.id + ":" + right.id} className="min-w-0 space-y-2 py-4">
                 <p className="text-sm font-semibold text-foreground">
                   {left.venue} · {overlapMinutes} minute(s) overlap
                 </p>
@@ -126,13 +123,13 @@ export default async function TpoScheduleConflictsPage({
           <h2 className="text-lg font-semibold text-foreground">Cannot fully assess</h2>
         </div>
         {data.unassessable.length === 0 ? (
-          <p className="p-6 text-sm text-body">
+          <p className="py-5 text-sm text-body">
             All on-campus candidate rounds in the selected window have a recorded venue and duration.
           </p>
         ) : (
           <ul className="divide-y divide-border">
             {data.unassessable.map((round) => (
-              <li key={round.id} className="flex flex-wrap items-start justify-between gap-3 p-4 text-sm">
+              <li key={round.id} className="grid min-w-0 gap-2 py-4 text-sm sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)] sm:items-start">
                 <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
                   className="font-semibold text-[var(--lms-teal-deep)] hover:underline">
                   {round.jobTitle} · {round.name}
