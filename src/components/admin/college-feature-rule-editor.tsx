@@ -98,7 +98,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
    confirmLabel="Apply change" confirmVariant="danger" pending={busy}
    confirmDisabled={busy||impactBusy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT")||students===null||(students>=100&&!acknowledgedPopulation)} onConfirm={()=>{void save();}}>
-   <div className="min-w-0 space-y-3 px-4 py-4 md:px-6">
+   <div className="min-w-0 space-y-3">
     <p className="m-0 break-words text-sm leading-5 text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
     {lockChanged?<Alert tone="warning">You are changing the policy lock. Descendant overrides may gain or lose the ability to take effect.</Alert>:null}
     {students!==null?<p className="m-0 break-words text-sm font-semibold leading-5 text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:

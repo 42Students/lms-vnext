@@ -195,3 +195,33 @@ Method: source-only review of route, loaded UI components, parent layouts and th
 - Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 35. Read the route/loading/error, access and selected-college redirect guards, scoped empty-state/Browse colleges link, PageHeader, permission helpers and parent layouts. Reviewed no scope, forbidden, selected scope, and error path.
 - Regression fixed (1): the route's error component still rendered the full-screen shared recovery UI inside the authenticated canvas. Use the in-shell fallback with `showHeader={false}`, preserving the sole route-level Profile verification title, telemetry and retry.
 - Extra clutter/alignment fixes: 0. 44px Browse colleges CTA and original no-implicit-college safety text remain. Files: `src/app/(authenticated)/admin/verification/error.tsx`, proof, queue. Static review; no CI.
+
+## Surface 36 — `src/app/(authenticated)/admin/videos/page.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 36. Read Videos route/loading/error and full shared `SuperAdminContentDirectoryPage` previously audited for Resources; reviewed `SuperAdminContentAuthoring`, `FacultyLessonAuthoring` YouTube mode, optional `FacultyLessonVideoManager`, public URL/duration validation, draft/publish transition, status/count/filter and mobile controls. Checked scoped/error/empty authoring branches and original tokens against design checklist.
+- Regressions found/fixed: 0. Videos route still delegates to source-of-truth directory with correct `kind="VIDEOS"`; no missing imports/props, invalid JSX or dropped controls found. Safe scope guards, disabled unauthorized binary upload and selected-lesson check stay.
+- Extra clutter/alignment fixes: 0. 44px publish row, single page heading, compact authoring disclosure and directory rows already conform to inspected legacy layout. Files changed: proof, queue only; no code run/CI.
+
+## Surface 37 — `src/components/admin/college-admin-lifecycle-action.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 37. Read complete component, `useGuardedAction`, `ConfirmDialog`, common Input/Button/Alert, lifecycle request and state gates. Reviewed mentor-role block, reason min/max feedback, selected status, confirm/cancel/pending/success/error and phone/tablet widths.
+- Regressions found/fixed: 0. Reason arias, suspended/active status guard, mutation payload, guarded re-entry and confirm-state locking agree with shared prop contracts; no broken markup observed.
+- Extra clutter/alignment fixes: 0. 44px action, danger Suspend, primary Reactivate, inline reason help and responsive modal inset already preserve legacy styling. Files changed: proof and queue only; no code run/CI.
+
+## Surface 38 — `src/components/admin/college-feature-rule-editor.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 38. Read complete editor and `admin-college-rule-ui-model`, shared Switch/Checkbox, `ConfirmDialog` and buttons/alerts. Checked stored and inherited policy, ancestor guard, impact read, zero/99/100+ population, recheck, receipt, stale rejection, async locks and 375px controls.
+- Regressions fixed: 0. All model prop signatures and save/preview guards remain consistent; action labels, selected values, statuses and aria controls preserved.
+- Extra clutter/alignment fix (1): common ConfirmDialog now adds legacy body padding, so the editor's additional responsive `px-4 py-4 md:px-6` applied a second unintended gutter. Removed only child padding while retaining exact text, warnings and access guards. Files: editor, proof, queue. No code/CI.
+
+## Surface 39 — `src/components/admin/managed-college-subdomain.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 39. Read full component, shared dialog/input/button/alert, selected-college effect resets, managed DNS and current-host read, regex validation, expected-host mutation, pending/failure/success and remove/change/allot confirmation.
+- Regressions fixed: 0. Mode-specific payload, label validation, host compare, client scope reset and modal disabling remain intact, with no broken tags/props.
+- Extra clutter/alignment fix (1): remove the child modal's now-redundant second layer of 16/24px padding; shared ConfirmDialog retains its documented legacy body inset. Current and new host remain separated and break safely at 375px. Files: component, proof, queue. No code/CI.
+
+## Surface 40 — `src/components/admin/student-rule-editor.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 40. Read full component and `admin-student-rule-ui-model`, shared Checkbox/Select/Alert and `ConfirmDialog`. Examined inherited/on/off/locked and blocked ancestor cases, recheck parser, dirty/unchanged guard, confirmation receipt validation, error/success and 375px/768px layouts.
+- Regressions fixed: 0. Stored and effective state changes still flow through typed receipt and fail-closed recheck; no lost controls/aria or mismatched props found.
+- Extra clutter/alignment fix (1): the modal body nested another responsive `px-4 py-4 md:px-6` gutter within the already-padded common ConfirmDialog. Removed only duplicate child padding; current override context and warning copy are unchanged. Files: `src/components/admin/student-rule-editor.tsx`, proof, queue. No code/CI.
+
+## Surface 41 — `src/components/admin/super-admin-batch-roster-manager.tsx`
+- Original polish: `docs/audit/ux/polish-lane-7.md`, Surface 41. Inspected full roster manager, DataTable, select/filter, member move action, `ConfirmDialog` and scoped section-enrollment API shape. Reviewed query and empty reset, unassigned/current/full/inactive/cross-period targets, confirmation/pending/error/success and responsive rows.
+- Regression fixed (1): Move buttons underneath the confirmation remained enabled, despite destination select being frozen. Disable all Move triggers while a pending-row review is open, preventing a new action from overwriting the reviewed row.
+- Extra clutter/alignment fix (1): remove duplicated inner modal padding now that common ConfirmDialog supplies 16px mobile / canvas desktop insets; current and destination detail columns retain their grid and text. Files: `src/components/admin/super-admin-batch-roster-manager.tsx`, proof, queue. No code/CI.
