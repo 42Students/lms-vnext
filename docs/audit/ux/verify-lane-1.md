@@ -141,3 +141,17 @@ Verification method: inspected the target page, its route loading/error/not-foun
 - **Regressions found/fixed (0):** validated search view/schema, Tabs/Pagination links, saved scores/result publication, IST date rendering, score/feedback privacy, loading/error/not-found, controls and aria/element imports; no source-level JSX or type issue discovered.
 - **Extra clutter/alignment fixes (1):** replaced standalone loading indicator with `GracefulPageLoading` under the existing heading, preserving wording and supplying shared slow-load recovery.
 - **Files changed:** `src/app/(authenticated)/learn/my-placements/assessments/results/loading.tsx`; verification proof and queue.
+
+## Surface 21 — Career Calendar
+- **Surface:** `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 21.
+- **Regressions found/fixed (1):** event detail `dl` had an orphan `p` directly alongside its term/description groups. Wrapped the unchanged approved-reschedule notice in a correctly labeled `dt`/`dd` pair with preserved status semantics, keeping valid descriptive-list structure.
+- **Extra clutter/alignment fixes (0):** inspected URL/date/view-kind filters, `LearnerCareerCalendar`, calendar CSS/legacy category colors, export, drawer, 375/768 scroll/navigation, route load/error and parent layout; no other source issue found.
+- **Files changed:** `src/components/placements/learner-career-calendar.tsx`; verification proof and queue.
+
+## Surface 22 — Placement interviews
+- **Surface:** `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`.
+- **Originating proof:** `docs/audit/ux/polish-lane-11.md`, Surface 22.
+- **Regressions found/fixed (0):** checked own interview authorization, deep link/filter/DTO mapping, shared `LearnerCareerRoundsWorkspace` and `LearnerCareerRounds`, withdrawal request component, confirmation pending/validation, status/date links, loading/error/not-found and parent layout; no duplicated TSX attributes, imports, props mismatch or missing aria labels found.
+- **Extra clutter/alignment fixes (0):** shared hairline rows, selected accent, scoped withdrawal notice and responsive action buttons remain consistent.
+- **Files changed:** verification proof and queue only.
