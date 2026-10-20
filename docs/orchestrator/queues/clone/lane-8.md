@@ -39,6 +39,6 @@ For each page: page head via PageHeader (title, subtitle, actions exactly as the
 - [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
 - [x] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`

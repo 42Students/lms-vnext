@@ -2,15 +2,15 @@
 
 These 21 items were moved to chat-8 from the END of other lanes' queues because chat-8 finished its own. They are not the donors' items any more. Same batch contract as your main queue; full fidelity per item. Tick here, in this file.
 
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
-- [ ] `src/app/(authenticated)/superadmin/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/[...legacy]/page.tsx`
+- [x] `src/app/(authenticated)/superadmin/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/page.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/settings/page.tsx`
 - [ ] `src/app/(authenticated)/college/batch-promotion/page.tsx`

@@ -1,3 +1,4 @@
+import { FilterBar } from "@/components/ui/filter-bar";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -185,10 +186,10 @@ export default async function SuperAdminLearnerAccessTracePage({
           </p>
         </div>
 
-        <form
+        <FilterBar title="Filters"><form
           action={basePath}
           method="get"
-          className="flex flex-wrap items-end gap-3"
+          className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:[&_label]:w-full"
         >
           <label className="grid min-w-60 flex-1 gap-2 text-sm font-semibold text-body">
             Name or roll number
@@ -232,7 +233,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           >
             Clear
           </Link>
-        </form>
+        </form></FilterBar>
 
         <p className="m-0 text-sm text-muted-foreground">
           {total === 0
