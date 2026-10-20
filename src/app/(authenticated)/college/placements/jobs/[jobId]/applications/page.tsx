@@ -96,13 +96,13 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
         href:driveApplicationsHref(jobId,{...query,stage,page:1}),
       }))}/>
-    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[13px] text-[var(--lms-body-text)]">
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
       <span>{data.total} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="inline-flex min-h-11 items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-[var(--lms-control-height)] inline-flex items-center">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
-      <p role="status" className="border-b border-[var(--lms-canvas-border)] pb-5 text-[14px]">
+      <p role="status" className="border-b border-[var(--lms-canvas-border)] pb-5 text-[var(--lms-font-base)]">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.
       </p>
       <DataTable caption="College drive applicant register" columns={columns}
@@ -110,7 +110,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         empty={<p role="status" className="text-sm text-body">No applications match these filters.</p>} />
      </section>:
      <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query}/>}
-    <nav aria-label="Application pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[13px] text-[var(--lms-body-text)]">
+    <nav aria-label="Application pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
         {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-[var(--lms-control-height)]" href={driveApplicationsHref(jobId,{...query,page:query.page+1})}>Next</Link>:null}

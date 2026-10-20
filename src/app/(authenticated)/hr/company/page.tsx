@@ -78,7 +78,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           title="No active college access"
           description="Your recruiter account has no active college access. Contact the placement cell that invited you."/>:
           <section className="space-y-3 border-b border-border pb-5">
-            <h2 className="text-base font-semibold text-foreground">Choose a college</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Choose a college</h2>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
               key:grant.collegeId,label:grant.collegeName,
               href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId),
@@ -124,7 +124,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                 <span aria-hidden="true" className="inline-flex size-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted font-bold text-foreground">
                   {result.company.name.trim().charAt(0).toUpperCase()}
                 </span>
-                <h2 className="text-lg font-semibold text-foreground">{result.company.name}</h2>
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.company.name}</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
@@ -145,7 +145,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <p className="mt-3 text-sm text-body">Industry not set</p>
           <p className="mt-2 text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-5">
-            <h3 className="text-base font-semibold text-foreground">Hiring footprint with this college</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             <SummaryStrip label="Hiring footprint with this college" className="mt-4" steps={[
               {label:"All visible drives",value:overview.total},
@@ -167,7 +167,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       ) : (
         <section className="border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-foreground">Recruiter team</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
               className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Export authorized team CSV

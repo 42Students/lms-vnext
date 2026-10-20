@@ -93,7 +93,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      </Banner>:null}
    {decisionNotices.length>0?<section aria-label="Drive request decisions"
      className="border-b border-border pb-4">
-    <h2 className="font-semibold text-foreground">Drive request decisions</h2>
+    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Drive request decisions</h2>
     <p className="mt-1 text-xs text-muted-foreground">Approval, changes requested and declined decisions for your own requests.</p>
     <ul className="mt-3 space-y-3">{decisionNotices.map(item=><li key={item.id}
       className="border-b border-border py-3 last:border-b-0">
@@ -113,7 +113,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         href:"/hr/conversations?collegeId="+encodeURIComponent(grant.collegeId),
       }))}/>:null}
    <section className="border-b border-border pb-4">
-    <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
+    <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
     {generalThread?<Disclosure title="Message the placement cell · General"
       className="mt-3 border-b border-border py-3 [&>summary]:min-h-11 md:[&>summary]:min-h-9">
@@ -152,12 +152,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
+    <label className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
      <Select name="sort" defaultValue={parsed.data.sort} className="mt-1">
       <option value="LATEST">Most recently updated</option><option value="OLDEST">Oldest updated first</option>
      </Select>
     </label>
-    <label className={"min-w-0 w-full basis-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
+    <label className={"min-w-0 w-full basis-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:basis-auto md:flex-none "+inboxStyles.searchField}>Search by drive or message
      <Input name="q" maxLength={120} defaultValue={parsed.data.q} className="mt-1 min-h-11 w-full md:min-h-9"/></label>
     <Button type="submit" variant="secondary" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Search</Button>
    </form>
