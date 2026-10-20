@@ -3,6 +3,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
+import {PageBackLink} from "@/components/ui/page-back-link";
 import {Banner} from "@/components/ui/banner";
 import {EmptyState} from "@/components/ui/empty-state";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
@@ -21,16 +22,16 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
  const recorded=await listTpoOutsideDriveRecords(context);
  const savedId=(await searchParams).saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
- return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow="TPO · Drive creation" title="Record an outside-platform drive"
-   description="Document a drive that already happened outside LMS without publishing any job or learners."/>
-  <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center text-[var(--lms-teal-deep)] md:min-h-9">Back to platform drive creation</Link>
+ return <div className="min-w-0 max-w-full space-y-4">
+  <PageHeader title="Record an outside-platform drive"
+   description="Document a drive that already happened outside LMS without publishing any job or learners."
+   actions={<PageBackLink href="/tpo/placements/new" label="Back to platform drive creation"/>}/>
   {saved?<Banner tone="success">
    External drive record saved. It was not published as a job.
   </Banner>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
   <section aria-label="Recorded outside drives" className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
-   <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Recorded outside drives</h2>
+   <h2 className="text-base font-semibold leading-6 md:text-lg md:leading-7 min-[992px]:text-xl">Recorded outside drives</h2>
    <p className="text-sm text-body">These are historic records, not published jobs; they are excluded from learner application reminders.</p>
    {recorded.length?<ul className="divide-y divide-border">
     {recorded.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm">
