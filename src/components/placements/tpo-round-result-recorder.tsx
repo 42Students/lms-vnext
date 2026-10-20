@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Disclosure } from "@/components/ui/disclosure";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -167,7 +168,7 @@ export function TpoRoundResultRecorder({
     );
   }
   return (
-    <div className="mt-3 space-y-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-xs">
+    <Disclosure title="Round result actions" className="mt-2 min-w-0" contentClassName="space-y-2 p-2 text-xs">
       {editable ? (
         <>
           <label className="block font-semibold text-body">
@@ -230,6 +231,6 @@ export function TpoRoundResultRecorder({
         </Button>
       ) : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
-    </div>
+    </Disclosure>
   );
 }
