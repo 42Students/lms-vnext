@@ -73,7 +73,7 @@ export default async function HrRoundsEditorPage({params}:{
      }))}/>
    </div>:null}
    {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
-    className={"min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-5 last:border-b-0 "+
+    className={"min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-6 last:border-b-0 "+
      (round.editable?"":"md:hidden")}>
     <div className="flex flex-wrap justify-between gap-2 md:hidden"><h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{round.sequence}. {round.name}</h3>
      <span className="flex flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>

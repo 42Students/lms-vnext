@@ -355,7 +355,7 @@ export default async function HrCalendarPage({
             {label:"Results due",value:calendar.resultsDue.length},
           ]} />
 
-          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-5">
+          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
             <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Results due in this period</h2>
             <p className="mt-1 text-sm text-body">Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.</p>
             {(category==="ALL"||category==="RESULTS_DUE")&&calendar.resultsDue.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
@@ -370,7 +370,7 @@ export default async function HrCalendarPage({
             </div> : <EmptyState title="No results due" description="No results deadlines are recorded in this calendar period."/>}
           </section>
 
-          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-5">
+          <section className="border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
@@ -392,7 +392,7 @@ export default async function HrCalendarPage({
                   href:calendarHref(anchor,option,category)}))}/>
             </div>
 
-            <div className={"mt-5 "+styles.nav}>
+            <div className={"mt-6 "+styles.nav}>
               <Link
                 href={calendarHref(
                   previous,
@@ -436,7 +436,7 @@ export default async function HrCalendarPage({
             <form
               action="/hr/calendar"
               method="get"
-              className="mt-5 flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-4"
+              className="mt-6 flex min-w-0 flex-wrap items-end gap-3 border-t border-[var(--lms-canvas-border)] pt-4"
             >
               <Input
                 type="hidden"
@@ -620,7 +620,7 @@ export default async function HrCalendarPage({
           {view === "agenda" ? (
             <section
               aria-label="Recruiter calendar agenda"
-              className="space-y-5"
+              className="space-y-6"
             >
               <div>
                 <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">

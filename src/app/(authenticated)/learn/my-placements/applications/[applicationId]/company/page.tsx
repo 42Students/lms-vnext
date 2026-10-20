@@ -22,7 +22,7 @@ export default async function LearnerApplicationCompanyPage({
   if (!company) notFound();
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
+    <div className="min-w-0 max-w-full space-y-6">
 
       <PageHeader
         title={company.companyName}
@@ -79,7 +79,7 @@ export default async function LearnerApplicationCompanyPage({
             </dd>
           </div>
         </dl>
-        <Banner tone="info" className="mt-5">
+        <Banner tone="info" className="mt-6">
           What the company sees here is limited to the verified public employer profile
           associated with your own application. This is not a live employer-access audit.
           Your private files, personal contacts and other learners&apos; applications

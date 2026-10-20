@@ -43,7 +43,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) redirect("/dashboard");
   const parsed = querySchema.safeParse({collegeId:(await searchParams).collegeId});
-  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Today" />
+  if (!parsed.success) return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Today" />
     <ErrorState title="Invalid college selection" description="The selected college ID is invalid."
       action={<Link href="/hr/home" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link>} /></div>;
   const recruiter = context.recruiter;
@@ -152,10 +152,10 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
     </Alert>:null}
     <section aria-label="Recruiter tasks" className="grid overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-5">{actions.map(action=>
-      <Link key={action.label} href={action.url} className="border-b border-[var(--lms-canvas-border)] p-5 last:border-b-0 hover:bg-primary-subtle min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link key={action.label} href={action.url} className="border-b border-[var(--lms-canvas-border)] p-4 last:border-b-0 hover:bg-primary-subtle min-[768px]:border-b-0 min-[768px]:border-r min-[768px]:last:border-r-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         <span className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{action.label}</span><span className="mt-2 block text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{action.value}</span>
       </Link>)}</section>
-    <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 min-[768px]:p-5">
+    <section aria-label="Next recruiter actions" className="space-y-3 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4 min-[768px]:p-6">
       <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
       {actionQueue.length ? <ul className="grid min-w-0 grid-cols-1 gap-3 min-[768px]:grid-cols-2">
@@ -194,7 +194,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           description="New applicants, replies and decisions from the placement cell will show up here." />
       )}
     </section>
-    <section aria-label="This week" className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <section aria-label="This week" className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">This week</h2>
         <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full calendar</Link>
@@ -212,7 +212,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </li>)}
       </ul>:<p className="mt-3 text-sm text-muted-foreground">Nothing scheduled here for the next eight days.</p>}
     </section>
-    <section aria-label="Live recruiter hiring drives" className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <section aria-label="Live recruiter hiring drives" className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Live hiring drives</h2>
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
@@ -237,7 +237,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </Link>)}
       </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-6">
       <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Actionable deadlines</h2>
       {today.dueSoon.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">{today.dueSoon.map(item =>
         <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
@@ -245,7 +245,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-6">
       <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">This week · upcoming rounds</h2>
       {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">{today.upcomingRounds.map(event =>
         <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
@@ -253,7 +253,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-6">
       <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Results due this week</h2>
       <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
       {dueResults.length ? <div className="mt-4 grid gap-3 min-[768px]:grid-cols-2">{dueResults.map(item =>
@@ -267,7 +267,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         </Link>)}</div> : <p className="mt-3 text-sm text-muted-foreground">No upcoming results deadlines are recorded for this college this week.</p>}
     </section>
     <section aria-label="Unread placement-cell conversations"
-      className="border-b border-[var(--lms-canvas-border)] pb-5">
+      className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Replies to read</h2>
         <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
@@ -287,7 +287,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         No unread placement-cell conversations on this inbox page.
       </p>}
     </section>
-    <section className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <section className="border-b border-[var(--lms-canvas-border)] pb-6">
       <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">With the placement cell</h2>
       <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
       {waitingRequests.length?<ul className="mt-4 grid gap-3 min-[768px]:grid-cols-2">

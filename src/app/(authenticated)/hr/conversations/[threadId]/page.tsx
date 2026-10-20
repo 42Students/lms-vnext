@@ -35,7 +35,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   result=await readRecruiterThreadMessages(context,parsedId.data,parsedPage.data);
  }catch(error){
   if(error instanceof TpoMessagingError && error.code==="TPO_MESSAGE_FORBIDDEN"){
-   return <div className="min-w-0 max-w-full space-y-5"><PageHeader title="Messages"/>
+   return <div className="min-w-0 max-w-full space-y-6"><PageHeader title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
      action={<Link href="/hr/home" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Today</Link>}/>
@@ -68,7 +68,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
  const messages=[...result.messages].reverse().map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-6">
   <RecruiterConversationLiveRefresh/>
   <PageHeader title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>

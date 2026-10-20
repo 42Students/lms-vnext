@@ -108,7 +108,7 @@ export default async function RecruiterCompanyReportsPage({
             description="Your recruiter account has no active college relationship available for reporting."
           />
         ) : (
-          <section className="border-b border-border pb-5">
+          <section className="border-b border-border pb-6">
             <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               Choose a college
             </h2>
@@ -196,7 +196,7 @@ export default async function RecruiterCompanyReportsPage({
         {label:"Closed drives",value:summary.closed},
       ]} />
 
-      <section aria-label="All your drives at this college" className="border-b border-border pb-4 md:pb-5">
+      <section aria-label="All your drives at this college" className="border-b border-border pb-4 md:pb-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
@@ -210,7 +210,7 @@ export default async function RecruiterCompanyReportsPage({
         </div>
       </section>
 
-      <section className="border-b border-border pb-4 md:pb-5">
+      <section className="border-b border-border pb-4 md:pb-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
           Drive report filters
         </h2>
@@ -271,7 +271,7 @@ export default async function RecruiterCompanyReportsPage({
         </form>
       </section>
 
-      <section className="border-b border-border pb-4 md:pb-5">
+      <section className="border-b border-border pb-4 md:pb-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current page hiring totals</h2>
         <p className="mt-1 text-xs text-muted-foreground">
           Totals cover only the visible authorized drive rows on this page, not every company drive.
@@ -325,7 +325,7 @@ export default async function RecruiterCompanyReportsPage({
             Page {page} of {Math.max(1, totalPages)}
           </p>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex gap-2">
             {page > 1 ? (
               <Link
                 href={recruiterCompanyReportsHref({
