@@ -31,7 +31,7 @@ export function CollegeDepartmentInsights({
     : "/college/placements/readiness-by-department";
   const columns: DataTableColumn<Data["items"][number]>[] = [
     {key:"name",header:"Department",mobilePriority:"primary",cell:item=><>
-      <p className="font-semibold text-foreground">{item.name}</p>
+      <p className="break-words [overflow-wrap:anywhere] font-semibold text-foreground">{item.name}</p>
       {item.archivedAt ? <p className="mt-1 text-xs text-muted-foreground">Archived department</p> : null}
     </>},
     {key:"population",header:attendance?"Marked sessions":"Active enrolled learners",
@@ -43,7 +43,7 @@ export function CollegeDepartmentInsights({
         ? item.absent+" absent · "+item.late+" late · "+item.excused+" excused · "+item.medical+" medical"
         : item.preferenceProfiles+" profiles recorded"},
   ];
-  return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-5)]">
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader
       title={title}
       description={attendance
@@ -62,15 +62,15 @@ export function CollegeDepartmentInsights({
       </>}
     />
     <section aria-label="Department filters" className="border-b border-border pb-4">
-      <form method="get" action={path} className="flex flex-wrap items-end gap-3">
-        <label className="grid w-full min-w-0 basis-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:max-w-sm md:basis-auto md:flex-1">
+      <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-[minmax(0,2fr)_auto_auto]">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Department name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
             />
         </label>
         <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
-        <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Clear</Link>
+        {data.query.q ? <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Clear</Link> : null}
       </form>
     </section>
     <section aria-label="Department evidence results" className="min-w-0">
@@ -81,12 +81,12 @@ export function CollegeDepartmentInsights({
         caption={title}
         empty={<EmptyState title={data.total===0?"No matching departments":"No departments on this page"}
           description={data.total===0?"No departments match these filters. No attendance or placement evidence is inferred.":"No departments exist on this page. Choose an earlier page."}
-          action={<Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear</Link>} />}
+          action={<Link href={data.total===0?path:departmentInsightsHref(data.kind,{...data.query,page:Math.max(1,data.query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear":"Previous page"}</Link>} />}
       />
     </section>
-    <nav aria-label="Department pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+    <nav aria-label="Department pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center">
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
-      <div className="flex gap-2">
+      <div className="flex min-w-0 gap-[var(--lms-space-3)] max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
         {data.query.page > 1 ? <Link
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9"
           href={departmentInsightsHref(data.kind, { ...data.query, page: data.query.page - 1 })}>Previous</Link> : null}
@@ -109,7 +109,7 @@ export function CollegeDepartmentInsights({
         </Alert>
       </Disclosure>
     ) : null}
-    <p className="text-xs leading-5 text-muted-foreground">
+    <p className="max-w-[85ch] break-words text-xs leading-5 text-muted-foreground">
       {attendance
         ? "Only persisted MARKED schedule sessions and explicit attendance-record statuses are counted. Present status may be implicit. Missing records, learner denominators, eligible sessions and percentages are not inferred. Cancelled events are excluded."
         : "Evidence coverage is not eligibility, job qualification, interview preparation, verified placement readiness or a season-frozen cohort. Learners with no active enrollment are outside this view. Counts are current persisted membership/enrollment evidence only."}
