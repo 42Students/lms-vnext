@@ -38,7 +38,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader title="Semesters" />
       <ErrorState title="Semester access denied"
         description="Your account cannot access Super Admin semesters."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to dashboard</Link>}/>
+        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to dashboard</Link>}/>
     </div>;
   }
   if (!context.adminScope?.collegeId) {
@@ -56,7 +56,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader  title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description="Check the selected program, term, status or page."
-        action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>} />
+        action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
     </div>;
   }
 
@@ -69,14 +69,14 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <ErrorState title="Semesters unavailable"
         description="The semester directory could not be loaded. Your filters were not changed."
         action={<Link href={pageHref(parsed.data)}
-          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline">Retry loading semesters</Link>}/>
+          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry loading semesters</Link>}/>
     </div>;
   }
   const data=result.value;
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
-      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Semester–Course Mapping</Link>} />
+      actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Semester–Course Mapping</Link>} />
     <AcademicSetupSteps step={3} />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
@@ -106,7 +106,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           </Select>
         </label>
         <Button type="submit">Filter</Button>
-        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">Clear</Link>
+        <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
       </form>
     </section>
     <form method="get" action="/admin/semesters" aria-label="Refresh semester directory">
@@ -121,7 +121,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       ...(data.query.q?{q:data.query.q}:{}),
       ...(data.query.programId?{programId:data.query.programId}:{}),
       ...(data.query.status!=="ALL"?{status:data.query.status}:{})
-    }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+    }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
       Export semesters.csv
     </a>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
