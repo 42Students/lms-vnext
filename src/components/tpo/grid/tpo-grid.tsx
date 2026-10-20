@@ -194,6 +194,8 @@ export function TpoGrid<Row>({
    pinned:"left",lockPinned:true,suppressMovable:true,resizable:false,sortable:false,
    headerComponent:()=> <Checkbox aria-label="Select all filtered students"
     checked={currentVisibleIds().length>0&&currentVisibleIds().every(id=>selection.selected.includes(id))}
+    indeterminate={currentVisibleIds().some(id=>selection.selected.includes(id))&&
+      !currentVisibleIds().every(id=>selection.selected.includes(id))}
     onChange={event=>selectAll(event.target.checked)}/>,
    cellRenderer:(p:{data?:Row})=>p.data?<Checkbox
     aria-label={"Select "+(openPrimary?.ariaLabel(p.data)??rowKey(p.data))}
