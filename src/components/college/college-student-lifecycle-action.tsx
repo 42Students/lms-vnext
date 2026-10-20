@@ -53,7 +53,7 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
       confirmDisabled={suspend&&reason.trim().length<3}
       onConfirm={confirm}>
       <div className="space-y-3">
-        {suspend?<label className="grid gap-1 text-sm font-semibold text-body">Reason
+        {suspend?<label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
           <Input maxLength={500} value={reason} disabled={pending} onChange={event=>setReason(event.target.value)}/>
         </label>:<p className="text-sm text-body">Restore access for this student membership?</p>}
         {error?<Alert tone="error">{error}</Alert>:null}

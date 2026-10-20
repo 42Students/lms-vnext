@@ -88,7 +88,7 @@ export function ApplicantNotesPanel({
         </p>
       ) : null}
       <form onSubmit={(e) => void submit(e)} className="space-y-2">
-        <label className="block text-sm font-semibold text-body">
+        <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Add a note
           <Textarea
             required

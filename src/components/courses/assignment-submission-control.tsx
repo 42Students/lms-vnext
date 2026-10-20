@@ -263,7 +263,7 @@ export function AssignmentSubmissionControl({
             "This assignment requires a PDF or file, but private uploads are unavailable. Ask your Faculty or college administrator to enable private file storage."}
         </Alert> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
-          <label className="mt-3 grid gap-1 text-xs font-semibold text-body">Link type
+          <label className="mt-3 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link type
             <Select value={linkKind} disabled={submitting}
               className="min-h-11 md:min-h-9"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
@@ -279,9 +279,9 @@ export function AssignmentSubmissionControl({
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
           </section>
         ) : (
-          <label className="mt-4 block">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Website / External Links
+          <label className="mt-4 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Website / External Links<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
             </span>
             <Input
               type="url"

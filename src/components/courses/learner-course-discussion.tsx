@@ -643,7 +643,7 @@ export function LearnerCourseDiscussion({
             <Button type="button" variant="ghost" className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
               onClick={() => setReplyTo(null)}>Cancel reply</Button>
           </div> : null}
-          <label className="text-xs font-semibold text-body" htmlFor="course-discussion-message">
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="course-discussion-message">
             Write a message
           </label>
           <Textarea
