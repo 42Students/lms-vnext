@@ -27,3 +27,17 @@
 - Extra clutter/alignment fixes (3): preserve authored multiline proposed values while safely wrapping long tokens, wrap arbitrary reason text, and prevent long reply messages overflowing 375px. No form fields, action labels, ids, backend payloads, permission/confirmation behavior or legacy tokens changed.
 - Full read: change requests page and service/error guards, shared complete composer/list/decision/refund and confirmation states; Select, Button, Textarea, ConfirmDialog, Disclosure, InlineNotice, Alert, EmptyState, StatusBadge, and recruiter scoped loading/error and parent layout. Prior proof from `polish-lane-15.md`; no local not-found/template/layout.
 - Files changed: `src/components/placements/tpo-drive-change-requests.tsx`, queue, evidence. Source-level 375px/768px review; no runtime/tests/CI.
+
+## Surface 5 — Recruiter Interview Slots
+- Surface: `src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/page.tsx` re-exports the HR interview slots page.
+- Regressions fixed: 0. Checked imports, slot forms/create, OFFER/BOOK/CANCEL, expected redirect paths, job scope, minimum IST date validation, version tokens, ConfirmDialog and empty-state form anchor.
+- Extra clutter/alignment fixes (3): safely break long persisted status/booking details, panel label and venue text at 375px. 768px two-column form and 44/36px controls kept.
+- Read: HR page and RecruiterInterviewSlotForm/Actions, ConfirmDialog/Input/Select/InlineNotice/Button, recruiter/HR loading/error, parent recruiter/authenticated layouts and original `polish-lane-15.md` entry. No local not-found/template/layout.
+- Files changed: `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`, queue, evidence. Source-only, no CI.
+
+## Surface 6 — Recruiter Drive Messages
+- Surface: `src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx` alias of HR conversation page.
+- Regressions fixed: 0. Verified authorized recruiter workspace scope, matching import/export, conversation POST names collegeId/jobId, open/continue hrefs, unchanged wording and route guards.
+- Extra clutter/alignment fixes: 0, verified no page change. Optional open form and direct empty-state action remain clear at 375px and 768px.
+- Read: HR page, service and recruiterDriveThreads model, both recruiter/HR loading/error, PageHeader/Input/Button/EmptyState and parent layouts, prior `polish-lane-15.md` entry. No local not-found/template/layout.
+- Files changed: queue and evidence only. Source-only, no CI.
