@@ -2,6 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
+import {Banner} from "@/components/ui/banner";
+import {StatusBadge} from "@/components/ui/status-badge";
+import {EmptyState} from "@/components/ui/empty-state";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
@@ -106,14 +109,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         cell:row=>(row.mode==="VIRTUAL"?"Virtual":"On campus")+" · "+(row.venue??row.meetingUrl??"—")},
       {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
         cell:row=>row.interviewer??"Not recorded"},
-      {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>row.status},
+      {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><div className="flex flex-wrap gap-2">
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      }))} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
       Download .ics</a>:null}
      {row.status==="SCHEDULED"?<>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
@@ -127,10 +130,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      </>:<span className="text-body">Recorded</span>}
     </div>},
     ]}
-    empty={<p role="status" className="text-sm text-body">No candidate interviews have been scheduled for this drive.</p>}
+    empty={<EmptyState title="No candidate interviews" description="No candidate interviews have been scheduled for this drive."/>}
   />
-  {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-  {error&&!show?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+  {success?<Banner tone="success">{success}</Banner>:null}
+  {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}>
     <h3 className="text-lg font-semibold">{editing?"Edit interview":"Schedule interview"}</h3>
     <label className="grid gap-1 text-sm">Round<Select value={roundId} disabled={Boolean(editing)}
@@ -141,7 +144,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>setApplicationId(e.target.value)} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid min-w-0 gap-3 md:grid-cols-2">
      <label className="grid gap-1 text-sm">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="w-full"/></label>
      <label className="grid gap-1 text-sm">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
@@ -157,7 +160,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>setInterviewer(e.target.value)} className="w-full"/></label>
     {editing?<label className="grid gap-1 text-sm">Reason for change<Textarea rows={2} value={reason}
      onChange={e=>setReason(e.target.value)} className="w-full"/></label>:null}
-    {error?<p role="alert" className="text-sm text-foreground">{error}</p>:null}
+    {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex flex-wrap gap-3">
      <Button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
       onClick={()=>void save()} >
