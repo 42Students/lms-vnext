@@ -102,7 +102,7 @@ function ContentItem({
   ];
 
   return (
-    <article className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <article className="min-w-0 border-b border-border bg-transparent py-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -380,16 +380,16 @@ export function FacultyCourseWorkspace({
     workspace;
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-5)]">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="Faculty · Course"
         title={course.courseName}
         description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
         actions={view !== "BLUEPRINT" ? (
-      <nav aria-label="Overview actions" className="flex flex-wrap gap-3">
+      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
         >
           Section reports hub
         </Link>
@@ -456,7 +456,7 @@ export function FacultyCourseWorkspace({
         </div>
       </section>
 
-      <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-5">
+      <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-5">
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
           className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Lessons" value={summary.lessons}
@@ -590,14 +590,14 @@ export function FacultyCourseWorkspace({
                       defaultOpen={Boolean(selectedLessonId || lessonIndex === 0)}
                       
                       
-                      title={<div className="flex w-full min-w-0 flex-wrap items-start justify-between gap-3">
+                      title={<div className="flex w-full min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
 
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}
                             {lessonIndex + 1}
                           </p>
-                          <h2 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">
+                          <h2 className="mt-1 break-words text-lg font-semibold text-[var(--lms-heading)]">
                             {lesson.name}
                           </h2>
                           {lesson.description ? (
@@ -613,7 +613,7 @@ export function FacultyCourseWorkspace({
                         </Badge>
                       
                       </div>}
-                      className="group rounded-[var(--lms-canvas-radius)] border border-border bg-[var(--lms-neutral-50)] p-4 md:p-5">
+                      className="group min-w-0 border-b border-border bg-transparent py-4">
 
                       {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
