@@ -178,14 +178,14 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       setDeleteTarget(null);setFeedbackTone("success");setFeedback("Resource removed.");
     }catch(error){problem(error);}finally{setBusy(false);}
   }
-  return <section className="min-w-0 space-y-4 border-b border-border pb-5">
+  return <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
     <h3 className="m-0 text-base font-semibold text-foreground">Attached</h3>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
         onChange={event=>{setSelected(event.target.files?.[0]??null);setFeedback(null);}}
-        className="block min-h-11 max-w-full text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
+        className="block min-h-11 w-full min-w-0 max-w-full text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
       <p className="text-xs text-muted-foreground">{limitsSummary("project-resource")}</p>
       <Disclosure title="File details (optional)" defaultOpen={Boolean(uploadTitle||uploadDescription||linkedResourceId)} contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3">
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -226,10 +226,10 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       description="Share the first link or file with your team." />:<ul className="divide-y divide-border">
       {files.map(file=>{
         const descriptor=fileStatusDescriptor(file.status);
-        return <li key={file.id} className="py-4">
-          <div className="flex flex-wrap items-start justify-between gap-2">
+        return <li key={file.id} className="min-w-0 py-4">
+          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
-              <p className="break-words font-semibold text-foreground">{file.title}</p>
+              <p className="break-words font-semibold text-foreground [overflow-wrap:anywhere]">{file.title}</p>
               <p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">
                 {file.originalName} · {formatFileSize(file.sizeBytes)}
               </p>
@@ -258,7 +258,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
             <Button variant="link" disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 sm:w-auto">Delete</Button>
           </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
-            className="mt-3 grid gap-2 sm:grid-cols-2">
+            className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 sm:grid-cols-2">
             <label className="text-sm text-body">Title
               <Input required maxLength={200} value={editTitle} disabled={busy}
                 onChange={event=>setEditTitle(event.target.value)}
