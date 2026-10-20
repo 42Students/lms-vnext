@@ -1,3 +1,4 @@
+import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -72,12 +73,11 @@ export default async function TpoRecruiterAccessPage({
   if (!parsed) {
     return (
       <div className="min-w-0 space-y-4">
-        <TpoSettingsNav active="recruiters" />
-
         <PageHeader
           title="Recruiter access"
           description="Read-only recruiter college-grant history."
         />
+        <TpoSettingsNav active="recruiters" compact />
 
         <ErrorState
           title="Invalid recruiter access filters"
@@ -127,21 +127,22 @@ export default async function TpoRecruiterAccessPage({
 
   return (
     <div className="min-w-0 space-y-4">
-      <TpoSettingsNav active="recruiters" />
-
       <PageHeader
         title="Recruiter access"
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
-
-      {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
-       <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>}
-      <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
+      <TpoSettingsNav active="recruiters" compact />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
         relationshipId: company.relationshipId,
         name: company.name,
       }))} />
+      <Disclosure title="Recruiter link and duration" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 space-y-4 pt-3">
+
+      {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
+       <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>}
+      <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
+      </Disclosure>
 
       <section className="border-t border-border pt-4">
         <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
@@ -159,7 +160,7 @@ export default async function TpoRecruiterAccessPage({
         <form
           action="/tpo/settings/recruiters"
           method="get"
-          className="mt-4 flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-4"
+          className="mt-4 grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] xl:items-end"
         >
           <label className="grid min-w-0 md:min-w-55 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Grant status
@@ -193,14 +194,14 @@ export default async function TpoRecruiterAccessPage({
           </label>
           <Button
             type="submit"
-            className="min-h-11 md:min-h-9"
+            className="min-h-11 w-full sm:w-auto md:min-h-9"
           >
             Apply
           </Button>
 
           <Link
             href="/tpo/settings/recruiters"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-link sm:w-auto"
           >
             Clear
           </Link>
@@ -212,7 +213,7 @@ export default async function TpoRecruiterAccessPage({
           <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
             Grant records
           </h2>
-          <div className="flex flex-wrap gap-2">
+          <Disclosure title="Export grants" className="min-w-0" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
             <a href={tpoRecruiterGrantExportHref(query)}
               className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
               Export filtered grants CSV
@@ -221,7 +222,7 @@ export default async function TpoRecruiterAccessPage({
               className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-link">
               Export filtered grants Excel
             </a>
-          </div>
+          </Disclosure>
 
           <p className="text-sm text-muted-foreground">
             {total === 0
@@ -266,12 +267,12 @@ export default async function TpoRecruiterAccessPage({
                     {item.ended?"Ended or removed":item.status==="ACTIVE"?"Active":"Revoked"}
                   </StatusBadge>
                   {item.status==="ACTIVE"&&item.grantId&&item.expectedUpdatedAt?
-                    <div className="flex min-w-0 flex-wrap gap-2">
+                    <Disclosure title="Manage access" className="min-w-0" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
                       <TpoRecruiterExtend grantId={item.grantId}
                         expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName} ended={item.ended}/>
                       <TpoRecruiterRevoke grantId={item.grantId}
                         expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName}/>
-                    </div>:null}
+                    </Disclosure>:null}
                 </div>},
               {key:"granted",header:"Granted",mobilePriority:"secondary",cell:item=>item.grantedDate},
               {key:"valid",header:"Valid through (IST)",mobilePriority:"secondary",cell:item=>item.validUntilDate??"No expiry on record"},
@@ -316,6 +317,7 @@ export default async function TpoRecruiterAccessPage({
         </nav>
       </section>
 
+      <Disclosure title="About recruiter access records" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Dates are displayed in IST. “Active” and
         “Revoked” refer to the persisted grant status
@@ -328,6 +330,7 @@ export default async function TpoRecruiterAccessPage({
         confirmation and immutable audit. Full legacy recruiter invites,
         exact modal UX and browser parity remain open.
       </p>
+      </Disclosure>
     </div>
   );
 }
