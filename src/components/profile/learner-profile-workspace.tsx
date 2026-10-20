@@ -532,7 +532,7 @@ export function LearnerProfileWorkspace(props: {
 
   return (
     <div className="min-w-0 space-y-5">
-      <nav aria-label="Quick access to unfinished profile sections" className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 md:hidden">
+      <nav aria-label="Quick access to unfinished profile sections" className="min-w-0 border-b border-border pb-3 md:hidden">
         <h2 className="text-sm font-semibold text-foreground">Quick profile steps</h2>
         <p className="mt-1 text-xs text-body">Jump to an unfinished saved-profile section. These are suggestions, not verification requirements.</p>
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
@@ -565,21 +565,24 @@ export function LearnerProfileWorkspace(props: {
               <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>{percent}% complete</StatusBadge>
             </div>
           </div>
-          <Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openDetails}>Edit profile</Button>
+          <Button className="min-h-11 md:min-h-9" variant="primary" onClick={openDetails}>Edit profile</Button>
         </div>
-        <div className="mt-5 grid gap-3 md:grid-cols-2">
-          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
+        <details className="mt-4 border-t border-border pt-2">
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Profile image and resume availability</summary>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="min-w-0 border-t border-border pt-3">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/replace remains blocked until the shared Cloud Storage profile-asset workflow is live.</p>
           </div>
-          <div className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
+          <div className="min-w-0 border-t border-border pt-3">
             <p className="m-0 text-sm font-semibold text-foreground">Resume</p>
             <p className="mt-1 text-xs leading-5 text-muted-foreground">Upload/import/remove remains explicitly blocked until Cloud Storage signing and cleanup are live.</p>
           </div>
         </div>
+        </details>
       </section>
 
-      <section className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface p-4 md:p-5" aria-labelledby="learner-profile-checklist-title">
+      <section className="min-w-0 border-b border-border pb-4" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
@@ -622,7 +625,7 @@ export function LearnerProfileWorkspace(props: {
             This is not a verification or placement eligibility decision.
           </p>
         )}
-        <ul className="mt-4 grid gap-2 md:grid-cols-2 lg:grid-cols-4">
+        <ul className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {checklist.items.map(item => (
             <li key={item.section}>
               <Link
@@ -720,7 +723,7 @@ export function LearnerProfileWorkspace(props: {
             </p>
             {entries.length?<ul className="space-y-2">
               {entries.map(entry=><li key={entry.id}
-                className="rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-3">
+                className="min-w-0 border-t border-border pt-3">
                 <p className="break-words text-sm font-semibold text-foreground">{entry.title}</p>
                 {entry.organization?<p className="mt-1 text-xs text-body">{entry.organization}</p>:null}
                 {entry.date?<p className="mt-1 text-xs text-body">{entry.date}</p>:null}
@@ -752,7 +755,7 @@ export function LearnerProfileWorkspace(props: {
                 {items.map((item) => {
                   const summary = itemTitle(section, item);
                   return (
-                    <div key={String(item.id)} className="flex flex-wrap items-center justify-between gap-3 rounded-[var(--lms-canvas-radius,12px)] border border-border bg-surface-subtle p-4">
+                    <div key={String(item.id)} className="flex min-w-0 flex-col items-start gap-2 border-t border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
                       <div className="min-w-0 flex-1">
                         <p className="m-0 break-words text-sm font-semibold text-foreground">{summary.primary}</p>
                         {summary.secondary ? <p className="mt-1 text-xs text-muted-foreground">{summary.secondary}</p> : null}
@@ -781,11 +784,11 @@ export function LearnerProfileWorkspace(props: {
         description="Only the alternate phone and contact email in your profile will change. Your login phone and account email will not change."
         footer={
           <>
-            <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={contactPending}
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={contactPending}
               onClick={closeContacts}>
               Keep current details
             </Button>
-            <Button className="min-h-11 md:min-h-9" disabled={contactPending || !learnerContactEditSchema.safeParse({
+            <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={contactPending || !learnerContactEditSchema.safeParse({
               confirmed: true, contacts: contactDraft,
             }).success}
               onClick={() => { void saveContacts(); }}>
@@ -830,7 +833,7 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={open=>{if(!open)closeDetails();}}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
         <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
           <fieldset className="grid gap-4">
@@ -890,9 +893,9 @@ export function LearnerProfileWorkspace(props: {
         title={showcaseDraft?.kind==="award"?"Awards & Recognitions":"Publications & Research"}
         description="Save a learner-entered record. This does not verify the award or publication."
         footer={<>
-          <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending}
             onClick={closeShowcase}>Cancel</Button>
-          <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
         </>}>
         {showcaseDraft?<div className="grid gap-4">
           <label className="text-sm font-semibold text-body">Title
@@ -924,8 +927,8 @@ export function LearnerProfileWorkspace(props: {
         onOpenChange={open=>{if(!open)closeJobPreferences();}}
         title="Edit Job Preferences"
         footer={<>
-          <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
-          <Button className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
         </>}>
@@ -964,7 +967,7 @@ export function LearnerProfileWorkspace(props: {
         open={collection !== null}
         onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
       >
         {collection ? (
           <div className="grid gap-4 md:grid-cols-2">
