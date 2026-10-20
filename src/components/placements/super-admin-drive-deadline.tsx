@@ -35,14 +35,14 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   }catch(e){setError(e instanceof Error?e.message:"Deadline extension failed.");}
   finally{inFlightRef.current=false;setBusy(false);}
  }
- return <div className="space-y-3"><form onSubmit={review} className="space-y-3 border-b border-border pb-5">
+ return <div className="space-y-3"><form onSubmit={review} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
-  <label className="grid max-w-md gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
-   <Input name="deadline" type="datetime-local" required className="max-w-md"/>
+  <label className="grid w-full max-w-md gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
+   <Input name="deadline" type="datetime-local" required className="w-full"/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <Button type="submit" disabled={busy}>
+  <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}>
    {busy?"Saving…":"Extend deadline"}</Button>
  </form>
  <ConfirmDialog open={pendingIso!==null} onOpenChange={next=>{if(!next&&!busy)setPendingIso(null);}}
