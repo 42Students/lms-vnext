@@ -45,7 +45,7 @@ function DetailField({
 }) {
   return (
     <div>
-      <dt className="text-xs font-semibold text-muted-foreground">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         {label}
       </dt>
       <dd className="mt-1 break-words text-sm text-body">
@@ -248,7 +248,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Sprints
               </h2>
               <StatusBadge>
@@ -329,7 +329,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Tasks
               </h2>
               <StatusBadge>
@@ -436,7 +436,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Resources
               </h2>
               <StatusBadge>
@@ -523,7 +523,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Active college assignments
               </h2>
               <StatusBadge>
@@ -567,7 +567,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold text-foreground">
+              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Version history
               </h2>
               <StatusBadge>
