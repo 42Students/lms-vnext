@@ -195,12 +195,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
      <p className="mt-1 break-words text-xs text-muted-foreground">{row.lastMessageAt?timeAgo(row.lastMessageAt,displayNow):"No messages yet"} · Private employer thread</p>
     </li>)}
    </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college." action={<Link href={hrConversationsHref({collegeId:result.collegeId,q:"",unreadOnly:"false",sort:"LATEST",scope:"ALL",page:1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Reset</Link>}/>}
-   <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&>a]:w-full max-[767px]:[&>a]:justify-center">
+   {result.pages>1 ? <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&>a]:w-full max-[767px]:[&>a]:justify-center">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
       className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
-   </nav>
+   </nav> : null}
   </>}
  </div>;
 }

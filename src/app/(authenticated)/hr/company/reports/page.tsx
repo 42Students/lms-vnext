@@ -302,6 +302,8 @@ export default async function RecruiterCompanyReportsPage({
           <EmptyState
             title="No matching drives"
             description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
+            action={query.status !== "ALL" ? <Link href={recruiterCompanyReportsHref({collegeId})}
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link> : undefined}
           />
         ) : (
           <HrCompanyReportsGrid
@@ -317,7 +319,7 @@ export default async function RecruiterCompanyReportsPage({
           />
         )}
 
-        <nav
+        {totalPages>1 ? <nav
           aria-label="Company reports pagination"
           className="flex flex-wrap items-center justify-between gap-3"
         >
@@ -354,7 +356,7 @@ export default async function RecruiterCompanyReportsPage({
               </Link>
             ) : null}
           </div>
-        </nav>
+        </nav> : null}
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
