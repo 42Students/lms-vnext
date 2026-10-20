@@ -49,10 +49,10 @@ export function TpoInterviewRescheduleForm({round}:{
    <Select name="mode" value={mode} onChange={e=>setMode(e.target.value)} className={field}>
     <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option>
    </Select></label>
-  <label className="text-sm text-body">Venue (for on-campus)
-   <Input name="venue" defaultValue={round.venue??""} className={field} maxLength={500}/></label>
-  <label className="text-sm text-body">Meeting URL (for virtual)
-   <Input name="meetingUrl" type="url" defaultValue={round.meetingUrl??""} className={field}/></label>
+  {mode==="ON_CAMPUS"?<label className="min-w-0 text-sm text-body">Venue (for on-campus)
+   <Input name="venue" value={venue} onChange={e=>setVenue(e.target.value)} className={field} maxLength={500}/></label>:null}
+  {mode==="VIRTUAL"?<label className="min-w-0 text-sm text-body">Meeting URL (for virtual)
+   <Input name="meetingUrl" type="url" value={meetingUrl} onChange={e=>setMeetingUrl(e.target.value)} className={field}/></label>:null}
   <label className="min-w-0 text-sm text-body sm:col-span-2">Reason (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={field}/></label>
   {error?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
