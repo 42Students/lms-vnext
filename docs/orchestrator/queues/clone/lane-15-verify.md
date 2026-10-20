@@ -35,12 +35,12 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-15.md: surface | regre
 - [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
 - [x] `src/app/(authenticated)/admin/courses/offerings/[offeringId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/departments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/domains/page.tsx`
-- [ ] `src/app/(authenticated)/admin/electives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/departments/page.tsx`
+- [x] `src/app/(authenticated)/admin/domains/page.tsx`
+- [x] `src/app/(authenticated)/admin/electives/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
