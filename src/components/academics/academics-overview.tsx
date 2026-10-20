@@ -1,9 +1,9 @@
+import Link from "next/link";
 import {
   DataTable,
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { EmptyState } from "@/components/ui/empty-state";
 import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import type { getAcademicsWorkspace } from "@/modules/academics/workspace";
 import { AcademicsCreatePanel } from "./academics-create-panel";
@@ -17,6 +17,17 @@ import {
 type Workspace = Awaited<
   ReturnType<typeof getAcademicsWorkspace>
 >;
+
+function AcademicEmpty({ action }: { action: string }) {
+  return (
+    <div role="status" aria-live="polite" className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
+      <p className="m-0 text-[var(--lms-font-base)] text-[var(--lms-body-text)]">No records to show.</p>
+      <Link href="#academics-create" className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+        {action}
+      </Link>
+    </div>
+  );
+}
 
 function periodTone(
   status: Workspace["periods"][number]["status"],
@@ -50,10 +61,12 @@ export function AcademicsOverview({
   collegeId,
   workspace,
   sectionBasePath,
+  programsDirectoryHref,
 }: {
   collegeId: string;
   workspace: Workspace;
   sectionBasePath: string;
+  programsDirectoryHref?: string;
 }) {
   const programColumns: DataTableColumn<
     Workspace["programs"][number]
@@ -91,6 +104,7 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (program) => (
         <ProgramActions
+          compactActions={Boolean(programsDirectoryHref)}
           program={{
             id: program.id,
             name: program.name,
@@ -199,6 +213,7 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (cohort) => (
         <CohortActions
+          compactActions={Boolean(programsDirectoryHref)}
           cohort={{
             id: cohort.id,
             name: cohort.name,
@@ -280,6 +295,7 @@ export function AcademicsOverview({
       className: "text-right",
       cell: (section) => (
         <SectionActions
+          compactActions={Boolean(programsDirectoryHref)}
           section={{
             id: section.id,
             name: section.name,
@@ -339,7 +355,7 @@ export function AcademicsOverview({
             College calendar windows with explicit lifecycle.
           </p>
         </div>
-        <DataTable caption="Academic periods" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Academic periods" empty={<AcademicEmpty action="Create period" />}
           columns={periodColumns}
           rows={workspace.periods}
           getRowKey={(period) => period.id}
@@ -347,15 +363,22 @@ export function AcademicsOverview({
       </section>
 
       <section className="space-y-3" aria-labelledby="admin-academic-programs-title">
-        <div>
-          <h2 id="admin-academic-programs-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
-            Programs
-          </h2>
-          <p className="mt-1 text-sm text-body">
-            Department-owned academic programs.
-          </p>
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-[var(--lms-space-3)]">
+          <div className="min-w-0">
+            <h2 id="admin-academic-programs-title" className="m-0 text-xl font-semibold text-[var(--lms-heading)]">
+              Programs
+            </h2>
+            <p className="mt-1 text-sm text-body">
+              Department-owned academic programs.
+            </p>
+          </div>
+          {programsDirectoryHref ? (
+            <Link href={programsDirectoryHref} className="inline-flex min-h-11 items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              Open Programs directory
+            </Link>
+          ) : null}
         </div>
-        <DataTable caption="Academic programs" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Academic programs" empty={<AcademicEmpty action="Create program" />}
           columns={programColumns}
           rows={workspace.programs}
           getRowKey={(program) => program.id}
@@ -371,7 +394,7 @@ export function AcademicsOverview({
             Program intakes with progression stored as learner history.
           </p>
         </div>
-        <DataTable caption="Cohorts and batches" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Cohorts and batches" empty={<AcademicEmpty action="Create cohort" />}
           columns={cohortColumns}
           rows={workspace.cohorts}
           getRowKey={(cohort) => cohort.id}
@@ -387,7 +410,7 @@ export function AcademicsOverview({
             Period-specific roster boundaries. Open a Section for learners, Faculty responsibilities and schedule.
           </p>
         </div>
-        <DataTable caption="Academic sections" empty={<EmptyState title="No records to show." />}
+        <DataTable caption="Academic sections" empty={<AcademicEmpty action="Create section" />}
           columns={sectionColumns}
           rows={workspace.sections}
           getRowKey={(section) => section.id}

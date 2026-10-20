@@ -79,6 +79,7 @@ export function AcademicsCreatePanel({
   const { showToast } = useToast();
   const [pending, startTransition] =
     useTransition();
+  const [activeForm, setActiveForm] = useState<"period" | "program" | "cohort" | "section" | null>(null);
 
   const [programDepartmentId, setProgramDepartmentId] =
     useState("");
@@ -129,6 +130,7 @@ export function AcademicsCreatePanel({
       try {
         await task();
         reset();
+        setActiveForm(null);
         showToast({
           tone: "success",
           title: successTitle,
@@ -229,10 +231,27 @@ export function AcademicsCreatePanel({
   }
 
   return (
-    <section className="grid min-w-0 gap-[var(--lms-space-5)] xl:grid-cols-2">
+    <section id="academics-create" aria-label="Create academic records" className="min-w-0 space-y-[var(--lms-space-4)]">
+      <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:grid-cols-4">
+        {([
+          ["period", "Create period", "academics-create-period"],
+          ["program", "Create program", "academics-create-program"],
+          ["cohort", "Create cohort", "academics-create-cohort"],
+          ["section", "Create section", "academics-create-section"],
+        ] as const).map(([kind, label, formId]) => (
+          <Button key={kind} type="button" variant={activeForm === kind ? "primary" : "secondary"}
+            aria-expanded={activeForm === kind} aria-controls={formId}
+            className="h-full w-full min-h-11 md:min-h-[var(--lms-control-height)]"
+            onClick={() => setActiveForm(current => current === kind ? null : kind)}>
+            {label}
+          </Button>
+        ))}
+      </div>
       <form
+        id="academics-create-period"
+        hidden={activeForm !== "period"}
         onSubmit={createPeriod}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New academic period
@@ -313,8 +332,10 @@ export function AcademicsCreatePanel({
       </form>
 
       <form
+        id="academics-create-program"
+        hidden={activeForm !== "program"}
         onSubmit={createProgram}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New program
@@ -409,8 +430,10 @@ export function AcademicsCreatePanel({
       </form>
 
       <form
+        id="academics-create-cohort"
+        hidden={activeForm !== "cohort"}
         onSubmit={createCohort}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New cohort / batch
@@ -549,8 +572,10 @@ export function AcademicsCreatePanel({
       </form>
 
       <form
+        id="academics-create-section"
+        hidden={activeForm !== "section"}
         onSubmit={createSection}
-        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-5)]"
+        className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]"
       >
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           New section
