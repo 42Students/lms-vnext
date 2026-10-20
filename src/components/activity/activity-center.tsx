@@ -93,18 +93,20 @@ export function ActivityCenter({
   nextRemaining,
   todayKey,
   yesterdayKey,
+  emptyHref = "/activity",
 }: {
   groups: readonly ActivityCenterGroup[];
   nextHref: string | null;
   nextRemaining:number;
   todayKey?: string;
   yesterdayKey?: string;
+  emptyHref?: string;
 }) {
   if (groups.length === 0) {
     return <EmptyState
       title="No meaningful activity matches these filters."
       description="Technical request noise is intentionally excluded from this center."
-      action={<Link href="/activity" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reset</Link>}
+      action={<Link href={emptyHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Reset</Link>}
     />;
   }
 
