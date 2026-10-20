@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -26,9 +27,13 @@ export function OrganizationActions({
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [nextName, setNextName] = useState(name);
   const [pending, startTransition] = useTransition();
+  const inFlightRef=useRef(false);
 
   function rename() {
+    if(pending||inFlightRef.current||!nextName.trim())return;
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(
         `/api/organizations/${organizationId}`,
         {
@@ -57,11 +62,16 @@ export function OrganizationActions({
         title: "Organization renamed",
       });
       router.refresh();
+      }catch{showToast({tone:"error",title:"Rename failed",description:"The organization could not be renamed."});}
+      finally{inFlightRef.current=false;}
     });
   }
 
   function archive() {
+    if(pending||inFlightRef.current)return;
+    inFlightRef.current=true;
     startTransition(async () => {
+      try {
       const response = await fetch(
         `/api/organizations/${organizationId}`,
         { method: "DELETE" },
@@ -86,6 +96,8 @@ export function OrganizationActions({
         title: "Organization archived",
       });
       router.refresh();
+      }catch{showToast({tone:"error",title:"Archive blocked",description:"The organization could not be archived."});}
+      finally{inFlightRef.current=false;}
     });
   }
 
@@ -93,14 +105,15 @@ export function OrganizationActions({
     <>
       <Dropdown trigger="Actions" label="Organization actions" mobileSheet align="end" className="print:hidden" triggerClassName="md:!min-h-9">
         <Menu className="w-full min-w-0">
-          <MenuItem onClick={() => { setNextName(name); setRenameOpen(true); }}>Rename</MenuItem>
-          <MenuItem onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
+          <MenuItem disabled={pending} onClick={() => { setNextName(name); setRenameOpen(true); }}>Rename</MenuItem>
+          <MenuItem disabled={pending} onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
         </Menu>
       </Dropdown>
 
       <Dialog
         open={renameOpen}
-        onOpenChange={setRenameOpen}
+        onOpenChange={next=>{if(!pending)setRenameOpen(next);}}
+        dismissible={!pending}
         title="Rename organization"
         description="The active-name uniqueness rule is enforced by the server."
         footer={
@@ -129,7 +142,7 @@ export function OrganizationActions({
       >
         <label
           htmlFor={`organization-name-${organizationId}`}
-          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Organization name
         </label>
@@ -146,7 +159,7 @@ export function OrganizationActions({
 
       <ConfirmDialog
         open={archiveOpen}
-        onOpenChange={setArchiveOpen}
+        onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         title={`Archive ${name}?`}
         description="This is allowed only when the organization has no active colleges."
         confirmLabel="Archive organization" confirmVariant="danger"
