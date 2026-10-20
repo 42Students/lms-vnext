@@ -144,8 +144,8 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
           </p>
         ) : (
-          <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <label className="block text-sm font-semibold text-foreground">
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
+            <label className="block min-w-0 text-sm font-semibold text-foreground">
               Recruiter
               <Select className={"mt-1 " + field} value={leadId} disabled={pending}
                 onChange={(event) => setLeadId(event.target.value)}>
@@ -161,7 +161,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
               <Input type="datetime-local" className={"mt-1 " + field}
                 value={dueLocal} disabled={pending} onChange={(event) => setDueLocal(event.target.value)} />
             </label>
-            <label className="block text-sm font-semibold text-foreground md:col-span-2">
+            <label className="block min-w-0 text-sm font-semibold text-foreground sm:col-span-2">
               Preparation note (optional)
               <Textarea rows={2} maxLength={500} className={"mt-1 " + field}
                 value={createNote} disabled={pending} onChange={(event) => setCreateNote(event.target.value)} />
@@ -189,7 +189,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           <div className="divide-y divide-border">
             {data.rows.map((row) => (
               <article key={row.id} className="min-w-0 space-y-3 py-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
@@ -208,13 +208,13 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground md:min-h-9">
+                    className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:w-auto md:min-h-9">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </Button>
                 </div>
                 {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
                 {activeId === row.id ? (
-                  <div className="grid min-w-0 gap-3 border-l-2 border-primary bg-primary-subtle px-4 py-3 md:grid-cols-2">
+                  <div className="grid min-w-0 gap-3 border-l-2 border-primary bg-primary-subtle px-3 py-3 sm:grid-cols-2">
                     <label className="block text-sm font-semibold text-foreground">
                       Outcome
                       <Select value={outcome} disabled={pending}
@@ -226,7 +226,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                         <option value="OTHER">Other</option>
                       </Select>
                     </label>
-                    <label className="block text-sm font-semibold text-foreground md:col-span-2">
+                    <label className="block min-w-0 text-sm font-semibold text-foreground sm:col-span-2">
                       Outcome note (required)
                       <Textarea maxLength={500} value={doneNote} disabled={pending}
                         onChange={(event) => setDoneNote(event.target.value)}
@@ -243,11 +243,11 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           </div>
         )}
       </section>
-      <ConfirmDialog open={confirmCreate} onOpenChange={setConfirmCreate}
+      <ConfirmDialog open={confirmCreate} onOpenChange={next=>{if(!pending)setConfirmCreate(next);}}
        title="Schedule this follow-up and record an immutable staff audit entry?"
        confirmLabel="Confirm" confirmVariant="primary" pending={pending}
        onConfirm={()=>void create()}/>
-      <ConfirmDialog open={confirmComplete!==null} onOpenChange={open=>{if(!open)setConfirmComplete(null);}}
+      <ConfirmDialog open={confirmComplete!==null} onOpenChange={open=>{if(!open&&!pending)setConfirmComplete(null);}}
        title={confirmComplete?"Mark the follow-up for "+confirmComplete.leadName+
         " done with outcome "+outcome+"? This action is terminal and audited.":""}
        confirmLabel="Confirm" pending={pending}
