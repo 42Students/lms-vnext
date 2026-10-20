@@ -138,6 +138,12 @@ function statusTone(status: string) {
   }
 }
 
+function SectionEmpty({ href, label }: { href: string; label: string }) {
+  return <EmptyState title="No records to show" action={
+    <a href={href} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{label}</a>
+  } />;
+}
+
 export function SectionOperations({
   section,
   programEnrollments,
@@ -693,7 +699,7 @@ export function SectionOperations({
           <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Program enrollments
           </h3>
-          <DataTable empty={<EmptyState title="No records to show" />}
+          <DataTable empty={<SectionEmpty href="#section-admit-learner" label="Admit learner to Program" />}
             columns={enrollmentColumns}
             rows={programEnrollments}
             getRowKey={(row) => row.id}
@@ -704,7 +710,7 @@ export function SectionOperations({
           <h3 id="section-roster" className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Section roster history
           </h3>
-          <DataTable empty={<EmptyState title="No records to show" />}
+          <DataTable empty={<SectionEmpty href="#section-place-learner" label="Place learner in this Section" />}
             columns={rosterColumns}
             rows={roster}
             getRowKey={(row) => row.id}
@@ -722,7 +728,7 @@ export function SectionOperations({
           </p>
         </div>
 
-        <Disclosure title="Faculty responsibility" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+        <Disclosure id="section-faculty-responsibility" title="Faculty responsibility" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
         <div className="grid min-w-0 items-center gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] [&>button]:w-full xl:[&>button]:w-auto">
           <Select className="min-w-0 flex-1"
             aria-label="Faculty member to assign"
@@ -787,7 +793,7 @@ export function SectionOperations({
         </div>
         </Disclosure>
 
-        <DataTable empty={<EmptyState title="No records to show" />}
+        <DataTable empty={<SectionEmpty href="#section-faculty-responsibility" label="Faculty responsibility" />}
           columns={facultyColumns}
           rows={facultyAssignments}
           getRowKey={(row) => row.id}
@@ -804,7 +810,7 @@ export function SectionOperations({
           </p>
         </div>
 
-        <Disclosure title="Add event" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+        <Disclosure id="section-add-event" title="Add event" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
         <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] pt-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
           <div>
             <label
@@ -980,7 +986,7 @@ export function SectionOperations({
         </div>
         </Disclosure>
 
-        <DataTable empty={<EmptyState title="No records to show" />}
+        <DataTable empty={<SectionEmpty href="#section-add-event" label="Add event" />}
           columns={scheduleColumns}
           rows={scheduleEvents}
           getRowKey={(row) => row.id}
