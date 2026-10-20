@@ -30,7 +30,7 @@ export default async function TpoTrustedCompaniesPage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <TpoSettingsNav active="trusted" />
       <PageHeader
         title="Trusted Companies"
@@ -47,7 +47,7 @@ export default async function TpoTrustedCompaniesPage() {
 
       {!data.explicitDomainsAvailable ? (
         <Alert tone="warning">
-          <h2 className="font-semibold text-foreground">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Trusted-domain allowlist unavailable
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">
@@ -61,7 +61,7 @@ export default async function TpoTrustedCompaniesPage() {
         </Alert>
       ) : null}
 
-      <section className="grid gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
         {[
           [
             "Linked companies",
@@ -98,7 +98,7 @@ export default async function TpoTrustedCompaniesPage() {
 
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
-          <h2 className="text-lg font-semibold text-foreground">
+          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Company trust
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
