@@ -163,10 +163,10 @@ export function FacultyCourseRoster({
           >
             Download roster CSV (names and roll numbers)
           </Button>
-          <label className="w-full max-w-md text-xs font-semibold text-body print:hidden">
+          <label className="w-full max-w-md text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
             Search students
             <Input
-              className="mt-1.5 min-h-11 md:min-h-9"
+              className="mt-[6px].5 min-h-11 md:min-h-9"
               value={search}
               onChange={(event) => {
                 setSearch(event.target.value);

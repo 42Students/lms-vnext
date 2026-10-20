@@ -85,7 +85,7 @@ export function CollegeGroupDetailWrites({
     <div className="space-y-3 border-t border-border pt-4">
       <h2 className="text-lg font-semibold text-foreground">Eligibility rule</h2>
       <p className="text-sm text-body">Edit the supported V1 criteria as JSON. At least one criterion is required. Saving does not run a refresh or change membership.</p>
-      <label className="grid gap-2 text-sm font-semibold text-body">Rule criteria
+      <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Rule criteria
         <Textarea rows={9} spellCheck={false} value={ruleJson} onChange={e=>setRuleJson(e.target.value)}
           className="w-full font-mono text-xs" />
       </label>

@@ -92,7 +92,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
  }
  return <form ref={formRef} onSubmit={submit} className="space-y-3 border-t border-[var(--lms-canvas-border)] pt-4">
   <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply to placement cell</h2>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
     rows={4} disabled={sending} aria-invalid={body.trim().length>4000}

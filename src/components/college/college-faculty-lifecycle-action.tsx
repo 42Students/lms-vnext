@@ -73,7 +73,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       confirmDisabled={action==="DEACTIVATE"&&reason.trim().length<3}
       onConfirm={submit}>
       <div className="space-y-3">
-        {action==="DEACTIVATE"?<label className="grid gap-1 text-sm font-semibold text-body">Reason
+        {action==="DEACTIVATE"?<label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
           <Input maxLength={500} value={reason} disabled={busy}
             onChange={e=>setReason(e.target.value)}/>
         </label>:<p className="text-sm text-body">Restore access for this faculty membership?</p>}

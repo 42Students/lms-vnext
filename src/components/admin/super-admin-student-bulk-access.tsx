@@ -55,10 +55,10 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    </label>)}
   </div>
   <div className="grid min-w-0 grid-cols-1 items-end gap-3 text-sm print:hidden md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
+   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module<Select value={module} disabled={busy} onChange={e=>setModule(e.target.value as typeof module)}
     className="min-h-11 w-full md:min-h-9">
     <option value="projects">Projects</option><option value="electives">Electives</option></Select></label>
-   <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
+   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access<Select value={action} disabled={busy} onChange={e=>setAction(e.target.value as typeof action)}
     className="min-h-11 w-full md:min-h-9">
     <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
     <option value="INHERIT">Clear override / Inherit</option></Select></label>

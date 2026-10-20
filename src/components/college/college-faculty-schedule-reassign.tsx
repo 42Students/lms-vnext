@@ -53,7 +53,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
 </>}>
     
     <p className="text-sm">{upcoming} upcoming scheduled session(s) for {name}.</p>
-    <label className="grid gap-2 text-sm font-semibold">Assign to
+    <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Assign to
      <Select value={selected} disabled={busy} onChange={e=>setSelected(e.target.value)}>
       <option value="">Choose a replacement faculty</option>
       {options.map(row=><option key={row.id} value={row.id}>{row.name??row.id}</option>)}

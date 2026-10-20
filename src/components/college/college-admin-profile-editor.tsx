@@ -15,7 +15,7 @@ function Field({ label, value, onChange, type = "text", hint }: {
   label: string; value: string; onChange: (value: string) => void;
   type?: string; hint?: string;
 }) {
-  return <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+  return <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
     {label}
     <Input className={fieldStyle} type={type} value={value} maxLength={500}
       onChange={event => onChange(event.target.value)} />
@@ -78,7 +78,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
         <h2 className="font-semibold text-foreground">Personal Details</h2>
         <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
         <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
-        <label className="grid gap-1 text-sm font-semibold text-body">About
+        <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">About
           <Textarea rows={3} maxLength={1000} className={fieldStyle}
             value={profile.about} onChange={e => top("about", e.target.value)} />
         </label>
