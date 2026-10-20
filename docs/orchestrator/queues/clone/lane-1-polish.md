@@ -44,7 +44,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-1.md: surface | proble
 - [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/drive-day/page.tsx` (TPO page)
 - [x] `src/app/(authenticated)/tpo/find/page.tsx` (TPO page)
-- [ ] `src/app/(authenticated)/tpo/follow-ups/page.tsx` (TPO page)
+- [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/home/page.tsx` (TPO page)
 - [ ] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx` (TPO page)
 - [ ] `src/components/placements/college-interview-status-actions.tsx` (Component with overlays: modals, drawers, menus, popovers, toasts. Polish EVERY state: open, create, update, confirm/delete, validation error, success, loading, mobile)

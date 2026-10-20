@@ -191,12 +191,12 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
           <div className="divide-y divide-border">
             {data.rows.map((row) => (
               <article key={row.id} className="min-w-0 space-y-3 py-4">
-                <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
                     <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       Due {displayDate(row.dueAt)} {row.overdue?<StatusBadge tone="warning">Overdue</StatusBadge>:null}
                     </p>
                     {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
@@ -216,7 +216,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                 </div>
                 {row.note ? <p className="whitespace-pre-wrap text-sm text-body">{row.note}</p> : null}
                 {activeId === row.id ? (
-                  <div className="grid min-w-0 gap-3 border-l-2 border-primary bg-primary-subtle px-3 py-3 sm:grid-cols-2">
+                  <div className="grid min-w-0 grid-cols-1 gap-3 border-l-2 border-primary bg-primary-subtle px-3 py-3 sm:grid-cols-2">
                     <label className="block text-sm font-semibold text-foreground">
                       Outcome
                       <Select value={outcome} disabled={pending}
@@ -235,7 +235,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                         className={"mt-1 " + field} rows={2} />
                     </label>
                     <Button variant="primary" type="button" onClick={() => setConfirmComplete(row)}
-                      disabled={pending || !doneNote.trim()} className={action}>
+                      disabled={pending || !doneNote.trim()} className={action + " sm:col-span-2 sm:justify-self-start"}>
                       {pending ? "Recording..." : "Review and confirm Done"}
                     </Button>
                   </div>

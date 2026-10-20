@@ -159,3 +159,11 @@
 **Problems fixed (9):** search button squeezed or detached on phone; input had no 44px minimum; inconsistent invalid length feedback; five empty sections competed with actual matches; oversized subheadings looked like page titles; long result names could spill; empty search had no reset; loading/error lost page heading; failed search had no exit route. 1/2-column mobile-safe search, 44px action, matching minLength, only populated results sections, compact headings, breakable rows and empty recovery. Routes, ID/ARIA, result caps, authorized search gates and API semantics retained.
 
 **Files:** `src/app/(authenticated)/tpo/find/page.tsx`, `src/app/(authenticated)/tpo/find/loading.tsx`, `src/app/(authenticated)/tpo/find/error.tsx`, queue and proof. No CI.
+
+## Surface 31 — TPO Follow-ups due
+
+**Reviewed:** `src/app/(authenticated)/tpo/follow-ups/page.tsx`, persisted scope/date/search/pagination and DB09-unavailable state, `TpoDueFollowupWorkspace` with create/complete flows, confirmation dialogs, validation, no-leads/empty, inline success/error, contact links, pending state; loading/error and TPO layout. 375/768/1280 source breakpoint review only, no UI execution/CI.
+
+**Problems fixed (10):** detached back action competed with heading; CSV export was styled primary next to task creation; ownership and date tabs consumed two disconnected rows; search controls broke unpredictably on phones; Search button not full-width at 375; pagination looked unnecessary on one page; row outcomes were poorly aligned on tablet; due/status badges cramped; edit form action floated among fields; route loading/error lost heading and recovery. Moved secondary actions into PageHeader, aligned two tab groups and search, kept schedule/complete controls as clear primary tasks, standardized row editor and mobile touch rhythm, suppressed single-page pagination, contextualized fallbacks. Existing scopes, export URL, queue pagers, mutation confirmation/guards, IDs and wording preserved.
+
+**Files:** `src/app/(authenticated)/tpo/follow-ups/page.tsx`, `src/app/(authenticated)/tpo/follow-ups/loading.tsx`, `src/app/(authenticated)/tpo/follow-ups/error.tsx`, `src/components/tpo/tpo-due-followup-workspace.tsx`, queue, proof. No code execution/CI.
