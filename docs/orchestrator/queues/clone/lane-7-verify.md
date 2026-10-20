@@ -50,8 +50,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/components/auth/session-response-guard.tsx`
 - [x] `src/components/hr/recruiter-display-name-editor.tsx`
 - [x] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/public/offline-banner.tsx`
-- [ ] `src/components/tracker/audit-finding-filter-persistence.tsx`
+- [x] `src/components/public/offline-banner.tsx`
+- [x] `src/components/tracker/audit-finding-filter-persistence.tsx`
 - [ ] `src/components/ui/form-section.tsx`
 - [ ] `src/components/ui/page-canvas.tsx`
 - [ ] `src/app/(authenticated)/admin/error.tsx`
