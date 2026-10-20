@@ -12,6 +12,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import { Disclosure } from "@/components/ui/disclosure";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string};
@@ -64,7 +65,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  }
  async function save(){
   if(!start||!applicationId||!roundId)return;
-  const iso=new Date(start+"+05:30").toISOString();
+  const parsed=new Date(start+"+05:30");
+  if(!Number.isFinite(parsed.getTime())){setError("Enter a valid date and time.");return;}
+  const iso=parsed.toISOString();
   const appointment={roundId,applicationId,scheduledAt:iso,durationMinutes:duration,
    mode,venue:mode==="ON_CAMPUS"?venue.trim():null,
    meetingUrl:mode==="VIRTUAL"?meetingUrl.trim():null,
@@ -111,9 +114,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         cell:row=>row.interviewer??"Not recorded"},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
-        cell:row=><details className="min-w-0">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Actions</summary>
-          <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
+        cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
+          <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] pb-2 sm:flex-row sm:flex-wrap">
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
        id:row.id,title:"College interview",date:row.scheduledAt,
@@ -131,7 +133,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        >Cancel</Button>
      </>:<span className="text-body">Recorded</span>}
           </div>
-         </details>},
+         </Disclosure>},
     ]}
     empty={<EmptyState title="No candidate interviews" description="No candidate interviews have been scheduled for this drive."/>}
   />
@@ -139,7 +141,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
-    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
+    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={()=>setShow(false)}>Cancel</Button>
    </>}>
