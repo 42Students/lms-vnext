@@ -82,41 +82,50 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
  return <section aria-label="Bulk student debarment" className="min-w-0 space-y-3 border-y border-border py-4">
   <h2 className="font-semibold">Debar or lift selected students</h2>
   <p className="text-sm">Uses the same students selected in the roster. Each student is checked and updated separately. Existing applications are not deleted.</p>
-  <p role="status" className="text-sm">{picked.length} selected from the filtered roster (maximum {MAX} per batch).</p>
-  <label className="grid max-w-xs gap-1 text-sm">Action
-   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9">
+  <p role="status" className="min-w-0 break-words text-sm text-body">{picked.length} selected from the filtered roster (maximum {MAX} per batch).</p>
+  <label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Action
+   <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-11 w-full min-w-0 md:min-h-9">
     <option value="DEBAR">Debar</option><option value="LIFT">Lift</option>
    </Select>
   </label>
-  <label className="grid gap-1 text-sm">Reason (required)
-   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} className="min-h-20 rounded-[var(--lms-control-radius)] border border-border p-2"/>
+  <label className="grid min-w-0 gap-1 text-sm">Reason (required)
+   <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} className="min-h-20 w-full min-w-0"/>
   </label>
   {action==="DEBAR"?<>
-   <label className="grid max-w-xs gap-1 text-sm">Until
-    <Select value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 md:min-h-9">
+   <label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Until
+    <Select value={duration} disabled={pending} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-11 w-full min-w-0 md:min-h-9">
      <option value="DATE">A specific date (IST)</option><option value="DRIVES">A number of drives</option><option value="MANUAL">Lifted by placement team</option>
     </Select>
    </label>
-   {duration==="DATE"?<label className="grid gap-1 text-sm">Last date
-    <Input type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="min-h-11 max-w-xs md:min-h-9"/>
-   </label>:duration==="DRIVES"?<label className="grid gap-1 text-sm">Number of drives
-    <Input type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="max-w-xs"/>
+   {duration==="DATE"?<label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Last date
+    <Input type="date" disabled={pending} value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9"/>
+   </label>:duration==="DRIVES"?<label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Number of drives
+    <Input type="number" min={1} max={10000} disabled={pending} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>:null}
   </>:null}
   {!check.ok&&picked.length>0?<InlineNotice tone="error" message={check.message}/>:null}
-  <Button variant="secondary" type="button" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}
+  <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!check.ok||pending} onClick={()=>setConfirm(true)}
    >Review {action==="DEBAR"?"debarment":"lifting"} for {picked.length} student(s)</Button>
   <Dialog open={confirm} onOpenChange={open=>{if(!pending)setConfirm(open);}}
    title={action==="DEBAR"?"Confirm bulk debarment":"Confirm bulk lift"}
    description={"Apply "+action.toLowerCase()+" to up to "+picked.length+" students? Each decision records the named reason and the learner is notified."}
-   footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
-    <Button disabled={!check.ok||pending} onClick={()=>void run()}>{pending?"Saving…":"Confirm selected changes"}</Button></>}>
-    <ul className="list-disc pl-4 text-sm">{picked.map(row=><li key={row.id}>{row.name}</li>)}</ul>
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
+    <Button variant={action==="DEBAR"?"danger":"primary"} className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={!check.ok||pending} onClick={()=>void run()}>{pending?"Saving…":"Confirm selected changes"}</Button>
+   </div>}>
+    <div className="min-w-0 space-y-2">
+     <p className="text-sm text-body">Reason: {reason.trim()}</p>
+     {action==="DEBAR"?<p className="text-sm text-body">{duration==="DATE"?"Until: "+untilDate:duration==="DRIVES"?"Drives: "+untilDrives:"Lifted by placement team"}</p>:null}
+     <ScrollCue axis="y" label="Selected learners for bulk debarment" viewportClassName="max-h-52">
+      <ul className="min-w-0 divide-y divide-border text-sm">{picked.map(row=><li key={row.id} className="min-w-0 break-words py-2">{row.name}</li>)}</ul>
+     </ScrollCue>
+     {error?<InlineNotice tone="error" message={error}/>:null}
+    </div>
   </Dialog>
   {results.length>0?<div role="status" aria-live="polite" className="space-y-2">
    <p>{results.filter(r=>r.status==="saved").length} saved · {results.filter(r=>r.status==="skipped").length} skipped · {results.filter(r=>r.status==="failed").length} failed.</p>
-   <ScrollCue axis="y" label="Bulk debarment results" viewportClassName="max-h-64"><ul className="space-y-1 text-sm">{results.map(row=><li key={row.id}><strong>{row.name}</strong> — {row.detail}</li>)}</ul></ScrollCue>
+   <ScrollCue axis="y" label="Bulk debarment results" viewportClassName="max-h-64"><ul className="min-w-0 divide-y divide-border text-sm">{results.map(row=><li key={row.id} className="min-w-0 break-words py-2"><strong>{row.name}</strong> — {row.detail}</li>)}</ul></ScrollCue>
   </div>:null}
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error&&!confirm?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }
