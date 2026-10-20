@@ -16,9 +16,9 @@ export default async function TpoWaitlistPage({params}:{params:Promise<{jobId:st
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Waitlist"} description="Review ranked applied waitlist results and release the next available offer seat exactly once."/>
   <nav aria-label="Waitlist related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-[13px]"><Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/offers"}
-   className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Offer register</Link>
+   className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9">Offer register</Link>
    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds"}
-    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9">Round results</Link></nav>
+    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9">Round results</Link></nav>
   <TpoWaitlistPromotionControl jobId={jobId} preview={data}/>
  </div>;
 }
