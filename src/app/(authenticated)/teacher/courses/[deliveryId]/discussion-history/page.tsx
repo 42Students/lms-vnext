@@ -25,13 +25,13 @@ export default async function FacultyDiscussionHistoryPage({
     <PageHeader eyebrow="Faculty · Discussion audit" title="Discussion moderation history"
       description={[data.delivery.courseName,data.delivery.sectionName].join(" · ")}
       actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
-        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Discussions
       </Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3">
-      <label className="grid gap-1 text-sm font-semibold text-body">Recorded action
+      <label className="grid gap-1 text-[13px] font-semibold leading-4 text-body">Recorded action
         <Select name="action" defaultValue={data.query.action}
-          className="min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="ALL">All moderation and reply actions</option>
           <option value="PIN">Pin/unpin</option>
           <option value="DELETE">Deletions</option>
