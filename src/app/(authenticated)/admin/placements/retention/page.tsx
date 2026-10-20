@@ -10,27 +10,30 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Banner} from "@/components/ui/banner";
 export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
- if(!context.adminScope?.collegeId)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Data retention report"/>
+ if(!context.adminScope?.collegeId)return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]"><PageHeader title="Data retention report" actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const report=await getSuperAdminPlacementRetentionReport(context);
  const fmt=(d:Date)=>d.toLocaleDateString("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  const columns:DataTableColumn<(typeof report.rows)[number]>[]=[
-  {key:"applicant",header:"Applicant",mobilePriority:"primary",cell:row=>row.applicantName},
-  {key:"drive",header:"Drive",mobilePriority:"secondary",cell:row=>row.jobTitle},
+  {key:"applicant",header:"Applicant",mobilePriority:"primary",cell:row=><strong className="block min-w-0 break-words font-semibold text-[var(--lms-heading)]">{row.applicantName}</strong>},
+  {key:"drive",header:"Drive",mobilePriority:"secondary",cell:row=><span className="block min-w-0 break-words">{row.jobTitle}</span>},
   {key:"state",header:"State",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="WITHDRAWN"?"neutral":"error"}>{row.applicationStatus==="WITHDRAWN"?"Withdrawn":"Rejected"}</StatusBadge>},
   {key:"updated",header:"Last updated",mobilePriority:"secondary",cell:row=>fmt(row.lastUpdated)},
   {key:"action",header:"Action",mobilePriority:"action",cell:row=><Link href={"/admin/placements/applications/"+encodeURIComponent(row.id)}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review →</Link>},
  ];
- return <div className="min-w-0 max-w-full space-y-4">
+ return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
   <PageHeader title="Data retention report"
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."
    actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
-  <p role="status" className="text-sm text-body tabular-nums">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}; cutoff {fmt(new Date(report.cutoff))}.</p>
   <Banner tone="warning">
    This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything.
   </Banner>
+  <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
+    <p role="status" className="font-semibold text-[var(--lms-heading)] tabular-nums">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}</p>
+    <p className="text-sm text-muted-foreground">Cutoff: <time dateTime={report.cutoff}>{fmt(new Date(report.cutoff))}</time></p>
+  </div>
   <DataTable columns={columns} rows={report.rows} getRowKey={row=>row.id}
     caption="Data retention report" empty={<EmptyState title="No applications needing review"
     description="No rejected or withdrawn applications have passed the 180-day idle threshold."/>}/>

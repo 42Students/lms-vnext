@@ -50,25 +50,25 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
   }catch(e){setError(e instanceof Error?e.message:"Policy update failed.");}
   finally{setBusy(null);}
  }
- return <section aria-labelledby="platform-placement-policy" className="space-y-4 border-b border-border pb-5">
-  <div className="flex flex-wrap items-center justify-between gap-3">
+ return <section aria-labelledby="platform-placement-policy" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
+  <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
    <div><h2 id="platform-placement-policy" className="text-lg font-semibold text-foreground">Placements policy</h2>
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
    </div>
    <Button type="button" variant="secondary" disabled={Boolean(busy)} onClick={()=>void refresh()}>Reload</Button>
   </div>
-  <div className="grid gap-4 md:grid-cols-2">
-   {fields.map(field=><div key={field.key} className="space-y-2 border-b border-border py-3">
+  <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
+   {fields.map(field=><div key={field.key} className="min-w-0 space-y-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)]">
      <label htmlFor={"policy-"+field.key} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field.label}</label>
      <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
      <div className="flex flex-wrap items-center gap-2">
       <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
        value={drafts[field.key]??String(field.value)}
        onChange={event=>setDrafts(current=>({...current,[field.key]:event.target.value}))}
-       className="min-w-28 flex-1" />
+       className="min-h-11 min-w-0 flex-1 md:min-h-9" />
       <span className="text-xs text-muted-foreground">{field.unit}</span>
      </div>
-     <div className="flex flex-wrap gap-2">
+     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
       <Button type="button" disabled={Boolean(busy)} onClick={()=>void submit(field,false)}>Save</Button>
       <Button type="button" variant="secondary" disabled={Boolean(busy)||!field.isOverridden} onClick={()=>void submit(field,true)}>Reset to default</Button>
      </div>
