@@ -29,7 +29,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-19.md: surface | probl
 - [x] `src/components/tpo/tpo-student-quick-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/tpo/tpo-student-saved-views.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [x] `src/components/tpo/tpo-students-assign-prep.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-students-bulk-debar.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-students-drive-visibility.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
 - [ ] `src/components/tpo/tpo-team-ask-panel.tsx` (Overlay (modal, drawer, popover, menu, tooltip, toast))
