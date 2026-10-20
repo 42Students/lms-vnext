@@ -4,6 +4,7 @@ import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Disclosure } from "@/components/ui/disclosure";
 import {AdminOfferingSectionTabs} from "./admin-offering-section-tabs";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
@@ -78,34 +79,32 @@ export async function AdminOfferingLearningPage({
         }
       />
       <AdminOfferingSectionTabs/>
-      <section id="course-home" aria-label="Course Home" className="scroll-mt-24 space-y-2">
-      <h2 className="text-lg font-semibold text-foreground">Home</h2>
-      <AdminCourseDisplayEditor
-        courseId={workspace.offering.courseId}
-        enabled={displayEnabled}
-        initial={
-          display
-            ? {
-                introductionText:
-                  display.introductionText,
-                bodyHtml:
-                  display.bodyHtml,
-                takeaways:
-                  display.takeaways,
-                thumbnailUrl:
-                  display.thumbnailUrl,
+      <section id="course-home" aria-label="Course Home" className="min-w-0 scroll-mt-24 space-y-3">
+        <h2 className="text-lg font-semibold text-foreground">Home</h2>
+        {displayEnabled ? (
+          <Disclosure title="Edit Course Home content" className="border-b border-[var(--lms-canvas-border)] pb-3" contentClassName="pt-3">
+            <AdminCourseDisplayEditor
+              courseId={workspace.offering.courseId}
+              enabled={displayEnabled}
+              initial={display ? {
+                introductionText: display.introductionText,
+                bodyHtml: display.bodyHtml,
+                takeaways: display.takeaways,
+                thumbnailUrl: display.thumbnailUrl,
                 version: display.version,
-              }
-            : null
-        }
-      />
+              } : null}
+            />
+          </Disclosure>
+        ) : (
+          <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={false} initial={null} />
+        )}
+      </section>
+      <section id="course-syllabus" aria-label="Course Syllabus" className="min-w-0 scroll-mt-24 space-y-3">
+        <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
+        <AdminOfferingLearningOverview workspace={workspace}/>
       </section>
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
       <AdminOfferingSectionPreview data={sectionPreview}/>
-      <section id="course-syllabus" aria-label="Course Syllabus" className="scroll-mt-24 space-y-2">
-       <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
-       <AdminOfferingLearningOverview workspace={workspace}/>
-      </section>
     </div>
   );
 }
