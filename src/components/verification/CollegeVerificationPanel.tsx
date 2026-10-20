@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeVerificationLegacyCopy } from "@/modules/verification/college-legacy-verification-copy";
+import { PageHeader } from "@/components/ui/page-header";
+import { collegeVerificationLegacyCopy } from "@/modules/verification/college-legacy-verification-copy";
 import { Banner } from "@/components/ui/banner";
 import {ActionPagination} from "@/components/ui/action-pagination";
 import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
@@ -121,6 +123,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  exportQuery.set("tab",activeTab);
  return <div className="min-w-0 space-y-5 md:space-y-6">
   <PageHeader title="Profile verification" description={collegeVerificationLegacyCopy.subtitle}/>
+  <PageHeader title="Profile verification" description={collegeVerificationLegacyCopy.subtitle}/>
 
   {truncated?<Banner tone="warning">
    Showing the first 1,000 students in this view. Totals reflect this working set; narrow the filters to review other students.
@@ -200,7 +203,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setAcknowledged(false);setBulkAction(null);}} >Cancel preview</Button>
    </div>}
   </section>}
-  <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy hideHeader
+  <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy hideHeader hideHeader
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} selectionDisabled={bulkBusy} disableLocalSearch preserveServerOrder allowCollegeStudentLinks allowCollegeContactLinks
    initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NAME"?"NAME":query.sort==="NEWEST"?"NEWEST":"OLDEST"}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query.attention)?"ALL":query.attention??"ALL"})}
