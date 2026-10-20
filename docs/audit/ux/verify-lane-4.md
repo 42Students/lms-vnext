@@ -69,3 +69,13 @@
 - Regressions found/fixed: 0. Read page and error/loading, HR layout, lane-14 proof, HrProposalHistoryGrid/TpoGrid, proposal query/links model, title/date formatting, grants, search/sort, and CSV export; verified current filter and pagination URLs, mobile/desktop projection and access.
 - Extra clutter/alignment: 1 — suppress empty proposal pager at 0 or 1 pages rather than rendering an empty navigation landmark.
 - Files changed: `src/app/(authenticated)/hr/drives/proposals/page.tsx`. Static only; no CI.
+
+## 15. `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
+- Regressions found/fixed: 0. Read route page/error/loading, HR/authenticated layout, lane-14 proof, RecordedOutsideForm and its Input/Select/Textarea/Button primitives; compared college/grant selection, saved confirmation, form POST fields and historical-only notice. Controls are responsive and correct.
+- Extra clutter/alignment: 0; bounded form and recovery copy remain intact.
+- Files changed: verified, no change. No runtime or CI.
+
+## 16. `src/app/(authenticated)/hr/home/page.tsx`
+- Regressions found/fixed: 1 layout regression — actionable deadlines and upcoming rounds links were inline elements under a `divide-y` row list, preventing full-width rows/hit targets; make both block/min-w-0 and do the same for results-due rows. Inspected full 32k source, route error/loading, HR layout, lane-14 proof, Today action/due/results models, profile/portfolio data calls, shared Badge/Alert/EmptyState and draft reminder. Checked permission, IST clock, grant choice, partial outage and drill-down links.
+- Extra clutter/alignment: 2 — long deadline/event labels wrap rather than overflowing, and summary-list row hit areas now align across sections.
+- Files changed: `src/app/(authenticated)/hr/home/page.tsx`. Static inspection only, no CI.

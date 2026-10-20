@@ -244,7 +244,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Actionable deadlines</summary>
       {today.dueSoon.length ? <div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">{today.dueSoon.map(item =>
         <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
-          className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"><span className="block font-medium text-foreground">{item.job.title}</span>
+          className="block min-w-0 break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"><span className="block font-medium text-foreground">{item.job.title}</span>
           <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
     </details>
@@ -252,7 +252,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">This week · upcoming rounds</summary>
       {today.upcomingRounds.length ? <div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">{today.upcomingRounds.map(event =>
         <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
-          className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"><span className="block font-medium text-foreground">{event.title}</span>
+          className="block min-w-0 break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"><span className="block font-medium text-foreground">{event.title}</span>
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
     </details>
@@ -261,7 +261,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="mt-1 text-sm text-body">Recorded result deadlines on authorized employer rounds. A past timestamp alone does not establish that results remain outstanding.</p>
       {dueResults.length ? <div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">{dueResults.map(item =>
         <Link key={item.id} href={hrResultsDueHref(item.jobId,item.id)}
-          className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="block min-w-0 break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           <span className="block break-words font-medium text-foreground">{item.roundName}</span>
           <span className="mt-1 block text-sm text-body">{item.jobTitle} · {when(item.dueAt)} IST</span>
           <Badge  tone="neutral" className="mt-2">
