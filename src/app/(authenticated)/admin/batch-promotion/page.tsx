@@ -83,7 +83,7 @@ export default async function SuperAdminBatchPromotionPage({
         caption="Batches"
         rows={visibleCohorts}
         getRowKey={batch=>batch.id}
-        empty={<p role="status" className="text-sm text-muted-foreground">No batches match the selected program and status.</p>}
+        empty={<EmptyState title="No matching batches" description="No batches match the selected program and status."/>}
         columns={[
           {key:"batch",header:"Batch",mobilePriority:"primary",cell:batch=><strong>{batch.programName} · {batch.name}</strong>},
           {key:"semester",header:"Semester",mobilePriority:"secondary",cell:batch=>batch.currentTermNumber??"—"},
