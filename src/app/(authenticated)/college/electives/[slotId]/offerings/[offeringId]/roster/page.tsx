@@ -145,13 +145,13 @@ export default async function ElectiveRoster({
       </div>)}
       {!archived && <form action={changeFaculty} className="flex min-w-0 flex-wrap items-end gap-[8px] max-[767px]:flex-col max-[767px]:items-stretch">
         <Input type="hidden" name="action" value="ASSIGN" />
-        <label className="grid min-w-0 gap-1 text-sm max-[767px]:w-full">Faculty
+        <label className="grid min-w-0 gap-[6px] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
           <Select name="membershipId" required defaultValue="" className="w-full max-w-full">
             <option value="" disabled>Choose faculty</option>
             {faculty.map(item => <option key={item.id} value={item.id}>{item.name ?? item.id}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm max-[767px]:w-full">Role
+        <label className="grid min-w-0 gap-[6px] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
           <Select name="role" className="w-full max-w-full">
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>

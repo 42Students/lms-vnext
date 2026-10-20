@@ -167,20 +167,20 @@ export default async function CollegeElectiveAllocatePage({
       {input.reason ? " " + input.reason : ""}
     </Alert>}
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-      <label className="grid min-w-0 gap-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class/Section
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
         <Select name="section" className={fieldStyle} defaultValue={input.section ?? ""}>
           <option value="">All sections</option>
           {allSections.map(s => <option key={s.id} value={s.id}>{s.name} ({s.code})</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll number or learner ID
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or learner ID
         <Input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
     </form>
     <form action={allocate} className="space-y-4 border-b border-border pb-4">
-      <label className="grid min-w-0 gap-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Allocate selected to…
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Allocate selected to…
         <Select name="offeringGroup" required className={fieldStyle}>
           <option value="">Choose elective offering</option>
           {offerings.map(o => <option key={o.id} value={o.groupId}>
@@ -211,7 +211,7 @@ export default async function CollegeElectiveAllocatePage({
       </ScrollCue>
       <p className="text-xs text-muted-foreground">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
-      <label className="grid min-w-0 gap-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
         <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}
           placeholder="One roll number or membership ID per line, comma separated also supported" />
       </label>

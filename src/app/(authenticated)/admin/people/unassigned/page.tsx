@@ -56,11 +56,11 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
       description="Read-only identities with no college membership. Users with active, suspended or ended memberships are excluded. Personal contact and session information are excluded." />
     <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">← Users & Roles</Link>
     <form method="get" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-4 md:grid-cols-2 lg:grid-cols-4">
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name<Input type="search" name="q" maxLength={100}
         defaultValue={data.query.q} className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm" /></label>
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Platform status<Select name="platformStatus" defaultValue={data.query.platformStatus}
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{statuses.map(status => <option key={status}>{status}</option>)}</Select></label>
-      <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">System role<Select name="role" defaultValue={data.query.role}
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
       <Button type="submit" variant="primary" className="self-end">Filter</Button>
     </form>
