@@ -88,3 +88,12 @@
 
 **Files changed:** assignment editor, method picker, resource links, manage/error.tsx, manage/loading.tsx, queue and proof.
 **Verification:** static TypeScript/JSX inspection; runtime, tests and CI deliberately not run.
+
+## 10 · Teacher / Attendance corrections redirect
+**Surface:** `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/page.tsx`
+**Problems found (5):** legacy placeholder route has no visible content but mismatched route loading label, generic card skeleton, inconsistent error padding on the single shell canvas, desktop-sized Retry control on phones, and no navigation fallback after failed authorization check.
+
+**Fix:** preserve validation, Section authorization and redirect to attendanceDetail exactly (never resurrect the unimplemented request-history page); align route loading to the correction check, use existing directory loading shape, align PageHeader/error text and full-size primary Retry with a safe Back to courses link. Reviewed parent faculty access/error/not-found, and redirect destination routing; no local not-found/template exists.
+
+**Files changed:** attendance-corrections `error.tsx`, `loading.tsx`, queue and proof. `page.tsx` intentionally unchanged: no rendered layout exists.
+**Verification:** static review only; no build or CI.
