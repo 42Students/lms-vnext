@@ -15,8 +15,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-11.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx`
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx`
 - [x] `src/app/(authenticated)/tpo/batches/[batchId]/invitation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/nudge-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/reminder-prep/page.tsx`
