@@ -44,10 +44,14 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
  return <>{confirmation}
   <Button variant="secondary" type="button" onClick={()=>void show()} className="min-h-11 md:min-h-9">
    Reassign class schedules</Button>
-  <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title="Reassign class schedules" dismissible={!busy}>
-    <div className="flex justify-end gap-3">
-     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
-      className="min-h-11 md:min-h-9">Close</Button></div>
+  <Dialog open={open} onOpenChange={next=>{if(!next&&!busy)setOpen(false);}} title="Reassign class schedules" dismissible={!busy} footer={<>
+<Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
+      className="min-h-11 md:min-h-9">Close</Button>
+<Button variant="primary" type="button" disabled={busy||!selected||!upcoming} onClick={()=>void submit()}
+     className="min-h-11 md:min-h-9" loading={busy}>
+     {busy?"Reassigning…":"Reassign class schedules"}</Button>
+</>}>
+    
     <p className="text-sm">{upcoming} upcoming scheduled session(s) for {name}.</p>
     <label className="grid gap-2 text-sm font-semibold">Assign to
      <Select value={selected} disabled={busy} onChange={e=>setSelected(e.target.value)}>
@@ -56,9 +60,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
      </Select></label>
     <p className="text-xs text-muted-foreground">Only future scheduled sessions are changed. Overlapping sessions are skipped; existing teaching history is retained.</p>
     {error?<Alert tone="error">{error}</Alert>:null}
-    <Button variant="primary" type="button" disabled={busy||!selected||!upcoming} onClick={()=>void submit()}
-     className="min-h-11 md:min-h-9" loading={busy}>
-     {busy?"Reassigning…":"Reassign class schedules"}</Button>
+    
     {receipt?<Alert tone="success" className="space-y-2">
      <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
      <p>{receipt.skipped} skipped.</p>
