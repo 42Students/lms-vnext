@@ -55,16 +55,12 @@ export default async function TpoCompanyContactLogPage({
 
   return (
     <div className="min-w-0 space-y-5">
-      <Link
-        href={"/tpo/companies/" + encodeURIComponent(companyId)}
-        className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
-      >
-        ← Company details
-      </Link>
       <PageHeader
         
         title={log.companyName + " · Contact log"}
         description="Read-only CRM interaction history for contacts explicitly linked to this college-company relationship."
+        actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
+          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Company details</Link>}
       />
       {!log.available ? (
         <Alert tone="warning">
@@ -90,7 +86,7 @@ export default async function TpoCompanyContactLogPage({
               activity remains read-only.
             </Alert>
           )}
-          <form method="get" action={path} className="flex flex-wrap items-end gap-3">
+          <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
             <label className="text-sm font-semibold text-foreground">
               Interaction type
               <Select
@@ -104,8 +100,8 @@ export default async function TpoCompanyContactLogPage({
               </Select>
             </label>
             <Button
-              type="submit"
-              className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link"
+              type="submit" variant="secondary"
+              className="min-h-11 md:min-h-9"
             >
               Filter
             </Button>
