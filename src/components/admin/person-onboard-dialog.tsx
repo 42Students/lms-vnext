@@ -117,7 +117,7 @@ export function PersonOnboardDialog({
 
   return (
     <>
-      <Button className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => setOpen(true)}>
+      <Button className="min-h-11 w-full md:min-h-9 md:w-auto" aria-label={forcedRole === "COLLEGE_ADMIN" ? "Onboard College Admin" : forcedRole === "TPO" ? "Onboard TPO" : undefined} onClick={() => setOpen(true)}>
         {forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
       </Button>
       <Dialog
