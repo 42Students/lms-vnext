@@ -6,6 +6,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { listPrograms } from "@/modules/academics/program-service";
 import { listProgramContents } from "@/modules/admin-ui/program-contents-service";
 import { listDepartments } from "@/modules/departments/service";
@@ -52,13 +53,12 @@ export default async function SuperAdminProgramsPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <AcademicSetupSteps step={2} />
       <PageHeader
         title="Programs"
         description="Manage programs within the selected college safety scope."
-        actions={<Link href="/admin/academics"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:bg-primary-subtle sm:min-h-9">Open Academic Setup overview →</Link>}
+        actions={<PageBackLink href="/admin/academics" label="Academic Setup overview" />}
       />
+      <AcademicSetupSteps step={2} />
       <AdminProgramDirectory
         programs={programs.map((program) => ({
           id: program.id,
