@@ -156,7 +156,7 @@ export function FacultyCourseHomeSignals({
             </div>
             <Link
               href={`/teacher/courses/${deliveryId}/students`}
-              className="text-sm font-semibold text-primary-text hover:underline"
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-[var(--lms-control-height)]"
             >
               View all {signals.atRiskTotal} students
             </Link>
@@ -180,7 +180,7 @@ export function FacultyCourseHomeSignals({
                     <p>Average grade: {learner.averageGradePercent===null?"No graded work":learner.averageGradePercent+"%"}</p>
                   </div>
                   <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
-                    className="mt-2 inline-block text-primary-text underline">View students</Link>
+                    className="mt-2 inline-flex min-h-11 items-center text-primary-text underline md:min-h-[var(--lms-control-height)]">View students</Link>
                 </Disclosure>
               </li>
             ))}
