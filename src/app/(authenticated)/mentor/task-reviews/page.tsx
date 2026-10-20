@@ -65,26 +65,26 @@ export default async function MentorTaskReviewsPage({
     </section> : <>
       <form method="get" action="/mentor/task-reviews"
         className={mentorTaskReviewMobileFilters}>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Task or project
           <Input type="search" name="search" maxLength={120} defaultValue={data.query.search}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-foreground"
             placeholder="Search pending task reviews" />
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Page size
           <Select name="pageSize" defaultValue={String(data.pageSize)}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="20">20</option><option value="50">50</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned project
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Assigned project
           <Select name="projectId" defaultValue={data.query.projectId ?? ""} className="min-h-11 md:min-h-9 max-w-full border border-[var(--lms-canvas-border)] px-3">
             <option value="">All assigned projects</option>
             {data.projects.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">My Mentor assignment
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">My Mentor assignment
           <Select name="assignment" defaultValue={data.query.assignment}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">All current assignments</option>
@@ -92,24 +92,24 @@ export default async function MentorTaskReviewsPage({
             <option value="SUPPORTING">Supporting Mentor</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Priority
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Priority
           <Select name="priority" defaultValue={data.query.priority}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             {(["ALL","CRITICAL","HIGH","MEDIUM","LOW"] as const).map(priority=>
               <option key={priority} value={priority}>{priority}</option>)}
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Submission version
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Submission version
           <Input type="number" name="version" min={1} max={100000}
             defaultValue={data.query.version ?? ""} placeholder="All versions"
             className="min-h-11 md:min-h-9 w-32 border border-[var(--lms-canvas-border)] px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Waiting since
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Waiting since
           <Select name="age" defaultValue={data.query.age} className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="ALL">Any submission age</option><option value="LAST_7_DAYS">Past 7 days</option><option value="OLDER_THAN_7_DAYS">Over 7 days old</option><option value="OLDER_THAN_30_DAYS">Over 30 days old</option>
           </Select>
         </label>
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Review order
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Review order
           <Select name="order" defaultValue={data.query.order}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
             <option value="NEWEST">Newest first</option>
