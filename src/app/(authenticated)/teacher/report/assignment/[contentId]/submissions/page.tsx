@@ -54,7 +54,7 @@ export default async function FacultyAssignmentSubmissionsPage({
       {query.filter!=="ALL"?<Input type="hidden" name="filter" value={query.filter}/>:null}
       {query.order!=="NEWEST"?<Input type="hidden" name="order" value={query.order}/>:null}
       {query.publication!=="ALL"?<Input type="hidden" name="publication" value={query.publication}/>:null}
-      <label className="grid min-w-0 flex-1 basis-56 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 w-full flex-1 basis-full gap-[6px] md:w-auto md:basis-56 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner submissions
         <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
