@@ -86,7 +86,7 @@ export function NotificationList({
     return (
       <div className={readEndpoint==="/api/learn/notifications"
         ? "flex min-h-[180px] flex-col items-center justify-center gap-4 bg-transparent px-6 py-12 text-center"
-        : "border-y border-[var(--lms-canvas-border)] bg-transparent px-6 py-12 text-center"}>
+        : readEndpoint==="/api/tpo/notifications" ? "bg-transparent px-4 py-6 text-center" : "border-y border-[var(--lms-canvas-border)] bg-transparent px-6 py-12 text-center"}>
         <p className={readEndpoint==="/api/learn/notifications"
           ? "m-0 text-[20px] font-semibold leading-[1.3] text-[var(--lms-neutral-900)]"
           : "m-0 font-semibold text-foreground"}>{emptyText}</p>
