@@ -20,7 +20,7 @@ Proof: ONE entry per surface in docs/audit/ux/polish-lane-13.md: surface | probl
 - [x] `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` (Mentor page)
 - [x] `src/app/(authenticated)/mentor/courses/[courseId]/[[...courseTab]]/page.tsx` (Mentor page)
 - [x] `src/app/(authenticated)/mentor/courses/page.tsx` (Mentor page)
-- [ ] `src/app/(authenticated)/mentor/fileExplorer/page.tsx` (Mentor page)
+- [x] `src/app/(authenticated)/mentor/fileExplorer/page.tsx` (Mentor page)
 - [ ] `src/app/(authenticated)/mentor/notifications/page.tsx` (Mentor page)
 - [ ] `src/app/(authenticated)/mentor/page.tsx` (Mentor page)
 - [ ] `src/app/(authenticated)/mentor/profile/page.tsx` (Mentor page)
