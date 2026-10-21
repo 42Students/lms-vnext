@@ -45,7 +45,7 @@ export async function DELETE(request:Request,{params}:{params:Promise<{sectionId
   const deleted=await deleteCollegeSection(context,sectionId,await request.json());
   return NextResponse.json({deleted},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
-  if(error instanceof CollegeSectionError || error instanceof CollegeSectionLifecycleError)
+  if(error instanceof CollegeSectionLifecycleError || error instanceof CollegeSectionError)
    return NextResponse.json({error:error.code},{
     status:error.code==="CLASS_NOT_FOUND"?404:409,
     headers:{"Cache-Control":"private, no-store"},
