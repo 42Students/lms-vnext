@@ -40,7 +40,7 @@ const MONTHS = ["January", "February", "March", "April", "May", "June",
   "July", "August", "September", "October", "November", "December"];
 
 function academicYearFor(date: string, startMonth: number): string {
-  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return "";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return "";
   const year = Number(date.slice(0, 4));
   const first = Number(date.slice(5, 7)) >= startMonth ? year : year - 1;
   return `${first}-${String((first + 1) % 100).padStart(2, "0")}`;
@@ -48,7 +48,7 @@ function academicYearFor(date: string, startMonth: number): string {
 
 function validAcademicYear(value: string): boolean {
   if (!value.trim()) return true;
-  const result = /^(\\d{4})-(\\d{2})$/.exec(value.trim());
+  const result = /^(\d{4})-(\d{2})$/.exec(value.trim());
   return Boolean(result && Number(result[2]) === (Number(result[1]) + 1) % 100);
 }
 
@@ -126,8 +126,10 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
     if(pending)return;
     setNotice(""); setNoticeIsError(false); setFieldErrors({});
     if (!programId) { setFieldErrors({ programId: "Select a program" }); return; }
+    if (!startPeriodId) { setFieldErrors({ startPeriodId: "Select a starting academic period" }); return; }
     if (!name.trim()) { setFieldErrors({ name: "Enter a batch name" }); return; }
     if (name.length > 255) { setFieldErrors({ name: "Maximum 255 characters" }); return; }
+    if (!code.trim()) { setFieldErrors({ code: "Enter a batch code" }); return; }
     if (!validAcademicYear(academicYear)) {
       setFieldErrors({ academicYear: "Use consecutive years, e.g., 2026-27" }); return;
     }
@@ -181,7 +183,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           {fieldErrors.programId ? <span role="alert" className="text-xs text-error">{fieldErrors.programId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
-          <Select required value={startPeriodId} error={Boolean(fieldErrors.startPeriodId)}
+          <Select value={startPeriodId} error={Boolean(fieldErrors.startPeriodId)}
             onChange={e => startPeriodChanged(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Choose period</option>
@@ -196,7 +198,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           {fieldErrors.name ? <span role="alert" className="text-xs text-error">{fieldErrors.name}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
-          <Input required maxLength={64} value={code} error={Boolean(fieldErrors.code)}
+          <Input maxLength={64} value={code} error={Boolean(fieldErrors.code)}
             onChange={e => { setCode(e.target.value); setFieldErrors(current => ({ ...current, code: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {fieldErrors.code ? <span role="alert" className="text-xs text-error">{fieldErrors.code}</span> : null}
@@ -285,6 +287,7 @@ export function CollegeCohortRowActions({ row, periods }: {
   const [endDate,setEndDate]=useState(row.endDate??"");
   const [notice, setNotice] = useState("");
   const [removeError, setRemoveError] = useState(false);
+  const [editErrors, setEditErrors] = useState<Record<string, string>>({});
   const original = {
     name: row.name, code: row.code,
     expectedEndPeriodId: row.expectedEndPeriodId,
@@ -335,28 +338,41 @@ export function CollegeCohortRowActions({ row, periods }: {
   function close() {
     if (hasUnsavedCollegeCohortEdit(original, draft) && !discardConfirm) {setDiscardConfirm(true);return;}
     setDiscardConfirm(false);setEditing(false);
-    setNotice("");
+    setNotice("");setEditErrors({});
   }
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(pending)return;
-    setNotice("");
+    setNotice(""); setEditErrors({});
+    if (!name.trim()) { setEditErrors({ name: "Enter a batch name" }); return; }
+    if (!validAcademicYear(academicYear)) {
+      // Legacy persisted extended academic years can still be displayed, but new
+      // edits use the old LMS consecutive-year format.
+      setEditErrors({ academicYear: "Use consecutive years, e.g., 2026-27" }); return;
+    }
+    if (startDate && endDate && endDate < startDate) {
+      setEditErrors({ endDate: "End date cannot be before start date" }); return;
+    }
     const parsed = updateCollegeCohortSchema.safeParse({ ...draft, confirm: true });
     if (!parsed.success) {
-      setNotice(parsed.error.issues[0]?.message ?? "Invalid batch changes.");
+      const fields: Record<string, string> = {};
+      for (const issue of parsed.error.issues) fields[String(issue.path[0] ?? "form")] = issue.message;
+      setEditErrors(fields);
+      setNotice("Batch was not updated. Check the highlighted fields.");
       return;
     }
 
     startTransition(async () => {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
-        setEditing(false);setDiscardConfirm(false);
+        setEditing(false);setDiscardConfirm(false);setEditErrors({});
         setNotice(`Updated batch “${parsed.data.name}”.`);
         showToast({ tone: "success", title: `Updated batch “${parsed.data.name}”.` });
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, "Batch update failed."));
+        setEditErrors(cohortErrors(error));
+        setNotice(academicSetupErrorMessage(error, "Batch was not updated."));
       }
     });
   }
@@ -364,7 +380,10 @@ export function CollegeCohortRowActions({ row, periods }: {
   return <div className="min-w-0">
     <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
     <Button variant="secondary" type="button" disabled={pending || blocked}
-      onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
+      onClick={() => {
+        setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);
+        setNotice("");setEditErrors({});setRemoveError(false);
+      }}
       >
       Edit
     </Button>
@@ -396,7 +415,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={pendingLifecycleAction==="GRADUATE"?"Mark this batch graduated?":"Archive this planned batch?"}
       description={pendingLifecycleAction==="GRADUATE"
         ? `Mark "${row.name}" graduated? This completes the batch after its final registered semester.`
-        : `Remove planned batch "${row.name}"? It will be archived, not physically deleted.`}
+        : `Archive planned batch "${row.name}"? This preserves the batch identifier and history; no physical deletion occurs.`}
       confirmLabel={pendingLifecycleAction==="GRADUATE"?"Mark graduated":"Archive batch"}
       pending={pending} onConfirm={pendingLifecycleAction==="GRADUATE"?graduate:retire}/>
     {removeError ? <Alert tone="error" className="mt-2">
@@ -412,35 +431,54 @@ export function CollegeCohortRowActions({ row, periods }: {
         
         <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation. Status: {row.status}. Planned batches can be archived only before class or student records exist; active batches may be marked Completed after their final term. The legacy Inactive transition is not supported by this progression model.</p>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
-          <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+          <Input maxLength={255} value={name} error={Boolean(editErrors.name)}
+            onChange={e => { setName(e.target.value); setEditErrors(current => ({ ...current, name: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
+          {editErrors.name ? <span role="alert" className="text-xs text-error">{editErrors.name}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
-          <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
+          <Input maxLength={64} value={code} error={Boolean(editErrors.code)}
+            onChange={e => { setCode(e.target.value); setEditErrors(current => ({ ...current, code: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
+          {editErrors.code ? <span role="alert" className="text-xs text-error">{editErrors.code}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period
-          <Select value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
+          <Select value={expectedEndPeriodId} error={Boolean(editErrors.expectedEndPeriodId)}
+            onChange={e => { setExpectedEndPeriodId(e.target.value); setEditErrors(current => ({ ...current, expectedEndPeriodId: "" })); }}
             className="min-h-11 md:min-h-9 ">
             <option value="">Not specified</option>
             {row.expectedEndPeriodId && !periods.some(p => p.id === row.expectedEndPeriodId) ?
               <option value={row.expectedEndPeriodId}>Previously recorded period (unavailable)</option> : null}
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
+          {editErrors.expectedEndPeriodId ? <span role="alert" className="text-xs text-error">{editErrors.expectedEndPeriodId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
-          <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
+          <Input maxLength={16} value={academicYear} error={Boolean(editErrors.academicYear)}
+            onChange={e => { setAcademicYear(e.target.value); setEditErrors(current => ({ ...current, academicYear: "" })); }}
+            placeholder="e.g., 2024-25" className="min-h-11 min-w-0 md:min-h-9"/>
+          {editErrors.academicYear ? <span role="alert" className="text-xs text-error">{editErrors.academicYear}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
-          <Input type="date" disabled={endDateLocked} value={startDate} onChange={e=>setStartDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
+          <Input type="date" disabled={endDateLocked} error={Boolean(editErrors.startDate)}
+            value={startDate} onChange={e => { setStartDate(e.target.value); setEditErrors(current => ({ ...current, startDate: "" })); }}
+            className="min-h-11 min-w-0 md:min-h-9"/>
+          {editErrors.startDate ? <span role="alert" className="text-xs text-error">{editErrors.startDate}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
-          <Input type="date" disabled={endDateLocked} value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)} className="min-h-11 min-w-0 md:min-h-9"/>
+          <Input type="date" disabled={endDateLocked} error={Boolean(editErrors.endDate)}
+            value={endDate} min={startDate||undefined}
+            onChange={e => { setEndDate(e.target.value); setEditErrors(current => ({ ...current, endDate: "" })); }}
+            className="min-h-11 min-w-0 md:min-h-9"/>
+          {editErrors.endDate ? <span role="alert" className="text-xs text-error">{editErrors.endDate}</span> : null}
         </label>
         {endDateLocked && <p className="text-xs text-muted-foreground md:col-span-2 leading-5">
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
         </p>}
-        {notice ? <p role="alert" className="text-sm text-body md:col-span-2 leading-[22px]">{notice}</p> : null}
+        {notice ? <Alert tone="error" className="md:col-span-2" title="Batch was not updated">
+          <span>{notice}</span>
+          <Button type="button" variant="ghost" className="self-start" onClick={() => setNotice("")}>Dismiss</Button>
+        </Alert> : null}
         <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} type="button" onClick={close}
             >
@@ -457,7 +495,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title="Discard unsaved batch changes?"
       description="The changes to this batch will be lost."
       confirmLabel="Discard changes" pending={pending}
-      onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");}}/>
+      onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");setEditErrors({});}}/>
     {!editing && notice && !removeError ? <p role="status" className="mt-1 text-xs text-body leading-5">{notice}</p> : null}
   </div>;
 }
