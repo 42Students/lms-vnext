@@ -204,7 +204,7 @@ export default async function SuperAdminFeaturesPage({
           >
             Search
           </Button>
-          {(Boolean(result.q)||Boolean(result.moduleFilter)||result.stateFilter!=="ALL"||result.lockFilter!=="ALL"||result.presenceFilter!=="ANY"||result.recentFilter!=="ALL"||result.searchField!=="ALL")?<Link
+          <Link
             href="/admin/features"
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white"
           >
