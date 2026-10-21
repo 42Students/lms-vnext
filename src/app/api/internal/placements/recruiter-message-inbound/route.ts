@@ -43,9 +43,9 @@ export async function POST(request:Request){
   const result=await acceptAuthenticatedRecruiterEmailReply(
    raw.body,request.headers.get("x-recruiter-mail-signature")??"");
   if(!result.accepted){
-   // This includes missing bridge configuration, a rejected HMAC and a
-   // temporarily unready intake table. The service must eventually expose
-   // a typed retryable result before this 403 can safely become a 503.
+   // A validated gateway request with an unready DB is retryable; a rejected
+   // HMAC is not. Upstream must retain the message on 503, not discard it.
+   if(result.retryable)return reply({error:"SERVICE_UNAVAILABLE"},503);
    console.warn("[recruiter-mail-inbound] unaccepted");
    return reply({error:"FORBIDDEN"},403);
   }
