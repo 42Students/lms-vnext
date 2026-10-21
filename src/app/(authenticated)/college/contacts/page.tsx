@@ -228,18 +228,18 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
         {key:"actions",header:"Related role records",mobileLabel:"Related role records",mobilePriority:"action" as const,
           cell:contact=><div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
             <Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-sm font-[650] text-[var(--lms-link-text)] bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View contact</Link>
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-sm font-[650] text-[var(--lms-link-text)] bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View contact</Link>
             {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-sm font-[650] text-[var(--lms-link-text)] bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{link.label}</Link>)}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] md:min-h-9 border border-[var(--lms-canvas-border)] px-3 text-sm font-[650] text-[var(--lms-link-text)] bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{link.label}</Link>)}
           </div>},
       ]}/>}
   </section>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
    <p className="break-words text-muted-foreground">Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
    <div className="flex flex-wrap gap-2">
-    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">First</Link>:null}
+    {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">First</Link>:null}
     <Pagination page={filter.page} pageCount={pageCount} hrefForPage={page=>collegeContactsHref({...filter,page})} label="Contact directory pages"/>
-    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last</Link>:null}
+    {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 bg-white hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Last</Link>:null}
    </div>
   </div>
  </div>;
