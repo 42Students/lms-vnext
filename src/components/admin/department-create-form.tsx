@@ -48,14 +48,16 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
         if(!response.ok){
           const payload:unknown=await response.json().catch(()=>null);
           const data=payload&&typeof payload==="object"?payload as Record<string,unknown>:{};
-          const conflict=data.error==="DEPARTMENT_NAME_CONFLICT";
+          const conflict=data.error==="DEPARTMENT_NAME_CONFLICT"||
+            data.code==="DEPARTMENT_NAME_CONFLICT";
           const fieldErrors=data.fieldErrors&&typeof data.fieldErrors==="object"
             ?data.fieldErrors as Record<string,unknown>:{};
           const missingCollege=typeof fieldErrors.college_id==="string"||
             typeof fieldErrors.collegeId==="string";
           const detail=conflict?"Department name already exists":
             missingCollege?"Please select college":
-            "Failed to create department";
+            typeof data.message==="string"&&/^(Department name|Please select college|Department already exists)/.test(data.message)
+              ?data.message:"Failed to create department";
           fail(detail,conflict?detail:"");
           return;
         }
@@ -82,7 +84,9 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
         {fieldError?<p id="department-name-error" className="mt-1 text-xs text-error">{fieldError}</p>:null}
       </div>
       <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending}>
-        {pending?"Creating…":<><span aria-hidden="true" className="mr-1">＋</span>{DEPARTMENT_COPY.createButton}</>}
+        {pending?"Creating…":<><svg aria-hidden="true" viewBox="0 0 16 16" width="14" height="14"
+          fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+          className="mr-1 inline-block shrink-0"><path d="M8 2.5v11M2.5 8h11"/></svg>{DEPARTMENT_COPY.createButton}</>}
       </Button>
       {notice?<p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-[22px] text-success-text sm:col-span-2">{notice}</p>:null}
       {error?<Alert tone="error" title={DEPARTMENT_COPY.createFailed}>
