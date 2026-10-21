@@ -86,11 +86,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/error.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/loading.tsx`
