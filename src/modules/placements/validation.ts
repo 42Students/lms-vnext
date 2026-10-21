@@ -37,11 +37,13 @@ export const placementCompanyDomainSchema = z
       }, "Enter a complete company domain with valid labels"),
   );
 
-const corporateWebsiteSchema=z.string().trim().max(500).url().refine(
- value=>{try{const url=new URL(value);return url.protocol==="https:"&&
-  !url.username&&!url.password;}catch{return false;}},
- "Company website must be a valid https link",
-);
+const corporateWebsiteSchema=z.string().trim()
+ .transform(value=>/^[a-z][a-z0-9+.-]*:/i.test(value)?value:"https://"+value)
+ .pipe(z.string().max(500).url().refine(
+  value=>{try{const url=new URL(value);return url.protocol==="https:"&&
+   !url.username&&!url.password&&url.hostname.includes(".");}catch{return false;}},
+  "Company website must be a valid https link",
+ ));
 export const createPlacementCompanyInputSchema = z
   .object({
     collegeId: z.string().uuid(),
