@@ -622,6 +622,7 @@ export const placementJobs = pgTable(
     applicationMode: varchar("application_mode", { length: 24 })
       .notNull()
       .default("INTERNAL"),
+    publicExternalSlug: varchar("public_external_slug", { length: 20 }),
     externalApplicationUrl: text("external_application_url"),
     applicationDeadline: timestamp("application_deadline", {
       withTimezone: true,
@@ -671,6 +672,11 @@ export const placementJobs = pgTable(
   },
   (table) => [
     uniqueIndex("placement_jobs_id_college_uq").on(table.id, table.collegeId),
+    uniqueIndex("placement_jobs_public_external_slug_uq")
+      .on(table.publicExternalSlug)
+      .where(sql`${table.publicExternalSlug} is not null`),
+    check("placement_jobs_public_external_slug_ck",
+      sql`${table.publicExternalSlug} is null or (${table.publicExternalSlug} ~ '^smr-[0-9a-f]{16}$' and ${table.applicationMode} in ('HYBRID', 'EXTERNAL_ONLY'))`),
     uniqueIndex("placement_jobs_legacy_id_uq").on(table.legacyJobId)
       .where(sql`${table.legacyJobId} is not null`),
     uniqueIndex("placement_jobs_legacy_slug_uq").on(sql`lower(${table.legacySlug})`)
@@ -919,6 +925,7 @@ export const placementCandidateAcademicEvidence = pgTable(
     ),
     /** For actual PG qualifications only; NULL means unprovided, not zero. */
     postgraduatePctBasisPoints: integer("postgraduate_pct_basis_points"),
+    hasPostgraduateQualification: boolean("has_postgraduate_qualification"),
     gapYears: integer("gap_years"),
     isLateralEntry: boolean("is_lateral_entry")
       .notNull()
@@ -1291,6 +1298,7 @@ export const placementApplicationPrivateArtifacts = pgTable(
       .primaryKey()
       .references(() => placementApplications.id, { onDelete: "restrict" }),
     assessmentUrl: text("assessment_url"),
+    assessmentObjectPath: text("assessment_object_path"),
     /** Stable object path, NOT an expiring signed download URL. */
     resumeObjectPath: text("resume_object_path"),
     legacyResumeUrl: text("legacy_resume_url"),
@@ -1313,6 +1321,10 @@ export const placementApplicationPrivateArtifacts = pgTable(
         (length(${table.assessmentUrl}) <= 2048
          and ${table.assessmentUrl} ~* '^https?://')`,
     ),
+    check("placement_application_private_assessment_key_ck",
+      sql`${table.assessmentObjectPath} is null or (length(${table.assessmentObjectPath}) between 5 and 700 and ${table.assessmentObjectPath} !~ '(^/|[.][.]|[[:cntrl:]])')`),
+    check("placement_application_private_resume_key_ck",
+      sql`${table.resumeObjectPath} is null or (length(${table.resumeObjectPath}) between 5 and 700 and ${table.resumeObjectPath} !~ '(^/|[.][.]|[[:cntrl:]])')`),
     check(
       "placement_application_private_resume_history_ck",
       sql`jsonb_typeof(${table.resumeHistory}) = 'array'`,
@@ -1858,6 +1870,7 @@ export const placementOffers = pgTable(
       .default("ISSUED"),
     roleTitle: text("role_title").notNull(),
     offerLetterUrl: text("offer_letter_url"),
+    offerLetterObjectPath: text("offer_letter_object_path"),
     offerLetterAttachedAt: timestamp("offer_letter_attached_at", {withTimezone:true}),
     offerLetterAttachedByUserId: uuid("offer_letter_attached_by_user_id")
       .references(()=>users.id,{onDelete:"restrict"}),
@@ -1925,6 +1938,8 @@ export const placementOffers = pgTable(
   (table) => [
     uniqueIndex("placement_offers_legacy_id_uq").on(table.legacyOfferId)
       .where(sql`${table.legacyOfferId} is not null`),
+    check("placement_offer_letter_key_ck",
+      sql`${table.offerLetterObjectPath} is null or (length(${table.offerLetterObjectPath}) between 5 and 700 and ${table.offerLetterObjectPath} !~ '(^/|[.][.]|[[:cntrl:]])')`),
     index("placement_offers_expiry_due_idx").on(table.expiresAt)
       .where(sql`${table.status} = 'ISSUED' and ${table.expiresAt} is not null`),
     index("placement_offers_dispute_due_idx").on(table.acceptedDisputableUntil)
@@ -2377,3 +2392,56 @@ export const placementJoiningHistory = pgTable(
     ),
   ],
 );
+
+/** Audit crosswalk: public placement views may not project these private fields. */
+export const LEGACY_PLACEMENT_APPLICATION_FIELD_OWNER = {
+  resume_url: "placement_application_private_artifacts.resume_object_path",
+  resume_history: "placement_application_private_artifacts.resume_history",
+  assessment_url: "placement_application_private_artifacts.assessment_url",
+  offer_letter_url: "placement_offers.offer_letter_object_path",
+  pap_requested: "placement_applications.pap_requested",
+  external_ref: "placement_applications.external_ref",
+  current_round_id: "placement_applications.current_round_id",
+  applied_by_college: "placement_applications.applied_by_college",
+  applied_by_college_opt_out_until: "placement_applications.applied_by_college_opt_out_until",
+  status_before_withdrawal: "placement_applications.status_before_withdrawal",
+  private_gender: "REQUIRES_PURPOSE_AND_CANDIDATE_CONSENT_NOT_IMPORTED",
+} as const;
+
+/** Scoped, revocable job URLs do not grant access to private application data. */
+export const placementPublicExternalJobLinks = pgTable(
+  "placement_public_external_job_links",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id").notNull(),
+    collegeId: uuid("college_id").notNull(),
+    slug: varchar("slug", { length: 20 }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    revokedAt: timestamp("revoked_at", { withTimezone: true }),
+    viewsCount: integer("views_count").notNull().default(0),
+  },
+  (table) => [
+    foreignKey({
+      name: "public_external_job_scoped_fk",
+      columns: [table.jobId, table.collegeId],
+      foreignColumns: [placementJobs.id, placementJobs.collegeId],
+    }).onDelete("restrict"),
+    uniqueIndex("public_external_job_slug_uq").on(table.slug),
+    index("public_external_job_college_idx").on(table.collegeId, table.jobId),
+    check("public_external_job_slug_ck", sql`${table.slug} ~ '^smr-[0-9a-f]{16}$'`),
+    check("public_external_job_views_ck", sql`${table.viewsCount} >= 0`),
+  ],
+);
+
+/** Unknown PG evidence never behaves as confirmed absence of qualification. */
+export function evaluatePostgraduatePlacementRequirement(input: {
+  minimumBasisPoints: number | null;
+  hasPostgraduateQualification: boolean | null;
+  postgraduatePctBasisPoints: number | null;
+}): "PASS" | "FAIL" | "MISSING" | "NOT_APPLICABLE" {
+  if (input.minimumBasisPoints === null) return "NOT_APPLICABLE";
+  if (input.hasPostgraduateQualification === false) return "NOT_APPLICABLE";
+  if (input.hasPostgraduateQualification === null) return "MISSING";
+  if (input.postgraduatePctBasisPoints === null) return "MISSING";
+  return input.postgraduatePctBasisPoints >= input.minimumBasisPoints ? "PASS" : "FAIL";
+}
