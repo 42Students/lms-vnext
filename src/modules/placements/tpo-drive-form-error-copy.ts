@@ -45,7 +45,7 @@ const DRIVE_FIELD_LABELS: Readonly<Record<string,string>> = {
   verifiedMarksOnly:"Verified marks only",
   minPctThroughout:"percentage throughout",
   allowedPassingYears:"passing years",
-  verifiedMarksOnly:"Verified marks only",
+
 };
 
 

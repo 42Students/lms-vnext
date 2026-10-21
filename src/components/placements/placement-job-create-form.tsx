@@ -896,6 +896,8 @@ export function PlacementJobCreateForm({
                 ) ?? "",
               ),
             ),
+          minPostgraduatePercentage:
+            nullableDecimal(String(data.get("minPostgraduatePercentage") ?? "")),
           minPctThroughout:nullableDecimal(String(data.get("minPctThroughout")??"")),
           requireVerifiedEvidence:data.get("requireVerifiedEvidence")==="on",
           allowedPassingYears:
@@ -1871,6 +1873,7 @@ export function PlacementJobCreateForm({
               "Minimum UG %",
               "0.01",
             ],
+            ["minPostgraduatePercentage","Minimum PG % (PG students only)","0.01"],
             ["minPctThroughout","Percentage throughout","0.01"],
           ].map(
             ([name, label, step]) => (
@@ -1903,8 +1906,9 @@ export function PlacementJobCreateForm({
           </label>
           <label className="flex items-center gap-2 text-sm font-semibold text-body sm:col-span-2">
             <Checkbox name="requireVerifiedEvidence" className="h-4 w-4 accent-primary"/>
-            Only students whose marks are verified
+            Verified marks only
           </label>
+          <p className="sm:col-span-2 text-xs leading-5 text-muted-foreground">College-verified marks only: unverified evidence and missing marks must be reviewed by the college. Missing marks are displayed as Not provided, not a failed threshold.</p>
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Missing evidence

@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
 import { DepartmentDirectory } from "@/components/admin/department-directory";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import type { DepartmentDirectoryRow } from "@/modules/admin-ui/department-directory";
 import {
   listDepartments,
@@ -45,8 +46,28 @@ export default async function CollegeDepartmentsPage() {
         description="Create, find, export and manage the departments in your college."
         actions={<Link href="/college/academics" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Academic periods and sections →</Link>}
       />
-      <DepartmentCreateForm collegeId={collegeId} />
-      <DepartmentDirectory rows={rows} />
+      <Tabs ariaLabel="Academic Setup" value="departments" renderPanel={false} items={[
+        {value:"departments",label:"Departments",href:"/college/departments"},
+        {value:"programs",label:"Programs",href:"/college/programs"},
+        {value:"semesters",label:"Semesters",href:"/college/semesters"},
+        {value:"semester-courses",label:"Semester–Course Mapping",href:"/college/semester-courses"},
+        {value:"batches",label:"Batches",href:"/college/batches"},
+        {value:"classes",label:"Classes",href:"/college/classes"},
+        {value:"batch-promotion",label:"Batch Promotion",href:"/college/batch-promotion"},
+        {value:"lecture-halls",label:"Lecture Halls",href:"/college/lecture-halls"},
+        {value:"electives",label:"Electives",href:"/college/electives"},
+        {value:"attendance",label:"Attendance",href:"/college/attendance"},
+      ]} />
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 lg:col-span-5"
+          aria-label="Create New Department">
+          <DepartmentCreateForm collegeId={collegeId} />
+        </section>
+        <section className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 lg:col-span-7"
+          aria-label="Existing Departments">
+          <DepartmentDirectory rows={rows} />
+        </section>
+      </div>
     </div>
   );
 }

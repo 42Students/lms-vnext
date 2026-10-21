@@ -677,6 +677,100 @@ export const placementEligibilityPolicyInputSchema = z
   })
   .strict();
 
+/** Import adapter for the V1 JobEligibility JSON, NOT the live write API.
+ * An importer must supply verified integer-to-UUID crosswalks. Legacy target
+ * college/department/program/batch/class visibility is a separate gate and
+ * must be imported by the caller; it is never inferred from a branch string.
+ * Unknown historical JSON keys are deliberately ignored with a warning,
+ * while discriminatory or unmapped restrictions are never silently dropped.
+ */
+export function adaptLegacyJobEligibility(
+  raw: unknown,
+  crosswalk: {
+    programIds: Readonly<Record<string, string>>;
+    batchIds: Readonly<Record<string, string>>;
+  },
+): {
+  policy: z.output<typeof placementEligibilityPolicyInputSchema>;
+  warnings: string[];
+} {
+  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+    throw new Error("Legacy eligibility must be a JSON object");
+  }
+  const legacy = raw as Record<string, unknown>;
+  const permitted = new Set([
+    "branches", "programIds", "passingYears", "batchIds",
+    "minCgpa", "minPctThroughout", "tenthMinPct", "twelfthMinPct",
+    "diplomaMinPct", "ugMinPct", "pgMinPct", "verifiedMarksOnly",
+    "gender", "maxActiveBacklogs", "maxPastBacklogs", "maxGapYears",
+  ]);
+  const warnings = Object.keys(legacy).filter(key => !permitted.has(key))
+    .map(key => "Unknown legacy eligibility field ignored: " + key);
+  // Old rows may contain deprecated backlog/gap keys which the V1 evaluator
+  // explicitly ignored. Do not turn them into fresh rejection rules.
+  for (const key of ["maxActiveBacklogs", "maxPastBacklogs", "maxGapYears"]) {
+    if (legacy[key] != null) warnings.push("Obsolete V1 field not enforced: " + key);
+  }
+  if (legacy.gender !== null && legacy.gender !== undefined &&
+      String(legacy.gender).trim() !== "") {
+    const supported = ["MALE", "FEMALE", "OTHER"].includes(
+      String(legacy.gender).trim().toUpperCase());
+    throw new Error(supported
+      ? "Legacy gender restriction needs an approved diversity-only policy before import; it cannot be added to employer-visible eligibility."
+      : "Unrecognized legacy gender restriction. Review the historical value before import.");
+  }
+  if (Array.isArray(legacy.branches) && legacy.branches.length) {
+    throw new Error("Legacy branches need a verified department/program crosswalk before import; no branch restriction was dropped.");
+  }
+  if (legacy.branches != null && !Array.isArray(legacy.branches)) {
+    throw new Error("Legacy branches must be a list of department names.");
+  }
+  function resolveIds(
+    value: unknown,
+    mapping: Readonly<Record<string, string>>,
+    field: string,
+  ): string[] {
+    if (value == null) return [];
+    if (!Array.isArray(value)) throw new Error("Legacy " + field + " must be an array.");
+    return value.map(item => {
+      if (typeof item !== "number" && typeof item !== "string") {
+        throw new Error("Legacy " + field + " contains an invalid identifier.");
+      }
+      const id = mapping[String(item)];
+      if (!id) throw new Error("Legacy " + field + " ID " + String(item) +
+        " has no verified vNext membership/academic crosswalk.");
+      return id;
+    });
+  }
+  const years = legacy.passingYears == null ? [] : legacy.passingYears;
+  if (!Array.isArray(years)) throw new Error("Legacy passingYears must be an array.");
+  if (legacy.verifiedMarksOnly != null && typeof legacy.verifiedMarksOnly !== "boolean") {
+    throw new Error("Legacy verifiedMarksOnly must be true or false.");
+  }
+  return {
+    policy: placementEligibilityPolicyInputSchema.parse({
+      allowedProgramIds: resolveIds(legacy.programIds, crosswalk.programIds, "programIds"),
+      allowedCohortIds: resolveIds(legacy.batchIds, crosswalk.batchIds, "batchIds"),
+      allowedPassingYears: years,
+      minCgpa: legacy.minCgpa ?? null,
+      minPctThroughout: legacy.minPctThroughout ?? null,
+      minTenthPercentage: legacy.tenthMinPct ?? null,
+      minTwelfthPercentage: legacy.twelfthMinPct ?? null,
+      minDiplomaPercentage: legacy.diplomaMinPct ?? null,
+      minUndergraduatePercentage: legacy.ugMinPct ?? null,
+      minPostgraduatePercentage: legacy.pgMinPct ?? null,
+      requireVerifiedEvidence: legacy.verifiedMarksOnly ?? false,
+      missingEvidencePolicy: "ALLOW_WITH_FLAG",
+    }),
+    warnings: [
+      ...warnings,
+      "Policy lists are deduplicated and limited to 100 programs/batches and 30 passing years.",
+      "Missing marks are NOT_PROVIDED, not FAIL; verified-only rules require college-attested marks.",
+      "Import legacy target scope separately; eligibility is not a visibility grant.",
+    ],
+  };
+}
+
 export const placementEligibilityOverrideInputSchema = z
   .object({
     decision: z.enum(["INCLUDE", "EXCLUDE"],{error:"Choose include or exclude."}),
