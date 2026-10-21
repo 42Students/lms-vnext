@@ -33,7 +33,7 @@ export const placementTpoJobTypes = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, table.label),
+    uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, sql`lower(${table.label})`),
     check("placement_tpo_job_types_label_ck", sql`length(btrim(${table.label})) > 0`),
   ],
 );
