@@ -335,9 +335,10 @@ async function safeProviderCode(response: Response): Promise<string | undefined>
 }
 
 /**
- * One attempt only: ZeptoMail template POST has no confirmed idempotency key.
- * Upstream jobs may retry only after recording a provider-safe outbox state;
- * a timeout is ambiguous, not evidence that the recipient did not get email.
+ * OTP and unspecified POSTs are attempted once. A non-OTP outbox with a
+ * stable deduplication key may opt into three retries only when the provider's
+ * idempotency handling has been independently verified by operations.
+ * Timeout without that guarantee is ambiguous, not proof of non-delivery.
  */
 export async function sendZeptoMailTemplate(
   message: ZeptoMailTemplateMessage,
