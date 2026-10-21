@@ -25,7 +25,13 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   const initial={reporterName:"",accountRole:"",environment:"",page:"",screen:"",section:"",issueType:"",severity:"NOT_SURE",description:contextPrefill?"\n\nCaptured context:\n"+contextPrefill:"",evidenceLink:""};
   const {draft,setDraft,restored,dirty,clearDraft,flushDraft}=useFormDraft("tracker-issue-report",initial);
   const {page,screen}=draft;
-  const patch=(key:keyof typeof initial,value:string)=>setDraft(current=>({...current,[key]:value}));
+  // Preserve the same key through ambiguous network retries, but regenerate
+  // it as soon as the reporter changes any field and intends a new submission.
+  const retryKeyRef=useRef<string|null>(null);
+  const patch=(key:keyof typeof initial,value:string)=>{
+    retryKeyRef.current=null;
+    setDraft(current=>({...current,[key]:value}));
+  };
   const [pending, setPending] = useState(false);
   const submitLock=useRef(false);
   const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
@@ -100,10 +106,14 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
     submitLock.current=true;
     setPending(true); setError("");
     try {
+      const retryKey=retryKeyRef.current??crypto.randomUUID();
+      retryKeyRef.current=retryKey;
       const payload=await apiFetch<{issue:{publicId:string}}>("/api/tracker/issues", {
-        method: "POST",headers: { "Content-Type": "application/json" },
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Idempotency-Key": retryKey },
         body: JSON.stringify(parsed.data),
       });
+      retryKeyRef.current=null;
       clearDraft();
       setRecentContext({reporterName:draft.reporterName,
         accountRole:draft.accountRole,environment:draft.environment});
