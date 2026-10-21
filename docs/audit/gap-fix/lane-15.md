@@ -188,3 +188,17 @@
 
 ## Packet 43 — faculty/course association history
 - `src_db_schema_faculty-course-associations.ts.md` | Documented verified source ID mapping and active int→endedAt lifecycle semantics for G2-3-020-007/027/040/043. Existing active-only unique membership/course index protects current associations; historical ended rows stay possible and must be kept during imports. | No legacy rows in greenfield, no DDL/data copy; for future approved import resolve faculty/course ID UUID crosswalk and de-dupe active source records after role/college check. Service owner must enforce ACTIVE membership and teaching grant on writes. No migration needed.
+
+
+## Packet 44 — learner import lineage
+- `src_db_schema_db02-learner-import-batches.staged.ts.md` | Registered storage/export and migration 0167 for scoped import batch provenance and immutable membership links, with college-matching composite FKs and membership-once constraint (G2-5-019-010/046/069). | G2-5-019-055 generic bulk undo intentionally NOT enabled: must inspect downstream attendance, projects, applications, assignments and auth dependencies and use individually auditable reversals. Greenfield has no legacy IDs or batch rows to backfill. 0167 NOT EXECUTED.
+
+## Packet 45 — tracker audit finding source fidelity
+- `src_db_schema_db10-audit-findings.draft.ts.md` | Added roles, reportedSeverity, environment, sourceCommitSha, agent actor kind/label, file/commit and structured from/to evidence; sync repo, lastCommit, lastError and lastSuccessAt, preserving externalId+internal UUID. Registered migration 0168/export for G2-16-001-066/067/069. | Actual sync worker/status endpoint must record failures and last successful run truthfully, sanitize commits and sensitive notes, and honor DB10_AUDIT_FINDINGS_READY. No sync run occurred; migration NOT EXECUTED.
+
+
+## Packet 46 — DB06 grade audit immutability
+- `src_db_schema_db06-history-staged.ts.md` | G2-17-019-038/043/044: reviewed exact scoped composite FK, before/after grade fields, CAS versions, staged append-only triggers and legacy LONG/status/timestamp mapping; documented strict cutover prerequisite. | PROMOTION CONFLICT: source contract expressly prohibits registering event table/triggers before gradeAssignmentSubmission/publishAssignmentGrade and attendance producers write matching events in same transaction. Existing producer uses activityEvents; enabling deferred completeness first would break grading. Left source-only, no SQL migration or schema barrel registration. Requires coordinated application+DB cutover and owner-approved PostgreSQL replay; no migration executed.
+
+## Packet 47 — department ID/archive crosswalk
+- `src_db_schema_departments.ts.md` | G2-18-027-010/052, G2-9-024-066: documented legacy numeric college/department → verified UUID and isDeleted→archivedAt mapping. Existing UUID FK, soft archive and timestamps already preserve current vNext model. | No historic department records by greenfield policy; an actual data migration requires tenant-verified crosswalk and original timezone. No new schema DDL or migration.
