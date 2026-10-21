@@ -1,3 +1,7 @@
+import {AdminScopeServiceError} from "@/modules/admin-scope/service";
+import {ZodError} from "zod";
+import {getDb} from "@/db/client";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {privateAuthJson,privateAuthResponse} from "@/modules/auth/private-response";
 import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "@/modules/auth/bounded-json";
 import {
@@ -19,6 +23,7 @@ export async function GET() {
   try {
     const context = await getCurrentRequestContext();
     const choices = await listAdminScopeChoices(context);
+    await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
 
     return privateAuthJson({
       scope: context.adminScope ?? null,
@@ -51,6 +56,7 @@ export async function POST(request: Request) {
       );
     }
 
+    await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
     const scope = await resolveAdminScopeSelection(
       context,
       body,
@@ -74,6 +80,14 @@ export async function POST(request: Request) {
 
     return response;
   } catch (error) {
+    if(error instanceof AdminScopeServiceError)return privateAuthJson({
+      error:"ADMIN_SCOPE_NOT_FOUND",message:"Invalid collegeId or organization selection. Choose an active college in the selected organization.",
+      status:400,type:"validation",
+    },{status:400});
+    if(error instanceof ZodError)return privateAuthJson({
+      error:"INVALID_REQUEST",message:"Invalid collegeId or organizationId. Select a valid scope.",
+      status:400,type:"validation",fieldErrors:error.issues.map(issue=>({field:issue.path.join("."),message:issue.message})),
+    },{status:400});
     return privateAuthResponse(apiErrorResponse(error));
   }
 }
@@ -89,6 +103,7 @@ export async function DELETE(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     await listAdminScopeChoices(context);
+    await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
 
     const response = privateAuthJson({
       ok: true,

@@ -208,7 +208,10 @@ export async function updateCourseLesson(
   try {
     return await getDb().transaction(async (tx) => {
       await lockLiveLessonWriteAncestry(tx, path);
-      const {expectedUpdatedAt,expectedVersion,active,enabled,visibleToStudents,...changes}=input;
+      const {expectedUpdatedAt,expectedVersion,active,enabled,visibleToStudents,sequence,...changes}=input;
+      // Legacy sequence=0 means keep the existing order on an update; only
+      // positive values intentionally reorder. Creation already appends for 0.
+      const orderChange=sequence!==undefined&&sequence>0?{sequence}:{};
       // A lesson-deletion flag retains each child publication/draft state.
       // Only rows removed *with* this lesson receive the provenance marker.
       if(active===false){
@@ -222,6 +225,7 @@ export async function updateCourseLesson(
       .update(courseLessons)
       .set({
         ...changes,
+        ...orderChange,
         ...(active===false?{status:"ARCHIVED" as const}:{}),
         ...((enabled??visibleToStudents)!==undefined?{visibleToStudents:enabled??visibleToStudents}:{}),
         version:sql`${courseLessons.version}+1`,
