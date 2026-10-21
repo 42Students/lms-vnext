@@ -660,9 +660,8 @@ export async function getProjectInstanceWorkspace(
       db
         .select()
         .from(projectSprints)
-        .where(
-          eq(projectSprints.projectId, projectId),
-        )
+        .where(and(eq(projectSprints.projectId, projectId),
+          isNull(projectSprints.deletedAt)))
         .orderBy(asc(projectSprints.sequence)),
       db
         .select()

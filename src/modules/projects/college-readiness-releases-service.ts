@@ -130,7 +130,8 @@ export async function listCollegeReadinessReleases(context:RequestContext,colleg
  const ids=releases.map(r=>r.id);
  const sprints=await db.select({id:projectSprints.id,releaseId:projectSprints.releaseId,
   status:projectSprints.status}).from(projectSprints).where(and(
-   eq(projectSprints.projectId,id),inArray(projectSprints.releaseId,ids)));
+   eq(projectSprints.projectId,id),isNull(projectSprints.deletedAt),
+   inArray(projectSprints.releaseId,ids)));
  const points=await db.select({
   sprintId:projectTasks.sprintId,
   committed:sql<number>`coalesce(sum(${projectTasks.estimatePoints}),0)::int`,

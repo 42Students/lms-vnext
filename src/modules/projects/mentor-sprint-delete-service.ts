@@ -56,7 +56,10 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"project_sprint",subjectId:sprint.id,subjectLabel:sprint.title,
     summary:"Planned sprint removed; tasks returned to product backlog",
-    metadata:{projectId:scope.project.id,sprintId:sprint.id,unlinkedTasks:moved.length,deleted:true},
+    metadata:{projectId:scope.project.id,sprintId:sprint.id,
+      templateKey:sprint.templateKey,unlinkedTasks:moved.length,deleted:true,
+      deletedByWorkspace:true,deletionSource:"WORKSPACE",
+      deletedAt:removed?new Date().toISOString():null},
     groupKey:"project:"+scope.project.id,
   });
   return {deleted:true,unlinkedTasks:moved.length};
