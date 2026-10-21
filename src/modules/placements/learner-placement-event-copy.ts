@@ -107,7 +107,7 @@ export function learnerPlacementEventCopy(
  const title=kind==="APPLICATION_STATUS_CHANGED"?(applicationStatusTitles[status]??titles[kind]):titles[kind];
  const job=cleanEventDetail(context.jobTitle);
  const company=cleanEventDetail(context.companyName);
- const named=job&&company?job+" at "+company:job||company||cleanEventDetail(subject,150);
+ const named=job&&company?job+" at "+company:job||company||safeSubject;
  const applicationDate=eventDate(context.appliedAt??context.statusUpdatedAt);
  const interviewDateTime=eventDate(context.interviewAt,true);
  const roundName=learnerPlacementRoundName(context.interviewType);
