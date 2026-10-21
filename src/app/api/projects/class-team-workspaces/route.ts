@@ -19,6 +19,13 @@ export async function POST(request: Request) {
       unchangedCount:result.alreadyCovered,
       message:unchanged?"Team already in step":repaired?"Team repaired":"Project teams created",
       outcomes:result.individualResults,
+      preflightHref:"/api/projects/cohort-preflight",
+      scope:"SELECTED_COLLEGE",
+      atomic:true,
+      noEligible:result.teamCount===0&&result.alreadyCovered===0,
+      partialFailure:false,
+      countSummary:{created:result.teamCount,alreadyCovered:result.alreadyCovered},
+      nextAction:result.teamCount===0?"REVIEW_CLASS_OR_TEMPLATE":"OPEN_TEAM_WORKSPACES",
     }, {status:unchanged?200:201,headers:{"Cache-Control":"no-store"}});
   } catch(error) {
     // A missing project table is a deployment dependency, not a partial team

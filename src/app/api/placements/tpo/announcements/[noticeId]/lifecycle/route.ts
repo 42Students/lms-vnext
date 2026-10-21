@@ -46,3 +46,75 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
   throw error;
  }
 }
+
+
+/** Legacy DELETE maps to a version-checked soft delete. A request with no
+ * version is rejected instead of deleting an announcement another TPO edited.
+ */
+export async function DELETE(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ const {noticeId}=await params;
+ const query=new URL(request.url).searchParams;
+ let version:unknown=query.get("expectedVersion");
+ if(version===null){
+  const raw=await request.json().catch(()=>null);
+  if(raw&&typeof raw==="object"&&!Array.isArray(raw))
+   version=(raw as {expectedVersion?:unknown}).expectedVersion;
+ }
+ const parsed=z.object({noticeId:z.string().uuid(),
+  expectedVersion:z.coerce.number().int().nonnegative()}).strict()
+  .safeParse({noticeId,expectedVersion:version});
+ if(!parsed.success)return NextResponse.json({error:"VERSION_REQUIRED",
+  message:"Refresh the announcement and send its current version to delete it.",
+ },{status:409,headers:{"Cache-Control":"private, no-store"}});
+ try{
+  await mutateTpoNotice(await getCurrentRequestContext(),{
+   ...parsed.data,action:"DELETE",
+  });
+  return NextResponse.json({saved:true,softDeleted:true,noticeId,
+   message:"Announcement deleted. Undo is available from Deleted announcements.",
+  },{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
+   return noticePostError(request,"STALE_VERSION",409);
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_NOT_FOUND")
+   return noticePostError(request,"NOT_FOUND",404);
+  throw error;
+ }
+}
+/** Legacy PUT /undo is restore or send-undo. Content edits have a separate
+ * versioned editor; unknown legacy PUT bodies must never silently mutate.
+ */
+export async function PUT(request:Request,{params}:{params:Promise<{noticeId:string}>}){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ const {noticeId}=await params;
+ const raw:unknown=await request.json().catch(()=>null);
+ const parsed=z.strictObject({
+  action:z.enum(["RESTORE","UNDO_SEND"]),
+  expectedVersion:z.number().int().nonnegative(),
+ }).safeParse(raw);
+ if(!parsed.success)return NextResponse.json({
+  error:"INVALID_LIFECYCLE_ACTION",
+  message:"Use a versioned RESTORE or UNDO_SEND action. Edit title and message in the announcement editor.",
+ },{status:422,headers:{"Cache-Control":"private, no-store"}});
+ try{
+  await mutateTpoNotice(await getCurrentRequestContext(),{
+   noticeId,...parsed.data,
+  });
+  return NextResponse.json({saved:true,action:parsed.data.action,noticeId,
+   message:parsed.data.action==="RESTORE"?"Announcement restored":"Announcement send undone",
+  },{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_UNDO_EXPIRED")
+   return NextResponse.json({error:"UNDO_WINDOW_EXPIRED",
+    message:"The 30-second Undo window has ended. Refresh announcements."},
+    {status:409,headers:{"Cache-Control":"private, no-store"}});
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
+   return noticePostError(request,"STALE_VERSION",409);
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_NOT_FOUND")
+   return noticePostError(request,"NOT_FOUND",404);
+  throw error;
+ }
+}

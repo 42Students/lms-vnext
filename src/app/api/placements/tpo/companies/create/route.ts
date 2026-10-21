@@ -66,7 +66,22 @@ export async function POST(request: Request) {
       logoUrl: result.company.logoPublicUrl ?? null,
       verifiedBy42: Boolean(result.company.verifiedAt),
       existed: result.existed,
-      nameLocked: result.existed || Boolean(result.company.verifiedAt),
+      nameLocked:result.existed||Boolean(result.company.verifiedAt),
+      matchedExistingCompany:result.existed,
+      collegeAlreadyLinked:result.alreadyLinked,
+      relationshipRestored:result.existed&&!result.alreadyLinked,
+      company:{
+        id:result.company.id,name:result.company.name,
+        primaryDomain:result.company.primaryDomain,
+        verifiedBy42:Boolean(result.company.verifiedAt),
+      },
+      relationship:{id:result.relationship.id,
+        collegeId:result.relationship.collegeId,
+        status:result.relationship.status},
+      identityDecision:result.existed?"MATCHED":"NEW",
+      actorAttribution:{userId:context.user.id,mode:"SCOPED_TPO"},
+      message:result.alreadyLinked?"Company is already linked to your college.":
+        result.existed?"Existing company linked to your college.":"Company created and linked to your college.",
     }, { status: result.existed ? 200 : 201 });
   } catch (error) {
     return apiErrorResponse(error);
