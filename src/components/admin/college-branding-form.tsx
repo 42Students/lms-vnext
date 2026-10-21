@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -69,17 +70,46 @@ export function CollegeBrandingForm({
   const [values, setValues] = useState<BrandingFormValues>(initial);
   const savedValues = useRef<BrandingFormValues>(initial);
   const [version,setVersion]=useState(initialVersion);
+  const [leaveHref,setLeaveHref]=useState<string|null>(null);
+  const allowConfirmedExit=useRef(false);
   const dirty = canEdit &&
     JSON.stringify(clean(values)) !== JSON.stringify(clean(savedValues.current));
   useEffect(() => {
     if (!dirty) return;
     const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (allowConfirmedExit.current) return;
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", onBeforeUnload);
     return () => window.removeEventListener("beforeunload", onBeforeUnload);
   }, [dirty]);
+  // Next's in-app Link navigation skips beforeunload. Intercept only an
+  // ordinary same-tab route change; allow section anchors and modified clicks.
+  useEffect(() => {
+    if (!dirty) return;
+    const onLinkClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+          event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!(event.target instanceof Element)) return;
+      const anchor = event.target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.hasAttribute("download") ||
+          (anchor.target && anchor.target !== "_self")) return;
+      const target = new URL(anchor.href, window.location.href);
+      if (target.origin !== window.location.origin ||
+          (target.pathname === window.location.pathname &&
+           target.search === window.location.search)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (savingRef.current) {
+        showToast({title:"Wait for the current college setup action to finish.",tone:"info"});
+      } else {
+        setLeaveHref(target.href);
+      }
+    };
+    document.addEventListener("click", onLinkClick, true);
+    return () => document.removeEventListener("click", onLinkClick, true);
+  }, [dirty, showToast]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, startSave] = useTransition();
   // A transition is not a synchronous double-click guard.
@@ -154,6 +184,17 @@ export function CollegeBrandingForm({
   }
 
   return (
+    <>
+    <ConfirmDialog open={leaveHref !== null}
+      title="Discard unsaved branding changes?"
+      description="You have unsaved branding changes. Leave without saving them?"
+      confirmLabel="Leave without saving" confirmVariant="danger"
+      onOpenChange={next => {if (!next) setLeaveHref(null);}}
+      onConfirm={() => {
+        if (!leaveHref || savingRef.current) return;
+        allowConfirmedExit.current = true;
+        window.location.assign(leaveHref);
+      }} />
     <div className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] min-[992px]:grid-cols-[minmax(0,1fr)_340px]">
       <form
         onSubmit={save}
@@ -277,5 +318,6 @@ export function CollegeBrandingForm({
         </Card>
       </aside>
     </div>
+    </>
   );
 }
