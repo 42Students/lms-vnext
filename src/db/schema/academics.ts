@@ -15,6 +15,7 @@ import { colleges } from "./colleges";
 import { lectureHalls } from "./lecture-halls";
 import { departments } from "./departments";
 import { collegeMemberships } from "./memberships";
+import { lmsGroups } from "./groups";
 import {
   academicPeriodStatusEnum,
   cohortStatusEnum,
@@ -201,6 +202,9 @@ export const sections = pgTable(
     // Legacy class fidelity (migration 0098): capacity floor and description.
     minSize: integer("min_size"),
     description: text("description"),
+    /** Optional legacy class-specific bounds; otherwise use academic period. */
+    startsOn: date("starts_on", { mode: "string" }),
+    endsOn: date("ends_on", { mode: "string" }),
     status: sectionStatusEnum("status")
       .notNull()
       .default("ACTIVE"),
@@ -241,6 +245,11 @@ export const sections = pgTable(
     index("sections_cohort_status_idx").on(
       table.cohortId,
       table.status,
+    ),
+    check(
+      "sections_date_pair_ck",
+      sql`(${table.startsOn} is null and ${table.endsOn} is null)
+        or (${table.startsOn} is not null and ${table.endsOn} is not null and ${table.endsOn} >= ${table.startsOn})`,
     ),
     check(
       "sections_capacity_ck",
@@ -323,6 +332,42 @@ export const learnerProgramEnrollments = pgTable(
       sql`(${table.status} = 'ACTIVE' and ${table.completedAt} is null and ${table.withdrawnAt} is null)
           or (${table.status} = 'COMPLETED' and ${table.completedAt} is not null and ${table.withdrawnAt} is null)
           or (${table.status} = 'WITHDRAWN' and ${table.withdrawnAt} is not null and ${table.completedAt} is null)`,
+    ),
+  ],
+);
+
+/**
+ * Legacy GROUP_BACKED class offering is not a synthetic academic section.
+ * Audience comes from ACTIVE lms_group_members, not section_enrollments.
+ */
+export const groupBackedClassOfferings = pgTable(
+  "group_backed_class_offerings",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    academicPeriodId: uuid("academic_period_id").notNull().references(
+      () => academicPeriods.id, { onDelete: "restrict" },
+    ),
+    rosterGroupId: uuid("roster_group_id").notNull().references(
+      () => lmsGroups.id, { onDelete: "restrict" },
+    ),
+    name: text("name").notNull(),
+    description: text("description"),
+    startsOn: date("starts_on", { mode: "string" }),
+    endsOn: date("ends_on", { mode: "string" }),
+    status: varchar("status", { length: 16 }).notNull().default("ACTIVE"),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("group_backed_offerings_period_group_uq").on(
+      t.academicPeriodId, t.rosterGroupId,
+    ),
+    index("group_backed_offerings_group_status_idx").on(t.rosterGroupId, t.status),
+    check("group_backed_offerings_status_ck", sql`${t.status} in ('ACTIVE', 'ARCHIVED')`),
+    check("group_backed_offerings_name_ck", sql`length(trim(${t.name})) > 0`),
+    check(
+      "group_backed_offerings_date_ck",
+      sql`(${t.startsOn} is null and ${t.endsOn} is null)
+        or (${t.startsOn} is not null and ${t.endsOn} is not null and ${t.endsOn} >= ${t.startsOn})`,
     ),
   ],
 );
