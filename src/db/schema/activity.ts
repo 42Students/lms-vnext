@@ -41,6 +41,12 @@ export const activityEvents = pgTable(
     ),
     // Historic audit provenance: no raw IP, phone or user-agent.
     legacyAuditId: bigint("legacy_audit_id", { mode: "number" }),
+    legacyActionLabel: varchar("legacy_action_label", {length:160}),
+    legacyTargetName: varchar("legacy_target_name", {length:160}),
+    legacySourceTimeZone: varchar("legacy_source_time_zone", {length:80}),
+    legacyOccurredLocal: timestamp("legacy_occurred_local", {withTimezone:false}),
+    legacyEventOriginalCode: varchar("legacy_event_original_code", {length:120}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     legacyActionKey: varchar("legacy_action_key", { length: 120 }),
     legacyEntityType: varchar("legacy_entity_type", { length: 80 }),
     legacyEntityId: text("legacy_entity_id"),
@@ -87,6 +93,12 @@ export const activityEvents = pgTable(
     index("activity_events_project_event_idx")
       .on(table.legacyProjectId, table.occurredAt)
       .where(sql`${table.legacyProjectId} is not null`),
+    index("activity_events_college_event_time_idx")
+      .on(table.collegeId,table.eventType,table.occurredAt,table.id),
+    index("activity_events_event_time_idx")
+      .on(table.eventType,table.occurredAt,table.id),
+    index("activity_events_group_stable_time_idx")
+      .on(table.groupKey,table.occurredAt,table.id),
     index("activity_events_legacy_audit_id_idx")
       .on(table.legacyAuditId)
       .where(sql`${table.legacyAuditId} is not null`),
@@ -169,6 +181,12 @@ export const inAppNotifications = pgTable(
     actionHref: text("action_href"),
     legacyNotificationId: bigint("legacy_notification_id", { mode: "number" }),
     legacyNotificationType: varchar("legacy_notification_type", { length: 80 }),
+    legacyOriginalTitle: text("legacy_original_title"),
+    legacyContextType: varchar("legacy_context_type", {length:80}),
+    legacyContextId: text("legacy_context_id"),
+    legacyWasRead: boolean("legacy_was_read"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacySourceTimeZone: varchar("legacy_source_time_zone", {length:80}),
     legacyContextLabel: text("legacy_context_label"),
     legacyCreatorFacultyId: integer("legacy_creator_faculty_id"),
     legacyRecipientType: varchar("legacy_recipient_type", { length: 24 }),
@@ -204,6 +222,12 @@ export const inAppNotifications = pgTable(
     uniqueIndex("in_app_notifications_user_legacy_uq")
       .on(table.userId, table.legacyNotificationId)
       .where(sql`${table.legacyNotificationId} is not null`),
+    index("in_app_notifications_user_history_idx")
+      .on(table.userId,table.createdAt,table.id)
+      .where(sql`${table.deletedAt} is null`),
+    index("in_app_notifications_user_unread_idx")
+      .on(table.userId,table.createdAt,table.id)
+      .where(sql`${table.readAt} is null and ${table.deletedAt} is null`),
     index("in_app_notifications_schedule_status_idx")
       .on(table.deliveryStatus, table.scheduledAt)
       .where(sql`${table.scheduledAt} is not null`),

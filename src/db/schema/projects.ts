@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   check,
   date,
@@ -333,6 +334,10 @@ export const projectReleases = pgTable(
   "project_releases",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyReleaseId: integer("legacy_release_id"),
+    legacyReleaseKey: varchar("legacy_release_key", {length: 120}),
+    legacySortOrder: integer("legacy_sort_order"),
+    legacyReleaseLabel: varchar("legacy_release_label", {length: 160}),
     projectId: uuid("project_id")
       .notNull()
       .references(() => projectInstances.id, {
@@ -346,6 +351,7 @@ export const projectReleases = pgTable(
     targetDate: date("target_date", { mode: "string" }),
     notes: text("notes"),
     version: integer("version").notNull().default(0),
+    legacyVersion: bigint("legacy_version", {mode:"number"}),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     sequence: integer("sequence").notNull(),
     status: varchar("status", { length: 32 })
@@ -370,6 +376,7 @@ export const projectReleases = pgTable(
     uniqueIndex(
       "project_releases_project_sequence_uq",
     ).on(table.projectId, table.sequence),
+    index("project_releases_source_order_idx").on(table.projectId,table.legacySortOrder,table.id),
     index("project_releases_project_status_idx").on(
       table.projectId,
       table.status,
@@ -408,6 +415,9 @@ export const projectSprints = pgTable(
     legacyReleaseKey: varchar("legacy_release_key", { length: 120 }),
     dueLabel: varchar("due_label", { length: 160 }),
     legacySprintKey: varchar("legacy_sprint_key", { length: 120 }),
+    legacySprintId: integer("legacy_sprint_id"),
+    legacySortOrder: integer("legacy_sort_order"),
+    legacyVersion: bigint("legacy_version", {mode:"number"}),
     legacyReleaseLabel: varchar("legacy_release_label", { length: 160 }),
     legacyDerivedStatus: varchar("legacy_derived_status", { length: 32 }),
     sprintNumber: integer("sprint_number"),
@@ -439,6 +449,7 @@ export const projectSprints = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("project_sprints_source_order_idx").on(table.projectId,table.releaseId,table.legacySortOrder,table.id),
     uniqueIndex("project_sprints_project_key_uq").on(
       table.projectId,
       table.templateKey,
@@ -491,6 +502,10 @@ export const projectTasks = pgTable(
     }).notNull(),
     // Overlength source keys are preserved; runtime key remains strict 64.
     legacyTaskKey: varchar("legacy_task_key", { length: 120 }),
+    legacyTaskId: integer("legacy_task_id"),
+    legacySortOrder: integer("legacy_sort_order"),
+    legacyCarriedFromSprintKey: varchar("legacy_carried_from_sprint_key", {length: 120}),
+    legacyVersion: bigint("legacy_version", {mode:"number"}),
     title: text("title").notNull(),
     description: text("description"),
     dueLabel: varchar("due_label", { length: 160 }),
@@ -522,7 +537,7 @@ export const projectTasks = pgTable(
     deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
     dueDate: date("due_date", { mode: "string" }),
     estimatePoints: integer("estimate_points"),
-    taskType: varchar("task_type", { length: 16 }),
+    taskType: varchar("task_type", { length: 16 }).default("STORY"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -547,6 +562,7 @@ export const projectTasks = pgTable(
       table.sprintId,
       table.sequence,
     ),
+    index("project_tasks_source_order_idx").on(table.projectId,table.sprintId,table.legacySortOrder,table.id),
     index("project_tasks_backlog_project_idx")
       .on(table.projectId, table.sequence)
       .where(sql`${table.sprintId} is null`),
@@ -554,6 +570,9 @@ export const projectTasks = pgTable(
       table.projectId,
       table.status,
     ),
+    index("project_tasks_active_order_idx")
+      .on(table.projectId,table.sprintId,table.sequence,table.id)
+      .where(sql`${table.deletedAt} is null`),
     index("project_tasks_assignee_membership_idx")
       .on(table.assigneeMembershipId)
       .where(sql`${table.assigneeMembershipId} is not null`),
@@ -589,6 +608,14 @@ export const projectTaskComments = pgTable(
   "project_task_comments",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyCommentId: integer("legacy_comment_id"),
+    legacyProjectId: integer("legacy_project_id"),
+    legacyTaskId: integer("legacy_task_id"),
+    legacyCommenterId: integer("legacy_commenter_id"),
+    legacyCommenterType: varchar("legacy_commenter_type", {length: 20}),
+    legacyCommenterName: varchar("legacy_commenter_name", {length: 160}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacyBodyWasNull: boolean("legacy_body_was_null"),
     projectId: uuid("project_id")
       .notNull()
       .references(() => projectInstances.id, {
@@ -628,6 +655,8 @@ export const projectTaskComments = pgTable(
       table.taskId,
       table.createdAt,
     ),
+    index("project_task_comments_scoped_history_idx")
+      .on(table.projectId,table.taskId,table.deletedAt,table.createdAt,table.id),
     check(
       "project_task_comments_body_ck",
       sql`length(trim(${table.body})) between 1 and 4000`,
@@ -661,6 +690,7 @@ export const projectResources = pgTable(
     }),
     title: text("title").notNull(),
     legacyResourceKey: varchar("legacy_resource_key", { length: 120 }),
+    legacySortOrder: integer("legacy_sort_order"),
     legacyResourceKind: varchar("legacy_resource_kind", { length: 32 }),
     legacySprintKey: varchar("legacy_sprint_key", { length: 120 }),
     legacyTaskKey: varchar("legacy_task_key", { length: 120 }),
@@ -760,6 +790,9 @@ export const projectMembers = pgTable(
       .default(false),
     roleLabel: text("role_label"),
     legacyUserType: varchar("legacy_user_type", { length: 32 }),
+    legacyMemberId: integer("legacy_member_id"),
+    legacyVersion: bigint("legacy_version", {mode:"number"}),
+    legacyRoleLabel: varchar("legacy_role_label", {length: 80}),
     legacyDisplayName: text("legacy_display_name"),
     legacyMemberStatus: varchar("legacy_member_status", { length: 32 }),
     deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
@@ -797,6 +830,7 @@ export const projectMembers = pgTable(
       .where(
         sql`${table.endedAt} is null and ${table.role} = 'MENTOR' and ${table.isPrimary} = true`,
       ),
+    index("project_members_source_type_idx").on(table.projectId,table.legacyUserType,table.membershipId),
     index("project_members_membership_active_idx").on(
       table.membershipId,
       table.endedAt,
@@ -946,6 +980,17 @@ export const projectSubmissions = pgTable(
     legacyMimeType: varchar("legacy_mime_type", { length: 160 }),
     legacyStorageKey: text("legacy_storage_key"),
     legacySubmittedLocal: timestamp("legacy_submitted_local", { withTimezone: false }),
+    legacyDraftSavedAt: timestamp("legacy_draft_saved_at", {withTimezone:true}),
+    legacyDraftSavedByName: varchar("legacy_draft_saved_by_name", {length:160}),
+    legacySubmittedByName: varchar("legacy_submitted_by_name", {length:160}),
+    legacySubmittedByType: varchar("legacy_submitted_by_type", {length:40}),
+    legacyReviewedByName: varchar("legacy_reviewed_by_name", {length:160}),
+    legacyReviewedByType: varchar("legacy_reviewed_by_type", {length:40}),
+    legacyLockedByName: varchar("legacy_locked_by_name", {length:160}),
+    legacyLastUpdatedAt: timestamp("legacy_last_updated_at", {withTimezone:true}),
+    legacyLastUpdatedByName: varchar("legacy_last_updated_by_name", {length:160}),
+    legacyLastUpdatedByType: varchar("legacy_last_updated_by_type", {length:40}),
+    legacyPrimaryAttachmentUrl: text("legacy_primary_attachment_url"),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     sourceUrl: text("source_url"),
     demoUrl: text("demo_url"),
@@ -1072,6 +1117,8 @@ export const projectDeliveryEvents = pgTable(
         projectSubmissions.id,
       ],
     }).onDelete("restrict"),
+    index("project_delivery_events_submission_history_idx")
+      .on(table.projectId,table.submissionId,table.occurredAt,table.id),
     index("project_delivery_events_project_time_idx").on(
       table.projectId,
       table.occurredAt,
@@ -1249,6 +1296,14 @@ export const projectMeetings = pgTable(
       .default("GENERAL"),
     title: text("title").notNull(),
     meetingKey: varchar("meeting_key", { length: 120 }),
+    legacyMeetingId: integer("legacy_meeting_id"),
+    legacyLocalStart: timestamp("legacy_local_start", {withTimezone:false}),
+    legacyLocalEnd: timestamp("legacy_local_end", {withTimezone:false}),
+    legacyTimeZone: varchar("legacy_time_zone", {length:80}),
+    legacyOrganizerName: varchar("legacy_organizer_name", {length:160}),
+    legacyOrganizerType: varchar("legacy_organizer_type", {length:32}),
+    legacyCalendarSyncStatus: varchar("legacy_calendar_sync_status", {length:24}),
+    legacyNeedsScheduleReview: boolean("legacy_needs_schedule_review").notNull().default(false),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
     version: integer("version").notNull().default(0),
@@ -1310,6 +1365,9 @@ export const projectMeetings = pgTable(
     uniqueIndex("project_meetings_project_key_uq")
       .on(table.projectId, sql`lower(${table.meetingKey})`)
       .where(sql`${table.meetingKey} is not null`),
+    index("project_meetings_legacy_id_idx")
+      .on(table.projectId,table.legacyMeetingId)
+      .where(sql`${table.legacyMeetingId} is not null`),
     index("project_meetings_project_start_idx").on(
       table.projectId,
       table.startsAt,
