@@ -227,18 +227,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/courses/course-display-read-only.tsx`
 - [x] `src/components/courses/faculty-assessment-overview.tsx`
 - [x] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-contacts-table.tsx`
-- [ ] `src/components/courses/faculty-content-order-editor.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/courses/faculty-submission-file-review.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/courses/learner-course-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-contacts-table.tsx`
+- [x] `src/components/courses/faculty-content-order-editor.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/courses/faculty-submission-file-review.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/learner-course-overview.tsx`
 - [ ] `src/components/courses/learner-course-workspace.tsx`
 - [ ] `src/components/courses/learner-quiz-attempt.tsx`
 - [ ] `src/components/courses/lesson-resource-materials-control.tsx`
