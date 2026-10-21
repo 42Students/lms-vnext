@@ -1,87 +1,169 @@
 "use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
-
 import { Checkbox } from "@/components/ui/checkbox";
-import {useState} from "react";
-import {ScrollCue} from "@/components/ui/scroll-cue";
-import {Button} from "@/components/ui/button";
-import {useRouter} from "next/navigation";
-import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
-type Course={id:string;name:string};
-type Report={selectedCourses:number;matchedLessons:number;matchedContents:number;
- changed:number;unchanged:number;failures:{id:string;reason:string}[];failedCourseIds:string[]};
+import { ScrollCue } from "@/components/ui/scroll-cue";
+import { Button } from "@/components/ui/button";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 
-export function SuperAdminCourseBulkVisibility({courses}:{courses:readonly Course[]}){
- const router=useRouter();
- const [selected,setSelected]=useState<string[]>([]);
- const [report,setReport]=useState<Report|null>(null);
- const [pending,setPending]=useState(false);
- const [error,setError]=useState<string|null>(null);
- const [lastAction,setLastAction]=useState<boolean|null>(null);
- const currentIds=new Set(courses.map(course=>course.id));
- const selectedInScope=selected.filter(id=>currentIds.has(id));
- async function apply(visibleToStudents:boolean,ids=selectedInScope){
-  // Never send IDs from a previous acting-college or an earlier page.
-  ids=ids.filter(id=>currentIds.has(id));
-  if(!ids.length||pending)return;
-  if(!window.confirm((visibleToStudents?"Show":"Hide")+" published lesson content in "+
-    ids.length+" selected course(s) to students?"))return;
-  setPending(true);setError(null);setReport(null);setLastAction(visibleToStudents);
-  try{
-   const data=await apiFetch<Report>("/api/admin/courses/bulk-status",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({courseIds:ids,visibleToStudents,confirmed:true}),
-   });
-   setReport(data);
-   router.refresh();
-  }catch(e){
-   setError(e instanceof FriendlyFetchError&&e.code==="COURSE_VISIBILITY_BULK_TOO_LARGE"
-    ?"Too many published lesson items are selected. Select fewer courses and try again."
-    :e instanceof FriendlyFetchError&&e.code==="COURSE_NOT_FOUND"
-     ?"One or more selected courses changed. Refresh and select current courses."
-     :e instanceof Error?e.message:"Unable to update student visibility.");
+type Course = { id: string; name: string };
+type Report = {
+  selectedCourses: number;
+  matchedLessons: number;
+  matchedContents: number;
+  changed: number;
+  unchanged: number;
+  failures: { id: string; reason: string }[];
+  failedCourseIds: string[];
+};
+
+/**
+ * This operation deliberately does NOT archive courses. The underlying
+ * ACTIVE/ARCHIVED course lifecycle is different from the legacy independent
+ * active+enabled visibility fields. The label and confirmation must never
+ * promise course-level hiding until the catalogue/access model supports it.
+ */
+export function SuperAdminCourseBulkVisibility({ courses }: { courses: readonly Course[] }) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<string[]>([]);
+  const [report, setReport] = useState<Report | null>(null);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastAction, setLastAction] = useState<boolean | null>(null);
+  const currentIds = new Set(courses.map((course) => course.id));
+  const selectedInScope = selected.filter((id) => currentIds.has(id));
+  const currentPageFullySelected = courses.length > 0 &&
+    courses.every((course) => selectedInScope.includes(course.id));
+
+  async function apply(visibleToStudents: boolean, candidateIds = selectedInScope) {
+    // A previously selected course from a different page or college must
+    // never be submitted without a verified current acting-college scope.
+    const ids = [...new Set(candidateIds.filter((id) => currentIds.has(id)))];
+    if (!ids.length || pending) return;
+    if (!window.confirm(
+      (visibleToStudents ? "Show" : "Hide") + " published lesson content in " +
+      ids.length + " selected course(s) to students? This does not hide the course " +
+      "itself or change unpublished and future content.",
+    )) return;
+
+    setPending(true);
+    setError(null);
+    setReport(null);
+    setLastAction(visibleToStudents);
+    try {
+      const data = await apiFetch<Report>("/api/admin/courses/bulk-status", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ courseIds: ids, visibleToStudents, confirmed: true }),
+      });
+      setReport(data);
+      // Keep only actionable failures in the current scope after the POST.
+      // Unlike content-level failures, this is a course-unit selection.
+      setSelected(data.failedCourseIds.filter((id) => currentIds.has(id)));
+      router.refresh();
+    } catch (caught) {
+      setError(caught instanceof FriendlyFetchError &&
+        caught.code === "COURSE_VISIBILITY_BULK_TOO_LARGE"
+        ? "Too many published lesson items are selected. Select fewer courses and try again."
+        : caught instanceof FriendlyFetchError && caught.code === "COURSE_NOT_FOUND"
+          ? "One or more selected courses changed. Refresh and select current courses."
+          : caught instanceof Error ? caught.message : "Unable to update published content visibility.");
+    } finally {
+      setPending(false);
+    }
   }
-  finally{setPending(false);}
- }
- return <section aria-label="Bulk course visibility" className="space-y-3 border-b border-border pb-5">
-  <h3 className="font-semibold text-foreground">Students see it</h3>
-  <p className="text-sm text-body">Show to students or hide from students across currently published lesson content in selected courses. Archived or unpublished content remains unchanged. New content keeps its own student visibility setting.</p>
-  <label className="flex min-h-11 items-center gap-2 py-2 text-sm">
-   <Checkbox checked={courses.length>0&&selectedInScope.length===courses.length}
-    disabled={pending||!courses.length}
-    onChange={e=>setSelected(e.target.checked?courses.map(course=>course.id):[])}/>
-   Select all courses on this page
-  </label>
-  <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48"><div className="divide-y divide-border border-y border-border">
-   {courses.map(course=><label key={course.id} className="flex min-h-11 items-center gap-2 text-sm">
-    <Checkbox checked={selectedInScope.includes(course.id)} disabled={pending}
-     onChange={e=>setSelected(ids=>{
-      const scoped=ids.filter(id=>currentIds.has(id));
-      return e.target.checked?[...new Set([...scoped,course.id])]:scoped.filter(id=>id!==course.id);
-     })}/>
-    <span>{course.name}</span>
-   </label>)}
-  </div></ScrollCue>
-  <p className="text-xs text-muted-foreground" role="status">{selectedInScope.length} selected</p>
-  <div className="flex flex-wrap gap-2">
-   <Button type="button" variant="primary" loading={pending} disabled={!selectedInScope.length||pending}
-    onClick={()=>void apply(true)}
-    className="min-h-11 md:min-h-9">
-    {pending?"Updating…":"Show to students"}</Button>
-   <Button variant="secondary" type="button" disabled={!selectedInScope.length||pending}
-    onClick={()=>void apply(false)}
-    className="min-h-11 md:min-h-9">
-    Hide from students</Button>
-  </div>
-  {error?<Alert tone="error">{error}</Alert>:null}
-  {report?<Alert tone={report.failures.length||report.matchedLessons===0?"warning":"success"} role="status">
-   <p>{report.changed} updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
-   {report.failures.length?<Button type="button" variant="secondary" disabled={pending||lastAction===null||!report.failedCourseIds.some(id=>currentIds.has(id))}
-    onClick={()=>lastAction!==null?void apply(lastAction,report.failedCourseIds):undefined}
-    className="min-h-11 md:min-h-9">
-    Retry failed
-   </Button>:null}
-   {report.matchedLessons===0?<p>No published lesson content is available for the selected courses.</p>:null}
-  </Alert>:null}
- </section>;
+
+  return (
+    <section aria-label="Bulk published content visibility" className="space-y-3 border-b border-border pb-5">
+      <h3 className="font-semibold text-foreground">Published lesson content visibility</h3>
+      <p className="text-sm text-body">
+        Show or hide currently published lesson content for students in the selected courses.
+        This does not change the course&apos;s active status, unpublished lessons, or future content.
+        To hide an entire course, use the course lifecycle and learner access controls.
+      </p>
+      <label className="flex min-h-11 items-center gap-2 py-2 text-sm">
+        <Checkbox
+          checked={currentPageFullySelected}
+          disabled={pending || !courses.length}
+          onChange={(event) => setSelected((previous) => {
+            // Retain off-page IDs locally, but never act on them without scoped
+            // revalidation. Pagination changes must not silently discard them.
+            const offPage = previous.filter((id) => !currentIds.has(id));
+            return event.target.checked ? [...offPage, ...courses.map((course) => course.id)] : offPage;
+          })}
+        />
+        Select all courses on this page
+      </label>
+      <ScrollCue axis="y" label="Bulk course selection" viewportClassName="max-h-48">
+        <div className="divide-y divide-border border-y border-border">
+          {courses.map((course) => (
+            <label key={course.id} className="flex min-h-11 items-center gap-2 text-sm">
+              <Checkbox
+                checked={selectedInScope.includes(course.id)}
+                disabled={pending}
+                onChange={(event) => setSelected((previous) => event.target.checked
+                  ? [...new Set([...previous, course.id])]
+                  : previous.filter((id) => id !== course.id))}
+              />
+              <span>{course.name}</span>
+            </label>
+          ))}
+        </div>
+      </ScrollCue>
+      <p className="text-xs text-muted-foreground" role="status">
+        {selectedInScope.length} selected on this page
+        {selected.length > selectedInScope.length
+          ? " · " + (selected.length - selectedInScope.length) + " saved from another page (not included in this action)"
+          : ""}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        <Button
+          type="button" variant="primary" loading={pending}
+          disabled={!selectedInScope.length || pending}
+          onClick={() => void apply(true)}
+          className="min-h-11 md:min-h-9"
+        >
+          {pending ? "Updating…" : "Show published content"}
+        </Button>
+        <Button
+          variant="secondary" type="button" disabled={!selectedInScope.length || pending}
+          onClick={() => void apply(false)}
+          className="min-h-11 md:min-h-9"
+        >
+          Hide published content
+        </Button>
+      </div>
+      {error ? <Alert tone="error">{error}</Alert> : null}
+      {report ? (
+        <Alert tone={report.failures.length || report.matchedLessons === 0 ? "warning" : "success"} role="status">
+          <p>
+            {report.selectedCourses - report.failedCourseIds.length} of {report.selectedCourses} course(s) processed
+            · {report.changed} published content item(s) updated
+            · {report.unchanged} unchanged · {report.failures.length} lesson failure(s)
+          </p>
+          <p className="text-xs">
+            Scope: {report.matchedLessons} published lesson(s), {report.matchedContents} content item(s).
+            The course status itself was not changed.
+          </p>
+          {report.failedCourseIds.length ? (
+            <Button
+              type="button" variant="secondary"
+              disabled={pending || lastAction === null ||
+                !report.failedCourseIds.some((id) => currentIds.has(id))}
+              onClick={() => lastAction === null ? undefined :
+                void apply(lastAction, report.failedCourseIds)}
+              className="min-h-11 md:min-h-9"
+            >
+              Retry failed courses
+            </Button>
+          ) : null}
+          {report.matchedLessons === 0
+            ? <p>No published lesson content is available for the selected courses.</p>
+            : null}
+        </Alert>
+      ) : null}
+    </section>
+  );
 }

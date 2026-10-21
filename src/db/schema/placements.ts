@@ -54,15 +54,17 @@ export const placementCompanies = pgTable(
     })
       .notNull()
       .defaultNow(),
+    /** Explicit CAS token. Writer must compare version and atomically increment. */
+    version: integer("version").notNull().default(1),
   },
   (table) => [
-    uniqueIndex("placement_companies_name_uq").on(
-      sql`lower(${table.name})`,
-    ),
+    // Display names are not globally unique; verified domains identify companies.
     uniqueIndex("placement_companies_domain_uq")
       .on(sql`lower(${table.primaryDomain})`)
       .where(sql`${table.primaryDomain} is not null`),
     index("placement_companies_status_idx").on(table.status),
+    index("placement_companies_name_idx").on(sql`lower(${table.name})`),
+    check("placement_companies_version_ck", sql`${table.version} > 0`),
     index("placement_companies_verified_idx").on(table.verifiedAt),
     check("placement_companies_verifier_ck", sql`(${table.verifiedAt} is null) = (${table.verifiedByUserId} is null)`),
     check(
@@ -97,6 +99,11 @@ export const placementCompanyRelationships = pgTable(
       () => collegeMemberships.id,
       { onDelete: "restrict" },
     ),
+    /** Per-college CRM fields; never disclose from the global company row. */
+    internalNotes: text("internal_notes"),
+    contactPersonName: varchar("contact_person_name", { length: 150 }),
+    contactEmail: varchar("contact_email", { length: 150 }),
+    contactPhone: varchar("contact_phone", { length: 30 }),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -227,6 +234,8 @@ export const placementRecruiterCollegeGrants = pgTable(
       () => users.id,
       { onDelete: "restrict" },
     ),
+    grantedByType: varchar("granted_by_type", { length: 32 }),
+    revokedByType: varchar("revoked_by_type", { length: 32 }),
     revokedAt: timestamp("revoked_at", {
       withTimezone: true,
     }),
@@ -250,6 +259,7 @@ export const placementRecruiterCollegeGrants = pgTable(
     })
       .notNull()
       .defaultNow(),
+    version: integer("version").notNull().default(1),
   },
   (table) => [
     uniqueIndex("placement_recruiter_college_grants_active_uq")
@@ -269,6 +279,7 @@ export const placementRecruiterCollegeGrants = pgTable(
     index("placement_recruiter_grant_validity_idx")
       .on(table.recruiterUserId, table.validUntil)
       .where(sql`${table.status} = 'ACTIVE'`),
+    check("placement_recruiter_grants_version_ck", sql`${table.version} > 0`),
     check(
       "placement_recruiter_grant_verification_ck",
       sql`${table.verificationStatus} in ('PENDING', 'VERIFIED', 'REJECTED')`,
@@ -495,10 +506,8 @@ export const placementJobs = pgTable(
     }>(),
     employmentType: varchar("employment_type", { length: 24 })
       .notNull(),
-    /** College-facing legacy job-type label; employmentType remains the existing normalized category. */
-    jobTypeLabel: varchar("job_type_label", { length: 40 }),
-    /** Snapshot on each drive for eligibility, held-offer and report decisions. */
-    countsAsPlaced: boolean("counts_as_placed").notNull().default(true),
+    /** NULL explicitly means no audited placed answer yet; never infer from employment type. */
+    countsAsPlaced: boolean("counts_as_placed"),
     workMode: varchar("work_mode", { length: 24 }).notNull(),
     locations: text("locations")
       .array()
@@ -764,6 +773,8 @@ export const placementCandidateAcademicEvidence = pgTable(
     source: varchar("source", { length: 16 })
       .notNull()
       .default("SELF"),
+    sourceMetadata: jsonb("source_metadata").$type<Record<string, unknown>>(),
+    importedAt: timestamp("imported_at", { withTimezone: true }),
     verifiedByUserId: uuid("verified_by_user_id").references(
       () => users.id,
       { onDelete: "restrict" },
@@ -994,6 +1005,18 @@ export const placementApplications = pgTable(
         onDelete: "restrict",
       }),
     channel: varchar("channel", { length: 16 }).notNull(),
+    /** Track provider separately from broad submission channel. */
+    sourceProvider: varchar("source_provider", { length: 50 }),
+    papRequested: boolean("pap_requested").notNull().default(false),
+    /** Nonsequential company/ATS reference, never the internal application UUID. */
+    publicRef: varchar("public_ref", { length: 33 })
+      .notNull()
+      .default(sql`'A' || upper(replace(gen_random_uuid()::text, '-', ''))`),
+    externalRef: text("external_ref"),
+    currentRoundId: uuid("current_round_id"),
+    appliedByCollege: boolean("applied_by_college").notNull().default(false),
+    appliedByCollegeOptOutUntil: timestamp("applied_by_college_opt_out_until", { withTimezone: true }),
+    ineligibleFlagAt: timestamp("ineligible_flag_at", { withTimezone: true }),
     status: varchar("status", { length: 24 })
       .notNull()
       .default("SUBMITTED"),
@@ -1016,6 +1039,13 @@ export const placementApplications = pgTable(
     withdrawnAt: timestamp("withdrawn_at", {
       withTimezone: true,
     }),
+    withdrawalReason: varchar("withdrawal_reason", { length: 64 }),
+    statusBeforeWithdrawal: varchar("status_before_withdrawal", { length: 30 }),
+    statusUpdatedAt: timestamp("status_updated_at", { withTimezone: true }),
+    statusUpdatedByUserId: uuid("status_updated_by_user_id").references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    version: integer("version").notNull().default(1),
     updatedAt: timestamp("updated_at", {
       withTimezone: true,
     })
@@ -1031,6 +1061,13 @@ export const placementApplications = pgTable(
       foreignColumns: [placementJobRoleOptions.id, placementJobRoleOptions.jobId],
     }).onDelete("restrict"),
     uniqueIndex("placement_applications_id_job_uq").on(table.id, table.jobId),
+    uniqueIndex("placement_applications_public_ref_uq").on(table.publicRef),
+    check("placement_applications_version_ck", sql`${table.version} > 0`),
+    foreignKey({
+      name: "placement_applications_current_round_job_fk",
+      columns: [table.currentRoundId, table.jobId],
+      foreignColumns: [placementJobRounds.id, placementJobRounds.jobId],
+    }).onDelete("restrict"),
     uniqueIndex(
       "placement_applications_role_membership_uq",
     ).on(table.roleOptionId, table.membershipId),
@@ -1064,6 +1101,37 @@ export const placementApplications = pgTable(
   ],
 );
 
+
+/** Staff-only attachments/provenance. Never project these directly to learners. */
+export const placementApplicationPrivateArtifacts = pgTable(
+  "placement_application_private_artifacts",
+  {
+    applicationId: uuid("application_id")
+      .primaryKey()
+      .references(() => placementApplications.id, { onDelete: "restrict" }),
+    assessmentUrl: text("assessment_url"),
+    /** Stable object path, NOT an expiring signed download URL. */
+    resumeObjectPath: text("resume_object_path"),
+    legacyResumeUrl: text("legacy_resume_url"),
+    resumeHistory: jsonb("resume_history")
+      .$type<Array<{ objectPath?: string; legacyUrl?: string; replacedAt: string }>>()
+      .notNull()
+      .default(sql`'[]'::jsonb`),
+    internalNotes: text("internal_notes"),
+    updatedByUserId: uuid("updated_by_user_id").references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    check(
+      "placement_application_private_resume_history_ck",
+      sql`jsonb_typeof(${table.resumeHistory}) = 'array'`,
+    ),
+  ],
+);
 
 export const placementApplicationStatusHistory = pgTable(
   "placement_application_status_history",

@@ -11,6 +11,7 @@ export type BrowseJobShape = {
     id: string;
     title: string;
     description: string;
+    jobTypeLabel?:string|null;
     applicationDeadline: string | null;
     publishedAt?: string | null;
   };
@@ -63,9 +64,12 @@ export function learnerDriveAvailabilityCounts(items:readonly BrowseJobShape[]) 
   return counts;
 }
 
+function visibleJobType(row:BrowseJobShape){
+ return row.job.jobTypeLabel?.trim()||row.roleOption.employmentType;
+}
 export function availableLearnerJobFacets<T extends BrowseJobShape>(items: readonly T[]) {
   return {
-    types: [...new Set(items.map((row) => row.roleOption.employmentType))]
+    types: [...new Set(items.map(visibleJobType))]
       .filter(Boolean).sort((a,b) => a.localeCompare(b)),
     locations: [...new Map(items.flatMap(row=>row.roleOption.locations)
       .map(value=>value.trim()).filter(Boolean)
@@ -78,7 +82,7 @@ export function availableLearnerJobFacets<T extends BrowseJobShape>(items: reado
 export function learnerJobEmploymentTypeCounts(items:readonly BrowseJobShape[]){
  const counts=new Map<string,number>();
  for(const row of items){
-  const type=row.roleOption.employmentType;
+  const type=visibleJobType(row);
   if(!type)continue;
   counts.set(type,(counts.get(type)??0)+1);
  }
@@ -105,7 +109,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       }
     }
     if (filters.employmentType !== "all" &&
-        row.roleOption.employmentType !== filters.employmentType) return false;
+        visibleJobType(row) !== filters.employmentType) return false;
     if(filters.location!=="all"&&!row.roleOption.locations.some(place=>
       place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;

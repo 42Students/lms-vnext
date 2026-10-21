@@ -100,6 +100,39 @@ export function formatTpoRecruiterGrantDate(
  * ACTIVE describes the grant row, not a guarantee
  * of currently usable recruiter account access.
  */
+/**
+ * Unlike the legacy indefinite grant, vNext access enforcement requires a
+ * finite expiry. NULL is a missing-expiry invalid grant, not a live grant.
+ * Keeping the four states separate prevents a TPO from interpreting it as
+ * "No end date" or quietly treating ACTIVE as effective authorization.
+ */
+export type TpoRecruiterGrantExpiryState =
+  | "CURRENT"
+  | "EXPIRED"
+  | "REVOKED"
+  | "MISSING_EXPIRY_INVALID";
+
+export function tpoRecruiterGrantExpiryState(
+  row: Pick<TpoRecruiterGrantSourceRow, "status" | "validUntil">,
+  now: Date = new Date(),
+): TpoRecruiterGrantExpiryState {
+  if (row.status === "REVOKED") return "REVOKED";
+  if (!(row.validUntil instanceof Date) ||
+      !Number.isFinite(row.validUntil.getTime())) {
+    return "MISSING_EXPIRY_INVALID";
+  }
+  return row.validUntil.getTime() <= now.getTime() ? "EXPIRED" : "CURRENT";
+}
+
+/** A safe TPO display label; NEVER claim an invalid grant has no end date. */
+export function tpoRecruiterGrantExpiryLabel(
+  row: Pick<TpoRecruiterGrantView, "status" | "validUntilDate" | "ended">,
+): string {
+  if (row.status === "REVOKED") return "Removed";
+  if (!row.validUntilDate) return "Missing expiry — access unavailable";
+  return row.ended ? "Ended" : `Until ${row.validUntilDate}`;
+}
+
 export function toTpoRecruiterGrantView(
   row: TpoRecruiterGrantSourceRow,
 ): TpoRecruiterGrantView {
@@ -124,7 +157,7 @@ export function toTpoRecruiterGrantView(
     revokedDate:
       formatTpoRecruiterGrantDate(row.revokedAt),
     validUntilDate:formatTpoRecruiterGrantDate(row.validUntil??null),
-    ended:status==="REVOKED"||!row.validUntil||row.validUntil.getTime()<=Date.now(),
+    ended:tpoRecruiterGrantExpiryState(row)!=="CURRENT",
     capabilities:row.capabilities??[],
     verificationStatus:row.verificationStatus??"UNKNOWN",
   };

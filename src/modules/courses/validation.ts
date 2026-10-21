@@ -51,6 +51,8 @@ export const createCourseInputSchema = z.object({
 
 export const updateCourseInputSchema = z
   .object({
+    // The version comes from the course row displayed in the editing form.
+    expectedUpdatedAt: z.string().datetime({ offset: true }),
     name: courseNameSchema.optional(),
     code: courseCodeSchema.optional(),
     shortTitle:courseShortTitleSchema.optional(),
@@ -66,8 +68,8 @@ export const updateCourseInputSchema = z
   }).strict()
   .refine(
     (value) =>
-      Object.values(value).some(
-        (item) => item !== undefined,
+      Object.entries(value).some(
+        ([key, item]) => key !== "expectedUpdatedAt" && item !== undefined,
       ),
     "At least one course field is required",
   );

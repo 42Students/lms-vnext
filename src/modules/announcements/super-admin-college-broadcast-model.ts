@@ -3,22 +3,25 @@ export const superAdminCollegeBroadcastSchema=z.strictObject({
  audienceMode:z.enum(["ALL_COLLEGES","SELECTED_COLLEGES"]),
  collegeIds:z.array(z.uuid()).max(500),
  reviewedCollegeIds:z.array(z.uuid()).max(500).optional(),
- title:z.string().trim().min(1).max(200),
- message:z.string().trim().min(1).max(8000),
+ title:z.string().trim().min(1,{error:"Give the announcement a title"}).max(200,{error:"Keep the title under 200 characters"}),
+ message:z.string().trim().min(1,{error:"Write the announcement"}).max(8000),
  scheduledAt:z.iso.datetime({offset:true}).nullable(),
  expiresAt:z.iso.datetime({offset:true}).nullable(),
  isPinned:z.boolean(),
- buttonLabel:z.string().trim().max(60).nullable().optional(),
- buttonUrl:z.string().trim().max(500).nullable().optional(),
+ buttonLabel:z.string().trim().max(60,{error:"Keep the button label under 60 characters"}).nullable().optional(),
+ buttonUrl:z.string().trim().max(500,{error:"Keep the link under 500 characters"}).nullable().optional(),
  publishConsent:z.literal(true),
 }).superRefine((v,ctx)=>{
- if(Boolean(v.buttonLabel)!==Boolean(v.buttonUrl))ctx.addIssue({code:"custom",path:["buttonUrl"],message:"Provide both button label and HTTPS link"});
- if(v.buttonUrl&&!/^https:\/\/[^\s]+$/i.test(v.buttonUrl))ctx.addIssue({code:"custom",path:["buttonUrl"],message:"Enter a secure HTTPS link"});
+ if(v.buttonLabel&&!v.buttonUrl)ctx.addIssue({code:"custom",path:["buttonUrl"],message:"The link has to start with https://"});
+ if(v.buttonUrl&&!/^https:\/\/[^\s]+$/i.test(v.buttonUrl))ctx.addIssue({code:"custom",path:["buttonUrl"],message:"The link has to start with https://"});
  if(v.audienceMode==="ALL_COLLEGES"&&v.collegeIds.length!==0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"All-colleges must not include an explicit target list"});
  if(v.reviewedCollegeIds && new Set(v.reviewedCollegeIds).size!==v.reviewedCollegeIds.length)ctx.addIssue({code:"custom",path:["reviewedCollegeIds"],message:"Reviewed audience may not contain duplicate colleges"});
  if(new Set(v.collegeIds).size!==v.collegeIds.length)ctx.addIssue({code:"custom",path:["collegeIds"],message:"A college must not appear more than once"});
- if(v.audienceMode==="SELECTED_COLLEGES"&&v.collegeIds.length===0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"Select at least one college"});
- if(v.expiresAt&&v.scheduledAt&&new Date(v.expiresAt)<=new Date(v.scheduledAt))ctx.addIssue({code:"custom",path:["expiresAt"],message:"Expiry must be later than schedule"});
+ if(v.audienceMode==="SELECTED_COLLEGES"&&v.collegeIds.length===0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"Pick at least one placement cell"});
+ // No durable due-time worker exists; refuse delayed publication rather than
+ // leaving unsent bell notices indefinitely.
+ if(v.scheduledAt)ctx.addIssue({code:"custom",path:["scheduledAt"],message:"Scheduled delivery is not available"});
+ if(v.expiresAt&&new Date(v.expiresAt).getTime()<Date.now()-60_000)ctx.addIssue({code:"custom",path:["expiresAt"],message:"The end date has passed"});
 });
 export function requestedBroadcastCollegeIds(ids:readonly string[]):string[]{
  return [...new Set(ids)];

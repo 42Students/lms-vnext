@@ -1,6 +1,7 @@
 import {
   and,
   asc,
+  desc,
   eq,
   isNull,
   sql,
@@ -547,10 +548,37 @@ export async function getMyAssignmentSubmission(
     : null;
 }
 
+/** Return the learner's own assignment history across deliveries. Grades stay
+ * private until published, including for old/archived assignments. */
+export async function listMyAssignmentSubmissionHistory(
+  context: RequestContext,
+  paging: { limit?: number; offset?: number } = {},
+) {
+  await requireOwnCourseLearnerRead(context);
+  if (!context.membership || context.membership.status !== "ACTIVE" ||
+      !context.membership.roles.includes("LEARNER")) {
+    throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+  }
+  const limit = Math.max(1, Math.min(100, Math.trunc(paging.limit ?? 50)));
+  const offset = Math.max(0, Math.trunc(paging.offset ?? 0));
+  if (!Number.isSafeInteger(limit) || !Number.isSafeInteger(offset)) {
+    throw new RangeError("Invalid submission history page");
+  }
+  const rows = await getDb()
+    .select()
+    .from(assignmentSubmissions)
+    .where(eq(assignmentSubmissions.membershipId, context.membership.id))
+    .orderBy(desc(assignmentSubmissions.submittedAt), desc(assignmentSubmissions.id))
+    .limit(limit)
+    .offset(offset);
+  return rows.map(toLearnerSubmission);
+}
+
 export async function listAssignmentSubmissions(
   context: RequestContext,
   assignmentIdInput: string,
   deliveryIdInput: string,
+  paging?: { limit: number; offset: number },
 ) {
   const assignmentId =
     courseAssignmentIdSchema.parse(
@@ -600,7 +628,7 @@ export async function listAssignmentSubmissions(
     );
   }
 
-  return getDb()
+  const query = getDb()
     .select({
       id: assignmentSubmissions.id,
       assignmentId:
@@ -670,6 +698,38 @@ export async function listAssignmentSubmissions(
       ),
       asc(assignmentSubmissions.id),
     );
+
+  // Existing callers keep their array response; paginated callers push
+  // limit/offset down to SQL rather than loading the whole submission table.
+  if (!paging) return query;
+  if (!Number.isSafeInteger(paging.limit) || paging.limit < 1 ||
+      !Number.isSafeInteger(paging.offset) || paging.offset < 0) {
+    throw new RangeError("Invalid assignment submissions page");
+  }
+  return query.limit(Math.min(100, paging.limit)).offset(paging.offset);
+}
+
+/** An authorized page with a scoped total, for large faculty cohorts. */
+export async function listAssignmentSubmissionsPage(
+  context: RequestContext,
+  assignmentId: string,
+  deliveryId: string,
+  paging: { limit: number; offset: number },
+) {
+  const rows = await listAssignmentSubmissions(context, assignmentId, deliveryId, paging);
+  const [counter] = await getDb()
+    .select({ total: sql<number>`count(*)::int` })
+    .from(assignmentSubmissions)
+    .where(and(
+      eq(assignmentSubmissions.assignmentId, courseAssignmentIdSchema.parse(assignmentId)),
+      eq(assignmentSubmissions.deliveryId, courseSectionDeliveryIdSchema.parse(deliveryId)),
+    ));
+  return {
+    submissions: rows,
+    total: counter?.total ?? 0,
+    limit: Math.min(100, paging.limit),
+    offset: paging.offset,
+  };
 }
 
 /** Confirm Faculty teaching scope inside the grading transaction, not merely
@@ -832,12 +892,16 @@ export async function publishAssignmentGrade(
     current,
   );
 
-  if(!facultyAssignmentGradePublicationAllowed(current.assignmentStatus,current.gradingStatus))
+  if (current.assignmentStatus !== "PUBLISHED") {
     throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+  }
   if (current.gradingStatus !== "GRADED") {
     throw new CoursesServiceError(
       "ASSIGNMENT_NOT_GRADED",
     );
+  }
+  if (!facultyAssignmentGradePublicationAllowed(current.assignmentStatus, current.gradingStatus)) {
+    throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   }
 
   // Even a duplicate publish must carry the current optimistic token:
@@ -903,4 +967,53 @@ export async function publishAssignmentGrade(
     }
     return updated;
   });
+}
+
+/** Bulk grade publication mirrors the legacy independently counted results.
+ * A row failure cannot roll back another learner's successful publication. */
+export async function publishAssignmentGradesBatch(
+  context: RequestContext,
+  items: readonly { submissionId: string; expectedVersion: number }[],
+) {
+  if (items.length < 1 || items.length > 100) {
+    throw new RangeError("Select between 1 and 100 submissions to publish");
+  }
+  const seen = new Set<string>();
+  let published = 0;
+  let skippedUngraded = 0;
+  let alreadyPublished = 0;
+  const failures: { submissionId: string; reason: string }[] = [];
+  for (const item of items) {
+    if (seen.has(item.submissionId)) {
+      failures.push({ submissionId: item.submissionId, reason: "DUPLICATE_SUBMISSION" });
+      continue;
+    }
+    seen.add(item.submissionId);
+    try {
+      const result = await publishAssignmentGrade(context, item.submissionId, {
+        expectedVersion: item.expectedVersion,
+      });
+      if (result.version === item.expectedVersion) {
+        alreadyPublished += 1;
+      } else {
+        published += 1;
+      }
+    } catch (error) {
+      if (error instanceof CoursesServiceError && error.code === "ASSIGNMENT_NOT_GRADED") {
+        skippedUngraded += 1;
+      } else {
+        failures.push({
+          submissionId: item.submissionId,
+          reason: error instanceof CoursesServiceError ? error.code : "PUBLISH_FAILED",
+        });
+      }
+    }
+  }
+  return {
+    published,
+    skippedUngraded,
+    alreadyPublished,
+    failed: failures.length,
+    failures,
+  };
 }

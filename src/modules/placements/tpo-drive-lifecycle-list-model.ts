@@ -21,6 +21,7 @@ export const tpoDriveLifecycleQuerySchema = z.object({
   deadline:z.enum(["ALL","TODAY","DUE_SOON","LATER","OVERDUE","UNSET"]).default("ALL"),
   workMode:z.enum(["ALL","ONSITE","REMOTE","HYBRID"]).default("ALL"),
   employmentType:z.enum(["ALL","FULL_TIME","INTERNSHIP","CONTRACT"]).default("ALL"),
+  jobTypeLabel:z.string().trim().min(2).max(40).optional(),
   minApplied:z.coerce.number().int().min(0).max(100000).optional(),
   maxApplied:z.coerce.number().int().min(0).max(100000).optional(),
   minOffers:z.coerce.number().int().min(0).max(100000).optional(),
@@ -46,7 +47,7 @@ export function tpoDriveLifecyclePage(total:number,requestedPage:number){
 }
 export type TpoLifecycleFact = {
   id: string; title: string; company: string; status: string;
-  workMode: string; employmentType: string; applicationDeadline: string | null;
+  workMode: string; employmentType: string; jobTypeLabel?:string|null; applicationDeadline: string | null;
 };
 export function projectTpoDriveLifecycle(
   facts: readonly TpoLifecycleFact[], view: "ALL" | "REQUESTS" | "DRAFT" | "LIVE" | "CLOSED",

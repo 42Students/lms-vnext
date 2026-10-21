@@ -17,6 +17,8 @@ import { getDb } from "@/db/client";
 import {
   activityEvents,
   academicPeriods,
+  learnerProgramEnrollments,
+  sectionEnrollments,
   courses,
   courseOfferings,
   courseSectionDeliveries,
@@ -188,6 +190,53 @@ export async function requireStaffNotificationAudience(
         )).limit(1);
   if (!assigned) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   return { draft, audience };
+}
+
+
+/**
+ * A legacy class notification is a broadcast, but delivery is a separate,
+ * deduplicated row for each currently enrolled learner in vNext. The course
+ * path resolves through active deliveries/sections. Neither path accepts a
+ * client-supplied list of users or trusts membership IDs from the browser.
+ */
+export async function resolveStaffNotificationRecipients(
+  context: RequestContext,
+  rawDraft: unknown,
+) {
+  const { draft, audience } = await requireStaffNotificationAudience(context, rawDraft);
+  const db = getDb();
+  const courseSection = draft.courseId
+    ? await db.select({ sectionId: courseSectionDeliveries.sectionId })
+        .from(courseSectionDeliveries)
+        .innerJoin(courseOfferings,
+          eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .where(and(
+          eq(courseOfferings.courseId, draft.courseId),
+          eq(courseOfferings.status, "ACTIVE"),
+          isNull(courseSectionDeliveries.endedAt),
+        ))
+    : null;
+  const sectionIds = draft.classId
+    ? [draft.classId]
+    : [...new Set((courseSection ?? []).map((row) => row.sectionId))];
+  if (sectionIds.length === 0) return { audience, userIds: [] as string[] };
+
+  const recipients = await db.selectDistinct({ userId: collegeMemberships.userId })
+    .from(sectionEnrollments)
+    .innerJoin(learnerProgramEnrollments,
+      eq(learnerProgramEnrollments.id, sectionEnrollments.learnerEnrollmentId))
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, learnerProgramEnrollments.membershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      inArray(sectionEnrollments.sectionId, sectionIds),
+      eq(sectionEnrollments.status, "ACTIVE"),
+      eq(learnerProgramEnrollments.status, "ACTIVE"),
+      eq(collegeMemberships.status, "ACTIVE"),
+      eq(collegeMemberships.collegeId, audience.collegeId),
+      eq(users.platformStatus, "ACTIVE"),
+    ));
+  return { audience, userIds: recipients.map((row) => row.userId) };
 }
 
 /**

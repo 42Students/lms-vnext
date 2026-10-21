@@ -1,9 +1,10 @@
 import "server-only";
-import {and,asc,desc,eq,gt,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gt,inArray,lt,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
- placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,users} from "@/db/schema";
+ placementJobs,placementRecruiterCollegeGrants,users} from "@/db/schema";
 import {placementDriveChangeRequests,placementDriveChangeRequestMessages} from "@/db/schema/placement-drive-change-requests";
+import {placementTpoMessageThreads,placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
@@ -15,7 +16,7 @@ import {driveChangeCommandSchema} from "./tpo-drive-change-request-model";
 type Party="TPO"|"COMPANY";
 async function scoped(context:RequestContext,rawJobId:unknown){
  const jobId=placementJobIdSchema.parse(rawJobId);
- if(context.membership&&hasMembershipRole(context,"TPO")){
+ if(context.membership&&(hasMembershipRole(context,"TPO")||hasMembershipRole(context,"COLLEGE_ADMIN"))){
   const collegeId=await requireTpoJobCollege(context);
   const [job]=await getDb().select({
    id:placementJobs.id,collegeId:placementJobs.collegeId,title:placementJobs.title,
@@ -51,6 +52,7 @@ async function recipients(tx:Parameters<Parameters<ReturnType<typeof getDb>["tra
   .innerJoin(users,eq(users.id,placementRecruiterCollegeGrants.recruiterUserId))
   .where(and(eq(placementRecruiterCollegeGrants.companyRelationshipId,job.companyRelationshipId),
    eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+   eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
    gt(placementRecruiterCollegeGrants.validUntil,new Date()),
    eq(users.platformStatus,"ACTIVE")));
  return [...new Set(grants.map(r=>r.userId))];
@@ -73,42 +75,117 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
    userId,eventId:event.id,title:"Drive change request",body,actionHref:href,
   }))).onConflictDoNothing();
  }
+ // Mirror each state change to the canonical recruiter/placement Discussion.
+ // System lines are already read and never claim external delivery.
+ const recruiterId=target==="TPO"?context.user.id:(await recipients(tx,job,"COMPANY")).sort()[0];
+ if(recruiterId){
+  await tx.insert(placementTpoMessageThreads).values({
+   collegeId:job.collegeId,recruiterUserId:recruiterId,jobId:job.id,
+  }).onConflictDoNothing();
+  const [thread]=await tx.select({id:placementTpoMessageThreads.id})
+   .from(placementTpoMessageThreads).where(and(
+    eq(placementTpoMessageThreads.collegeId,job.collegeId),
+    eq(placementTpoMessageThreads.recruiterUserId,recruiterId),
+    eq(placementTpoMessageThreads.jobId,job.id))).limit(1);
+  if(thread){
+   const now=new Date();
+   await tx.insert(placementTpoMessages).values({
+    threadId:thread.id,senderType:target==="TPO"?"RECRUITER":"TPO",
+    senderUserId:context.user.id,body,readAt:now,createdAt:now,
+   });
+   await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
+    .where(eq(placementTpoMessageThreads.id,thread.id));
+  }
+ }
 }
-export async function getDriveChangeRequests(context:RequestContext,jobId:unknown){
+const FIELD_LABELS:Record<string,string>={DEADLINE:"Application deadline",PAY:"Pay / package",
+ ELIGIBILITY:"Eligibility",LOCATION:"Location",ROUNDS:"Interview rounds",OTHER:"Other"};
+export async function getDriveChangeRequests(context:RequestContext,jobId:unknown,cursor?:string|null){
  const {job,party}=await scoped(context,jobId);
  const storageReady=true; // registered in 0114
  if(!storageReady)return {job,party,storageReady,requests:[],
   pendingMessage:"Company change requests are pending database migration registration."};
- const requests=await getDb().select().from(placementDriveChangeRequests)
-  .where(eq(placementDriveChangeRequests.jobId,job.id))
-  .orderBy(desc(placementDriveChangeRequests.createdAt))
-  .limit(100);
+ const [at,id]=cursor?.split("|")??[];
+ const date=at?new Date(at):null;
+ if(cursor&&(!date||!Number.isFinite(date.getTime())||!id||
+  !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)))
+  throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+ const where=and(eq(placementDriveChangeRequests.jobId,job.id),
+  date&&id?or(lt(placementDriveChangeRequests.createdAt,date),
+   and(eq(placementDriveChangeRequests.createdAt,date),lt(placementDriveChangeRequests.id,id))):undefined);
+ const [all,total]=await Promise.all([
+  getDb().select().from(placementDriveChangeRequests).where(where)
+   .orderBy(desc(placementDriveChangeRequests.createdAt),desc(placementDriveChangeRequests.id)).limit(101),
+  getDb().select({count:sql<number>`count(*)::int`}).from(placementDriveChangeRequests)
+   .where(eq(placementDriveChangeRequests.jobId,job.id)),
+ ]);
+ const requests=all.slice(0,100);
  const messages=requests.length?await getDb().select().from(placementDriveChangeRequestMessages)
   .where(inArray(placementDriveChangeRequestMessages.requestId,requests.map(r=>r.id)))
   .orderBy(asc(placementDriveChangeRequestMessages.sentAt)):[];
- return {job,party,storageReady,pendingMessage:null,
+ const authors=requests.length?await getDb().select({id:users.id,name:users.displayName})
+  .from(users).where(inArray(users.id,[...new Set(requests.map(r=>r.createdByUserId))])):[];
+ const names=new Map(authors.map(r=>[r.id,r.name]));
+ const grouped=new Map<string,typeof messages>();
+ for(const message of messages){
+  const items=grouped.get(message.requestId)??[];
+  items.push(message);grouped.set(message.requestId,items);
+ }
+ const last=requests.at(-1);
+ return {job,party,storageReady,pendingMessage:null,totalCount:Number(total[0]?.count??0),
+  hasMore:all.length>100,nextCursor:all.length>100&&last?last.createdAt.toISOString()+"|"+last.id:null,
   requests:requests.map(r=>({
    ...r,createdAt:r.createdAt.toISOString(),updatedAt:r.updatedAt.toISOString(),
-   decidedAt:r.decidedAt?.toISOString()??null,
-   messages:messages.filter(m=>m.requestId===r.id).map(m=>({
-    ...m,sentAt:m.sentAt.toISOString(),
-   })),
+   decidedAt:r.decidedAt?.toISOString()??null,resolvedAt:r.decidedAt?.toISOString()??null,
+   createdByName:names.get(r.createdByUserId)??null,fieldLabel:FIELD_LABELS[r.field]??"Other",
+   kind:r.mode==="SUGGEST"?"PROPOSE":"ASK",
+   direction:r.proposerParty==="TPO"?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
+   answerValue:r.status==="ANSWERED"?r.decisionNote:null,
+   replyText:r.status==="DECLINED"?r.decisionNote:null,
+   currentValue:null, // Historical snapshot absent in migration 0114; do not invent it.
+   messages:(grouped.get(r.id)??[]).map(m=>({...m,sentAt:m.sentAt.toISOString()})),
   }))};
 }
 export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:unknown,raw:unknown){
  const {job,party}=await scoped(context,rawJobId);
  const input=driveChangeCommandSchema.parse(raw);
  return getDb().transaction(async tx=>{
-  const [lockedJob]=await tx.select({status:placementJobs.status})
-   .from(placementJobs).where(and(eq(placementJobs.id,job.id),
-    eq(placementJobs.collegeId,job.collegeId))).for("share").limit(1);
-  if(!lockedJob||lockedJob.status==="ARCHIVED"||lockedJob.status==="CANCELLED")
+  // A job-first exclusive lock serializes create/dedupe and decision transitions.
+  // Withdrawing remains legal even after an otherwise read-only drive has ended.
+  const [lockedJob]=await tx.select().from(placementJobs)
+   .where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,job.collegeId)))
+   .for("update").limit(1);
+  if(!lockedJob)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+  if(input.action!=="WITHDRAW"&&(lockedJob.status==="ARCHIVED"||lockedJob.status==="CANCELLED"))
    throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   if(input.action==="CREATE"){
    const target:Party=party==="TPO"?"COMPANY":"TPO";
+   const mode=input.field==="OTHER"?"ASK":input.mode;
+   if(input.field!=="OTHER"){
+    const [duplicate]=await tx.select({id:placementDriveChangeRequests.id})
+     .from(placementDriveChangeRequests).where(and(
+      eq(placementDriveChangeRequests.jobId,job.id),
+      eq(placementDriveChangeRequests.proposerParty,party),
+      eq(placementDriveChangeRequests.field,input.field),
+      eq(placementDriveChangeRequests.status,"OPEN"))).limit(1);
+    if(duplicate)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   }
+   if(mode==="SUGGEST"&&input.field==="LOCATION"&&
+    lockedJob.locations.join(", ").trim().toLocaleLowerCase("en-IN")===
+     input.proposedValue.trim().toLocaleLowerCase("en-IN"))
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   if(mode==="SUGGEST"&&input.field==="DEADLINE"){
+    const proposed=Date.parse(input.proposedValue);
+    if(!Number.isFinite(proposed)||proposed<=Date.now())
+     throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
+    if(lockedJob.applicationDeadline?.getTime()===proposed)
+     throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   }
+   if(target==="COMPANY"&&(await recipients(tx,job,"COMPANY")).length===0)
+    throw new PlacementsServiceError("PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE");
    const [created]=await tx.insert(placementDriveChangeRequests).values({
     jobId:job.id,createdByUserId:context.user.id,proposerParty:party,targetParty:target,
-    mode:input.mode,field:input.field,proposedValue:input.proposedValue,reason:input.reason,
+    mode,field:input.field,proposedValue:input.proposedValue,reason:input.reason,
    }).returning();
    await announce(tx,context,job,target,"PLACEMENTS_DRIVE_CHANGE_REQUEST_CREATED",created.id,
     "New "+input.field.toLowerCase()+" change request for "+job.title+".");
@@ -128,8 +205,13 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
     "New reply in the "+request.field.toLowerCase()+" change request for "+job.title+".");
    return {id:message.id,status:"COMMENTED"};
   }
-  if(request.status!=="OPEN"||request.updatedAt.toISOString()!==input.expectedUpdatedAt)
-   throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
+  if(request.status!=="OPEN")throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+  if(request.updatedAt.toISOString()!==input.expectedUpdatedAt)
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_STALE");
+  if(input.action==="ACCEPT"&&(request.mode!=="SUGGEST"||request.field==="OTHER"))
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  if(input.action==="ANSWER"&&request.mode!=="ASK")
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   if(input.action==="WITHDRAW"){
    if(request.proposerParty!==party||request.createdByUserId!==context.user.id)
     throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
@@ -142,10 +224,17 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    updatedAt:new Date(),
   }).where(and(eq(placementDriveChangeRequests.id,request.id),
    eq(placementDriveChangeRequests.status,"OPEN"))).returning({id:placementDriveChangeRequests.id});
-  if(!updated)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
+  if(!updated)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+  const [remaining]=party==="COMPANY"&&request.proposerParty==="TPO"?
+   await tx.select({id:placementDriveChangeRequests.id}).from(placementDriveChangeRequests)
+    .where(and(eq(placementDriveChangeRequests.jobId,job.id),
+     eq(placementDriveChangeRequests.proposerParty,"TPO"),
+     eq(placementDriveChangeRequests.status,"OPEN"))).limit(1):[];
+  const ready=party==="COMPANY"&&request.proposerParty==="TPO"&&!remaining;
   await announce(tx,context,job,party==="TPO"?"COMPANY":"TPO",
-   "PLACEMENTS_DRIVE_CHANGE_REQUEST_DECIDED",request.id,
-   "Your change request about "+request.field.toLowerCase()+" was "+status.toLowerCase()+". "+input.note);
+   ready?"PLACEMENTS_DRIVE_CHANGES_MADE":"PLACEMENTS_DRIVE_CHANGE_REQUEST_DECIDED",request.id,
+   ready?"The company answered your change requests for "+job.title+"; ready to review again.":
+    "Your change request about "+request.field.toLowerCase()+" was "+status.toLowerCase()+". "+input.note);
   return {id:updated.id,status};
  });
 }

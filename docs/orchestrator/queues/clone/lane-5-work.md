@@ -11,10 +11,10 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_placements_page.tsx.md` (edit src/app/(authenticated)/admin/placements/page.tsx; 11 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part1of3.md` (edit src/components/admin/lecture-hall-manager.tsx; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part2of3.md` (edit src/components/admin/lecture-hall-manager.tsx; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part3of3.md` (edit src/components/admin/lecture-hall-manager.tsx; 10 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_placements_page.tsx.md` (edit src/app/(authenticated)/admin/placements/page.tsx; 11 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part1of3.md` (edit src/components/admin/lecture-hall-manager.tsx; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part2of3.md` (edit src/components/admin/lecture-hall-manager.tsx; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part3of3.md` (edit src/components/admin/lecture-hall-manager.tsx; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_super-admin-faculty-assignment-create.tsx.part1of3.md` (edit src/components/admin/super-admin-faculty-assignment-create.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_super-admin-faculty-assignment-create.tsx.part2of3.md` (edit src/components/admin/super-admin-faculty-assignment-create.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_super-admin-faculty-assignment-create.tsx.part3of3.md` (edit src/components/admin/super-admin-faculty-assignment-create.tsx; 1 findings; best P2)

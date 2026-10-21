@@ -36,7 +36,9 @@ export async function getCollegeDashboardLowAttendance(
   // incorrectly makes every learner with one absence look 0% present.
   const marked = sql<number>`count(*)::int`;
   const attended = sql<number>`sum(case
-    when ${attendanceRecords.status} = 'ABSENT' then 0 else 1 end)::int`;
+    when ${attendanceRecords.id} is null
+      or ${attendanceRecords.status} in ('PRESENT', 'LATE')
+    then 1 else 0 end)::int`;
   const atRisk = getDb().select({
     membershipId: collegeMemberships.id,
     displayName: users.displayName,

@@ -211,7 +211,7 @@ export default async function TpoPlacementSummaryPage({
             headings={[
               "Drive",
               "Company",
-              "Employment type",
+              "Job type",
               "Applicants",
               "Applications",
               "Shortlisted",
@@ -223,7 +223,7 @@ export default async function TpoPlacementSummaryPage({
             rows={shownDrives.map((row) => [
               row.title,
               row.companyName,
-              row.employmentType,
+              row.jobTypeLabel??row.employmentType,
               row.applicants,
               row.applications,
               row.shortlisted,

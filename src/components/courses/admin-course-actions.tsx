@@ -15,7 +15,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import {COLLEGE_COURSES_COPY} from "@/modules/courses/college-courses-copy";
 
@@ -55,7 +55,9 @@ function useCourseMutation() {
           tone: "error",
           title: "Course update failed",
           description:
-            academicSetupErrorMessage(error, "Course was not saved. Review your changes and retry."),
+            error instanceof FriendlyFetchError && error.code === "COURSE_STALE_VERSION"
+              ? "This course was modified by someone else. Refresh and reapply your changes."
+              : academicSetupErrorMessage(error, "Course was not saved. Review your changes and retry."),
         });
       }
     });
@@ -72,6 +74,7 @@ export function CourseActions({
   allowMetadata?:boolean;
   course: {
     id: string;
+    updatedAt: string;
     name: string;
     code: string;
     shortTitle?:string|null;
@@ -169,6 +172,7 @@ export function CourseActions({
                         course.id,
                       "PATCH",
                       {
+                        expectedUpdatedAt: course.updatedAt,
                         name,
                         code,
                         ...(allowMetadata?{shortTitle:shortTitle.trim(),

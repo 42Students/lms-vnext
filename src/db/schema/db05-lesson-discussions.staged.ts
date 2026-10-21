@@ -1,21 +1,21 @@
 /**
- * DB-008 / Chat 6 -- UNREGISTERED STAGED ONLY.
+ * DB-008 / chat-14 -- STAGED, pending journal review and security tests.
  *
  * Mirrors scripts/sql/db05-lesson-content-discussions.draft.sql.
  * This is not classroom/delivery chat (see discussions.ts).
- * Chat 1 alone registers the numbered migration and schema barrel export.
- * Do NOT import into runtime APIs until tenant scope, attachment ACL, parent
- * semantics and real PostgreSQL negatives have passed.
+ * Migration 0200 supplies the tenant guard, composite membership FKs and
+ * server-trusted author snapshots. Lane 15 alone registers journal entries.
+ * No runtime import/export until course access, attachment ACL, and
+ * disposable PostgreSQL negative/race tests are complete.
  *
- * NOTE: Composite parent FK only proves same content ID; separate SQL
- * db05-lesson-discussions-same-college.draft.sql replaces the tenant trigger
- * to compare content, course department, period, delivery and author scope.
- * Neither a Drizzle FK nor an index executes that trigger.
+ * Lesson-content discussions are not delivery classroom chat. Historical
+ * numeric user/content IDs map via college-scoped legacy_id_map, never a UUID
+ * cast. The Drizzle schema alone does not execute the SQL scope trigger.
  */
 import { sql } from "drizzle-orm";
 import {
   boolean, check, foreignKey, index, integer, pgTable, text,
-  timestamp, unique, uuid, varchar,
+  timestamp, unique, uniqueIndex, uuid, varchar,
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { lessonContents } from "./courses";
@@ -25,6 +25,8 @@ export const lessonContentDiscussionsStaged = pgTable(
   "lesson_content_discussions",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    // Optional, college-scoped provenance only (not the vNext API identifier).
+    legacyDiscussionId: integer("legacy_discussion_id"),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -34,6 +36,7 @@ export const lessonContentDiscussionsStaged = pgTable(
     authorMembershipId: uuid("author_membership_id")
       .notNull()
       .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    // These names are overwritten from trusted identity by migration 0200.
     authorUniqueNameSnapshot: text("author_unique_name_snapshot"),
     authorProfileNameSnapshot: text("author_profile_name_snapshot"),
     contentText: text("content_text").notNull(),
@@ -61,6 +64,19 @@ export const lessonContentDiscussionsStaged = pgTable(
       "lesson_content_discussions_parent_not_self_ck",
       sql`${table.parentDiscussionId} is null or ${table.parentDiscussionId} <> ${table.id}`,
     ),
+    foreignKey({
+      name: "lesson_content_discussions_author_college_fk",
+      columns: [table.authorMembershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "lesson_content_discussions_resolver_college_fk",
+      columns: [table.resolvedByMembershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    uniqueIndex("lesson_content_discussions_legacy_college_id_uq")
+      .on(table.collegeId, table.legacyDiscussionId)
+      .where(sql`${table.legacyDiscussionId} is not null`),
     unique("lesson_content_discussions_id_content_uq")
       .on(table.id, table.lessonContentId),
     foreignKey({

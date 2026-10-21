@@ -13,8 +13,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_notifications_zeptomail-email.ts.part1of2.md` (edit src/modules/notifications/zeptomail-email.ts; 20 findings; best P0)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_notifications_zeptomail-email.ts.part2of2.md` (edit src/modules/notifications/zeptomail-email.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_super-admin-course-bulk-visibility.tsx.md` (edit src/components/courses/super-admin-course-bulk-visibility.tsx; 8 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_lesson-resource-materials-service.ts.md` (edit src/modules/courses/lesson-resource-materials-service.ts; 8 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_super-admin-course-bulk-visibility.tsx.md` (edit src/components/courses/super-admin-course-bulk-visibility.tsx; 8 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_lesson-resource-materials-service.ts.md` (edit src/modules/courses/lesson-resource-materials-service.ts; 8 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_app_api_courses_lesson-contents_contentId_materials_route.ts.md` (edit src/app/api/courses/lesson-contents/[contentId]/materials/route.ts; 1 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_modules_messaging_providers.ts.part1of4.md` (edit src/modules/messaging/providers.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_modules_messaging_providers.ts.part2of4.md` (edit src/modules/messaging/providers.ts; 20 findings; best P1)

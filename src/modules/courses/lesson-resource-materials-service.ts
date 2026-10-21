@@ -11,6 +11,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireDeliveryContentMutation,requireLearningReadAccess} from "./learning-access";
 import {loadLessonContentScope} from "./scope";
 import {CoursesServiceError} from "./errors";
+import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
+import {StorageFileError} from "@/modules/storage/file-errors";
 import {resourceMaterialCommandSchema,resourceMaterialsWriteReady,safeLearnerResourceMaterialHref} from "./lesson-resource-materials-model";
 
 function ensureReady(){
@@ -107,4 +109,144 @@ export async function commandLessonResourceMaterial(
   await recordAudit(old.id,input.action);
   return {id:old.id,action:input.action};
  });
+}
+
+
+/**
+ * Migration-only compatibility projection of legacy ContentDataDTO materials.
+ * The old JSON allowed both camelCase and snake_case fields. A legacy FILE
+ * cannot simply be copied into READY: its original R2 key belongs to the old
+ * storage namespace and has no vNext clean-scan attestation. Re-import it
+ * through the private file upload/verification flow before enabling Open.
+ *
+ * Legacy index is an immutable migration identity: seed sequence=index and
+ * never compact sequences when removing a material.
+ */
+export type LegacyResourceMaterialDraft = {
+  legacyIndex: number;
+  kind: "LINK" | "FILE";
+  title: string;
+  notes: string | null;
+  externalUrl: string | null;
+  needsVerifiedFileImport: boolean;
+};
+
+export function parseLegacyResourceMaterialDrafts(value: unknown): LegacyResourceMaterialDraft[] {
+  let data = value;
+  if (typeof data === "string") {
+    try { data = JSON.parse(data) as unknown; } catch { return []; }
+  }
+  if (!data || typeof data !== "object" || Array.isArray(data)) return [];
+  const parent = data as Record<string, unknown>;
+  const dto = parent.contentDataDTO ?? parent.content_data_dto ?? parent;
+  if (!dto || typeof dto !== "object" || Array.isArray(dto)) return [];
+  const record = dto as Record<string, unknown>;
+  const rawMaterials = record.resourceMaterials ?? record.resource_materials;
+  if (!Array.isArray(rawMaterials)) return [];
+  return rawMaterials.slice(0, 20).flatMap((raw, index): LegacyResourceMaterialDraft[] => {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+    const item = raw as Record<string, unknown>;
+    const kind = String(item.kind ?? "").toUpperCase();
+    if (kind !== "LINK" && kind !== "FILE") return [];
+    const rawTitle = item.title ?? item.file_name ?? item.fileName ?? "Resource material";
+    const title = String(rawTitle).trim().slice(0, 255) || "Resource material";
+    const rawNotes = item.notes;
+    const notes = typeof rawNotes === "string" ? rawNotes.slice(0, 2000) : null;
+    const rawUrl = item.url ?? item.externalUrl ?? item.external_url;
+    const externalUrl = kind === "LINK" && typeof rawUrl === "string"
+      ? safeLearnerResourceMaterialHref(rawUrl) : null;
+    // Reject malformed imported links; never turn a historic object key
+    // into an external link visible to students.
+    if (kind === "LINK" && !externalUrl) return [];
+    return [{
+      legacyIndex: index, kind, title, notes, externalUrl,
+      needsVerifiedFileImport: kind === "FILE",
+    }];
+  });
+}
+
+/**
+ * A legacy /materials/{index} link can resolve to the vNext UUID without
+ * embedding an object key or exposing another content's materials. Historical
+ * index equals the material's original sequence, never its array position
+ * after removals; ADD_LINK assigns max(sequence)+1, so gaps are preserved.
+ */
+export async function resolveLegacyResourceMaterialId(
+ context: RequestContext, contentId: string, deliveryId: string | null,
+ rawIndex: number,
+): Promise<string | null> {
+ if (!Number.isSafeInteger(rawIndex) || rawIndex < 0 || rawIndex >= 20)
+  throw new StorageFileError("STORAGE_NOT_FOUND");
+ await authorizeMaterial(context, contentId, deliveryId, false);
+ const [row] = await getDb().select({id: lessonContentMaterials.id})
+  .from(lessonContentMaterials)
+  .where(and(eq(lessonContentMaterials.lessonContentId, contentId),
+   eq(lessonContentMaterials.sequence, rawIndex)))
+  .limit(1);
+ return row?.id ?? null;
+}
+
+/**
+ * Call ONLY on a user-initiated file Open. The material list is metadata-only.
+ * The UUID and delivery go through the same authorization boundary as list.
+ * R2 signs for 15 minutes, after READY and clean scanner attestation. No
+ * storage key is returned, persisted in browser state, or placed in a log.
+ */
+export async function grantLessonResourceMaterialFile(
+ context: RequestContext, contentId: string, deliveryId: string | null,
+ materialId: string,
+): Promise<{
+ url: string;
+ expiresAt: string;
+ expiresInSeconds: number;
+ originalName: string;
+ contentType: string;
+}> {
+ ensureReady();
+ const content = await authorizeMaterial(context, contentId, deliveryId, false);
+ const [material] = await getDb().select({
+  id: lessonContentMaterials.id,
+  kind: lessonContentMaterials.kind,
+  storageKey: lessonContentMaterials.storageKey,
+  originalName: lessonContentMaterials.originalName,
+  uploadStatus: lessonContentMaterials.uploadStatus,
+  scanStatus: lessonContentMaterials.scanStatus,
+  objectGeneration: lessonContentMaterials.objectGeneration,
+  verifiedSizeBytes: lessonContentMaterials.verifiedSizeBytes,
+ }).from(lessonContentMaterials).where(and(
+  eq(lessonContentMaterials.id, materialId),
+  eq(lessonContentMaterials.lessonContentId, contentId),
+ )).limit(1);
+ if (!material || material.kind !== "FILE") throw new StorageFileError("STORAGE_NOT_FOUND");
+ if (material.uploadStatus !== "READY" || material.scanStatus !== "CLEAN" ||
+  !material.objectGeneration || !material.verifiedSizeBytes || !material.storageKey)
+  throw new StorageFileError("STORAGE_FILE_NOT_READY");
+
+ const pieces = material.storageKey.split("/");
+ const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if (pieces.length !== 5 || pieces[0] !== "private" ||
+  pieces[1] !== content.collegeId || !uuid.test(pieces[2] ?? "") ||
+  pieces[3] !== "course-resource" || !uuid.test(pieces[4] ?? ""))
+  throw new StorageFileError("STORAGE_NOT_FOUND");
+ let grant: Awaited<ReturnType<typeof createPrivateReadGrant>>;
+ try {
+  grant = await createPrivateReadGrant({
+   objectKey: material.storageKey,
+   collegeId: content.collegeId,
+   ownerMembershipId: pieces[2]!,
+   expiresInMs: 15 * 60_000,
+  });
+ } catch {
+  throw new StorageFileError("STORAGE_FILE_NOT_READY");
+ }
+ if (grant.generation !== material.objectGeneration ||
+  grant.sizeBytes !== material.verifiedSizeBytes)
+  throw new StorageFileError("STORAGE_FILE_NOT_READY");
+ return {
+  url: grant.readUrl,
+  expiresAt: grant.expiresAt.toISOString(),
+  expiresInSeconds: 15 * 60,
+  originalName: material.originalName ?? "Resource file",
+  contentType: grant.contentType,
+ };
 }

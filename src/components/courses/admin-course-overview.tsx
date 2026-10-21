@@ -154,6 +154,7 @@ export function AdminCourseOverview({
           activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
           course={{
             id: course.id,
+            updatedAt: course.updatedAt.toISOString(),
             name: course.name,
             code: course.code,
             shortTitle:course.shortTitle,

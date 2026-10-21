@@ -29,3 +29,27 @@
 ### Deployment/production gate
 
 - Added `docs/operations/tpo-scheduled-jobs-dev.md` with ten-job schedule inventory, explicit missing handlers, dev-secret and actor requirements, unchanged unsafe deployment gates, and a production **NOT READY** release hold (G2-5-032-068, -063). This documents the hold; it does not itself finish the missing implementation or verification rows.
+
+## Wave 1 — packet 1: admin placements landing
+- Packet: `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_placements_page.tsx.md` | reviewed 11 findings.
+- Applied / improved: G2-17-030-038 — verified platform policy service and route persist only GLOBAL/GLOBAL, and restricted editable policy to no-college view; G2-17-030-058 — inline per-drive actions, student lookup and retention links with other routable flows retained; G2-15-026-002 — explicit direct drive-detail action; G2-10-017-033/039/048 — reused the existing scoped deadline form with date check, confirmation and result feedback on the overview; G2-17-030-022 — existing duplicate action exposed in the overview (draft-copy route, not legacy width-800 prefilling modal).
+- Skipped / partial requiring shared-owner follow-up: G2-17-030-022 full 800px Create Drive/duplicate prefill; G2-10-017-033 legacy default +7 days/end-of-day and G2-10-017-048 optimistic-token contract (existing deadline component/service owned outside admin); G2-15-026-035 placement toggle and active-tenant checks on every endpoint (service/API); G2-15-026-001/037/065 unsafe organization/global aggregate list without a selected college. The existing selected-college-only membership model remains deliberately in force. See handoff-lane-5.md.
+- Source-only verification: page imports, JSX tag pairs, policy scope and existing deadline/duplicate prop shapes reread. No TS compilation, code execution, CI or browser inspection.
+
+## Wave 1 — packet 2: lecture-hall manager (part 1/3)
+- Packet: `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part1of3.md` | reviewed 20 findings.
+- Applied / improved: G2-10-018-025/041/079/089, G2-19-018-022/032, G2-4-027-035 — snapshot-based unsaved edit protection on Cancel, backdrop, Escape and close with exact legacy discard copy; G2-10-018-031, G2-9-017-033/034 — empty required room-type selection, legacy create capacity default 50 and 1–1000 client-side range; G2-9-017-007 — always-visible creation form in responsive left card; G2-19-018-027 — quoted duplicate-name feedback; G2-19-018-020 — optional department remains UUID/null (not legacy sentinel 0), avoiding unsafe API shape.
+- Skipped / explicit lifecycle waiver: G2-10-018-027, G2-19-018-035/067, G2-4-027-028/073, G2-6-030-033 — archive/restore and future-booking conflict retained instead of unsafe legacy hard-delete; G2-6-030-022 — selected-college-only create retained, global picker requires service/authorization design. Service schema still accepts capacity to 5000; backend policy decision needed before changing shared service; listed in handoff-lane-5.md.
+- Source-only verification: edited client component re-read for import usage, balanced section/div/form/Dialog tags, button handler signatures and field IDs. No tests, TS compilation, CI or browser inspection.
+
+## Wave 1 — packet 3: lecture-hall manager (part 2/3)
+- Packet: `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part2of3.md` | reviewed 20 findings.
+- Applied or already implemented: G2-9-017-036/041/049/061/063/089 — part-1 dirty confirmation, mandatory room type, 1–1000 client capacity and normalized edit snapshot; G2-9-017-095 — max255 name/description and required room type on client, backend 5000 difference handed off; G2-10-018-030/032/035 — exact blank-name error plus native two-row Textarea in create and edit; G2-19-018-025/026, G2-4-027-026/027/029, G2-6-030-031 — room type, same-college department feedback, quoted duplicate name, field-level name guidance and separate min/max/integer capacity messages.
+- Intentionally skipped: G2-10-018-038, G2-19-018-030, G2-4-027-030 — retain Archive/Restore semantics and truthful status-specific feedback, not legacy deletion toast. Backend max5000 vs UI max1000 deliberately not changed without product/backend owner decision.
+- Validation boundary: source-only TSX import/prop/tag review; no TS execution or browser/CI.
+
+## Wave 1 — packet 4: lecture-hall manager (part 3/3)
+- Packet: `docs/audit/gap-fix-work/packets/lane-5/src_components_admin_lecture-hall-manager.tsx.part3of3.md` | reviewed 10 findings.
+- Applied or already implemented: G2-6-030-034, G2-9-017-039/040/042/046, G2-10-018-033/036, G2-19-018-024/028 — exact create/update success via copy constants, required name/type plus inline name error, "College is required." guard, per-create "Could not create the room. Try again." and per-edit "Could not save the room. Try again.", optional department placeholder "Select department", and two-row description fields.
+- Intentionally skipped: G2-9-017-047 — archive/restore is not legacy physical deletion, so show truthful "Lecture hall archived"/"Lecture hall restored", with explicit preserved-schedule-history explanation. The backend continues blocking future bookings on archive.
+- Validation boundary: existing shared Textarea checked for native props/rows; no TS execution or CI.
