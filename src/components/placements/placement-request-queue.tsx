@@ -147,7 +147,7 @@ export function PlacementRequestQueue({
   }
 
   if (requests.length === 0) {
-    return <section aria-label="Learner requests" className="border-b border-border py-5"><h2 className="font-semibold">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground">No learner requests yet.</p></section>;
+    return <section aria-label="Learner requests" className="border-b border-border py-5"><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground leading-[22px]">No learner requests yet.</p></section>;
   }
 
   const openCount = requests.filter(
@@ -159,10 +159,10 @@ export function PlacementRequestQueue({
       <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
               Learner requests
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               Review exceptional requests here. Approving a request must apply its real domain effect atomically.
             </p>
           </div>
@@ -218,7 +218,7 @@ export function PlacementRequestQueue({
                       "Learner"}{" "}
                     · {item.roleTitle}
                   </p>
-                  <p className="mt-1 break-all text-xs text-muted-foreground">
+                  <p className="mt-1 break-all text-xs text-muted-foreground leading-5">
                     {item.candidateEmail ??
                       "No email"}{" "}
                     ·{" "}
@@ -244,7 +244,7 @@ export function PlacementRequestQueue({
                 </StatusBadge>
               </div>
 
-              <p className="mt-3 text-sm text-body">
+              <p className="mt-3 text-sm text-body leading-[22px]">
                 {item.reason}
               </p>
 
@@ -313,7 +313,7 @@ export function PlacementRequestQueue({
                       }}
                     />
                   </label>
-                  {validationError[item.id]?<p role="alert" className="text-sm text-destructive lg:col-span-2">{validationError[item.id]}</p>:null}
+                  {validationError[item.id]?<p role="alert" className="text-sm text-destructive lg:col-span-2 leading-[22px]">{validationError[item.id]}</p>:null}
                   <div className="grid grid-cols-2 gap-2 lg:flex lg:items-center">
                     <Button
                       size="sm"
@@ -345,7 +345,7 @@ export function PlacementRequestQueue({
                   </div>
                 </div>
               ) : item.decisionNote ? (
-                <p className="mt-3 text-xs text-muted-foreground">
+                <p className="mt-3 text-xs text-muted-foreground leading-5">
                   Decision note:{" "}
                   {item.decisionNote}
                 </p>

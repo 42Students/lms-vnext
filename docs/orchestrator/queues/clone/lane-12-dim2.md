@@ -223,26 +223,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
 - [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
 - [x] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-recruiter-access.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
-- [ ] `src/components/placements/recorded-outside-form.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-drive-archive.tsx`
-- [ ] `src/components/placements/super-admin-drive-pipeline.tsx`
-- [ ] `src/components/placements/super-admin-drive-quick-search.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
-- [ ] `src/components/placements/tpo-college-rules-control.tsx`
-- [ ] `src/components/placements/tpo-company-interaction-form.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-cancel-form.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
-- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/placements/placement-recruiter-access.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/recorded-outside-form.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-drive-archive.tsx`
+- [x] `src/components/placements/super-admin-drive-pipeline.tsx`
+- [x] `src/components/placements/super-admin-drive-quick-search.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/tpo-college-rules-control.tsx`
+- [x] `src/components/placements/tpo-company-interaction-form.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-drive-cancel-form.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-drive-close-preview-form.tsx`
+- [x] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
 - [ ] `src/components/placements/tpo-report-record-links.tsx`
 - [ ] `src/components/placements/tpo-request-decision-control.tsx`
 - [ ] `src/components/placements/tpo-round-calendar-control.tsx`

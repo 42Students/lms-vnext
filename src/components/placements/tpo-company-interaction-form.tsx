@@ -80,8 +80,8 @@ export function TpoCompanyInteractionForm({
 
   return (
     <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-      <h2 className="text-base font-semibold text-foreground">Record a contact interaction</h2>
-      <p className="text-sm leading-6 text-body">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Record a contact interaction</h2>
+      <p className="text-sm text-body leading-[22px]">
         This records an internal CRM event, not a delivered call, email or message.
         All entries are permanent, actor-attributed history. No contact stage changes.
       </p>

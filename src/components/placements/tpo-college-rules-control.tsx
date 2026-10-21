@@ -87,8 +87,8 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
   }
   return (
     <section className="min-w-0 border-b border-border pb-5">
-      <h3 className="text-base font-semibold text-foreground">Offers and placed</h3>
-      <p className="mt-2 text-sm text-body">
+      <h3 className="text-base font-semibold text-[var(--lms-heading)]">Offers and placed</h3>
+      <p className="mt-2 text-sm text-body leading-[22px]">
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
       <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">

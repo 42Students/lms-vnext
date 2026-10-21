@@ -75,8 +75,8 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
 
   return (
     <section id="drive-lifecycle-publish" className="border-b border-border pb-6">
-      <h2 className="text-base font-semibold text-foreground">Drive publish / close / reopen</h2>
-      <p className="mt-1 text-sm text-body">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Drive publish / close / reopen</h2>
+      <p className="mt-1 text-sm text-body leading-[22px]">
         Current state: {readiness.status}. Publish and reopen require a persisted
         eligibility policy, an active role, an evaluative round and an active season/company.
         Reopen is blocked after applied results or accepted offers.
@@ -88,7 +88,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
             Review close consequences before confirming
           </Link>
         ) : (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground leading-[20px]">
             Cannot close: {readiness.close.blockers.map(tpoDriveReadinessMessage).join(" ")}
           </p>
         )}
@@ -107,7 +107,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
         ))}
       </div>
       {available.filter((item) => item.decision.blockers.length > 0).map((item) => (
-        <p key={item.action} className="mt-2 text-xs text-muted-foreground">
+        <p key={item.action} className="mt-2 text-xs text-muted-foreground leading-[20px]">
           {item.action === "PUBLISH" ? "Before publishing" : "Before reopening"}: {item.decision.blockers.map(tpoDriveReadinessMessage).join(" ")}
         </p>
       ))}
