@@ -83,3 +83,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_tpo-batches-controller.md.md` | 10/10 findings reviewed and routed by ID to TPO batch participation/rules/read services. No out-of-area edits; no CI. **Handoff, not fixed**.
 
 - `NEW_docs_audit_gap2_lane-13_l18-u030-superadmin-departments.md.md` | 8/8 findings reviewed and routed by ID to Academic departments page, mutation service and schema. No out-of-area edits; no CI. **Handoff, not fixed**.
+
+- `NEW_docs_audit_gap2_lane-6_superadmin-login.md.md` | 8/8 packet findings triaged with exact target paths; no changes to shared sign-in and consent/auth outside lane ownership. **Handoff, not fixed**, no code/CI execution.
+
+- `NEW_docs_audit_gap2_lane-14_l18-u029-semester-management.md.md` | 7/7 packet findings triaged with exact target paths; no changes to Academic semester form/page outside lane ownership. **Handoff, not fixed**, no code/CI execution.

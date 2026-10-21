@@ -755,3 +755,28 @@ TPO cohort/eligibility/invitation read and writes span Placements batch ownershi
 - G2-18-030-059 | `src/db/schema/academics.ts` | Confirm archived data retention and dependency uniqueness; old reports must not assume deleted rows disappear physically
 
 Selected-college scoping and archive-rather-than-delete are intentionally safer vNext defaults; preserving global unscoped lookup would require explicit pagination/privacy scope. Academics/admin owner must implement error/state polish. **8/8 handed off, not fixed**.
+
+## Super Admin login route — lane-7 handoff (2026-10-21)
+
+- G2-6-031-001 | `src/app/superadmin-login/page.tsx` | Restore legacy route's recognizable branded login surface or record approved single-login consolidation and preserve returnTo.
+- G2-6-031-019 | `src/components/auth/login-form.tsx` | Confirm whether explicit consent is still legally required; if yes restore checkbox/disabled rule with acknowledgement tracking.
+- G2-6-031-038 | `src/components/auth/login-form.tsx` | Get owner/legal decision on affirmative consent vs informational text.
+- G2-6-031-022 | `src/components/auth/login-form.tsx` | Restore exact text or document improved actionable contact language.
+- G2-6-031-023 | `src/components/auth/login-form.tsx` | Match message and toast duration/position if strict clone outweighs usability.
+- G2-6-031-024 | `src/components/auth/login-form.tsx` | Show exact error message on attempted empty submit; ensure keyboard flow.
+- G2-6-031-026 | `src/components/auth/login-form.tsx` | Match literal OTP Sent! toast style/duration if parity required.
+- G2-6-031-027 | `src/app/login/page.tsx` | Match placement and 4-second toast if route-specific parity; retain accessible persistent alert if approved.
+
+Unifying login across roles is intentional; affirmative OTP Terms consent requires legal/policy signoff and cannot be reinstated solely for styling. Auth owner should retain non-enumerating error and OTP security even if legacy copy is requested. **8/8 handed off, not fixed**.
+
+## Semester management clone — lane-7 handoff (2026-10-21)
+
+- G2-18-029-002 | `src/app/(authenticated)/admin/semesters/page.tsx` | Restore 10/14 side-by-side card layout at lg, stack below breakpoint
+- G2-18-029-005 | `src/app/(authenticated)/admin/semesters/page.tsx` | Recreate compact tools in list card header, including search placeholder
+- G2-18-029-006 | `src/components/admin/super-admin-semester-create-control.tsx` | Open by default in bordered card, vertical fields and plus icon
+- G2-18-029-007 | `src/components/admin/super-admin-semester-create-control.tsx` | Field-level errors, red alert headings, sticky failed-record Retry delete
+- G2-18-029-013 | `src/app/(authenticated)/admin/semesters/page.tsx` | Retain old same-scope rows and warning Couldn't refresh semesters
+- G2-18-029-016 | `src/app/(authenticated)/admin/semesters/page.tsx` | Apply old breakpoints and mobile horizontal table overflow
+- G2-18-029-008 | `src/components/admin/super-admin-semester-create-control.tsx` | After create select its program for visible new row; preserve toast
+
+Academic semester create/list visual layout and server fetch are shared Academic/Admin UI areas. Restore clone grid and safe retry with UI owner; semester number/program validation must remain scoped. **7/7 handed off, not fixed**.
