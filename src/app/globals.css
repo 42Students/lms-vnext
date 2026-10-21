@@ -1263,3 +1263,22 @@ body {
   outline-offset: 2px;
   box-shadow: none;
 }
+
+/* Legacy interaction-state parity: components___accessibility.scss:19-35,49-59.
+   Low specificity preserves intentional per-component focus and press styling. */
+:where(a, summary):focus-visible {
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
+}
+:where([role="button"]):focus-visible {
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(26,149,161,.12);
+}
+@media (hover: none) {
+  :where([role="button"]):active {
+    transform: scale(.98);
+    opacity: .9;
+    transition: transform 50ms ease, opacity 50ms ease;
+  }
+}
