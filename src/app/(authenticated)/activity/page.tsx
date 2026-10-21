@@ -159,10 +159,10 @@ export default async function ActivityPage({
       <PageHeader title="Activity Log" />
       <ErrorState title="Couldn't load activity."
         description="Your filters have been preserved. Please try again."
-        action={<Link href={retryHref}
+        action={<a href={retryHref}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">
           Retry
-        </Link>} />
+        </a>} />
     </div>;
   }
 
@@ -263,10 +263,10 @@ export default async function ActivityPage({
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:bg-[rgba(38,186,199,0.07)] md:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
             Export
           </a>}
-          <Link href={retryHref}
+          <a href={retryHref}
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Refresh
-          </Link>
+          </a>
           {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)]">
             Open audit findings board →
