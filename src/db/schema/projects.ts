@@ -193,6 +193,9 @@ export const projectInstances = pgTable(
     // Imported numeric identity and old five-state status, never permission scope.
     legacyProjectId: integer("legacy_project_id"),
     legacyStatus: varchar("legacy_status", { length: 32 }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    legacyTemplateBound: boolean("legacy_template_bound"),
+    legacyRecoverableContent: boolean("legacy_recoverable_content"),
     slug: varchar("slug", { length: 96 }).notNull(),
     title: text("title").notNull(),
     summary: text("summary"),
@@ -294,6 +297,10 @@ export const projectReleases = pgTable(
     }).notNull(),
     title: text("title").notNull(),
     description: text("description"),
+    targetDate: date("target_date", { mode: "string" }),
+    notes: text("notes"),
+    version: integer("version").notNull().default(0),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     sequence: integer("sequence").notNull(),
     status: varchar("status", { length: 32 })
       .notNull()
@@ -354,6 +361,18 @@ export const projectSprints = pgTable(
     goal: text("goal"),
     legacyReleaseKey: varchar("legacy_release_key", { length: 120 }),
     dueLabel: varchar("due_label", { length: 160 }),
+    legacySprintKey: varchar("legacy_sprint_key", { length: 120 }),
+    legacyReleaseLabel: varchar("legacy_release_label", { length: 160 }),
+    legacyDerivedStatus: varchar("legacy_derived_status", { length: 32 }),
+    sprintNumber: integer("sprint_number"),
+    startedByMembershipId: uuid("started_by_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    startedAt: timestamp("started_at", { withTimezone: true }),
+    completedByMembershipId: uuid("completed_by_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    completedAt: timestamp("completed_at", { withTimezone: true }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
     definitionOfDone: text("definition_of_done"),
     startDate: date("start_date"),
     endDate: date("end_date"),
@@ -595,6 +614,16 @@ export const projectResources = pgTable(
       length: 64,
     }),
     title: text("title").notNull(),
+    legacyResourceKey: varchar("legacy_resource_key", { length: 120 }),
+    legacyResourceKind: varchar("legacy_resource_kind", { length: 32 }),
+    legacySprintKey: varchar("legacy_sprint_key", { length: 120 }),
+    legacyTaskKey: varchar("legacy_task_key", { length: 120 }),
+    legacyFileName: text("legacy_file_name"),
+    legacyFileUrl: text("legacy_file_url"),
+    legacyAttachmentUrl: text("legacy_attachment_url"),
+    legacyDownloadUrl: text("legacy_download_url"),
+    legacyUploadedByMembershipId: uuid("legacy_uploaded_by_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
     description: text("description"),
     url: text("url"),
     resourceType: varchar("resource_type", { length: 24 }).notNull().default("LINK"),
@@ -684,6 +713,11 @@ export const projectMembers = pgTable(
       .notNull()
       .default(false),
     roleLabel: text("role_label"),
+    legacyUserType: varchar("legacy_user_type", { length: 32 }),
+    legacyDisplayName: text("legacy_display_name"),
+    legacyMemberStatus: varchar("legacy_member_status", { length: 32 }),
+    deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     startedAt: timestamp("started_at", {
       withTimezone: true,
     })
@@ -855,6 +889,10 @@ export const projectSubmissions = pgTable(
       .notNull()
       .default("DRAFT"),
     summary: text("summary").notNull(),
+    legacyDeliveryId: integer("legacy_delivery_id"),
+    legacySnapshot: text("legacy_snapshot"),
+    legacyStatus: varchar("legacy_status", { length: 60 }),
+    legacyRevisionCount: integer("legacy_revision_count"),
     sourceUrl: text("source_url"),
     demoUrl: text("demo_url"),
     notes: text("notes"),
@@ -955,6 +993,16 @@ export const projectDeliveryEvents = pgTable(
         onDelete: "restrict",
       }),
     reason: text("reason").notNull(),
+    // Historical snapshots never authorize the current event actor.
+    legacyAction: varchar("legacy_action", { length: 32 }),
+    legacyStatus: varchar("legacy_status", { length: 60 }),
+    legacyActorId: integer("legacy_actor_id"),
+    legacyActorName: text("legacy_actor_name"),
+    legacyActorType: varchar("legacy_actor_type", { length: 32 }),
+    legacyNotes: text("legacy_notes"),
+    legacyAttachmentUrl: text("legacy_attachment_url"),
+    legacyFeedback: text("legacy_feedback"),
+    legacyRevisionCount: integer("legacy_revision_count"),
     occurredAt: timestamp("occurred_at", {
       withTimezone: true,
     })
@@ -1146,6 +1194,10 @@ export const projectMeetings = pgTable(
       .notNull()
       .default("GENERAL"),
     title: text("title").notNull(),
+    meetingKey: varchar("meeting_key", { length: 120 }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
+    version: integer("version").notNull().default(0),
     agenda: text("agenda"),
     startsAt: timestamp("starts_at", {
       withTimezone: true,
@@ -1200,6 +1252,9 @@ export const projectMeetings = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("project_meetings_project_key_uq")
+      .on(table.projectId, sql`lower(${table.meetingKey})`)
+      .where(sql`${table.meetingKey} is not null`),
     index("project_meetings_project_start_idx").on(
       table.projectId,
       table.startsAt,

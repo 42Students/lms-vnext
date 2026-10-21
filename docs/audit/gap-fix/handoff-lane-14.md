@@ -32,3 +32,11 @@
 - `src/modules/projects/mentor-task-delete-service.ts` and task views (projects owner) | G2-13-017-031/-038 | Preserve soft-delete vs workspace suppression when recomputing template fallback; current code hard deletes.
 - `src/modules/projects/project-task-activity-service.ts` and task comment UI (projects owner) | G2-12-017-007/-013/-014/-015/-058/-060 | Publish comment progressValue/snapshot/badges and reject client-spoofed author; process system events separately.
 - `drizzle/meta/_journal.json` (lane 15 only) | G2-8-016-005, G2-12-017-060 | Review 0206/0207, preflight tenant import and comment kind constraints before journal registration.
+
+- `src/modules/projects/mentor-sprint-delete-service.ts` / sprint read model (projects owner) | G2-14-017-003/-008/-014/-018/-037/-062 | Compute derived status separately; tombstone and workspace suppression, no hard deletion of legacy overrides.
+- `src/modules/projects/resources-service.ts` / private files (projects/storage owner) | G2-16-028-049/-050 | Map old resource kind/keys/file provenance into private project_resource_files and signed URL ACL, never expose saved private URLs directly.
+- `src/modules/projects/mentor-meeting-service.ts` (projects owner) | G2-20-017-029/-043 | Revive by source meeting key, preserve tombstones/workspace deletion and enforce version CAS.
+- `src/modules/projects/project-members-service.ts` (projects owner) | G2-18-017-001/-007/-009/-041/-045/-046/-048 | Map historic int project/user/type to tenant membership, preserve no-reinsert semantic and audit display/status, no expired member access.
+- `src/modules/projects/project-delivery-service.ts` / importer (projects owner) | G2-3-018-008/-009/-026/-033/-044, G2-4-018-002/-007/-008 | Translate source delivery snapshots into versioned submissions; stage actorless legacy events separately, validate private attachments and owner.
+- `src/modules/projects/project-workspace-service.ts` (projects owner) | G2-11-028-067/-069, G2-2-020-045/-071 | Distinguish archived from deleted/recoverable/template-bound and explicit restore/cascade of project descendants.
+- `drizzle/meta/_journal.json` (lane15 only) | G2-14-017-060, G2-20-017-043 | Review/register 0208/0209 after tenant/collision checks.
