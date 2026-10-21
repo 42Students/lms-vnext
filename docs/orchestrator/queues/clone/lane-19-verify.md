@@ -3,5 +3,5 @@
 P0 packets (V0) come first: do them RIGHT AFTER your current packet, before anything else, because they close the most important findings. The P1 sample packets (V1) are done after your other queues. Tick [x] as you go.
 
 - [x] `docs/audit/gap-fix-work/verify/packets/lane-19/V0_lane19_1.md` (2 rows)
-- [ ] `docs/audit/gap-fix-work/verify/packets/lane-19/V1_lane19_1.md` (25 rows)
+- [x] `docs/audit/gap-fix-work/verify/packets/lane-19/V1_lane19_1.md` (25 rows; code checked and missing alias, recruiter ownership, quiz bookmark, recurring dates fixed; DB10 seed and production cron deployment attestation handed off)
 - [x] `docs/audit/gap-fix-work/verify/packets/lane-19/V1_lane19_2.md` (6 rows)
