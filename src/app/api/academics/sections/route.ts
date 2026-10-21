@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   createSection,
   listSections,
+  searchSections,
 } from "@/modules/academics/section-service";
 
 export const runtime = "nodejs";
@@ -21,6 +22,44 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
+    const mode = url.searchParams.get("mode");
+    if (mode && mode !== "list") {
+      // Scoped legacy discovery; obsolete in-memory select and cache-refresh
+      // operations never create or modify academic data in vNext.
+      const supported = ["search", "program", "category", "popular", "stats",
+        "exists", "select", "refresh"];
+      if (!supported.includes(mode))
+        return NextResponse.json({ error:"INVALID_SEARCH_MODE" },{status:400});
+      const requestedLimit=url.searchParams.get("limit")??"20";
+      const limit=Number(requestedLimit);
+      if(!/^[0-9]+$/.test(requestedLimit)||!Number.isSafeInteger(limit)||limit<1||limit>100)
+        return NextResponse.json({error:"INVALID_LIMIT"},{status:400});
+      const programId=url.searchParams.get("programId")??undefined;
+      if(programId&&!/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(programId))
+        return NextResponse.json({error:"INVALID_PROGRAM"},{status:400});
+      const q=(url.searchParams.get("q")??url.searchParams.get("name")??"").trim();
+      if(q.length>100)return NextResponse.json({error:"INVALID_QUERY"},{status:400});
+      if((mode==="exists"||mode==="select")&&!q)
+        return NextResponse.json({error:"NAME_REQUIRED"},{status:400});
+      const rows=await searchSections(context,{q,programId,limit});
+      const items=rows.map(row=>({id:row.id,name:row.name,code:row.code,
+        className:row.name,batchId:row.cohortId,batchName:row.cohortName,
+        programId:row.programId,programName:row.programName,
+        academicPeriodId:row.academicPeriodId}));
+      const headers={"Cache-Control":"private, no-store"};
+      const exact=items.find(row=>row.name.toLocaleLowerCase("en-IN")===q.toLocaleLowerCase("en-IN")||
+        row.code.toLocaleLowerCase("en-IN")===q.toLocaleLowerCase("en-IN"));
+      if(mode==="exists")return NextResponse.json({exists:Boolean(exact),status:"success"}, {headers});
+      if(mode==="select")return NextResponse.json({selected:exact??null,
+        telemetryRecorded:false,legacySelectionTracking:"RETIRED"}, {headers});
+      if(mode==="stats")return NextResponse.json({returned:items.length,limited:items.length===limit,
+        total:null,scope:"CURRENT_COLLEGE",status:"success"}, {headers});
+      if(mode==="refresh")return NextResponse.json({status:"success",
+        cache:"NO_PERSISTED_CLASS_SEARCH_CACHE",refreshed:false}, {headers});
+      if(mode==="popular")return NextResponse.json({sections:items,data:items,
+        popularityAvailable:false,order:"NAME"}, {headers});
+      return NextResponse.json({sections:items,data:items}, {headers});
+    }
     const cohortId = url.searchParams.get("cohortId");
     if (!cohortId) {
       return NextResponse.json({

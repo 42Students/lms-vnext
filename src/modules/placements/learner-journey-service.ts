@@ -6,6 +6,7 @@ import {
   inArray,
   isNotNull,
   ne,
+  or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -154,6 +155,10 @@ export async function getLearnerPlacementJourney(
 
   const [bookings, roundCatalog] = await Promise.all([
     getDb().select({
+      appointmentId:placementRoundCandidateSlots.id,
+      appointmentStatus:placementRoundCandidateSlots.status,
+      importedAppointmentState:placementRoundCandidateSlots.legacyInterviewStatus,
+      interviewOutcome:placementRoundCandidateSlots.interviewOutcome,
       applicationId:placementApplications.id,
       jobId:placementJobs.id,
       roundId:placementJobRounds.id,
@@ -175,8 +180,11 @@ export async function getLearnerPlacementJourney(
      .where(and(
        eq(placementApplications.membershipId,membership.id),
        eq(placementJobs.collegeId,membership.collegeId),
-       eq(placementRoundCandidateSlots.status,"BOOKED"),
-     )).orderBy(asc(placementRoundCandidateSlots.startsAt)),
+       or(eq(placementRoundCandidateSlots.status,"BOOKED"),
+        and(eq(placementRoundCandidateSlots.status,"CANCELLED"),
+         isNotNull(placementRoundCandidateSlots.legacyInterviewId))),
+     )).orderBy(asc(placementRoundCandidateSlots.startsAt),
+       asc(placementRoundCandidateSlots.id)),
     getDb().select({
       id:placementJobRounds.id,
       jobId:placementJobRounds.jobId,
@@ -245,7 +253,11 @@ export async function getLearnerPlacementJourney(
       learnerUserId:context.user.id,now:snapshotNow,
     });
     const appliedResults=resultsByApplication.get(row.application.id)??[];
-    const ownBookings=bookingsByApplication.get(row.application.id)??[];
+    const ownBookings=[...(bookingsByApplication.get(row.application.id)??[])]
+      .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime()||
+        a.appointmentId.localeCompare(b.appointmentId));
+    const activeBookings=ownBookings.filter(booking=>booking.appointmentStatus==="BOOKED"&&
+      !["COMPLETED","NO_SHOW","CANCELLED"].includes(booking.importedAppointmentState??booking.interviewOutcome??""));
     const knownRounds=roundsByJob.get(row.job.id)??[];
     const unresolvedRound=knownRounds.find(round=>round.kind!=="TALK" &&
       !appliedResults.some(result=>result.roundId===round.id));
@@ -290,11 +302,18 @@ export async function getLearnerPlacementJourney(
       // These are verified current candidate bookings; expected round times
       // below are informational and never presented as confirmed bookings.
       schedule:ownBookings.map(booking=>({
+        appointmentId:booking.appointmentId,
+        status:booking.importedAppointmentState??booking.interviewOutcome??
+          (booking.appointmentStatus==="CANCELLED"?"CANCELLED":"SCHEDULED"),
+        isPast:booking.startsAt.getTime()<snapshotNow.getTime(),
+        startsAtIst:new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+          year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}).format(booking.startsAt),
         roundId:booking.roundId,roundName:booking.roundName,
         sequence:booking.roundSequence,
         startsAt:booking.startsAt,endsAt:booking.endsAt,
         room:booking.room,panel:booking.panel,
-        confirmed:true as const,learnerConfirmedAt:booking.learnerConfirmedAt,
+        confirmed:booking.appointmentStatus==="BOOKED",
+        learnerConfirmedAt:booking.learnerConfirmedAt,
       })),
       rounds:knownRounds.map(round=>{
         const result=appliedResults.find(item=>item.roundId===round.id);
@@ -309,12 +328,12 @@ export async function getLearnerPlacementJourney(
         return {roundId:round.id,sequence:round.sequence,kind:round.kind,
           name:round.name,status:round.status,state,
           expectedAt:round.scheduledAt,expectedVenue:round.venue,
-          confirmed:ownBookings.some(booking=>booking.roundId===round.id)};
+          confirmed:activeBookings.some(booking=>booking.roundId===round.id)};
       }),
       offerHistory:(offersByApplication.get(row.application.id)??[])
         .sort((a,b)=>b.issuedAt.getTime()-a.issuedAt.getTime()),
       withdrawalMode:row.application.status==="SUBMITTED"
-        ?ownBookings.length>0||appliedResults.length>0?"REQUEST" as const:"SELF" as const
+        ?activeBookings.length>0||appliedResults.length>0?"REQUEST" as const:"SELF" as const
         :"NONE" as const,
     };
   });
