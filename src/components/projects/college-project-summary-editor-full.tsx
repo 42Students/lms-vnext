@@ -60,20 +60,8 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
   return ()=>ctrl.abort();
  },[open,p.collegeId]);
  async function save(){
-  if(busy)return;
-  if(!form.title.trim()){setError("Title is required");return;}
-  if(form.title.trim().length>160){setError("Title must be 160 characters or fewer");return;}
-  if(form.startDate&&form.endDate&&form.endDate<form.startDate){
-    setError("End date must be on or after the start date");return;
-  }
-  if(form.estimationUnit!==sourceForm.estimationUnit&&estimatedTaskCount>0){
-    setError("Estimation unit cannot change while "+estimatedTaskCount+
-      " task"+(estimatedTaskCount===1?" has":"s have")+" an existing estimate.");
-    return;
-  }
-  if(form.sprintLengthWeeks&&Number(form.sprintLengthWeeks)>12){
-    setError("Sprint length must be between 1 and 12 weeks.");return;
-  }
+  if(!form.title.trim()||busy)return;
+  if(form.startDate&&form.endDate&&form.endDate<form.startDate){setError("End date must be on or after start date.");return;}
   if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");
   try {

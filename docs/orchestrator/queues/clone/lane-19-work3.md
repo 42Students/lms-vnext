@@ -9,7 +9,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_tpo-placement-write-service.ts.md` (edit src/modules/announcements/tpo-placement-write-service.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-page_content-model.ts.md` (edit src/modules/placements/public-page/content-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_learner-attendance-calendar-model.ts.md` (edit src/modules/attendance/learner-attendance-calendar-model.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_college-project-summary-model.ts.md` (edit src/modules/projects/college-project-summary-model.ts; 6 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_college-project-summary-model.ts.md` (edit src/modules/projects/college-project-summary-model.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_proxy.ts.md` (edit src/proxy.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_lecture-halls_hallId_route.ts.md` (edit src/app/api/lecture-halls/[hallId]/route.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_error-copy.ts.md` (edit src/modules/placements/public-join/error-copy.ts; 5 findings; best P1)

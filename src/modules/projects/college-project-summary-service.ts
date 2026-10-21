@@ -8,11 +8,10 @@ import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed,collegeProjectSummaryMatchesCurrent} from "./college-project-summary-model";
+import {materializeCollegeProjectSummaryPatch,collegeProjectStatusChangeAllowed,collegeProjectSummaryMatchesCurrent} from "./college-project-summary-model";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
  const scope=await requireProjectManageAccess(context,projectId);
- const input=collegeProjectSummaryPatch.parse(raw);
  return getDb().transaction(async tx=>{
   const [row]=await tx.select().from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),
@@ -24,6 +23,7 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
   await assertPersistedPlatformPermission(tx,context,"projects.manage",{
    collegeId:scope.collegeId,organizationId:scope.organizationId,
   });
+  const input=materializeCollegeProjectSummaryPatch(row,raw);
   // A completed request can be retried after its response was lost. Only
   // exact equality of *all* persisted fields is an idempotent no-op; every
   // actual change still requires the caller's original optimistic token.
@@ -83,7 +83,9 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project",subjectId:row.id,subjectLabel:updated.title,
    summary:"Project workspace summary updated",
-   metadata:{from:{title:row.title,status:row.status,progressPercent:row.progressPercent},to:{title:updated.title,status:updated.status,progressPercent:updated.progressPercent},fields:["summary","phase","dueLabel","courseLabel","sectionId","blocker","nextAction","dates","sprintLengthWeeks","estimationUnit"]},
+   metadata:{from:{title:row.title,status:row.status,progressPercent:row.progressPercent},
+    to:{title:updated.title,status:updated.status,progressPercent:updated.progressPercent},
+    fields:Object.keys(raw as Record<string,unknown>).filter(key=>!key.startsWith("expected"))},
   });
   await notifyActiveProjectMembers(tx,updatedEvent.id,{
    projectId:updated.id,collegeId:scope.collegeId,roles:["LEARNER"],
