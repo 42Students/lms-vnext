@@ -10,8 +10,8 @@ export const sectionIdSchema = z.string().uuid();
 export const academicNameSchema = z
   .string()
   .trim()
-  .min(1)
-  .max(255);
+  .min(1, "Enter a name")
+  .max(255, "Maximum 255 characters");
 
 export const academicCodeSchema = z
   .string()
@@ -38,7 +38,7 @@ export const academicDateSchema = z
   );
 
 const programDurationTermsSchema = z.number().int().min(1).max(24);
-const programDurationYearsSchema = z.number().int().min(1).max(10);
+const programDurationYearsSchema = z.number().int().min(1, "Duration must be between 1 and 10 years").max(10, "Duration must be between 1 and 10 years");
 
 function validateProgramDuration(
   value: {
@@ -185,7 +185,7 @@ export const createSectionInputSchema = z.object({
     .number()
     .int()
     .positive()
-    .max(10000)
+    .max(200, "Maximum must be a whole number from 1 to 200")
     .nullable()
     .optional(),
 });
@@ -198,7 +198,7 @@ export const updateSectionInputSchema = z
       .number()
       .int()
       .positive()
-      .max(10000)
+      .max(200, "Maximum must be a whole number from 1 to 200")
       .nullable()
       .optional(),
   })
@@ -372,3 +372,32 @@ export type UpdateSectionScheduleEventInput =
   z.infer<
     typeof updateSectionScheduleEventInputSchema
   >;
+
+/** The old backend supplied numeric dept_id and optional program codes.
+ * This adapter deliberately requires an authorized college-scoped FK lookup;
+ * a dangling/foreign legacy department never gets a guessed UUID.
+ */
+export const legacyProgramImportInputSchema=z.object({
+  id:z.number().int().positive(),
+  dept_id:z.number().int().positive(),
+  name:z.string().trim().min(1).max(255),
+  code:z.string().trim().max(64).nullable().optional(),
+  duration_years:z.number().int().min(1).max(10),
+}).strict();
+
+export function translateLegacyProgramImport(
+  raw:unknown,
+  mapped:{legacyDepartmentId:number;departmentId:string},
+){
+  const source=legacyProgramImportInputSchema.parse(raw);
+  if(source.dept_id!==mapped.legacyDepartmentId)
+    throw new z.ZodError([{code:"custom",path:["dept_id"],
+      message:"Legacy department has no mapping in the selected college"}]);
+  const proposedCode=source.code?.trim()||
+    "PROG-"+String(source.id);
+  return createProgramInputSchema.parse({
+    departmentId:departmentIdSchema.parse(mapped.departmentId),
+    name:source.name,code:proposedCode,
+    durationYears:source.duration_years,durationTerms:source.duration_years*2,
+  });
+}

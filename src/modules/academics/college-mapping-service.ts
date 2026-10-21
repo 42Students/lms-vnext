@@ -17,11 +17,13 @@ import {
   programTerms,
   programTermCourses,
   programs,
+  facultyProfiles,
   sections,
   users,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { requirePermission } from "@/modules/permissions/policy";
 import {
   COLLEGE_MAPPING_PAGE_SIZE,
   facultyAssignmentQuerySchema,
@@ -31,21 +33,14 @@ import {
 } from "./college-mapping-model";
 
 const programDepartment = alias(departments, "mapping_program_department");
+const facultyDepartment = alias(departments,"mapping_faculty_department");
 
-function requireCollegeAdmin(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-      !can(context, "courses.read", {
-        collegeId: member.collegeId,
-        organizationId: member.organizationId,
-      })) {
-    throw new AuthorizationError("courses.read");
-  }
-  requirePermission(context, "courses.read", {
-    collegeId: member.collegeId,
-    organizationId: member.organizationId,
+async function requireCollegeAdmin(context: RequestContext) {
+  const acting=await resolveActingCollege(context,"courses.read");
+  requirePermission(context,"courses.read",{
+    collegeId:acting.collegeId,organizationId:acting.organizationId,
   });
-  return member.collegeId;
+  return acting.collegeId;
 }
 
 function pattern(value: string) {
@@ -58,7 +53,7 @@ export async function listCollegeSemesterCourseMappings(
   raw: unknown,
 ) {
   const query = semesterCourseQuerySchema.parse(raw);
-  const collegeId = requireCollegeAdmin(context);
+  const collegeId = await requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(courseOfferings.id, "sc_id"),
@@ -129,6 +124,9 @@ export async function listCollegeSemesterCourseMappings(
       semesterId: programTerms.id,
       semesterNumber: programTerms.termNumber,
       semesterName: programTerms.name,
+      courseType:programTermCourses.type,
+      courseCredits:programTermCourses.credits,
+      mandatory:programTermCourses.legacyIsMandatory,
     }).from(programTermCourses)
       .innerJoin(programTerms, eq(programTerms.id, programTermCourses.programTermId))
       .innerJoin(programs, eq(programs.id, programTerms.programId))
@@ -137,7 +135,7 @@ export async function listCollegeSemesterCourseMappings(
         eq(programDepartment.collegeId, collegeId),
       ))
       .where(query.programId ? eq(programs.id, query.programId) : undefined)
-      .orderBy(asc(programTerms.termNumber)),
+      .orderBy(asc(programs.name),asc(programTerms.termNumber),asc(programTermCourses.displayOrder),asc(programTermCourses.id)),
   ]);
   const total = totals[0]?.total ?? 0;
   const termByCourse = new Map<string, typeof termMappings>();
@@ -166,7 +164,7 @@ export async function listCollegeFacultyAssignments(
   raw: unknown,
 ) {
   const query = facultyAssignmentQuerySchema.parse(raw);
-  const collegeId = requireCollegeAdmin(context);
+  const collegeId = await requireCollegeAdmin(context);
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(courseTeachingAssignments.id, "fa_id"),
@@ -175,6 +173,10 @@ export async function listCollegeFacultyAssignments(
     deliveryId: aliasedColumn(courseTeachingAssignments.deliveryId, "fa_delivery_id"),
     membershipId: aliasedColumn(courseTeachingAssignments.membershipId, "fa_membership_id"),
     facultyName: aliasedColumn(users.displayName, "fa_faculty_name"),
+    facultyFirstName:aliasedColumn(users.legacyFirstName,"fa_first_name"),
+    facultyLastName:aliasedColumn(users.legacyLastName,"fa_last_name"),
+    facultyDepartmentName:aliasedColumn(facultyDepartment.name,"fa_department_name"),
+    facultyDepartmentId:aliasedColumn(facultyDepartment.id,"fa_department_id"),
     courseName: aliasedColumn(courses.name, "fa_course_name"),
     courseCode: aliasedColumn(courses.code, "fa_course_code"),
     sectionName: aliasedColumn(sections.name, "fa_section_name"),
@@ -195,6 +197,9 @@ export async function listCollegeFacultyAssignments(
       eq(membershipRoles.role, "FACULTY"),
     ))
     .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(facultyDepartment,and(eq(facultyDepartment.id,facultyProfiles.primaryDepartmentId),
+      eq(facultyDepartment.collegeId,collegeId)))
     .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
@@ -249,6 +254,9 @@ export async function listCollegeFacultyAssignments(
     items: entries.map(item => ({
       ...item,
       facultyName: item.facultyName?.trim() || "Unnamed faculty",
+      facultyFirstName:item.facultyFirstName?.trim()||
+        item.facultyName?.trim().split(/\s+/)[0]||"Faculty",
+      facultyDepartment:item.facultyDepartmentName??"Not assigned",
       state: facultyAssignmentState(item.endedAt, item.deliveryEndedAt),
     })),
     total, totalPages: mappingPageCount(total),

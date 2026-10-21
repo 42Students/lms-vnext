@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const uuid = z.string().uuid();
-const name = z.string().trim().min(1, "Enter the class or section name").max(255);
+const name = z.string().trim().min(1, "Enter the class or section name").max(255, "Maximum 255 characters");
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid class code");
 const capacity = z.number().int("Maximum must be a whole number from 1 to 200")
@@ -40,7 +40,7 @@ export const updateCollegeSectionSchema = z.object({
   confirm: z.literal(true),
 }).strict().superRefine((input, ctx) => {
   if (input.minSize != null && input.capacity != null && input.minSize > input.capacity) {
-    ctx.addIssue({ code: "custom", path: ["capacity"], message: "Maximum students cannot be below minimum students." });
+    ctx.addIssue({ code: "custom", path: ["minSize"], message: "Maximum cannot be less than minimum" });
   }
 });
 
@@ -82,7 +82,8 @@ export const legacyClassImportSchema = z.object({
   name: name,
   description: z.string().nullable().optional(),
   lower_limit: z.number().int().min(0).max(200).nullable().optional(),
-  upper_limit: creationCapacity,
+  // Zero means no maximum in the old ClassDTO, never a zero-seat class.
+  upper_limit: z.number().int().min(0).max(200),
   startDate: z.string().nullable().optional(),
   endDate: z.string().nullable().optional(),
 }).superRefine((input, ctx) => {
@@ -110,15 +111,30 @@ export function translateLegacyClassToSection(
     academicPeriodId: uuid.parse(resolved.academicPeriodId),
     name: input.name,
     code: code.parse(resolved.code),
-    capacity: input.upper_limit,
+    capacity: input.upper_limit === 0 ? 1 : input.upper_limit,
     minSize: input.lower_limit ?? null,
     description: input.description ?? null,
   });
   return {
-    section,
+    section: {...section,capacity:input.upper_limit===0?null:section.capacity},
     legacyClassId: input.id,
+    capacityDisplay: input.upper_limit===0?"No limit":String(input.upper_limit),
     // Apply these only after resolving the owning academic period.
     legacyStartsAt: input.startDate ?? null,
     legacyEndsAt: input.endDate ?? null,
   };
 }
+
+/** Reused by detail tables, imported snapshots and existing unlimited
+ * classes. A persisted null and old zero sentinel both mean no limit.
+ * New class creation intentionally requires a finite 1..200 capacity.
+ */
+export function legacyClassCapacityLabel(value:number|null|undefined):string{
+  return value===null||value===undefined||value===0?"No limit":String(value);
+}
+
+export const legacyClassSnapshotSchema=z.strictObject({
+  legacyClassId:z.number().int().positive().nullable(),
+  legacyStartsAt:z.iso.datetime({offset:true}).nullable(),
+  legacyEndsAt:z.iso.datetime({offset:true}).nullable(),
+});
