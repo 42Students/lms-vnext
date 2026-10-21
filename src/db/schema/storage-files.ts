@@ -479,3 +479,39 @@ export const storageLegacyFileCrosswalks = pgTable(
       sql`${t.legacyObjectKeyMac} is null or ${t.legacyObjectKeyMac} ~ '^[a-f0-9]{64}$'`),
   ],
 );
+
+/** Legacy object keys are source evidence, NEVER signed URLs or vNext UUIDs.
+ * The importer must compute an HMAC of each source key and insert a scoped
+ * storageLegacyFileCrosswalks row; downloads recheck live owner/scan status.
+ */
+export type LegacyFileImportState =
+  "UPLOADING" | "VERIFYING" | "READY" | "FAILED" | "QUARANTINED" | "DELETED";
+
+export function legacyStorageImportState(input:{
+  oldStatus:string;uploadExpiresAt:Date;scanAttestedClean:boolean;
+  verifiedObjectGeneration:boolean;now:Date;
+}):{status:LegacyFileImportState;reason:string}{
+  const source=input.oldStatus.trim().toUpperCase();
+  if(source==="DELETED"||source==="REMOVED")return {status:"DELETED",reason:"Source deleted"};
+  if(source==="FAILED"||source==="ERROR")return {status:"FAILED",reason:"Source upload failed"};
+  if(source==="QUARANTINED"||source==="REJECTED")return {status:"QUARANTINED",reason:"Source scan rejected"};
+  if(input.scanAttestedClean&&input.verifiedObjectGeneration&&
+    ["READY","VERIFIED","COMPLETE","COMPLETED"].includes(source))
+    return {status:"READY",reason:"Object and clean scan independently verified"};
+  if(input.uploadExpiresAt.getTime()<=input.now.getTime())
+    return {status:"FAILED",reason:"Unverified upload receipt expired"};
+  if(source==="UPLOADING"||source==="CREATED")return {status:"UPLOADING",reason:"Upload not yet verified"};
+  return {status:"VERIFYING",reason:"Awaiting verification and scanning"};
+}
+
+/** Resource deletion is routed to an owner-scoped endpoint, never directly to R2. */
+export function legacyStorageDeleteTarget(kind:string):string|null{
+  switch(kind){
+    case "ASSIGNMENT_SUBMISSION_FILE":return "assignment_submission_files";
+    case "PROJECT_RESOURCE_FILE":return "project_resource_files";
+    case "LESSON_VIDEO":return "lesson_video_assets";
+    default:return null;
+  }
+}
+export const LEGACY_FILE_UNAVAILABLE_COPY=
+  "This file is no longer available. Ask your college to restore it.";
