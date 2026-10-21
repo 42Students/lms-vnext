@@ -487,9 +487,9 @@ export function AdminOfferingLearningOverview({
             <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-3">
               {workspace.lessons.map((lesson,index)=>{
                 const itemCount=lesson.contents.length+lesson.assignments.length+lesson.quizzes.length;
-                return <button type="button" key={lesson.id}
+                return <Button variant="secondary" type="button" key={lesson.id}
                   aria-label={"Open lesson "+(lesson.name.trim()||"Untitled lesson")}
-                  className="group flex min-h-48 min-w-0 flex-col items-start rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-left shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="min-w-0 flex-col"
                   onClick={()=>setFocusedLessonId(lesson.id)}>
                   <p className="text-xs font-semibold text-primary-text">Lesson {index+1}</p>
                   <h3 className="mt-3 break-words text-[26px] font-semibold leading-[1.25] capitalize text-[var(--lms-heading)]">
@@ -502,7 +502,7 @@ export function AdminOfferingLearningOverview({
                   <span className="mt-3 text-sm font-semibold text-primary-text group-hover:underline">
                     Open lesson →
                   </span>
-                </button>;
+                </Button>;
               })}
             </div>
           ):(

@@ -4,7 +4,6 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
-import {AdminFeatureRefreshButton} from "@/components/admin/admin-feature-refresh-button";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -47,15 +46,10 @@ type SearchParams = Record<
         }
       >
         {decision.enabled
-          ? "On"
-          : "Off"}
+          ? "Enabled"
+          : "Disabled"}
       </StatusBadge>
-      <p className="text-[11px] leading-4 text-muted-foreground">
-        {decision.locked?"Locked at "+(decision.level==="DEFAULT"?"higher":decision.level.charAt(0)+decision.level.slice(1).toLowerCase())+" level":
-         decision.level!=="COLLEGE"&&decision.level!=="DEFAULT"?"Inherited from "+decision.level.charAt(0)+decision.level.slice(1).toLowerCase():
-         decision.source==="SOURCE_DEFAULT"?"Default availability":"College rule"}
-       </p>
-       <Disclosure title="Rule source" className="min-w-0"
+      <Disclosure title="Rule source" className="min-w-0"
         contentClassName="pb-2 pt-2 text-xs leading-5 text-muted-foreground">
         <p className="break-words">{describeModuleDecision(decision)}</p>
       </Disclosure>
@@ -90,7 +84,7 @@ export default async function SuperAdminFeaturesPage({
           title="Invalid feature filters"
           description="The search or page number is invalid. No college module settings were loaded."
           action={
-            {(Boolean(result.q)||Boolean(result.moduleFilter)||result.stateFilter!=="ALL"||result.lockFilter!=="ALL"||result.presenceFilter!=="ANY"||result.recentFilter!=="ALL"||result.searchField!=="ALL")?<Link
+            <Link
               href="/admin/features"
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white w-full md:w-auto justify-center"
             >
@@ -127,36 +121,32 @@ export default async function SuperAdminFeaturesPage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Feature Controls"
-        description="This is the broad availability switch for Projects and Placements. Narrower department, class or student access belongs in Module Access; Courses & Content is core and is never switched off here."
-         actions={<AdminFeatureRefreshButton/>}
+        description="Effective college-level access for the three optional modules available: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
       />
 
-      <section aria-label="Feature Controls overview" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-none sm:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability</p>
-          <StatusBadge tone={scopeLabel==="One college"?"info":scopeLabel==="Organization scope"?"warning":"success"}>{scopeLabel}</StatusBadge>
-         </div>
+      <section aria-label="Feature Controls overview" className="border-t border-border pt-6">
+        <p className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-lg font-semibold text-foreground">Optional modules by college</h2>
-        <dl className="mt-3 grid grid-cols-1 gap-0 divide-y divide-border border-y border-border text-sm min-[420px]:grid-cols-2 min-[420px]:[&>div:last-child]:col-span-2 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:[&>div:last-child]:col-span-1">
-          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges in scope</dt><dd className="mt-2 font-semibold">{result.total} matching active colleges</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on this page</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} shown colleges</dd></div>
-          <div className="min-w-0 col-span-2 px-4 py-3 sm:col-span-1"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on this page</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} shown colleges</dd></div>
+        <dl className="mt-3 grid grid-cols-2 gap-0 divide-y divide-border border-y border-border text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges matching current filters</dt><dd className="mt-2 font-semibold">{result.total} in the authorized query scope</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} matching colleges</dd></div>
+          <div className="min-w-0 col-span-2 px-4 py-3 sm:col-span-1"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} matching colleges</dd></div>
         </dl>
       </section>
-      <section aria-label="College module controls" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 shadow-none sm:p-5">
+      <section className="border-t border-border pt-6">
         <form
           action="/admin/features"
           method="get"
           className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-end"
         >
           <label className="grid min-w-0 w-full flex-1 md:min-w-60 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Search feature-control colleges
+            Find college
             <Input
               name="q"
               type="search"
               maxLength={100}
               defaultValue={result.q}
-              aria-label="Search feature-control colleges" placeholder="Search colleges"
+              placeholder="College name or code"
               className="w-full"
             />
           </label>
@@ -219,10 +209,11 @@ export default async function SuperAdminFeaturesPage({
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white"
           >
             Clear
-           </Link>:null}
-           <span role="status" className="w-full text-xs text-muted-foreground">{result.q?result.total+" matching colleges":"Showing "+result.total+" colleges"} · Search up to 100 characters</span>
-         </form>
-       <div className="mt-4 min-w-0 space-y-3">
+          </Link>
+        </form>
+      </section>
+
+      <section className="min-w-0 space-y-3">
         <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="m-0 text-lg font-semibold text-foreground">
             College module matrix
@@ -244,12 +235,11 @@ export default async function SuperAdminFeaturesPage({
         </div>
 
         <DataTable<(typeof result.items)[number]> caption="College module matrix"
-           rows={result.items} getRowKey={college=>college.id} mobileMode="scroll"
-          empty={<EmptyState title={result.total>0?"No colleges on this page":result.q?"No colleges match this search.":"No colleges found."}
-             description={result.total>0?"This page is outside the result range. Return to the first page.":
-              result.q?"Try another college name or clear the search.":"No active colleges are available in the selected Super Admin scope."}/>} 
+          rows={result.items} getRowKey={college=>college.id}
+          empty={<EmptyState title="No colleges on this page"
+            description="No active colleges match the current search and selected Super Admin scope. Check the filters or return to the first page."/>}
           columns={[
-            {key:"college",header:"College",mobilePriority:"primary",className:"min-w-[220px]",cell:college=>{
+            {key:"college",header:"College",mobilePriority:"primary",cell:college=>{
               const summary=collegeModuleCardSummary(college.modules);
               return <div className="min-w-0 space-y-2">
                 <strong className="break-words">{college.name}</strong>
@@ -260,11 +250,11 @@ export default async function SuperAdminFeaturesPage({
                 </Disclosure>
               </div>;
             }},
-            ...OPTIONAL_MODULE_KEYS.filter(module=>module==="projects"||module==="placements").map(module=>({
-              key:module,header:ADMIN_MODULE_LABELS[module],mobilePriority:"secondary" as const,className:"min-w-[140px]",
+            ...OPTIONAL_MODULE_KEYS.map(module=>({
+              key:module,header:ADMIN_MODULE_LABELS[module],mobilePriority:"secondary" as const,
               cell:(college:(typeof result.items)[number])=>{
                 const decision=college.modules.find(item=>item.module===module);
-                return decision?<div className="min-w-0" aria-label={college.name+" "+ADMIN_MODULE_LABELS[module]+" module"}>
+                return decision?<div className="min-w-0">
                   <ModuleState decision={decision}/>
                   {decision.module==="projects"||decision.module==="placements" ?
                     <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
@@ -289,7 +279,7 @@ export default async function SuperAdminFeaturesPage({
           className="flex flex-wrap items-center justify-between gap-3"
         >
           <p className="m-0 text-sm text-muted-foreground">
-            Page {result.page} of {result.totalPages} · {result.total>0?firstItem+"–"+lastItem+" of "+result.total:"0 colleges"}
+            Page {result.page} of {result.totalPages}
           </p>
           <div className="flex flex-wrap gap-2">
             {result.page > 1 ? (
@@ -332,9 +322,9 @@ export default async function SuperAdminFeaturesPage({
             ) : null}
           </div>
         </nav>
-       </div>
-       </section>
-       <Disclosure title="How to interpret module access" className="min-w-0" contentClassName="max-w-4xl pb-3 pt-2">
+      </section>
+
+      <Disclosure title="How to interpret module access" className="min-w-0" contentClassName="max-w-4xl pb-3 pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
         Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner&apos;s effective access. The CSV includes only the current permissioned page (up to 100 colleges) and excludes contacts. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
@@ -346,7 +336,7 @@ export default async function SuperAdminFeaturesPage({
         authorization gates may affect a learner&apos;s
         actual experience. Projects and Placements offer direct Turn on/Turn off controls
         in the matrix; changes are not applied until the guarded impact review and
-        server-side authorization succeed. Electives is resolved through Module Access rather than a switch in this overview.
+        server-side authorization succeed. Electives retains the advanced disclosure.
         The legacy one-click switch would bypass the intentional vNext Inherit/Lock
         and explicit-impact contracts, so it is not silently reintroduced.
       </p>
