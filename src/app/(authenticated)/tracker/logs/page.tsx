@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Tabs } from "@/components/ui/tabs";
-import { LockKeyhole } from "lucide-react";
+
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { KnownErrorsWorkspace } from "@/components/tracker/known-errors-workspace";
 import { TrackerLiveLogsExplorer } from "@/components/tracker/tracker-live-logs-explorer";
@@ -18,6 +18,16 @@ import {
 import { cloudLogPollConfigured, logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
+
+function LockKeyhole({className = ""}: {className?: string}) {
+  return <svg aria-hidden="true" viewBox="0 0 24 24" width={26} height={26}
+    className={className} fill="none" stroke="currentColor" strokeWidth={1.8}
+    strokeLinecap="round" strokeLinejoin="round">
+    <rect x={4.5} y={10} width={15} height={11} rx={2}/>
+    <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+    <circle cx={12} cy={15.5} r={1}/>
+  </svg>;
+}
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Logs · 42 Tracker" };
@@ -36,7 +46,7 @@ export default async function TrackerLogsPage({
     // The retired password-only gate must never become a privilege escalation.
     // Retain its recognizable entry point and direct staff to named SSO.
     return <section className="mx-auto max-w-[480px] space-y-4 rounded-[12px] border border-[var(--lms-canvas-border)] bg-surface p-6 text-center">
-      <LockKeyhole aria-hidden="true" size={26} className="mx-auto text-muted-foreground" />
+      <LockKeyhole className="mx-auto text-muted-foreground" />
       <PageHeader title="Logs access" description="Sign in with an authorized Super Admin account to view backend logs." />
       <p className="text-sm text-muted-foreground">Access is tied to a named account and its current permissions; the old shared password is no longer accepted.</p>
       <Link href="/login?next=%2Ftracker%2Flogs"
@@ -116,6 +126,10 @@ export default async function TrackerLogsPage({
       {newSinceLastVisit > 0 ? (
         <Alert tone="info">{newSinceLastVisit}{items.length === 40 ? "+" : ""} new tracked error {newSinceLastVisit === 1 ? "signature" : "signatures"} since your last review.</Alert>
       ) : null}
+      <nav aria-label="Log tools" className="flex flex-wrap items-center gap-3 text-sm">
+        <a href="#known-errors-heading" className="font-semibold text-primary-text underline">Known errors</a>
+        <a href="#telegram-alert-tools" className="font-semibold text-primary-text underline">Alert digest</a>
+      </nav>
       <TrackerLiveLogsExplorer initialQuery={liveQuery} />
       {!pollingReady ? (
         <Alert tone="warning">Cloud Logging polling is not configured for this deployment. The live source may be unavailable; this is not a healthy-log result.</Alert>
@@ -141,7 +155,7 @@ export default async function TrackerLogsPage({
         </div>
       </details>
       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Telegram alert tools</summary>
+        <summary id="telegram-alert-tools" className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Telegram alert tools</summary>
         <div className="min-w-0 space-y-3 pt-3">
           {knownErrors ? (
             <TrackerTelegramManualPanel items={items} configured={telegramReady} deploy={deploy} />

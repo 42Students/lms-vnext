@@ -79,7 +79,7 @@ export default async function LearnerCourseTabPage({
   const [workspaceResult, deliveriesResult, instructorsResult] = await Promise.allSettled([
     getLearnerCourseWorkspace(context, deliveryId),
     listLearnerCourseDeliveries(context, { includeHistorical: true }),
-    listLearnerCourseInstructors(context, deliveryId),
+    activeTab === "home" ? listLearnerCourseInstructors(context, deliveryId) : Promise.resolve([]),
   ]);
   if(workspaceResult.status==="rejected"){
     const reason:unknown=workspaceResult.reason;
@@ -96,9 +96,9 @@ export default async function LearnerCourseTabPage({
   if(workspaceResult.status!=="fulfilled" || deliveriesResult.status!=="fulfilled" ||
       instructorsResult.status!=="fulfilled"){
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Could not load course lessons" />
+      <PageHeader title="Could not load course" />
       <Banner tone="warning" role="alert">
-        Could not load course lessons. Content and completion counts may be incomplete.
+        Could not load course. Content and completion counts may be incomplete.
         <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/"+(activeTab??"home")}
           className="ml-2 font-semibold text-primary-text underline">Retry</Link>
       </Banner>
@@ -238,7 +238,7 @@ export default async function LearnerCourseTabPage({
   }
 
   return (
-    <div className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
+    <div role="region" aria-label="Course workspace" className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
       <nav aria-label="Course navigation" className="flex flex-wrap items-center gap-3">
         <Link
               href="/learn/courses"

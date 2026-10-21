@@ -9,7 +9,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {capStudentLookupRows,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
 export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unknown){
- const q=z.string().trim().min(3).max(150).parse(raw);
+ const q=z.string().trim().min(2).max(150).parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx),db=getDb();
  const people=await db.select({membershipId:collegeMemberships.id,name:users.displayName,
   roll:learnerProfiles.rollNumber,email:users.email})

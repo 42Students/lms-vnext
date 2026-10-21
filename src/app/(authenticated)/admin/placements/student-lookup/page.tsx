@@ -89,7 +89,7 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
         }))} unavailable={Boolean(lookup && !lookup.ok)}
       />
       {invalid ? <p role="alert" className="mt-2 text-xs text-error">
-        Enter 3 to 150 characters in a single search. Search results are scoped to the selected college.
+        Enter 2 to 150 characters in a single search. Search results are scoped to the selected college.
       </p> : null}
       {!scope ? <p role="status" className="mt-2 text-xs text-muted-foreground" id="placement-student-scope-hint">
         Choose a college in the header above to look up student placements.
@@ -149,7 +149,14 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
                 <StatusBadge tone={stageTone(status)} className={stageColor(status)}>{label}</StatusBadge>
               </div>
               <p className="text-xs text-muted-foreground">Applied {appliedDate(row.submittedAt)}
-                {row.joining === "JOINED" ? " · Joined" : row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
+                {status === "SHORTLISTED" ? " · Shortlisted" :
+                  status === "ASSESSMENT" ? " · Test stage" :
+                  status === "INTERVIEW" ? " · Interview stage" :
+                  status === "WAITLISTED" ? " · Waitlisted" :
+                  status === "REJECTED" ? " · Not selected" :
+                  status === "WITHDRAWN" ? " · Withdrawn" :
+                  row.joining === "JOINED" ? " · Joined" :
+                  row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
               </p>
             </li>;
           })}
