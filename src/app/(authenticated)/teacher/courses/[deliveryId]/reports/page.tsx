@@ -20,9 +20,9 @@ export default async function FacultyReportsHubPage({
   const [{ deliveryId }, raw] = await Promise.all([params, searchParams]);
   const parsed = parseFacultyReportsHubLocation(deliveryId, raw);
   if (!parsed.success) {
-    return <section role="alert" className="min-w-0 space-y-4">
+    return <section className="min-w-0 space-y-4">
       <PageHeader title="Invalid report filters" />
-      <p className="text-sm leading-6 text-body">Use the Section reports page to choose valid filters.</p>
+      <p role="alert" className="text-sm leading-6 text-body">Use the Section reports page to choose valid filters.</p>
       <Link href="/teacher/courses" className={reportLink}>Courses</Link>
     </section>;
   }
