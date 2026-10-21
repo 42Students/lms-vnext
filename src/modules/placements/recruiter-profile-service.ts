@@ -1,9 +1,10 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, gt, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {placementRecruiterPublicContacts} from "@/db/schema/placement-recruiter-public-contacts";
 import {placementTableExists} from "./staged-tables";
 import {
   placementCompanies,
+  placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
   activityEvents, inAppNotifications, collegeMemberships, membershipRoles, colleges,
@@ -29,6 +30,8 @@ export async function getRecruiterSelfProfile(context: RequestContext, selectedC
   if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) {
     throw new AuthorizationError("placements.recruiter.read");
   }
+  if(selectedCollegeId&&!context.recruiter.grants.some(grant=>grant.collegeId===selectedCollegeId))
+    throw new AuthorizationError("placements.recruiter.read");
   const [row] = await getDb()
     .select({
       userId: users.id,
@@ -62,9 +65,59 @@ export async function getRecruiterSelfProfile(context: RequestContext, selectedC
   const [contact]=contactReady?await getDb().select({phone:placementRecruiterPublicContacts.phoneDigits})
    .from(placementRecruiterPublicContacts).where(
     eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).limit(1):[];
-  return { ...row, contactPhoneDigits:contact?.phone??null,contactReady,
-   // A caller selecting a college must not receive unrelated college grants.
-   grants: selectedCollegeId ? context.recruiter.grants.filter(grant=>grant.collegeId===selectedCollegeId) : context.recruiter.grants };
+  // Trusted active grant IDs come from the authenticated session, not URL
+  // supplied membership keys. Recheck persisted status/expiry before exposing
+  // capabilities to the profile view.
+  const trusted=selectedCollegeId
+    ?context.recruiter.grants.filter(grant=>grant.collegeId===selectedCollegeId)
+    :context.recruiter.grants;
+  const grantRows=trusted.length?await getDb().select({
+    id:placementRecruiterCollegeGrants.id,
+    collegeId:colleges.id,collegeName:colleges.name,collegeCode:colleges.code,
+    validUntil:placementRecruiterCollegeGrants.validUntil,
+    capabilities:placementRecruiterCollegeGrants.capabilities,
+    legacyLogoExists:colleges.legacyLogoUrl,
+    logoObjectPath:colleges.logoObjectPath,
+  }).from(placementRecruiterCollegeGrants)
+   .innerJoin(placementCompanyRelationships,
+     eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
+   .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+   .where(and(
+     inArray(placementRecruiterCollegeGrants.id,trusted.map(item=>item.id)),
+     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+     eq(colleges.status,"ACTIVE"),
+     gt(placementRecruiterCollegeGrants.validUntil,new Date()),
+   )):[];
+  const grantById=new Map(grantRows.map(item=>[item.id,item]));
+  const grants=trusted.flatMap(grant=>{
+    const persisted=grantById.get(grant.id);
+    if(!persisted)return [];
+    return [{
+      ...grant,
+      collegeCode:persisted.collegeCode,logoUrl:null,
+      logoAvailable:Boolean(persisted.legacyLogoExists||persisted.logoObjectPath),
+      validUntil:persisted.validUntil,
+      capabilities:persisted.capabilities,
+      // vNext UUID grants replace non-cryptographic legacy membership keys.
+      membershipKey:null as string|null,
+    }];
+  });
+  const nameParts=row.displayName.trim().split(/\s+/).filter(Boolean);
+  return {...row,
+    firstName:nameParts[0]??"",lastName:nameParts.slice(1).join(" "),
+    contactPhoneDigits:contact?.phone??null,contactReady,
+    scope:selectedCollegeId?"COLLEGE" as const:"GLOBAL" as const,
+    selectedCollegeId:selectedCollegeId??null,
+    capabilities:[...new Set(grants.flatMap(grant=>grant.capabilities))],
+    colleges:grants.map(grant=>({
+      collegeId:grant.collegeId,collegeName:grant.collegeName,
+      code:grant.collegeCode,logoUrl:grant.logoUrl,
+      validUntil:grant.validUntil,membershipKey:grant.membershipKey,
+      grantId:grant.id,capabilities:grant.capabilities,
+    })),
+    grants,
+  };
 }
 
 export async function leaveOwnRecruiterCollegeAccess(
