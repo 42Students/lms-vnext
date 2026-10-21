@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectAdminAuditPage } from "@/components/projects/project-admin-audit-page";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Banner } from "@/components/ui/banner";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
@@ -42,17 +43,24 @@ export default async function SuperAdminProjectAuditPage({
         />
         <ProjectAdminNav basePath="/admin/projects" active="audit" />
         <EmptyState
-          title="Select a college scope"
-          description="Choose a college in the Super Admin scope selector before reviewing project activity."
+          title="Select a college to continue"
+          description="Choose a college in the Super Admin scope selector before reviewing project activity. Global project audit is available only with explicit platform-wide audit permission."
         />
       </div>
     );
   }
 
-  return (
+  return <div className="min-w-0 space-y-4">
+    {!collegeId ? <Banner tone="warning" role="status">
+      Platform-wide project audit. Results may include multiple colleges under
+      your explicitly authorized global audit scope. Select one college in the
+      scope switcher to narrow the audit before reviewing or exporting events.
+    </Banner> : <Banner tone="info" role="status">
+      Selected-college project audit. Results are restricted to the current college.
+    </Banner>}
     <ProjectAdminAuditPage
       basePath="/admin/projects"
       searchParams={await searchParams}
     />
-  );
+  </div>;
 }

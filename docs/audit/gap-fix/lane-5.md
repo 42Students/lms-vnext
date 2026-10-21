@@ -280,3 +280,27 @@
 
 ## Packet 59 — Candidate interviews canonical route
 - The old Super Admin Interviews entry now maps to the already implemented selected-college Calendar candidate appointment list (default agenda view, bounded whitelisted date/company/job/round-kind filters), rather than prioritizing round-level records that lack Confirmed/Reschedule/No Show lifecycle. Calendar already reads actual bookings with independent retry. Existing detailed round pages remain addressable. G2-5-007-012/028 page route resolved via canonical consumer; same-scope stale list retention remains calendar-service handoff. No code/tests/CI run.
+
+## Packet 60 — New global project template
+- Clarified selected org/college scope denial and how to clear it before global template authoring. Clarified college module gate at assignment/workspace consumption rather than falsely applying one arbitrary college's Projects flag to a global catalog. G2-5-029-040/041 intent reconciled with vNext platform authoring model. No code/tests/CI run.
+
+## Packet 61 — Global project template catalogue
+- Preserved strict invalid-filter handling with a recovery link retaining safely bounded q, instead of silently interpreting unknown status. Clarified that Templates is global project-authoring catalogue even with no college selected; Workspaces retain selected-college safety. G2-7-031-021/G2-6-029-030 addressed as explicit route/design split. No code/tests/CI run.
+
+## Packet 62 — Project audit scope
+- Selected-college audit and explicitly permitted platform-wide audit now have distinct visible scope explanations; no-college non-global actor sees exact "Select a college to continue". G2-7-030-046/032 addressed on page, preserving permission-gated global service. No code/tests/CI run.
+
+## Packet 63 — College web address
+- Managed subdomain and verified custom domains now load independently; either can show exact "Couldn't load the web address." with retry without hiding the successfully loaded subsection. Authorization denial is not swallowed. Added explicit unsaved/scope-transition warning. G2-9-031-028 addressed, G2-5-030-018 shared dirty/busy registry handoff. No code/tests/CI run.
+
+## Packet 64 — Tenant setup hub
+- Unified visible step tabs for Create organization and college / Launch setup / Tenant directory, and explained the safe connected creation and scope-selection workflow. Legacy single-sheet contents stay separate routes intentionally to preserve vNext scope and current persisted form contracts. Findings G2-10-023-001/105 reviewed. No code execution, tests or CI.
+
+## Packet 65 — Create drive
+- Restored 800px-wide focused form composition using the existing validated placement create workspace and clear return path. Exact floating modal/drop-in duplicateFrom state cannot be generated safely from the current server page without a tenant-validated cloning API and client modal controller; documented instead of inventing draft values. G2-17-030-022 partially fulfilled. No code execution, tests or CI.
+
+## Packet 66 — Screening assessment evidence
+- Clarified in the scoped queue that decisions are not numeric scores; linked authorized Applications detail instead of leaking unverified assessment/ranking fields or manufacturing zero scores. The field-level assessment projection requires explicit service and permission handoff (G2-13-021-002). No code/tests/CI run.
+
+## Packet 67 — Canonical workspace overview navigation
+- Legacy overview already resolves through canonical /admin/projects/[projectId]/[section]. Replaced unsafe first-of-duplicate query selection with bounded single-value from/reason, while leaving college ID exclusively in authorized selected scope. G2-18-028-001 reviewed; unsupported old numeric IDs stay unmapped pending an explicit crosswalk. No code/tests/CI run.

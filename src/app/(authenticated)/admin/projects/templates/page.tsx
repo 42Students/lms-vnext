@@ -28,10 +28,13 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
+ const recoveryQ=typeof raw.q==="string"&&raw.q.length<=100?raw.q.trim():"";
+ const recoveryHref="/admin/projects/templates"+(recoveryQ?"?q="+encodeURIComponent(recoveryQ):"");
  if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Templates" />
-  <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Clear filters</Link>}/>
+  <ErrorState title="Invalid template filters"
+    description="Check search, status and page. An unsupported status is not silently reinterpreted; clear invalid filters and keep your safe search term."
+   action={<Link href={recoveryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
@@ -56,7 +59,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  }
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Templates"
-   description="A single catalog every college draws from — college-admin can use these but not edit them."
+   description="Global project template catalogue — author reusable blueprints here before assigning them to selected colleges. College Admins can use these but cannot edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary)]-hover hover:bg-[var(--lms-button-primary)]-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">New template →</Link>:undefined}/>
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
   <form method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto]">
