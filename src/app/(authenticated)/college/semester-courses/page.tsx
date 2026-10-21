@@ -10,7 +10,8 @@ import { listCollegeTermMappings } from "@/modules/academics/college-term-mappin
 export default async function CollegeSemesterCoursesPage() {
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-6">
-    <PageHeader title="Semester–Course Mapping" />
+    <PageHeader title="Semester–Course Mapping"
+      description="Define the curriculum for each semester and spot courses that still need faculty coverage." />
     <ErrorState title="Admin not assigned to a college"
       description="Your account has no current college assignment. Contact your administrator to restore access to semester–course mappings." />
   </div>;
@@ -20,10 +21,16 @@ export default async function CollegeSemesterCoursesPage() {
   });
   return <div className="min-w-0 space-y-6 md:space-y-6">
     <PageHeader title="Semester–Course Mapping"
+      description="Define the curriculum for each semester and spot courses that still need faculty coverage."
       actions={<Link href="/college/courses"
         className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[150ms] md:min-h-9 motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Course offerings
       </Link>} />
+    <nav aria-label="Academic setup" className="flex min-w-0 flex-wrap items-center gap-4 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
+      <Link href="/college/academics" className="font-semibold text-primary-text hover:underline">Academic workspace</Link>
+      <Link href="/college/programs" className="font-semibold text-primary-text hover:underline">Programs</Link>
+      <span aria-current="page" className="border-b-2 border-[var(--lms-primary)] pb-1 font-semibold text-foreground">Semester–Course Mapping</span>
+    </nav>
     {!curriculumData ? <ErrorState title="Semester–course mappings could not be loaded"
       description="The college curriculum could not be refreshed. No mappings were changed."
       action={<a href="/college/semester-courses" className="font-semibold text-link underline underline-offset-4">Retry curriculum</a>}/> :
