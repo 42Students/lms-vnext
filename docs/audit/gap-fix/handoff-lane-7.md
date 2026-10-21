@@ -727,3 +727,31 @@ Notification channel matrix and provider templates belong to Messaging/Notificat
 - G2-6-025-023 | `src/modules/storage/file-lifecycle.ts` | Offer explicit storage-unavailable recovery, avoid exposing provider stack.
 
 Existing signed storage intentionally prevents public download URLs. Course Resource FILE attachments require a scoped grant, HEAD/scan attestation and one-time receipt consumption before exposing downloads. Storage/Courses schema owned elsewhere. **11/11 handed off, not fixed**.
+
+## TPO batch eligibility and invitation — lane-7 handoff (2026-10-21)
+
+- G2-6-023-004 | `src/modules/placements/tpo-batch-workspace-read-service.ts` | Build total/eligible/placed/unbatched journey strip and same section ordering.
+- G2-6-023-006 | `src/modules/placements/tpo-batch-workspace-read-service.ts` | Expose exact counts and quick-action badges per batch from authorized queries.
+- G2-6-023-017 | `src/modules/placements/batch-participation-service.ts` | Support clear-to-NOT_DECIDED semantics via row removal, notes and per-scope decision provenance.
+- G2-6-023-019 | `src/modules/placements/tpo-batch-workspace-read-service.ts` | Map no-college error to literal copy and 403 scope selection affordance.
+- G2-6-023-020 | `src/modules/placements/batch-participation-service.ts` | Restore exact invalid-decision client and HTTP messaging.
+- G2-6-023-021 | `src/modules/placements/batch-participation-service.ts` | Clone literal validation wording and field-level placement.
+- G2-6-023-022 | `src/modules/placements/batch-participation-service.ts` | Map error codes to legacy complete wording; disable appropriate button.
+- G2-6-023-024 | `src/modules/placements/batch-participation-service.ts` | Match confirmation/result summary and success count wording, not just event creation.
+- G2-6-023-025 | `src/modules/placements/tpo-batch-reminder-service.ts` | Render legacy Reminded N student(s) / Everyone has chosen already variants.
+- G2-6-023-026 | `src/modules/placements/tpo-batch-rules-service.ts` | Return complete effective policy or revalidate/refetch after save.
+
+TPO cohort/eligibility/invitation read and writes span Placements batch ownership. 'Not decided' clearing must preserve audit and cannot be silently conflated with INELIGIBLE. **10/10 handed off, not fixed**.
+
+## Super Admin departments — lane-7 handoff (2026-10-21)
+
+- G2-18-030-002 | `src/app/(authenticated)/admin/departments/page.tsx` | Document product decision: Super Admin all-college view intentionally removed for safety; offer explicit selected-college scope UX, not silent empty list
+- G2-18-030-036 | `src/modules/academics/department-service.ts` | Document intentionally removed unscoped listing; if global directory required, add new server-authorized paged cross-college view
+- G2-18-030-037 | `src/app/api/academics/departments/[departmentId]/route.ts` | Document snakeCase→server tenant mapping and DELETE→ARCHIVE migration; old API clients must use new safe endpoints
+- G2-18-030-039 | `src/modules/academics/college-department-mutation-service.ts` | Test selected-college SA acting scope authorization, no privilege via forged college ID, explicit missing-scope error
+- G2-18-030-041 | `src/modules/academics/college-department-mutation-service.ts` | Explain archived children still block even when active count chips show zero; provide count/blocker reason from server
+- G2-18-030-046 | `src/app/(authenticated)/admin/departments/page.tsx` | Catch list failure at page boundary, render error and retry rather than server exception or bogus no-results
+- G2-18-030-058 | `src/db/schema/academics.ts` | Document legacy int→UUID ID translation, tenant scope and archivedAt vs delete for integrations/export
+- G2-18-030-059 | `src/db/schema/academics.ts` | Confirm archived data retention and dependency uniqueness; old reports must not assume deleted rows disappear physically
+
+Selected-college scoping and archive-rather-than-delete are intentionally safer vNext defaults; preserving global unscoped lookup would require explicit pagination/privacy scope. Academics/admin owner must implement error/state polish. **8/8 handed off, not fixed**.

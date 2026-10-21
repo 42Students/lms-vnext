@@ -79,3 +79,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-2_zeptomail-template-id-resolver.md.md` | 11/11 findings mapped to Notification template resolver/provider owner files. No code outside lane scope altered, security/tenant boundary retained. **Handoff, not fixed**; static only.
 
 - `NEW_docs_audit_gap2_lane-6_resource-upload-controller.md.md` | 11/11 findings mapped to Storage policy/lifecycle and Courses lesson materials owner files. No code outside lane scope altered, security/tenant boundary retained. **Handoff, not fixed**; static only.
+
+- `NEW_docs_audit_gap2_lane-6_tpo-batches-controller.md.md` | 10/10 findings reviewed and routed by ID to TPO batch participation/rules/read services. No out-of-area edits; no CI. **Handoff, not fixed**.
+
+- `NEW_docs_audit_gap2_lane-13_l18-u030-superadmin-departments.md.md` | 8/8 findings reviewed and routed by ID to Academic departments page, mutation service and schema. No out-of-area edits; no CI. **Handoff, not fixed**.
