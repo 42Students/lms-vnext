@@ -165,7 +165,6 @@ export function LearnerCourseDiscussion({
   const historyPrepend = useRef(false);
   const locallyDeletedIds = useRef(new Set<string>());
   const changeCursor=useRef<{since:string;afterId?:string}|null>(null);
-  const refreshPollCount=useRef(0);
 
   const load = useCallback(async (silent = false) => {
     const refreshId = ++latestRefreshId.current;
@@ -261,7 +260,6 @@ export function LearnerCourseDiscussion({
   // retransferring the whole 60-message page for every idle tick.
   const pollChanges=useCallback(async()=>{
     if(!loadedOnce.current||!changeCursor.current)return;
-    if(++refreshPollCount.current%4===0){await load(true);return;}
     try{
       const params=new URLSearchParams({since:changeCursor.current.since});
       if(changeCursor.current.afterId)params.set("afterId",changeCursor.current.afterId);
@@ -500,14 +498,8 @@ export function LearnerCourseDiscussion({
         {operationToast}
       </div>:null}
       <h2 className="sr-only">Discussions</h2>
-      <p className="m-0 text-sm text-body">
-        Keep course conversations in one place and follow along easily.
-      </p>
-
-
-
       {pinned ? (
-        <section className="flex min-w-0 items-start gap-2.5 rounded-[14px] border border-[#d8e7ea] bg-[#f6fbfb] px-[14px] py-3">
+        <section className="flex min-w-0 items-start gap-2.5 rounded-[12px] border border-[#d8e7ea] bg-[#f6fbfb] px-[14px] py-3">
           <span className="mt-0.5 shrink-0 text-[#1a95a1]"><DiscussionPinIcon filled /></span>
           <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-semibold text-foreground">{pinned.messageText}</p>
@@ -677,12 +669,14 @@ export function LearnerCourseDiscussion({
                       <div className="flex shrink-0 items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                         {canPost ? <Button type="button" variant="ghost"
                           className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
+                          aria-label={"Reply to "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"}
+                          title={"Reply to "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"}
                           onClick={() => {
                             setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                             focusComposer();
                           }}>Reply</Button> : null}
                         {moderate ? <Button type="button" variant="ghost" size="sm"
-                          aria-label={row.item.pinned?"Unpin this message":"Pin this message"}
+                          aria-label={(row.item.pinned?"Unpin":"Pin")+" "+row.item.senderName+"'s message"}
                           title={row.item.pinned?"Unpin this message":"Pin this message"}
                           disabled={pinningId!==null}
                           onClick={()=>void togglePin(row.item.id)}
@@ -691,7 +685,7 @@ export function LearnerCourseDiscussion({
                         </Button> : null}
                         {(moderate || row.item.isMine) ? <Button
                           type="button" variant="ghost" size="sm"
-                          aria-label="Delete this message" title="Delete this message"
+                          aria-label={"Delete "+(row.item.isMine?"your":row.item.senderName+"'s")+" message"} title="Delete this message"
                           disabled={deletingId===row.item.id}
                           onClick={()=>{setModerationError(null);setDeleteTarget(row.item.id);}}
                           className="min-h-9 min-w-9 p-2 !text-[var(--lms-error)]">
@@ -760,13 +754,14 @@ export function LearnerCourseDiscussion({
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
             className="mt-1.5 w-full"
+            aria-describedby="course-discussion-compose-hint"
           />
           <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-xs text-muted-foreground">
+            <span id="course-discussion-compose-hint" className="text-xs text-muted-foreground">
               Enter to send · Shift+Enter for a new line
               {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
-            <Button type="submit" className="min-h-9 w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
+            <Button type="submit" className="min-h-9 w-auto" disabled={!canPost || scopeUnavailable || !learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Sending…" : "Send"}
             </Button>
           </div>
