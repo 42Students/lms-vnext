@@ -10,6 +10,11 @@ export type LearnerPlacementNoticeSource = {
   receiverType?: string;
   buttonLabel?: string | null;
   buttonUrl?: string | null;
+  jobId?: string | null;
+  unread?: boolean | null;
+  authorName?: string | null;
+  showUntil?: Date | null;
+  linkUrl?: string | null;
 };
 
 /** Only recognize persisted producer/audience enums, never infer a TPO-only notice. */
@@ -55,6 +60,10 @@ export function learnerPlacementNoticeFeed(rows: readonly LearnerPlacementNotice
       Number.isFinite(row.updatedAt.getTime()) && row.updatedAt > row.createdAt
       ? row.updatedAt.toISOString() : null,
     isPinned: row.isPinned,
+    unread: row.unread ?? null,
+    authorName: row.authorName?.trim() || null,
+    showUntil: row.showUntil && Number.isFinite(row.showUntil.getTime()) ? row.showUntil.toISOString() : null,
+    ...(row.jobId && /^[a-f0-9]{8}-[a-f0-9-]{27,}$/i.test(row.jobId)?{jobId:row.jobId,driveHref:"/learn/my-placements/jobs/"+encodeURIComponent(row.jobId)}:{}),
     ...(safeLearnerNoticeAction(row.buttonLabel, row.buttonUrl) ?? {}),
     ...(row.senderType ? { senderLabel:learnerNoticeSourceLabel(row.senderType) } : {}),
     ...(row.receiverType ? { audienceLabel:learnerNoticeAudienceLabel(row.receiverType) } : {}),

@@ -48,6 +48,10 @@ function formatTokens(body:string,members:TeamPayload["members"]){
     return chunk;
   });
 }
+/** Legacy name-keyed thread identifiers must be migrated server-side to
+ * canonical company UUIDs within the current college. Never use an untrusted
+ * company name as the live read/write key or fetch a foreign-college thread.
+ */
 /** TPO-companies-05: internal college team only; read operations are authorized server side. */
 export function TpoCompanyTeamConversation({companyId,companyName,actorMembershipId}:{
  companyId:string;companyName:string;actorMembershipId:string;
