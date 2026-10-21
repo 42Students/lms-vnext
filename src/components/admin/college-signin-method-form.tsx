@@ -10,7 +10,7 @@ import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
-import {collegeSignInMethodSchema} from "@/modules/colleges/signin-methods-model";
+import {collegeSignInMethodSchema,signInChannelOrder} from "@/modules/colleges/signin-methods-model";
 import type {z} from "zod";
 type Method=z.infer<typeof collegeSignInMethodSchema>;
 const choices:{value:Method;label:string;hint:string}[]=[
@@ -106,6 +106,15 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyC
     <span className="min-w-0"><strong className="block break-words text-sm">{choice.label}</strong><span className="text-xs text-muted-foreground">{choice.hint}</span></span>
    </label>)}
   </fieldset>
+  <section aria-label="Sign-in order preview" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+    <h3 className="mb-2 text-sm font-semibold text-foreground">Sign-in preview</h3>
+    <ol className="flex flex-wrap items-center gap-2" aria-label="One-time-code channel order">
+      {signInChannelOrder(selection).map((channel,index)=><li key={channel}
+        className="rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle px-3 py-2 text-xs font-semibold text-primary-text">
+        {index+1}. {channel==="EMAIL"?"Email one-time code":"Phone one-time code"}
+      </li>)}
+    </ol>
+  </section>
   <p className="text-xs leading-5 text-muted-foreground">Saved sign-in method: {choices.find(choice=>choice.value===savedMethod)?.label??savedMethod}</p>
   {dirty?<Alert tone="warning">Unsaved sign-in method changes. Save or restore the saved selection before leaving this page.</Alert>:null}
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>{setMessage("");setConfirmOpen(true);}}

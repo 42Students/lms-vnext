@@ -1,4 +1,16 @@
 import {z} from "zod";
+/** Normalize unambiguous legacy local clock input to IST before validating. */
+export function normalizeTpoDriveDeadlineIst(value:string):string{
+ const trimmed=value.trim();
+ if(!/^\d{4}-\d{2}-\d{2}[ T]\d{2}:\d{2}(?::\d{2})?$/.test(trimmed))return trimmed;
+ const local=trimmed.replace(" ","T");
+ const full=local.length===16?local+":00":local;
+ const instant=new Date(full+"+05:30");
+ if(!Number.isFinite(instant.getTime())||
+   new Date(instant.getTime()+330*60_000).toISOString().slice(0,19)!==full)
+  return trimmed;
+ return full+"+05:30";
+}
 export const tpoDriveDeadlineSchema=z.object({
  confirmed:z.literal(true),expectedUpdatedAt:z.iso.datetime({offset:true})
   .transform(value=>new Date(value).toISOString()),
@@ -6,7 +18,8 @@ export const tpoDriveDeadlineSchema=z.object({
  newDeadlineIso:z.string({error:issue=>issue.input===undefined||issue.input===null
   ?"newDeadline is required":"newDeadline must be an ISO date-time"})
   .trim().min(1,{message:"newDeadline is required"})
-  .datetime({offset:true,message:"newDeadline must be an ISO date-time"}),
+  .transform(normalizeTpoDriveDeadlineIst)
+  .pipe(z.iso.datetime({offset:true,message:"newDeadline must be an ISO date-time"})),
 }).strict();
 export type TpoDriveDeadlineInput=z.infer<typeof tpoDriveDeadlineSchema>;
 export function evaluateTpoDriveDeadline(

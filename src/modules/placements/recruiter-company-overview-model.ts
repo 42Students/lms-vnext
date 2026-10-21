@@ -46,13 +46,13 @@ export function buildRecruiterCollegeAcademicBands(
  const safeSample=sample.length>=minimumGroup;
  const cgpaBands=safeSample?RECRUITER_CGPA_BANDS.map(band=>{
   const count=sample.filter(row=>row.cgpa!==null&&row.cgpa>=band.min&&row.cgpa<band.max).length;
-  return {label:band.label,count:count>=minimumGroup?count:null};
+  return {label:band.label,count:count>=minimumGroup?Math.round(count/5)*5:null};
  }):null;
  const branches=new Map<string,number>();
  for(const learner of learners)branches.set(learner.branchName,(branches.get(learner.branchName)??0)+1);
  const byBranch=[...branches].filter(([,count])=>count>=minimumGroup)
   .sort((a,b)=>b[1]-a[1]||a[0].localeCompare(b[0],"en-IN"))
-  .map(([branch,count])=>({branch,count}));
+  .map(([branch,count])=>({branch,count:Math.round(count/5)*5}));
  return {cgpaBands,basedOn:safeSample?sample.length:null,byBranch,
   suppressed:!safeSample,minimumGroup};
 }

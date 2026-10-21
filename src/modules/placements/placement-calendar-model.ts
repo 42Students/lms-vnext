@@ -138,21 +138,13 @@ export function placementCalendarWindow(
   const period = careerCalendarPeriod([], anchor, view);
 
   if (view === "week") {
-    const days = Array.from(
-      { length: 7 },
-      (_, index) =>
-        shiftCareerCalendarDay(
-          period.start,
-          "day",
-          index,
-        ),
-    );
-
-    return {
-      from: period.start,
-      to: period.end,
-      days,
-    };
+    // The legacy TPO calendar starts on Sunday; the learner calendar is
+    // Monday-first. Noon UTC avoids a host-timezone-dependent weekday.
+    const weekday = new Date(`${anchor}T12:00:00.000Z`).getUTCDay();
+    const from = shiftCareerCalendarDay(anchor, "day", -weekday);
+    const days = Array.from({length:7},(_,index)=>
+      shiftCareerCalendarDay(from,"day",index));
+    return {from,to:days[6]!,days};
   }
 
   const first = period.start;
@@ -160,8 +152,8 @@ export function placementCalendarWindow(
     `${first}T12:00:00.000Z`,
   ).getUTCDay();
 
-  // Monday-first, consistent with careerCalendarPeriod.
-  const offset = (weekday + 6) % 7;
+  // Legacy TPO month grid starts on Sunday.
+  const offset = weekday;
 
   const gridStart = shiftCareerCalendarDay(
     first,

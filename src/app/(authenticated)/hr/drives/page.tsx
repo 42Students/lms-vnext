@@ -22,6 +22,7 @@ import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-lin
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
+import {recruiterRequestLegacyLabel} from "@/modules/placements/recruiter-drive-request-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
 import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
@@ -60,7 +61,11 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
   if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Drives" description="Choose an authorized college to open its hiring drives." />
-    {grants.length === 0 ? <EmptyState title="Drive access is not switched on" description="Your placement-cell relationship must be active and have Drives permission before any hiring drives are visible. Contact the placement cell to request access." /> :
+    {grants.length === 0 ? <EmptyState
+      title={context.recruiter.companyId?"Drive access is not switched on":"Your account has no company yet"}
+      description={context.recruiter.companyId
+        ?"Your placement-cell relationship must be active and have Drives permission before any hiring drives are visible. Contact the placement cell to request access."
+        :"Your account has no company yet. Please contact the placement cell"} /> :
     <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
       key:grant.collegeId,label:grant.collegeName,
       href:recruiterDrivesHref({
@@ -148,6 +153,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </span>
       </nav>
     </details>
+    <p className="text-xs font-semibold text-muted-foreground">Hiring with {grants.find(grant=>grant.collegeId===selectedCollege)?.collegeName??"your selected college"}</p>
     <RecruiterRequestFeedback storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)+":feedback"}/>
     <HrUnsentDriveAlert collegeId={selectedCollege}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
@@ -232,11 +238,26 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         const editable=req.status==="REQUEST"||req.status==="SENT_BACK";
         return <li key={req.id} className="min-w-0 py-4">
           <p className="min-w-0 break-words font-semibold text-foreground">{title}</p>
-          <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"info":"info"}>{requestStageLabel(req.status)}</StatusBadge></p>
+          <p className="mt-1"><StatusBadge tone={req.status==="REJECTED"||req.status==="CANCELLED"?"error":req.status==="SENT_BACK"?"warning":req.status==="DRAFT"?"info":"info"}>
+            {recruiterRequestLegacyLabel(req.status)}
+          </StatusBadge><span className="ml-2 text-xs text-muted-foreground" title="Saved request lifecycle">{requestStageLabel(req.status)}</span></p>
           {req.status==="SENT_BACK"?<Alert tone="warning" className="mt-2">
             Placement-cell feedback: {req.decisionNote??"Please contact the placement cell for the requested changes."}
           </Alert>:null}
           <p className="mt-2 text-xs text-muted-foreground">Requested {req.createdAt.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</p>
+          <dl className="mt-2 grid gap-x-4 gap-y-1 text-xs text-body sm:grid-cols-2 lg:grid-cols-3">
+            {([
+              ["Location",draft.location],["Job type",draft.employmentType],["Drive mode",draft.driveMode],
+              ["Minimum CGPA",draft.minimumCgpa],["Passing year",draft.passingYear],["CTC (LPA)",draft.ctcLpa],
+              ["Fixed (LPA)",draft.fixedLpa],["Variable (LPA)",draft.variableLpa],
+              ["Stipend / month (INR)",draft.stipendMonthlyInr],
+            ] as const).filter((entry)=>typeof entry[1]==="string"&&entry[1].trim()).map(([label,value])=>
+              <div key={label}><dt className="inline font-semibold">{label}: </dt><dd className="inline">{String(value)}</dd></div>)}
+            {Array.isArray(draft.branches)&&draft.branches.length>0?<div>
+              <dt className="inline font-semibold">Branches: </dt>
+              <dd className="inline">{draft.branches.filter((item):item is string=>typeof item==="string").join(", ")}</dd>
+            </div>:null}
+          </dl>
           {editable?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&"+(req.status==="SENT_BACK"?"fix":"edit")+"="+encodeURIComponent(req.id)}
             className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
