@@ -59,7 +59,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   ];
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Interviews"
-      description={(data?.job.title??appointments?.job.title??"Drive schedule")+" · Candidate interviews, completed and no-show outcomes."
+      description={(data?.job.title??appointments?.job.title??"Drive schedule")+" · Candidate interviews, completed and no-show outcomes."}
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Drive overview</Link>} />
     <div className="flex min-w-0 flex-wrap gap-3 text-sm">
       <span className="rounded-full border border-[var(--lms-canvas-border)] px-3 py-1">This drive only</span>
