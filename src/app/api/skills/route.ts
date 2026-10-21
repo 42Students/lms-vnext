@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { ZodError, z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
-import { isSuperAdmin } from "@/modules/identity/context";
 import { getDb } from "@/db/client";
 import { activityEvents } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
@@ -51,7 +50,9 @@ export async function POST(request:Request) {
   try{
     const context=await getCurrentRequestContext();
     const payload:unknown=await request.json();
-    const action=z.strictObject({action:z.string()}).passthrough().parse(payload).action;
+    const actionInput=z.strictObject({action:z.string()}).passthrough().safeParse(payload);
+    const action=actionInput.success?actionInput.data.action:null;
+    if(!action)return recordSelectedSkillIds(context,request,payload);
     if(action==="IMPORT_SKILLS"){
       if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE")
         return NextResponse.json({error:"FORBIDDEN"},{status:403});
@@ -270,20 +271,20 @@ const skillSelectionSchema=z.strictObject({
  * v1 numeric skill IDs must be resolved by an explicitly scoped migration
  * adapter; never reinterpret untrusted legacy integers as a UUID.
  */
-export async function POST(request: Request) {
-  if (!isSameOriginRequest(request))
-    return NextResponse.json({error:"FORBIDDEN"},{status:403});
+async function recordSelectedSkillIds(
+  context:Awaited<ReturnType<typeof getCurrentRequestContext>>,
+  request:Request,payload:unknown,
+) {
   if (!skillsCatalogRuntimeEnabled())
     return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING"},
       {status:503,headers:{"Cache-Control":"private, no-store"}});
   try {
-    const context=await getCurrentRequestContext();
     if(!canReadSkillCatalog(context))
       return NextResponse.json({error:"FORBIDDEN"},{status:403});
     const token=request.headers.get("idempotency-key");
     if(!token||!z.uuid().safeParse(token).success)
       return NextResponse.json({error:"IDEMPOTENCY_KEY_REQUIRED"},{status:400});
-    const input=skillSelectionSchema.parse(await request.json());
+    const input=skillSelectionSchema.parse(payload);
     const ids=[...new Set([...(input.skillIds??[]),...(input.skillId?[input.skillId]:[])])].sort();
     const dedupeKey=`skills:usage:${context.user.id}:${token}`;
     const result=await getDb().transaction(async tx=>{

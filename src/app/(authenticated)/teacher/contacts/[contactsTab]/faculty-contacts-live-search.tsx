@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {FACULTY_CONTACTS_SEARCH_PLACEHOLDER} from "@/modules/courses/faculty-contacts-filter-model";
 
 export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
  baseHref:string;initialSearch:string;pageSize:number;
@@ -29,7 +30,7 @@ export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
    <circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>
   </svg>
   <Input type="search" aria-label="Search contacts" maxLength={200}
-   placeholder="Search contacts..." value={value}
+   placeholder={FACULTY_CONTACTS_SEARCH_PLACEHOLDER} value={value}
    onChange={event=>setValue(event.target.value)}
    className="min-h-11 w-full min-w-0 pl-9 pr-10 md:min-h-9"/>
   {value?<Button variant="secondary" type="button" aria-label="Clear search" title="Clear search"

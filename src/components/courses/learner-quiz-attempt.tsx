@@ -137,6 +137,14 @@ export function LearnerQuizAttempt() {
         if(!response.ok)return;
         const data:unknown=await response.json();
         if(!data||typeof data!=="object"||!("memberships" in data))return;
+        const activeRole=(data as {currentRole?:unknown}).currentRole;
+        // The legacy /quiz URL also served teachers. Faculty must land in the
+        // permission-checked report/preview, never in a learner submission UI.
+        if(activeRole==="FACULTY"&&quizId&&deliveryId){
+          if(!controller.signal.aborted)router.replace("/teacher/report/quiz/"+encodeURIComponent(quizId)+
+            "?deliveryId="+encodeURIComponent(deliveryId));
+          return;
+        }
         const raw=(data as {memberships:unknown}).memberships;
         if(!Array.isArray(raw)||raw.length===0)return;
         const ids=raw.map((entry:unknown)=>entry&&typeof entry==="object"&&
@@ -145,7 +153,7 @@ export function LearnerQuizAttempt() {
         if(!controller.signal.aborted)setAccountScope((ids as string[]).sort().join(":"));
       }).catch(()=>{ /* No identity scope means no browser draft persistence. */ });
     return ()=>controller.abort();
-  },[]);
+  },[quizId,deliveryId,router]);
   // Cross-account draft isolation: the authenticated membership roster is
   // unique to a user; never restore or persist if that scope is unavailable.
   const storageKey = quizId && deliveryId && accountScope
