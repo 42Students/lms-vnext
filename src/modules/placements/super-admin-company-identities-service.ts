@@ -29,8 +29,9 @@ export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:u
   if(!company||company.status!=="ACTIVE")throw new Error("Company is unavailable.");
   const [collegeDomain]=await tx.select({id:tenantDomains.id}).from(tenantDomains)
     .where(ilike(tenantDomains.host,domain)).limit(1);
-  if(collegeDomain||domain.endsWith(".edu")||domain.endsWith(".ac.in"))
-   throw new Error("A college domain cannot be claimed by a company.");
+  if(collegeDomain||[".ac.in",".edu.in",".res.in",".edu",".ac.uk",
+    ".edu.au",".ac.nz",".edu.sg",".ac.jp",".edu.cn"].some(suffix=>("."+domain).endsWith(suffix)))
+   throw new Error("College and university addresses can\'t be used for a company");
   const current=await tx.select().from(placementCompanyDomains)
     .where(eq(placementCompanyDomains.companyId,company.id)).for("update");
   const own=current.find(d=>d.domain.toLowerCase()===domain);
@@ -42,24 +43,25 @@ export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:u
      ilike(placementCompanies.primaryDomain,domain),
      ne(placementCompanies.id,company.id))).limit(1);
    if(primaryOwner)
-    throw new Error("Domain belongs to "+primaryOwner.name+". Merge them instead.");
+    throw new Error(domain+" already belongs to another company. Merge them instead.");
    const [taken]=await tx.select({companyId:placementCompanyDomains.companyId,
       companyName:placementCompanies.name})
      .from(placementCompanyDomains)
      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyDomains.companyId))
      .where(ilike(placementCompanyDomains.domain,domain)).limit(1);
    if(taken&&taken.companyId!==company.id)
-    throw new Error("Domain belongs to "+taken.companyName+". Merge them instead.");
+    throw new Error(domain+" already belongs to another company. Merge them instead.");
    if(!own){
     await tx.insert(placementCompanyDomains).values({
       companyId:company.id,domain,addedByUserId:context.user.id,
+      addedByUserType:"SUPER_ADMIN",verifiedBy42:false,
     });
    }
    if(!company.primaryDomain)await tx.update(placementCompanies)
     .set({primaryDomain:domain,updatedAt:new Date()}).where(eq(placementCompanies.id,company.id));
   }else{
    if(!own)throw new Error("Domain is not registered with this company.");
-   if(current.length<=1)throw new Error("Keep at least one company domain.");
+   if(current.length<=1)throw new Error("A company keeps at least one domain");
    await tx.delete(placementCompanyDomains).where(eq(placementCompanyDomains.id,own.id));
    if(company.primaryDomain===domain)await tx.update(placementCompanies)
     .set({primaryDomain:current.find(d=>d.id!==own.id)!.domain,updatedAt:new Date()})
@@ -84,10 +86,10 @@ export async function changeSuperAdminCompanyAlias(context:RequestContext,raw:un
   if(!company||company.status!=="ACTIVE")throw new Error("Company is unavailable.");
   if(cmd.action==="ADD"&&canonicalCompanyAlias(company.name)===canonicalCompanyAlias(alias))
    throw new Error("This is already the company's canonical name.");
-  const [otherName]=await tx.select({id:placementCompanies.id}).from(placementCompanies)
+  const [otherName]=await tx.select({id:placementCompanies.id,name:placementCompanies.name}).from(placementCompanies)
    .where(and(ilike(placementCompanies.name,alias),ne(placementCompanies.id,company.id))).limit(1);
   if(cmd.action==="ADD"&&otherName)
-   throw new Error("Other name conflicts with another company. Merge them instead.");
+   throw new Error("Other name already belongs to "+otherName.name+". Merge them instead.");
   const [existing]=await tx.select().from(placementCompanyAliases)
    .where(ilike(placementCompanyAliases.alias,alias)).limit(1);
   if(cmd.action==="ADD"){

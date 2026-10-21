@@ -13,6 +13,20 @@ import {placementJobIdSchema,placementRoundIdSchema} from "./validation";
 import {overlapsInterviewRoom,planInterviewDay,sameInterviewRoom,tpoInterviewSlotActionSchema} from "./tpo-interview-slot-model";
 import {actOnPlacementRequest} from "./request-service";
 
+/** Legacy /api/v1/interviews endpoint operations mapped to canonical vNext
+ * job/round/slot facts. Not all legacy actions belong to the same writer. */
+export const LEGACY_INTERVIEW_SLOT_ACTIONS = {
+  LIST: "getTpoInterviewSlotWorkspace",
+  CREATE: "mutateTpoInterviewSlots.BOOK",
+  UPDATE: "mutateTpoInterviewSlots.MOVE",
+  CANCEL: "mutateTpoInterviewSlots.CANCEL",
+  CONFIRM: "learner-round-confirmation-service",
+  RESCHEDULE: "placement_learner_requests.ROUND_RESCHEDULE",
+  COMPLETE: "college-interview-action-service",
+  FEEDBACK: "college-interview-action-service",
+} as const;
+
+
 async function scope(context:RequestContext,rawJobId:unknown,rawRoundId:unknown){
  const collegeId=await requireTpoJobCollege(context);
  const jobId=placementJobIdSchema.parse(rawJobId),roundId=placementRoundIdSchema.parse(rawRoundId);
@@ -80,6 +94,12 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
   upcomingSlotCount:slots.filter(slot=>slot.startsAt>=now).length,
   pastSlotCount:slots.filter(slot=>slot.startsAt<now).length,
   pendingRescheduleCount:reschedules.length,
+  // A pending change request does not cancel the existing confirmed slot.
+  upcomingApplicationIds:slots.filter(slot=>slot.status==="BOOKED"&&slot.startsAt>=now)
+   .map(slot=>slot.applicationId).filter((id):id is string=>Boolean(id)),
+  pendingRescheduleApplicationIds:reschedules.map(row=>row.applicationId),
+  pastApplicationIds:slots.filter(slot=>slot.status==="BOOKED"&&slot.startsAt<now)
+   .map(slot=>slot.applicationId).filter((id):id is string=>Boolean(id)),
   recruiterProposals:recruiterProposals.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString()})),
   reschedules:reschedules.map(row=>({...row,requestedAt:row.requestedAt.toISOString()})),
   slots:slots.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
@@ -90,11 +110,14 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
  * membership before checking overlapping time windows. */
 async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
  applicationId:string,startsAt:Date,endsAt:Date,ignoreSlotId?:string){
- const [application]=await tx.select({membershipId:placementApplications.membershipId})
-  .from(placementApplications).innerJoin(placementJobs,
-   eq(placementJobs.id,placementApplications.jobId))
+ const [application]=await tx.select({
+   membershipId:placementApplications.membershipId,userId:collegeMemberships.userId,
+  }).from(placementApplications)
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
   .where(and(eq(placementApplications.id,applicationId),
-   eq(placementJobs.collegeId,collegeId))).limit(1);
+   eq(placementJobs.collegeId,collegeId),
+   eq(collegeMemberships.collegeId,collegeId))).limit(1);
  if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
  const [membership]=await tx.select({id:collegeMemberships.id})
   .from(collegeMemberships).where(and(
@@ -102,14 +125,19 @@ async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
    eq(collegeMemberships.collegeId,collegeId),
    eq(collegeMemberships.status,"ACTIVE"))).for("update").limit(1);
  if(!membership)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+ // Lock the person as well as their college membership. The same learner
+ // can have multiple memberships in one organization; checking one UUID
+ // alone would permit simultaneous interviews in different colleges.
+ const [lockedUser]=await tx.select({id:users.id}).from(users)
+  .where(eq(users.id,application.userId)).for("update").limit(1);
+ if(!lockedUser)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
  const [conflict]=await tx.select({id:placementRoundCandidateSlots.id})
   .from(placementRoundCandidateSlots)
   .innerJoin(placementApplications,
    eq(placementApplications.id,placementRoundCandidateSlots.applicationId))
-  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
   .where(and(
-   eq(placementJobs.collegeId,collegeId),
-   eq(placementApplications.membershipId,application.membershipId),
+   eq(collegeMemberships.userId,application.userId),
    eq(placementRoundCandidateSlots.status,"BOOKED"),
    ignoreSlotId?ne(placementRoundCandidateSlots.id,ignoreSlotId):undefined,
    lt(placementRoundCandidateSlots.startsAt,endsAt),
@@ -158,6 +186,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
  }
  if(info.round.jobStatus!=="PUBLISHED"||info.round.kind!=="INTERVIEW"||
   info.round.roundStatus!=="SCHEDULED")throw new PlacementsServiceError("PLACEMENT_ROUND_JOB_READ_ONLY");
+ // Legacy allowed booking only against an active interview. The explicit
+ // round and drive states are the vNext equivalent, not a generic event.
  return getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   const [current]=await tx.select({status:placementJobRounds.status})
