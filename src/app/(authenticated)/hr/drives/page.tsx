@@ -11,6 +11,7 @@ import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
+import { RecruiterDriveLiveSearch } from "@/components/hr/recruiter-drive-live-search";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { hasActiveRecruiter } from "@/modules/identity/context";
@@ -60,7 +61,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const grants = context.recruiter.grants;
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
-  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Drives" description="Choose an authorized college to open its hiring drives." />
+  if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Drives" description="Select a college workspace to view its hiring drives." />
     {grants.length === 0 ? <EmptyState
       title={context.recruiter.companyId?"Drive access is not switched on":"Your account has no company yet"}
       description={context.recruiter.companyId
@@ -184,6 +185,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       </div>
       </details>
     </section>:null}
+    <section aria-label="Recruiter drives workspace"
+      className="min-w-0 space-y-4 rounded-[12px] border border-border bg-surface p-4 md:p-6">
     <Tabs ariaLabel="Drive lifecycle" renderPanel={false} value={query.data.view}
       items={viewOptions.map(option=>({
         value:option.view, label:option.label, count:option.count,
@@ -200,8 +203,8 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
-      <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-[180px] gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by role
-        <Input type="search" name="q" defaultValue={query.data.q} maxLength={100} placeholder="Search by role" className="min-h-11 w-full md:min-h-9" /></label>
+      {totals.all>6 || Boolean(query.data.q)?<RecruiterDriveLiveSearch
+        currentHref={returnTo} initialQuery={query.data.q}/>:null}
       <details open={query.data.employment!=="ALL"||query.data.mode!=="ALL"||query.data.deadline!=="ALL"||query.data.sort!=="RECENT"} className="order-last min-w-0 w-full basis-full border-t border-border pt-2">
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More filters</summary>
         <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -301,6 +304,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view !== "WAITING" ? <div className="flex min-w-0 flex-wrap items-center justify-between gap-3"><p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
         Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total.toLocaleString("en-IN")}</p>{pageResult.pages>1 ? <Pagination label="Drive pages" page={pageResult.page} pageCount={pageResult.pages} hrefForPage={page=>recruiterDrivesHref({...query.data,collegeId:selectedCollege,page})}/> : null}</div>:null}
+    </section>
     <Link href="/hr/round-results" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review round results →</Link>
     <p className="text-xs text-muted-foreground">Request history is saved. Placement-cell approval and external sending remain unavailable until the registered employer-request workflow is ready.</p>
   </div>;
