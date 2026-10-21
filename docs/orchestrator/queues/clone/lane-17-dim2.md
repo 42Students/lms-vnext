@@ -407,19 +407,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/courses/college-assessment-aggregate.tsx`
 - [x] `src/components/courses/college-content-aggregate.tsx`
 - [x] `src/components/courses/college-learner-progress-report.module.css`
-- [ ] `src/components/courses/college-learner-progress-report.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/groups/college-group-import-preview.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/placement-drive-day-overview.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/courses/college-learner-progress-report.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/groups/college-group-import-preview.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/placement-drive-day-overview.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
 - [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
 - [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
 - [ ] `src/components/placements/tpo-round-results-import.tsx`
