@@ -97,7 +97,7 @@ export default async function CollegeActivityPage({
         ] as const).map(([key,label])=>{
           const active=key===(data.query.category??(data.query.view==="EVERYTHING"?"EVERYTHING":"IMPORTANT"));
           return <Link key={key} aria-current={active?"page":undefined}
-            href={collegeActivityHref({...data.query,category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
+            href={collegeActivityHref({...data.query,loaded:1,category:key==="IMPORTANT"||key==="EVERYTHING"?undefined:key,
               view:key==="EVERYTHING"?"EVERYTHING":"IMPORTANT",module:undefined,importance:undefined})}
             className={"inline-flex min-h-10 items-center justify-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold " +
              (active?"bg-white text-[#0b6772] shadow-sm":"text-[var(--lms-body-text)] hover:bg-white/70")}>
@@ -219,7 +219,7 @@ export default async function CollegeActivityPage({
         </div>
       </form>
     </section>
-    <section className="min-w-0 space-y-5" aria-label="College activity events">
+    <section id="activity-feed" className="min-w-0 scroll-mt-5 space-y-5" aria-label="College activity events">
       {data.groups.length===0?<EmptyState title={(data.query.view??"IMPORTANT")==="IMPORTANT"&&!data.query.category
         ? "Nothing important happened in this period." : "No activity in this period."}
         description="Try another category or date range to see recorded changes."
@@ -244,8 +244,11 @@ export default async function CollegeActivityPage({
                   </div>
                   {group.count>1?<span className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1 text-xs font-semibold">{group.count} related events · several at once</span>:null}
                 </div>
-                <details className="min-w-0 text-sm">
-                  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Details</summary>
+                <details className="group min-w-0 text-sm">
+                  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
+                    <span className="group-open:hidden">Details</span>
+                    <span className="hidden group-open:inline">Hide details</span>
+                  </summary>
                   <dl className="grid min-w-0 gap-2 border-l border-[var(--lms-canvas-border)] pl-3 sm:grid-cols-2">
                     <div><dt className="font-semibold">Actor</dt><dd className="break-words">{collegeActivityActor(item.actor)}</dd></div>
                     <div><dt className="font-semibold">When (IST)</dt><dd>{when(item.event.occurredAt)}</dd></div>
@@ -265,11 +268,16 @@ export default async function CollegeActivityPage({
       <p className="text-xs text-muted-foreground">Showing {data.items.length} recorded events in {data.groups.length} chronological groups on this page. Grouped counts never imply missing history was retrieved.</p>
     </section>
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
-      <p className="text-muted-foreground">Up to {data.query.pageSize ?? "50"} events per page</p>
-      {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        Load more older activity
-      </Link> : <span className="text-muted-foreground">No older matching events</span>}
+      <p className="text-muted-foreground">Showing {data.items.length} events · {data.remainingCount.toLocaleString("en-IN")} older matching events</p>
+      {data.nextCursor ? ((data.query.loaded ?? 1)<10
+        ? <Link href={collegeActivityHref({...data.query,loaded:(data.query.loaded ?? 1)+1})+"#activity-feed"}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-link md:min-h-9">
+          Load more ({data.remainingCount.toLocaleString("en-IN")} older)
+        </Link>
+        : <Link href={collegeActivityHref({...data.query,loaded:1},data.nextCursor)}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Older activity
+        </Link>) : <span className="text-muted-foreground">No older matching events</span>}
     </nav>
     <p className="text-xs text-muted-foreground">
       Important shows high- and critical-importance events. Category views remain college-scoped; Everything includes all importance levels.
