@@ -711,7 +711,7 @@ const collegeSearchSynonyms:Readonly<Record<string,string>>={
  "st joseph":"st joseph college",
 };
 function collegeSearchNormalized(value:string){
- return value.toLocaleLowerCase("en-IN").replace(/[^\\p{L}\\p{N}]+/gu," ").trim();
+ return value.toLocaleLowerCase("en-IN").replace(/[^\p{L}\p{N}]+/gu," ").trim();
 }
 /** Bounded edit-distance-2 check for the old cache's rare typo fallback.
  * Unlike full-matrix distance it exits as soon as a row exceeds the bound. */
@@ -789,8 +789,7 @@ export async function listAuthorizedCollegeSearchOptions(
  }
  ranked.sort((a,b)=>
   b.score-a.score||
-  Math.min(Math.floor((popularity.get(b.row.id)??0)/10),20)-
-   Math.min(Math.floor((popularity.get(a.row.id)??0)/10),20)||
+  (popularity.get(b.row.id)??0)-(popularity.get(a.row.id)??0)||
   a.row.name.localeCompare(b.row.name)||a.row.id.localeCompare(b.row.id));
  return ranked.slice(0,cap).map(({row})=>({
   id:row.id,
