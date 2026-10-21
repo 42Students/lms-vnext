@@ -14,7 +14,7 @@ export async function getSuperAdminHiringReportFilters(context:RequestContext){
    scope.organizationId?eq(colleges.organizationId,scope.organizationId):undefined))
   .limit(1);
  if(!college)throw new AuthorizationError("placements.read");
- const [jobs,depts,progs,batches]=await Promise.all([
+ const [jobsResult,deptsResult,progsResult,batchesResult]=await Promise.allSettled([
   db.select({id:placementJobs.id,name:placementJobs.title}).from(placementJobs)
    .where(eq(placementJobs.collegeId,scope.collegeId)).orderBy(asc(placementJobs.title)).limit(2000),
   db.select({id:departments.id,name:departments.name}).from(departments)
@@ -27,5 +27,18 @@ export async function getSuperAdminHiringReportFilters(context:RequestContext){
    .innerJoin(departments,eq(departments.id,programs.departmentId))
    .where(eq(departments.collegeId,scope.collegeId)).orderBy(asc(cohorts.name)).limit(2000),
  ]);
- return {jobs,departments:depts,programs:progs,batches};
+ const jobs=jobsResult.status==="fulfilled"?jobsResult.value:[];
+ const depts=deptsResult.status==="fulfilled"?deptsResult.value:[];
+ const progs=progsResult.status==="fulfilled"?progsResult.value:[];
+ const batches=batchesResult.status==="fulfilled"?batchesResult.value:[];
+ const failedFilters=[
+  jobsResult.status==="rejected"?"jobs":null,
+  deptsResult.status==="rejected"?"departments":null,
+  progsResult.status==="rejected"?"programs":null,
+  batchesResult.status==="rejected"?"batches":null,
+ ].filter((name):name is string=>name!==null);
+ const filtersError=failedFilters.length
+  ?`Could not load ${failedFilters.join(", ")} for filtering. Those dropdowns are empty because the request failed, not because there is no data.`
+  :null;
+ return {jobs,departments:depts,programs:progs,batches,failedFilters,filtersError};
 }

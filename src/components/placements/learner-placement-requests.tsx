@@ -11,6 +11,21 @@ import { useToast } from "@/components/ui/toast";
 import { apiFetch } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 
+/** Legacy seven-option vocabulary. Keep specialized vNext request payload
+ * shapes separate: Withdrawal needs an application, Extension an offer; the
+ * remaining five are the authorized general-request kinds. Round reschedule
+ * remains an additional vNext-only action.
+ */
+export const LEGACY_LEARNER_REQUEST_KIND_CHOICES = [
+ {legacy:"WITHDRAWAL",label:"Withdrawal",vNext:"APPLICATION_WITHDRAWAL",surface:"APPLICATION"},
+ {legacy:"OFFER_EXTENSION",label:"Offer extension",vNext:"OFFER_EXTENSION",surface:"OFFER"},
+ {legacy:"REGISTRATION_CHANGE",label:"Registration change",vNext:"REGISTRATION_CHANGE",surface:"GENERAL"},
+ {legacy:"ABSENCE_DISPUTE",label:"Absence dispute",vNext:"ABSENCE_DISPUTE",surface:"GENERAL"},
+ {legacy:"CORRECTION",label:"Correction",vNext:"CORRECTION_WITH_PROOF",surface:"GENERAL"},
+ {legacy:"EXTERNAL_OFFER",label:"External offer",vNext:"OFF_CAMPUS_OFFER",surface:"GENERAL"},
+ {legacy:"PAP",label:"Placement after placement",vNext:"PLACEMENT_AFTER_PLACEMENT",surface:"GENERAL"},
+] as const;
+
 type RequestItem = {
   id: string;
   requestType:
