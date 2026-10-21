@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 type RouteContext = { params: Promise<{ slug: string }> };
 const uuid = z.string().uuid();
 const slugSchema = z.string().min(1).max(64)
-  .regex(/^[a-z0-9][a-z0-9-]*$/);
+  .regex(/^[a-z0-9][a-z0-9._-]*$/);
 
 /** Authenticated, tenant-scoped legacy /by-slug/{slug} compatibility.
  * An archived slug remains reserved in the unique index, but is not exposed
