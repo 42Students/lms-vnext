@@ -10,6 +10,17 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { updateCollegeTermMapping, removeCollegeTermMapping, CollegeTermMappingError } from "@/modules/academics/college-term-mapping-service";
 
 export const runtime = "nodejs";
+/** Legacy semester courses endpoint map (numeric term/course identifiers must
+ * be mapped within the acting college, never trusted from a client request):
+ * old GET semester/{id}/courses => GET /api/academics/semesters/:semesterId
+ * old POST single/multiple => POST /api/academics/semester-course-mappings
+ * old PUT credits/is_mandatory/course_order => PATCH .../:mappingId
+ * (credits and position supported; source mandatory is preserved read-only);
+ * old DELETE semesterId/courseId => DELETE .../:mappingId {confirm:true}
+ * old reorderCourses => PUT /api/academics/semester-course-mappings
+ * with {programTermId,mappingIds:[full ordered mapping UUID set]}. Reordering
+ * uses a transaction and resequences ALL peers, so update atomically.
+ */
 const inUseMessage = "A current active batch offering is using this semester-course mapping. Remove the live offering before deleting this mapping.";
 
 export async function GET(
@@ -47,8 +58,15 @@ export async function GET(
       .where(and(eq(courseOfferings.courseId,row.courseId),
         eq(courseOfferings.status,"ACTIVE"))).limit(1);
     return NextResponse.json({mapping:row,canRemove:!activeOffering,
+      data:row,legacySemantics:{
+        mandatory:row.isMandatory===null?"unknown":row.isMandatory,
+        orderIsOneBased:true,
+        positionChangesResequencePeers:true,
+        deleteRequiresConfirmation:true,
+      },
       deleteWarning:activeOffering?inUseMessage:
-        "Removing this course will remove it from the semester map; historical course and learner records are retained."});
+        "Removing this course will remove it from the semester map; historical course and learner records are retained."},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch(error) { return apiErrorResponse(error); }
 }
 
@@ -61,7 +79,8 @@ export async function DELETE(
     const { mappingId } = await params;
     const context = await getCurrentRequestContext();
     const result = await removeCollegeTermMapping(context, mappingId, await request.json());
-    return NextResponse.json({ result, message:"Course removed from semester" });
+    return NextResponse.json({status:"OK",result,message:"Course removed from semester"},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     if (error instanceof CollegeTermMappingError)
       return NextResponse.json({ error: error.code,
@@ -81,7 +100,9 @@ export async function PATCH(
     const { mappingId } = await params;
     const context = await getCurrentRequestContext();
     const mapping = await updateCollegeTermMapping(context, mappingId, await request.json());
-    return NextResponse.json({ mapping, message: "Semester course updated" }, { headers: { "Cache-Control": "private, no-store" } });
+    return NextResponse.json({ status:"OK", mapping,
+      data:mapping,message:"Semester course updated",
+      reorderHint:"Changing position resequences other courses within this semester." }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     if (error instanceof CollegeTermMappingError)
       return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });

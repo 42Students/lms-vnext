@@ -9,9 +9,24 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { collegeBatchRetireIdSchema, collegeBatchRetireSchema } from "./college-batch-retire-model";
 
+/** Legacy hard delete is deliberately not reproduced: deleting a cohort
+ * destroys provenance for imported enrollments, progression and audit events.
+ * The vNext retention policy is SOFT_ARCHIVE_PLANNED_ONLY. A legacy migration
+ * should represent source-deleted IDs as archived tombstones instead of
+ * reusing those numeric IDs for new batches; no runtime delete occurs here.
+ * Do not treat this explicit product decision as owner approval.
+ */
+export const COLLEGE_BATCH_RETIRE_POLICY="SOFT_ARCHIVE_PLANNED_ONLY" as const;
+
 export class CollegeBatchRetireError extends Error {
   constructor(public readonly code:"BATCH_NOT_FOUND"|"BATCH_STALE"|"BATCH_NOT_PLANNED"|"BATCH_HAS_DEPENDENCIES") {
-    super(code);this.name="CollegeBatchRetireError";
+    const details={
+      BATCH_NOT_FOUND:"Batch not found in the selected college.",
+      BATCH_STALE:"This batch changed. Refresh its details before archiving.",
+      BATCH_NOT_PLANNED:"Only a planned batch can be archived.",
+      BATCH_HAS_DEPENDENCIES:"The batch has class, enrollment, course offering or progression history. Move or resolve those records before archiving.",
+    } as const;
+    super(details[code]);this.name="CollegeBatchRetireError";
   }
 }
 export async function retireCollegeBatch(context:RequestContext,rawId:unknown,raw:unknown) {
@@ -48,7 +63,11 @@ export async function retireCollegeBatch(context:RequestContext,rawId:unknown,ra
       collegeId:member.collegeId,organizationId:member.organizationId,
       subjectType:"cohort",subjectId:id,subjectLabel:batch.name,
       summary:"Unused planned batch archived",
-      metadata:{fromStatus:"PLANNED",toStatus:"ARCHIVED"},
+      metadata:{fromStatus:"PLANNED",toStatus:"ARCHIVED",
+        retentionPolicy:COLLEGE_BATCH_RETIRE_POLICY,
+        sourceAction:"LEGACY_BATCH_DELETE_REPLACED_BY_ARCHIVE",
+        classHistoryChecked:true,learnerHistoryChecked:true,
+        courseOfferingHistoryChecked:true,progressionHistoryChecked:true},
     });
     return updated;
   });

@@ -69,7 +69,7 @@ export default async function RecruiterCompanyReportsPage({
     return (
       <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
         <PageHeader
-          title="Company Reports"
+          title="Company & Team"
           description="Read-only, college-scoped employer hiring metrics."
         />
 
@@ -89,16 +89,30 @@ export default async function RecruiterCompanyReportsPage({
     );
   }
 
-  const report = await getRecruiterCompanyReports(
-    context,
-    parsed.data,
-  );
+  let report:Awaited<ReturnType<typeof getRecruiterCompanyReports>>;
+  try{
+    report=await getRecruiterCompanyReports(context,parsed.data);
+  }catch{
+    return <div className="min-w-0 max-w-full space-y-4">
+      <PageHeader title="Company & Team" description="Reports"/>
+      <ErrorState title="Could not load reports"
+        description="The report data could not be loaded for this recruiter account and college. No incomplete totals are shown."
+        action={<Link href="/hr/company/reports"
+          className="inline-flex min-h-11 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+            <path d="M20 11a8 8 0 1 0-2 5.5M20 4v7h-7"/>
+          </svg>
+          Retry reports
+        </Link>}/>
+    </div>;
+  }
 
   if (report.status !== "READY") {
     return (
       <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
         <PageHeader
-          title="Company Reports"
+          title="Company & Team"
           description="Choose one college to view your employer's authorized hiring reports. Reports from different college relationships are never combined."
         />
 
@@ -165,7 +179,7 @@ export default async function RecruiterCompanyReportsPage({
   return (
     <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6">
       <PageHeader
-        title="Company Reports"
+        title="Company & Team"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
         actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4 max-[767px]:flex-col max-[767px]:items-stretch">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
@@ -200,7 +214,9 @@ export default async function RecruiterCompanyReportsPage({
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">All your drives at this college</h2>
         <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
-          {buildRecruiterReportFunnel(report.funnel).map(stage=><div key={stage.label}
+          {buildRecruiterReportFunnel(report.funnel)
+            .filter(stage=>!(stage.label.toLowerCase().includes("assessment")&&stage.total===0))
+            .map(stage=><div key={stage.label}
             className={funnelStyles.row}>
             <span className={funnelStyles.label}>{stage.label}</span>
             <MetricBar label={stage.label+" hiring funnel"}
@@ -300,8 +316,10 @@ export default async function RecruiterCompanyReportsPage({
 
         {jobs.length === 0 ? (
           <EmptyState
-            title="No matching drives"
-            description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
+            title={query.status==="ALL"&&summary.total===0?"Reports":"No matching drives"}
+            description={query.status==="ALL"&&summary.total===0
+              ?"Reports appear once you have a drive with applicants."
+              :"No matching drives for these filters. Review the college or clear the selected drive status."}
             action={query.status !== "ALL" ? <Link href={recruiterCompanyReportsHref({collegeId})}
               className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link> : undefined}
           />
