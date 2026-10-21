@@ -156,7 +156,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         Export matching drives CSV
       </Link>
     </div>:null}
-    <form method="get" action="/recruiter/drives" role="search" aria-label="Filter recruiter drives" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
+    <form method="get" action="/recruiter/drives" role="search" aria-label="Filter recruiter drives" className="flex min-w-0 flex-wrap items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 max-[767px]:flex-col max-[767px]:items-stretch">
       <Input type="hidden" name="collegeId" value={selectedCollege} />
       <Input type="hidden" name="view" value={query.data.view} />
       <Input type="hidden" name="page" value="1" />
