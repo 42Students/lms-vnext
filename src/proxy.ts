@@ -27,6 +27,17 @@ export function proxy(request: NextRequest) {
       "x-request-id": requestId,
     } });
   }
+  // Retired legacy group detail route now lives in the college People area.
+  // Temporary same-host redirect neither leaks nor parses obsolete integer IDs.
+  if (/^\/college-admin\/student-groups\/[^/]+\/?$/.test(path)) {
+    const target=request.nextUrl.clone();
+    target.pathname="/college/contacts";
+    target.search="";
+    const response=NextResponse.redirect(target,307);
+    response.headers.set("Cache-Control","no-store");
+    response.headers.set("x-request-id",requestId);
+    return response;
+  }
   const response = NextResponse.next({ request: { headers: forwardHeaders } });
   response.headers.set("x-request-id", requestId);
   return response;
