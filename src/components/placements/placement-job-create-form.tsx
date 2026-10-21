@@ -127,6 +127,7 @@ export function PlacementJobCreateForm({
   const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const uncertainKey=backupKey+":create-outcome-unknown";
   const [uncertainCreate,setUncertainCreate]=useState(false);
+  const [publishMissing,setPublishMissing]=useState<string[]>([]);
   const [companyMode, setCompanyMode] =
     useState<"EXISTING" | "NEW">(
       companies.length > 0
@@ -312,6 +313,11 @@ export function PlacementJobCreateForm({
         event.currentTarget,
       );
       const title = String(data.get("title") ?? "").trim();
+      const description=String(data.get("description")??"").trim();
+      // Keep HTML-stripped validation at prepublish without interpreting
+      // arbitrary rich markup or introducing an unsafe HTML renderer.
+      const meaningfulDescription=description.replace(/<[^>]*>/g,"")
+        .replace(/&(?:nbsp|#160);/gi," ").trim();
       // TPO-drives-45: datetime-local is IST regardless of browser timezone.
       const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
       const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
@@ -327,7 +333,43 @@ export function PlacementJobCreateForm({
         Number(openingsValue) < 1 || Number(openingsValue) > 100_000)) {
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
+      if(companyMode==="NEW"&&!createdJobRef.current){
+        const name=String(data.get("companyName")??"").trim();
+        const domain=String(data.get("companyDomain")??"").trim();
+        const website=String(data.get("companyWebsite")??"").trim();
+        if(name.length<2||name.length>150)
+          throw new Error("Company name must be between 2 and 150 characters");
+        if(!domain&&!website)
+          throw new Error("Add the company's website or a company email domain");
+        if(website){
+          let secure=false;
+          try{
+            const parsed=new URL(website);
+            secure=parsed.protocol==="https:"&&Boolean(parsed.hostname)&&
+              !parsed.username&&!parsed.password&&website.length<=500;
+          }catch{/* Invalid URL */}
+          if(!secure)throw new Error("Company website must be a valid https link");
+        }
+      }
       if(reviewPublish){
+        const missing:string[]=[];
+        if(!meaningfulDescription)missing.push("Job description");
+        if(companyMode==="EXISTING"&&!companies.some(company=>company.relationshipId===companyRelationshipId))
+          missing.push("Employer");
+        if(companyMode==="NEW"&&!String(data.get("companyName")??"").trim())
+          missing.push("Company name");
+        if(!deadlineIso||Date.parse(deadlineIso)<=Date.now())
+          missing.push("Future application deadline");
+        const stipendCheck=nullableDecimal(String(data.get("stipendPerMonthInr")??""));
+        const fixedCheck=nullableDecimal(String(data.get("fixedLpa")??""));
+        if(minimumLpa===null&&maximumLpa===null&&fixedCheck===null&&stipendCheck===null)
+          missing.push("CTC or stipend");
+        const modeCheck=String(data.get("applicationMode")??"INTERNAL");
+        if(modeCheck!=="INTERNAL"&&!String(data.get("externalApplicationUrl")??"").trim())
+          missing.push("HTTPS employer application link");
+        setPublishMissing(missing);
+        if(missing.length)
+          throw new Error("Complete "+missing.length+" item(s) before review: "+missing.join(", ")+".");
         // TPO-drives-42: verify company selection before any employer or job is written.
         if(companyMode==="EXISTING"&&!companies.some(company=>company.relationshipId===companyRelationshipId))
           throw new Error("Pick the company from the list before publishing.");
@@ -479,9 +521,7 @@ export function PlacementJobCreateForm({
           title: String(
             data.get("title") ?? "",
           ).trim(),
-          description: String(
-            data.get("description") ?? "",
-          ).trim(),
+          description,
           legacyPostingDetails:{
             campusPool:{hostCollege,reportingTime,travelNote},
             portal:{studentsRegisterSeparately,name:studentsRegisterSeparately?portalName:"",
@@ -644,9 +684,10 @@ export function PlacementJobCreateForm({
             "POST",{kind:round.kind,name:round.name});
         }
       }
+      setPublishMissing([]);
       showToast({
         tone: "success",
-        title: "Draft opportunity created",
+        title: reviewPublish ? "Draft saved — review before publishing" : "Drive draft created",
         description:planned.length
           ? `Saved ${planned.length} planned round(s). Choose each round's mode and schedule in the drive workspace.`
           : "Continue in the drive workspace to configure rounds and run the hiring process.",
@@ -706,10 +747,11 @@ export function PlacementJobCreateForm({
         </ol>
         <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
         <div aria-label="Publish preflight warnings" className="mt-3 space-y-1 text-xs text-body">
-          <p role="status">No interview rounds added yet</p>
+          {plannedTpoRoundRows(roundPreset).length===0?
+           <p role="status">No interview rounds added yet</p>:null}
           {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"&&selectedProgramIds.length===0&&selectedCohortIds.length===0?
-            <p role="status">No eligibility rules set - every registered student will see this drive</p>:null}
-          <p>These are warnings, not publication blockers. Review the drive and invite the recruiter before confirming publication.</p>
+            <p role="status">Open eligibility is selected; actual reach still depends on registration, membership and learner participation.</p>:null}
+          <p>Draft review does not publish or notify learners. Confirm the server's eligibility reach and missing items on the next screen.</p>
         </div>
         </nav>
       </details>
@@ -859,7 +901,7 @@ export function PlacementJobCreateForm({
                   value={newEmployerName}
                   onChange={event=>setNewEmployerName(event.target.value)}
                   required
-                  maxLength={200}
+                  maxLength={150}
                 />
               </label>
               <label>
@@ -882,6 +924,7 @@ export function PlacementJobCreateForm({
                   className={inputClass}
                   name="companyWebsite"
                   type="url"
+                  maxLength={500}
                   placeholder="https://example.com"
                 />
               </label>
@@ -1433,20 +1476,25 @@ export function PlacementJobCreateForm({
           {plannedTpoRoundRows(roundPreset).map(round=><li key={round.sequence}>{round.name} · {round.kind}</li>)}
         </ol>
         <p className="mt-2 text-xs text-muted-foreground">
-          These rounds are created as pending with the draft. Configure online or on-campus mode,
-          venues and dates in the drive workspace before inviting candidates.
+          The selected round template creates pending rounds with the draft. Review each round's
+          name, kind and mode in the saved drive before sending any candidate invitations.
         </p>
       </section>
       <details className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
       <section aria-label="Who this reaches" className="min-w-0 pb-[var(--lms-space-4)]">
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Round templates are saved as pending during draft setup; scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.</p>
       </section>
 
       </details>
+      {publishMissing.length>0?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm">
+        <p className="font-semibold">Complete {publishMissing.length} item(s) before reviewing publication</p>
+        <ul className="mt-2 list-disc pl-5">{publishMissing.map(label=><li key={label}>{label}</li>)}</ul>
+        <p className="mt-2">Your form is still here. Complete these fields and choose Review &amp; publish again.</p>
+      </div>:null}
       <section className="flex min-w-0 flex-col gap-3 border-t border-border py-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
+        <p className="text-sm text-body">Create a draft, then review the server reach, rounds and notifications before confirming publication.</p>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
             {pending ? "Creating…" : "Create draft"}
@@ -1454,11 +1502,11 @@ export function PlacementJobCreateForm({
           <Button variant="secondary"
             type="submit"
             value="review-publish"
-            aria-label="Publish after reviewing the drive"
+            aria-label="Create draft and review before publication"
             disabled={pending || !activeSeason || uncertainCreate}
             className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
           >
-            Publish
+            Review &amp; publish
           </Button>
         </div>
       </section>
