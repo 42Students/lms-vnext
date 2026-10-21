@@ -23,4 +23,4 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L17-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DiscussionController.java`
 - [x] L18-U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectMember.java`
 - [x] L18-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DepartmentController.java`
-- [ ] L19-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java`
+- [x] L19-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java`
