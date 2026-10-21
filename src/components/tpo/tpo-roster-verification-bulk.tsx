@@ -60,9 +60,9 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
  }
  if(!waiting.length)return null;
  return <section aria-label="Bulk student profile verification" className="min-w-0 space-y-3 border-b border-border py-4">
-  <h2 className="text-lg font-semibold text-foreground">Verify profiles / Send back for correction</h2>
-  <p className="text-sm text-muted-foreground">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
-  <p role="status" aria-live="polite" className="text-sm tabular-nums">{checked.length} selected of {waiting.length} visible waiting sections.</p>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Verify profiles / Send back for correction</h2>
+  <p className="text-sm text-muted-foreground leading-[22px]">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
+  <p role="status" aria-live="polite" className="text-sm tabular-nums leading-[22px]">{checked.length} selected of {waiting.length} visible waiting sections.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm print:hidden">
    <Checkbox  disabled={busy} checked={waiting.length>0&&waiting.slice(0,20).every(row=>selected.includes(verificationSelectionKey(row)))}
     onChange={event=>{setSelected(event.target.checked?waiting.slice(0,20).map(verificationSelectionKey):[]);invalidate();}}/>
@@ -101,7 +101,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    >Preview selected</Button>
   {preview?<div className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
-   {skipped.length?<p className="text-sm text-warning-text">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
+   {skipped.length?<p className="text-sm text-warning-text leading-[22px]">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
     I have checked their documents another way (for example the college&apos;s own records).
    </label>:null}
@@ -116,6 +116,6 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
    <ul className="space-y-1 text-sm">{described.map(item=><li key={item.key}>{item.label} · {item.section}: {item.message}</li>)}</ul>
   </div>:null}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
  </section>;
 }

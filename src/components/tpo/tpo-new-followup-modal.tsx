@@ -125,7 +125,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
       <Textarea aria-label="Note (optional)" rows={3} maxLength={500} value={note} onChange={event=>setNote(event.target.value)}
        disabled={saving} className={field}/>
      </Disclosure>
-     {!loading&&!error&&leads.length===0?<p role="status" className="text-sm text-body">No recruiters available. Add a recruiter before scheduling a follow-up.</p>:null}
+     {!loading&&!error&&leads.length===0?<p role="status" className="text-sm text-body leading-[22px]">No recruiters available. Add a recruiter before scheduling a follow-up.</p>:null}
      {error?<InlineNotice tone="error" message={error}/>:null}
      {!loading&&leads.length===0&&error?<Button variant="secondary" type="button" disabled={saving} onClick={()=>void show()} className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh recruiters</Button>:null}
     </form>
