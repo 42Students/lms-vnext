@@ -2,7 +2,8 @@ import "server-only";
 import {and,eq,inArray,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,legacyIdMap,membershipRoles,
-  projectTemplates,sections,users} from "@/db/schema";
+  projectTemplates,projectTemplateCollegeAssignments,
+  cohorts,programs,departments,sections,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -70,12 +71,22 @@ export async function preflightLegacyProjectCreateIds(
   const mapped=(kind:Kind,id:number)=>byKey.get(kind+":"+id)!;
   const templateId=mapped("template",raw.templateId);
   const [template]=await tx.select({id:projectTemplates.id})
-   .from(projectTemplates).where(eq(projectTemplates.id,templateId)).limit(1);
+   .from(projectTemplates)
+   .innerJoin(projectTemplateCollegeAssignments,and(
+     eq(projectTemplateCollegeAssignments.templateId,projectTemplates.id),
+     eq(projectTemplateCollegeAssignments.collegeId,college.id),
+     isNull(projectTemplateCollegeAssignments.revokedAt)))
+   .where(and(eq(projectTemplates.id,templateId),
+      eq(projectTemplates.status,"PUBLISHED"))).limit(1);
   if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
   const sectionId=raw.classId!=null?mapped("section",raw.classId):null;
   if(sectionId){
    const [section]=await tx.select({id:sections.id}).from(sections)
-    .where(eq(sections.id,sectionId)).limit(1);
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(and(eq(sections.id,sectionId),
+      eq(sections.status,"ACTIVE"),eq(departments.collegeId,college.id))).limit(1);
    if(!section)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const mentorMembershipId=raw.mentorId!=null?mapped("mentor",raw.mentorId):null;
