@@ -2,12 +2,10 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
+import { listPlacementOperationsJobPage } from "@/modules/placements/tpo-operations-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
+import { SuperAdminDriveDirectoryFilters } from "@/components/placements/super-admin-drive-directory-filters";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions,SuperAdminDriveRowStatusAction } from "@/components/placements/super-admin-bulk-drive-actions";
@@ -17,32 +15,35 @@ import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-dri
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, filterAdminDriveDirectory, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
+import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const ctx=await getCurrentRequestContext(), raw=await searchParams;
  if(!ctx.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
-  <PageHeader title="Drives"/>
-  <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
+  <PageHeader title="Jobs Management (LMS)"/>
+  <div role="alert" className="rounded-md border border-[#ffe58f] bg-[#fffbe6] p-4 text-sm text-[#874d00]">
+    <strong className="block">Select a College to manage Jobs</strong>
+    <span className="mt-1 block">Jobs are treated as college-scoped in Superadmin. Use the header Organization/College selector.</span>
+  </div>
  </div>;
  requireSuperAdminSelectedCollege(ctx,"placements.manage");
  // Parse the whole query: dropping unknown keys would quietly accept
  // forged college/scope selectors and contradictory link parameters.
  const parsed=adminDriveDirectoryQuerySchema.safeParse(raw);
  if(!parsed.success)return <div className="min-w-0 space-y-4">
-  <PageHeader title="Drives"/>
+  <PageHeader title="Jobs Management (LMS)"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
    action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
  </div>;
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.
- const loaded=await getPlacementTpoOperations(ctx,ctx.adminScope.collegeId)
+ const loaded=await listPlacementOperationsJobPage(ctx,ctx.adminScope.collegeId,parsed.data)
   .then(value=>({ok:true as const,value}))
   .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
  if(!loaded.ok)return <div className="min-w-0 space-y-4">
-  <PageHeader title="Drives"/>
+  <PageHeader title="Jobs Management (LMS)"/>
   <ErrorState
    title={loaded.denied?"Drive access denied":"Drives unavailable"}
    description={loaded.denied
@@ -54,24 +55,46 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    </Link>}
   />
  </div>;
- const operations=loaded.value;
- const rows=operations.jobs.map(row=>({job:row.job,company:row.job.company,metrics:row.metrics}));
- const data=filterAdminDriveDirectory(rows,parsed.data);
+ const data=loaded.value;
+ const hasFilters=Boolean(parsed.data.q)||parsed.data.status!=="ALL";
  const href=(page:number)=>adminDriveDirectoryHref({...parsed.data,page});
  const today=new Date();
  const columns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"job",header:"Job Title",mobileLabel:"Job Title",mobilePriority:"primary",
-   cell:row=><><strong className="break-words">{row.job.title}</strong>
-    <div className="mt-1 flex min-w-0 flex-wrap items-center gap-2"><span className="text-xs text-body">{row.company.name}</span><StatusBadge tone={row.job.status==="PUBLISHED"?"success":row.job.status==="DRAFT"?"info":"neutral"}>{adminDriveStatus(row.job,today)}</StatusBadge></div></>},
-  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>row.job.employmentType.replaceAll("_"," ")},
+   cell:row=><div className="grid min-w-0 gap-1">
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+      <StatusBadge tone={row.job.status==="PUBLISHED"?"success":row.job.status==="DRAFT"?"info":"neutral"}>{adminDriveStatus(row.job,today)}</StatusBadge>
+      <strong className="break-words text-[var(--lms-heading)]">{row.job.title}</strong>
+    </div>
+    <span className="text-xs text-body">{row.company.name}</span>
+   </div>},
+  {key:"company",header:"Company",mobileLabel:"Company",mobilePriority:"secondary",
+   cell:row=><span className="break-words">{row.company.name}</span>},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=>
+    <StatusBadge tone={row.job.status==="PUBLISHED"?"success":row.job.status==="DRAFT"?"info":"neutral"}>{adminDriveStatus(row.job,today)}</StatusBadge>},
+  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>{
+    const type=row.job.jobTypeLabel?.trim()||(
+      row.job.employmentType==="FULL_TIME"?"Full-time":
+      row.job.employmentType==="INTERNSHIP"?"Internship":"Contract");
+    return <span className="inline-flex rounded-[4px] border border-[#d9d9d9] bg-[#fafafa] px-2 py-0.5 text-xs font-medium text-[#595959]">{type}</span>;
+   }},
   {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
-  {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>row.job.applicationDeadline?
-   <span className={row.job.applicationDeadline<today?"line-through text-muted-foreground":""}>
-    {adminDriveIstDate(row.job.applicationDeadline)}</span>:"—"},
-  {key:"posted",header:"Posted",mobilePriority:"secondary",cell:row=>adminDriveIstDate(row.job.publishedAt)},
-  {key:"applicants",header:"Submitted",mobilePriority:"secondary",
-   cell:row=><span title="Submitted applications only; this is not a count of all applicant statuses."
-     className="tabular-nums">{row.metrics.submittedApplications}</span>},
+  {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>{
+    const expired=Boolean(row.job.applicationDeadline&&row.job.applicationDeadline.getTime()<=today.getTime());
+    return <span className={"inline-flex items-center gap-1 "+(expired?"text-[#fa8c16]":"text-body")}>
+      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 10h18"/>
+      </svg>
+      <span className={expired?"line-through":""}>{adminDriveIstDate(row.job.applicationDeadline)}</span>
+    </span>;
+   }},
+  {key:"posted",header:"Posted",mobilePriority:"secondary",
+   cell:row=><span title={row.job.publishedAt?"Date published":"Draft: date created"}>
+    {adminDriveIstDate(row.job.publishedAt??row.job.createdAt)}</span>},
+  {key:"applicants",header:"Applicants",mobilePriority:"secondary",
+   cell:row=><span title="All application records for this drive"
+     className="tabular-nums">{row.metrics.applicants}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
    cell:row=>{
     const base="/admin/placements/jobs/"+encodeURIComponent(row.job.id);
