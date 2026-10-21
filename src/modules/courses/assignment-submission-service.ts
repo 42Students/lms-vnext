@@ -696,10 +696,10 @@ export async function listAssignmentSubmissions(
       ),
     )
     .orderBy(
-      asc(
+      desc(
         assignmentSubmissions.submittedAt,
       ),
-      asc(assignmentSubmissions.id),
+      desc(assignmentSubmissions.id),
     );
 
   // Existing callers keep their array response; paginated callers push
