@@ -12,13 +12,15 @@ import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 
 type MeetingRow = {
-  id: string; status: string; title: string; agenda: string | null;
+  id: string;status:string;title:string;agenda:string|null;
+  meetingKey:string|null;meetingType:string;meetingUrl:string|null;
+  outcome:string|null;
   startsAt: string; endsAt: string;
   linkedSprintId: string | null; linkedTaskId: string | null;
 };
 type Choice = { id: string; title: string };
 type TaskChoice = Choice & { sprintId: string | null };
-type Draft = Omit<MeetingRow, "status">;
+type Draft = Omit<MeetingRow,"status"|"meetingKey"> & {key:string;notes:string|null};
 
 function localIst(iso: string) {
   const value = new Date(iso);
@@ -36,7 +38,9 @@ function asIso(local: string) {
 }
 function toDraft(meeting: MeetingRow): Draft {
   return {
-    id: meeting.id, title: meeting.title, agenda: meeting.agenda,
+    id:meeting.id,title:meeting.title,agenda:meeting.agenda,
+    meetingType:meeting.meetingType,meetingUrl:meeting.meetingUrl,
+    notes:meeting.outcome,key:meeting.meetingKey??("meeting-"+meeting.id.slice(0,8)),
     startsAt: localIst(meeting.startsAt), endsAt: localIst(meeting.endsAt),
     linkedSprintId: meeting.linkedSprintId, linkedTaskId: meeting.linkedTaskId,
   };
@@ -67,7 +71,10 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
   const valid = changed.every(row => {
     const start = Date.parse(row.startsAt + ":00+05:30");
     const end = Date.parse(row.endsAt + ":00+05:30");
-    return row.title.trim().length > 0 && row.title.trim().length <= 200 &&
+    return row.title.trim().length>0 && row.title.trim().length<=200 &&
+      row.key.trim().length>0 && row.key.length<=120 &&
+      (row.notes?.length??0)<=4000 &&
+      (!row.meetingUrl||/^https?:\/\//.test(row.meetingUrl)) &&
       (row.agenda?.length ?? 0) <= 4000 &&
       Number.isFinite(start) && Number.isFinite(end) && end > start &&
       (!row.linkedSprintId || sprints.some(sprint => sprint.id === row.linkedSprintId)) &&
@@ -88,7 +95,7 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
       showToast({ tone: "info", title: "No changes to save" });
       return;
     }
-    if (!valid || changed.length > 100) {
+    if (!valid || changed.length > 500) {
       showToast({ tone: "error", title: "Check meeting plan details",
         description: "Check titles, IST date and time windows, and work links before saving." });
       return;
@@ -100,16 +107,18 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
         "/meetings/plan", "PATCH", {
           expectedMeetingsToken: meetingsToken,
           meetings: changed.map(row => ({
-            id: row.id, title: row.title.trim(), agenda: row.agenda?.trim() || null,
+            id:row.id,title:row.title.trim(),agenda:row.agenda?.trim()||null,
+            key:row.key.trim(),meetingType:row.meetingType,
+            meetingUrl:row.meetingUrl?.trim()||null,notes:row.notes?.trim()||null,
             startsAt: asIso(row.startsAt), endsAt: asIso(row.endsAt),
             linkedSprintId: row.linkedSprintId, linkedTaskId: row.linkedTaskId,
           })),
         });
       setOpen(false);
-      showToast({ tone: "success", title: "Meeting plan saved" });
+      showToast({ tone: "success", title: "Meetings updated" });
       router.refresh();
     } catch (error) {
-      showToast({ tone: "error", title: "Failed to save meeting plan",
+      showToast({ tone: "error", title: "Failed to update meetings",
         description: error instanceof Error ? error.message : "Reload the current meeting plan and try again." });
     } finally {
       saving.current = false;
@@ -164,6 +173,30 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
           <Input className="mt-1" required maxLength={200} value={row.title}
             onChange={event => update(row.id, "title", event.target.value)} />
         </label>
+        <div className="grid min-w-0 gap-3 md:grid-cols-2">
+          <label className="text-[13px] font-semibold text-body">Meeting key
+            <Input className="mt-1" maxLength={120} value={row.key}
+              onChange={event=>update(row.id,"key",event.target.value)}/>
+          </label>
+          <label className="text-[13px] font-semibold text-body">Ceremony
+            <Select className="mt-1" value={row.meetingType}
+              onChange={event=>update(row.id,"meetingType",event.target.value)}>
+              <option value="GENERAL">General</option>
+              <option value="PLANNING">Planning</option>
+              <option value="STANDUP">Standup</option>
+              <option value="REVIEW">Review</option>
+              <option value="RETRO">Retrospective</option>
+            </Select>
+          </label>
+        </div>
+        <label className="block text-[13px] font-semibold text-body">Meeting URL
+          <Input className="mt-1" type="url" maxLength={2048} value={row.meetingUrl??""}
+            placeholder="https://…" onChange={event=>update(row.id,"meetingUrl",event.target.value||null)}/>
+        </label>
+        <label className="block text-[13px] font-semibold text-body">Notes
+          <Textarea className="mt-1" maxLength={4000} value={row.notes??""}
+            onChange={event=>update(row.id,"notes",event.target.value||null)}/>
+        </label>
         <label className="block text-[13px] font-semibold text-body">Agenda
           <Textarea className="mt-1" maxLength={4000} value={row.agenda ?? ""}
             onChange={event => update(row.id, "agenda", event.target.value || null)} />
@@ -208,7 +241,7 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
         Check meeting details and linked tasks before saving.
       </p> : null}
       <div className="flex flex-wrap gap-2">
-        <Button loading={pending} disabled={pending || !valid || changed.length > 100}
+        <Button loading={pending} disabled={pending || !valid || changed.length > 500}
           onClick={() => void save()}>{pending ? "Saving…" : "Save meeting plan"}</Button>
         <Button variant="secondary" disabled={pending || !dirty}
           onClick={() => setDraft(baseline)}>Undo all changes</Button>

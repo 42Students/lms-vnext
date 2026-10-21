@@ -1809,7 +1809,9 @@ export function ProjectWorkspace({
             <ProjectMeetingPlanEditor projectId={workspace.project.id}
               meetingsToken={projectMeetingPlanToken(workspace.meetings)}
               meetings={workspace.meetings.filter(meeting => !meeting.deletedAt).map(meeting => ({
-                id: meeting.id, status: meeting.status, title: meeting.title,
+                id:meeting.id,status:meeting.status,title:meeting.title,
+                meetingKey:meeting.meetingKey,meetingType:meeting.meetingType,
+                meetingUrl:meeting.meetingUrl,outcome:meeting.outcome,
                 agenda: meeting.agenda, startsAt: meeting.startsAt.toISOString(),
                 endsAt: meeting.endsAt.toISOString(), linkedSprintId: meeting.linkedSprintId,
                 linkedTaskId: meeting.linkedTaskId,
