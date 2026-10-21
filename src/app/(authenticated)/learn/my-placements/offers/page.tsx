@@ -73,9 +73,25 @@ export default async function LearnerOffersPage({
   const conflictingDeadlines=expiry!=="all"&&query.due==="1";
   const context = await getCurrentRequestContext();
   const [offers,requestRead] = await Promise.all([
-    getOwnLearnerOfferBrowse(context,view),
+    getOwnLearnerOfferBrowse(context,view).catch(() => null),
     readOptionalLearnerAlertSource(()=>listOwnPlacementRequests(context)),
   ]);
+  if(offers===null){
+    // A scoped read failed: do not turn a failed request into an empty inbox.
+    // Retain only supported filter facets in the explicit retry link.
+    const params=new URLSearchParams();
+    for(const [key,value] of Object.entries(query)){
+      if(["status","q","due","page","sort","kind","joining","expiry","focus"].includes(key)&&
+         typeof value==="string")params.set(key,value);
+    }
+    const retry="/learn/my-placements/offers"+(params.size?"?"+params.toString():"");
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="My offers" description="Your official placement offers and recorded joining outcomes." />
+      <Banner tone="warning">We could not load your offers.
+        <Link href={retry} className="ml-2 inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry</Link>
+      </Banner>
+    </section>;
+  }
   const requests = requestRead.items;
   const snapshotNowIso = new Date().toISOString();
   const expiredIssuedCount=learnerExpiredIssuedOffers(offers.items,Date.parse(snapshotNowIso));

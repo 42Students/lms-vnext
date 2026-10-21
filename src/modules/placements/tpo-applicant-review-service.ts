@@ -8,6 +8,28 @@ import { requireTpoJobCollege } from "./tpo-job-write-base";
 import { tpoApplicantDetailQuerySchema } from "./tpo-applicant-detail-model";
 import { tpoApplicantReviewSchema, canReviewApplicant, candidateScreeningPayload } from "./tpo-applicant-review-model";
 import { decidePlacementScreening } from "./screening-service";
+import { legacyApplicantProgress } from "./tpo-applicant-pipeline-model";
+
+/** Canonical read-only projection for a TPO applicant row. The writer keeps
+ * application lifecycle (SUBMITTED/WITHDRAWN), screening, bulk round stage,
+ * applied result and official offer as independent persisted facts.
+ * It must not overwrite application.status to imitate legacy statuses or
+ * announce an unreleased round result. Null evidence remains unknown.
+ * See tpo-applicant-pipeline-service for the scoped joins required on reads.
+ */
+export function projectTpoReviewApplicantStatus(input:{
+ applicationStatus:string;screeningStatus:string|null;
+ stage?:string|null;roundKind?:string|null;releasedRoundOutcome?:string|null;
+ offerStatus?:string|null;
+}):string{
+ return legacyApplicantProgress({id:"",student:null,role:"",submittedAt:"",
+  applicationStatus:input.applicationStatus,screeningStatus:input.screeningStatus,
+  currentRoundKind:input.stage==="INTERVIEW"?"INTERVIEW":
+   input.stage==="TEST"?"TEST":input.roundKind??null,
+  latestRoundOutcome:input.releasedRoundOutcome??null,
+  latestOfferStatus:input.offerStatus??null,
+ });
+}
 
 export async function reviewTpoApplicant(
   context: RequestContext, rawParams: unknown, rawInput: unknown,
