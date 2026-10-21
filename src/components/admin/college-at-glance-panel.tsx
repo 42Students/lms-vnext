@@ -15,11 +15,13 @@ const ITEMS=[
 ];
 export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initial:CollegeAtGlanceCounts|null}){
  const [counts,setCounts]=useState<CollegeAtGlanceCounts|null>(initial);
+ const currentCounts=useRef<CollegeAtAGlanceCounts|null>(initial);
  const requestSequence=useRef(0);
  const currentCollegeId=useRef(collegeId);
  useEffect(()=>{
   currentCollegeId.current=collegeId;
   requestSequence.current+=1;
+  currentCounts.current=initial;
   setCounts(initial);
   setError(initial?"":COLLEGE_GLANCE_LOAD_ERROR);
  },[collegeId,initial]);
@@ -34,14 +36,15 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
    const raw=await response.json() as unknown;
    if(!isCollegeAtGlanceCounts(raw))throw Error("Invalid");
    if(seq!==requestSequence.current||currentCollegeId.current!==collegeId)return;
+   currentCounts.current=raw;
    setCounts(raw);setError("");
   }catch{
    if(seq===requestSequence.current&&currentCollegeId.current===collegeId)
-    setError(previous=>counts?COLLEGE_GLANCE_REFRESH_ERROR:previous||COLLEGE_GLANCE_LOAD_ERROR);
+    setError(previous=>currentCounts.current?COLLEGE_GLANCE_REFRESH_ERROR:previous||COLLEGE_GLANCE_LOAD_ERROR);
   }finally{
    if(seq===requestSequence.current&&currentCollegeId.current===collegeId)setRefreshing(false);
   }
- },[collegeId,counts]);
+ },[collegeId]);
  useEffect(()=>{
   if(!initial)void refresh();
   const id=setInterval(()=>{void refresh();},30000);
