@@ -178,3 +178,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-company-team-conversation.tsx.md` | Confirmed canonical UUID live company team thread; added legacy name-key import boundary warning. Historical name-keyed threads need scoped DB crosswalk; not falsely fetched by companyName. Partial, no CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_storage_file-errors.ts.md` | Added safe Resource-specific storage error messages for missing R2, file type, file size including 50MiB; retains 413 and current typed codes. Callers must consume mapper, no CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace-readiness.tsx.md` | Exact 'Readiness could not be loaded' restored for safe error state; removed incorrect releases-as-blocker text, clarified override facts. Group-page canonical panel integration remains. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_domain-model.ts.md` | Tightened company-domain exact/subdomain matching against malformed labels and documented conservative PSL fallback. Full maintained PSL not installed and new packages forbidden, so complete registrable-domain parity remains a dependency. No CI.

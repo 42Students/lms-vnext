@@ -973,3 +973,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-11-007-059 | `src/modules/placements/tpo-company-team-service.ts + historical thread migration` | Import legacy normalized name-keyed threads into college+UUID company conversations with collision audit; never read by untrusted company name.
 - G2-20-009-018/-021 | `src/lib/api-error.ts + resource upload UI` | Map StorageFileError codes via storageFileFriendlyMessage(code,'resource') at correct route, distinguish 413 and 503; preserve safe generic error elsewhere.
+
+- G2-7-004-008/-064 | `src/components/projects/project-admin-readiness-page.tsx` | Mount canonical ProjectWorkspaceReadiness details by selected workspace and preserve release/override context.
+- G2-13-012-027 / G2-12-012-015 / G2-12-012-031 | `src/modules/placements/public-join/domain-model.ts + approved PSL dataset` | Replace partial hand-maintained public suffix list with reviewed maintained PSL without unsafe registrable-domain guessing; new packages forbidden in lane.
