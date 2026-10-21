@@ -1,5 +1,17 @@
 import { z } from "zod";
 
+/** Old user-input contract is precisely seven ASCII characters, with the
+ * suffix equal to the next calendar year, including 2099-00 rollover.
+ * Persist only the start integer after this input-layer validation.
+ */
+export function parsePromotionAcademicYear(value: string): number | null {
+  if (!/^[0-9]{4}-[0-9]{2}$/.test(value)) return null;
+  const start = Number(value.slice(0,4));
+  const suffix = Number(value.slice(5));
+  return start >= 1900 && start <= 9998 && suffix === (start + 1) % 100
+    ? start : null;
+}
+
 export function formatPromotionAcademicYear(yearStart: number): string {
   return `${yearStart}-${String((yearStart + 1) % 100).padStart(2, "0")}`;
 }
@@ -13,11 +25,7 @@ export const collegePromotionQuerySchema = z.object({
   yearStart: z.preprocess(value => {
     if (value === "" || value === null) return undefined;
     if (typeof value !== "string") return value;
-    const match = /^(\\d{4})-(\\d{2})$/.exec(value.trim());
-    if (!match) return Number.NaN;
-    const startYear = Number(match[1]);
-    return Number(match[2]) === (startYear + 1) % 100
-      ? startYear : Number.NaN;
+    return parsePromotionAcademicYear(value.trim()) ?? Number.NaN;
   }, z.number({ error: promotionAcademicYearError })
     .int(promotionAcademicYearError)
     .min(1900, promotionAcademicYearError)
@@ -38,6 +46,8 @@ export function batchPromotionPlan(input: {
   cohortStatus: string;
   currentTermNumber: number | null;
   durationTerms: number;
+  /** Converted legacy durationYears×2 by default; actual term models can use 3+. */
+  termsPerAcademicYear?: number;
   nextTermConfigured: boolean;
   nextTermHasCourses?: boolean;
   currentYearStart: number | null;
@@ -63,12 +73,24 @@ export function batchPromotionPlan(input: {
   else if (!input.currentPeriodOwned) blockers.push("PERIOD_OUTSIDE_COLLEGE");
   // Legacy advances the academic year when moving from an even term to
   // the next odd term (2→3, 4→5). An explicit override always wins.
+  const termsPerYear=input.termsPerAcademicYear??2;
+  // Existing two-semester institutions preserve 2→3, 4→5 rollover.
+  // A registered trimester program may explicitly pass three instead.
   const boundaryRollover = termValid && !(
     input.currentTermNumber === input.durationTerms
-  ) && input.currentTermNumber! % 2 === 0;
-  const year = input.overrideYearStart ?? (input.currentYearStart === null
-    ? null : input.currentYearStart + (boundaryRollover ? 1 : 0));
-  if (year === null || year === undefined) blockers.push("ACADEMIC_YEAR_MISSING");
+  ) && Number.isSafeInteger(termsPerYear) && termsPerYear>=2 &&
+    input.currentTermNumber! % termsPerYear === 0;
+  const currentYearValid = input.currentYearStart !== null &&
+    Number.isSafeInteger(input.currentYearStart) &&
+    input.currentYearStart>=1900 && input.currentYearStart<=9998;
+  const overrideValid = input.overrideYearStart===undefined ||
+    Number.isSafeInteger(input.overrideYearStart) &&
+    input.overrideYearStart>=1900 && input.overrideYearStart<=9998;
+  const resolvedYear = input.overrideYearStart ?? (currentYearValid
+    ? input.currentYearStart! + (boundaryRollover ? 1 : 0) : null);
+  const year=overrideValid && resolvedYear!==null &&
+    resolvedYear>=1900 && resolvedYear<=9998 ? resolvedYear : null;
+  if (year === null) blockers.push("ACADEMIC_YEAR_MISSING");
   const graduating = termValid && input.currentTermNumber === input.durationTerms;
   if (termValid && !graduating && !input.nextTermConfigured)
     blockers.push("NEXT_TERM_UNCONFIGURED");
@@ -97,6 +119,27 @@ export function promotionLearnerBlockers(input: {
   if (!input.hasLearnerRole) blockers.push("LEARNER_ROLE_MISSING");
   if (input.periodConfigured && !input.hasActiveClass) blockers.push("NO_ACTIVE_CLASS");
   return blockers;
+}
+
+/** The exact next step and maximum semester are preview-owned. Skipping
+ * semesters was possible in the legacy transport shape but is not valid for
+ * vNext audited one-step promotion with version and learner CAS.
+ */
+export function promotionNextSemesterHelp(
+  currentTermNumber:number|null,durationTerms:number,
+):string {
+  if(currentTermNumber===null)return "Record the current semester before promotion.";
+  if(!Number.isInteger(durationTerms)||durationTerms<1 ||
+     currentTermNumber<1||currentTermNumber>durationTerms)
+    return "Current semester is outside this program's configured duration.";
+  if(currentTermNumber===durationTerms)
+    return `Semester ${durationTerms} is the final semester. Review graduation instead.`;
+  return `The next valid semester is ${currentTermNumber+1} (maximum ${durationTerms}). Semesters cannot be skipped.`;
+}
+
+/** Old status label for a completed verified promotion. */
+export function promotionSuccessLabel(term:number) {
+  return `Batch promoted to semester ${term}`;
 }
 
 export const collegePromotionExecuteSchema = z.object({
