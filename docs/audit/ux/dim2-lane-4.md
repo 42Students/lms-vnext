@@ -1,0 +1,13 @@
+# Dimension 2 value re-sweep — chat-4 / Empty, loading and error states
+
+Source: `docs/design/old-lms-shell-spec.md`, `docs/design/legacy-styles/components___{common,button,form,antddesign}.scss`, `docs/audit/ux/states-lane-12.md`, `docs/design/ui-clone-checklist.md`. Inspected source and shared components for 1280/768/375. Structure, copy and functionality preserved; no CI.
+
+| File | Instances checked | Legacy ↔ code (three measured property pairs) | Fixes |
+| --- | ---: | --- | --- |
+| `src/app/(authenticated)/account/security/page.tsx` | 2 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | 2 CTA value correction(s) |
+| `src/app/(authenticated)/admin/academics/page.tsx` | 1 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | none |
+| `src/app/(authenticated)/admin/assignments/error.tsx` | 1 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | 1 CTA value correction(s) |
+| `src/app/(authenticated)/admin/assignments/page.tsx` | 6 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | 3 CTA value correction(s) |
+| `src/app/(authenticated)/admin/attendance/page.tsx` | 2 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | 1 CTA value correction(s) |
+| `src/app/(authenticated)/admin/audit/page.tsx` | 1 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | 1 CTA value correction(s) |
+| `src/app/(authenticated)/admin/batch-promotion/error.tsx` | 1 | heading 18px/600/#172033 ↔ shared `--lms-font-lg`/600/`--lms-heading`; body 14px/1.6/#54505d ↔ shared `--lms-font-base`/1.6/`--lms-body-text`; CTA 44px phone/36px desktop/radius9/650 ↔ shared Button or normalized recovery Link | 1 CTA value correction(s) |
