@@ -272,3 +272,6 @@
 
 - work2 #11 `placements/offers/[offerId]/actions/route.ts` | G2-17-023-026: retained authenticated vNext `{offer}` client contract, documented direct-object legacy response adapter instead of breaking current consumers.
 - work2 #12 `college-drive-archive-action.tsx` | G2-9-013-047: explicitly announces accurate `Drive archived` on confirmed successful request before returning to archived drives, not legacy false deletion claim.
+
+- work2 #13 `college-drive-row-lifecycle-action.tsx` | G2-9-015-049: failed close/reopen impact preview now explicitly reassures that nothing changed; legacy deletion copy deliberately not misapplied because this control has no delete path.
+- work2 #14 `bug-tracker/admin-validation.ts` | G2-17-024-017: explicit human-readable Zod status/resolution labels for admin listing and workflow updates, while retaining strict enum checks.
