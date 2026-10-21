@@ -1023,11 +1023,12 @@ export function RecruiterLeadsWorkspace({
               onExportCsv={selected=>exportRows(selected?"selected":"shown","csv")}
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
               onCopyRows={()=>void copyRows()}>
-              {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
+              {visibleKeys=><>
+               {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
                 sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}
                  showColumns={false}/>
-              {visibleKeys=><RecruiterTpoGrid rows={sortedVisible}
+              <RecruiterTpoGrid rows={sortedVisible}
                 columns={RECRUITER_GRID_COLUMNS.filter(column=>visibleKeys.includes(column.key)&&column.key!=="Actions")}
                 rowKey={lead=>lead.id} storageKey="tpo-engage-recruiter-roster-v1"
                 integratedWorkspace mobileActionsCollapsible
@@ -1049,7 +1050,8 @@ export function RecruiterLeadsWorkspace({
                         onClick={()=>void createInviteLink(lead)}>{lead.inviteSentAt?"Resend invite":"Invite"}</Button>
                       :<span className="text-xs text-muted-foreground">Joined</span>):null}
                   </div>:undefined}
-              />}
+              />
+              </>}
 
             </GridWorkspace>
           ) : (
