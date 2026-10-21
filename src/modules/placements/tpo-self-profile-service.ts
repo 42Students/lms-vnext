@@ -32,6 +32,13 @@ import { requirePlacementManageScope } from "./scope";
  *
  * Login phone and email are read-only and returned only for the authenticated
  * membership owner. Profile documents and other memberships remain excluded.
+ *
+ * Legacy PUT /faculty/:facultyId/header for profileImage is implemented as
+ * POST (private signed upload) + PATCH (attested/versioned confirm) at
+ * /api/placements/tpo/profile/avatar, backed by tpo-avatar-service.ts.
+ * This read model deliberately cannot write an avatar or delete old keys:
+ * owned prior keys are queued transactionally for best-effort secure cleanup
+ * after replacement, never deleted before the new photo commits.
  */
 export async function getOwnTpoProfile(
   context: RequestContext,
