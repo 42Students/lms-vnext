@@ -11,7 +11,8 @@ import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
@@ -19,7 +20,8 @@ type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
  durationMinutes:number;mode:string;venue:string|null;meetingUrl:string|null;
- interviewer:string|null;outcomeNote:string|null;version:number};
+ interviewer:string|null;outcomeNote:string|null;version:number;
+ interviewType?:string|null;roundDescription?:string|null};
 const display=(iso:string)=>new Intl.DateTimeFormat("en-IN",{
  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
 }).format(new Date(iso))+" IST";
@@ -40,6 +42,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [mode,setMode]=useState<"ON_CAMPUS"|"VIRTUAL">("ON_CAMPUS");
  const [venue,setVenue]=useState("");const [meetingUrl,setMeetingUrl]=useState("");
  const [interviewer,setInterviewer]=useState("");const [reason,setReason]=useState("");
+ const [interviewType,setInterviewType]=useState<"SCREENING"|"TECHNICAL"|"HR"|"MANAGERIAL"|"FINAL">("TECHNICAL");
+ const [roundDescription,setRoundDescription]=useState("");
+ const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
  const [decision,setDecision]=useState<{row:Appointment;action:"CANCEL"|"COMPLETED"|"NO_SHOW"}|null>(null);
@@ -51,17 +56,21 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   setMode(row?.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS");
   setVenue(row?.venue??"");setMeetingUrl(row?.meetingUrl??"");
   setInterviewer(row?.interviewer??"");setReason("");
+  const type=row?.interviewType;
+  setInterviewType(type==="SCREENING"||type==="TECHNICAL"||type==="HR"||
+   type==="MANAGERIAL"||type==="FINAL"?type:"TECHNICAL");
+  setRoundDescription(row?.roundDescription??rounds.find(r=>r.id===(row?.roundId??rounds[0]?.id))?.name??"");
   setDirty(false);setConfirmDiscard(false);
-  setError("");setSuccess("");setShow(true);
+  setError("");setSuccess("");setFieldErrors({});setShow(true);
  }
  function closeSetup(){
-  if(busy)return;
+  if(busy){showToast({tone:"info",title:"Wait for interview submission to finish."});return;}
   if(dirty)setConfirmDiscard(true);
   else setShow(false);
  }
  async function post(body:Record<string,unknown>){
   if(busy)return false;
-  setBusy(true);setError("");setSuccess("");
+  setBusy(true);setError("");setSuccess("");setFieldErrors({});
   try{
    const data=await apiFetch<{status?:string}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/interviews",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
@@ -70,18 +79,29 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    setSuccess(body.action==="SCHEDULE"?"Interview scheduled and candidate notified." :
     "Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
    if(body.action==="SCHEDULE"){
-    showToast({tone:"success",title:"Interview scheduled and candidate notified."});
+    showToast({tone:"success",title:"Interview scheduled successfully",
+     description:"Interview scheduled and candidate notified."});
    }
    setDirty(false);router.refresh();onCommitted?.();return true;
-  }catch(e){setError(e instanceof Error?e.message:"Interview action failed");return false;}
+  }catch(e){
+   if(e instanceof FriendlyFetchError&&"fieldErrors" in e&&
+    typeof e.fieldErrors==="object"&&e.fieldErrors!==null)
+    setFieldErrors(e.fieldErrors as Record<string,string>);
+   setError(e instanceof Error?e.message:"Interview action failed");return false;
+  }
   finally{setBusy(false);}
  }
  async function save(){
   if(!start||!applicationId||!roundId)return;
-  const parsed=new Date(start+"+05:30");
-  if(!Number.isFinite(parsed.getTime())){setError("Enter a valid date and time.");return;}
-  const iso=parsed.toISOString();
+  if(roundDescription.trim().length<10){
+   setFieldErrors({roundDescription:"Please describe what this round is about"});
+   setError("Please describe what this round is about");return;
+  }
+  let iso:string;
+  try{iso=driveDeadlineIstToIso(start);}
+  catch{setError("Enter a valid date and time in IST.");return;}
   const appointment={roundId,applicationId,scheduledAt:iso,durationMinutes:duration,
+   interviewType,roundDescription:roundDescription.trim(),
    mode,venue:mode==="ON_CAMPUS"?venue.trim():null,
    meetingUrl:mode==="VIRTUAL"?meetingUrl.trim():null,
    interviewer:interviewer.trim()||null};
@@ -142,6 +162,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         cell:row=>(row.mode==="VIRTUAL"?"Virtual":"On campus")+" · "+(row.venue??row.meetingUrl??"—")},
       {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
         cell:row=>row.interviewer??"Not recorded"},
+      {key:"clash",header:"Conflicts",mobilePriority:"secondary",cell:row=>{
+       const began=Date.parse(row.scheduledAt);
+       const ended=began+row.durationMinutes*60_000;
+       const conflict=appointments.some(other=>other.id!==row.id&&other.status==="SCHEDULED"&&
+        Date.parse(other.scheduledAt)<ended+15*60_000&&
+        Date.parse(other.scheduledAt)+other.durationMinutes*60_000>began-15*60_000&&
+        (other.applicationId===row.applicationId||
+         (Boolean(row.venue??row.meetingUrl)&&(other.venue??other.meetingUrl)=== (row.venue??row.meetingUrl))||
+         (Boolean(row.interviewer)&&other.interviewer===row.interviewer)));
+       return conflict?<StatusBadge tone="error">Conflict</StatusBadge>:"—";
+      }},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
@@ -171,7 +202,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
-    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
+    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||roundDescription.trim().length<10||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
@@ -184,6 +215,25 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
+    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+     <label className="grid gap-[6px] text-[13px] font-semibold">Interview Type
+      <Select value={interviewType} onChange={event=>{
+       setInterviewType(event.target.value as typeof interviewType);setDirty(true);
+      }} className="w-full">
+       <option value="SCREENING">Screening</option><option value="TECHNICAL">Technical</option>
+       <option value="HR">HR</option><option value="MANAGERIAL">Managerial</option>
+       <option value="FINAL">Final</option>
+      </Select>
+     </label>
+     <label className="grid gap-[6px] text-[13px] font-semibold sm:col-span-2">
+      What this round is about <span className="text-xs text-muted-foreground">({roundDescription.length}/500)</span>
+      <Textarea rows={3} minLength={10} maxLength={500} value={roundDescription}
+       placeholder="Explain this interview round and how candidates should prepare"
+       onChange={event=>{setRoundDescription(event.target.value);setDirty(true);}}
+       className="w-full"/>
+      {fieldErrors.roundDescription?<span role="alert" className="text-error">{fieldErrors.roundDescription}</span>:null}
+     </label>
+    </div>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>{setStart(e.target.value);setDirty(true);}} className="w-full"/></label>
