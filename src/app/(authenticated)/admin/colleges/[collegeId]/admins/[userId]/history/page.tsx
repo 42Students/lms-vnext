@@ -33,7 +33,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
    description="Recorded identity, college-admin lifecycle and platform actions concerning this administrator in this college. Cross-college and raw event metadata are excluded."
    actions={<PageBackLink href={base} label="College admins"/>}/>
   <p role="status" className="text-sm text-muted-foreground tabular-nums">
-   Page {data.page} · {data.events.length} recorded event(s) shown{data.truncated?" · more available":""}.
+   Page {data.page} · {data.events.length.toLocaleString("en-IN")} recorded event(s) shown{data.truncated?" · more available":""}.
   </p>
   <DataTable<(typeof data.events)[number]> caption="Administrator activity history" rows={data.events} getRowKey={row=>row.id}
     empty={<EmptyState title="No administrator history" description="No matching identity or platform history was recorded for this administrator in the current college."/>}

@@ -95,7 +95,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeClassRowActions row={row}/>},
           ]} />
         <nav aria-label="Class pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
-          <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.items.length} of {data.total.toLocaleString("en-IN")} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">
             {data.query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white" href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
             {data.query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white" href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
