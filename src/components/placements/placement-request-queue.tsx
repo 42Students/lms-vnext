@@ -147,7 +147,7 @@ export function PlacementRequestQueue({
   }
 
   if (requests.length === 0) {
-    return <section aria-label="Learner requests" className="border-b border-border py-5"><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground leading-[22px]">No learner requests yet.</p></section>;
+    return <section aria-label="Learner requests" className="border-b border-border py-6"><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Learner requests</h2><p className="mt-2 text-sm text-muted-foreground leading-[22px]">No learner requests yet.</p></section>;
   }
 
   const openCount = requests.filter(
@@ -155,7 +155,7 @@ export function PlacementRequestQueue({
   ).length;
 
   return (
-    <section className="min-w-0 border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-6">
       <div className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>

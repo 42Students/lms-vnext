@@ -60,13 +60,13 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
   return <form onKeyDown={shortcuts} onSubmit={event => void submit(event)}
     className="min-w-0 space-y-4 border-b border-border pb-6">
     <h3 className="font-semibold text-foreground">Review application</h3>
-    <label className="grid min-w-0 gap-[6px] text-[13px] text-[var(--lms-neutral-400)]">Decision
+    <label className="grid min-w-0 gap-2 text-[13px] text-[var(--lms-neutral-400)]">Decision
       <Select name="decision" value={decision} disabled={pending||saved} onChange={event=>{setDecision(event.target.value as "SHORTLISTED"|"REJECTED");setReviewed(false);}} className="mt-1 min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
         <option value="SHORTLISTED">Shortlist</option>
         <option value="REJECTED">Reject</option>
       </Select>
     </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] text-[var(--lms-neutral-400)]">Decision note (rejections are candidate-visible)
+    <label className="grid min-w-0 gap-2 text-[13px] text-[var(--lms-neutral-400)]">Decision note (rejections are candidate-visible)
       <Textarea required name="note" value={note} disabled={pending||saved} onChange={event=>{setNote(event.target.value);setReviewed(false);}} minLength={10} maxLength={1000} rows={3}
         className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3"/>
     </label>
@@ -85,7 +85,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
       </label>
       <p className="text-xs text-body">The decision note above is learner-visible. Internal reason presets stay private; do not copy confidential employer notes into the learner message.</p>
     </fieldset>:null}
-    <label className="flex min-w-0 items-start gap-[6px] break-words text-[13px] text-[var(--lms-neutral-400)]">
+    <label className="flex min-w-0 items-start gap-2 break-words text-[13px] text-[var(--lms-neutral-400)]">
       <Checkbox checked={reviewed} disabled={pending||saved}
         onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
       I reviewed the applicant and the learner-visible reason. This screening decision is audited.

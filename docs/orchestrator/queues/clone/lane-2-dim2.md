@@ -449,21 +449,21 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [ ] `src/components/placements/placement-calendar-workspace.tsx`
 - [x] `src/components/placements/placement-draft-edit-form.tsx`
 - [x] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-day-overview.tsx`
+- [x] `src/components/placements/placement-drive-day-overview.tsx`
 - [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
 - [ ] `src/components/placements/placement-operations-overview.tsx`
 - [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
 - [ ] `src/components/placements/public-join-preview-retry.tsx`
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/report-bar-chart.module.css`
+- [x] `src/components/placements/report-bar-chart.module.css`
 - [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/super-admin-hiring-funnel.module.css`
-- [ ] `src/components/placements/tpo-applicant-review-form.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/super-admin-hiring-funnel.module.css`
+- [x] `src/components/placements/tpo-applicant-review-form.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
 - [ ] `src/components/placements/tpo-company-feedback-form.tsx`
 - [ ] `src/components/placements/tpo-company-interaction-form.tsx`
 - [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx`
