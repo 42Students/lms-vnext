@@ -282,7 +282,9 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
               ready ? "This workspace is ready to submit" : "This workspace still has readiness gaps"}
           </h2>
         </div>
-        <StatusBadge tone={ready ? "success" : "error"}>{ready ? "Ready" : "Not ready"}</StatusBadge>
+        <StatusBadge tone={ready ? "success" : "error"}>
+          {hasFinalSubmission?"Submitted":ready ? "Ready" : "Not ready"}
+        </StatusBadge>
       </div>
       <div>
         <div className="mb-2 flex justify-between gap-2 text-sm font-semibold">
@@ -301,7 +303,16 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
       "border-y px-4 py-3 text-sm " + (override.state === "FORCE_UNLOCK"
         ? "border-success-border bg-success-subtle" : "border-warning-border bg-warning-subtle")
     }>
-      <p className="font-semibold">Readiness override active · {override.state === "FORCE_UNLOCK" ? "Force unlocked" : "Force blocked"}</p>
+      <p className="flex items-center gap-2 font-semibold">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="size-4 shrink-0">
+          <rect x="5" y="10" width="14" height="11" rx="2"/>
+          {override.state==="FORCE_BLOCK"?
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>:
+            <path d="M8 10V7a4 4 0 0 1 8 0"/>}
+        </svg>
+        Readiness override active · {override.state === "FORCE_UNLOCK" ? "Force unlocked" : "Force blocked"}
+      </p>
       <dl className="mt-2 grid gap-3 sm:grid-cols-3">
         <div><dt className="text-xs text-muted-foreground">Reason</dt><dd className="mt-1 whitespace-pre-wrap">{override.note || "—"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Set by</dt><dd className="mt-1">{override.overriddenBy || "—"}</dd></div>
@@ -1176,6 +1187,13 @@ export function ProjectWorkspace({
             workspace.sprints.length===0?<p role="status" className="border-y border-border py-3 text-sm text-body">
               No sprints yet. Add the first sprint when a release is ready.
             </p>:null}
+          {mode==="ADMIN"&&show("tasks")&&!workspace.releasesLoadError&&workspace.sprints.length===0?
+            <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-y border-info-border bg-info-subtle px-3 py-3 text-sm">
+              <span>No sprints are available yet. Create a sprint to organize the task plan.</span>
+              <Link href={(sectionBaseHref??backHref)+"/sprints"} className="font-semibold text-link underline">
+                Open Sprint plan
+              </Link>
+            </div>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
