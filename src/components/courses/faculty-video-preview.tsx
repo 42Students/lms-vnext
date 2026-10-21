@@ -1,5 +1,6 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
+import {reportVideoFailure} from "@/lib/report-client-error";
 import { PageLoading } from "@/components/ui/page-loading";
 
 import { useEffect, useRef, useState } from "react";
@@ -31,10 +32,10 @@ export function FacultyVideoPreview({videoId,deliveryId}:{videoId:string;deliver
    },{once:true});
    setLoading(false);
    timeout=setTimeout(()=>{
-    void grant().catch(cause=>{if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:"Video preview expired.");});
+    void grant().catch(cause=>{if(!controller.signal.aborted){reportVideoFailure(cause);setError(cause instanceof Error?cause.message:"Video preview expired.");}});
    },Math.max(1000,Date.parse(result.expiresAt)-Date.now()-30_000));
   }
-  void grant().catch(cause=>{if(!controller.signal.aborted){setLoading(false);setError(cause instanceof Error?cause.message:"Video preview unavailable.");}});
+  void grant().catch(cause=>{if(!controller.signal.aborted){reportVideoFailure(cause);setLoading(false);setError(cause instanceof Error?cause.message:"Video preview unavailable.");}});
   return()=>{controller.abort();if(timeout)clearTimeout(timeout);if(video){video.pause();video.removeAttribute("src");video.removeAttribute("poster");video.load();}};
  },[videoId,deliveryId]);
  return <section aria-label="Video preview" className="space-y-2">
