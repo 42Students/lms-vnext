@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import {
   createCollege,
   listColleges,
+  listAuthorizedCollegeSearchOptions,
 } from "@/modules/colleges/service";
 import { apiErrorResponse } from "@/lib/api-error";
 
@@ -91,6 +92,18 @@ export async function GET(request: Request) {
     const limit=parsedLimit??(mode==="search"?15:mode==="popular"?10:50);
     const match=q.toLocaleLowerCase("en-IN");
     const region=(mode==="state"||mode==="category"?params.get("state"):params.get("city"))?.trim().toLocaleLowerCase("en-IN")??"";
+    if(mode==="search"||mode==="popular"){
+      const ranked=await listAuthorizedCollegeSearchOptions(context,{
+        organizationId,q:mode==="search"?q:"",limit,
+      });
+      const data=ranked.map(row=>({...row,collegeName:row.name}));
+      return NextResponse.json({status:"OK",
+        message:mode==="popular"?"Ranked by active membership; historic search-click popularity is unavailable.":
+          "Colleges retrieved in "+elapsed+"ms",
+        data,colleges:data,
+        ...(mode==="popular"?{popularityAvailable:false,popularityProxy:"ACTIVE_MEMBERSHIP_COUNT"}:{}),
+      },{headers:{"Cache-Control":"private, no-store"}});
+    }
     const result=items.filter(row=>{
       if(mode==="state"||mode==="category")return Boolean(region)&&row.state?.toLocaleLowerCase("en-IN")===region;
       if(mode==="city")return Boolean(region)&&row.city?.toLocaleLowerCase("en-IN")===region;
