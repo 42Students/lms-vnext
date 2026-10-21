@@ -11,3 +11,10 @@ export function learnerCoursePreferredPeriod(rows: readonly {
     a.course.academicPeriodId.localeCompare(b.course.academicPeriodId)
   )[0]?.course.academicPeriodId ?? "";
 }
+
+/** Reject malformed historical credit values at legacy migration boundaries;
+ * never silently turn missing or blank data into zero credits. */
+export function legacyLearnerCreditValue(raw:unknown):number|null{
+ const credit=typeof raw==="number"?raw:typeof raw==="string"&&raw.trim()!==""?Number(raw):NaN;
+ return Number.isFinite(credit)&&credit>=0&&credit<=100?credit:null;
+}

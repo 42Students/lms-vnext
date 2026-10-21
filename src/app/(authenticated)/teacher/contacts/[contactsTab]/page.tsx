@@ -2,7 +2,7 @@ import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {parseFacultyContactsQuery} from "@/modules/courses/faculty-contacts-filter-model";
+import {parseFacultyContactsQuery,FACULTY_CONTACTS_SEARCH_PLACEHOLDER} from "@/modules/courses/faculty-contacts-filter-model";
 import {facultyContactDirectoryQuery} from "@/modules/courses/faculty-contact-detail-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -105,7 +105,7 @@ export default async function FacultyContactsPage({
                 name="q"
                 maxLength={200}
                 defaultValue={result.search}
-                placeholder="Name or department"
+                placeholder={FACULTY_CONTACTS_SEARCH_PLACEHOLDER}
               />
             </label>
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -119,7 +119,7 @@ export default async function FacultyContactsPage({
               </Select>
             </label>
             <Button type="submit" variant="primary" className="min-h-11 w-full sm:col-span-2 lg:col-span-1 lg:w-auto lg:min-h-9">
-              Search
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg> Search
             </Button>
           </form>
         </div>

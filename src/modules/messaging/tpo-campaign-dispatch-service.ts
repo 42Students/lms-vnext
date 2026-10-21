@@ -32,8 +32,7 @@ function configuration(){
  if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"||
    !isCampaignTemplateKey(provider)||provider===mail.otpTemplateKey||
    !mail.token.trim()||!isSecureMailProviderEndpoint(mail.apiUrl)||
-   Buffer.byteLength(key,"utf8")<32||
-   !origin)
+   Buffer.byteLength(key,"utf8")<32)
    throw new TpoCampaignDispatchError("NOT_READY");
  return {provider,key,origin};
 }
