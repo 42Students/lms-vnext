@@ -135,6 +135,27 @@ export async function resolveRequestTenant(
 }
 
 /** For tests only. */
+/** Invalidate verified and alias lookups after tenant-domain changes. */
+export function invalidateRequestTenantCache(host?: string): void {
+  if (!host) { cache.clear(); return; }
+  try { cache.delete(normalizeRequestHost(hostWithoutPort(host))); }
+  catch { /* Invalid host cannot be admitted to the positive cache. */ }
+}
+
+/** For tests only. */
 export function clearRequestTenantCacheForTests() {
-  cache.clear();
+  invalidateRequestTenantCache();
+}
+
+/** Versioned presentation data; permissions only use the server-side RequestTenant. */
+export function requestTenantBootstrap(tenant: RequestTenant) {
+  return {
+    version: 1 as const,
+    host: tenant.host,
+    tenantKind: tenant.kind,
+    ...(tenant.kind === "college" ? {
+      canonicalHost: tenant.canonicalHost ?? null,
+      shouldRedirectToCanonicalHost: tenant.shouldRedirectToCanonicalHost === true,
+    } : {}),
+  };
 }
