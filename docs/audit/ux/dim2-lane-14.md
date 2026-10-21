@@ -164,3 +164,14 @@ src/components/admin/tenant-settings-editor.tsx | 30 responsive instances | 375 
 src/components/admin/tenant-settings-other-keys.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
 src/components/announcements/super-admin-college-broadcast-form.tsx | 33 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
 src/components/attendance/admin-attendance-parent-contact-editor.tsx | 19 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/attendance/admin-attendance-workspace.tsx | 76 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone flex wrap, phone grid one column, phone grid one column
+src/components/attendance/college-attendance-policy-form.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/college/college-faculty-assignment-actions.tsx | 31 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/college/college-faculty-csv-import.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | none
+src/components/college/college-faculty-reassign-action.tsx | 9 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/college/college-faculty-schedule-reassign.tsx | 20 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/college/college-offering-metadata-action.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/college/college-person-profile-overview-modal.tsx | 27 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/college/college-student-import-history.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | phone flex wrap
+src/components/college/student-class-move-action.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/courses/admin-course-display-editor.tsx | 28 responsive instances | 375 min width zero ↔ min-w-0; 375 wraps ↔ flex-wrap; 375 sidebar hidden ↔ shell @max767 | none

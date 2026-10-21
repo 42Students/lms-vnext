@@ -390,7 +390,7 @@ export function AdminAttendanceWorkspace({
           Show all college courses (including courses not taught to this class)
         </label>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:col-span-2 md:flex-row md:flex-wrap md:items-center md:justify-between xl:col-span-3">
-          <div className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] md:justify-start">
+          <div className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] md:justify-start flex-wrap">
             <Button size="sm" variant="secondary"
               aria-label="Previous month"
               type="button" onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
@@ -455,7 +455,7 @@ export function AdminAttendanceWorkspace({
                   }{" "}
                   of {heldSessions.length} held sessions marked
                 </p>
-                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-xs text-body md:grid-cols-3 xl:grid-cols-6">
+                <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-3)] text-xs text-body md:grid-cols-3 xl:grid-cols-6">
                   <div><dt>Monthly attendance</dt><dd className="font-semibold">{monthPercent===null?"—":monthPercent+"%"}</dd></div>
                   <div><dt>Students</dt><dd className="font-semibold">{data.grid.roster.length}</dd></div>
                   <div><dt>Sessions held</dt><dd className="font-semibold">{heldSessions.length}</dd></div>
@@ -643,7 +643,7 @@ export function AdminAttendanceWorkspace({
         }
         footer={
           target ? (
-            <div className="grid w-full min-w-0 grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
+            <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
               {(
                 [
                   "PRESENT",
