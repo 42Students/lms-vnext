@@ -376,8 +376,8 @@ function JobActions({
       {missing.length>0?<p className="text-xs text-body">Missing: {missing.map(row=>row.criterion).join(", ")}</p>:null}
       {failed.length>0?<p className="text-xs text-body">Not met: {failed.map(row=>row.criterion).join(", ")}</p>:null}
       <div className="flex flex-wrap gap-3">
-        <Link href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Check registration</Link>
-        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Review academic evidence</Link>
+        <Link href="/learn/my-placements#registration" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Check registration</Link>
+        <Link href="/learn/my-placements#placement-academic-evidence" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">Review academic evidence</Link>
       </div>
     </div>;
   }
@@ -410,7 +410,7 @@ function JobActions({
             href={safeExternalUrl!}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:w-auto md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle sm:w-auto md:min-h-9"
           >
             Open employer form
           </a>
@@ -449,7 +449,7 @@ function JobActions({
           </dl>
           <Button type="button" variant="link" aria-expanded={showSharedDetails}
             onClick={()=>setShowSharedDetails(open=>!open)}
-            className="max-md:min-h-11 font-semibold text-primary-text underline">
+            className="max-md:min-h-11 font-[650] text-primary-text underline">
             {showSharedDetails?"Hide what gets shared":"What exactly gets shared?"}
           </Button>
           {showSharedDetails?<ul className="list-disc space-y-2 pl-5 text-sm text-body">
@@ -542,7 +542,7 @@ export function LearnerPlacementJobs({
                 <h2 className="mt-1 break-words text-xl font-semibold text-foreground">
                   <Link
                     href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery) ?? "/learn/my-placements/jobs"}
-                    className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
+                    className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline"
                     aria-label={`View ${item.roleOption.title} drive details at ${item.company.name}`}
                   >
                     {item.roleOption.title}

@@ -229,7 +229,7 @@ export function LearnerApplicationsBrowse({
                   <strong className="break-words text-foreground">{row.title}</strong>
                   <span className="ml-2 text-xs text-muted-foreground">{row.detail}</span>
                 </span>
-                <Link href={row.href} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text">
+                <Link href={row.href} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
                   View application →
                 </Link>
               </li>
@@ -341,7 +341,7 @@ export function LearnerApplicationsBrowse({
             <p className="text-sm text-body">No applications have been recorded for this learner yet.
               Browse your published college drives and check eligibility before applying.</p>
             <Link href="/learn/my-placements/jobs"
-              className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
               Browse available drives →
             </Link>
           </div>
@@ -375,22 +375,22 @@ export function LearnerApplicationsBrowse({
             <>
               {ownApplicationJobHref(selected.jobId) ? <Link
                 href={ownApplicationJobHref(selected.jobId)!}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text">
                 View drive
               </Link> : null}
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
               >Application detail</Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/history`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
               >
                 Full history
               </Link>
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}/company`}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto"
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto"
               >
                 What the company sees
               </Link>
@@ -411,10 +411,10 @@ export function LearnerApplicationsBrowse({
             </Button>
           ) : null}
           <Link href={selectedAssessment?.href??"/learn/my-placements/assessments"}
-            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
+            className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto">
             {selectedAssessment?"Open this assessment":"Assessments"}
           </Link>
-          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-semibold text-primary-text md:w-auto">
+          <Link href={selectedInterview?.href??"/learn/my-placements/interviews"} className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-center text-sm font-[650] text-primary-text md:w-auto">
             {selectedInterview?"Open this interview":"Interviews"}
           </Link>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => updateQuery({applicationId:null})}>Got it</Button>
@@ -424,7 +424,7 @@ export function LearnerApplicationsBrowse({
             {selected.driveStatus==="CANCELLED"?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">
               <p className="font-semibold text-foreground">This drive was cancelled</p>
               <p>Review placement cell notices for any published reason. Your saved application history remains available.</p>
-              <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-primary-text underline">College notices</Link>
+              <Link href="/learn/my-placements/announcements" className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-primary-text underline focus-visible:underline">College notices</Link>
             </div>:selected.driveStatus==="CLOSED"?<p role="status" className="border-b border-[var(--lms-canvas-border)] py-3 text-sm text-body">This drive has closed. Previously recorded results remain visible.</p>:null}
             <dl className="grid gap-3 md:grid-cols-2">
               <div><dt className="text-xs font-semibold text-muted-foreground">Applied</dt>
@@ -439,7 +439,7 @@ export function LearnerApplicationsBrowse({
             <section aria-label="Selection process" className="min-w-0 border-t border-border pt-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h3 className="font-semibold text-foreground">Selection process</h3>
-                <Link href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">See in schedule</Link>
+                <Link href="/learn/my-placements/schedule" className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">See in schedule</Link>
               </div>
               <ol className="mt-3 space-y-2 text-sm text-body">
                 {scheduledRounds.filter(round=>round.applicationId===selected.applicationId)
@@ -462,7 +462,7 @@ export function LearnerApplicationsBrowse({
                 <h3 className="text-sm font-semibold text-foreground">Recent recorded milestones</h3>
                 <Link href={"/learn/my-placements/applications/"+
                   encodeURIComponent(selected.applicationId)+"/history"}
-                  className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
                   Full saved history →
                 </Link>
               </div>

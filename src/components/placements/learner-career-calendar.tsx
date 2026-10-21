@@ -293,7 +293,7 @@ export function LearnerCareerCalendar({
                         Event details
                       </Button>
                       <Link href={learnerCareerCalendarEventTarget(event)}
-                        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
+                        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] hover:underline focus-visible:underline">
                         Open exact round →
                       </Link>
                     </div>
@@ -341,12 +341,12 @@ export function LearnerCareerCalendar({
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-3">
-              <Button variant="link" className="max-[767px]:min-h-11 text-sm font-semibold" type="button"
+              <Button variant="link" className="max-[767px]:min-h-11 text-sm font-[650]" type="button"
                 onClick={()=>showEventDetail(event)}>
                 Event details
               </Button>
               <Link href={hrefForEvent(event)}
-                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
+                className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
                 View application →
               </Link>
             </div>
@@ -359,7 +359,7 @@ export function LearnerCareerCalendar({
         footer={
           <div className="flex min-w-0 w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             {selected?<Link href={learnerCareerCalendarEventTarget(selected)}
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)]">
               Open exact round
             </Link>:null}
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" type="button" onClick={()=>setSelectedKey(null)}

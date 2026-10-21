@@ -341,7 +341,7 @@ export function LearnerPlacementOffers({
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 break-words text-sm text-body">
               {item.letterHref ? (
                 <a href={item.letterHref} rel="noopener noreferrer"
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline">
+                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline">
                   View offer letter
                 </a>
               ) : null}
@@ -355,13 +355,13 @@ export function LearnerPlacementOffers({
             <nav aria-label={`Offer links for ${item.companyName}`} className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
               {learnerOfferApplicationHref(item.applicationId) ? (
                 <Link href={learnerOfferApplicationHref(item.applicationId)!}
-                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">
                   View related application
                 </Link>
               ) : null}
               {learnerOfferHref(item.offerId) ? (
                 <Link href={learnerOfferHref(item.offerId)!}
-                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">
                   Link to this offer
                 </Link>
               ) : null}
@@ -399,7 +399,7 @@ export function LearnerPlacementOffers({
                   Number.isFinite(Date.parse(item.acceptedDisputableUntil)) &&
                   Number.isFinite(Date.parse(snapshotNowIso)) &&
                   Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso) ? (
-                    <Link className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline"
+                    <Link className="mt-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline"
                       href={"/learn/my-placements/placement?"+new URLSearchParams({
                         request:"acceptance-dispute",offerId:item.offerId,
                       }).toString()+"#requests"}>
@@ -413,7 +413,7 @@ export function LearnerPlacementOffers({
                 Offer deadline extension requested. Your placement team has not approved it yet.
                 {" "}
                 <Link href="/learn/my-placements/support?status=PENDING&type=OFFER_EXTENSION"
-                  className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Review pending request</Link>
+                  className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 focus-visible:underline">Review pending request</Link>
               </p>
             ) : null}
             {learnerOfferResponseTiming(item,snapshotNowIso).urgency==="INVALID" ? (
