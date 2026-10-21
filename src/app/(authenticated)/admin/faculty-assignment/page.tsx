@@ -24,6 +24,8 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
+ const classes=classesResult.status==="fulfilled"?classesResult.value:[];
+ const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
  const metrics = collegeId ? await Promise.allSettled([
   listAdminFacultyAssignments(context,{status:"ALL",page:1,pageSize:20}),
   listAdminFacultyAssignments(context,{status:"ACTIVE",page:1,pageSize:20}),
