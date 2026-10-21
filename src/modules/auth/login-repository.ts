@@ -184,6 +184,18 @@ export const drizzleLoginRepository: LoginRepository = {
       ) {
         return false;
       }
+      // A newly started challenge supersedes earlier unused codes for the
+      // same verified user/contact. This prevents old SMS and email codes
+      // from surviving a restart in another tab or device.
+      await tx.execute(sql`
+        UPDATE identity_auth_attempts
+        SET used_at = now(), sms_code_mac = NULL,
+            sms_code_expires_at = NULL, email_code_mac = NULL,
+            email_code_expires_at = NULL, version = version + 1
+        WHERE user_id = ${input.userId}
+          AND contact_fingerprint = ${input.contactFingerprint}
+          AND used_at IS NULL AND expires_at > now()
+      `);
       await tx.execute(sql`
       INSERT INTO identity_auth_attempts (
         id, user_id, college_id, target_role, contact_fingerprint, ip_tag,

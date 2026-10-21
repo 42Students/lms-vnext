@@ -67,7 +67,7 @@ const projectAdminQuerySchema = z.strictObject({
     ])
     .optional(),
   page: strictPageNumber(1,100000,1),
-  pageSize: strictPageNumber(10,100,25),
+  pageSize: strictPageNumber(10,100,20),
 });
 
 export type ProjectAdminQuery = z.input<
@@ -503,15 +503,16 @@ export async function listProjectAdminRiskQueue(
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
   const search = query.q
     ? or(
-        ilike(
-          projectInstances.title,
-          searchPattern,
-        ),
-        ilike(
-          projectInstances.slug,
-          searchPattern,
-        ),
+        ilike(projectInstances.title,searchPattern),
+        ilike(projectInstances.slug,searchPattern),
         sql`${projectInstances.id}::text ilike ${searchPattern}`,
+        sql`exists (select 1 from project_members mentor
+          join college_memberships cm on cm.id = mentor.membership_id
+          join users u on u.id = cm.user_id
+          where mentor.project_id = ${projectInstances.id}
+            and cm.college_id = ${college.id}::uuid
+            and mentor.role = 'MENTOR' and mentor.ended_at is null
+            and u.display_name ilike ${searchPattern})`,
       )
     : undefined;
   // Correlated subqueries below need a qualified outer reference: Drizzle
@@ -626,9 +627,7 @@ export async function listProjectAdminRiskQueue(
         .where(where)
         .orderBy(
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
-            query.riskSort==="SEVERITY"
-              ? desc(signalScore)
-              : asc(lastActivityAt),
+            query.riskSort==="INACTIVE"?asc(lastActivityAt):desc(signalScore),
           asc(projectInstances.title),
           asc(projectInstances.id),
         )
