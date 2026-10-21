@@ -30,8 +30,11 @@ export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus,
  approvedJob?:{status:string}|null){
  if(approvedJob?.status==="PUBLISHED")return "Live";
  if(approvedJob?.status==="CLOSED")return "Completed";
- return status==="REJECTED"||status==="CANCELLED"?"Cancelled":
-  status==="DRAFT"?"Sent for review":"Sent for review";
+ if(status==="REJECTED")return "Rejected";
+ if(status==="CANCELLED")return "Cancelled";
+ if(status==="SENT_BACK")return "Needs changes";
+ if(status==="DRAFT")return "Approved awaiting publication";
+ return "Sent for review";
 }
 
 /** Optimistic request edit token and real 0101 REQUEST/SENT_BACK transitions. */
@@ -127,4 +130,23 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
  if(unmapped.length)return {ok:false,reason:"Legacy company, eligibility or schedule fields need an authorized migration.",
   unmappedFields};
  return {ok:true,draft:parsed.data,unmappedFields};
+}
+
+/** Legacy clients supplied collegeIds, but ownership is selected from the
+ * authenticated recruiter scope. A forged foreign college must be rejected,
+ * not published and not silently interpreted as a target audience.
+ */
+export function trustedRecruiterRequestFromLegacy(
+ raw:unknown,trustedCollegeId:string,submissionId:string,
+):RecruiterDriveRequestInput{
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))
+  throw new Error(RECRUITER_DRIVE_FORM_REQUIRED_ERROR);
+ const record=raw as Record<string,unknown>;
+ if(record.collegeId!==undefined && record.collegeId!==trustedCollegeId)
+  throw new Error("Selected college does not match the authorized recruiter scope");
+ const parsed=recruiterDraftFromLegacyForm(record.form??record.draft??record);
+ if(!parsed.ok)throw new Error(parsed.reason);
+ return recruiterDriveRequestInputSchema.parse({
+  collegeId:trustedCollegeId,submissionId,draft:parsed.draft,
+ });
 }

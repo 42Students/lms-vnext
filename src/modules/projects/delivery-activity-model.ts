@@ -2,6 +2,15 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RecordActivityEventInput } from "@/modules/activity/service";
 
 export type ProjectDeliveryEvent = "DRAFT_CREATED" | "DRAFT_UPDATED" | "SUBMITTED" | "REVIEWED" | "LOCKED";
+/** Legacy action vocabulary is a presentation mapping, never a write permission. */
+export const LEGACY_PROJECT_DELIVERY_ACTIONS = {
+ DRAFT_CREATED:"DRAFT_SAVED",DRAFT_UPDATED:"DRAFT_SAVED",SUBMITTED:"SUBMITTED",
+ REVIEWED:"REVIEWED",LOCKED:"REVIEWED",
+ REOPENED:"DRAFT_SAVED",ATTACHMENTS_CHANGED:"DRAFT_SAVED",
+} as const;
+export const LEGACY_PROJECT_DELIVERY_BADGES = {
+ DRAFT_SAVED:"Saved",SUBMITTED:"Submitted",REVIEWED:"Reviewed",
+} as const;
 const deliveryEvents = {
   DRAFT_CREATED: ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_DRAFT_CREATED,
   DRAFT_UPDATED: ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_DRAFT_UPDATED,
@@ -44,6 +53,8 @@ export type ProjectDeliveryHistorySource = {
  projectId:string; submissionId:string; eventId:string;action:ProjectDeliveryEvent;
  occurredAt:Date; actorName:string|null; actorRole:string|null;
  version:number;feedback:string|null; evidenceFileIds:readonly string[];
+ status?:string|null; notes?:string|null; revision?:number|null;
+ technicalAction?:"REOPENED"|"ATTACHMENTS_CHANGED"|null;
 };
 export const PROJECT_SUBMISSION_HISTORY_MESSAGE="Project submission history retrieved";
 export const PROJECT_DELIVERY_HISTORY_MESSAGE="Project delivery history retrieved";
@@ -64,9 +75,13 @@ export function projectDeliveryHistoryProjection(
   revisions:new Set(ordered.map(row=>row.version)).size,
   items:ordered.map(row=>({
    eventId:row.eventId,submissionId:row.submissionId,
-   action:row.action,version:row.version,occurredAt:row.occurredAt,
+   action:row.action,legacyAction:LEGACY_PROJECT_DELIVERY_ACTIONS[row.technicalAction??row.action],
+   legacyLabel:LEGACY_PROJECT_DELIVERY_BADGES[LEGACY_PROJECT_DELIVERY_ACTIONS[row.technicalAction??row.action]],
+   status:row.status??(row.action==="REVIEWED"?"REVIEWED":row.action==="SUBMITTED"?"SUBMITTED":"DRAFT_SAVED"),
+   version:row.version,revision:row.revision??row.version,occurredAt:row.occurredAt,
    actorName:row.actorName,actorRole:row.actorRole,
    feedback:options.includeFeedback?row.feedback:null,
+   notes:options.includeFeedback?row.notes??null:null,
    // Grant only verified IDs using a separate authorized download endpoint.
    evidenceFileIds:row.evidenceFileIds.filter(id=>
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)),

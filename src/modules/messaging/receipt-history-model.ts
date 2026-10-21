@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const messagingHistoryQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).max(10000).default(1),
-  purpose: z.string().trim().max(160).optional(),
+  page: z.coerce.number().int().transform(value=>Math.min(10000,Math.max(1,value))).default(1),
+  purpose: z.string().trim().max(64).transform(value=>value||undefined).optional(),
 }).strict();
 
 /** No carrier handset-delivery inference may be made from provider acceptance. */
@@ -16,8 +16,8 @@ export function messagingHistoryQueryError(input:unknown):string|null {
  const parsed=messagingHistoryQuerySchema.safeParse(input);
  if(parsed.success)return null;
  const fields=parsed.error.issues.map(issue=>issue.path[0]);
- if(fields.includes("page"))return "Enter a valid history page between 1 and 10000.";
- if(fields.includes("purpose"))return "Search purpose must be 160 characters or less.";
+ if(fields.includes("page"))return "Enter a valid history page number.";
+ if(fields.includes("purpose"))return "Search purpose must be 64 characters or less.";
  return "Invalid history filters. Clear them and try again.";
 }
 
@@ -40,6 +40,8 @@ export function projectMessagingHistory(rows: readonly MessagingHistoryRow[]) {
     total: row.total,
     queued: row.queued,
     acceptedByProvider: row.sent,
+    acceptedStatusLabel: "Provider accepted" as const,
+    deliveryCaution: MESSAGING_SENT_STATUS_NOTE,
     failed: row.failed,
     suppressed: row.suppressed,
     createdAt: row.createdAt,
@@ -47,4 +49,15 @@ export function projectMessagingHistory(rows: readonly MessagingHistoryRow[]) {
     /** SENT represents provider acceptance, never handset or mailbox delivery. */
     status: row.finalizedAt ? "FINALIZED" as const : "IN_PROGRESS" as const,
   }));
+}
+
+/** Legacy SMS log size is inclusive 1..200; invalid values never enlarge reads. */
+export function legacyMessagingHistoryPaging(rawPage:unknown,rawSize:unknown){
+ const numeric=(value:unknown,fallback:number)=>{
+  if(value===null||value===undefined||value==="")return fallback;
+  const number=Number(value);
+  return Number.isFinite(number)?Math.trunc(number):fallback;
+ };
+ return {page:Math.max(0,Math.min(10000,numeric(rawPage,0))),
+  size:Math.max(1,Math.min(200,numeric(rawSize,25)))};
 }
