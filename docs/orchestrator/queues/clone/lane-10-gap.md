@@ -69,4 +69,4 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/index.js`
 - [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/tasks.js`
 - [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js`
-- [ ] U031 (Cross-cutting area) `cross/10: Search, filters, sorting, pagination conventions across all list pages`
+- [x] U031 (Cross-cutting area) `cross/10: Search, filters, sorting, pagination conventions across all list pages`
