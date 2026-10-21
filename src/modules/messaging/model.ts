@@ -106,20 +106,23 @@ export async function previewCollegeCampaignAudience(args:{
  loadSuppressed:(collegeId:string)=>Promise<ReadonlySet<string>>;
  policyFor:(request:OutboundSendRequest)=>DeliveryPolicy;
 }){
- if(!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(args.collegeId))throw new Error("INVALID_COLLEGE_SCOPE");
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(args.collegeId))
+  throw new Error("INVALID_COLLEGE_SCOPE");
  const requests=args.requests.map(request=>outboundSendSchema.parse(request));
  if(requests.some(request=>request.channel!=="EMAIL"||
     !request.purpose.startsWith("tpo-recruiter-campaign:")))
   throw new Error("INVALID_CAMPAIGN_PURPOSE");
  const suppressed=await args.loadSuppressed(args.collegeId);
- return previewAudience(requests,request=>({
-  ...args.policyFor(request),
-  suppressed:new Set([...args.policyFor(request).suppressed,...suppressed]),
- }));
+ return previewAudience(requests,request=>{
+  // Read each policy once: a live per-college unsubscribe snapshot must not
+  // be mixed with two inconsistent caller policy reads in one preview row.
+  const policy=args.policyFor(request);
+  return {...policy,suppressed:new Set([...policy.suppressed,...suppressed])};
+ });
 }
 export function suppressionOperatorMessage(reason:SuppressionReason):string{
  if(reason==="nonprod-not-allowlisted")
-  return "Failed to send in development: recipient is outside the allowlist (not attempted).";
+  return "Not attempted in development: recipient is outside the allowlist.";
  if(reason==="unsubscribed")return "Unsubscribed for this college; not sent.";
  return "Not sent: "+reason.replace(/-/g," ")+".";
 }

@@ -47,6 +47,8 @@ export type PlatformSmsTemplate = {
   channels: readonly string[];
   definition: "FIXED_OTP_SOURCE" | "OUTBOUND_INTENT_ONLY";
   source: string;
+  /** Template registration/intent is not proof of a configured sender. */
+  sendReadiness: "PROVIDER_CONFIGURATION_REQUIRED" | "INTENT_ONLY";
 };
 
 /**
@@ -68,6 +70,7 @@ export function buildPlatformSmsTemplateCatalog(input: {
       channels: ["SMS"],
       definition: "FIXED_OTP_SOURCE",
       source: "src/modules/notifications/exotel-sms.ts",
+      sendReadiness: "PROVIDER_CONFIGURATION_REQUIRED",
     },
     ...input.outboundTemplateKeys.map((key) => ({
       key,
@@ -80,6 +83,7 @@ export function buildPlatformSmsTemplateCatalog(input: {
       channels: [...input.outboundChannels],
       definition: "OUTBOUND_INTENT_ONLY" as const,
       source: "src/modules/operations/outbound-delivery-contract.ts",
+      sendReadiness: "INTENT_ONLY" as const,
     })),
   ];
 }
