@@ -3,9 +3,11 @@ import {
   asc,
   desc,
   eq,
+  ilike,
   inArray,
   isNull,
   ne,
+  or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -27,6 +29,7 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
 import { createPlacementJobInputSchema } from "./validation";
+import { adminDriveDirectoryQuerySchema } from "./admin-drive-directory-model";
 
 type QueuePriority = "HIGH" | "MEDIUM" | "LOW";
 
@@ -574,5 +577,97 @@ db
     workQueue,
     upcomingRounds,
     jobs: jobViews,
+  };
+}
+
+
+/**
+ * Exact, database-filtered directory complement to the bounded TPO dashboard.
+ * Do not sort/filter/page the dashboard's 60+20 sample on the client; call
+ * this function with validated URL filters to obtain the selected-college
+ * page and a separate total. Search escapes SQL LIKE metacharacters so user
+ * text is treated literally.
+ */
+export async function listPlacementOperationsJobPage(
+  context: RequestContext,
+  collegeIdInput: string,
+  rawFilters: unknown = {},
+) {
+  const collegeId = createPlacementJobInputSchema.shape.collegeId.parse(collegeIdInput);
+  await requirePlacementManageScope(context, collegeId);
+  const filters = adminDriveDirectoryQuerySchema.parse(rawFilters);
+  const db = getDb();
+  const statusPredicate = filters.status === "ACTIVE"
+    ? eq(placementJobs.status, "PUBLISHED")
+    : filters.status === "DRAFT"
+      ? eq(placementJobs.status, "DRAFT")
+      : filters.status === "CLOSED"
+        ? inArray(placementJobs.status, ["CLOSED", "CANCELLED"])
+        : undefined;
+  const literalSearch = filters.q.replace(/[\\%_]/g, "\\$&");
+  const searchPredicate = filters.q
+    ? or(
+        ilike(placementJobs.title, "%" + literalSearch + "%"),
+        ilike(placementCompanies.name, "%" + literalSearch + "%"),
+      )
+    : undefined;
+  const where = and(
+    eq(placementJobs.collegeId, collegeId),
+    isNull(placementJobs.archivedAt),
+    statusPredicate,
+    searchPredicate,
+  );
+  const directory = () => db.select({
+    job: placementJobs,
+    company: placementCompanies,
+  }).from(placementJobs)
+    .innerJoin(placementCompanyRelationships,
+      eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId))
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementCompanyRelationships.companyId));
+  const [totalRow] = await db.select({total: sql<number>`count(*)::int`})
+    .from(placementJobs)
+    .innerJoin(placementCompanyRelationships,
+      eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId))
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementCompanyRelationships.companyId))
+    .where(where);
+  const total = Number(totalRow?.total ?? 0);
+  const totalPages = Math.max(1, Math.ceil(total / filters.pageSize));
+  const page = Math.min(filters.page, totalPages);
+  const rows = await directory().where(where)
+    .orderBy(
+      sql`${placementJobs.publishedAt} desc nulls last`,
+      desc(placementJobs.createdAt),
+      desc(placementJobs.id),
+    )
+    .limit(filters.pageSize).offset((page - 1) * filters.pageSize);
+  const ids = rows.map(({job}) => job.id);
+  const counts = await db.select({
+    jobId: placementApplications.jobId,
+    submitted: sql<number>`count(*)::int`,
+  }).from(placementApplications)
+    .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .where(and(
+      eq(placementJobs.collegeId, collegeId),
+      isNull(placementJobs.archivedAt),
+      inArray(placementApplications.jobId, ids),
+      eq(placementApplications.status, "SUBMITTED"),
+    )).groupBy(placementApplications.jobId);
+  const countsByJob = new Map(counts.map(row => [row.jobId, Number(row.submitted)] as const));
+  return {
+    total, totalPages, page, pageSize: filters.pageSize,
+    items: rows.map(({job, company}) => ({
+      job: {
+        id: job.id, title: job.title, status: job.status,
+        applicationDeadline: job.applicationDeadline,
+        employmentType: job.employmentType,
+        locations: job.locations,
+        publishedAt: job.publishedAt,
+        company: {id: company.id, name: company.name},
+      },
+      company: {id: company.id, name: company.name},
+      metrics: {submittedApplications: countsByJob.get(job.id) ?? 0},
+    })),
   };
 }
