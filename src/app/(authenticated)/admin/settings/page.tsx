@@ -32,7 +32,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     await getCurrentRequestContext();
 
   if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-    return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings access denied"
         description="Your account cannot access privileged tenant settings."
@@ -40,7 +40,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     </div>;
   const raw=await searchParams;
   const parsed=parseAdminInventoryQuery(raw);
-  if(!parsed) return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+  if(!parsed) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
       action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
@@ -53,7 +53,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     .then(value=>({ok:true as const,value}))
     .catch(()=>({ok:false as const}));
   if(!platform.ok)
-    return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
@@ -80,7 +80,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
 
   return (
-    <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         title="Tenant Settings"
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
