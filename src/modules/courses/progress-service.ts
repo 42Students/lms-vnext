@@ -70,7 +70,8 @@ export function buildLearnerProgressView(
   minInProgressPercent = 5,
 ): LearnerProgressView {
   const durationSeconds =
-    content.durationSeconds ?? progress?.durationSeconds ?? 0;
+    content.durationSeconds && content.durationSeconds > 0
+      ? content.durationSeconds : progress?.durationSeconds ?? 0;
   // Without authored duration preserve genuine saved position for resume.
   // Unknown duration must never imply a percentage or completion.
   const lastPositionSeconds = durationSeconds > 0
@@ -385,7 +386,8 @@ export async function saveLearnerContentProgress(
   // Read the current attempt before computing progress. Previously saved
   // duration remains authoritative if imported media has no authored duration.
   const existing = isTimed ? await loadProgressRow(membershipId, contentId) : null;
-  const durationSeconds = content.durationSeconds ?? existing?.durationSeconds ?? 0;
+  const durationSeconds = content.durationSeconds && content.durationSeconds > 0
+    ? content.durationSeconds : existing?.durationSeconds ?? 0;
   let positionSeconds = 0;
   let shouldComplete = false;
 
@@ -467,6 +469,13 @@ export async function saveLearnerContentProgress(
   const currentRow = await loadProgressRow(membershipId, contentId);
   if (!currentRow) {
     throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+  }
+  // A stale device must not update a newer retake merely because a failed
+  // insert or another writer forced a fresh lookup. Same-attempt insertion
+  // races remain recoverable without losing legitimate progress.
+  if ((existing && currentRow.attempt !== existing.attempt) ||
+      (!existing && currentRow.attempt !== 1)) {
+    throw new CoursesServiceError("LEARNER_PROGRESS_STALE_ATTEMPT");
   }
   const updated = await atomicProgressUpdate(
     membershipId,

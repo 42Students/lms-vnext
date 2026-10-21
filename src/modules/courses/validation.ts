@@ -41,6 +41,8 @@ export const createCourseInputSchema = z.object({
   officialCode:courseOfficialCodeSchema.optional(),
   cardColor:courseCardColorSchema.optional(),
   takeaways:z.string().trim().max(2000).nullable().optional(),
+  introductionHeading:z.string().trim().min(1).max(255).optional(),
+  enabled:z.boolean().optional(),
   description: z
     .string()
     .trim()
