@@ -52,7 +52,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
  return mobileSheet?<div className="w-full min-w-0">
   <Button variant="secondary" type="button" aria-expanded={sheetOpen} aria-controls={filterPanelId}
    onClick={()=>setSheetOpen(true)}
-   className="min-h-11 w-full md:hidden">
+   className={autoOpenMobile?"hidden":"min-h-11 w-full md:hidden"}>
    {title} ({activeCount})
   </Button>
   <BottomSheet open={sheetOpen} onOpenChange={next=>{setSheetOpen(next);if(!next&&autoOpenMobile)onAutoClose?.();}} title={title}>

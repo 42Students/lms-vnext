@@ -16,7 +16,7 @@ type Choice = {
   durationMinutes: number | null;
 };
 const localIst = (value: string | null) => value
-  ? new Intl.DateTimeFormat("en-CA", {
+  ? new Intl.DateTimeFormat("sv-SE", {
       timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit",
       day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
     }).format(new Date(value)).replace(", ", "T").replace(" ", "T")
@@ -136,10 +136,10 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       {!blockedDatesAvailable?<Alert tone="warning">Blocked-date storage is unavailable; schedule clashes cannot be verified.</Alert>:null}
       <details open={cancelExpanded} onToggle={event=>setCancelExpanded(event.currentTarget.open)} className="min-w-0 border-t border-border pt-2">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-body md:min-h-9">Cancellation reason (for Cancel only)</summary>
-      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Cancellation reason (for Cancel only)
-        <Textarea value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
+      <div className="min-w-0">
+        <Textarea aria-label="Cancellation reason (for Cancel only)" value={reason} onChange={(event) => setReason(event.target.value)} maxLength={1000}
           className="mt-2 min-h-24 w-full min-w-0" />
-      </label>
+      </div>
       </details>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
         <Button variant="primary" disabled={pending} type="button" onClick={() => review("SCHEDULE")}

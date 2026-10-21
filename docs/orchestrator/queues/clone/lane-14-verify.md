@@ -49,9 +49,9 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-14.md: surface | regre
 - [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
 - [x] `src/components/placements/tpo-drive-deadline-form.tsx`
 - [x] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-season-controls.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
 - [ ] `src/components/tpo/tpo-batch-class-decision.tsx`
 - [ ] `src/components/tpo/tpo-campaign-send-control.tsx`
 - [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
