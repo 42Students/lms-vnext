@@ -14,7 +14,7 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader eyebrow="Faculty · Courses" title="Section quizzes"
    description={workspace.course.courseName+" · "+workspace.course.sectionName}
-   actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">Back to course</Link>} />
+   actions={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Back to course</Link>} />
   {workspace.lessons.length?<FacultyChoiceQuizBuilder deliveryId={deliveryId}
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
    <section role="status" className="border-y border-[var(--lms-canvas-border)] bg-transparent py-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
