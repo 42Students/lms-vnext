@@ -27,6 +27,7 @@ export const placementTpoJobTypes = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
+    /** Stable display name; virtual built-ins have no row, so drives snapshot their selected label. */
     label: varchar("label", { length: 40 }).notNull(),
     sortOrder: integer("sort_order").notNull().default(0),
     active: boolean("active").notNull().default(true),
