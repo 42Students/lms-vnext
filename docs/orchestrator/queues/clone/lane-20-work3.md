@@ -14,6 +14,6 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_tpo-college-rules-control.tsx.md` (edit src/components/placements/tpo-college-rules-control.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_electives_college-elective-lifecycle-action.tsx.md` (edit src/components/electives/college-elective-lifecycle-action.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_instance-restore-service.ts.md` (edit src/modules/projects/instance-restore-service.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-3/src_app_api_courses_quizzes_quizId_route.ts.md` (edit src/app/api/courses/quizzes/[quizId]/route.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-students-spreadsheet.tsx.md` (edit src/components/tpo/tpo-students-spreadsheet.tsx; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-3/src_app_api_courses_quizzes_quizId_route.ts.md` (edit src/app/api/courses/quizzes/[quizId]/route.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-students-spreadsheet.tsx.md` (edit src/components/tpo/tpo-students-spreadsheet.tsx; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_app_api_announcements_announcementId_route.ts.md` (edit src/app/api/announcements/[announcementId]/route.ts; 3 findings; best P1)
