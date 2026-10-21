@@ -71,13 +71,18 @@ export default async function SuperAdminFacultyPage({searchParams}:{
   description="Registered faculty in the selected college. Contact fields are shown only to authorized administrators."
   searchParams={searchParams} renderRowActions={row=><div className="flex min-w-0 flex-wrap items-start gap-3">
     {peopleFilters?<CollegePersonEditAction membershipId={row.id} kind="FACULTY" departments={peopleFilters.departments}/>:null}
+    <CollegePersonAuditModal membershipId={row.id} name={row.title} kind="FACULTY"/>
+    <CollegePersonProfileOverviewModal membershipId={row.id} name={row.title} kind="FACULTY"/>
     <Disclosure title={"More faculty actions for "+row.title} className="min-w-0"
       contentClassName="flex min-w-0 flex-col items-start gap-3 pb-2 pt-2 sm:flex-row sm:flex-wrap">
       <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status} roleLabel="Faculty"/>
-      <CollegePersonAuditModal membershipId={row.id} name={row.title} kind="FACULTY"/>
-      <CollegePersonProfileOverviewModal membershipId={row.id} name={row.title} kind="FACULTY"/>
       {facultyPicker?<SuperAdminFacultyScheduleReassignAction sourceMembershipId={row.id} sourceName={row.title}
         candidates={facultyPicker.faculty} truncated={facultyPicker.truncated}/>:null}
+      <p className="max-w-md text-xs text-muted-foreground">
+        Legacy credential-swapping impersonation and forced OTP lockout clearing are
+        retired security operations. Remove faculty ends only an unassigned college
+        membership after a protected dependency check; it never deletes identity or history.
+      </p>
     </Disclosure>
   </div>} loader={query=>listAdminScopedPeople(context,"FACULTY",query)}/></div>;
 }
