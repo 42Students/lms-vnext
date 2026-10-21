@@ -1,4 +1,5 @@
 import { Alert } from "@/components/ui/alert";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Tabs } from "@/components/ui/tabs";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Input } from "@/components/ui/input";
@@ -24,12 +25,18 @@ export default async function CampaignHistory({searchParams}:PageProps){
  const params=await searchParams;
  const query=messagingHistoryQuerySchema.safeParse({page:first(params.page),purpose:first(params.purpose)});
  if(!query.success)return <div className="min-w-0 space-y-4"><PageHeader title="Emails"/><Alert tone="error">Invalid history filters. <Link href="/tpo/recruiters/campaigns">Reset filters</Link></Alert></div>;
- const result=await listTpoMessagingHistory(context,query.data);
- const drafts=await listTpoCampaignDrafts(context);
- const deliveryReady=await tpoCampaignDispatchReady();
+ const result=await listTpoMessagingHistory(context,query.data).catch(()=>null);
+ const drafts=await listTpoCampaignDrafts(context).catch(()=>null);
+ const deliveryReady=await tpoCampaignDispatchReady().catch(()=>null);
+ if(!result)return <div className="min-w-0 space-y-4">
+   <PageHeader title="Emails" description="Email campaigns from Engage"/>
+   <Alert tone="error"><strong>Could not load email history.</strong>
+    <Link href="/tpo/recruiters/campaigns" className="ml-2 font-semibold text-link underline">Retry</Link>
+   </Alert>
+  </div>;
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Emails"
-   description="Persisted email/SMS batch receipts for your college. Provider acceptance does not prove recipient delivery."
+   description="Email campaigns from Engage. Sent counts mean provider acceptance, not confirmed delivery."
    actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
      <Link href="/tpo/recruiters/campaigns/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary sm:w-auto md:min-h-9">New email campaign</Link>
      <Dropdown mobileSheet align="end" label="More campaign history actions" trigger="More ···"><nav aria-label="Campaign history actions" className="min-w-48 space-y-1">
@@ -53,16 +60,22 @@ export default async function CampaignHistory({searchParams}:PageProps){
    <Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center justify-center text-sm text-link underline lms-inline-link md:min-h-9">Clear</Link>
   </form>
 
-  <section aria-label="Email campaigns" className="space-y-3">
+  <section aria-label="Email campaigns" className="space-y-3 rounded-[12px] border border-border bg-surface p-4 md:p-5">
    <p className="text-sm text-body">{TPO_CAMPAIGN_RECIPIENT_CAP_COPY}</p>
-   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Email campaigns</h2>
-   {!drafts.ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body leading-[22px]">
-     {CAMPAIGN_DRAFT_UNAVAILABLE}
+   <div className="flex flex-wrap items-center justify-between gap-2">
+    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Emails sent from Engage</h2>
+    <StatusBadge tone={deliveryReady===true?"success":deliveryReady===false?"warning":"neutral"}>
+      {deliveryReady===true?"Email ready":deliveryReady===false?"Email unavailable":"Readiness unknown"}
+    </StatusBadge>
+   </div>
+   {!drafts||!drafts.ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body leading-[22px]">
+     {drafts?CAMPAIGN_DRAFT_UNAVAILABLE:"Could not load campaign history."}
+     <Link href="/tpo/recruiters/campaigns" className="ml-2 font-semibold text-link underline">Retry</Link>
     </p>:drafts.rows.length===0?
-    <p role="status" className="text-sm text-body leading-[22px]">No email campaigns yet.</p>:
-    <ul className="grid min-w-0 gap-3 lg:grid-cols-2">
+    <p role="status" className="text-sm text-body leading-[22px]">No emails sent from Engage yet. Create an email campaign to begin.</p>:
+    <ul className="min-w-0 divide-y divide-border">
      {drafts.rows.map(item=><li key={item.campaign_id}
-      className="border-b border-border py-4">
+      className="min-w-0 py-3 first:pt-0 last:pb-0">
       <Link className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-link underline lms-inline-link md:min-h-9"
        href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(item.campaign_id)}>
        {item.title}
@@ -71,18 +84,23 @@ export default async function CampaignHistory({searchParams}:PageProps){
       <p className="mt-1 text-xs text-muted-foreground leading-5">
        {item.sender_name} · {tpoCampaignHistoryTime(new Date(item.created_at))} IST
       </p>
-      <p className="mt-2 text-sm text-body leading-[22px]">
-       {tpoCampaignHistoryStatus(item.status)} · {item.sent} sent{item.skipped>0?" · "+item.skipped+" skipped":""}{item.failed>0?" · "+item.failed+" failed":""}
-      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+       <StatusBadge tone={item.status==="SENT"?"success":item.status==="SENDING"?"info":"neutral"}>{tpoCampaignHistoryStatus(item.status)}</StatusBadge>
+       <StatusBadge tone="success">{item.sent} sent</StatusBadge>
+       {item.skipped>0?<StatusBadge tone="warning">{item.skipped} skipped</StatusBadge>:null}
+       {item.failed>0?<StatusBadge tone="error">{item.failed} failed</StatusBadge>:null}
+       <span className="text-muted-foreground">{item.sent+item.skipped+item.failed} recipient outcomes</span>
+      </div>
       <p className="mt-1 text-xs text-muted-foreground leading-5">Segment: {item.segment.replaceAll("_"," ")}</p>
      </li>)}
     </ul>}
-   {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body leading-[22px]"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE} {TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} <Link href="/tpo/recruiters/campaigns" className="font-semibold text-link underline">Check delivery readiness again</Link></p>:null}
+   {deliveryReady!==true?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body leading-[22px]"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE} {TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} <Link href="/tpo/recruiters/campaigns" className="font-semibold text-link underline">Check delivery readiness again</Link></p>:null}
   </section>
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
+  <p className="text-xs text-muted-foreground">Receipts below are an additional delivery ledger, separate from the campaign send history.</p>
   <p role="status" className="text-sm text-body leading-[22px]">{result.total} recorded batches · Page {result.page} of {result.pages}</p>
-  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="grid min-w-0 gap-3 lg:grid-cols-2">
-    {result.rows.map(row=><li key={row.id} className="min-w-0 border-b border-border py-4">
+  {result.rows.length ? <ol aria-label="recruiters campaigns entries" className="min-w-0 divide-y divide-border rounded-[12px] border border-border bg-surface px-4">
+    {result.rows.map(row=><li key={row.id} className="min-w-0 py-3">
       <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
         className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline-offset-2 hover:underline">{row.purpose}</Link>
