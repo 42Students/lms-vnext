@@ -1,5 +1,6 @@
 import { FilterBar } from "@/components/ui/filter-bar";
 import { StatTile } from "@/components/ui/stat-tile";
+import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import collegeStyles from "@/components/admin/legacy-college-stat.module.css";
 import { Pagination } from "@/components/ui/pagination";
@@ -40,7 +41,7 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,openCreateCourse=false,
+  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
@@ -93,11 +94,22 @@ export function AdminCourseOverview({
     {
       key: "cover",
       header: "Image",
-      cell:course=>(<div className="h-14 w-20 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
-       {course.thumbnailUrl?.startsWith("https://")?
-        <img src={course.thumbnailUrl} alt={course.name+" cover"} loading="lazy"
-          className="h-full w-full object-cover"/>:
-        <span className="flex h-full items-center justify-center text-xs text-muted-foreground">No image</span>}
+      cell:course=>(<div className="h-[35px] w-[50px] overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+        {course.thumbnailUrl?.startsWith("https://")?
+          <a href={course.thumbnailUrl} target="_blank" rel="noopener noreferrer"
+            aria-label={"Preview "+(course.name?.trim()||"Untitled course")+" cover"}
+            className="block h-full w-full focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">
+            <img src={course.thumbnailUrl} alt={(course.name?.trim()||"Untitled course")+" cover"}
+              width={50} height={35} loading="lazy" className="h-full w-full object-cover"/>
+          </a>:
+          <span role="img" aria-label="Course preview unavailable"
+            className="flex h-full items-center justify-center text-muted-foreground">
+            <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none"
+              stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8" cy="8" r="1.5"/><path d="m3 17 5-5 4 4 3-3 6 5"/>
+            </svg>
+          </span>}
       </div>),
     },
     {
@@ -110,7 +122,7 @@ export function AdminCourseOverview({
            return first?offeringBasePath+"/"+encodeURIComponent(first.id):
             courseBasePath+"?q="+encodeURIComponent(course.name);
           })()} className="font-semibold text-primary-text underline-offset-2 hover:underline">
-            {course.name}
+            {course.name?.trim()||"Untitled course"}
           </Link>
           <p className="mt-1 text-xs font-semibold text-primary-text">{course.code}</p>
           {(course.description || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
@@ -126,24 +138,13 @@ export function AdminCourseOverview({
     {
       key: "shortTitle",
       header: "Short Title",
-      cell:course=><span className="text-sm text-body">{course.shortTitle??"—"}</span>,
+      cell:course=><span className="text-sm text-body">{course.shortTitle?.trim()||"—"}</span>,
     },
     {
       key: "department",
       header: "Department",
       cell: (course) =>
-        course.departmentName,
-    },
-    {
-      key: "dependencies",
-      header: "Dependencies",
-      cell: course=>{
-        const count=activeOfferingCountByCourse.get(course.id)??0;
-        const lessons=lessonCountByCourse?.[course.id];
-        return <span title="Course lesson dependencies and active Offerings to archive before this Course can be archived">
-          {lessons===undefined?"":lessons+" lesson"+(lessons===1?"":"s")+" · "}{count} active offering{count===1?"":"s"}
-        </span>;
-      },
+        course.departmentName?.trim()||"Department name unavailable (ID "+course.departmentId+")",
     },
     {
       key: "status",
@@ -161,6 +162,24 @@ export function AdminCourseOverview({
           updatedAt:course.updatedAt.toISOString()}}/>
         </div>
       ),
+    },
+    {
+      key: "dependencies",
+      header: "Dependencies",
+      cell: course=>{
+        const count=activeOfferingCountByCourse.get(course.id)??0;
+        const lessons=lessonCountByCourse?.[course.id];
+        return <span title="Course lesson dependencies and active Offerings to archive before this Course can be archived">
+          <span className="inline-flex flex-col gap-1">
+            <StatusBadge tone={lessons===undefined?"warning":"neutral"}>
+              {lessons===undefined?"Lessons: unavailable":lessons+" lesson"+(lessons===1?"":"s")}
+            </StatusBadge>
+            <span className="text-xs text-muted-foreground">
+              {count} active offering{count===1?"":"s"}
+            </span>
+          </span>
+        </span>;
+      },
     },
     {
       key: "actions",
@@ -451,6 +470,8 @@ export function AdminCourseOverview({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
+      <Disclosure title="Course catalogue totals" className="min-w-0 border-b border-border"
+        contentClassName="py-3">
       <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] lg:grid-cols-4">
         <StatTile
           className={collegeStyles.tile}
@@ -480,10 +501,15 @@ export function AdminCourseOverview({
           detail=""
         />
       </div>
+      </Disclosure>
 
-      <div className={courseBasePath.startsWith("/admin/")?"grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"space-y-[var(--lms-space-4)]"}>
-      <div id="create-course" className="min-w-0">
-      <Disclosure title="Create New Course" defaultOpen={openCreateCourse||Boolean(duplicateCourseId)||courseBasePath.startsWith("/admin/")}
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+      <div id="create-course" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+      <h2 className="mb-3 text-lg font-semibold text-foreground">Create New Course</h2>
+      {workspace.departments.length===0?<Alert tone="warning" role="status">
+        No departments in this college yet. Add a department before creating a course.
+      </Alert>:null}
+      <Disclosure title="Course details" defaultOpen={true}
         className="min-w-0 border-y border-[var(--lms-canvas-border)]"
         contentClassName="min-w-0 pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
       <AdminCourseCreatePanel
@@ -503,7 +529,7 @@ export function AdminCourseOverview({
       </Disclosure>
       </div>
 
-      <section className="min-w-0 space-y-[var(--lms-space-3)]">
+      <section className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
             {COLLEGE_COURSES_COPY.existingTitle}
@@ -514,7 +540,7 @@ export function AdminCourseOverview({
           search={<label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search courses
             <Input form="college-course-catalogue-filters" name="q" type="search" maxLength={100}
-              defaultValue={catalogueQuery.q} placeholder="Name, code or department"
+              defaultValue={catalogueQuery.q} placeholder="Search courses"
               className="min-h-11 min-w-0 md:min-h-9"/>
           </label>}
           action={<Button type="submit" form="college-course-catalogue-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
@@ -527,20 +553,20 @@ export function AdminCourseOverview({
                 <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
               </Select>
             </label>
-            {courseBasePath.startsWith("/admin/") ? <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Per page
               <Select name="pageSize" defaultValue={catalogueQuery.pageSize ?? "25"} className="min-h-11 md:min-h-9">
                 <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
               </Select>
-            </label> : null}
+            </label>
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:col-span-2">
               <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
-              <a href={courseBasePath.startsWith("/admin/") ? "/api/admin/courses/catalogue/export" + collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export", "") : collegeCourseCatalogueExportHref(catalogueQuery)} download
+              <a href={courseBasePath.startsWith("/admin/") ? "/api/admin/courses/catalogue/export" + collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export", "") : collegeCourseCatalogueExportHref(catalogueQuery)} download="courses.csv"
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">
-                Export CSV
+                Export courses.csv
               </a>
-              {courseBasePath.startsWith("/admin/") ? <Link href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses", courseBasePath)}
-                className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Refresh</Link> : null}
+              <Link href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses", courseBasePath)}
+                className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Refresh</Link>
               <Link href={courseBasePath} className="inline-flex min-h-11 items-center justify-center px-[var(--lms-space-3)] text-sm text-body hover:text-primary-text md:min-h-9">Clear</Link>
             </div>
           </form>
@@ -562,13 +588,19 @@ export function AdminCourseOverview({
           id:course.id,name:course.name,enabled:course.enabled&&course.legacyAllowedForDisplay!==0,
           updatedAt:course.updatedAt.toISOString(),
          }))}/>:null}
-        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show. Create Course and offering above to add the first record.</p>}
+        <div className="min-w-0 overflow-x-auto" role="region" aria-label="Existing Courses" tabIndex={0}>
+        <DataTable empty={<p className="m-0 text-sm text-muted-foreground">
+          {workspace.departments.length===0?"No departments in this college yet.":
+           catalogueQuery?.q?"No matching courses. Clear search to see the catalogue.":
+           "No courses in this college yet. Create one on the left."}
+        </p>}
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}
           getRowKey={(course) => course.id}
         />
+        </div>
         {catalogue&&catalogueQuery?<div className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
-          <p className="text-muted-foreground">{catalogue.total} matching courses · {catalogue.pageSize} per page</p>
+          <p className="text-muted-foreground">{catalogue.total===0?0:(catalogue.page-1)*catalogue.pageSize+1}–{Math.min(catalogue.total,catalogue.page*catalogue.pageSize)} of {catalogue.total} courses · {catalogue.pageSize} per page</p>
           <Pagination page={catalogue.page} pageCount={catalogue.pages}
             hrefForPage={page => collegeCourseCatalogueHref({...catalogueQuery,page}).replace("/college/courses",courseBasePath)}
             label="Course catalogue pages" showBoundaryLinks={false}/>

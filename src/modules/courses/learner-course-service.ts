@@ -575,6 +575,7 @@ export async function getLearnerCourseWorkspace(
       lessonSequence:
         courseLessons.sequence,
       contentId: lessonContents.id,
+      contentDeliveryId: lessonContents.deliveryId,
       contentType:
         lessonContents.contentType,
       contentTitle: lessonContents.title,
@@ -661,6 +662,7 @@ export async function getLearnerCourseWorkspace(
 
   type ContentItem = {
     id: string;
+    deliveryId:string|null;
     type: string;
     title: string;
     notes: string | null;
@@ -783,6 +785,7 @@ export async function getLearnerCourseWorkspace(
 
     lesson.contents.push({
       id: row.contentId,
+      deliveryId:row.contentDeliveryId,
       type: row.contentType!,
       title: row.contentTitle!,
       notes: row.contentNotes,

@@ -18,7 +18,6 @@ import { learnerSafeExternalContentHref } from "@/modules/courses/learner-extern
 import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -132,6 +131,65 @@ function kindLabel(
   }
 }
 
+function legacyAddedDate(value:Date|string|null|undefined){
+ if(!value)return null;
+ const d=value instanceof Date?value:new Date(value);
+ return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("en-GB",{
+  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+ }).format(d):null;
+}
+function legacyLiveMoment(value:Date|string|null|undefined){
+ if(!value)return null;
+ const d=value instanceof Date?value:new Date(value);
+ return Number.isFinite(d.getTime())?new Intl.DateTimeFormat("en-GB",{
+  weekday:"long",day:"2-digit",month:"short",year:"numeric",
+  hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata",
+ }).format(d):null;
+}
+function contentKindLabel(type:string){
+ if(type==="RESOURCE")return "Resource";
+ if(type==="VIDEO")return "Video";
+ if(type==="YOUTUBE")return "YouTube Video";
+ if(type==="LIVE_CLASS")return "Live session";
+ return "Learning content";
+}
+function liveProvider(url:string|null){
+ if(!url)return null;
+ try{
+  const h=new URL(url).hostname.toLowerCase();
+  if(h==="zoom.us"||h.endsWith(".zoom.us"))return "Zoom";
+  if(h==="meet.google.com")return "Google Meet";
+  if(h==="teams.microsoft.com")return "Microsoft Teams";
+  if(h==="webex.com"||h.endsWith(".webex.com"))return "Webex";
+  return "online";
+ }catch{return null;}
+}
+/** Historical Interweave notes may contain HTML. Convert only visible
+ * legacy text with line breaks; React escapes any remaining markup so
+ * untrusted embedded script, attributes or links never become DOM elements. */
+function legacySafeNotes(notes:string){
+ if(!/<[a-z][\s\S]*>/i.test(notes))return notes;
+ return notes.replace(/<br\s*\/?>/gi,"\n")
+  .replace(/<\/(p|div|ul|ol|li|h[1-6])\s*>/gi,"\n")
+  .replace(/<li(?:\s[^>]*)?>/gi,"• ")
+  .replace(/<[^>]*>/g,"")
+  .replace(/&nbsp;/gi," ").replace(/&amp;/gi,"&")
+  .replace(/&lt;/gi,"<").replace(/&gt;/gi,">")
+  .replace(/&quot;/gi,'"').trim();
+}
+function ContentKindIcon({kind}:{kind:string}){
+ if(["VIDEO","YOUTUBE","LIVE_CLASS"].includes(kind))
+  return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+   stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+   strokeLinejoin="round" aria-hidden="true">
+    <rect x="3" y="5" width="13" height="14" rx="2"/>
+    <path d="m16 10 5-3v10l-5-3"/></svg>;
+ return <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+  stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+  strokeLinejoin="round" aria-hidden="true">
+   <path d="M7 3h7l4 4v14H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/>
+   <path d="M14 3v5h5M9 13h6M9 17h6"/></svg>;
+}
 function ContentCard({
   content,
   lessonId,
@@ -149,6 +207,12 @@ function ContentCard({
 }) {
   const start = formatDateTime(content.startsAt);
   const end = formatDateTime(content.endsAt);
+  const meetingLink=learnerSafeExternalContentHref(content.externalUrl);
+  const provider=liveProvider(meetingLink);
+  const liveStart=content.startsAt?new Date(content.startsAt):null;
+  const liveEnd=content.endsAt?new Date(content.endsAt):null;
+  const durationMinutes=liveStart&&liveEnd?
+    Math.floor((liveEnd.getTime()-liveStart.getTime())/60000):0;
   const interaction = resourceInteractionState({
     type: content.type,
     externalUrl: content.externalUrl,
@@ -173,7 +237,10 @@ function ContentCard({
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge tone="info">
-              {content.type.replaceAll("_", " ")}
+              <span className="inline-flex items-center gap-1.5"><ContentKindIcon kind={content.type}/>{contentKindLabel(content.type)}</span>
+            </StatusBadge>
+            <StatusBadge tone="neutral">
+              {content.deliveryId?"For your class":"Shared with your class"}
             </StatusBadge>
             <StatusBadge
               tone={progressTone(
@@ -205,15 +272,15 @@ function ContentCard({
             {content.title}
           </h3>
         </div>
-        <span className="text-xs font-semibold text-muted-foreground">
-          #{content.sequence + 1}
-        </span>
+        {legacyAddedDate(content.createdAt)?<span className="text-[11px] leading-5 text-muted-foreground">
+          Added {legacyAddedDate(content.createdAt)}
+        </span>:null}
       </div>
 
       {content.notes ? (
-        <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
-          {content.notes}
-        </p>
+        <div className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+          <LearnerFormattedResponse text={legacySafeNotes(content.notes)}/>
+        </div>
       ) : null}
 
       {content.progress.durationSeconds > 0 ? (
@@ -227,12 +294,39 @@ function ContentCard({
         </div>
       ) : null}
 
-      {content.type==="LIVE_CLASS"&&content.startsAt&&content.endsAt
-        ? <LearnerLiveSessionStatus startsAt={new Date(content.startsAt).toISOString()}
-            endsAt={new Date(content.endsAt).toISOString()}/>:null}
+      {content.type==="LIVE_CLASS"?<section aria-label="Live session details"
+        className="mt-4 flex min-w-0 flex-wrap items-stretch gap-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] p-4">
+        {liveStart&&Number.isFinite(liveStart.getTime())?
+          <div className="flex w-[72px] shrink-0 flex-col items-center justify-center rounded-lg border border-border bg-white p-2 text-primary-text">
+            <span className="text-xs font-semibold uppercase">
+              {new Intl.DateTimeFormat("en-GB",{month:"short",timeZone:"Asia/Kolkata"}).format(liveStart)}
+            </span>
+            <span className="text-2xl font-bold">
+              {new Intl.DateTimeFormat("en-GB",{day:"2-digit",timeZone:"Asia/Kolkata"}).format(liveStart)}
+            </span>
+            <span className="text-xs">
+              {new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:"Asia/Kolkata"}).format(liveStart)}
+            </span>
+          </div>:null}
+        <div className="flex min-w-0 flex-1 flex-col justify-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {content.startsAt&&content.endsAt?
+              <LearnerLiveSessionStatus startsAt={new Date(content.startsAt).toISOString()}
+               endsAt={new Date(content.endsAt).toISOString()}/>:null}
+            <span className="text-xs font-semibold text-body">{provider?"on "+provider:"Live Class"}</span>
+          </div>
+          {legacyLiveMoment(content.startsAt)?<p className="text-sm text-body">
+            {legacyLiveMoment(content.startsAt)}
+            {liveEnd&&Number.isFinite(liveEnd.getTime())?" – "+
+              new Intl.DateTimeFormat("en-GB",{hour:"numeric",minute:"2-digit",
+               hour12:true,timeZone:"Asia/Kolkata"}).format(liveEnd):""}
+            {durationMinutes>0?" · "+durationMinutes+" min":""}
+          </p>:null}
+        </div>
+      </section>:null}
       {content.type==="LIVE_CLASS"&&!learnerSafeExternalContentHref(content.externalUrl)
         ? <p role="status" className="mt-2 text-xs text-muted-foreground">
-            No meeting link available yet. Check back before the session starts.
+            No meeting link available yet. The link will appear here once the session is scheduled.
           </p>:null}
       {start || end ? (
         <p className="mt-3 text-xs text-muted-foreground">
@@ -653,34 +747,9 @@ export function LearnerCourseWorkspace({
     return content.type === "VIDEO" || content.type === "YOUTUBE";
   };
 
-  const filterCounts = {
-    all: workspace.lessons.reduce((sum, lesson) => sum + lesson.items.length, 0),
-    lectures: workspace.lessons.reduce(
-      (sum, lesson) =>
-        sum +
-        lesson.contents.filter(
-          (content) => content.type === "VIDEO" || content.type === "YOUTUBE",
-        ).length,
-      0,
-    ),
-    resources: workspace.lessons.reduce(
-      (sum, lesson) =>
-        sum + lesson.contents.filter((content) => content.type === "RESOURCE").length,
-      0,
-    ),
-    assessments: workspace.lessons.reduce(
-      (sum, lesson) => sum + lesson.assignments.length + lesson.quizzes.length,
-      0,
-    ),
-    "live-sessions": workspace.lessons.reduce(
-      (sum, lesson) =>
-        sum + lesson.contents.filter((content) => content.type === "LIVE_CLASS").length,
-      0,
-    ),
-  };
-
   const mobileOutline=learnerRoadmapMobileOutline(
-    workspace.lessons.map(lesson=>({
+    workspace.lessons.filter(lesson=>activeFilter==="all"||
+      lesson.items.some(item=>matchesFilter(lesson,item))).map(lesson=>({
       id:lesson.id,name:lesson.name,sequence:lesson.sequence,
       visibleCount:lesson.items.filter(item=>matchesFilter(lesson,item)).length,
     })),
@@ -715,13 +784,14 @@ export function LearnerCourseWorkspace({
               Content locked or unavailable. This item is not published in the selected lesson.
             </Alert>:null}
       <div>
-        <h2 className="sr-only">Learning Path</h2>
+        <h2 className="text-xl font-semibold text-foreground">Learning Path</h2>
         <p className="m-0 text-sm text-body">
           Follow the course in order, open lesson content, submit assessments, and track completion.
         </p>
       </div>
 
-      <section className="border-b border-border pb-5">
+      <Disclosure title="Course progress and next steps" className="border-b border-border pb-3"
+        contentClassName="pt-3">
         <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr] lg:items-center">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -753,7 +823,7 @@ export function LearnerCourseWorkspace({
           {progressUnknown?<p role="status" className="text-sm text-warning">Lesson completion state could not be fully verified. Retry state before using this progress estimate.</p>:
            <ProgressBar value={measuredProgress} label="Overall Course progress" />}
         </div>
-      </section>
+      </Disclosure>
 
       {!progressUnknown?<Disclosure title="Learning progress breakdown"
         className="border-b border-border pb-3" contentClassName="pt-3">
@@ -781,17 +851,18 @@ export function LearnerCourseWorkspace({
         </div>
       </Disclosure>:null}
 
-      <Tabs
-        ariaLabel="Learning path content filter"
-        value={activeFilter}
-        renderPanel={false}
-        items={filters.map(item => ({
-          value: item.key,
-          label: item.label,
-          count: filterCounts[item.key],
-          href: `/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${encodeURIComponent(item.key)}`,
-        }))}
-      />
+      <nav role="group" aria-label="Learning path content filter"
+        className="flex flex-wrap items-center gap-2">
+        {filters.map(item=><Link key={item.key} role="button"
+          aria-pressed={activeFilter===item.key}
+          href={`/learn/courses/${encodeURIComponent(deliveryId)}/roadmap?filter=${encodeURIComponent(item.key)}`}
+          className={"inline-flex min-h-11 items-center rounded-full border px-4 py-2 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 "+
+            (activeFilter===item.key
+              ?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]"
+              :"border-border bg-surface text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]")}>
+          {item.label}
+        </Link>)}
+      </nav>
 
       <Disclosure title={"Jump to lesson ("+mobileOutline.length+")"}
           className="rounded-xl border border-border bg-surface md:hidden [&>summary]:min-h-11 [&>summary]:p-4">
@@ -821,7 +892,7 @@ export function LearnerCourseWorkspace({
         {workspace.lessons.map((lesson, lessonIndex) => {
           const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
           if (focusLessonId && focusLessonId !== lesson.id) return null;
-          // Keep empty lessons visible so learners understand what is absent in each filter.
+          if(activeFilter!=="all"&&visibleItems.length===0)return null;
 
           const lessonProgress = lessonProgressState(
             lesson.items.map((item) => item.progress.status),
@@ -849,8 +920,8 @@ export function LearnerCourseWorkspace({
             <Disclosure id={`lesson-${lesson.id}`} key={lesson.id}
               defaultOpen={
                 focusLessonId === lesson.id ||
-                (!focusLessonId && (workspace.nextItem?.lessonId === lesson.id ||
-                  (!workspace.nextItem && lessonIndex === 0)))
+                (!focusLessonId && workspace.lessons.find(candidate=>
+                  candidate.items.some(item=>matchesFilter(candidate,item)))?.id===lesson.id)
               }
               preserveSummary
               summaryClassName="cursor-pointer list-none px-4 py-4 md:px-5"
@@ -861,8 +932,9 @@ export function LearnerCourseWorkspace({
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                       {String(lessonIndex + 1).padStart(2, "0")}
                     </p>
-                    <h3 className="mt-1 text-lg font-semibold text-foreground">
-                      {lesson.name}
+                    <h3 aria-current={lessonProgress.current&&!progressUnknown?"step":undefined}
+                      className="mt-1 text-lg font-semibold text-foreground">
+                      {lesson.name?.trim()||"Untitled lesson"}
                     </h3>
                     {lesson.description ? (
                       <p className="mt-1 max-w-3xl text-sm leading-6 text-body">
@@ -898,7 +970,7 @@ export function LearnerCourseWorkspace({
                 </div>
               
               </>}
-              className="group min-w-0 border-b border-border bg-surface">
+              className="group min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-none">
 
               <div className="border-t border-border bg-surface p-4 md:p-5">
                 {lessonCompletion.stateKnown? <div className="mb-4 space-y-2">
@@ -965,8 +1037,10 @@ export function LearnerCourseWorkspace({
                             focusKey={deliveryId+":"+lesson.id+":"+item.id}
                             locked={content.availability==="SCHEDULED"&&content.type!=="LIVE_CLASS"}
                             availability={content.availability}
-                            caption={content.type === "LIVE_CLASS" ? "Live session" :
-                              content.type === "RESOURCE" ? "Resource" : "Lecture"}
+                            caption={contentKindLabel(content.type)+
+                              ((content.type==="VIDEO"||content.type==="YOUTUBE")&&
+                                content.progress.percentComplete>0&&content.progress.percentComplete<100
+                                 ?" · "+content.progress.percentComplete+"% watched":"")}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -991,7 +1065,10 @@ export function LearnerCourseWorkspace({
                             title={assignment.title}
                             kind="Assignment"
                             focusKey={deliveryId+":"+lesson.id+":"+item.id}
-                            caption="Assignment" dueText={assignment.dueAt?(formatDateTime(assignment.dueAt)??undefined):undefined}
+                            caption={"Assignment"+(!assignment.submissionId&&
+                              assignment.dueAt&&assignment.dueAt.getTime()<workspace.snapshotNowMs
+                               ?" · Not submitted":"")}
+                            dueText={assignment.dueAt?(formatDateTime(assignment.dueAt)??undefined):undefined}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -1013,7 +1090,11 @@ export function LearnerCourseWorkspace({
                           title={quiz.title}
                           kind="Quiz"
                           focusKey={deliveryId+":"+lesson.id+":"+item.id}
-                          caption="Quiz" dueText={quiz.dueAt?(formatDateTime(quiz.dueAt)??undefined):undefined}
+                          caption={!quiz.dueAt&&quiz.attemptsUsed===0
+                            ?"Quiz · Unavailable · deadline missing":quiz.progress.status==="MISSED"
+                              ?"Quiz · Missed":"Quiz"}
+                          locked={!quiz.dueAt&&quiz.attemptsUsed===0}
+                          dueText={quiz.dueAt?(formatDateTime(quiz.dueAt)??undefined):undefined}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -1024,6 +1105,25 @@ export function LearnerCourseWorkspace({
                     })}
                   </div>
                 )}
+                {focusLessonId===lesson.id?<nav aria-label="Lesson navigation (end)"
+                  className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4 text-sm">
+                  <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                    Back to Learning Path
+                  </Link>
+                  {workspace.lessons[lessonIndex-1]?<Link
+                    href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?lesson="+
+                      encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                    Previous lesson
+                  </Link>:null}
+                  {workspace.lessons[lessonIndex+1]?<Link
+                    href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?lesson="+
+                      encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
+                    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                    Next lesson
+                  </Link>:null}
+                </nav>:null}
               </div>
             </Disclosure>
           );
