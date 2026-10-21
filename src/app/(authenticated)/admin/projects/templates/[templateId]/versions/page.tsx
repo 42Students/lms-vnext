@@ -4,6 +4,7 @@ import {notFound} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {Banner} from "@/components/ui/banner";
 import { SuperAdminTemplateSubviewPage } from "@/components/projects/super-admin-template-subview-page";
+import {canonicalTemplateVersionHistoryPage} from "@/modules/projects/template-version-history-model";
 
 export default async function SuperAdminTemplateVersionsPage({
   params,
@@ -27,6 +28,7 @@ export default async function SuperAdminTemplateVersionsPage({
    </Link>
   </section>;
   if(!z.uuid().safeParse(templateId).success)notFound();
+  const query=await searchParams;
 
   return (
     <div className="min-w-0 space-y-3">
@@ -37,7 +39,7 @@ export default async function SuperAdminTemplateVersionsPage({
     <SuperAdminTemplateSubviewPage
       templateId={templateId}
       section="versions"
-      historyQuery={{ page: (await searchParams).page }}
+      historyQuery={{page:canonicalTemplateVersionHistoryPage(query)}}
     />
     </div>
   );
