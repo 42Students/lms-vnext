@@ -177,8 +177,7 @@ export async function getPlacementReportWorkspace(
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
       employmentType: placementJobs.employmentType,
-      recruiterDriveMode: placementJobs.recruiterDriveMode,
-      isDream: placementJobs.isDream,
+      countsAsPlaced: placementJobs.countsAsPlaced,
     })
     .from(placementJobs)
     .innerJoin(
@@ -646,6 +645,7 @@ export async function getPlacementReportDetails(
         companyId: placementCompanies.id,
         companyName: placementCompanies.name,
         employmentType: placementJobs.employmentType,
+        countsAsPlaced: placementJobs.countsAsPlaced,
         status: placementOffers.status,
         kind: placementOffers.kind,
         annualCtcInr: placementOffers.annualCtcInr,
@@ -761,6 +761,7 @@ export async function getPlacementReportDetails(
       companyId: row.companyId,
       companyName: row.companyName,
       employmentType: row.employmentType,
+      countsAsPlaced: row.countsAsPlaced,
       status: row.status,
       kind: row.kind,
       annualCtcInr: row.annualCtcInr,
