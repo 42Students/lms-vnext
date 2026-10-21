@@ -3,11 +3,14 @@ import {and,asc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {activityEvents,collegeMemberships,colleges,placementApplications,
- placementApplicationScreenings,placementJobRounds,placementJobs,users} from "@/db/schema";
+ placementApplicationScreenings,placementApplicationScreeningHistory,
+ placementJobRounds,placementJobs,users} from "@/db/schema";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
+import {decidePlacementScreening} from "./screening-service";
+import {PlacementsServiceError} from "./errors";
 
 export type TpoBulkStageAction="MOVE_TEST"|"MOVE_INTERVIEW";
 export const TPO_BULK_STAGE_LIMIT = 100;
@@ -185,4 +188,160 @@ export async function moveTpoBulkApplicationStages(
  return {requested:results.length,succeeded,failed,
   summary:failed?"Bulk status update completed with "+failed+" failure(s)"
    :"Bulk status update completed",results};
+}
+
+/** Legacy status write adapter. Offer/HIRED are projections of separately
+ * confirmed offers and joining evidence; never manufacture those outcomes by
+ * assigning a string to an application. Assessment links belong to the drive
+ * round setup, and are refused here if not persisted there first. */
+export type TpoLegacyBulkStatus =
+ "SHORTLISTED"|"REJECTED"|"ASSESSMENT"|"INTERVIEW"|"OFFERED"|"HIRED";
+
+export async function applyTpoLegacyBulkStatuses(
+ ctx:RequestContext,jobId:string,
+ items:readonly {
+  applicationId:string;status:TpoLegacyBulkStatus;
+  expectedScreeningUpdatedAt?:string;expectedStageVersion?:string;
+  rejectionReason?:string;assessmentUrl?:string;
+ }[],
+){
+ if(!items.length)throw new RangeError("Select at least one application.");
+ if(items.length>TPO_BULK_STAGE_LIMIT)
+  throw new RangeError("You can update at most 100 applications at a time.");
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!uuid.test(jobId))throw new RangeError("Select a valid placement drive.");
+ const seen=new Set<string>();
+ const valid:readonly TpoLegacyBulkStatus[]=[
+  "SHORTLISTED","REJECTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED",
+ ];
+ for(const item of items){
+  if(!uuid.test(item.applicationId))throw new RangeError("Select valid application IDs.");
+  if(seen.has(item.applicationId))throw new RangeError("Remove duplicate application IDs.");
+  if(!valid.includes(item.status))throw new RangeError("Select a valid applicant status.");
+  if(item.status==="REJECTED"&&!item.rejectionReason?.trim())
+   throw new RangeError("Rejection reason is required.");
+  if(item.status==="REJECTED"&&item.rejectionReason!.trim().length>500)
+   throw new RangeError("Rejection reason must be 500 characters or fewer.");
+  if(item.assessmentUrl){
+   try{
+    const url=new URL(item.assessmentUrl);
+    if(url.protocol!=="https:")throw new Error("HTTPS required");
+   }catch{throw new RangeError("Assessment link must be a valid HTTPS URL.");}
+  }
+  seen.add(item.applicationId);
+ }
+ const collegeId=await requireTpoJobCollege(ctx);
+ await getDb().transaction(async tx=>requireTpoJobActor(tx,ctx));
+ // A same-college but different-drive ID must not be changed merely because
+ // the actor may manage both drives. Scope the complete submitted batch first.
+ const scoped=await getDb().select({id:placementApplications.id})
+  .from(placementApplications)
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .where(and(eq(placementApplications.jobId,jobId),
+   eq(placementJobs.collegeId,collegeId),
+   inArray(placementApplications.id,items.map(item=>item.applicationId))));
+ const allowed=new Set(scoped.map(row=>row.id));
+ const results:{
+  applicationId:string;status:TpoLegacyBulkStatus;success:boolean;error:string|null;
+ }[]=[];
+ for(const item of items){
+  try{
+   if(!allowed.has(item.applicationId))
+    throw new RangeError("Applicant not found in this drive.");
+   if(item.assessmentUrl)
+    throw new RangeError("Save the assessment URL on the test round before moving applicants.");
+   if(item.status==="SHORTLISTED"||item.status==="REJECTED"){
+    await decidePlacementScreening(ctx,item.applicationId,{
+     decision:item.status,
+     candidateMessage:item.status==="REJECTED"?item.rejectionReason!.trim():null,
+     internalReason:null,
+    },item.expectedScreeningUpdatedAt);
+   }else if(item.status==="ASSESSMENT"||item.status==="INTERVIEW"){
+    if(!item.expectedStageVersion)
+     throw new RangeError("Refresh the applicant list before moving to a round.");
+    await moveTpoBulkApplicationStage(ctx,jobId,item.applicationId,
+     item.status==="ASSESSMENT"?"MOVE_TEST":"MOVE_INTERVIEW",
+     item.expectedStageVersion);
+   }else{
+    throw new RangeError("Issue or verify the offer and joining outcome in Offers first.");
+   }
+   results.push({applicationId:item.applicationId,status:item.status,success:true,error:null});
+  }catch(error){
+   // Authorization and database failures stop the operation. Validation,
+   // version, and state failures remain visible beside the affected row.
+   if(!(error instanceof RangeError)&&
+      !(error instanceof TpoBulkStageError)&&
+      !(error instanceof PlacementsServiceError))throw error;
+   const message=error instanceof RangeError?error.message:
+    error instanceof TpoBulkStageError&&error.code==="STAGE_STALE"||
+    error instanceof PlacementsServiceError&&error.code==="PLACEMENT_SCREENING_STALE"
+     ?"Applicant status changed. Refresh and try again.":
+    "The applicant cannot move to this status. Check screening and round requirements.";
+   results.push({applicationId:item.applicationId,status:item.status,success:false,error:message});
+  }
+ }
+ const succeeded=results.filter(row=>row.success).length,failed=results.length-succeeded;
+ return {requested:items.length,succeeded,failed,
+  summary:failed?"Bulk status update completed with "+failed+" failure(s)"
+   :"Bulk status update completed",results};
+}
+
+/** Legacy chronological status history projection. Screening decisions have a
+ * durable history table; TPO test/interview moves and offer/joining updates
+ * are drawn from the scoped activity stream. Never infer HIRED from OFFERED. */
+export async function listTpoApplicationStatusHistory(
+ ctx:RequestContext,jobId:string,applicationId:string,
+){
+ const collegeId=await requireTpoJobCollege(ctx);
+ const db=getDb();
+ await db.transaction(async tx=>requireTpoJobActor(tx,ctx));
+ const [application]=await db.select({id:placementApplications.id})
+  .from(placementApplications)
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .where(and(eq(placementApplications.id,applicationId),
+   eq(placementApplications.jobId,jobId),eq(placementJobs.collegeId,collegeId)))
+  .limit(1);
+ if(!application)throw new TpoBulkStageError("STAGE_NOT_ALLOWED");
+ const [screening,events]=await Promise.all([
+  db.select({
+   id:placementApplicationScreeningHistory.id,
+   at:placementApplicationScreeningHistory.createdAt,
+   from:placementApplicationScreeningHistory.fromStatus,
+   to:placementApplicationScreeningHistory.toStatus,
+   reason:placementApplicationScreeningHistory.internalReason,
+   candidateMessage:placementApplicationScreeningHistory.candidateMessage,
+   actorUserId:placementApplicationScreeningHistory.actorUserId,
+  }).from(placementApplicationScreeningHistory)
+   .where(eq(placementApplicationScreeningHistory.applicationId,applicationId)),
+  db.select({
+   id:activityEvents.id,at:activityEvents.occurredAt,
+   eventType:activityEvents.eventType,summary:activityEvents.summary,
+   metadata:activityEvents.metadata,actorUserId:activityEvents.actorUserId,
+  }).from(activityEvents).where(and(
+   eq(activityEvents.module,"PLACEMENTS"),
+   eq(activityEvents.subjectType,"placement_application"),
+   eq(activityEvents.subjectId,applicationId),
+   eq(activityEvents.collegeId,collegeId),
+  )),
+ ]);
+ const history=[
+  ...screening.map(row=>({
+   id:row.id,at:row.at,source:"SCREENING" as const,
+   from:row.from,to:row.to,actorUserId:row.actorUserId,
+   reason:row.reason??row.candidateMessage??null,
+  })),
+  ...events.filter(row=>row.eventType!==ACTIVITY_EVENT_TYPES.PLACEMENTS_SCREENING_DECIDED)
+   .map(row=>{
+    const meta=row.metadata??{};
+    return {
+     id:row.id,at:row.at,source:"ACTIVITY" as const,
+     from:typeof meta.from==="string"?meta.from:null,
+     to:typeof meta.to==="string"?meta.to:null,
+     actorUserId:row.actorUserId,
+     reason:typeof meta.reason==="string"?meta.reason:row.summary,
+    };
+   }),
+ ];
+ history.sort((a,b)=>a.at.getTime()-b.at.getTime()||a.id.localeCompare(b.id));
+ return {jobId,applicationId,history};
 }
