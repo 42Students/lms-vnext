@@ -111,7 +111,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         { value: "calendar", label: "Calendar", href: "/learn/my-placements/schedule?view=calendar" },
       ]} />
       {view==="coming"?<section className="space-y-3" aria-label="Coming up">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Coming up ({ahead.length} dated)</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Coming up ({ahead.length} dated)</h2>
         {ahead.length === 0 && undated.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">Nothing coming up. When a company&apos;s round is planned, it shows here.</p> : null}
         {ahead.length === 0 && undated.length > 0 ? <p role="status" className="text-sm text-body">
           {undated.length} upcoming round(s) have no confirmed time yet. Check the details below.
@@ -140,7 +140,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </Suspense>
       </section>:null}
       {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Past</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Past</h2>
         {past.length === 0 ? <p role="status" className="flex min-h-44 items-center justify-center border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center text-sm leading-[1.5] text-body">No past rounds yet.</p> : past.map(row =>
           <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
             <h3 className="font-semibold text-[var(--lms-heading)]">{row.roundName} · {row.companyName}</h3>
