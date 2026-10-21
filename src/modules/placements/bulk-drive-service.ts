@@ -404,3 +404,27 @@ export async function bulkAddLearnersToDrive(
   }
   return { results, counts: bulkDriveCounts(results) };
 }
+
+/** Exact migration guide for legacy TpoApplicantController entry points.
+ * All vNext writes require a same-origin authenticated TPO, persisted
+ * college-owned UUID scope and validated payloads. Do not interpret a
+ * successful preview as an actual mutation.
+ */
+export const TPO_APPLICANT_API_MIGRATION = [
+ {legacy:"GET /tpo/drives/{jobId}/applicants",vNext:"GET applicants-pipeline page",method:"GET",status:200,
+  note:"Scoped, paginated pipeline read; not the legacy unpaged JPA entity array"},
+ {legacy:"GET /tpo/drives/{jobId}/applicants/not-applied",vNext:"GET /api/placements/jobs/{jobId}/bulk-add",method:"GET",status:200,
+  note:"Active college learner candidates; eligibility and application status rechecked before addition"},
+ {legacy:"POST /tpo/drives/{jobId}/applicants/remind-not-applied",vNext:"POST /api/placements/tpo/jobs/{jobId}/remind-not-applied",method:"POST",status:200,
+  note:"Scoped reasoned reminder; current endpoint requires validated body"},
+ {legacy:"POST /tpo/drives/{jobId}/applicants/apply-on-behalf/{learnerId}",vNext:"POST /api/placements/jobs/{jobId}/bulk-add",method:"POST",status:200,
+  note:"Use {roleOptionId,membershipIds:[UUID]}; unlike old 201 this returns per-learner outcome counts"},
+ {legacy:"POST /tpo/drives/{jobId}/applicants/add-students",vNext:"POST /api/placements/jobs/{jobId}/bulk-add",method:"POST",status:200,
+  note:"Old learnerIds are now membershipIds and includeIneligible boolean becomes reasoned includeIneligible"},
+ {legacy:"POST /tpo/drives/{jobId}/applicants/bulk-move",vNext:"POST /api/placements/tpo/bulk-actions/preview + confirm",method:"POST",status:200,
+  note:"Use UUID application IDs, revision-backed preview token and guarded confirmation"},
+ {legacy:"POST /tpo/drives/{jobId}/applicants/bulk-reject",vNext:"POST /api/placements/tpo/bulk-actions/preview + confirm",method:"POST",status:200,
+  note:"Reason and selected applications validated by the guarded bulk-action workflow"},
+ {legacy:"POST /tpo/drives/{jobId}/applicants/undo/{undoGroupId}",vNext:"POST /api/placements/tpo/bulk-actions/undo",method:"POST",status:200,
+  note:"Uses stored bulk-run identifiers; conflicts respond 409 after notified/reconciled changes"},
+] as const;
