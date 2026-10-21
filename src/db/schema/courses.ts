@@ -1,9 +1,12 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   check,
+  date,
   index,
   integer,
+  jsonb,
   pgTable,
   text,
   timestamp,
@@ -42,12 +45,21 @@ export const courses = pgTable(
       }),
     name: text("name").notNull(),
     code: varchar("code", { length: 64 }).notNull(),
+    // Legacy IDs must be resolved from scoped import maps before storing UUIDs.
+    slug: varchar("slug", { length: 64 }),
+    parentCourseId: uuid("parent_course_id"),
     // SA-academics-people-50: distinct legacy catalogue presentation metadata.
     shortTitle: varchar("short_title", { length: 120 }),
     officialCode: varchar("official_code", { length: 64 }),
     cardColor: varchar("card_color", { length: 7 }),
     takeaways: text("takeaways"),
     description: text("description"),
+    // Old active, enabled, and soft deletion were independent flags.
+    enabled: boolean("enabled").notNull().default(true),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    legacyMetadata: jsonb("legacy_metadata").$type<Record<string, unknown>>(),
+    legacyAllowedForDisplay: integer("legacy_allowed_for_display"),
+    version: bigint("version", { mode: "number" }).notNull().default(0),
     status: courseStatusEnum("status")
       .notNull()
       .default("ACTIVE"),
@@ -79,6 +91,11 @@ export const courses = pgTable(
       table.departmentId,
       table.status,
     ),
+    uniqueIndex("courses_slug_uq").on(table.slug)
+      .where(sql`${table.slug} is not null`),
+    index("courses_visible_department_idx")
+      .on(table.departmentId, table.status, table.enabled)
+      .where(sql`${table.deletedAt} is null`),
     check("courses_card_color_hex_ck",
       sql`${table.cardColor} IS NULL OR ${table.cardColor} ~ '^#[0-9A-Fa-f]{6}$'`,
     ),
@@ -248,6 +265,10 @@ export const courseTeachingAssignments = pgTable(
     endedAt: timestamp("ended_at", {
       withTimezone: true,
     }),
+    // Legacy start/end dates are dates, not instant timestamps.
+    startDate: date("start_date", { mode: "string" }),
+    endDate: date("end_date", { mode: "string" }),
+    version: bigint("version", { mode: "number" }).notNull().default(0),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -280,6 +301,10 @@ export const courseTeachingAssignments = pgTable(
     index(
       "course_teaching_assignments_delivery_idx",
     ).on(table.deliveryId),
+    index("course_teaching_assignments_membership_dates_idx")
+      .on(table.membershipId, table.startDate, table.endDate),
+    check("course_teaching_assignments_date_order_ck",
+      sql`${table.startDate} is null or ${table.endDate} is null or ${table.endDate} >= ${table.startDate}`),
   ],
 );
 
@@ -332,7 +357,11 @@ export const courseLessons = pgTable(
     status: courseLessonStatusEnum("status")
       .notNull()
       .default("ACTIVE"),
+    // status maps old active; visibleToStudents maps enabled.
+    // The old is_deleted state is independent of both.
     visibleToStudents: boolean("visible_to_students").notNull().default(true),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    version: bigint("version", { mode: "number" }).notNull().default(0),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -361,6 +390,9 @@ export const courseLessons = pgTable(
       table.learningPathId,
       table.status,
     ),
+    index("course_lessons_live_learner_idx")
+      .on(table.learningPathId, table.sequence)
+      .where(sql`${table.status} = 'ACTIVE' and ${table.visibleToStudents} = true and ${table.deletedAt} is null`),
     check(
       "course_lessons_sequence_ck",
       sql`${table.sequence} >= 0`,
