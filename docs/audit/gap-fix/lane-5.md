@@ -274,3 +274,9 @@
 
 ## Packet 57 — Super Admin legacy hiring dashboard
 - Legacy /admin/placements/hiring now redirects to the canonical scoped /admin/placements/analytics hiring metrics, funnel and company report. Allows only bounded analytic filter keys; rejects arbitrary query passthrough. Existing Analytics service retains unified validated counts rather than synthetic old GET shapes. G2-10-008-001 page route parity addressed; G2-10-008-063 remains a service/API compatibility handoff. No code/test/CI run.
+
+## Packet 58 — Selected-college Super Admin applications
+- No scope now shows exact legacy "Organization context required for job application search." and a selected-college recovery cue, rather than querying any applications. An optional filter lookup failure no longer hides the protected directory. Existing item links lead to authorized application detail and stage history; private contact/resume/notes remain protected pending explicit need-to-know service. Reviewed G2-11-030-009 and G2-12-014-023; first requires permissioned detail service handoff. No code/tests/CI run.
+
+## Packet 59 — Candidate interviews canonical route
+- The old Super Admin Interviews entry now maps to the already implemented selected-college Calendar candidate appointment list (default agenda view, bounded whitelisted date/company/job/round-kind filters), rather than prioritizing round-level records that lack Confirmed/Reschedule/No Show lifecycle. Calendar already reads actual bookings with independent retry. Existing detailed round pages remain addressable. G2-5-007-012/028 page route resolved via canonical consumer; same-scope stale list retention remains calendar-service handoff. No code/tests/CI run.

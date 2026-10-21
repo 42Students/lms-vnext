@@ -133,3 +133,6 @@
 
 - G2-5-030-018: Branding setup still requires shared route/scope transition dirty-busy registry; page warning is advisory, not an interception.
 - G2-10-008-063: legacy hiring metrics, funnel, company-report GET response envelopes are intentionally replaced by one validated tenant-scoped Analytics report. Define external API adapters only after explicit caller compatibility review, not by inventing endpoint payloads in the redirect.
+
+- G2-11-030-009: Super Admin learner application detail already provides authorized stage history, but contact email/phone, resume, notes require separate evidence-based field permissions and exact college membership scope; do not append private columns to broad directory.
+- G2-5-007-028: candidate Calendar booked interview feed already isolates fetch errors; last-good historical appointment state must be cached with selected-college, date window, role and exact filters to avoid leaking across scope transitions.
