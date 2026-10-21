@@ -51,6 +51,10 @@ export default async function CollegeGroupsPage({
   requirePermission(context, "academics.manage", {
     organizationId: membership.organizationId, collegeId: membership.collegeId,
   });
+  // The old Student Groups menu was hidden and replaced with People.
+  // New standalone group CRUD is an independently releasable feature; do
+  // not read group rosters or render mutations without an explicit release.
+  if (process.env.COLLEGE_STUDY_GROUPS_RELEASED !== "true") redirect("/college/people");
   const filters = parseCollegeGroupsDirectoryParams(await searchParams);
   if (!filters) return <div className="min-w-0 space-y-4">
     <PageHeader title="Student Groups" />
