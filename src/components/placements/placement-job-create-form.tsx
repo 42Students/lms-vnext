@@ -129,6 +129,7 @@ export function PlacementJobCreateForm({
   const deadlineTimeChosen=useRef(false);
   const [restoredBackup,setRestoredBackup]=useState(false);
   const [lastLocalSaveAt,setLastLocalSaveAt]=useState<number|null>(null);
+  const [lastServerSavedAt,setLastServerSavedAt]=useState<string|null>(null);
   const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const uncertainKey=backupKey+":create-outcome-unknown";
   const [uncertainCreate,setUncertainCreate]=useState(false);
@@ -317,6 +318,19 @@ export function PlacementJobCreateForm({
   useEffect(()=>{
     try{setUncertainCreate(localStorage.getItem(uncertainKey)==="1");}catch{}
   },[uncertainKey]);
+  useEffect(()=>{
+    if(!partialJobId)return;
+    let active=true;
+    void apiFetch<{job:{updatedAt:string;createdByUserId:string}}>(
+      `/api/placements/jobs/${encodeURIComponent(partialJobId)}`,
+      {credentials:"same-origin",timeoutMs:15000},
+    ).then(response=>{
+      if(!active)return;
+      const lastSaved=response.job?.updatedAt;
+      if(lastSaved&&Number.isFinite(Date.parse(lastSaved)))setLastServerSavedAt(lastSaved);
+    }).catch(()=>{/* Keep the server attribution unknown on a failed read. */});
+    return ()=>{active=false;};
+  },[partialJobId]);
   useEffect(()=>{
     if(autoCopyHandled.current)return;
     const sourceId=new URLSearchParams(window.location.search).get("duplicateFrom");
@@ -1008,7 +1022,12 @@ export function PlacementJobCreateForm({
       className="min-w-0 space-y-[var(--lms-space-4)]"
     >
       <p role="status" aria-live="polite" className="max-w-[75ch] break-words text-xs leading-5 text-body">
-        {pending?"Saving changes…":lastLocalSaveAt?
+        {pending?"Saving changes…":lastServerSavedAt&&partialJobId?
+          "Last saved on server at "+new Intl.DateTimeFormat("en-IN",{
+            dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+          }).format(new Date(lastServerSavedAt))+" IST · Draft created by your account; finish setup before publishing.":
+          partialJobId?"Draft exists on server · Last-saved timestamp unavailable; retry setup or open the draft.":
+          lastLocalSaveAt?
           "Changes not saved to the server · Browser backup at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
           "Not saved yet · Your changes are backed up locally until you create the draft."}
       </p>
