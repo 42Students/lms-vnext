@@ -259,17 +259,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/learn/profile/page.tsx`
 - [x] `src/app/(authenticated)/mentor/calendar/page.tsx`
 - [x] `src/app/(authenticated)/mentor/notifications/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/not-found.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
