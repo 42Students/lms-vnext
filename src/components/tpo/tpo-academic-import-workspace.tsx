@@ -119,7 +119,7 @@ export function TpoAcademicImportWorkspace() {
       </p>
       <a download="academic-import-template.csv"
         href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
-        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
+        className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download a template
       </a>
       <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Drop a CSV file here, or click to choose" accept=".csv,text/csv" maxBytes={200_000}

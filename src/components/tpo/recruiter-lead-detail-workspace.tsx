@@ -397,14 +397,14 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="min-w-0 space-y-5">
-      {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Recruiter leads</Link>:null}
+      {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
         <p role="status" className="border-y border-border py-6">Loading recruiter details…</p>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 border-b border-border pb-5">
           <PageHeader title="This recruiter isn’t in Engage" />
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
-          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
             Go to Engage
           </Link>
           <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => void load()}>Retry</Button>
@@ -460,7 +460,7 @@ export function RecruiterLeadDetailWorkspace({
                <p className="text-xs text-muted-foreground">Applied and offers below are stored drive counts, not verified placements.</p>
                <ul className="space-y-1">
                  {companySummary.drives.slice(0,5).map(drive=><li key={drive.id}>
-                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
+                   <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
                    {" · "+drive.applied+" applied · "+drive.offers+" offers"}
                  </li>)}
                </ul>
@@ -470,7 +470,7 @@ export function RecruiterLeadDetailWorkspace({
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
              <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
-               className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+               className="lms-inline-link mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
                Open company memory
              </Link>
              </section>
@@ -480,10 +480,10 @@ export function RecruiterLeadDetailWorkspace({
               <h2 className="text-lg font-semibold">Contact</h2>
               <dl className="space-y-3 text-sm [&_dd]:min-w-0 [&_dd]:break-words">
                 <div><dt className="text-muted-foreground">Email</dt>
-                  <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{lead.emailNorm}</a>
+                  <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">{lead.emailNorm}</a>
                     : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add email</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Phone</dt>
-                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{lead.phoneNorm}</a>
+                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">{lead.phoneNorm}</a>
                     : <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={openEdit}>Add phone</Button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
@@ -686,7 +686,7 @@ export function RecruiterLeadDetailWorkspace({
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 {duplicateLead?<p role="status" className="text-sm">
                  Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
-                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open {duplicateLead.name}</Link>
+                  className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">Open {duplicateLead.name}</Link>
                 </p>:null}
                 <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
                   <Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" type="button" disabled={saving} onClick={()=>closeEdit()}>Cancel</Button>
