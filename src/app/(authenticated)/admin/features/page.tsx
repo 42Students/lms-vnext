@@ -128,7 +128,7 @@ export default async function SuperAdminFeaturesPage({
         <p className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Module availability · {scopeLabel}</p>
         <h2 className="mt-1 text-lg font-semibold text-foreground">Optional modules by college</h2>
         <dl className="mt-3 grid grid-cols-2 gap-0 divide-y divide-border border-y border-border text-sm sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges in scope</dt><dd className="mt-2 font-semibold">{result.total} matching current filters</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Colleges matching current filters</dt><dd className="mt-2 font-semibold">{result.total} in the authorized query scope</dd></div>
           <div className="min-w-0 px-4 py-3"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Projects on</dt><dd className="mt-2 font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
           <div className="min-w-0 col-span-2 px-4 py-3 sm:col-span-1"><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Placements on</dt><dd className="mt-2 font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
         </dl>
@@ -248,10 +248,14 @@ export default async function SuperAdminFeaturesPage({
                 const decision=college.modules.find(item=>item.module===module);
                 return decision?<div className="min-w-0">
                   <ModuleState decision={decision}/>
-                  <Disclosure title={"Change "+decision.label+" →"} className="mt-2 [&>summary]:min-h-11 [&>summary]:text-primary-text">
+                  {decision.module==="projects"||decision.module==="placements" ?
                     <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
-                      stored={decision.stored} ancestorLocked={decision.ancestorLocked}/>
-                  </Disclosure>
+                      stored={decision.stored} ancestorLocked={decision.ancestorLocked}/> :
+                    <Disclosure title={"Change "+decision.label+" →"}
+                      className="mt-2 [&>summary]:min-h-11 [&>summary]:text-primary-text">
+                      <CollegeFeatureRuleEditor collegeId={college.id} module={decision.module}
+                        stored={decision.stored} ancestorLocked={decision.ancestorLocked}/>
+                    </Disclosure>}
                 </div>:<span className="text-muted-foreground">—</span>;
               },
             })),
@@ -320,7 +324,11 @@ export default async function SuperAdminFeaturesPage({
         Lower-level Projects/Electives overrides,
         placement participation decisions, and other
         authorization gates may affect a learner&apos;s
-        actual experience. Guarded inline college-policy editors are available from each cell. Every change still requires fresh impact review and server-side authorization.
+        actual experience. Projects and Placements offer direct Turn on/Turn off controls
+        in the matrix; changes are not applied until the guarded impact review and
+        server-side authorization succeed. Electives retains the advanced disclosure.
+        The legacy one-click switch would bypass the intentional vNext Inherit/Lock
+        and explicit-impact contracts, so it is not silently reintroduced.
       </p>
       </Disclosure>
     </div>
