@@ -24,6 +24,8 @@ import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } 
 import {Button} from "@/components/ui/button";
 import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
+import {ErrorState} from "@/components/ui/error-state";
+import {AuthorizationError} from "@/modules/permissions/policy";
 /** User-facing acknowledgements belong to the interactive action controls,
  * not to this server-rendered conversation snapshot. Their verified response
  * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
@@ -42,7 +44,15 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const rawMessage=Array.isArray(query.m)?query.m[0]:query.m;
  const highlightId=rawMessage&&tpoThreadIdSchema.safeParse(rawMessage).success?rawMessage:undefined;
  if(!parsedPage.success)notFound();
- const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
+ const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data).catch(error=>{
+   if(error instanceof AuthorizationError)throw error;
+   return null;
+ });
+ if(!result)return <div className="min-w-0 space-y-4">
+   <PageHeader title="Team conversation"/>
+   <ErrorState title="Could not load conversation" description="Previous messages were not changed."
+     action={<Link href={"/tpo/team/"+encodeURIComponent(threadId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>}/>
+  </div>;
  if(result.status==="NOT_FOUND")notFound();
  if(result.status==="NOT_REGISTERED")return <div className="min-w-0 space-y-4">
    <PageHeader title="Conversations unavailable"/>
@@ -71,12 +81,26 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const serverNow=new Date();
  return <div className="min-w-0 space-y-4">
   <PageHeader title={result.thread.topic}
-   description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}
+   description={"With "+result.thread.counterpartName+" · Private topic"}
    actions={<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 w-full items-center justify-center text-link lms-inline-link sm:w-auto min-[768px]:min-h-9">All conversations</Link>}/>
+  <div className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3">
+   <StatusBadge tone="neutral">Private topic</StatusBadge>
+   <StatusBadge tone="info">2 participants</StatusBadge>
+   <StatusBadge tone="neutral">{result.thread.kind.replaceAll("_"," ")}</StatusBadge>
+   <Link href={"/tpo/messages?tab=team&c="+encodeURIComponent(threadId)} className="ml-auto hidden min-h-9 items-center text-sm font-semibold text-link underline lg:inline-flex">Show beside conversations</Link>
+  </div>
   <TpoLiveRefresh intervalMs={30000}/>
   <TpoTeamOpenRead threadId={result.thread.id}/>
+  <section aria-label="Participants" className="flex flex-wrap items-center justify-between gap-2 rounded-[10px] border border-border bg-surface px-3 py-2">
+   <div className="min-w-0 space-y-1">
+    <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">People here</h2>
+    <p className="text-sm text-body">You · {result.thread.counterpartName}</p>
+   </div>
+   <span className="text-xs text-muted-foreground">Private to the two members</span>
+  </section>
   <Disclosure title="Conversation tools" className="min-w-0 border-b border-border" contentClassName="space-y-3 py-3">
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
+  <p className="text-xs text-muted-foreground">This two-person conversation remains private. Opening it to the whole team and leaving a group conversation require multi-member topics; those controls are not offered for a private pair.</p>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
    counterpart={result.thread.counterpartName}
    createdDate={new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(result.thread.createdAt)}

@@ -25,7 +25,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const router=useRouter();
  const [title,setTitle]=useState(""),[subject,setSubject]=useState("");
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
- const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
+ const [templateKey,setTemplateKey]=useState("recruiter-campaign"),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
  const [savedDraftId,setSavedDraftId]=useState<string|null>(null);
  const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
@@ -81,9 +81,12 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
  }
- return <section className="min-w-0 space-y-4 border-t border-border pt-4" aria-label="Campaign composer">
+ return <section className={"min-w-0 space-y-4 "+(selectedLeadIds.length?
+   "mx-auto max-w-[680px] rounded-[12px] border border-border bg-white p-4 shadow-[0_12px_35px_rgba(0,0,0,0.08)] sm:p-6":
+   "border-t border-border pt-4")} aria-label="Campaign composer">
   <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" recruiters":"Write a campaign"}</h2>
   <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
+  <p className="text-xs text-muted-foreground">Saving a draft is available even when sending is disabled. The Send action is only available after selecting eligible recipients and confirming a verified draft.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Campaign name
     <Input value={title} maxLength={160} aria-required="true" className={field}
@@ -115,14 +118,13 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <Input value={subject} maxLength={200} aria-required="true" className={field}
      onChange={e=>setSubject(e.target.value)}/>
    </label>
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Message
-    <Textarea value={body} maxLength={10000} aria-required="true" rows={6}
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Email
+    <Textarea value={body} maxLength={10000} aria-required="true" rows={8}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
    <p className="text-xs text-muted-foreground" aria-live="polite">{body.length} / 10,000 characters</p>
    <p className="text-xs text-muted-foreground">
-     Write {`{name}`} or {`{company}`} and each person sees their own. This preview uses example text;
-     sending, signature and unsubscribe-link delivery have not been enabled.
+     Write {`{name}`} or {`{company}`} and each person sees their own. Your signature and an unsubscribe link are added when sending is configured. This preview uses example text; provider delivery is not yet guaranteed.
    </p>
    <Disclosure title="Preview" ariaLabel="Message preview" className="border-y border-border py-2">
      <div className="min-w-0 py-2">
@@ -133,7 +135,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
    </Disclosure>
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Approved campaign template key
     <Input value={templateKey} maxLength={160} required className={field}
-     placeholder="tpo-campaign-general" onChange={e=>setTemplateKey(e.target.value)}/>
+     placeholder="recruiter-campaign" onChange={e=>setTemplateKey(e.target.value)}/>
     <span className="mt-1 block text-xs font-normal text-muted-foreground">
      Authentication or OTP templates cannot be used for recruitment campaigns.
     </span>
