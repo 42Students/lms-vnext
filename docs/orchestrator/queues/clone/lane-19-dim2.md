@@ -420,7 +420,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [x] `src/components/placements/college-drive-bulk-actions.tsx`
 - [x] `src/components/placements/college-drive-pipeline-overview.tsx`
-- [ ] `src/components/placements/learner-own-drive-journey.tsx`
+- [x] `src/components/placements/learner-own-drive-journey.tsx`
 - [ ] `src/components/placements/learner-placement-preferences.tsx`
 - [ ] `src/components/placements/placement-draft-edit-form.tsx`
 - [ ] `src/components/placements/tpo-college-rules-control.tsx`
