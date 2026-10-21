@@ -4,6 +4,7 @@ import {bugTrackerApiError} from "@/lib/bug-tracker-api-error";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {getMyTrackerReport} from "@/modules/bug-tracker/reporter-service";
 import {isSuperAdmin} from "@/modules/identity/context";
+import {getBugTrackerIssueForAdmin} from "@/modules/bug-tracker/admin-service";
 export const runtime="nodejs";
 type Params={params:Promise<{publicId:string}>};
 const headers={"cache-control":"private, no-store"};
@@ -16,7 +17,14 @@ export async function GET(_request:Request,{params}:Params){
     const {publicId}=await params;
     // Activity in this route contains no internal actor IDs or engineering notes.
     // The reporter predicate is always verified against the signed-in user.
-    if(isSuperAdmin(context))return NextResponse.json({error:"USE_ADMIN_ISSUE_DETAIL"},{status:400,headers});
+    if(isSuperAdmin(context)){
+      // Admin detail enforces scope and audits this privileged read.
+      const detail=await getBugTrackerIssueForAdmin(context,publicId);
+      if(detail.activityUnavailable)
+        return NextResponse.json({error:"ACTIVITY_UNAVAILABLE"},{status:503,headers});
+      return NextResponse.json({items:[...detail.activities].reverse(),
+        nextCursor:detail.nextActivityCursor,chronological:"ascending"},{headers});
+    }
     await getMyTrackerReport(context,publicId);
     return NextResponse.json({items:await listMyTrackerReportHistory(context,publicId)},
       {headers});

@@ -22,6 +22,8 @@ import { trackerReportSchema } from "./report-input-model";
 export async function createBugTrackerIssueForAdmin(context: RequestContext, rawInput: unknown) {
   if(context.user.platformStatus!=="ACTIVE")throw new TrackerAdminError("FORBIDDEN");
   const input = trackerReportSchema.parse(rawInput);
+  // Keep the externally shareable LMS-#### shape; random IDs must not
+  // leak the number of reports or make other reporters' IDs guessable.
   const publicId = "LMS-" + randomBytes(8).readBigUInt64BE().toString().padStart(4, "0");
   const db = getDb();
   return db.transaction(async (tx) => {

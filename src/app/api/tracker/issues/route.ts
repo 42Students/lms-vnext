@@ -4,7 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { createBugTrackerIssueForAdmin } from "@/modules/bug-tracker/report-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { bugTrackerApiError } from "@/lib/bug-tracker-api-error";
-import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
+import { listBugTrackerIssuesForAdmin, listLegacyBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { parseTrackerIssuesApiQuery } from "@/modules/bug-tracker/issues-api-query";
 import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
@@ -42,6 +42,37 @@ export async function GET(request: Request) {
     const context = await getCurrentRequestContext();
     const params = new URL(request.url).searchParams;
     if (isSuperAdmin(context)) {
+      // Only numeric pagination opts into legacy Spring Page; cursor callers
+      // keep their existing contract without any silent change.
+      if(params.has("page")||params.has("size")){
+        const allowed=new Set(["page","size","sort","status","severity","environment","q"]);
+        for(const key of params.keys())
+          if(!allowed.has(key)||params.getAll(key).length!==1)return invalid();
+        const numeric=(key:"page"|"size",fallback:number)=>{
+          const raw=params.get(key);
+          if(raw===null)return fallback;
+          if(!/^-?[0-9]+$/.test(raw))return null;
+          const n=Number(raw);
+          if(!Number.isSafeInteger(n))return null;
+          return key==="page"?Math.max(0,Math.min(100000,n)):Math.min(100,Math.max(1,n));
+        };
+        const page=numeric("page",0),size=numeric("size",20);
+        const rawSort=params.get("sort")?.toLowerCase()??"desc";
+        if(page===null||size===null||!["asc","desc","newest","oldest"].includes(rawSort))return invalid();
+        const status=params.get("status")||undefined;
+        const severity=params.get("severity")||undefined;
+        const environment=params.get("environment")||undefined;
+        const q=params.get("q")?.trim()||undefined;
+        if(status&&!(BUG_STATUSES as readonly string[]).includes(status))return invalid("status","Invalid status");
+        if(severity&&!(BUG_SEVERITIES as readonly string[]).includes(severity))return invalid("severity","Invalid severity");
+        if(environment&&!(BUG_ENVIRONMENTS as readonly string[]).includes(environment))return invalid("environment","Invalid environment");
+        if(q&&q.length>200)return invalid("q","Invalid search");
+        const legacy=await listLegacyBugTrackerIssuesForAdmin(context,{
+          page,size,sort:rawSort==="asc"||rawSort==="oldest"?"asc":"desc",
+          status,severity,environment,q,
+        });
+        return NextResponse.json(legacy,{headers:{"cache-control":"private, no-store"}});
+      }
       const query = parseTrackerIssuesApiQuery(params);
       if (!query) return invalid();
       const page = await listBugTrackerIssuesForAdmin(context, query);
@@ -57,9 +88,9 @@ export async function GET(request: Request) {
     const numeric = (field: "page" | "size", fallback: number, max: number) => {
       const raw = params.get(field);
       if (raw === null) return fallback;
-      if (!/^[0-9]+$/.test(raw)) return null;
+      if (!/^-?[0-9]+$/.test(raw)) return null;
       const n = Number(raw);
-      return Number.isSafeInteger(n) && n >= (field === "page" ? 0 : 1) && n <= max ? n : null;
+      return Number.isSafeInteger(n) ? Math.max(field==="page"?0:1,Math.min(max,n)) : null;
     };
     const page = numeric("page", 0, 100000);
     const size = numeric("size", 20, 100);
@@ -94,7 +125,10 @@ export async function GET(request: Request) {
     ]);
     const total = totalRows[0]?.total ?? 0;
     return NextResponse.json(
-      { items, page, size, total, totalPages: Math.ceil(total / size) },
+      { items,content:items,page,size,total,totalElements:total,
+        number:page,numberOfElements:items.length,first:page===0,
+        last:(page+1)*size>=total,totalPages:Math.ceil(total/size),
+        pageable:{pageNumber:page,pageSize:size,offset:page*size} },
       { headers: { "cache-control": "private, no-store" } },
     );
   } catch (error) {

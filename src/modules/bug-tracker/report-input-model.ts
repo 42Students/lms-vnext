@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { BUG_ACCOUNT_ROLES, BUG_ENVIRONMENTS, BUG_SEVERITIES } from "./admin-validation";
-import { ISSUE_TYPE_OPTIONS, LOCATION_OPTIONS, REPORTER_OPTIONS } from "./report-form-options";
+import { LOCATION_OPTIONS } from "./report-form-options";
 
 /** SA-placements-projects-100: exact legacy report intake; server revalidates all fields. */
 export const trackerReportSchema = z.object({
@@ -10,8 +10,9 @@ export const trackerReportSchema = z.object({
   page: z.string().trim().min(1, "Select the page and area.").max(120),
   screen: z.string().trim().max(120).nullable().optional(),
   section: z.string().trim().max(120).nullable().optional(),
-  issueType: z.string().trim().min(1, "Select the closest issue type.").max(80)
-    .refine(value => ISSUE_TYPE_OPTIONS.some(option => option.value === value), "Select the closest issue type."),
+  // Stale legacy clients can submit custom categories <=80 characters.
+  // The current form still recommends its configured issue-type picker.
+  issueType: z.string().trim().min(1, "Select the closest issue type.").max(80),
   severity: z.enum(BUG_SEVERITIES),
   description: z.string().trim().min(1, "description is required")
     .max(4000, "Keep the description under 4000 characters."),
