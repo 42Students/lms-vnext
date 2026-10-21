@@ -59,7 +59,11 @@ export class LectureHallError extends Error {
   }
 }
 
-const nameSchema = z.string().trim().min(1, "Name is required").max(255);
+// The old backend says "Room name is required"; the old form uses
+// "Please enter room name". The shared client already shows the form copy.
+const nameSchema = z.string().trim()
+  .min(1, "Room name is required")
+  .max(255, "Room name must be 255 characters or less");
 const descriptionSchema = z
   .union([z.string(), z.null()])
   .optional()
@@ -67,7 +71,9 @@ const descriptionSchema = z
     const trimmed = typeof value === "string" ? value.trim() : value;
     return trimmed === "" || trimmed === undefined ? null : trimmed;
   })
-  .pipe(z.string().max(255).nullable());
+  // The vNext column is varchar(255); reject excessive text rather than
+  // silently truncating a legacy unlimited description.
+  .pipe(z.string().max(255, "Description cannot exceed 255 characters").nullable());
 
 const hallFields = {
   name: nameSchema,
@@ -100,15 +106,18 @@ export const updateLectureHallSchema = z
         const trimmed = typeof value === "string" ? value.trim() : value;
         return trimmed === "" ? null : trimmed;
       })
-      .pipe(z.string().max(255).nullable().optional()),
+      .pipe(z.string().max(255, "Description cannot exceed 255 characters").nullable().optional()),
     departmentId: hallFields.departmentId,
     status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, "Nothing to update");
 
+// Missing college scope is a validation error, never a signal to query other
+// colleges. Global SA / organization-wide discovery would need an approved
+// read-only endpoint and explicit role gate outside this mutation service.
 export const listLectureHallsSchema = z.object({
-  collegeId: z.string().uuid(),
+  collegeId: z.string().uuid("Select a college to continue"),
   q: z.string().trim().max(100).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
@@ -255,6 +264,9 @@ export async function listLectureHalls(
       .where(and(...filters)),
   ]);
 
+  // This response is a paginated directory, not the old /stats endpoint.
+  // Its pagination.total is the authoritative count; do not claim an
+  // unimplemented global "Stats retrieved" API wrapper.
   return {
     collegeId: college.id,
     collegeName: college.name,
