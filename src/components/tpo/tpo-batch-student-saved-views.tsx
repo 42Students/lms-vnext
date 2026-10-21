@@ -74,7 +74,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
       disabled={busy||guarded} onClick={()=>void openSaved(view)} className="min-h-11 md:min-h-9"
       >{view.name}</Button>)}
    </div>:null}
-   <label className="block min-w-0 text-sm">View name
+   <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">View name
     <Input value={name} onChange={e=>{setName(e.target.value);setError("");setNotice("");}} maxLength={100}
      className="mt-1 min-h-11 w-full md:min-h-9"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">

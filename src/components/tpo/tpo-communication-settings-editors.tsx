@@ -40,7 +40,7 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
    "Drive cancelled","Application deadline today","Debarred or marked absent",
   ].map(label=><Badge key={label} tone="neutral">{label}</Badge>)}</div>
-  <label className="block text-sm font-semibold print:hidden">Monthly limit on optional SMS
+  <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Monthly limit on optional SMS
    <Input type="number" min={0} max={100000} step={1} value={value} disabled={busy}
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
     className="mt-2 min-h-11 w-40 min-[768px]:min-h-9 print:hidden"/>
@@ -74,7 +74,7 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
  }
  return <section className="space-y-4 border-t border-border pt-5">
   <h2 className="hidden font-semibold print:block">Email signature preview</h2>
-  <label className="block text-sm font-semibold print:hidden">Email signature
+  <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Email signature
    <Textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
     onChange={event=>setValue(event.target.value)}
@@ -116,7 +116,7 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
  }
  return <section className="space-y-3 border-t border-border pt-5">
   <h2 className="font-semibold">Recruiter access lasts</h2>
-  <label className="block text-sm print:hidden">Access granted to a recruiter lasts
+  <label className="block text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Access granted to a recruiter lasts
    <Select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
     className="mt-2 min-h-11 min-[768px]:min-h-9">

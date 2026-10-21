@@ -46,7 +46,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
   });
  }
  return <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-end">
-  <label className="min-w-0 flex-1 text-xs">Learner override
+  <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner override
    <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9" aria-label="Learner eligibility override" 
     value={decision} disabled={busy} onChange={event=>{setDecision(event.target.value as Decision);setReviewed(false);}}>
     <option value="NOT_DECIDED">Inherit class/batch</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
@@ -73,7 +73,7 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
       onClick={()=>{setOther(true);setReason("");setReviewed(false);}}
       >Other</FilterChip>
     </div>
-    {other?<label className="block text-sm">Reason
+    {other?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
      <Textarea className="mt-1" autoFocus aria-label="Reason for ineligibility" placeholder="Why are they not in placements?"
        maxLength={200}
       value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);setReviewed(false);}}/>
