@@ -571,6 +571,13 @@ export async function getPlacementReportWorkspace(
     registrations: registrations.filter((row) => inBranch(row.membershipId)),
     branches,
   });
+  // An unavailable registration ledger must not generate a valid-looking
+  // zero placement rate. A known empty ledger still retains legacy zero.
+  if (!registrationsAvailable) {
+    report.metrics.placementRatePercent = null;
+    report.metrics.placementRateOneDecimal = null;
+    for (const row of report.byBranch) row.placementRatePercent = null;
+  }
 
   return {
     collegeId: college.id,
@@ -667,7 +674,7 @@ export async function getPlacementReportDetails(
     "placement_batch_registrations",
   );
 
-  const [poolRows, enrollmentRows, offerRows, selectionDetailRows] = await Promise.all([
+  const [poolRows, offerRows, selectionDetailRows] = await Promise.all([
     registrationsAvailable
       ? db
           .select({
@@ -701,38 +708,6 @@ export async function getPlacementReportDetails(
       : Promise.resolve(
           [] as { membershipId: string; displayName: string | null }[],
         ),
-
-    db
-      .select({
-        membershipId: learnerProgramEnrollments.membershipId,
-        departmentId: departments.id,
-        departmentName: departments.name,
-        enrollmentStatus: learnerProgramEnrollments.status,
-        admittedAt: learnerProgramEnrollments.admittedAt,
-      })
-      .from(learnerProgramEnrollments)
-      .innerJoin(
-        collegeMemberships,
-        and(
-          eq(
-            collegeMemberships.id,
-            learnerProgramEnrollments.membershipId,
-          ),
-          eq(collegeMemberships.collegeId, query.collegeId),
-        ),
-      )
-      .innerJoin(
-        programs,
-        eq(programs.id, learnerProgramEnrollments.programId),
-      )
-      .innerJoin(
-        departments,
-        and(
-          eq(departments.id, programs.departmentId),
-          eq(departments.collegeId, query.collegeId),
-        ),
-      )
-      .orderBy(desc(learnerProgramEnrollments.admittedAt)),
 
     db
       .select({
@@ -848,6 +823,34 @@ export async function getPlacementReportDetails(
           : undefined,
       )),
   ]);
+
+  // Resolve branches for the scoped learner pool rather than scanning every
+  // historical enrollment in the college for a single-drive report.
+  const reportMembershipIds = [...new Set([
+    ...poolRows.map((row) => row.membershipId),
+    ...offerRows.map((row) => row.membershipId),
+    ...selectionDetailRows.map((row) => row.membershipId),
+  ])];
+  const enrollmentRows = reportMembershipIds.length === 0 ? [] : await db
+    .select({
+      membershipId: learnerProgramEnrollments.membershipId,
+      departmentId: departments.id,
+      departmentName: departments.name,
+      enrollmentStatus: learnerProgramEnrollments.status,
+      admittedAt: learnerProgramEnrollments.admittedAt,
+    })
+    .from(learnerProgramEnrollments)
+    .innerJoin(collegeMemberships, and(
+      eq(collegeMemberships.id, learnerProgramEnrollments.membershipId),
+      eq(collegeMemberships.collegeId, query.collegeId),
+    ))
+    .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
+    .innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, query.collegeId),
+    ))
+    .where(inArray(learnerProgramEnrollments.membershipId, reportMembershipIds))
+    .orderBy(desc(learnerProgramEnrollments.admittedAt));
 
   // Prefer an ACTIVE program enrollment, then the most recently admitted
   // enrollment. This is current academic branch attribution, not a
