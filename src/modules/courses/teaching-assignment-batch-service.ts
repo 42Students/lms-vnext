@@ -1,4 +1,5 @@
 import "server-only";
+import {z} from "zod";
 import {and,eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
@@ -14,6 +15,7 @@ import {loadCourseMembership,loadCourseSectionDeliveryScope} from "./scope";
 import {teachingAssignmentConflict} from "./teaching-assignment-guard";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {createCourseTeachingAssignmentsBatchInputSchema} from "./validation";
+import {COURSE_TEACHING_ROLES} from "./constants";
 
 /** SA-academics-people-101: selected courses share one class and period.
  * All teaching grants and their audit records commit or roll back together. */
@@ -148,4 +150,54 @@ export async function createCourseTeachingAssignmentsBatch(
    throw new CoursesServiceError("PRIMARY_TEACHER_CONFLICT");
   throw error;
  }
+}
+
+/** The legacy selection can span faculty, classes and academic periods.
+ * Preserve the scoped atomic command per class, but report independent
+ * successes/failures rather than rolling back unrelated classes. */
+export async function createPartitionedCourseTeachingAssignments(
+ context:RequestContext,rawInput:unknown,
+){
+ const batches=z.array(z.strictObject({
+  deliveryIds:z.array(z.string().uuid()).min(1).max(100),
+  membershipId:z.string().uuid(),role:z.enum(COURSE_TEACHING_ROLES),
+ })).min(1).max(50).parse(rawInput);
+ const selected=requireSuperAdminSelectedCollege(context,"courses.manage");
+ const succeeded:Array<{membershipId:string;deliveryIds:string[];createdIds:string[]}>=[];
+ const failed:Array<{membershipId:string;deliveryIds:string[];reason:string}>=[];
+ for(const batch of batches){
+  const groups=new Map<string,string[]>();
+  for(const id of new Set(batch.deliveryIds)){
+   try{
+    const scope=await loadCourseSectionDeliveryScope(id);
+    if(scope.collegeId!==selected.collegeId||
+       (selected.organizationId&&scope.organizationId!==selected.organizationId))
+      throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+    const key=[scope.organizationId,scope.collegeId,scope.sectionId,
+      scope.cohortId,scope.academicPeriodId].join(":");
+    const ids=groups.get(key)??[];
+    ids.push(id);groups.set(key,ids);
+   }catch(error){
+    failed.push({membershipId:batch.membershipId,deliveryIds:[id],
+     reason:error instanceof CoursesServiceError?error.code:"SECTION_DELIVERY_NOT_FOUND"});
+   }
+  }
+  for(const ids of groups.values()){
+   for(let offset=0;offset<ids.length;offset+=10){
+    const subset=ids.slice(offset,offset+10);
+    try{
+     const created=await createCourseTeachingAssignmentsBatch(context,{
+      membershipId:batch.membershipId,role:batch.role,deliveryIds:subset,
+     });
+     succeeded.push({membershipId:batch.membershipId,
+      deliveryIds:subset,createdIds:created.map(row=>row.id)});
+    }catch(error){
+     failed.push({membershipId:batch.membershipId,deliveryIds:subset,
+      reason:error instanceof CoursesServiceError?error.code:"BATCH_ASSIGNMENT_FAILED"});
+    }
+   }
+  }
+ }
+ return {succeeded,failed,partial:failed.length>0,createdCount:succeeded.reduce(
+  (total,batch)=>total+batch.createdIds.length,0)};
 }

@@ -11,13 +11,25 @@ import {listCollegeCourseSetupRelations} from "./college-course-setup-relations-
 export async function getAdminCourseWorkspace(
  context:RequestContext,collegeId:string,includeArchivedOfferings=false,
 ){
- const [academics,courses,facultyChoices,relations]=await Promise.all([
+ // Academic scope and course authorization are critical: never conceal them.
+ const [academics,courses]=await Promise.all([
   getAcademicsWorkspace(context,collegeId),
   listCourses(context,collegeId),
+ ]);
+ // A transient picker/statistics failure must not take down the course list.
+ const [facultyResult,relationsResult]=await Promise.allSettled([
   listCollegeFacultyPicker(context,collegeId),
   listCollegeCourseSetupRelations(context,collegeId,includeArchivedOfferings),
  ]);
- const {offerings,deliveries,teachingAssignments}=relations;
+ const facultyChoices=facultyResult.status==="fulfilled"?facultyResult.value:null;
+ const relations=relationsResult.status==="fulfilled"?relationsResult.value:null;
+ const offerings=relations?.offerings??[];
+ const deliveries=relations?.deliveries??[];
+ const teachingAssignments=relations?.teachingAssignments??[];
+ const loadWarnings=[
+  ...(facultyResult.status==="rejected"?["Faculty directory unavailable"]:[]),
+  ...(relationsResult.status==="rejected"?["Course relationship details unavailable"]:[]),
+ ];
  return {
   collegeId,
   departments:academics.departments,
@@ -25,8 +37,9 @@ export async function getAdminCourseWorkspace(
   programs:academics.programs,
   cohorts:academics.cohorts,
   sections:academics.sections,
-  faculty:facultyChoices.faculty,
-  facultyTruncated:facultyChoices.truncated,
+  faculty:facultyChoices?.faculty??[],
+  facultyTruncated:facultyChoices?.truncated??false,
+  loadWarnings,
   courses,offerings,deliveries,teachingAssignments,
   summary:{
    courses:courses.length,
