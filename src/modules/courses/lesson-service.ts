@@ -149,6 +149,7 @@ export async function createCourseLesson(
           description:
             input.description ?? null,
           sequence: input.sequence,
+          visibleToStudents: input.visibleToStudents ?? true,
         })
         .returning();
 

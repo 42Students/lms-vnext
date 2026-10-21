@@ -82,6 +82,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
       (current.status==="ARCHIVED" ||
        (current.status!=="DRAFT" && input.questions!==undefined))) ||
      (input.action==="PUBLISH" && current.status!=="DRAFT") ||
+     (input.action==="UNPUBLISH" && current.status!=="PUBLISHED") ||
      (input.action==="CLOSE" && current.status!=="PUBLISHED") ||
      (input.action==="ARCHIVE" && !["DRAFT","PUBLISHED","CLOSED"].includes(current.status)))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
@@ -105,6 +106,9 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
     // Once a learner has attempted, the question bank, allowed attempt count
     // and history cannot be rewritten. Only title, text and deadline metadata
     // can change with a current optimistic version; closing still works.
+    if(input.action==="UNPUBLISH" && (attempt || !current.dueAt ||
+      current.dueAt.getTime()<=Date.now() || current.resultsPublished))
+      throw new CoursesServiceError("QUIZ_UNPUBLISH_LOCKED");
     if(attempt && (input.action==="ARCHIVE" ||
        (input.action==="EDIT" &&
         (input.questions!==undefined || input.maxAttempts!==current.maxAttempts))))
@@ -143,10 +147,17 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      if(input.action==="PUBLISH" && (!current.dueAt ||
       current.dueAt.getTime()<=Date.now()))
        throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
+     if(input.action==="PUBLISH"){
+       if(!current.dueAt)throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+       const [question]=await tx.select({id:quizQuestions.id}).from(quizQuestions)
+        .where(eq(quizQuestions.quizId,current.id)).limit(1);
+       if(!question||current.totalPoints<=0)throw new CoursesServiceError("QUIZ_QUESTION_INVALID");
+     }
      const isArchive=input.action==="ARCHIVE";
      const isClose=input.action==="CLOSE";
+     const isUnpublish=input.action==="UNPUBLISH";
      const [transitioned]=await tx.update(courseQuizzes).set({
-      status:isArchive?"ARCHIVED":isClose?"CLOSED":"PUBLISHED",
+      status:isArchive?"ARCHIVED":isClose?"CLOSED":isUnpublish?"DRAFT":"PUBLISHED",
       updatedAt:new Date(Math.max(Date.now(),current.updatedAt.getTime()+1)),
      }).where(and(eq(courseQuizzes.id,current.id),eq(courseQuizzes.deliveryId,deliveryId),
       eq(courseQuizzes.status,current.status),
@@ -157,6 +168,7 @@ export async function commandFacultyQuiz(context:RequestContext,rawParams:unknow
      result=transitioned;
      eventType=isArchive?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_ARCHIVED:
       isClose?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_CLOSED:
+      isUnpublish?ACTIVITY_EVENT_TYPES.COURSES_QUIZ_UPDATED:
       ACTIVITY_EVENT_TYPES.COURSES_QUIZ_PUBLISHED;
     }
    }

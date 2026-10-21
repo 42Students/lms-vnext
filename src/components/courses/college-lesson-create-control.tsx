@@ -4,6 +4,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useToast } from "@/components/ui/toast";
 
 import {useRouter} from "next/navigation";
 import {useState} from "react";
@@ -34,10 +36,12 @@ async function postRecord(url:string,payload:unknown,key:"learningPath"|"lesson"
 /** Direct College Admin lesson authoring, with an on-demand learning path. */
 export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  const router=useRouter();
+ const {showToast}=useToast();
  const [open,setOpen]=useState(false);
  const [offeringId,setOfferingId]=useState(options[0]?.offeringId??"");
  const [name,setName]=useState("");
  const [description,setDescription]=useState("");
+ const [visibleToStudents,setVisibleToStudents]=useState(true);
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
@@ -45,8 +49,12 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
  const [sequenceOverrides,setSequenceOverrides]=useState<Record<string,number>>({});
  const chosen=options.find(item=>item.offeringId===offeringId)??options[0];
  async function create(addAnother:boolean){
-  if(busy||!chosen||!name.trim())return;
+  if(busy)return;
+  if(!chosen){setError("Select a course");return;}
+  if(!name.trim()){setError("Enter a lesson name");return;}
+  if(name.trim().length>255){setError("Maximum 255 characters");return;}
   setBusy(true);setError("");setNotice("");
+  let pathCreated=false;
   try{
    let pathId=pathOverrides[chosen.offeringId]??chosen.pathId;
    if(!pathId){
@@ -56,19 +64,25 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      description:null,
     },"learningPath");
     setPathOverrides(old=>({...old,[chosen.offeringId]:pathId!}));
+    pathCreated=true;
    }
    const next=sequenceOverrides[chosen.offeringId]??chosen.nextSequence;
    await postRecord("/api/courses/lessons",{
     learningPathId:pathId,name:name.trim(),description:description.trim()||null,
-    sequence:next,
+    sequence:next,visibleToStudents,
    },"lesson");
    setSequenceOverrides(old=>({...old,[chosen.offeringId]:next+1}));
-   setNotice("Lesson created.");
-   setName("");setDescription("");
+   const message=`Created lesson “${name.trim()}” in ${chosen.courseName}.`;
+   setNotice(message);
+   showToast({tone:"success",title:message});
+   setName("");setDescription("");setVisibleToStudents(true);
+   // Retain the selected course for consecutive lesson creation.
    if(!addAnother)setOpen(false);
    router.refresh();
   }catch(cause){
-   setError(cause instanceof Error?cause.message:"Unable to create Lesson.");
+   const reason=cause instanceof Error?cause.message:"Unable to create Lesson.";
+   const mapped=reason==="INVALID_REQUEST"?"Lesson name is required":reason==="LESSON_NAME_CONFLICT"?"A lesson with this name already exists.":reason;
+   setError((pathCreated?"The Learning Path was saved, but the Lesson was not created. Retry without changing course. ":"")+mapped);
   }finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 md:flex-none">
@@ -102,17 +116,23 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
     <Input value={name} onChange={event=>setName(event.target.value)} maxLength={255}
      className="min-h-11 md:min-h-9" required/>
    </label>
+   <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+    <Checkbox checked={visibleToStudents} disabled={busy}
+     onChange={event=>setVisibleToStudents(event.target.checked)}/>
+    Visible to students
+   </label>
+   {!visibleToStudents?<p className="text-xs text-muted-foreground">This lesson will be hidden from students until you show it.</p>:null}
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description (optional)
     <Textarea value={description} onChange={event=>setDescription(event.target.value)}
      maxLength={5000} rows={3}
      className="min-h-11 md:min-h-9"/>
    </label>
    <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
-    <Button type="button" loading={busy} disabled={busy||!name.trim()} onClick={()=>void create(false)}
+    <Button type="button" loading={busy} disabled={busy} onClick={()=>void create(false)}
      className="min-h-11 md:min-h-9">
      {busy?"Saving…":"Create Lesson"}
     </Button>
-    <Button type="button" disabled={busy||!name.trim()} onClick={()=>void create(true)}
+    <Button type="button" disabled={busy} onClick={()=>void create(true)}
      variant="secondary" className="min-h-11 md:min-h-9">
      Create Lesson & Add Another
     </Button>
@@ -122,7 +142,9 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
     </Button>
    </div>
   </div>:null}
-  {error?<Alert tone="error">{error}</Alert>:null}
+  {error?<div className="flex items-start gap-2"><Alert tone="error"><strong>Lesson was not created.</strong> {error}</Alert>
+   <Button type="button" size="sm" variant="ghost" onClick={()=>setError("")} aria-label="Dismiss lesson error">Dismiss</Button>
+  </div>:null}
   {notice?<Alert tone="info">{notice}</Alert>:null}
  </section>;
 }

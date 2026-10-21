@@ -491,12 +491,12 @@ export async function updateCourseQuiz(
     (input.dueAt ? new Date(input.dueAt).getTime() : null) !==
       (current.dueAt?.getTime() ?? null);
   if(changesDeadline && (attemptCount>0 || current.status==="CLOSED"))
-    throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+    throw new CoursesServiceError("QUIZ_DEADLINE_LOCKED");
 
   if(current.status!=="DRAFT" && (
     (input.shuffleQuestions!==undefined&&input.shuffleQuestions!==current.shuffleQuestions)||
     (input.shuffleOptions!==undefined&&input.shuffleOptions!==current.shuffleOptions)
-  ))throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+  ))throw new CoursesServiceError("QUIZ_RANDOMIZATION_LOCKED");
 
   if (
     input.questions &&
@@ -504,7 +504,7 @@ export async function updateCourseQuiz(
       attemptCount > 0)
   ) {
     throw new CoursesServiceError(
-      "QUIZ_HAS_ATTEMPTS",
+      "QUIZ_QUESTIONS_LOCKED",
     );
   }
 
@@ -514,7 +514,7 @@ export async function updateCourseQuiz(
     input.maxAttempts !== current.maxAttempts
   ) {
     throw new CoursesServiceError(
-      "QUIZ_HAS_ATTEMPTS",
+      "QUIZ_ATTEMPT_LIMIT_LOCKED",
     );
   }
 
@@ -695,6 +695,9 @@ export async function transitionCourseQuiz(
     );
   }
 
+  if (input.action === "UNPUBLISH" && current.status !== "PUBLISHED")
+    throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+
   if (
     input.action === "CLOSE" &&
     current.status !== "PUBLISHED"
@@ -704,41 +707,50 @@ export async function transitionCourseQuiz(
     );
   }
 
-  if (
-    input.action === "PUBLISH" &&
-    (!current.dueAt || current.dueAt.getTime() <= Date.now())
-  ) {
-    throw new CoursesServiceError(
-      "QUIZ_DEADLINE_PASSED",
-    );
+  if (input.action === "PUBLISH") {
+    if (!current.dueAt) throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+    if (current.dueAt.getTime() <= Date.now())
+      throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
   }
 
   const nextStatus =
     input.action === "PUBLISH"
       ? "PUBLISHED"
+      : input.action === "UNPUBLISH" ? "DRAFT"
       : input.action === "CLOSE"
         ? "CLOSED"
         : "ARCHIVED";
 
-  const [updated] = await getDb()
-    .update(courseQuizzes)
-    .set({
-      status: nextStatus,
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(courseQuizzes.id, quizId),
-        ne(courseQuizzes.status, "ARCHIVED"),
-      ),
-    )
-    .returning();
-
-  if (!updated) {
-    throw new CoursesServiceError(
-      "QUIZ_NOT_FOUND",
-    );
-  }
+  // Serialize with learner attempt insertion and preserve a reversible
+  // PUBLISHED -> DRAFT transition only before submissions and the deadline.
+  const updated = await getDb().transaction(async tx => {
+    const [locked] = await tx.select().from(courseQuizzes)
+      .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
+    if (!locked || locked.status !== current.status)
+      throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    if (input.action === "UNPUBLISH") {
+      const [attempt] = await tx.select({id:quizAttempts.id}).from(quizAttempts)
+        .where(eq(quizAttempts.quizId,quizId)).limit(1);
+      if (attempt || !locked.dueAt || locked.dueAt.getTime() <= Date.now() ||
+          locked.resultsPublished)
+        throw new CoursesServiceError("QUIZ_UNPUBLISH_LOCKED");
+    }
+    if (input.action === "PUBLISH") {
+      if (!locked.dueAt) throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+      if (locked.dueAt.getTime() <= Date.now())
+        throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
+      const [question] = await tx.select({id:quizQuestions.id}).from(quizQuestions)
+        .where(eq(quizQuestions.quizId,quizId)).limit(1);
+      if (!question || locked.totalPoints <= 0)
+        throw new CoursesServiceError("QUIZ_QUESTION_INVALID");
+    }
+    const [changed] = await tx.update(courseQuizzes)
+      .set({status:nextStatus,updatedAt:new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1))})
+      .where(and(eq(courseQuizzes.id,quizId),eq(courseQuizzes.status,locked.status)))
+      .returning();
+    if (!changed) throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    return changed;
+  });
 
   return updated;
 }
@@ -749,11 +761,12 @@ export async function setCourseQuizResults(
   const quizId=courseQuizIdSchema.parse(quizIdInput);
   const input=setQuizResultsInputSchema.parse(rawInput);
   const current=await loadCourseQuizScope(quizId,true);
-  await authorizeQuizMutation(context,current);
+  const actor=await authorizeQuizMutation(context,current);
   const manage=can(context,"courses.manage",{
     collegeId:current.collegeId,organizationId:current.organizationId,
   });
-  if(!manage)throw new CoursesServiceError("QUIZ_RESULTS_ADMIN_ONLY");
+  const authorized=manage||(actor==="FACULTY"&&current.deliveryId!==null);
+  if(!authorized)throw new CoursesServiceError("QUIZ_RESULTS_ADMIN_ONLY");
   return getDb().transaction(async tx=>{
     const [locked]=await tx.select().from(courseQuizzes)
       .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
@@ -762,7 +775,7 @@ export async function setCourseQuizResults(
     const eligibleStatus=input.published
       ? dueIsPast && (locked.status==="CLOSED"||locked.status==="PUBLISHED")
       : locked.status==="CLOSED";
-    if(!eligibleStatus || !legacyQuizResultsWriteAllowed(manage,"CLOSED",
+    if(!eligibleStatus || !legacyQuizResultsWriteAllowed(authorized,"CLOSED",
       locked.resultsPublished,input.published))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
     const now=new Date(Math.max(Date.now(),locked.updatedAt.getTime()+1));
