@@ -40,13 +40,13 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
  return <section className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-4" aria-label="Batch eligibility decision">
   <h2 className="font-semibold">Who is in placements?</h2>
   <p className="text-sm text-muted-foreground">This sets the default for this whole cohort. More specific class and student decisions override it.</p>
-  <label className="block text-sm">Batch default decision
+  <label className="block text-[13px]">Batch default decision
    <Select className="min-h-11 md:min-h-9" value={decision} disabled={pending}
      onChange={e=>setDecision(e.target.value as Decision)}>
     <option value="NOT_DECIDED">Not decided</option><option value="ELIGIBLE">Eligible</option><option value="INELIGIBLE">Ineligible</option>
    </Select>
   </label>
-  {decision==="INELIGIBLE"?<label className="block text-sm">Reason required
+  {decision==="INELIGIBLE"?<label className="block text-[13px]">Reason required
    <Textarea  maxLength={200} value={reason}
     onChange={e=>setReason(e.target.value)} disabled={pending}/>
   </label>:null}
