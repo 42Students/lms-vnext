@@ -33,12 +33,20 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
    </Alert>:categories.map(category=>{
     const rows=data.categories.filter(item=>item.category===category);
     if(!rows.length)return null;
-    return <div key={category} className="mt-4 space-y-2">
+    return <div key={category} className="mt-4 space-y-2 border-l-4 border-amber-400 bg-amber-50/60 px-3 py-2">
       <h3 className="font-semibold">{labels[category]} ({rows.length})</h3>
       <ul className="space-y-2">{rows.slice(0,3).map(row=><li key={row.jobId}
        className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-3)] sm:flex-row sm:items-center">
        <div className="min-w-0 break-words [overflow-wrap:anywhere]"><p className="font-semibold">{row.title}</p>
-        <p className="text-sm text-body">{row.count} candidate(s) need review</p></div>
+        <p className="text-sm text-body">{row.count} candidate(s) need review</p>
+         {row.examples.length?<ul aria-label={"Affected learners for "+row.title} className="mt-2 space-y-1">
+          {row.examples.map(example=><li key={example.id} className="text-sm">
+           <Link href={example.href} className="font-semibold text-link underline underline-offset-2">
+            {example.name} <span aria-hidden="true">›</span>
+           </Link>
+           <span className="ml-2 text-xs text-body">{example.detail}</span>
+          </li>)}
+         </ul>:null}</div>
        <Link href={row.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
         Review applications</Link>
       </li>)}</ul>
@@ -46,7 +54,15 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
        <ul className="mt-2 space-y-2">{rows.slice(3).map(row=><li key={row.jobId}
         className="rounded border border-border p-3">
         <Link href={row.href} className="font-semibold text-primary-text underline">{row.title}</Link>
-        <p>{row.count} candidate(s)</p></li>)}</ul>
+        <p>{row.count} candidate(s)</p>
+         {row.examples.length?<ul className="mt-2 space-y-1">
+          {row.examples.map(example=><li key={example.id}>
+           <Link href={example.href} className="text-sm font-semibold text-link underline underline-offset-2">
+            {example.name} <span aria-hidden="true">›</span>
+           </Link><span className="ml-2 text-xs text-body">{example.detail}</span>
+          </li>)}
+         </ul>:null}
+        </li>)}</ul>
        <p className="mt-2 text-xs text-muted-foreground">Showing {rows.length} of {rows.length}</p>
       </Disclosure>:null}
     </div>;
@@ -73,8 +89,8 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     Showing at most the 60 newest active drives. Search here filters only these results;
     <Link href="/college/placements/drives" className="ml-1 text-link underline">search all drives</Link>.
    </p>:null}
-   {visibleJobs.length?<div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-3">
-    {visibleJobs.map(job=><article key={job.id} className="relative min-w-0 space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
+   {visibleJobs.length?<div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-4">
+    {visibleJobs.map(job=><article key={job.id} className="relative min-w-0 space-y-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-space-3)] transition-shadow hover:shadow-sm focus-within:shadow-sm">
      <Link href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/overview?returnTo=%2Fcollege%2Fplacements"}
       aria-label={"Open drive overview: "+job.title}
       className="absolute inset-0 rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
