@@ -26,6 +26,8 @@ export type PlacementEmployerRelationshipItem = {
   companyStatus?:string;
   relationshipStatus?:string;
   industry?:string|null;
+  contactName?:string|null;
+  contactEmail?:string|null;
   drives?:number;
   lastActive?:Date|null;
   isTrusted: boolean;
@@ -136,7 +138,7 @@ export function PlacementEmployerRelationships({
       );
       showToast({
         tone: "success",
-        title: "Employer relationship archived",
+        title: "Company deleted from this college",
         description:
           "Canonical employer identity remains available to other colleges.",
       });
@@ -186,7 +188,16 @@ export function PlacementEmployerRelationships({
           No companies yet.
         </p>
       ) : (
-        <div className="divide-y divide-border">
+        <div className="min-w-0 overflow-x-auto">
+          <div role="table" aria-label="College company relationships" className="min-w-[1120px] divide-y divide-border">
+            <div role="row" className="grid grid-cols-[1.5fr_1.1fr_1.1fr_0.7fr_1fr_2fr] gap-3 border-b border-border py-3 text-xs font-semibold text-body">
+              <span role="columnheader">Company</span>
+              <span role="columnheader">Contact</span>
+              <span role="columnheader">Website</span>
+              <span role="columnheader">Drives</span>
+              <span role="columnheader">Last active</span>
+              <span role="columnheader">Actions</span>
+            </div>
           {relationships.map((item) => {
             const draft =
               drafts[item.relationshipId] ?? {
@@ -202,50 +213,43 @@ export function PlacementEmployerRelationships({
             return (
               <div
                 key={item.relationshipId}
-                className="grid min-w-0 items-start gap-[var(--lms-space-3)] py-[var(--lms-space-4)] lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] lg:gap-[var(--lms-space-4)]"
+                role="row"
+                className="grid grid-cols-[1.5fr_1.1fr_1.1fr_0.7fr_1fr_2fr] min-w-0 items-start gap-3 py-4"
               >
-                <div className="min-w-0">
-                  <div className="flex min-w-0 flex-wrap items-center gap-2">
-                    <p className="m-0 min-w-0 break-words font-semibold text-foreground">
-                      {item.name}
-                    </p>
-                    {item.verifiedAt?<StatusBadge tone="success">Verified by 42</StatusBadge>:null}
-                    {item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED"?
-                      <StatusBadge tone="warning">Deleted</StatusBadge>:null}
-                    <StatusBadge
-                      tone={
-                        draft.isTrusted
-                          ? "success"
-                          : "neutral"
-                      }
-                    >
-                      {draft.isTrusted
-                        ? "Trusted"
-                        : "Unverified"}
+                <div role="cell" className="min-w-0">
+                  <p className="m-0 break-words font-semibold text-foreground">{item.name}</p>
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {item.verifiedAt ? <StatusBadge tone="success">Verified by 42</StatusBadge> : null}
+                    {item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED" ?
+                      <StatusBadge tone="warning">Deleted</StatusBadge> : null}
+                    <StatusBadge tone={draft.isTrusted?"success":"neutral"}>
+                      {draft.isTrusted?"Trusted":"Unverified"}
                     </StatusBadge>
                   </div>
-                  <p className="mt-1 text-sm text-body leading-[22px]">
-                    Domains: {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
+                  <p className="mt-1 break-words text-xs text-body">
+                    {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
                     {item.industry?" · "+item.industry:""}
                   </p>
-                  {typeof item.drives==="number" ? <p className="mt-1 text-sm text-body leading-[22px]">
-                    Drives: {item.drives} · Last active: {item.lastActive
-                      ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
-                      : "Not recorded"}
-                  </p> : null}
-                  {item.websiteUrl ? (
-                    <a
-                      className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-                      href={item.websiteUrl}
-                      
-                      rel="noopener noreferrer"
-                    >
-                      Open employer website →
-                    </a>
-                  ) : null}
                 </div>
-
-                <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                <div role="cell" className="min-w-0 break-words text-sm text-body">
+                  {item.contactName || item.contactEmail || "No contact recorded"}
+                  {item.contactName&&item.contactEmail?<p className="mt-1 break-all text-xs">{item.contactEmail}</p>:null}
+                </div>
+                <div role="cell" className="min-w-0 break-all text-sm">
+                  {item.websiteUrl ?
+                    <a href={item.websiteUrl} rel="noopener noreferrer"
+                      className="text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                      {employerWebsiteHost(item.websiteUrl)??"Employer website"}
+                    </a> : <span className="text-muted-foreground">—</span>}
+                </div>
+                <div role="cell" className="text-sm text-body">{item.drives??"—"}</div>
+                <div role="cell" className="text-sm text-body">
+                  {item.lastActive
+                    ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
+                    : "Not recorded"}
+                </div>
+                <div role="cell" className="min-w-0 space-y-3">
+                <div className="grid min-w-0 gap-3">
                   <label>
                     <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
                       Relationship owner
@@ -318,7 +322,7 @@ export function PlacementEmployerRelationships({
                   </label>
                 </div>
 
-                <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:justify-end lg:col-span-2 lg:border-t-0 lg:pt-0">
+                <div className="flex min-w-0 flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] pt-3">
                   {item.companyStatus!=null && item.companyStatus!=="ACTIVE" ? (
                     <span role="status" className="text-sm text-muted-foreground">
                       This company is archived on the platform and cannot be restored here.
@@ -344,13 +348,17 @@ export function PlacementEmployerRelationships({
                   </Button>
 
                   <Button size="sm" variant="ghost"
-                    className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
+                    className="min-h-11 w-full sm:w-auto md:min-h-9"
+                    disabled={busy||(item.drives??0)>0}
+                    title={(item.drives??0)>0?"Used by drives: switch it off instead":undefined}
                     onClick={()=>setArchiveConfirmId(item.relationshipId)}>Archive</Button>
                   </>)}
+                </div>
                 </div>
               </div>
             );
           })}
+          </div>
         </div>
       )}
       <ConfirmDialog open={Boolean(archiveConfirmId)}

@@ -1,5 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 import { Button } from "@/components/ui/button";
 import { useState, type FormEvent } from "react";
@@ -15,16 +16,24 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
  const router=useRouter();
  const {pending,run}=useGuardedAction({busyLabel:"Adding company..."});
  const [open,setOpen]=useState(false);
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [name,setName]=useState("");
  const [websiteUrl,setWebsiteUrl]=useState("");
  const [primaryDomain,setPrimaryDomain]=useState("");
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
+ const dirty=Boolean(name.trim()||websiteUrl.trim()||primaryDomain.trim());
+ function requestClose(){
+  if(pending)return;
+  if(dirty){setConfirmDiscard(true);return;}
+  setOpen(false);setError("");
+ }
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   const parsed=collegeCompanyDraftPayload({collegeId,name,websiteUrl,primaryDomain});
   if(!parsed.success){
-   setError(parsed.error.issues[0]?.message??"Check company details.");return;
+   const nameIssue=parsed.error.issues.find(issue=>issue.path[0]==="name");
+   setError(nameIssue?.message??parsed.error.issues[0]?.message??"Check company details.");return;
   }
   void run(async()=>{
    setError("");setNotice("");
@@ -34,17 +43,17 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
       body:JSON.stringify(parsed.data),
     });
     setName("");setWebsiteUrl("");setPrimaryDomain("");setOpen(false);
-    setNotice("Company added to this college. Existing company identities are reused where possible.");
+    setNotice("Company created. Added to this college; existing company identities are reused where possible.");
     router.refresh();
    }catch(cause){
     setError(cause instanceof FriendlyFetchError?cause.message:
-      "Could not add this company. Check the website and domain before retrying.");
+      "Check the website and domain before retrying.");
    }
   });
  }
  const field="min-h-11 w-full md:min-h-9";
  return <section className="min-w-0 space-y-[var(--lms-space-3)]">
-  <Button variant="primary" type="button" disabled={pending} onClick={()=>setOpen(value=>!value)}
+  <Button variant="primary" type="button" disabled={pending} onClick={()=>open?requestClose():setOpen(true)}
     aria-expanded={open} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
     Add company
   </Button>
@@ -52,7 +61,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   {open?<form onSubmit={submit} className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-2">
     <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] md:col-span-2">Add company</h2>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
-      <Input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
+      <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name} onChange={e=>setName(e.target.value)}
         className={field} />
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS, optional)
@@ -66,14 +75,21 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
     <p className="text-sm text-muted-foreground sm:col-span-2 leading-[22px]">
       A company is shared across colleges by its canonical identity. Only this college&apos;s relationship may be edited here.
     </p>
-    {error?<p role="alert" className="sm:col-span-2 text-sm text-error leading-[22px]">{error}</p>:null}
+    {error?<div role="alert" className="sm:col-span-2 flex flex-wrap items-start justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-error leading-[22px]">
+      <span><strong>Company was not saved.</strong> {error}</span>
+      <Button type="button" variant="ghost" size="sm" onClick={()=>setError("")}>Dismiss</Button>
+    </div>:null}
     <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2">
       <Button variant="primary" type="submit" disabled={pending} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         {pending?"Adding…":"Save company"}
       </Button>
-      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
+      <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
         className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Cancel</Button>
     </div>
    </form>:null}
+  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+   title="Discard unsaved changes?" description="Your company details have not been saved."
+   cancelLabel="Keep editing" confirmLabel="Discard changes" confirmVariant="danger"
+   onConfirm={()=>{setConfirmDiscard(false);setOpen(false);setError("");setName("");setWebsiteUrl("");setPrimaryDomain("");}} />
  </section>;
 }
