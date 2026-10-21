@@ -27,8 +27,14 @@ export const placementRecruiterDriveRequests = pgTable(
     recruiterUserId: uuid("recruiter_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
+    /**
+     * Idempotent per-college submission nonce; the same verified UUID may
+     * correlate a recruiter group across colleges without sharing college
+     * relationship/approval authority. This is NOT a placement_job ID.
+     */
     submissionId: uuid("submission_id").notNull(),
     sourceJobId: uuid("source_job_id"),
+    /** A Job exists only after approval; pending requests have no job identity. */
     approvedJobId: uuid("approved_job_id"),
     status: varchar("status", { length: 24 }).notNull().default("REQUEST"),
     draft: jsonb("draft").$type<Record<string, unknown>>().notNull(),
