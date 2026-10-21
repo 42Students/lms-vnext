@@ -11,7 +11,7 @@ export default function CollegeModuleAccessError({
 }) {
   return (
     <ErrorState
-      title="Could not load Module Access"
+      title="Could not load module access."
       description="The college's persisted hierarchy could not be read. No effective access decision is inferred from this failure."
       action={
         <Button

@@ -297,16 +297,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
-- [ ] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/features/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
+- [x] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/error.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
+- [x] `src/app/(authenticated)/admin/features/error.tsx`
 - [ ] `src/app/(authenticated)/admin/features/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/hr/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
