@@ -54,6 +54,8 @@ export async function listCollegeCourseCatalogue(
   id:courses.id,name:courses.name,code:courses.code,
   shortTitle:courses.shortTitle,officialCode:courses.officialCode,cardColor:courses.cardColor,takeaways:courses.takeaways,
   description:courses.description,status:courses.status,
+  enabled:courses.enabled,legacyAllowedForDisplay:courses.legacyAllowedForDisplay,
+  thumbnailUrl:courses.thumbnailUrl,imageUrl:courses.imageUrl,
   departmentId:courses.departmentId,departmentName:departments.name,
   createdAt:courses.createdAt,updatedAt:courses.updatedAt,
  }).from(courses)
