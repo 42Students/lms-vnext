@@ -1,3 +1,6 @@
+import {and,count,eq,isNull,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,departments} from "@/db/schema";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {redirect} from "next/navigation";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -20,12 +23,41 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
+ const metrics = collegeId ? await Promise.allSettled([
+  listAdminFacultyAssignments(context,{status:"ALL",page:1,pageSize:20}),
+  listAdminFacultyAssignments(context,{status:"ACTIVE",page:1,pageSize:20}),
+  getDb().select({
+   primary:sql<number>`count(*) filter (where ${courseTeachingAssignments.role} = 'PRIMARY')::integer`,
+   classes:sql<number>`count(distinct ${courseSectionDeliveries.sectionId})::integer`,
+  }).from(courseTeachingAssignments)
+   .innerJoin(courseSectionDeliveries,eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+   .innerJoin(departments,eq(departments.id,courses.departmentId))
+   .where(and(eq(departments.collegeId,collegeId),
+    isNull(courseTeachingAssignments.endedAt),isNull(courseSectionDeliveries.endedAt))),
+ ]) : null;
+ const metricsReady=metrics?.every(item=>item.status==="fulfilled")??false;
+ const total=metrics?.[0].status==="fulfilled"?metrics[0].value.total:null;
+ const active=metrics?.[1].status==="fulfilled"?metrics[1].value.total:null;
+ const primary=metrics?.[2].status==="fulfilled"?metrics[2].value[0]?.primary:null;
+ const covered=metrics?.[2].status==="fulfilled"?metrics[2].value[0]?.classes:null;
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <AdminScopedReadPage
-  intro={workspace?<section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+  intro={workspace?<div className="space-y-4">
+   {metricsReady?<section aria-label="Faculty assignment overview" className="grid grid-cols-2 divide-x divide-border border-y border-border lg:grid-cols-4">
+    {[
+     ["Assignments",total],["Active",active],["Primary instructors",primary],["Classes covered",covered],
+    ].map(([label,value])=><div key={label} className="min-w-0 px-3 py-4">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums">{typeof value==="number"?value.toLocaleString("en-IN"):"—"}</p>
+    </div>)}
+   </section>:<p role="status" className="text-sm text-muted-foreground">Faculty assignment totals are temporarily unavailable.</p>}
+   <section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
    <SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
    <Link href="/admin/courses" className="inline-flex min-h-11 items-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Create teaching assignment →</Link>
-  </section>:null}
+  </section>
+  </div>:null}
   classOptions={classes} title="Faculty Assignments" path="/admin/faculty-assignment" statuses={statuses}
   exportPath="/api/admin/faculty-assignment/export" exportFilename="faculty-assignments.csv"
   description="Connect faculty to the right class, course, semester and teaching role. Account status and profile changes stay on the Faculty roster."
@@ -35,7 +67,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     const rawRole=row.details.find(detail=>detail.startsWith("Teaching role: "))?.slice("Teaching role: ".length);
     const role=COURSE_TEACHING_ROLES.find(value=>value===rawRole);
     return <div className="flex min-w-0 flex-wrap items-start gap-2" aria-label={"Assignment "+row.id+" actions"}>
-      <Disclosure title="Edit" className="min-w-0 border border-border rounded-[var(--lms-control-radius)] px-2"
+      <Disclosure title={"Edit assignment "+row.id} className="min-w-0 border border-border rounded-[var(--lms-control-radius)] px-2"
         contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
         <p className="m-0 text-xs text-body">Edit assignment {row.id}</p>
         {role&&row.revision?<SuperAdminTeachingRoleEdit assignmentId={row.id}
@@ -50,11 +82,11 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
           Open course delivery setup →
         </Link>
       </Disclosure>
-      <Disclosure title="Delete / End" className="min-w-0 rounded-[var(--lms-control-radius)] border border-error px-2"
+      <Disclosure title={"End assignment "+row.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-error px-2"
         contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
         <p className="m-0 text-xs text-body">End assignment {row.id}</p>
         <p className="m-0 max-w-prose text-xs text-muted-foreground">
-          Delete is represented by End in vNext. The teaching history remains
+          Delete teaching assignment? Ending it preserves teaching history. The teaching history remains
           auditable and the assignment can no longer create new sessions.
         </p>
         <TeachingAssignmentActions legacyCopy assignment={{
