@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { AdminAssessmentDirectory } from "@/components/courses/admin-assessment-read-directory";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
 import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-assignment-authoring-options";
@@ -55,9 +56,15 @@ export default async function SuperAdminAssignmentsPage({
         Assignment creation options are temporarily unavailable. Existing assignments remain visible.
       </Alert>}
     <AdminAssessmentDirectory data={data} showHeader={false} />
-    <div className="flex min-w-0 justify-start print:hidden">
-      <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">Export</a>
+    <div className="flex min-w-0 flex-wrap justify-start gap-2 print:hidden">
+      {data.items.length ? <a download href={adminAssessmentExportHref("ASSIGNMENT",query.data,"PAGE")}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9">
+        <span aria-hidden="true" className="mr-2">↓</span>Export CSV (page)
+      </a> : <Button variant="secondary" disabled>Export CSV (page)</Button>}
+      <a download href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">
+        Export all matching
+      </a>
     </div>
   </div>;
 }
