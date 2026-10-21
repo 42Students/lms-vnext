@@ -47,7 +47,7 @@ export const tpoLeadSourceSchema = z.string().trim()
 
 export const createTpoLeadSchema = z.object({
   collegeId: id,
-  name: z.string().trim().min(1).max(150),
+  name: z.string().trim().min(1, "Enter the recruiter's name").max(150),
   email: email.optional(),
   phone: phone.nullable().optional(),
   designation: z.string().trim().max(100).nullable().optional(),
@@ -68,7 +68,7 @@ export const confirmedCreateTpoLeadSchema = z.object({
 
 export const logTpoLeadActivitySchema = z.object({
   collegeId: id,
-  type: z.enum(["CALL", "EMAIL", "MEETING", "NOTE"]),
+  type: z.enum(["CALL", "EMAIL", "MEETING", "NOTE"],{error:"Log a call, email, meeting or note"}),
   outcome: z.string().trim().max(30).nullable().optional(),
   note: z.string().trim().max(2000).nullable().optional(),
 }).strict().superRefine((value,ctx)=>{
@@ -86,7 +86,7 @@ export const createTpoFollowupSchema = z.object({
 
 export const moveTpoFollowupSchema = z.object({
   collegeId: id,
-  dueAt: z.iso.datetime({ offset: true }),
+  dueAt: z.iso.datetime({ offset: true, error:"Choose a date" }),
 }).strict();
 
 export const markTpoNotNowSchema = z.object({

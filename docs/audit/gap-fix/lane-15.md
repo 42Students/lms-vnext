@@ -260,3 +260,6 @@
 
 - work2 #3 `tpo-public-placement-content-editor.tsx` | G2-17-022-018: legacy load failure copy and Retry using Next router refresh; save failure retains dirty draft and explanatory retry text. No invented content GET route.
 - work2 #4 `placements/recruiter/profile/details/route.ts` | G2-10-025-030: valid JSON null body now returns HTTP 400 `BODY_REQUIRED`; malformed JSON/oversized body still retains security error contract.
+
+- work2 #5 `campaign-unsubscribe-confirm.tsx` | G2-20-031-023 confirmation result exact success title and message already exist at confirmed page, POST-only control preserved; G2-1-025-018 restored typographic apostrophe in error.
+- work2 #6 `tpo-crm-validation.ts` | G2-14-022-021/022/025 restored exact activity type, recruiter-name, and follow-up date validation wording through Zod4 field errors; existing shape, authorization, phone normalization preserved.
