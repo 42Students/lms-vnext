@@ -13,6 +13,8 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
 
  const [search,setSearch]=useState("");
  const [choice,setChoice]=useState(selected??"");
+ const [rememberedChoice,setRememberedChoice]=useState<Workspace|null>(
+   () => items.find(item=>item.id===selected)??null);
  const [page,setPage]=useState(1);
  const [retryTick,setRetryTick]=useState(0);
  const [result,setResult]=useState({items:items.slice(0,25),total:initialTotal,
@@ -44,11 +46,14 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
   return()=>{window.clearTimeout(timer);controller.abort();};
  },[collegeId,page,search,retryTick]);
  const current=result.page,total=result.total,count=result.totalPages;
- const selectedRow=items.find(item=>item.id===choice);
+ const selectedRow=result.items.find(item=>item.id===choice)??
+   items.find(item=>item.id===choice)??
+   (rememberedChoice?.id===choice?rememberedChoice:null);
  const rows=selectedRow&&!result.items.some(item=>item.id===selectedRow.id)
    ?[selectedRow,...result.items]:result.items;
  const startIndex=total===0?0:(current-1)*25+1,finish=Math.min(total,current*25);
  return <form method="get" action={action} className={"min-w-0 space-y-3 "+styles.legacy}>
+  {choice?<input type="hidden" name="workspaceId" value={choice}/>:null}
   <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search workspace title or ID
    <Input type="search" maxLength={120} value={search}
     onChange={e=>{setSearch(e.target.value);setPage(1)}}
@@ -57,12 +62,13 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
   <fieldset disabled={busy||Boolean(error)} className="max-h-64 min-w-0 space-y-1 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
    <legend className="sr-only">Select a workspace</legend>
    {rows.map(item=><label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:min-h-9">
-    <Radio name="workspaceId" value={item.id} checked={choice===item.id}
-      onChange={()=>setChoice(item.id)}/>
+    <Radio name="workspace-choice" value={item.id} checked={choice===item.id}
+      onChange={()=>{setChoice(item.id);setRememberedChoice(item);}}/>
     <span className="min-w-0 flex-1 break-words">{item.title}</span>
     <StatusBadge tone={item.status==="ACTIVE"||item.status==="COMPLETED"?"success":item.status==="PLANNED"?"info":"neutral"} className="shrink-0">{item.status}</StatusBadge>
    </label>)}
-   {!rows.length?<EmptyState title="No matching workspaces" description="No matching workspaces."/>:null}
+   {!rows.length?<EmptyState title="No matching workspaces"
+     description="No matching workspaces. Search the college directory or select another page."/>:null}
   </fieldset>
   <div className="flex min-w-0 flex-col gap-2 text-sm text-body md:flex-row md:items-center md:justify-between">
    <span role="status">{busy?"Loading workspaces…":startIndex+"–"+finish+" of "+total}</span>
