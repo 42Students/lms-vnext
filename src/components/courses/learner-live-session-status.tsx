@@ -4,7 +4,10 @@ import { StatusBadge } from "@/components/ui/status-badge";
 
 export function liveSessionCountdown(startsAt:string,endsAt:string,now:Date):string{
  const start=Date.parse(startsAt),end=Date.parse(endsAt),time=now.getTime();
- if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return "Time unavailable";
+ // Old LMS keeps a session scheduled when no authored time is available;
+ // malformed nonempty timestamps do not justify claiming the room is live.
+ if(!startsAt.trim()||!endsAt.trim())return "Scheduled";
+ if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)return "Timing unknown";
  if(time>=end)return "Ended";
  if(time>=start)return "Live now";
  const remaining=Math.ceil((start-time)/60000);
@@ -22,5 +25,5 @@ export function LearnerLiveSessionStatus({startsAt,endsAt}:{
   const timer=window.setInterval(update,30000);
   return ()=>{window.clearTimeout(initial);window.clearInterval(timer);};
  },[startsAt,endsAt]);
- return <p role="status" className="mt-2"><StatusBadge tone={label==="Live now"?"success":label==="Time unavailable"?"warning":label==="Ended"||label==="Scheduled"?"neutral":"info"}>{label}</StatusBadge></p>;
+ return <p role="status" className="mt-2"><StatusBadge tone={label==="Live now"?"success":label==="Timing unknown"?"warning":label==="Ended"||label==="Scheduled"?"neutral":"info"}>{label}</StatusBadge></p>;
 }
