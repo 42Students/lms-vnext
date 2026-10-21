@@ -19,8 +19,11 @@ export type SummaryProject={
 };
 type Choice={id:string;name:string;code:string};
 const style="mt-1 w-full";
-export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimatedTaskCount=0}:{
- project:SummaryProject;taskProgress?:{done:number;total:number};estimatedTaskCount?:number;
+export function CollegeProjectSummaryEditorFull({
+ project:p,taskProgress,estimatedTaskCount=0,hasMentor=true,
+}:{
+ project:SummaryProject;taskProgress?:{done:number;total:number};
+ estimatedTaskCount?:number;hasMentor?:boolean;
 }){
  const router=useRouter();
  const pathname=usePathname();
@@ -37,6 +40,11 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
  };
  const [form,setForm]=useState(sourceForm);
  const dirty=JSON.stringify(form)!==JSON.stringify(sourceForm);
+ useEffect(()=>{
+  if(!dirty)setForm(sourceForm);
+  // A colleague's save must not overwrite an unsaved local draft.
+  // Both the UI and server reject the old token if this form is stale.
+ },[p.updatedAt]);
  const discard=useProjectEditorDiscardGuard(open,dirty,busy,()=>{
   setForm(sourceForm);setOpen(false);setError("");
  });
@@ -61,6 +69,10 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
  },[open,p.collegeId]);
  async function save(){
   if(busy)return;
+  if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
+  if(!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"){
+    setError("Assign a mentor before activating this workspace.");return;
+  }
   if(!form.title.trim()){setError("Title is required");return;}
   if(form.title.trim().length>160){setError("Title must be 160 characters or fewer");return;}
   if(form.startDate&&form.endDate&&form.endDate<form.startDate){
@@ -176,6 +188,11 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
    <p className="text-xs text-muted-foreground">
      Activating requires a Mentor; completing requires an approved final submission.
    </p>
+   {!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"?
+    <Banner tone="warning">Assign a mentor before changing the workspace status to Active.
+      <Link href={"/admin/projects/reassign-mentor?fromMentorId=UNASSIGNED"}
+       className="ml-1 font-semibold underline">Assign mentor</Link>
+    </Banner>:null}
    {overviewHref!==pathname?<Link href={overviewHref}
      className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
      Open Overview
