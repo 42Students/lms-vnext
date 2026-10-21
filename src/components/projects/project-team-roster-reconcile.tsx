@@ -18,10 +18,10 @@ export function ProjectTeamRosterReconcile({ projectId }: { projectId: string })
     inFlight.current = true;
     setPending(true);
     try {
-      const result = await projectMutation<{ changed: number }>(
+      const result = await projectMutation(
         "/api/projects/" + encodeURIComponent(projectId) + "/team-reconcile",
         "POST", {},
-      );
+      ) as { changed: number };
       const count = result.changed;
       if (count > 0) {
         showToast({ tone: "success",
