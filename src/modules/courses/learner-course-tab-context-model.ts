@@ -7,3 +7,14 @@ export function learnerCourseTabPersistentQuery(query:Record<string,string|strin
  }
  return out.toString();
 }
+
+/** The entry route and tab links must use the same bounded query policy.
+ * Preserve legacy cls and harmless unknown selectors, but do not carry
+ * lesson/content-specific or oversized values into the course home route. */
+export function learnerCourseBaseRedirectHref(
+ deliveryId:string,query:Record<string,string|string[]|undefined>,
+):string{
+ const suffix=learnerCourseTabPersistentQuery(query);
+ const base="/learn/courses/"+encodeURIComponent(deliveryId)+"/home";
+ return suffix?base+"?"+suffix:base;
+}
