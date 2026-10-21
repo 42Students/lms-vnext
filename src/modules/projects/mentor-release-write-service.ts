@@ -14,7 +14,7 @@ import {mentorReleaseDeleteSchema,mentorReleaseVersionMatches,nextMentorReleaseU
 
 const uuid=z.string().uuid();
 const body=z.strictObject({
- title:z.string().trim().min(1).max(200),
+ title:z.string().trim().min(1).max(220),
  description:z.string().trim().max(4000).nullable().optional(),
  expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
 });
