@@ -79,7 +79,7 @@ export async function ProjectAdminReadinessPage({
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <ErrorState title="Invalid readiness filters"
       description="Review the workspace status, page or rows filters. No workspace records were loaded."
-      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/>
+      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Clear filters</Link>}/>
   </div>;
   const query: ProjectAdminCollectionQuery = {
     q: one(searchParams.q),
@@ -102,7 +102,7 @@ export async function ProjectAdminReadinessPage({
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <ErrorState title="Submission readiness unavailable"
       description="The readiness workspaces could not be loaded. Choose the selected college and retry."
-      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry readiness</Link>} />
+      action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry readiness</Link>} />
   </div>;
   const [result, activeOverrides, workspaceChoices] = read.value;
   const chosenId=z.string().uuid().safeParse(one(searchParams.projectId) ?? one(searchParams.workspaceId)).data;
