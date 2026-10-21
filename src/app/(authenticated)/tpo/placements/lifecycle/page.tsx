@@ -114,6 +114,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     <PageHeader eyebrow="TPO" title="Drives"
       description="Review requests, prepare drafts and run every placement drive from one workspace."
       actions={<>
+        <Link href={retryHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[var(--lms-primary-subtle)] md:min-h-9 md:w-auto">Refresh</Link>
         <Dropdown mobileSheet align="end" label="More drive actions" trigger="More">
           <nav aria-label="Drive navigation and exports" className="grid min-w-48 gap-1 text-sm">
             <Link href="/tpo/placements/overview" className="rounded-[var(--lms-control-radius)] px-3 py-2 font-semibold text-primary-text hover:bg-primary-subtle">Operations overview</Link>
@@ -281,7 +282,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <Button type="submit" className="w-full sm:w-auto">Apply</Button>
       </div>
     </form>
-    {supportError?<Alert tone="warning">Job type filters are unavailable. The drive list remains available; retry to load the missing filter choices.</Alert>:null}
+    {supportError?<Alert tone="warning">Job type filters are unavailable. The drive list remains available; retry to load the missing filter choices. <a href={retryHref} className="ml-2 inline-flex min-h-11 items-center font-semibold underline underline-offset-4 md:min-h-9">Retry missing data</a></Alert>:null}
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
 
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
@@ -352,14 +353,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
           {Array.from(exportParams.entries()).map(([key,value])=><Input type="hidden" key={key} name={key} value={value}/>)}
           <Input type="hidden" name="scope" value="SELECTED"/>
-          <p className="text-sm text-body">Select up to 25 drives shown on this page to export just those rows.</p>
+          <p className="text-sm text-body">Select up to 25 drives shown on this page to export or act on those rows. Closing or cancelling requires a separate server-verified preview and confirmation.</p>
           <div className="min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)]" role="region"
             aria-label="Drives data table" tabIndex={0}>
             <table className="w-full min-w-[1150px] border-collapse text-left text-sm">
               <caption className="sr-only">Drives in the selected status tab. Scroll horizontally for all columns and drive actions.</caption>
               <thead className="bg-[var(--lms-neutral-50)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                 <tr className="border-b border-[var(--lms-canvas-border)]">
-                  <th scope="col" className="min-w-[210px] px-3 py-3">
+                  <th scope="col" aria-sort={data.sort==="COMPANY"?"ascending":"none"} className="min-w-[210px] px-3 py-3">
                     <Link href={{...pageHref(1),query:{...pageHref(1).query,sort:"COMPANY"}}}
                       className="font-semibold text-primary-text underline underline-offset-4">Drive</Link>
                   </th>
