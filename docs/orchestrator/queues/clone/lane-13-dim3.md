@@ -4,16 +4,16 @@
 Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/courses/admin-offering-learning-page.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/placements/placement-job-create-workspace.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/courses/admin-offering-learning-page.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/placements/placement-job-create-workspace.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
 - [ ] `src/components/placements/tpo-round-calendar-control.tsx`
 - [ ] `src/components/placements/tpo-week-hour-calendar.module.css`
 - [ ] `src/components/projects/learner-project-board-search.tsx`
