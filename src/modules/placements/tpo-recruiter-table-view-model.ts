@@ -1,11 +1,14 @@
-export const ENGAGE_COLUMNS = ["Contact","Company","Status","Stage","Owner",
-"Last activity","Next follow-up","Company drives","Invite","Added","Flags","Source","Email","Phone","Actions"] as const;
+export const ENGAGE_COLUMNS = ["Contact","Status","Stage","Company","Designation","Email","Phone",
+ "Flags","Owner","Last activity","Next follow-up","Invite","Added","Came from",
+ "Company drives","Students placed","Actions"] as const;
 export type EngageColumn = (typeof ENGAGE_COLUMNS)[number];
-export const ENGAGE_DEFAULT_COLUMNS: readonly EngageColumn[] = ENGAGE_COLUMNS.filter(x=>x!=="Email"&&x!=="Phone");
+export const ENGAGE_DEFAULT_COLUMNS: readonly EngageColumn[] = ENGAGE_COLUMNS.filter(x=>
+ !["Designation","Email","Phone","Added"].includes(x));
 export type EngageSort = "ADDED"|"LAST_ACTIVITY"|"NEXT_FOLLOWUP"|"NAME"|"DRIVES";
 export function normalizeEngageColumns(value:unknown): EngageColumn[]{
  if(!Array.isArray(value))return [...ENGAGE_DEFAULT_COLUMNS];
- const selected=ENGAGE_COLUMNS.filter(x=>value.includes(x));
+ const migrated=value.map((x:unknown)=>x==="Source"?"Came from":x);
+ const selected=ENGAGE_COLUMNS.filter(x=>migrated.includes(x));
  return selected.includes("Contact")?selected:[...ENGAGE_DEFAULT_COLUMNS];
 }
 export function sortEngageRows<T extends {id:string;name:string;createdAt:string;
