@@ -115,7 +115,7 @@ function activityDay(value:string){
  return new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(value));
 }
 function activityDayHeading(value:string){
- return new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(value));
+ return new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(value));
 }
 function formatWhen(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -125,6 +125,40 @@ function formatWhen(value: string) {
   }).format(new Date(value));
 }
 
+function activityTime(value:string){
+ const date=new Date(value);
+ return Number.isFinite(date.getTime())?
+ new Intl.DateTimeFormat("en-IN",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})
+  .format(date).toUpperCase():"Not recorded";
+}
+function activityActorName(item:ActivityCenterGroup["latest"]){
+ if(item.actor?.displayName?.trim())return item.actor.displayName.trim();
+ const id=item.actor?.id;if(!id)return "System";
+ const role=String(item.event.metadata.actorUserType??item.event.metadata.actorRole??"").toUpperCase();
+ const kind=role.includes("STUDENT")||role.includes("LEARNER")?"Student":
+  role.includes("FACULTY")||role.includes("STAFF")?"Staff":"User";
+ return kind+" #"+id.slice(0,16);
+}
+function activitySubjectName(event:ActivityCenterGroup["latest"]["event"]){
+ if(event.subjectLabel?.trim())return event.subjectLabel.trim();
+ for(const key of ["targetName","entityName","name","title"]){
+  const v=event.metadata[key];
+  if(typeof v==="string"&&v.trim())return v.trim().slice(0,160);
+ }
+ return humanize(event.subjectType)+" #"+event.subjectId.slice(0,16);
+}
+function activityActionTone(eventType:string,importance:string){
+ if(/(delete|remove|revoke|suspend|reject|archive|debar|cancel|block)/i.test(eventType))
+  return "warning" as const;
+ if(/(approve|verify|publish|restore|resolve|activate)/i.test(eventType))
+  return "success" as const;
+ return tone(importance);
+}
+function activitySafeMetadata(metadata:Record<string,unknown>){
+ const sensitive=/(token|secret|password|credential|authorization|session|cookie|private.?key|object.?path|phone|email|ip.?address|user.?agent)/i;
+ return Object.entries(metadata).filter(([key,v])=>!sensitive.test(key)&&
+  v!==null&&v!==undefined&&v!=="").slice(0,14);
+}
 function tone(
   importance: string,
 ):
@@ -148,20 +182,20 @@ function tone(
 /** Bound nested legacy payloads to readable, non-executable key/value content. */
 function detailValue(value:unknown,depth=0):ReactNode {
  if(value===undefined||value===null||value===""||value==="null")return "—";
- if(typeof value==="string")return <span className="break-all whitespace-pre-wrap">{value.slice(0,2000)}{value.length>2000?"…":""}</span>;
+ if(typeof value==="string")return <span className="break-all whitespace-pre-wrap">{value.slice(0,160)}{value.length>160?"…":""}</span>;
  if(typeof value==="number"||typeof value==="boolean")return String(value);
- if(depth>=6)return <span className="text-muted-foreground">Further nested details not shown</span>;
+ if(depth>=3)return <span className="text-muted-foreground">Further nested details not shown</span>;
  if(Array.isArray(value))return <ol className="list-inside list-decimal space-y-1">
-  {value.slice(0,30).map((item,i)=><li key={i}>{detailValue(item,depth+1)}</li>)}
-  {value.length>30?<li>+{value.length-30} more values</li>:null}
+  {value.slice(0,14).map((item,i)=><li key={i}>{detailValue(item,depth+1)}</li>)}
+  {value.length>14?<li>+{value.length-14} more values</li>:null}
  </ol>;
  if(typeof value==="object")return <dl className="space-y-1">
-  {Object.entries(value as Record<string,unknown>).slice(0,30).map(([key,item])=>
+  {activitySafeMetadata(value as Record<string,unknown>).map(([key,item])=>
    <div key={key} className="min-w-0 break-words">
     <dt className="inline font-semibold">{humanize(key)}: </dt>
     <dd className="inline">{detailValue(item,depth+1)}</dd>
    </div>)}
-  {Object.keys(value).length>30?<div className="text-muted-foreground">Further fields not shown</div>:null}
+  {Object.keys(value).length>14?<div className="text-muted-foreground">Further fields not shown</div>:null}
  </dl>;
  return "—";
 }
@@ -221,14 +255,14 @@ export function ActivityCenter({
                 <tr className="border-t border-border align-top">
                   <td className="whitespace-nowrap px-3 py-3">{formatWhen(item.event.occurredAt)}</td>
                   <td className="max-w-[180px] break-words px-3 py-3">
-                    {item.actor?.displayName??item.actor?.email??"System"}
+                    {activityActorName(item)}
                   </td>
                   <td className="max-w-[220px] break-words px-3 py-3">
                     {actionSentence(item.event.eventType,item.event.subjectType)}
                     {group.count>1?<span className="block text-xs text-muted-foreground">{group.count} related events</span>:null}
                   </td>
                   <td className="max-w-[200px] break-words px-3 py-3">
-                    {item.event.subjectLabel??item.event.subjectType}
+                    {activitySubjectName(item.event)}
                   </td>
                   <td className="px-3 py-3">
                     <Disclosure title="Details" className="min-w-[120px] text-xs">
@@ -236,7 +270,7 @@ export function ActivityCenter({
                         <div><dt className="font-semibold">Action key</dt><dd className="break-all">{item.event.eventType}</dd></div>
                         <div><dt className="font-semibold">Entity ID</dt><dd className="break-all">{item.event.subjectId}</dd></div>
                         <div><dt className="font-semibold">Actor ID</dt><dd className="break-all">{item.actor?.id??"System"}</dd></div>
-                        {Object.entries(item.event.metadata).map(([name,value])=>
+                        {activitySafeMetadata(item.event.metadata).map(([name,value])=>
                           <div key={name}><dt className="font-semibold">{humanize(name)}</dt>
                             <dd>{detailValue(value)}</dd></div>)}
                       </dl>
@@ -261,7 +295,7 @@ export function ActivityCenter({
 
   return (
     <div className="min-w-0 space-y-4">
-      <div className="min-w-0">
+      <div className="min-w-0" role="list" aria-label="Dated activity timeline">
         {groups.map((group,index) => {
           const item = group.latest;
           const day=activityDay(group.latest.event.occurredAt);
@@ -269,35 +303,41 @@ export function ActivityCenter({
           return (
             <Fragment key={group.key+":"+item.event.id}>
             {day!==previousDay?<h3 className="mt-[var(--lms-space-6)] text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
-            <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
+            <article role="listitem" className={"min-w-0 border-b border-[var(--lms-canvas-border)] py-3 "+
+              (/(delete|remove|reject|revoke|suspend|archive|debar)/i.test(item.event.eventType)?"border-l-[3px] border-l-orange-500 pl-3":"")}>
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge
-                      tone={tone(
-                        item.event
-                          .importance,
-                      )}
+                      tone={activityActionTone(item.event.eventType,item.event.importance)}
                     >
                       {humanize(
                         item.event
                           .importance,
                       )}
                     </StatusBadge>
-                    <StatusBadge>
-                      {humanize(
-                        item.event.module,
-                      )}
-                    </StatusBadge>
+                    {/(^|[._])BULK($|[._])/i.test(item.event.eventType)||group.count>1?
+                     <span className="rounded border border-border px-2 py-0.5 text-xs font-semibold text-muted-foreground">
+                      several at once{group.count>1?" ("+group.count+")":""}
+                     </span>:null}
                     {group.count > 1 ? (
                       <span className="text-xs font-semibold text-muted-foreground">
-                        {group.count.toLocaleString("en-IN")} related events
+                        {group.count.toLocaleString("en-IN")} recorded operations
                       </span>
                     ) : null}
                   </div>
-                  <h2 className="mt-2 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">
-                    {activityEventSentence(item.event,item.actor)}
-                  </h2>
+                  <div className="mt-2 grid grid-cols-[70px_minmax(0,1fr)] items-start gap-3 sm:grid-cols-[84px_minmax(0,1fr)]">
+                   <time dateTime={item.event.occurredAt} className="whitespace-nowrap pt-1 text-xs tabular-nums text-muted-foreground">
+                    {activityTime(item.event.occurredAt)}
+                   </time>
+                   <h2 className="min-w-0 break-words text-sm font-medium leading-6 text-[var(--lms-heading)]">
+                    {/(delete|remove|reject|revoke|suspend|archive|debar)/i.test(item.event.eventType)?
+                     <span role="img" aria-label="Caution" className="mr-2">⚠</span>:null}
+                    <strong>{activityActorName(item)}</strong>{" "}
+                    {actionSentence(item.event.eventType,item.event.subjectType)}{" "}
+                    <strong>{activitySubjectName(item.event)}</strong>
+                   </h2>
+                  </div>
                   <p className="mt-1 text-sm text-body leading-[22px]">{item.event.summary}</p>
                   <p className="mt-2 text-xs text-muted-foreground leading-5">
                     {formatWhen(
@@ -315,9 +355,6 @@ export function ActivityCenter({
                   </p>
                 </div>
                 <div className="flex shrink-0 flex-col items-start gap-2 min-[768px]:items-end">
-                  <span className="max-w-full break-all text-xs text-muted-foreground">
-                    {humanize(item.event.eventType)}
-                  </span>
                   <Link
                     href={`/activity/${item.event.id}`}
                     className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-foreground min-[768px]:min-h-9 min-[768px]:w-auto motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
@@ -326,23 +363,50 @@ export function ActivityCenter({
                   </Link>
                 </div>
               </div>
-              <Disclosure title="Details" className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+              <details className="group mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+                <summary className="inline-flex min-h-9 cursor-pointer list-none items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
+                 <span className="group-open:hidden">Details</span><span className="hidden group-open:inline">Hide details</span>
+                </summary>
                 <dl className="mt-2 grid gap-1 min-[768px]:grid-cols-2">
                   <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
-                  <div><dt>Actor</dt><dd className="break-all">{item.actor?.displayName??item.actor?.email??"System"}{item.actor?.id?" · "+item.actor.id:""}</dd></div>
+                  <div><dt>Actor</dt><dd className="break-all">{activityActorName(item)}{item.actor?.id?" · "+item.actor.id:""}</dd></div>
                   <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>
                   <div><dt>Exact time (IST)</dt><dd>{formatWhen(item.event.occurredAt)}</dd></div>
                   <div><dt>Events grouped</dt><dd>{group.count>1?"several at once ("+group.count+")":"1"}</dd></div>
-                  {Object.entries(item.event.metadata).map(([name,value])=><div key={name}>
+                  {activitySafeMetadata(item.event.metadata).map(([name,value])=><div key={name}>
                     <dt>{humanize(name)}</dt><dd className="break-all whitespace-pre-wrap">{detailValue(value)}</dd>
                   </div>)}
                 </dl>
-              </Disclosure>
+              </details>
             </article>
             </Fragment>
           );
         })}
       </div>
+
+      <details className="min-w-0 border-t border-border pt-3">
+       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link">
+        Raw forensic table · current page
+       </summary>
+       <p className="text-xs text-muted-foreground">One representative event appears per activity group. IP and user-agent source values were not retained. Use individual details for full audit records.</p>
+       <div className="mt-3 w-full overflow-x-auto"><table className="min-w-[960px] w-full border-collapse text-left text-xs">
+        <thead><tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>
+         <th scope="col" key={label} className="border-b border-border px-3 py-2">{label}</th>)}</tr></thead>
+        <tbody>{groups.map(group=>{
+         const item=group.latest;
+         return <tr key={item.event.id} className="border-b border-border align-top">
+          <td className="whitespace-nowrap px-3 py-2">{formatWhen(item.event.occurredAt)}</td>
+          <td className="px-3 py-2" title={item.event.eventType}>{actionSentence(item.event.eventType,item.event.subjectType)}</td>
+          <td className="px-3 py-2" title={item.event.subjectId}>{activitySubjectName(item.event)}</td>
+          <td className="px-3 py-2">{String(item.event.metadata.organizationName??"Not retained")}</td>
+          <td className="px-3 py-2">{String(item.event.metadata.collegeName??"Not retained")}</td>
+          <td className="px-3 py-2" title={item.actor?.id??undefined}>{activityActorName(item)}</td>
+          <td className="px-3 py-2">{RAW_AUDIT_MISSING_TRANSPORT}</td>
+          <td className="px-3 py-2">{RAW_AUDIT_MISSING_TRANSPORT}</td>
+         </tr>;
+        })}</tbody>
+       </table></div>
+      </details>
 
       {nextHref ? (
         <div className="flex justify-center">
@@ -350,7 +414,7 @@ export function ActivityCenter({
             href={nextHref}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 md:w-auto text-sm font-semibold text-foreground motion-safe:transition-colors hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
-            Load more ({nextRemaining} older)
+            Load older activity ({nextRemaining} remaining) · next page
           </Link>
         </div>
       ) : null}

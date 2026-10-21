@@ -11,8 +11,8 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_activity_activity-center.tsx.part1of2.md` (edit src/components/activity/activity-center.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_activity_activity-center.tsx.part2of2.md` (edit src/components/activity/activity-center.tsx; 19 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_activity_activity-center.tsx.part1of2.md` (edit src/components/activity/activity-center.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_activity_activity-center.tsx.part2of2.md` (edit src/components/activity/activity-center.tsx; 19 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_activity_notification-service.ts.part1of2.md` (edit src/modules/activity/notification-service.ts; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_activity_notification-service.ts.part2of2.md` (edit src/modules/activity/notification-service.ts; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_recruiter-lead-detail-workspace.tsx.part1of2.md` (edit src/components/tpo/recruiter-lead-detail-workspace.tsx; 40 findings; best P2)
