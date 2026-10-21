@@ -7,8 +7,12 @@ export function tpoRecruiterInviteApiErrorResponse(error: unknown) {
     return NextResponse.json(
       { error: error.code === "TPO_RECRUITER_INVITE_NOT_FOUND"
           ? "INVITE_INVALID"
-          : error.code },
-      { status: error.code === "TPO_RECRUITER_INVITE_NOT_FOUND" ? 404 : 409 },
+          : error.code,
+        message: error.code === "TPO_RECRUITER_INVITE_NOT_FOUND"
+          ? "This invitation is no longer available."
+          : "The invitation cannot be completed. Check the recruiter details or ask the placement cell." },
+      { status: error.code === "TPO_RECRUITER_INVITE_NOT_FOUND" ? 404 : 400,
+        headers: { "Cache-Control": "private, no-store" } },
     );
   }
   return apiErrorResponse(error);

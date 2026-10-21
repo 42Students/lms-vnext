@@ -24,6 +24,19 @@ export class FriendlyFetchError extends Error {
   }
 }
 
+/** A caller-initiated abort is not a network failure and must not trigger retry UI. */
+export class ApiFetchCancelledError extends FriendlyFetchError {
+  readonly silent = true;
+  readonly retryable = false;
+  constructor() {
+    super("", 499, "REQUEST_CANCELLED");
+    this.name = "ApiFetchCancelledError";
+  }
+}
+export function isApiFetchCancelled(error: unknown): error is ApiFetchCancelledError {
+  return error instanceof ApiFetchCancelledError;
+}
+
 function errorBody(value: unknown): Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
@@ -87,6 +100,9 @@ export async function apiFetch<T = unknown>(
     }
     return payload as T;
   } catch (reason) {
+    // Explicit user/route cancellation is a silent, non-retryable outcome.
+    // This must run before the global network-warning dispatcher.
+    if (!didTimeout && options.signal?.aborted) throw new ApiFetchCancelledError();
     const status=reason instanceof FriendlyFetchError?reason.status:didTimeout?504:0;
     if(typeof window!=="undefined"){
       const path=typeof input==="string"?input:input instanceof URL?input.pathname:input instanceof Request?input.url:"";
@@ -96,9 +112,6 @@ export async function apiFetch<T = unknown>(
     if (reason instanceof FriendlyFetchError) throw reason;
     if (didTimeout) {
       throw new FriendlyFetchError(friendlyApiError({ status: 504 }), 504);
-    }
-    if (controller.signal.aborted && options.signal?.aborted) {
-      throw new FriendlyFetchError(friendlyApiError({ status: 504 }), 499);
     }
     throw new FriendlyFetchError(friendlyApiError({ network: true }), 0);
   } finally {
