@@ -106,7 +106,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    onConfirm={()=>{void save(true);}}>
     <div className="space-y-2 text-sm text-body">
      <p>Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. {changed.length} changed setting(s); {changed.filter(item=>item.dangerous).length} high impact.</p>
-     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain pl-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+     <ul role="region" aria-label="High-impact settings review" tabIndex={0} className="max-h-48 list-disc space-y-1 overflow-auto overscroll-contain pl-5 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       {changed.map(spec=><li key={spec.key} className="break-all">{spec.label} ({spec.key})</li>)}
      </ul>
      <p>Blank values restore the source default. These saved overrides do not automatically reconfigure deployment-managed authentication or SMS services.</p>
@@ -114,7 +114,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
    <h3 className="font-semibold text-[var(--lms-heading)]">Save results</h3>
-   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
+   <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain text-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
     <strong className="break-all">{row.key}</strong><StatusBadge tone={row.status==="SAVED"?"success":row.status==="DELETED"?"info":"error"}>{row.status}</StatusBadge><span className="min-w-0 break-words text-body">{row.message}</span></li>)}</ul>
   </div>:null}
  </section>;
