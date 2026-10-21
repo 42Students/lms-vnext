@@ -392,9 +392,10 @@ function JobActions({
           </StatusBadge>
           <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-3 text-sm">
             <p className="font-semibold text-foreground">You're in — application sent</p>
-            <p className="mt-1 break-all text-body">Receipt: {receipt.id}</p>
+            <p className="mt-1 break-all text-body">Application reference (APP): {receipt.id}</p>
             <p className="mt-1 text-body">Recorded: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
-            <p className="mt-1 text-body">Resume: Not attached by this application</p>
+            <p className="mt-1 text-body">Resume: No resume is attached to this application.</p>
+            <p className="mt-1 text-xs text-muted-foreground">The application record does not include a downloadable resume; no unsupported preview link is shown.</p>
             <Link href="/learn/my-placements/applications"
               className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
               View applications →

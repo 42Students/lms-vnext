@@ -50,7 +50,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>}/>
   </div>;
  }
- const [policyRead,typesRead,companiesRead]=["PUBLISHED","DRAFT"].includes(job.status)?await Promise.allSettled([
+ const [policyRead,typesRead]=["PUBLISHED","DRAFT","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)?await Promise.allSettled([
   getJobEligibilityPolicy(context,jobId),
   listPlacementJobTypeChoices(context,job.collegeId),
   listPlacementCompanies(context,job.collegeId),
@@ -156,6 +156,55 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       }:null,
     }} />:null}
   </section>
+  {job.status!=="DRAFT"?<section aria-label="Full job settings" className="min-w-0 space-y-4 border-b border-border pb-5">
+   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Full job details</h2>
+   <p className="text-sm text-body">All saved posting fields remain available to review regardless of publication state. Published changes use the audited editor above; eligibility and applicant targeting are frozen after publication to preserve historical decisions.</p>
+   <dl className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
+    {([
+      ["Status",job.status],["Job type",job.jobTypeLabel??"Not specified"],
+      ["Employment",job.employmentType],["Work mode",job.workMode],
+      ["Application channel",job.applicationMode],["Openings",job.openings??"Not specified"],
+      ["Locations",job.locations.join(", ")||"Not specified"],
+      ["Minimum CTC (INR)",job.minimumAnnualCtcInr??"Not specified"],
+      ["Maximum CTC (INR)",job.maximumAnnualCtcInr??"Not specified"],
+      ["External application",job.externalApplicationUrl??"Not configured"],
+     ] as const).map(([label,value])=><div key={label} className="min-w-0">
+      <dt className="font-semibold text-muted-foreground">{label}</dt>
+      <dd className="mt-1 break-words text-foreground">{String(value)}</dd>
+     </div>)}
+   </dl>
+   <div className="space-y-2">
+    <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Job description</h3>
+    <p className="whitespace-pre-wrap break-words text-sm text-body">{job.description}</p>
+   </div>
+   <div className="space-y-2">
+    <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Eligibility and target audience</h3>
+    {publishedPolicy?<dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
+     {([
+       ["Programs",publishedPolicy.allowedProgramIds.length],
+       ["Batches",publishedPolicy.allowedCohortIds.length],
+       ["Classes",publishedPolicy.allowedSectionIds.length],
+       ["Minimum CGPA",publishedPolicy.minCgpa??"Not set"],
+       ["Maximum active backlogs",publishedPolicy.maxActiveBacklogs??"Not set"],
+       ["Maximum past backlogs",publishedPolicy.maxPastBacklogs??"Not set"],
+       ["Minimum 10th %",publishedPolicy.minTenthPercentage??"Not set"],
+       ["Minimum 12th %",publishedPolicy.minTwelfthPercentage??"Not set"],
+       ["Minimum diploma %",publishedPolicy.minDiplomaPercentage??"Not set"],
+       ["Minimum undergraduate %",publishedPolicy.minUndergraduatePercentage??"Not set"],
+       ["Maximum gap years",publishedPolicy.maxGapYears??"Not set"],
+       ["Passing years",publishedPolicy.allowedPassingYears.join(", ")||"All"],
+       ["Missing evidence",publishedPolicy.missingEvidencePolicy],
+      ] as const).map(([label,value])=><div key={label}>
+       <dt className="font-semibold text-muted-foreground">{label}</dt>
+       <dd className="mt-1 text-foreground">{String(value)}</dd>
+      </div>)}
+    </dl>:<ErrorState title="Eligibility unavailable" description="Eligibility policy could not be loaded. Refresh before making changes."
+       action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry</Link>}/>}
+   </div>
+   {job.status!=="PUBLISHED"?<Banner tone="info">
+    This drive is {job.status.toLowerCase()}. Full settings are preserved for review; archived and closed records cannot be silently rewritten. Use the status controls to reopen an eligible drive before editing.
+   </Banner>:null}
+  </section>:null}
   {job.legacyPostingDetails?<details className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]"
     aria-label="Additional job details">
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Additional job details</summary>

@@ -12,7 +12,7 @@ import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {listCollegeDriveApplications} from "./college-drive-applications-service";
 import {DRIVE_APPLICATION_BULK_CAP} from "./college-drive-applications-model";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
-import {collegeStageCommandSchema,COLLEGE_APPLICATION_TRANSITIONS} from "./college-stage-action-model";
+import {collegeStageCommandSchema,COLLEGE_APPLICATION_TRANSITIONS,COLLEGE_APPLICATION_CORRECTIONS} from "./college-stage-action-model";
 import {PlacementsServiceError} from "./errors";
 
 export async function getCollegeApplicationPipeline(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -95,6 +95,16 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      const allowed=COLLEGE_APPLICATION_TRANSITIONS[from]??[];
      throw Error("Cannot move from "+from+" to "+next+
       ". Allowed next stages: "+(allowed.length?allowed.join(", "):"none")+".");
+    }
+    if(input.action==="CORRECT"){
+     if(!(COLLEGE_APPLICATION_CORRECTIONS[from]??[]).includes(next))
+      throw Error("That exceptional correction is not permitted for this stage.");
+     if(next==="APPLIED"||next==="ASSESSMENT"){
+      const live=await tx.select({id:placementOffers.id}).from(placementOffers)
+       .where(and(eq(placementOffers.applicationId,applicationId),
+        inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+      if(live.length)throw Error("Resolve active offers before correcting a placement stage.");
+     }
     }
     // Reversals are permitted by the old LMS, but an accepted offer or a
     // confirmed joining cannot be made to disappear by moving a display stage.
@@ -207,8 +217,10 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      actorUserId:context.user.id,actorMembershipId:context.membership?.collegeId===collegeId?context.membership.id:null,
      module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_APPLICATION_STAGE_MOVED",
      subjectType:"placement_application",subjectId:applicationId,
-     summary:"College Admin moved application to "+next,
-     metadata:{jobId,from,to:next,reason:input.reason},
+     summary:input.action==="CORRECT"?"College Admin corrected application stage to "+next:
+      "College Admin moved application to "+next,
+     metadata:{jobId,from,to:next,reason:input.reason,
+      exceptionalCorrection:input.action==="CORRECT"},
     }).returning({id:activityEvents.id});
     await tx.insert(inAppNotifications).values({
      userId:application.userId,eventId:audit.id,

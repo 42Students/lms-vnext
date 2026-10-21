@@ -1,5 +1,15 @@
 import { z } from "zod";
 import {TPO_RULE_LIMITS} from "./tpo-rule-limits";
+/** Additional vNext fields must be visible beside the legacy season name and dates. */
+export const TPO_SEASON_FORM_COPY = {
+ name: "Season name",
+ code: "Season code",
+ startDate: "Start date",
+ endDate: "End date",
+ confirmation: "I confirm these placement season details.",
+ codeHelp: "Season code is required in the new LMS to uniquely identify a season. It is not generated from the season name.",
+ confirmationHelp: "Confirm the season name, code and dates before saving.",
+} as const;
 const fields = {
   name: z.string().trim().min(2).max(160),
   code: z.string().trim().min(2).max(64),

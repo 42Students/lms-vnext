@@ -41,6 +41,8 @@ const DRIVE_FIELD_LABELS: Readonly<Record<string,string>> = {
   applicationDeadline:"the application deadline",
   externalApplicationUrl:"the employer application link",
   minCgpa:"minimum CGPA",
+  requireVerifiedEvidence:"Verified marks only",
+  verifiedMarksOnly:"Verified marks only",
   minPctThroughout:"percentage throughout",
   allowedPassingYears:"passing years",
   verifiedMarksOnly:"Verified marks only",
@@ -51,8 +53,12 @@ const DRIVE_FIELD_LABELS: Readonly<Record<string,string>> = {
 export function tpoDriveFormErrorMessage(reason:unknown):string{
   if(reason instanceof FriendlyFetchError){
     if(reason.code&&DRIVE_ERRORS[reason.code])return DRIVE_ERRORS[reason.code];
+    if(reason.code==="PLACEMENT_ELIGIBILITY_EVIDENCE_MISSING"||reason.code==="PLACEMENT_VERIFIED_MARKS_REQUIRED")
+      return "Verified marks only — college-verified academic marks are required before the applicant can be considered eligible.";
     if(reason.code==="INVALID_REQUEST"||reason.status===400){
       const field=Object.keys(reason.fieldErrors).find(key=>Object.hasOwn(DRIVE_FIELD_LABELS,key));
+      if(field==="requireVerifiedEvidence"||field==="verifiedMarksOnly")
+        return "Check Verified marks only. Unverified or missing academic marks must be verified by the college before applying.";
       if(field)return "Check "+DRIVE_FIELD_LABELS[field]+" and try again.";
     }
     const summary=reason.message.trim();
