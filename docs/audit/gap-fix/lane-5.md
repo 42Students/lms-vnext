@@ -298,3 +298,9 @@
 
 ## Packet 65 — Create drive
 - Restored 800px-wide focused form composition using the existing validated placement create workspace and clear return path. Exact floating modal/drop-in duplicateFrom state cannot be generated safely from the current server page without a tenant-validated cloning API and client modal controller; documented instead of inventing draft values. G2-17-030-022 partially fulfilled. No code execution, tests or CI.
+
+## Packet 66 — Screening assessment evidence
+- Clarified in the scoped queue that decisions are not numeric scores; linked authorized Applications detail instead of leaking unverified assessment/ranking fields or manufacturing zero scores. The field-level assessment projection requires explicit service and permission handoff (G2-13-021-002). No code/tests/CI run.
+
+## Packet 67 — Canonical workspace overview navigation
+- Legacy overview already resolves through canonical /admin/projects/[projectId]/[section]. Replaced unsafe first-of-duplicate query selection with bounded single-value from/reason, while leaving college ID exclusively in authorized selected scope. G2-18-028-001 reviewed; unsupported old numeric IDs stay unmapped pending an explicit crosswalk. No code/tests/CI run.
