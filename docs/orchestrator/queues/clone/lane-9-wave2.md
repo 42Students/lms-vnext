@@ -25,7 +25,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_learner-assessment-overview.tsx.md` (edit src/components/courses/learner-assessment-overview.tsx; 36 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-course-roster.tsx.md` (edit src/components/courses/faculty-course-roster.tsx; 32 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_learner-quiz-attempt.tsx.md` (edit src/components/courses/learner-quiz-attempt.tsx; 29 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_lesson-content-service.ts.md` (edit src/modules/courses/lesson-content-service.ts; 27 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_lesson-content-service.ts.md` (edit src/modules/courses/lesson-content-service.ts; 27 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_verification_TpoVerificationPanel.tsx.md` (edit src/components/verification/TpoVerificationPanel.tsx; 26 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_notifications_exotel-sms.ts.md` (edit src/modules/notifications/exotel-sms.ts; 24 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_super-admin-lesson-bulk-visibility.tsx.md` (edit src/components/courses/super-admin-lesson-bulk-visibility.tsx; 24 findings; best P2)

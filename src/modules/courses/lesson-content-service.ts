@@ -5,6 +5,7 @@ import {
   isNull,
   ne,
   or,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {z} from "zod";
@@ -41,6 +42,29 @@ import {
   type UpdateLessonContentInput,
 } from "./validation";
 
+/** The old LMS used classId=0 for course-wide content. vNext instead uses
+ * nullable deliveryId, and positive numeric legacy IDs must be translated by
+ * an authenticated, tenant-scoped migration map, never treated as a UUID. */
+export function normalizeLegacyContentTarget(
+ target:{classId?:number|null;deliveryId?:string|null},
+):string|null{
+ if(target.deliveryId!==undefined){
+  if(target.classId!==undefined&&target.classId!==null&&target.classId!==0)
+   throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
+  return target.deliveryId?courseSectionDeliveryIdSchema.parse(target.deliveryId):null;
+ }
+ if(target.classId===null||target.classId===undefined||target.classId===0)return null;
+ throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
+}
+export type LessonContentPageOptions={
+ page?:number;pageSize?:number;contentType?:"RESOURCE"|"VIDEO"|"YOUTUBE"|"LIVE_CLASS";
+};
+function safePageOptions(value:LessonContentPageOptions):Required<Pick<LessonContentPageOptions,"page"|"pageSize">>{
+ const page=value.page??1,pageSize=value.pageSize??20;
+ if(!Number.isSafeInteger(page)||page<1||page>100000||!Number.isSafeInteger(pageSize)||pageSize<1||pageSize>100)
+  throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
+ return {page,pageSize};
+}
 type ContentWriteScope = {
   lessonId: string;
   learningPathId: string;
@@ -293,6 +317,7 @@ export async function listLessonContents(
   lessonIdInput: string,
   deliveryIdInput?: string | null,
   includeArchived = false,
+  pageOptions?:LessonContentPageOptions,
 ) {
   const lessonId =
     courseLessonIdSchema.parse(
@@ -378,15 +403,16 @@ export async function listLessonContents(
     );
   }
 
-  const rows = await getDb()
-    .select()
-    .from(lessonContents)
-    .where(and(...conditions))
-    .orderBy(
-      asc(lessonContents.sequence),
-      asc(lessonContents.createdAt),
-      asc(lessonContents.id),
-    );
+  if(pageOptions?.contentType)conditions.push(eq(lessonContents.contentType,pageOptions.contentType));
+  // The optional page/size form is for large faculty content directories.
+  // Leaving options absent preserves legacy unpaged, sequence-first reads.
+  const query=getDb().select().from(lessonContents).where(and(...conditions))
+    .orderBy(asc(lessonContents.sequence),asc(lessonContents.createdAt),asc(lessonContents.id))
+    .$dynamic();
+  const paging=pageOptions?safePageOptions(pageOptions):null;
+  const rows = paging
+    ? await query.limit(paging.pageSize).offset((paging.page-1)*paging.pageSize)
+    : await query;
 
   // Until the DB05 ordering migration is certified, reading ordinary lesson
   // content must not eagerly load its server-only, staged-schema writer.
@@ -409,6 +435,37 @@ export async function listLessonContents(
   return applyDeliveryContentOrderIfReady(visibleRows, deliveryId);
 }
 
+/** Metrics operate only over the caller's already-authorized audience. */
+export async function listLessonContentMetrics(
+ context:RequestContext,lessonId:string,deliveryId?:string|null,
+){
+ const items=await listLessonContents(context,lessonId,deliveryId);
+ const counts:Record<"RESOURCE"|"VIDEO"|"YOUTUBE"|"LIVE_CLASS",number>={
+  RESOURCE:0,VIDEO:0,YOUTUBE:0,LIVE_CLASS:0,
+ };
+ const statusCounts={DRAFT:0,PUBLISHED:0,ARCHIVED:0};
+ let availablePoints=0;
+ for(const item of items){
+  counts[item.contentType]=(counts[item.contentType]??0)+1;
+  if(item.status==="DRAFT"||item.status==="PUBLISHED"||item.status==="ARCHIVED")
+   statusCounts[item.status]++;
+  if(Number.isFinite(item.points)&&item.points>=0)availablePoints+=item.points;
+ }
+ return {counts,statusCounts,total:items.length,availablePoints};
+}
+/** A bookmarked content ID must pass the same path/section authorization
+ * and learner visibility checks as the normal list. No private storage key
+ * is serialized to students. */
+export async function getAuthorizedLessonContent(
+ context:RequestContext,contentIdInput:string,deliveryId?:string|null,
+){
+ const id=lessonContentIdSchema.parse(contentIdInput);
+ const scope=await loadLessonContentScope(id);
+ const items=await listLessonContents(context,scope.lessonId,deliveryId);
+ const item=items.find(candidate=>candidate.id===id);
+ if(!item)throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
+ return item;
+}
 export async function createLessonContent(
   context: RequestContext,
   rawInput: CreateLessonContentInput & {resourceMaterials?:unknown;resource_materials?:unknown},
@@ -552,6 +609,7 @@ export async function updateLessonContent(
           ? eq(lessonContents.deliveryId, current.deliveryId)
           : isNull(lessonContents.deliveryId),
         eq(lessonContents.contentType, current.contentType),
+        sql`date_trunc('milliseconds', ${lessonContents.updatedAt}) = ${current.updatedAt.toISOString()}::timestamptz`,
         ne(
           lessonContents.status,
           "ARCHIVED",
@@ -625,6 +683,7 @@ export async function transitionLessonContent(
           ? eq(lessonContents.deliveryId, current.deliveryId)
           : isNull(lessonContents.deliveryId),
         eq(lessonContents.contentType, current.contentType),
+        sql`date_trunc('milliseconds', ${lessonContents.updatedAt}) = ${current.updatedAt.toISOString()}::timestamptz`,
         input.action === "PUBLISH"
           ? eq(lessonContents.status, "DRAFT")
           : ne(lessonContents.status, "ARCHIVED"),
