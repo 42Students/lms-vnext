@@ -434,17 +434,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        {companyName?" · "+companyName:""}
       </span>
     </div>:null}
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={Boolean(editing)}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={busy||Boolean(editing)}
      onChange={e=>{setRoundId(e.target.value);setDirty(true);}} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={Boolean(editing)}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={busy||Boolean(editing)}
      onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
      <label className="grid gap-[6px] text-[13px] font-semibold">Interview Type
-      <Select value={interviewType} onChange={event=>{
+      <Select value={interviewType} disabled={busy} onChange={event=>{
        setInterviewType(event.target.value as typeof interviewType);setDirty(true);
       }} className="w-full">
        <option value="SCREENING">Screening</option><option value="TECHNICAL">Technical</option>
@@ -454,7 +454,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      </label>
      <label className="grid gap-[6px] text-[13px] font-semibold sm:col-span-2">
       What this round is about <span className="text-xs text-muted-foreground">({roundDescription.length}/500)</span>
-      <Textarea rows={3} minLength={10} maxLength={500} value={roundDescription}
+      <Textarea rows={3} minLength={10} maxLength={500} disabled={busy} value={roundDescription}
        placeholder="Explain this interview round and how candidates should prepare"
        onChange={event=>{setRoundDescription(event.target.value);setDirty(true);}}
        className="w-full"/>
@@ -479,11 +479,11 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         {INTERVIEW_DURATIONS.map(value=><option key={value} value={value}>{value} minutes</option>)}
       </Select></label>
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} disabled={busy} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
      className="w-full">
      <option value="ON_CAMPUS">Offline</option><option value="VIRTUAL">Online</option></Select></label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">{mode==="VIRTUAL"?"Meeting Link":"Venue Address"}
-     <Input value={mode==="VIRTUAL"?meetingUrl:venue} maxLength={500}
+     <Input value={mode==="VIRTUAL"?meetingUrl:venue} maxLength={500} disabled={busy}
       placeholder={mode==="VIRTUAL"?"https://meet.example.com/...":"Enter interview venue address"}
       onChange={e=>{mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value);setDirty(true);}}
       className="w-full"/>
@@ -491,7 +491,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      </label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
       Interviewer(s) <span className="text-xs font-normal text-muted-foreground">Use the same spelling as existing interviews to avoid double-booking.</span>
-     <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255}
+     <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255} disabled={busy}
       placeholder="Start typing an interviewer’s name" autoComplete="off"
       onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/>
      <datalist id={"interviewer-suggestions-"+jobId}>
@@ -504,7 +504,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     {previewConflicts.length>0?<Banner tone="warning" role="alert">
       Possible scheduling conflict with {previewConflicts.length} interview{previewConflicts.length===1?"":"s"} in this drive, including a 15-minute buffer. Check the candidate, room and interviewer. The server also checks other drives before saving.
     </Banner>:null}
-    {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason}
+    {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason} disabled={busy}
      onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></label>:null}
     {error?<Banner tone="error" action={<Button type="button" size="sm"
       variant="secondary" onClick={()=>setError("")}>Dismiss</Button>}>
