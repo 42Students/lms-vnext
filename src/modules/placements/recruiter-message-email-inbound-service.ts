@@ -1,19 +1,62 @@
 import "server-only";
-import {createHash} from "node:crypto";
+import {createHash,randomUUID} from "node:crypto";
 import {eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementRecruiterInboundEmailEvents,placementRecruiterMessageMailState} from "@/db/schema";
+import {inboundMailMessages} from "@/db/schema/inbound-mail";
 import {notifyTpoOfRecruiterMessage} from "./recruiter-message-tpo-notification-service";
 import {verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply} from "./recruiter-message-email-model";
 
 const inboundSchema=z.strictObject({
  from:z.email().max(320).transform(x=>x.trim().toLowerCase()),
  to:z.email().max(320).transform(x=>x.trim().toLowerCase()),
- text:z.string().min(1).max(20000),
- providerMessageId:z.string().trim().min(8).max(255),
+ text:z.string().max(20000).optional(),
+ html:z.string().max(20000).optional(),
+ subject:z.string().max(512).optional(),
+ headerFrom:z.string().max(320).optional(),
+ auth:z.string().max(2000).optional(),
+ providerMessageId:z.string().trim().max(255).optional(),
 });
-export type RecruiterEmailInboundResult={accepted:boolean;replayed:boolean};
+export type RecruiterInboundOutcome=
+ "POSTED"|"STORED"|"DUPLICATE"|"NO_THREAD"|"WRONG_SENDER"|
+ "NOT_VERIFIED"|"EMPTY"|"ACCESS_ENDED";
+export type RecruiterEmailInboundResult={
+ accepted:boolean;replayed:boolean;outcome?:RecruiterInboundOutcome;
+};
+/** The trusted mail gateway signs the original payload after provider verification.
+ * HTML-only mail is flattened to inert text, never interpreted as markup.
+ */
+function plainMailText(text:string|undefined,html:string|undefined){
+ if(text?.trim())return text;
+ if(!html)return "";
+ const flattened=html
+  .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1\s*>/gi,"")
+  .replace(/<br\s*\/?\s*>/gi,"\n")
+  .replace(/<\/(?:p|div|li|tr|h[1-6])\s*>/gi,"\n")
+  .replace(/<[^>]*>/g,"");
+ return flattened
+  .replace(/&(?:amp|lt|gt|quot|apos|nbsp);/gi,entity=>{
+   const table:Record<string,string>={amp:"&",lt:"<",gt:">",quot:'"',apos:"'",nbsp:" "};
+   return table[entity.slice(1,-1).toLowerCase()]??entity;
+  })
+  .replace(/&#(x[0-9a-f]+|[0-9]+);/gi,(entity,numeric:string)=>{
+   const code=numeric[0]?.toLowerCase()==="x"?
+    Number.parseInt(numeric.slice(1),16):Number.parseInt(numeric,10);
+   return code>=0&&code<=0x10ffff&&!(code>=0xd800&&code<=0xdfff)?
+    String.fromCodePoint(code):entity;
+  }).trim();
+}
+/** Only upstream-verified DMARC, or SPF/DKIM when DMARC did not fail,
+ * may post as a recruiter. Gateway HMAC prevents untrusted callers
+ * from fabricating this provider evidence.
+ */
+function senderVerified(auth:string|undefined){
+ const lower=auth?.toLowerCase()??"";
+ if(/\bdmarc\s*=\s*fail\b/.test(lower))return false;
+ return /\bdmarc\s*=\s*pass\b/.test(lower)||
+  /\b(?:spf|dkim)\s*=\s*pass\b/.test(lower);
+}
 /** Only a gateway that verifies the upstream mail provider may sign a payload.
  * A sender's From/Reply-To header alone never confers access. No email
  * addresses, message bodies, or token secrets are logged here.
@@ -33,30 +76,53 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const parsed=inboundSchema.safeParse(json);
  if(!parsed.success)return {accepted:false,replayed:false};
  const input=parsed.data,domain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").toLowerCase();
- const replyBody=extractRecruiterEmailReply(input.text);
- if(!replyBody)return {accepted:false,replayed:false};
+ const fullText=plainMailText(input.text,input.html);
+ const replyBody=extractRecruiterEmailReply(fullText);
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
- if(!match||match[2]!==domain)return {accepted:false,replayed:false};
- const tokenHash=createHash("sha256").update(match[1]).digest("hex");
- // Idempotency belongs to the authorized thread, not a provider-global identifier.
- // The same upstream message id in a different college must not claim replay.
-
+ const isReply=Boolean(match&&match[2]===domain);
+ const tokenHash=isReply&&match?createHash("sha256").update(match[1]).digest("hex"):null;
+ // Inbox and reply posting are one atomic intake: no mail is acknowledged without
+ // durable storage, including unknown mail, expired replies, and failed auth.
  const db=getDb();
  const [ready]=await db.execute<{ok:boolean}>(sql`
-  select to_regclass('public.placement_recruiter_message_mail_state') is not null
-    and to_regclass('public.placement_recruiter_inbound_email_events') is not null
-    and exists(select 1 from information_schema.columns
-      where table_name='placement_tpo_messages' and column_name='delivery_channel') as ok
+  select to_regclass('public.inbound_mail_messages') is not null as ok
  `).then(result=>result.rows);
  if(!ready?.ok)return {accepted:false,replayed:false};
  return db.transaction(async tx=>{
+  const sourceMessageId=input.providerMessageId?.trim()||
+   "no-id:"+randomUUID();
+  const [received]=await tx.insert(inboundMailMessages).values({
+   id:randomUUID(),sourceMessageId,
+   fromAddress:input.from,toAddress:input.to,
+   subject:input.subject?.trim()||"(no subject)",
+   bodyPlain:fullText,receivedAt:new Date(),status:"NEW",
+  }).onConflictDoNothing().returning({id:inboundMailMessages.id});
+  if(!received)return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
+  if(!isReply)return {accepted:true,replayed:false,outcome:"STORED" as const};
+  if(!replyBody)return {accepted:true,replayed:false,outcome:"EMPTY" as const};
+  const declaredFrom=(/^.*<([^<>]+)>\s*$/.exec(input.headerFrom??"")?.[1]||
+   input.headerFrom||input.from).trim().toLowerCase();
+  if(declaredFrom!==input.from)
+   return {accepted:true,replayed:false,outcome:"WRONG_SENDER" as const};
+  if(!senderVerified(input.auth))
+   return {accepted:true,replayed:false,outcome:"NOT_VERIFIED" as const};
+  // Legacy +r-20hex and +rdev-20hex addresses are retained in Inbox for
+  // triage; they cannot authenticate against vNext's 32hex persisted tokens.
+  if(!tokenHash)return {accepted:true,replayed:false,outcome:"NO_THREAD" as const};
+  const [replyReady]=await tx.execute<{ok:boolean}>(sql`
+   select to_regclass('public.placement_recruiter_message_mail_state') is not null
+     and to_regclass('public.placement_recruiter_inbound_email_events') is not null
+     and exists(select 1 from information_schema.columns
+       where table_name='placement_tpo_messages' and column_name='delivery_channel') as ok
+  `).then(result=>result.rows);
+  if(!replyReady?.ok)return {accepted:true,replayed:false,outcome:"ACCESS_ENDED" as const};
   // The indexed reply-token row lock serializes writes for this thread.
   // Never use a provider-global message id as a cross-tenant advisory lock.
   const [state]=await tx.select().from(placementRecruiterMessageMailState)
    .where(eq(placementRecruiterMessageMailState.replyTokenHash,tokenHash))
    .for("update").limit(1);
   if(!state||!state.replyTokenExpiresAt||state.replyTokenExpiresAt<=new Date())
-   return {accepted:false,replayed:false};
+   return {accepted:true,replayed:false,outcome:"NO_THREAD" as const};
   // DB-backed principal, thread owner, own company, active college/grant,
   // verified grant and unexpired DRIVES capability are all mandatory.
   const auth=await tx.execute<{college_id:string}>(sql`
@@ -77,13 +143,13 @@ export async function acceptAuthenticatedRecruiterEmailReply(
         and j.college_id=t.college_id and j.company_relationship_id=rel.id))
    limit 1
   `);
-  if(!auth.rows[0])return {accepted:false,replayed:false};
-  const msgHash=createHash("sha256").update(state.threadId+"\u0000"+input.providerMessageId).digest("hex");
+  if(!auth.rows[0])return {accepted:true,replayed:false,outcome:"ACCESS_ENDED" as const};
+  const msgHash=createHash("sha256").update(state.threadId+"\u0000"+sourceMessageId).digest("hex");
   const [duplicate]=await tx.select({id:placementRecruiterInboundEmailEvents.id,
     threadId:placementRecruiterInboundEmailEvents.threadId})
     .from(placementRecruiterInboundEmailEvents)
     .where(eq(placementRecruiterInboundEmailEvents.messageIdHash,msgHash)).limit(1);
-  if(duplicate)return {accepted:duplicate.threadId===state.threadId,replayed:true};
+  if(duplicate)return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
   const inserted=await tx.execute<{id:string}>(sql`
     insert into placement_tpo_messages(thread_id,sender_type,sender_user_id,body,delivery_channel)
     values(${state.threadId}::uuid,'RECRUITER',${state.recruiterUserId}::uuid,${replyBody},'EMAIL')
@@ -100,6 +166,10 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    collegeId:auth.rows[0].college_id,threadId:state.threadId,messageId:id,
    senderUserId:state.recruiterUserId,at:new Date(),
   });
-  return {accepted:true,replayed:false};
+  // Successfully routed mail needs no manual triage; failed/unknown mail
+  // remains NEW in the Super Admin Inbox for operator follow-up.
+  await tx.update(inboundMailMessages).set({status:"RESOLVED",version:1})
+   .where(eq(inboundMailMessages.id,received.id));
+  return {accepted:true,replayed:false,outcome:"POSTED" as const};
  });
 }
