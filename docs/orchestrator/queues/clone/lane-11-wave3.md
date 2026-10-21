@@ -12,10 +12,10 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 Packets:
 
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_super-admin-today-board.tsx.md` (edit src/components/admin/super-admin-today-board.tsx; 15 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_super-admin-hr-detail-drawer.tsx.md` (edit src/components/admin/super-admin-hr-detail-drawer.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_super-admin-hr-detail-drawer.tsx.md` (edit src/components/admin/super-admin-hr-detail-drawer.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_modules_colleges_admin-today-attention-service.ts.md` (edit src/modules/colleges/admin-today-attention-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_learner-module-access-drawer.tsx.md` (edit src/components/admin/learner-module-access-drawer.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_modules_colleges_branding-service.ts.md` (edit src/modules/colleges/branding-service.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_modules_colleges_branding-service.ts.md` (edit src/modules/colleges/branding-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_placements_jobs_jobId_schedule_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_module-access_page.tsx.md` (edit src/app/(authenticated)/admin/module-access/page.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_projects_page.tsx.md` (edit src/app/(authenticated)/admin/projects/page.tsx; 1 findings; best P1)
