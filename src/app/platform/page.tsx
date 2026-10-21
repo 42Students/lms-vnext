@@ -1,26 +1,87 @@
 import type { Metadata } from "next";
-import { MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta } from "@/components/marketing/marketing-layout";
-export const metadata: Metadata = {title:"Platform | 42 LMS",description:"One connected platform for learning, projects and placements."};
+import {
+  MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta,
+} from "@/components/marketing/marketing-layout";
+
+export const metadata: Metadata = {
+  title: "Platform | 42 LMS",
+  description: "One connected platform for learning, projects and placements.",
+};
+
+/** Non-AI scope: seven former autonomous-agent promises become seven existing
+ * people-operated workspaces. These are intentional product-copy replacements,
+ * not a claim that AI tutoring, prediction or grading has been implemented.
+ */
+const WORKSPACES = [
+  { title: "Learner workspace", description: "Course material, assignments, assessments and your learning progress." },
+  { title: "Faculty workspace", description: "Teach courses, prepare assessments and record outcomes with human review." },
+  { title: "Mentor workspace", description: "Guide teams, review project tasks and help learners reach milestones." },
+  { title: "Career and placement workspace", description: "Browse placement opportunities, eligibility and application progress." },
+  { title: "Course and content administration", description: "Organize curriculum, lessons and academic resources for your college." },
+  { title: "Placement operations", description: "Coordinate recruiter drives, screening rounds, interviews and offers." },
+  { title: "Project and team management", description: "Track milestones, members, deliveries and feedback without automated coaching." },
+] as const;
+
+/** Former assessment/skills/learning/knowledge/agent/analytics pillars are
+ * intentionally consolidated into the four non-predictive product pillars.
+ * These descriptions make no promise of autonomous assessment or AI insight.
+ */
+const PILLARS = [
+  { title: "Learning", description: "Courses, lessons, assignments, assessments and academic progress." },
+  { title: "Projects", description: "Teamwork, mentor feedback, milestones and portfolio evidence." },
+  { title: "Placements", description: "Student eligibility, applications, interviews, offers and joining." },
+  { title: "Integrations", description: "Connected workflows between academic delivery, projects and placement operations." },
+] as const;
+
+const CONNECTED_WORKFLOWS = [
+  "Courses", "Assignments", "Assessments", "Projects",
+  "Mentor reviews", "Placement drives", "Interviews", "Offers",
+] as const;
+const LIFECYCLE = ["Discover", "Learn", "Build", "Demonstrate", "Interview", "Grow"] as const;
+
 export default function PlatformMarketingPage() {
- return <MarketingLayout>
-  <MarketingHero eyebrow="42 LMS platform" title="One connected platform for learning, projects and placements."
-    description="A connected place for learning, guided projects, assessments, recruitment, and workforce development." showExploreLink={false}/>
-  <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={[
-   {title:"Learner workspace",description:"Courses, skills, assessments, career planning and project work."},
-   {title:"Faculty workspace",description:"Academic content, assignments, progress and course delivery."},
-   {title:"Mentor workspace",description:"Review milestones, guide teams and track outcomes."},
-   {title:"Placement workspace",description:"Opportunities, candidates, interviews and hiring decisions."},
-   {title:"HR workspace",description:"Collaborate with placement teams on applications and selection."},
-   {title:"Administrator",description:"Bring academic structure and people management into one place."}
-  ]}/>
-  <MarketingFeatureGrid title="Connected platform pillars" items={[
-   {title:"Learning",description:"Courses, assessments and academic progress."},
-   {title:"Projects",description:"Practical teamwork, mentoring and portfolio evidence."},
-   {title:"Placements",description:"From candidate eligibility through offers and joining."},
-   {title:"Integrations",description:"Reduce handoffs between academic and hiring workflows."}
-  ]}/>
-  <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]"><h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">A complete talent lifecycle</h2>
-   <p className="break-words text-base leading-7 text-body">Discover needs → Learn → Build → Demonstrate → Interview → Grow.</p></section>
-  <MarketingCta title="Explore the platform with our team" />
- </MarketingLayout>;
+  return <MarketingLayout path="/platform" pageTitle="Platform"
+      pageDescription="One connected platform for learning, projects and placements.">
+    <MarketingHero eyebrow="42 LMS platform"
+      title="One connected platform for learning, projects and placements."
+      description="Connect academic delivery, guided projects, assessments and recruitment in one place, with people responsible for teaching, feedback and decisions."
+      showExploreLink={false} />
+
+    <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={WORKSPACES} />
+    <MarketingFeatureGrid title="Connected platform pillars" items={PILLARS} />
+
+    <section className="min-w-0 space-y-4 border-y border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] py-6"
+      aria-labelledby="platform-workflows-heading">
+      <h2 id="platform-workflows-heading" className="text-[20px] font-semibold leading-7 text-[var(--lms-heading)]">
+        Workflows connected across learning and hiring
+      </h2>
+      <p className="text-sm leading-6 text-body">
+        These are connected product workflows, not claims of third-party integrations.
+      </p>
+      <ul className="flex min-w-0 flex-wrap gap-2">
+        {CONNECTED_WORKFLOWS.map(label=><li key={label}
+          className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 text-sm font-semibold text-[var(--lms-body-text)]">
+          {label}
+        </li>)}
+      </ul>
+    </section>
+
+    <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]"
+      aria-labelledby="platform-lifecycle-heading">
+      <h2 id="platform-lifecycle-heading" className="text-[20px] font-semibold leading-7 text-[var(--lms-heading)]">
+        A complete talent lifecycle
+      </h2>
+      <ol className="flex min-w-0 flex-wrap items-center gap-2">
+        {LIFECYCLE.map((step,index)=><li key={step} className="inline-flex items-center gap-2">
+          <span className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-sm font-semibold">
+            {step}
+          </span>
+          {index<LIFECYCLE.length-1?<span aria-hidden="true" className="text-[var(--lms-muted-text)]">→</span>:null}
+        </li>)}
+      </ol>
+      <p className="text-sm leading-6 text-body">The steps are managed by learners, educators, mentors and placement teams.</p>
+    </section>
+
+    <MarketingCta title="Explore the platform with our team" />
+  </MarketingLayout>;
 }
