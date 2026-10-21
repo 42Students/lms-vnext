@@ -846,6 +846,9 @@ export async function applyToPlacementJob(
         }
         const [restored] = await tx.update(placementApplications).set({
           status: "SUBMITTED", withdrawnAt: null,
+          // Do not replace the first application date when restoring a valid
+          // early withdrawal; submittedAt still records this new attempt.
+          firstAppliedAt: liveExisting.firstAppliedAt ?? liveExisting.submittedAt,
           eligibilityStatus: liveEligibility.status,
           eligibilitySnapshot: liveEligibility,
           submittedAt: new Date(), submittedByUserId: context.user.id,
@@ -872,6 +875,7 @@ export async function applyToPlacementJob(
           eligibilitySnapshot: liveEligibility,
           submittedByUserId: context.user.id,
           submittedAt: now,
+          firstAppliedAt: now,
         })
         .onConflictDoNothing()
         .returning();
@@ -977,6 +981,21 @@ export async function listOwnPlacementApplications(
         id: placementCompanies.id,
         name: placementCompanies.name,
       },
+      // One indexed, participant-scoped projection for each upcoming slot.
+      // No per-application N+1 queries or unbooked room inventory disclosure.
+      nextInterviewAt: sql<Date | null>`(
+        select s.starts_at from placement_round_candidate_slots s
+        where s.application_id = ${placementApplications.id}
+          and s.status = 'BOOKED' and s.starts_at >= now()
+        order by s.starts_at asc, s.id asc limit 1
+      )`,
+      nextInterviewRoundName: sql<string | null>`(
+        select r.name from placement_round_candidate_slots s
+        join placement_job_rounds r on r.id = s.round_id
+        where s.application_id = ${placementApplications.id}
+          and s.status = 'BOOKED' and s.starts_at >= now()
+        order by s.starts_at asc, s.id asc limit 1
+      )`,
     })
     .from(placementApplications)
     .innerJoin(
