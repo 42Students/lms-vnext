@@ -44,14 +44,14 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/drives/index.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/drives/new.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/tpo/announcements.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/tpo/audit.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/tpo/companies.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/[roundId].js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/index.js`
-- [ ] U010 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId]/edit.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/index.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/new.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/tpo/audit.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/tpo/companies.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/[roundId].js`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/index.js`
+- [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId]/edit.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/index.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/new.js`
 - [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/tpo/home.js`
 - [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/tpo/index.js`
 - [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/tpo/messages.js`
