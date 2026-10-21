@@ -3,13 +3,14 @@ import {
   boolean,
   check,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { courseSectionDeliveries } from "./courses";
+import { courseSectionDeliveries, lessonContents } from "./courses";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 
@@ -31,6 +32,10 @@ export const courseDiscussionMessages = pgTable(
         () => collegeMemberships.id,
         { onDelete: "restrict" },
       ),
+    lessonContentId: uuid("lesson_content_id").references(()=>lessonContents.id,{onDelete:"restrict"}),
+    /** Historic lesson-level discussion order; delivery feed ordering stays timestamp based. */
+    legacyLessonSequence: integer("legacy_lesson_sequence"),
+    legacyProfileName: varchar("legacy_profile_name",{length:160}),
     senderRole: varchar("sender_role", {
       length: 24,
     }).notNull(),
@@ -58,6 +63,11 @@ export const courseDiscussionMessages = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
+    index("course_discussion_messages_lesson_cursor_idx")
+      .on(table.deliveryId,table.lessonContentId,table.createdAt,table.id)
+      .where(sql`${table.lessonContentId} is not null and ${table.deletedAt} is null`),
+    check("course_discussion_legacy_lesson_sequence_ck",sql`
+      ${table.legacyLessonSequence} is null or ${table.legacyLessonSequence} >= 0`),
     index(
       "course_discussion_messages_delivery_created_idx",
     ).on(table.deliveryId, table.createdAt),
