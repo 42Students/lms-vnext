@@ -289,18 +289,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/tpo/tpo-team-rename.tsx`
 - [x] `src/components/tpo/tpo-timed-debar-control.tsx`
 - [x] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
-- [ ] `src/components/ui/action-pagination.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/list-toolbar.tsx`
-- [ ] `src/components/ui/split-button.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/components/ui/action-pagination.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/list-toolbar.tsx`
+- [x] `src/components/ui/split-button.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
 - [ ] `src/components/verification/TpoVerificationPanel.tsx`
 - [ ] `src/components/verification/VerificationReviewDrawer.tsx`
 
