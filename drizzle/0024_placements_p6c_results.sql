@@ -1,3 +1,8 @@
+-- Old round-result BIGINT IDs and superseded_by links require a scoped UUID
+-- crosswalk. Resolve an entire acyclic predecessor chain before activation,
+-- preserving historical outcomes and dates; one version per round/application
+-- may remain current. Superseded rows use status SUPERSEDED and source time.
+-- Missing actor/time for APPLIED is an exception, not an invented timestamp.
 CREATE TABLE "placement_round_results" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"round_id" uuid NOT NULL,
