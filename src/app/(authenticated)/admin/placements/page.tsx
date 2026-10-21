@@ -6,6 +6,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Disclosure } from "@/components/ui/disclosure";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-drive-deadline";
@@ -114,6 +116,17 @@ export default async function AdminPlacementsPage({ searchParams }: {
           </div>
         )}
       </Disclosure>
+      <section aria-label="Student placement lookup" className="min-w-0 border-b border-border pb-4">
+        <h2 className="mb-2 font-semibold text-foreground">Find a student's placement status</h2>
+        <form method="get" action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col items-end gap-2 sm:flex-row">
+          <label className="grid min-w-0 w-full gap-1 text-sm text-body">Name, roll number or email
+            <Input type="search" name="q" minLength={3} maxLength={150} required
+             placeholder="Find one student in this college"/>
+          </label>
+          <Button type="submit" className="min-h-11 w-full shrink-0 sm:w-auto">Search students</Button>
+        </form>
+        <Link href="/admin/placements/retention" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Review stale placement records (read only)</Link>
+      </section>
       <PlacementOperationsWorkspace
         context={context}
         collegeId={collegeId}
