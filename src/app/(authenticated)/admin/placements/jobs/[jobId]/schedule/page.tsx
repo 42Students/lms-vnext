@@ -105,16 +105,20 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     ?href+(href.includes("?")?"&":"?")+"conflictsOnly=1":href;
   const conflictHref=conflictsOnly
     ?refreshHref:refreshHref+(refreshHref.includes("?")?"&":"?")+"conflictsOnly=1";
-  const csvCell=(value:string|number|null|undefined)=>"\\""+
-    String(value??"").replaceAll("\\"","\\"\\"")+"\\"";
+  const csvCell=(value:string|number|null|undefined)=>{
+    const raw=String(value??"");
+    // Prevent spreadsheet formula execution when exported text is opened.
+    const safe=/^\s*[=+\-@]/.test(raw)?"'"+raw:raw;
+    return '"'+safe.replaceAll('"','""')+'"';
+  };
   const appointmentCsv=[
     ["Appointment ID","Application ID","Round ID","Start (UTC)","Duration (minutes)",
       "Mode","Venue","Panel","Status"].map(csvCell).join(","),
     ...visibleCandidateRows.map(item=>
       [item.id,item.applicationId,item.roundId,item.scheduledAt,item.durationMinutes,
        item.mode,item.venue,item.interviewer,item.status].map(csvCell).join(",")),
-  ].join("\\r\\n")+"\\r\\n";
-  const exportHref="data:text/csv;charset=utf-8,"+encodeURIComponent("\\uFEFF"+appointmentCsv);
+  ].join("\r\n")+"\r\n";
+  const exportHref="data:text/csv;charset=utf-8,"+encodeURIComponent("\uFEFF"+appointmentCsv);
   const nowMs=Date.now();
   const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
     timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
