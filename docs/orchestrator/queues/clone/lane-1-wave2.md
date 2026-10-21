@@ -26,7 +26,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-workspace-list.tsx.md` (edit src/components/projects/project-admin-workspace-list.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_admin-project-section-page.tsx.md` (edit src/components/projects/admin-project-section-page.tsx; 36 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-audit-page.tsx.md` (edit src/components/projects/project-admin-audit-page.tsx; 36 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-submissions-page.tsx.md` (edit src/components/projects/project-admin-submissions-page.tsx; 36 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-submissions-page.tsx.md` (edit src/components/projects/project-admin-submissions-page.tsx; 36 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-7_u004-college-admin-projects-readiness.md.md` (new; 34 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-7_u016-college-admin-workspace-tasks.md.md` (new; 34 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-7_u006-college-admin-project-templates.md.md` (new; 32 findings; best P2)
