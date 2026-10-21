@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { UsersRound, BriefcaseBusiness, UserRound, ContactRound, Inbox, MessageCircle, CalendarDays, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
 import {eq} from "drizzle-orm";
@@ -30,11 +29,20 @@ import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-serv
 import {listPlacementCalendarEvents} from "@/modules/placements/placement-calendar-service";
 import {placementCalendarDayKey} from "@/modules/placements/placement-calendar-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
-const homeIcons = { batches:UsersRound,drives:BriefcaseBusiness,students:UserRound,
- engage:ContactRound,inbox:Inbox,team:MessageCircle,week:CalendarDays } as const;
 function TpoHomeRowIcon({kind}:{kind:TpoHomeLegacyRow["key"]}) {
- const Icon=homeIcons[kind];
- return <Icon size={20} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-[#667d86]"/>;
+ const common={stroke:"currentColor",fill:"none",strokeWidth:1.8,strokeLinecap:"round" as const,strokeLinejoin:"round" as const};
+ return <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" className="shrink-0 text-[var(--lms-muted-text)]" {...common}>
+  {kind==="batches"?<><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 5a3 3 0 0 1 0 6M17 14a5 5 0 0 1 4 5v1"/></>:
+   kind==="drives"?<><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 12a20 20 0 0 0 18 0M12 12v3"/></>:
+   kind==="students"?<><circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></>:
+   kind==="engage"?<><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="9" r="2"/><path d="M8 16a4 4 0 0 1 8 0M4 7H2M4 12H2M4 17H2"/></>:
+   kind==="inbox"?<><path d="M4 4h16l2 12v4H2v-4L4 4Z"/><path d="M2 16h6l2 3h4l2-3h6"/></>:
+   kind==="team"?<><path d="M20 11.5a8 8 0 0 1-8 8 9 9 0 0 1-4-.9L3 20l1.5-4.5A8 8 0 1 1 20 11.5Z"/><path d="M8 11h8M8 14h5"/></>:
+   <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M8 14h3M14 14h2"/></>}
+ </svg>;
+}
+function TpoHomeChevronRight(){
+ return <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" className="shrink-0 text-[var(--lms-muted-text)]" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>;
 }
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
@@ -212,7 +220,7 @@ export default async function TpoHome(){
      <span className="min-w-0 flex-1"><strong className="block break-words text-sm text-foreground">{row.title}</strong>
       <span className="mt-1 block break-words text-xs text-muted-foreground">{row.status}</span></span>
      {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
-     <ChevronRight aria-hidden="true" size={18} strokeWidth={1.7} className="shrink-0 text-[var(--lms-muted-text)]"/>
+     <TpoHomeChevronRight/>
     </Link>
    </li>)}</ul>
  </section>
