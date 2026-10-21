@@ -26,7 +26,8 @@ export async function getSuperAdminDriveAttention(
     case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
      when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
      else 'APPLIED' end)='APPLIED'
-   and ${placementApplications.submittedAt}<${staleBefore})::integer`.mapWith(Number),
+   and coalesce(${placementApplications.statusUpdatedAt},
+    ${placementApplications.submittedAt})<${staleBefore})::integer`.mapWith(Number),
   unscheduled:sql<number>`count(*) filter(where
    ${placementCollegeApplicationStages.stage}='INTERVIEW'
    and not exists(select 1 from placement_round_candidate_slots s

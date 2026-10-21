@@ -8,6 +8,20 @@ import {
 } from "@/modules/placements/season-service";
 
 export const runtime = "nodejs";
+/** Scoped legacy TPO season route mapping:
+ * GET /api/v1/tpo/season → GET /api/placements/seasons?collegeId={uuid}
+ * GET /api/v1/tpo/season/current → /tpo/settings/season
+ * POST /api/v1/tpo/season → POST /api/placements/seasons
+ * Legacy /{seasonId}/open-registration is intentionally not translated to
+ * ACTIVE/CLOSED: registration-open state and deadline are independent fields
+ * and must use a separately authorized, persisted registration workflow.
+ */
+export const TPO_SEASON_LEGACY_CROSSWALK = {
+ list: "/api/placements/seasons?collegeId={uuid}",
+ current: "/tpo/settings/season",
+ create: "/api/placements/seasons",
+ openRegistration: "NOT_AVAILABLE_UNTIL_REGISTRATION_LIFECYCLE",
+} as const;
 
 export async function GET(request: Request) {
   try {

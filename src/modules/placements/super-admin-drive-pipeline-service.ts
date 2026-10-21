@@ -12,6 +12,9 @@ import { projectSuperAdminDrivePipeline } from "./super-admin-drive-pipeline-mod
  * super-admin-drive-attention-service.ts. The owning page fetches it via
  * Promise.allSettled, so warning failures never hide this pipeline snapshot
  * and one drive never triggers an unbounded college-wide attention scan.
+ * The selected-job service supplies four legacy follow-up categories:
+ * stagnant applications, unscheduled interviews, absent offer letters,
+ * and a published job closing soon with low conversion.
  */
 export async function getSuperAdminDrivePipeline(context: RequestContext, jobId: string) {
   const job = await getPlacementJob(context, jobId);

@@ -11,9 +11,13 @@ import { isIssuedPlacementOfferDue } from "./placement-offer-sweep-policy";
 /**
  * P-S1-07: transaction-bound batch primitive for the 15-minute expiry job.
  *
- * EXPIRED is registered by migration 0085. This transactional primitive is
- * now compatible with the real constraint; scheduler invocation every 15
- * minutes and end-to-end race/notification acceptance remain outstanding.
+ * EXPIRED is registered by migration 0085. The authenticated internal route
+ * /api/internal/placements/tpo/offer-expiry/run calls runTpoOfferExpiryTick,
+ * which is registered with a 15-minute Asia/Kolkata scheduler contract in
+ * tpo-scheduled-job-registry. Each tick drains up to five short, skip-locked
+ * 100-offer transactions, safely retrying overdue rows on later invocations.
+ * External deployment must configure the actual cron, scheduler secret,
+ * service actor, and enabled flag; application code alone does not run timers.
  */
 export async function sweepExpiredPlacementOffers(
   actorUserId: string,
