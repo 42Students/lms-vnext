@@ -29,6 +29,7 @@ export type CollegeSectionErrorCode =
   | "CLASS_CODE_CONFLICT"
   | "CLASS_HAS_DEPENDENCIES"
   | "CLASS_CAPACITY_BELOW_ENROLLMENT"
+  | "CLASS_MIN_SIZE_ABOVE_CAPACITY"
   | "CLASS_STALE";
 
 export class CollegeSectionError extends Error {

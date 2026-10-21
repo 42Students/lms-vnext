@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
-  CollegeSectionError, updateCollegeSection, deleteCollegeSection,
+  CollegeSectionError, updateCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
 
 import { deleteCollegeSection, CollegeSectionLifecycleError } from "@/modules/academics/college-section-lifecycle-service";
@@ -45,7 +45,7 @@ export async function DELETE(request:Request,{params}:{params:Promise<{sectionId
   const deleted=await deleteCollegeSection(context,sectionId,await request.json());
   return NextResponse.json({deleted},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
-  if(error instanceof CollegeSectionError)
+  if(error instanceof CollegeSectionError || error instanceof CollegeSectionLifecycleError)
    return NextResponse.json({error:error.code},{
     status:error.code==="CLASS_NOT_FOUND"?404:409,
     headers:{"Cache-Control":"private, no-store"},

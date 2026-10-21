@@ -25,6 +25,8 @@ export async function GET(request:Request) {
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="companies.csv"',
     "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff",
+    "X-Export-Scope":"COLLEGE_COMPANY_RELATIONSHIP",
+    "X-Export-Contact-Fields":"UNAVAILABLE_IN_CURRENT_SCHEMA",
     "X-Export-Truncated":incomplete?"true":"false",
     "X-Export-Total":String(first.total),
     "X-Export-Included":String(all.length)},
