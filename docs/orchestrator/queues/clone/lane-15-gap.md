@@ -49,8 +49,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/syllabusDetail.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js`
 - [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/EmailVariableValidator.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationServiceImpl.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/SmsService.java`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationServiceImpl.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/SmsService.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/learners/LearnerSearchController.java`
 - [ ] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/tpo/JobRoundRepository.java`
 - [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobEligibilityOverride.java`
