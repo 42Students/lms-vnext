@@ -410,7 +410,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [ ] `src/components/courses/assignment-file-open-control.tsx`
 - [x] `src/components/courses/assignment-submission-control.tsx`
 - [x] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-lesson-reorder-actions.tsx`
+- [x] `src/components/courses/college-lesson-reorder-actions.tsx`
 - [ ] `src/components/courses/college-quiz-attempts.tsx`
 - [ ] `src/components/courses/faculty-content-editor.tsx`
 - [ ] `src/components/courses/faculty-quiz-review.tsx`
