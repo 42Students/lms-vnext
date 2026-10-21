@@ -19,6 +19,7 @@ import {
   DRIVE_APPLICATION_EXPORT_CAP, DRIVE_APPLICATION_BULK_CAP,
 } from "./college-drive-applications-model";
 
+const LEGACY_CSV_EXPORT_CAP=20_000;
 function pattern(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
@@ -27,7 +28,7 @@ export async function listCollegeDriveApplications(
   context: RequestContext,
   jobIdInput: unknown,
   raw: unknown,
-  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number;
+  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number;exportCap?:number;
     sort?:"AGE_ASC"|"AGE_DESC"|"SCORE_ASC"|"SCORE_DESC"|"SUBMITTED_DESC"; } = {},
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
@@ -41,6 +42,9 @@ export async function listCollegeDriveApplications(
   const pageSize = options.pageSize===undefined||!Number.isFinite(options.pageSize)
     ?DRIVE_APPLICATIONS_PAGE_SIZE
     :Math.max(1,Math.min(100,Math.floor(options.pageSize)));
+  // Only the audited legacy CSV adapter may request the historic 20k cap.
+  const exportCap=options.exportCap===LEGACY_CSV_EXPORT_CAP?
+    LEGACY_CSV_EXPORT_CAP:DRIVE_APPLICATION_EXPORT_CAP;
   const [drive] = await db.select({ id: placementJobs.id, title: placementJobs.title,
     companyName: placementCompanies.name, legacyJobId: placementJobs.legacyJobId,
   }).from(placementJobs)
@@ -64,6 +68,8 @@ export async function listCollegeDriveApplications(
     partialScore: sql<number | null>`null::integer`.as("partial_score"),
     screeningReason: placementApplicationScreenings.internalReason,
     name: users.displayName,
+    legacyFirstName:users.legacyFirstName,
+    legacyLastName:users.legacyLastName,
     email: users.email,
     collegeName: colleges.name,
     lastStatusUpdatedAt:sql<Date>`greatest(${placementApplications.submittedAt},${placementApplications.statusUpdatedAt},${placementCollegeApplicationStages.movedAt},${placementApplicationScreenings.updatedAt})`.as("last_status_updated_at"),
@@ -141,7 +147,7 @@ export async function listCollegeDriveApplications(
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
     db.select().from(source).orderBy(...order)
-      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : pageSize)
+      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? exportCap : pageSize)
       .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * pageSize),
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
@@ -157,7 +163,7 @@ export async function listCollegeDriveApplications(
   })), total,
     pageSize,scoreSortAvailable:true as const,
     stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
-    truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
+    truncated: options.exportAll && total > exportCap,
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
   };
 }
