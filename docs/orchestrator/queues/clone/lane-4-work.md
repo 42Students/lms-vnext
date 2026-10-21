@@ -42,7 +42,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-drive-applications-service.ts.md` (edit src/modules/placements/college-drive-applications-service.ts; 14 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_hr-drive-draft-model.ts.md` (edit src/modules/placements/hr-drive-draft-model.ts; 14 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-applications-browse.tsx.md` (edit src/components/placements/learner-applications-browse.tsx; 13 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 13 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 13 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_admin-drive-directory-model.ts.md` (edit src/modules/placements/admin-drive-directory-model.ts; 12 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-drive-archive.tsx.md` (edit src/components/placements/super-admin-drive-archive.tsx; 12 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-drive-lifecycle-list-service.ts.md` (edit src/modules/placements/tpo-drive-lifecycle-list-service.ts; 12 findings; best P1)

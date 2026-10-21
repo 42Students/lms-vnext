@@ -71,3 +71,6 @@ The following work crosses a different owned file or requires a deployment-owned
 
 - G2-12-006-021/040: learner applications UI now consumes server-provided `withdraw:SELF|REQUEST` or deadline-bound staff opt-out grant; source reader constructing `LearnerPlacementJourneyItem` must expose withdraw mode after persisted eligibility/offer/round checks. Do not restore guessed mode from screening counts. Cancel reason may be surfaced via `cancelledReason`.
 - G2-12-006-024: preview retry API action requires typed safe read errors from the application detail endpoint; inline details use loaded server facts and direct detail links, not an unauthorized client request.
+
+- G2-16-022-003/021: direct-posting persistence, audit and read gate now available as `setTpoPublicJoinPostingPolicy`/`publicJoinLinkAllowsDirectPosting`; recruiter publication/approval writer must invoke the gate inside its transaction before bypassing a TPO review. Do not silently trust an old link ID or a UI checkbox.
+- G2-8-010-021/015: external JOB `smr-` slug issuance is separate from public RECRUITER join links; job lifecycle/slug writer to handle visibility-triggered creation and legacy 50-attempt message. A raw one-time recruiter join URL cannot be reconstituted from SHA-256 hash; UI must offer rotation and warn before navigating away, not display a fabricated link.
