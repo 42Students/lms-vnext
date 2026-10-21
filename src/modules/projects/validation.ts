@@ -134,6 +134,22 @@ export const projectTemplateBlueprintSchema = z
       .array(resourceSchema)
       .max(200)
       .default([]),
+    // Legacy source metadata is descriptive-only. It is preserved in the
+    // published blueprint for read-only previews, never interpreted as a
+    // permission, project lifecycle transition or automatic enrollment.
+    legacy: z.object({
+      courseLabel:z.string().trim().max(160).nullable().optional(),
+      phase:z.string().trim().max(120).nullable().optional(),
+      status:z.string().trim().max(40).nullable().optional(),
+      lifecycleStatus:z.string().trim().max(40).nullable().optional(),
+    }).strict().optional(),
+    submission:z.object({
+      instructions:z.string().trim().max(4000).optional(),
+      requiredEvidence:z.array(z.string().trim().min(1).max(500)).max(50).optional(),
+    }).strict().optional(),
+    delivery:z.record(z.string(),z.unknown()).optional(),
+    meetings:z.array(z.record(z.string(),z.unknown())).max(100).optional(),
+    activity:z.array(z.record(z.string(),z.unknown())).max(200).optional(),
   })
   .strict()
   .superRefine((blueprint, ctx) => {
