@@ -48,6 +48,38 @@ import { TPO_CALENDAR_CHIP_CHOICES, filterTpoCalendarChipEvents, parseTpoCalenda
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
+/**
+ * Last-known TPO follow-up summary, scoped to the requesting principal and
+ * college. Retains a bounded, short-lived view when an independently loaded
+ * calendar source fails on refresh; never treats an outage as zero events.
+ * Process-local retention is best-effort, not a durable calendar store.
+ */
+const lastKnownTpoNeeds = new Map<string, {
+  savedAt: number;
+  events: PlacementCalendarEvent[];
+}>();
+
+function keepTpoNeedsSummary(
+  userId: string,
+  collegeId: string,
+  events: PlacementCalendarEvent[] | null,
+  now: Date,
+): { events: PlacementCalendarEvent[]; stale: boolean } {
+  const key = userId + ":" + collegeId;
+  if (events !== null) {
+    if (lastKnownTpoNeeds.size >= 200) lastKnownTpoNeeds.clear();
+    lastKnownTpoNeeds.set(key, { savedAt: now.getTime(), events });
+    return { events, stale: false };
+  }
+  const last = lastKnownTpoNeeds.get(key);
+  if (last && now.getTime() - last.savedAt <= 15 * 60_000) {
+    return { events: last.events, stale: true };
+  }
+  if (last) lastKnownTpoNeeds.delete(key);
+  return { events: [], stale: false };
+}
+
+
 type CalendarSearchParams = {
   date?: string | string[];
   view?: string | string[];
@@ -545,7 +577,11 @@ export async function PlacementCalendarWorkspace({
   const visibleEvents=audience==="TPO" && state.kinds.length ? filterTpoCalendarChipEvents(selectedEvents,state.kinds) : selectedEvents;
   if(audience==="TPO"&&blockedDays?.ready)
    eventTypeCounts.set("BLOCKED",toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length);
-  const needsEvents=needsWindow?.events??[];
+  const needsSnapshot = keepTpoNeedsSummary(
+    context.user.id, collegeId, needsWindow?.events ?? null, now,
+  );
+  const needsEvents = needsSnapshot.events;
+  const needsKnown = needsWindow !== null || needsSnapshot.stale;
   const blockedSet=new Set(blockedDays?.rows.map(item=>item.day)??[]);
   const {overdue,blockedRounds,busyDays}=summarizeTpoCalendarNeeds(needsEvents,blockedSet,now);
   const groups =
@@ -644,7 +680,7 @@ export async function PlacementCalendarWorkspace({
       />
 
       {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
-        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
+        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
       </Banner>:null}
 
       {calendarFollowupsWritable ? (
@@ -662,20 +698,20 @@ export async function PlacementCalendarWorkspace({
 
       {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
        <h2 className="text-base font-semibold">Today</h2>
-       {needsWindow?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
+       {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
          <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
          {event.status==="DONE"?<span className="ml-2 text-success-text">Done</span>:null}
         </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>:
          <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
-       {needsWindow?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
+       {needsKnown?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid min-w-0 gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
         {([
-          {focus:"OVERDUE" as const,label:"Follow-ups overdue (last 90 days)",value:needsWindow?overdue.length:null},
-          {focus:"BLOCKED" as const,label:"Rounds on a blocked date",value:needsWindow&&blockedDays?.ready?blockedRounds.length:null},
-          {focus:"BUSY" as const,label:"Busy days (3 or more)",value:needsWindow?busyDays.length:null},
+          {focus:"OVERDUE" as const,label:"Follow-ups overdue (last 90 days)",value:needsKnown?overdue.length:null},
+          {focus:"BLOCKED" as const,label:"Rounds on a blocked date",value:needsKnown&&blockedDays?.ready?blockedRounds.length:null},
+          {focus:"BUSY" as const,label:"Busy days (3 or more)",value:needsKnown?busyDays.length:null},
         ]).map(item=><Link key={item.focus}
           href={calendarHref(basePath,audience,state,{focus:state.focus===item.focus?null:item.focus})}
           aria-current={state.focus===item.focus?"true":undefined}
@@ -694,7 +730,7 @@ export async function PlacementCalendarWorkspace({
            Close
           </Link>
          </div>
-         {!needsWindow || (state.focus==="BLOCKED"&&!blockedDays?.ready)
+         {!needsKnown || (state.focus==="BLOCKED"&&!blockedDays?.ready)
           ? <p role="status" className="mt-2 text-sm text-warning-text">This list is unavailable. Retry the calendar summary.</p>
           : focusedNeeds.length===0
             ? <p className="mt-2 text-sm text-body">Nothing needs attention in this category.</p>

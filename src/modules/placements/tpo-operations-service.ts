@@ -248,7 +248,7 @@ db
         .where(
           and(
             eq(placementJobs.collegeId, collegeId),
-            ne(placementJobs.status, "PUBLISHED"),
+            inArray(placementJobs.status, ["DRAFT", "CLOSED"]),
             isNull(placementJobs.archivedAt),
           ),
         )
@@ -377,6 +377,7 @@ db
         .where(and(
           eq(placementJobs.collegeId, collegeId),
           isNull(placementJobs.archivedAt),
+          ne(placementJobs.status, "CANCELLED"),
           sql`(
             ${placementJobs.status} = 'DRAFT'
             or (
