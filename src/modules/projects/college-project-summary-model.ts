@@ -72,9 +72,22 @@ export function materializeCollegeProjectSummaryPatch(
  raw:unknown,
 ){
  const input=collegeProjectSummarySparsePatch.parse(raw);
- const desired={...current,...input,
-  ...(input.sectionId===0?{sectionId:null}:{})};
- return collegeProjectSummaryPatch.parse(desired);
+ // The persisted project record contains IDs, timestamps and other fields
+ // that must never be spread into a strict summary schema. Pick only the
+ // supported summary columns, preserving omitted fields from the live row.
+ const desired=Object.fromEntries(collegeProjectSummaryFields.map(field=>[
+  field,
+  Object.prototype.hasOwnProperty.call(input,field)
+   ? field==="sectionId"&&input.sectionId===0?null:input[field]
+   : current[field],
+ ]));
+ return collegeProjectSummaryPatch.parse({
+  ...desired,
+  expectedTitle:input.expectedTitle,
+  expectedSummary:input.expectedSummary,
+  expectedStatus:input.expectedStatus,
+  expectedUpdatedAt:input.expectedUpdatedAt,
+ });
 }
 
 /** Historical legacy statuses were broader than vNext lifecycle. Preserve

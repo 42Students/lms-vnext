@@ -622,7 +622,9 @@ export function ProjectWorkspace({
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
-          { label: workspace.project.title?.trim()||"Workspace" },
+          { label: workspace.project.title?.trim()||"Workspace",
+            href: sectionBaseHref ? sectionBaseHref+"/summary"+sectionQuerySuffix : undefined },
+          ...(activeSection ? [{label: PROJECT_WORKSPACE_SECTION_LABELS[activeSection]}] : []),
         ]} />
       ) : null}
       {sectionBaseHref ? (
@@ -633,16 +635,32 @@ export function ProjectWorkspace({
           }))} />
       ) : null}
 
-      {mode === "ADMIN" && riskReason ? (
-        <section role="status" className="border-y border-warning-border bg-warning-subtle px-4 py-3 text-sm">
-          Opened from At-risk projects · {riskReason === "STALLED" ? "Stalled" : riskReason === "BLOCKER" ? "Active blocker" : "Pending review"}
-          {riskReason==="BLOCKER"&&!workspace.project.blocker?.trim()&&
-            !workspace.tasks.some(task=>task.status==="BLOCKED")?
-            " · The recorded blocker has cleared. Refresh the risk report for current counts.":null}
-          {riskReason==="REVIEW"&&!workspace.taskSubmissions.some(item=>item.status==="SUBMITTED")?
-            " · No task submissions currently await review. Refresh the risk report.":null}
-        </section>
-      ) : null}
+      {mode === "ADMIN" && riskReason ? (() => {
+        const reasons = riskReason.split(",").map(reason=>reason.trim()).filter(Boolean);
+        const hadBlocker = reasons.some(reason=>/^(BLOCKER|Active blocker)$/i.test(reason));
+        const hadReview = reasons.some(reason=>/^(REVIEW|Pending review)$/i.test(reason));
+        const blockerActive = Boolean(workspace.project.blocker?.trim()) ||
+          workspace.tasks.some(task=>task.status==="BLOCKED");
+        const reviewActive = workspace.taskSubmissions.some(item=>item.status==="SUBMITTED");
+        const mismatch = (hadBlocker&&!blockerActive)||(hadReview&&!reviewActive);
+        return <section role="status"
+          className="border-y border-info-border bg-info-subtle px-4 py-3 text-sm">
+          <p className="flex items-center gap-2 font-semibold text-foreground">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="1.8" className="size-4 shrink-0">
+              <circle cx="12" cy="12" r="9"/><path d="M12 10v6M12 7h.01"/>
+            </svg>
+            Opened via a filtered view
+          </p>
+          <p className="mt-1 text-body">
+            {mismatch ? "Flagged there for: " : "Reason: "}{riskReason}
+          </p>
+          {mismatch ? <p className="mt-1 text-body">
+            This page&apos;s own recomputation no longer shows the same reason.
+            Activity data may have updated since. Refresh the risk report.
+          </p> : null}
+        </section>;
+      })() : null}
 
       {mode === "ADMIN" && show("readiness") ? (
         <Link href={(backHref.startsWith("/college/") ? "/college/projects/readiness" : "/admin/projects/readiness") + "?projectId=" + encodeURIComponent(workspace.project.id)}
@@ -690,7 +708,7 @@ export function ProjectWorkspace({
           !task.deletedAt && task.estimatePoints !== null).length}
         hasMentor={workspace.members.some(member=>
           member.role==="MENTOR"&&!member.endedAt)}/>:null}
-      {show("summary") || (mode === "MENTOR" && show("overview")) ? (
+      {(mode !== "ADMIN" && show("summary")) || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
             label="Tasks"

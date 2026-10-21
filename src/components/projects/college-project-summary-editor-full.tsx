@@ -116,17 +116,25 @@ export function CollegeProjectSummaryEditorFull({
   if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");
   try {
-   const res=await fetch("/api/projects/"+encodeURIComponent(p.id),{
-    method:"PATCH",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
+   // Only send user-touched fields: an unrelated editor must not be
+   // overwritten by this page's older full-workspace snapshot.
+   const desired={
      title:form.title.trim(),summary:form.summary.trim()||null,status:form.status,
      progressPercent:hasTaskData?p.progressPercent:form.progressPercent,phase:form.phase.trim()||null,
      dueLabel:form.dueLabel.trim()||null,courseLabel:form.courseLabel.trim()||null,
      sectionId:form.sectionId||null,blocker:form.blocker.trim()||null,
      nextAction:form.nextAction.trim()||null,startDate:form.startDate||null,endDate:form.endDate||null,
      sprintLengthWeeks:form.sprintLengthWeeks?Number(form.sprintLengthWeeks):null,
-     estimationUnit:form.estimationUnit||null,expectedTitle:p.title,expectedSummary:p.summary,
-     expectedStatus:p.status,expectedUpdatedAt:new Date(p.updatedAt).toISOString(),
+     estimationUnit:form.estimationUnit||null,
+   };
+   const touched=(Object.keys(desired) as Array<keyof typeof desired>)
+     .filter(key=>form[key]!==baselineRef.current.form[key]);
+   const patch=Object.fromEntries(touched.map(key=>[key,desired[key]]));
+   const res=await fetch("/api/projects/"+encodeURIComponent(p.id),{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({...patch,
+      expectedTitle:p.title,expectedSummary:p.summary,expectedStatus:p.status,
+      expectedUpdatedAt:new Date(p.updatedAt).toISOString(),
     }),
    });
    if(!res.ok){const detail=await res.json().catch(()=>({error:"Save failed"}));
@@ -168,9 +176,10 @@ export function CollegeProjectSummaryEditorFull({
       <option value="ARCHIVED" disabled>Archived (use Archive action)</option>
     </Select></label>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
+     aria-describedby={hasTaskData?"project-summary-progress-help":undefined}
      disabled={hasTaskData} value={derivedProgress??form.progressPercent}
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
-     {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
+     {hasTaskData?<span id="project-summary-progress-help" className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
     <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Schedule &amp; setup</h3>
     {field("Phase","phase",80)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}

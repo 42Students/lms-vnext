@@ -134,7 +134,7 @@ export async function AdminProjectSectionPage({
   const safeFrom = from === "at-risk" || from === "submissions" ? from : "workspaces";
   const backHref = safeFrom === "workspaces" ? basePath : basePath + "/" + safeFrom;
   const backLabel = safeFrom === "at-risk" ? "Back to at-risk projects" : safeFrom === "submissions" ? "Back to submissions" : "Projects";
-  const safeReason = reason && /^(STALLED|BLOCKER|REVIEW)$/i.test(reason) ? reason.toUpperCase() : null;
+  const safeReason = reason && reason.length<=240 && !/[<>\x00-\x1f]/.test(reason) ? reason : null;
   const linkParams = new URLSearchParams();
   if (safeFrom !== "workspaces") linkParams.set("from",safeFrom);
   if (safeReason) linkParams.set("reason",safeReason);

@@ -10,10 +10,12 @@ export default async function LegacyCollegeWorkspaceSectionRedirect({
   const {workspaceId,section}=await params;
   const query=await searchParams;
   const from=typeof query.from==="string"&&["workspaces","at-risk","submissions"].includes(query.from)?query.from:null;
-  const reason=typeof query.reason==="string"&&/^(STALLED|BLOCKER|REVIEW)$/i.test(query.reason)?query.reason.toUpperCase():null;
+  const reason=typeof query.reason==="string"&&query.reason.length<=240&&
+    !/[<>\x00-\x1f]/.test(query.reason)?query.reason:null;
   const suffix=new URLSearchParams();
   if(from&&from!=="workspaces")suffix.set("from",from);
   if(reason)suffix.set("reason",reason);
+  if(query.openTemplate==="1"&&section==="summary")suffix.set("openTemplate","1");
   // Preserve bounded view context for existing bookmarked workspace aliases.
   for(const name of ["q","filter","status","sort","page"] as const){
     const value=query[name];
