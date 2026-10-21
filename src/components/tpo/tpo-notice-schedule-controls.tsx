@@ -9,6 +9,7 @@ export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
 }){
  const [mode,setMode]=useState<"NOW"|"LATER">("NOW");
  return <div className="space-y-3">
+  <Input type="hidden" name="when" value={mode}/>
   <fieldset className="space-y-2">
    <legend className="text-sm font-semibold text-foreground">When</legend>
    <div className="flex flex-wrap gap-4 text-sm">

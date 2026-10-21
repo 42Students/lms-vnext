@@ -68,7 +68,7 @@ export function TpoNoticeLiveReach({targetedReady}:{targetedReady:boolean}){
    {preview.status==="loading"?"Checking who this announcement reaches…":
     preview.status==="invalid"?"Pick who it is for to see how many it reaches.":
     preview.status==="failed"?"Couldn't work out who it reaches. Check the audience or try again.":
-    <>Goes to <strong>{preview.count} {preview.count===1?"student":"students"}</strong> · {preview.audience==="COLLEGE"?"All students":"Students in "+preview.audience.toLowerCase()}</>}
+    <>Goes to <strong>{preview.count} {preview.count===1?"student":"students"}</strong> · {preview.audience==="COLLEGE"?"All active college members":"Students in "+preview.audience.toLowerCase()}</>}
    {preview.status==="ready"?<p className="mt-1 text-xs text-muted-foreground">An estimate of active college memberships, not a send or delivery count. Email is unavailable.</p>:null}
    {preview.status==="ready"&&!canPublishTpoNoticeWithCurrentStorage(preview.audience,targetedReady)?
     <p className="mt-1 text-xs text-[var(--lms-warning-text)]">Targeted recipient storage is not ready. Publishing to this audience is unavailable.</p>:null}
