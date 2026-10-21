@@ -8,7 +8,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {facultyProfileDocumentSchema} from "./faculty-profile-document";
+import {facultyContactEditSchema,facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
 
 const uuid=z.string().uuid();
@@ -20,6 +20,8 @@ const inputSchema=z.strictObject({
   contactEmail:z.union([z.email(),z.literal("")]),
   contactPhone:z.string().trim().max(32),
   primaryDepartmentId:uuid.nullable().optional(),
+  // Per-profile CAS; older clients can omit it, new editors must send it.
+  expectedProfileVersion:z.number().int().min(0).optional(),
   employmentType:z.string().trim().max(128).optional(),
   academicTitle:z.string().trim().max(128).optional(),
   rollNumber:z.string().trim().max(128).optional(),
@@ -37,6 +39,7 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
     name:users.displayName,phone:users.phoneE164,email:users.email,
     faculty:facultyProfiles.profileDocument,learner:learnerProfiles.profileDocument,
     departmentId:facultyProfiles.primaryDepartmentId,
+    facultyVersion:facultyProfiles.profileDocumentVersion,
     title:facultyProfiles.academicTitle,employmentType:facultyProfiles.employmentType,
     roll:learnerProfiles.rollNumber,registration:learnerProfiles.registrationNumber,
   }).from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -55,7 +58,8 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
     contactPhone:faculty?.contact.contactMobile??learner?.contacts.alternatePhone??"",
     contactEmail:faculty?.contact.contactMail??learner?.contacts.contactEmail??"",
     bio:faculty?.about.description??learner?.bio??"",
-    primaryDepartmentId:row.departmentId,academicTitle:row.title,
+    primaryDepartmentId:row.departmentId,profileVersion:row.facultyVersion??0,
+    academicTitle:row.title,
     employmentType:row.employmentType,rollNumber:row.roll,registrationNumber:row.registration};
 }
 export async function saveCollegePersonEditor(context:RequestContext,rawId:unknown,raw:unknown){
@@ -70,8 +74,12 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
     if(input.kind==="FACULTY"){
       const [found]=await tx.select({
         document:facultyProfiles.profileDocument,
+        profileVersion:facultyProfiles.profileDocumentVersion,
         departmentId:facultyProfiles.primaryDepartmentId,
       }).from(facultyProfiles).where(eq(facultyProfiles.membershipId,id)).for("update").limit(1);
+      if(input.expectedProfileVersion!==undefined &&
+          input.expectedProfileVersion!==(found?.profileVersion??0))
+        throw Error("FACULTY_PROFILE_VERSION_CONFLICT");
       // Keep an existing department on partial updates; require and scope
       // the department when provisioning a Faculty member.
       const departmentId=input.primaryDepartmentId===undefined
@@ -87,6 +95,8 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
         personalDetails:{...original.personalDetails,gender:input.gender,dateOfBirth:input.dateOfBirth},
         address:{...original.address,currentAddress:input.address},
         contact:{...original.contact,contactMobile:input.contactPhone,contactMail:input.contactEmail}});
+      if (JSON.stringify(original.contact)!==JSON.stringify(doc.contact))
+        facultyContactEditSchema.parse(doc.contact);
       await tx.insert(facultyProfiles).values({membershipId:id,profileDocument:doc,
         primaryDepartmentId:departmentId,
         academicTitle:input.academicTitle||null,employmentType:input.employmentType||null})

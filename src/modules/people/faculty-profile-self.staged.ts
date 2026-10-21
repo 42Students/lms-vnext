@@ -9,6 +9,8 @@ import { facultyProfileDocumentStorageReady } from "./faculty-profile-readiness"
 import { facultyPrivateReceiptsUnchanged } from "./faculty-self-section-model";
 import {
   emptyFacultyProfileDocument,
+  facultyContactEditSchema,
+  facultyLegacyProfileExceptions,
   facultyProfileDocumentSchema,
   type FacultyProfileDocument,
 } from "./faculty-profile-document";
@@ -41,6 +43,18 @@ function assertPersistedFaculty(
   return context.membership;
 }
 
+/** A malformed migrated section must never be silently replaced by defaults
+ * during a whole-document save (which would destroy the original data). */
+function parseStoredFacultyDocument(raw: unknown): FacultyProfileDocument {
+  const parsed = facultyProfileDocumentSchema.safeParse(raw ?? {});
+  if (!parsed.success) {
+    // The report intentionally contains only section names/counts, not PII.
+    facultyLegacyProfileExceptions(raw);
+    throw new PeopleServiceError("FACULTY_PROFILE_LEGACY_REMEDIATION_REQUIRED");
+  }
+  return parsed.data;
+}
+
 function toView(row: FacultyProfileDocumentRow | undefined) {
   if (!row) {
     return {
@@ -49,19 +63,15 @@ function toView(row: FacultyProfileDocumentRow | undefined) {
     };
   }
   return {
-    document: facultyProfileDocumentSchema.parse(
-      row.profile_document ?? {},
-    ),
+    document: parseStoredFacultyDocument(row.profile_document),
     version: row.profile_document_version,
   };
 }
 
 /**
- * STAGED DB04 adapter.
- *
- * This module intentionally uses raw SQL and is NOT wired to runtime routes
- * until W01 promotes the matching faculty_profiles columns into the canonical
- * Drizzle schema/journal and proves an empty/latest PostgreSQL replay.
+ * Faculty self-profile adapter. The canonical faculty_profiles schema includes
+ * the document + version columns and authenticated self-document routes call
+ * this adapter after checking the live migration readiness gate.
  *
  * The write authorization recheck and the mutation happen in one transaction,
  * so platform disable, membership suspension and FACULTY-role revocation
@@ -146,8 +156,14 @@ export async function saveOwnFacultyProfileDocumentStaged(
 
     const current = locked.rows[0];
     const persistedDocument = current
-      ? facultyProfileDocumentSchema.parse(current.profile_document ?? {})
+      ? parseStoredFacultyDocument(current.profile_document)
       : emptyFacultyProfileDocument;
+    // A full-document writer must not bypass the section-level contact rules.
+    // Previously saved legacy empty contacts remain readable and may be
+    // retained while unrelated sections are edited.
+    if (JSON.stringify(persistedDocument.contact) !== JSON.stringify(document.contact)) {
+      facultyContactEditSchema.parse(document.contact);
+    }
     // The generic section writer must not accept forged file/identity receipts.
     if (!facultyPrivateReceiptsUnchanged(persistedDocument, document)) {
       throw new PeopleServiceError("PRIVATE_IDENTITY_UPDATE_DENIED");
