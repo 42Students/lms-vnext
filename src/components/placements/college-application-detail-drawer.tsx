@@ -32,6 +32,7 @@ export type CollegeApplicationDetail={
  stage:string|null;stageHistory:Event[];screeningHistory:Event[];history:Event[];
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
+ assessmentLink?:string|null;jobAssessmentLink?:string|null;
  offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
  scoring:{available:boolean;scorePercent?:number|null;partial?:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
 };
@@ -58,6 +59,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [success,setSuccess]=useState("");
  const [linkNotice,setLinkNotice]=useState("");
  const [resumePreviewOpen,setResumePreviewOpen]=useState(false);
+ const [assessmentOpen,setAssessmentOpen]=useState(false);
+ const [assessmentUrl,setAssessmentUrl]=useState("");
+ const [saveAssessmentToJob,setSaveAssessmentToJob]=useState(true);
+ const [assessmentError,setAssessmentError]=useState("");
+ const [movingToAssessment,setMovingToAssessment]=useState(false);
  const [interviewOpen,setInterviewOpen]=useState(false);
  const [interviewLoading,setInterviewLoading]=useState(false);
  const [interviewError,setInterviewError]=useState("");
@@ -165,6 +171,42 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
   finally{setSavingLetter(false);}
  }
+ function openAssessment(){
+  setAssessmentUrl(detail?.assessmentLink??detail?.jobAssessmentLink??"");
+  setSaveAssessmentToJob(true);setAssessmentError("");
+  setAssessmentOpen(true);
+ }
+ async function moveToAssessment(){
+  if(movingToAssessment||!detail)return;
+  const url=assessmentUrl.trim();
+  if(url && !/^https:\/\/[^\s]+$/i.test(url)){
+   setAssessmentError("Enter a secure HTTPS assessment URL, or leave the link blank.");
+   return;
+  }
+  setMovingToAssessment(true);setAssessmentError("");setSuccess("");
+  try{
+   const result=await apiFetch<{moved:number;skipped:number;
+    results:Array<{applicationId:string;status:string;reason?:string}>}>(
+    "/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
+     method:"POST",headers:{"content-type":"application/json"},
+     body:JSON.stringify({action:"MOVE",applicationIds:[applicationId],
+      stage:"ASSESSMENT",reason:"Moved to Assessment",notifyByEmail:false,
+      ...(url?{assessmentUrl:url,saveAssessmentUrlToJob:saveAssessmentToJob}:{}),
+      confirmed:true}),
+    });
+   if(result.moved!==1){
+    setAssessmentError(result.results[0]?.reason??"The applicant's stage changed. Refresh and try again.");
+    return;
+   }
+   setAssessmentOpen(false);
+   await reload();
+   setSuccess("Application moved to Assessment");
+   showToast({tone:"success",title:"Application moved to Assessment",
+    description:url?"Assessment link recorded with the stage change.":"Candidate notified in-app."});
+  }catch(reason){
+   setAssessmentError(reason instanceof Error?reason.message:"Unable to move this application.");
+  }finally{setMovingToAssessment(false);}
+ }
  async function loadCandidateInterviews(){
   if(interviewFetchRef.current)return;
   interviewFetchRef.current=true;
@@ -204,6 +246,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const privateResumeUrl=detail?.resume.available &&
   /^\/api\/(college|admin|tpo)\/verification\//.test(detail.resume.url??"")
    ? detail.resume.url : null;
+ const canMoveToAssessment=Boolean(detail?.application.status==="SUBMITTED"&&
+  (detail.stage==="SHORTLISTED"||(!detail.stage&&detail.screening?.status==="SHORTLISTED")));
  const sections=[
   {label:"Pipeline history",rows:detail?.stageHistory??[],
    available:Array.isArray(detail?.stageHistory),hasMore:detail?.stageHistoryHasMore},
@@ -230,9 +274,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   }finally{if(requestId===detailReadRef.current)setHistoryLoading(null);}
  }
  return <>
-  <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)requestClose();}}
-   title="Application Details" description="Application details and status history"
-   className="max-w-[50rem]" bodyClassName="!px-4 sm:!px-6">
+  <Dialog open={!interviewOpen&&!assessmentOpen} onOpenChange={open=>{if(!open)requestClose();}} title="Application Details">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
@@ -296,7 +338,18 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        ) : null}
       </section>
       <section className="border-b border-border py-4">
-       <h3 className="font-semibold">Assessment Link</h3>
+       <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="font-semibold">Assessment Link</h3>
+        {canMoveToAssessment?<Button type="button" variant="secondary"
+          onClick={openAssessment} disabled={saving||savingLetter}>
+          Move to Assessment
+        </Button>:null}
+       </div>
+       {detail.assessmentLink?.startsWith("https://")?<p className="mt-2 text-sm">
+        Saved assessment link: <a href={detail.assessmentLink} target="_blank"
+          rel="noopener noreferrer" className="break-all font-semibold text-link underline">
+          {detail.assessmentLink}</a>
+       </p>:null}
        {detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).length?
         <div className="mt-3 space-y-2">{detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).map(r=>
           <p key={r.id} className="text-sm"><a href={r.testUrl!} 
@@ -512,6 +565,37 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     description="Unsaved offer-letter links and internal notes will be lost."
     confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
     onConfirm={()=>{setConfirmDiscard(false);onClose();}}/>
+  <Dialog open={assessmentOpen} onOpenChange={next=>{if(!next&&!movingToAssessment)
+    setAssessmentOpen(false);}} title="Move to Assessment"
+    description="Record the assessment link while moving this candidate. The stage change and link are saved together.">
+    <div className="space-y-4">
+      <p className="text-sm text-body">Candidate: {detail?.application.name??"Applicant"}</p>
+      <label className="grid gap-2 text-sm font-semibold">
+        Assessment URL (optional)
+        <Input type="url" placeholder="https://..." maxLength={2048}
+          value={assessmentUrl} disabled={movingToAssessment}
+          onChange={event=>setAssessmentUrl(event.target.value)}/>
+      </label>
+      <label className="flex min-h-11 items-center gap-2 text-sm">
+        <input type="checkbox" checked={saveAssessmentToJob}
+          onChange={event=>setSaveAssessmentToJob(event.target.checked)}
+          disabled={movingToAssessment||!assessmentUrl.trim()}
+          className="size-4 accent-[var(--lms-primary)]"/>
+        Save link to job
+      </label>
+      <p className="text-xs text-muted-foreground">Only HTTPS links are accepted. An empty URL leaves the existing link unchanged. The candidate receives an in-app update.</p>
+      {assessmentError?<p role="alert" className="text-sm text-error">{assessmentError}</p>:null}
+      <div className="flex flex-wrap justify-end gap-2">
+        <Button type="button" variant="secondary" disabled={movingToAssessment}
+          onClick={()=>setAssessmentOpen(false)}>Cancel</Button>
+        <Button type="button" disabled={movingToAssessment||
+          Boolean(assessmentUrl.trim()&&!/^https:\/\/[^\s]+$/i.test(assessmentUrl.trim()))}
+          onClick={()=>void moveToAssessment()}>
+          {movingToAssessment?"Moving…":"Move to Assessment"}
+        </Button>
+      </div>
+    </div>
+  </Dialog>
   <Dialog open={interviewOpen} onOpenChange={next=>{if(!next){
     setInterviewOpen(false);void reload();
    }}} title={"Candidate interviews · "+(detail?.application.name??"Applicant")}
