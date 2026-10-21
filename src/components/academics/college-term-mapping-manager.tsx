@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { DataTable } from "@/components/ui/data-table";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
@@ -22,6 +23,7 @@ type MappingRead = {
 
 export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [pending, start] = useTransition();
   const inFlight=useRef(false);
   const [programId, setProgramId] = useState("");
@@ -78,16 +80,27 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           ? data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course" : null;
         const addedCount = confirm.type === "ADD"
           ? ((confirm.body as { mappings?: unknown[] }).mappings?.length ?? 1) : 0;
-        setNotice(removedCourse === null
-          ? TERM_MAPPING_COPY.addedMessage(addedCount) : TERM_MAPPING_COPY.removedMessage(removedCourse));
+        const message = removedCourse === null
+          ? TERM_MAPPING_COPY.addedMessage(addedCount) : TERM_MAPPING_COPY.removedMessage(removedCourse);
+        showToast({ tone: "success", title: message });
+        setNotice(null);
         setConfirm(null);
         setError(null);
         if (confirm.type === "ADD") setDraftByTerm(current => ({ ...current, [termId]: [] }));
         router.refresh();
       } catch (cause) {
-        setError(cause instanceof FriendlyFetchError && cause.code
+        const message = cause instanceof FriendlyFetchError && cause.code
           ? collegeTermMappingErrorMessage(cause.code)
-          : "Unable to change mapping. Refresh and try again.");
+          : confirm.type === "ADD"
+            ? "Failed to add courses to this semester."
+            : "Could not remove the course from this semester.";
+        if (cause instanceof FriendlyFetchError && cause.code === "TERM_NOT_FOUND") {
+          setFieldErrors({ term: "Select a semester" });
+        } else if (cause instanceof FriendlyFetchError && cause.code === "COURSE_NOT_FOUND") {
+          setFieldErrors({ courses: "Select at least one course." });
+        }
+        setError(message);
+        showToast({ tone: "error", title: message });
       }finally{
         inFlight.current=false;
       }
@@ -137,7 +150,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       setError(parsed.error.issues[0]?.message ?? "Course mapping was not updated");
       return;
     }
-    setError(null);
+    setError(null); setFieldErrors({});
     inFlight.current=true;
     start(async () => {
       try {
@@ -148,15 +161,24 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         });
         const previous = data.mapped.find(row => row.id === id);
         const oldPosition = previous ? orderedPeers(previous).findIndex(row => row.id === id) + 1 : position;
-        setNotice(oldPosition === position
+        const message = oldPosition === position
           ? `Updated mapping for “${previous?.courseName ?? "course"}”.`
-          : "Semester course order saved.");
+          : "Semester course order saved.";
+        showToast({ tone: "success", title: message });
+        setNotice(null);
         setEditing(null);
         router.refresh();
       } catch (cause) {
-        setError(cause instanceof FriendlyFetchError && cause.code
-          ? collegeTermMappingErrorMessage(cause.code)
-          : "Course mapping was not updated");
+        const previous = data.mapped.find(row => row.id === id);
+        const wasReorder = previous
+          ? orderedPeers(previous).findIndex(row => row.id === id) + 1 !== position : false;
+        const message = wasReorder
+          ? "Could not save order; previous order restored."
+          : cause instanceof FriendlyFetchError && cause.code
+            ? collegeTermMappingErrorMessage(cause.code)
+            : "Course mapping was not updated";
+        setError(message);
+        showToast({ tone: "error", title: message });
       }finally{
         inFlight.current=false;
       }
@@ -170,7 +192,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 
   return <section className="min-w-0 space-y-4 border-t border-border pt-4">
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
-    <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
+      <Button type="button" variant="secondary" disabled={pending}
+        onClick={() => { setError(null); setFieldErrors({}); router.refresh(); }}>Refresh</Button>
+    </div>
+    <p className="text-xs text-muted-foreground">Drag a course to reorder, or use the Move up and Move down buttons for keyboard access.</p>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
@@ -235,14 +262,14 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         empty={<p>No courses mapped to this semester.</p>}
         columns={[
           {key:"course",header:TERM_MAPPING_COPY.columns.courseName,mobilePriority:"primary",cell:row=>
-            <div draggable={!pending}
+            <div draggable={!pending && editableTerm}
               onDragStart={event=>{setDraggedId(row.id);event.dataTransfer.effectAllowed="move";}}
               onDragEnd={()=>setDraggedId(null)}
               onDragOver={event=>{if(draggedId && draggedId!==row.id)event.preventDefault();}}
               onDrop={event=>{
                 event.preventDefault();
                 const source=currentMappings.find(item=>item.id===draggedId);
-                if(source && source.termId===row.termId && source.id!==row.id){
+                if(editableTerm && source && source.termId===row.termId && source.id!==row.id){
                   const index=orderedPeers(row).findIndex(item=>item.id===row.id)+1;
                   updateMapping(source.id,String(source.credits??3),index);
                 }
@@ -270,6 +297,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                     onChange={event=>setEditing({...editing,credits:event.target.value})}
                     className="block min-h-11 w-full rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-2"/>
                 </label>
+                {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
                 <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
                   <Input type="number" min={1} max={orderedPeers(row).length} step={1}
                     value={editing.position}
