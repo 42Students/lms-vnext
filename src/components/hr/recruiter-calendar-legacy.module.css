@@ -79,7 +79,7 @@
 }
 .event:focus-visible {
   outline: 2px solid var(--lms-button-primary);
-  outline-offset: 2px;
+  outline-offset: 3px;
 }
 .time {
   color: #4a5568;
