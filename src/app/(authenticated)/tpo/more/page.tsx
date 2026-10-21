@@ -15,7 +15,6 @@ export default async function TpoMorePage() {
   return (
     <div data-testid="tpo.more" className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="TPO · Navigation"
         title="More"
         description="Secondary placement tools, insights and account controls that stay out of your main day-to-day navigation."
       />
