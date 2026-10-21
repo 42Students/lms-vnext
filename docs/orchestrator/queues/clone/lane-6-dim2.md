@@ -371,5 +371,5 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/ui/timeline.tsx`
 - [x] `src/components/verification/CollegeVerificationPanel.tsx`
 - [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
