@@ -10,7 +10,8 @@ export default function PublicPlacementsError({
   reset: () => void;
 }) {
   return (
-    <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 min-[768px]:p-6">
+    <div className="min-h-screen bg-[#f5f7f9] px-4 py-8">
+    <main className="mx-auto w-full max-w-[760px] rounded-[8px] border border-[#e5e9f0] bg-white p-6">
       <section role="alert" className="space-y-4">
         <PageHeader title="We couldn't load this page" />
         <p className="text-sm text-body">
@@ -19,5 +20,6 @@ export default function PublicPlacementsError({
         <Button type="button" onClick={reset}>Retry</Button>
       </section>
     </main>
+    </div>
   );
 }

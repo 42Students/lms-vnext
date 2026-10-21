@@ -13,10 +13,17 @@ import {InboundMailList} from "@/components/admin/inbound-mail-list";
 
 type Params=Record<string,string|string[]|undefined>;
 const one=(value:string|string[]|undefined)=>typeof value==="string"?value:undefined;
+const optional=(value:string|string[]|undefined)=>one(value)?.trim()||undefined;
 export default async function InboundMailPage({searchParams}:{searchParams:Promise<Params>}) {
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
- const header=<PageHeader eyebrow="Super Admin" title="Inbound mail" description="Private incoming messages. No automatic replies or outbound sends are performed."/>;
+ const header=<header className="space-y-2">
+   <PageHeader title="Inbound mail"/>
+   <p className="max-w-4xl text-sm text-body">
+     Every email sent to a 42lms.com address. Recruiters&apos; replies to a conversation go straight into it; anything else waits here until someone reads it and marks it done.
+   </p>
+   <p className="text-xs text-muted-foreground">Private platform-wide inbox. Failed recruiter replies remain available for manual triage; this view never sends automatic replies.</p>
+ </header>;
  const params=await searchParams;
  // Inbox payloads may contain messages addressed to other organizations.
  // The persisted vNext inbox contract is deliberately global-only.
@@ -37,9 +44,9 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    Array.isArray(params[key]));
  const parsed=inboundMailListQuerySchema.safeParse({
   status:one(params.status)??(oldShow==="POSTED"||oldShow==="REPLIES"?"ALL":mappedShow??"NEW"),
-  kind:one(params.kind)??(oldShow==="REPLIES"?"REPLY":undefined),
-  routingStatus:one(params.routingStatus)??(oldShow==="POSTED"?"POSTED":undefined),
-  q:one(params.q),recipient:one(params.recipient),page:one(params.page),
+  kind:optional(params.kind)??(oldShow==="REPLIES"?"REPLY":undefined),
+  routingStatus:optional(params.routingStatus)??(oldShow==="POSTED"?"POSTED":undefined),
+  q:one(params.q),recipient:optional(params.recipient),page:one(params.page),
  });
  if(repeated||(oldShow&&!mappedShow)||(oldShow&&params.status!==undefined)||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
    <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="inline-flex items-center min-h-11 md:min-h-9 lms-inline-link font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset</Link></Alert></div>;
@@ -60,10 +67,10 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const totalPages=data.total===null?null:Math.max(1,Math.ceil(data.total/50));
  const pageNumbers=totalPages===null?[]:Array.from(
   {length:Math.min(totalPages,7)},(_,i)=>Math.max(1,Math.min(data.page-3,totalPages-6))+i);
- const next=(page:number)=>{
+ const next=(page:number,clearSearch=false)=>{
   const url=new URLSearchParams();
   if(parsed.data.status!=="ALL")url.set("status",parsed.data.status);
-  if(parsed.data.q)url.set("q",parsed.data.q);
+  if(parsed.data.q&&!clearSearch)url.set("q",parsed.data.q);
   if(parsed.data.recipient)url.set("recipient",parsed.data.recipient);
   if(parsed.data.kind)url.set("kind",parsed.data.kind);
   if(parsed.data.routingStatus)url.set("routingStatus",parsed.data.routingStatus);
@@ -72,29 +79,37 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  };
  const base=new URLSearchParams({...parsed.data.q?{q:parsed.data.q}:{},
   ...parsed.data.recipient?{recipient:parsed.data.recipient}:{}});
- const tabs=[{value:"NEW",label:"To read",count:data.toReadCount},{value:"POSTED",label:"Posted to conversations",count:null},{value:"TRIAGED",label:"Being handled",count:null},
-  {value:"RESOLVED",label:"Done",count:null},{value:"ALL",label:"All",count:null}] as const;
+ const tabs=[{value:"NEW",label:"To read",count:data.toReadCount},{value:"POSTED",label:"Posted to conversations",count:null},
+  {value:"RESOLVED",label:"Done",count:null},{value:"ALL",label:"All",count:null},
+  {value:"TRIAGED",label:"Being handled",count:null}] as const;
  return <div className="min-w-0 space-y-4 md:space-y-6">{header}
   {!INBOUND_ROUTING_METADATA_READY?<Alert tone="info">
     Posted to conversations cannot be shown yet: the verified routing outcome is not stored in this inbox.
     Being handled tracks manual triage only; it does not confirm a recruiter reply was delivered.
     Only persisted inbox messages appear here.
   </Alert>:null}
+  <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
   <Tabs ariaLabel="Inbound mail views" value={parsed.data.routingStatus==="POSTED"?"POSTED":parsed.data.status} renderPanel={false}
     items={tabs.map(tab=>{
      const url=new URLSearchParams(base);
      if(tab.value==="POSTED"){url.set("status","ALL");url.set("routingStatus","POSTED");}
      else url.set("status",tab.value);
      return {value:tab.value,label:tab.label,
-      count:tab.count===null?undefined:tab.count,
+      count:tab.count===null||tab.count===0?undefined:tab.count,
       href:"/admin/inbound-mail?"+url.toString()};
     })}/>
-  <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
-   <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Search
-    <Input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-[6px] min-w-0" placeholder="Sender, subject or message body"/></label>
-   <Button type="submit" className="w-full min-[768px]:w-auto">Filter</Button>
-   {data.items.length>0?<Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white min-[768px]:min-h-9 min-[768px]:w-auto">Clear</Link>:null}
-   <details className="min-w-0 min-[768px]:col-span-3" open={Boolean(parsed.data.recipient||parsed.data.kind||parsed.data.routingStatus)}>
+  <form method="get" action="/admin/inbound-mail" role="search" aria-label="Search inbound mail"
+    className="flex min-w-0 flex-1 flex-wrap items-end gap-2">
+   <Input type="hidden" name="status" value={parsed.data.status}/>
+   <label className="min-w-0 w-full flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[300px] sm:max-w-[300px]">
+    <span className="sr-only">Search sender, subject or text</span>
+    <Input name="q" type="search" defaultValue={parsed.data.q} maxLength={120}
+      aria-label="Search sender, subject or text"
+      className="min-h-11 w-full md:min-h-9" placeholder="Search sender, subject or text"/>
+   </label>
+   <Button type="submit" className="min-h-11 shrink-0 md:min-h-9">Search</Button>
+   {parsed.data.q?<Link href={next(1,true)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white min-[768px]:min-h-9 min-[768px]:w-auto">Clear</Link>:null}
+   <details className="w-full min-w-0 basis-full" open={Boolean(parsed.data.recipient||parsed.data.kind||parsed.data.routingStatus)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Recipient inbox · Status</summary>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] pt-[var(--lms-space-3)] min-[768px]:grid-cols-2">
      <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Recipient inbox
@@ -109,20 +124,21 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
       <Select name="kind" defaultValue={parsed.data.kind??""} className="mt-[6px] w-full">
         <option value="">All messages</option><option value="REPLY">Replies</option><option value="OTHER">Other mail</option>
       </Select></label>
-     <label className="min-w-0 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Status
-      <Select name="status" defaultValue={parsed.data.status} className="mt-[6px] w-full">
-       <option value="ALL">All</option><option value="NEW">To read</option><option value="TRIAGED">Being handled</option><option value="RESOLVED">Done</option>
-      </Select></label>
     </div>
    </details>
   </form>
+  </div>
   <InboundMailList rows={data.items.map(x=>({
    id:x.id,receivedAt:x.receivedAt.toISOString(),fromAddress:x.fromAddress,
    toAddress:x.toAddress,subject:x.subject,bodyPlain:x.bodyPlain,status:x.status,version:x.version,
    routingStatus:x.routingStatus,handledAt:x.handledAt?.toISOString()??null,
   }))}/>
   <nav aria-label="Inbox pages" className="flex min-w-0 flex-col gap-[var(--lms-space-3)] text-sm min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-   <span className="min-w-0 text-body">{data.total===null?"Page "+data.page:data.total+" matching messages · Page "+data.page+" of "+totalPages}</span>
+   <span className="min-w-0 text-body">
+     {data.total===null?"Page "+data.page:
+       (data.items.length?((data.page-1)*50+1)+"–"+((data.page-1)*50+data.items.length)+" of "+data.total:
+       "0 of "+data.total)+" matching messages · Page "+data.page+" of "+totalPages}
+   </span>
    <div className="flex w-full min-w-0 items-center gap-[var(--lms-space-2)] min-[768px]:w-auto">
     {data.page>1?<Link className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] font-[650] min-[768px]:min-h-9" href={next(data.page-1)}>Previous</Link>:null}
     <div className="flex min-w-0 flex-1 items-center gap-[var(--lms-space-2)] overflow-x-auto pb-1 min-[768px]:flex-none min-[768px]:overflow-visible min-[768px]:pb-0">

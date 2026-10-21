@@ -2,7 +2,8 @@ import { PageHeader } from "@/components/ui/page-header";
 
 export default function PublicPlacementsNotFound() {
   return (
-    <main className="mx-auto my-4 min-h-[calc(100vh-2rem)] w-full max-w-4xl rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 min-[768px]:p-6">
+    <div className="min-h-screen bg-[#f5f7f9] px-4 py-8">
+    <main className="mx-auto w-full max-w-[760px] rounded-[8px] border border-[#e5e9f0] bg-white p-6">
       <section role="status" className="space-y-3">
         <PageHeader title="This page isn't available" />
         <p className="text-sm text-body">
@@ -10,5 +11,6 @@ export default function PublicPlacementsNotFound() {
         </p>
       </section>
     </main>
+    </div>
   );
 }
