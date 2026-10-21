@@ -150,3 +150,6 @@
 
 - Lane 1 DB05 schema journal and `src/modules/courses/lesson-order-*` service | G2-17-018-039 | Stage 0243 only after unique (lesson_content_id,lesson_id) and owning delivery/lesson FK/scope guards, resolve numeric old class to UUID delivery with per-class stable sequence/duplicate preflight; no staged SQL active yet.
 - TPO email campaign importer and composer | G2-19-010-067 | Map source numeric campaign to tenant-safe UUID header+draft with historical sender/subject/body/counts in 0235; preserve old status and distinguish historic SENT counts from current delivery receipt, do not create duplicate parallel campaign data.
+
+- Placement application historic importer/read model | G2-3-013-044 | Retain 0244 source events separately from native status history, resolve tenant/job/application foreign keys, preserve nullable actor/deleted and varchar50 statuses with original time; never invent actor or reclassify source event as authorized new transition; original 0021 unchanged.
+- Super-admin organization importer/tenant lifecycle service | G2-3-030-067 | Use 0245 source integer org ID for scoped migration only, preserve legacy isDeleted independently from vNext ACTIVE/ARCHIVED; preflight duplicates and tenant college FK before load, no inferred active status.
