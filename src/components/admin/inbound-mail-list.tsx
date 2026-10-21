@@ -11,6 +11,10 @@ import {inboundMailStatusActions,type InboundMailStatus} from "@/modules/inbound
 export type InboundMailRow={
  id:string;receivedAt:string;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
+ // Optional source-enriched details: never infer recipient identity or outcome
+ // solely from sender addresses or the manual triage state.
+ senderDisplayName?:string|null;senderKind?:string|null;
+ collegeName?:string|null;routingStatus?:string|null;handledAt?:string|null;
 };
 export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  const router=useRouter();
@@ -34,7 +38,8 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
    if(!response.ok)throw Error(response.status===409?"Message was changed elsewhere. Refresh before retrying.":"Could not update message status.");
    const saved=await response.json() as {status:string;version:number};
    setOverrides(previous=>({...previous,[row.id]:{status:saved.status,version:saved.version}}));
-   setMessage(status==="RESOLVED"?"Message marked done.":status==="TRIAGED"?"Message marked being handled.":"Message moved back to To read.");
+   if(status==="RESOLVED")setSelected(null);
+   setMessage(status==="RESOLVED"?"":status==="TRIAGED"?"Message marked being handled.":"Message moved back to To read.");
    router.refresh();
   }catch(error){setMessageError(true);setMessage(error instanceof Error&&error.name==="AbortError"?"Request timed out. Refresh the inbox before trying again.":error instanceof Error?error.message:"Could not update message status.");}
   finally{window.clearTimeout(timeout);triageGate.current.end();setBusy(false);}
@@ -53,9 +58,15 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
        <div className="min-w-0 flex-1 space-y-[var(--lms-space-1)]">
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
          <h2 className="min-w-0 break-words text-base font-semibold text-[var(--lms-heading)]">{row.subject||"(No subject)"}</h2>
+         {row.routingStatus ? <StatusBadge>{row.routingStatus.replaceAll("_"," ")}</StatusBadge> : null}
          <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
+         {row.handledAt ? <StatusBadge>Done</StatusBadge> : null}
         </div>
-        <p className="min-w-0 break-words text-sm text-body leading-[22px]">From {row.fromAddress} · To {row.toAddress}</p>
+        <p className="min-w-0 break-words text-sm text-body leading-[22px]">
+          {row.senderDisplayName ? <strong>{row.senderDisplayName} · </strong> : null}
+          From {row.fromAddress} · To {row.toAddress}
+          {row.senderKind ? <span className="ml-2 font-semibold">{row.senderKind}{row.collegeName ? " · "+row.collegeName : ""}</span> : null}
+        </p>
         <p className="line-clamp-2 max-w-prose break-words text-sm text-muted-foreground print:line-clamp-none leading-[22px]">{safeInboundPreview(row.bodyPlain)}</p>
         <p className="text-xs text-muted-foreground leading-5">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
        </div>
@@ -63,14 +74,16 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       </div>
      </article>)}
     </div>
-    <p className="text-xs text-muted-foreground leading-5">Sender identity and conversation-routing status are not verified by this inbox.</p>
+    <p className="text-xs text-muted-foreground leading-5">
+      Sender and routing badges appear only when verified identity and routing metadata are available.
+    </p>
    </>}
   {selected?<Drawer open onOpenChange={open=>{if(!open&&!busy)setSelected(null)}} title={selected.subject||"(No subject)"}
     description="Private inbound message"
     footer={<div className="flex w-full min-w-0 flex-col gap-[var(--lms-space-3)]">
      {message?<p role={messageError?"alert":"status"} aria-live="polite" className={"max-w-prose break-words text-sm "+(messageError?"text-error":"text-body")}>{message}</p>:null}
      <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:justify-end">
-      {inboundMailStatusActions(overrides[selected.id]?.status??selected.status).map(action=>
+      {(selected.routingStatus==="POSTED"?[]:inboundMailStatusActions(overrides[selected.id]?.status??selected.status)).map(action=>
        <Button key={action.status} type="button" className="w-full min-h-11 min-[768px]:w-auto min-[768px]:min-h-9" variant={action.status==="RESOLVED"?"primary":"secondary"} disabled={busy} onClick={()=>void change(selected,action.status)}>
         {busy?"Saving…":action.label}
        </Button>)}
@@ -83,8 +96,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     </dl>
     <section className="mt-[var(--lms-space-4)] min-w-0">
      <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Plain text message</h3>
-     <p className="mt-[var(--lms-space-2)] max-w-prose whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{selected.bodyPlain.slice(0,15000)}</p>
-     {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground leading-5">Message preview truncated after 15,000 characters.</p>:null}
+     <p className="mt-[var(--lms-space-2)] max-w-prose whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{selected.bodyPlain}</p>
     </section>
    </Drawer>:null}
  </div>;
