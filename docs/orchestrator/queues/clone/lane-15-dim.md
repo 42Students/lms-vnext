@@ -170,20 +170,20 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/components/hr/hr-recruiter-bell.tsx`
 - [x] `src/components/hr/recruiter-designation-editor.tsx`
 - [x] `src/components/hr/recruiter-display-name-editor.tsx`
-- [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-company-create.tsx`
-- [ ] `src/components/placements/college-drive-archive-action.tsx`
-- [ ] `src/components/placements/college-drive-bulk-actions.tsx`
-- [ ] `src/components/placements/college-drive-deadline-action.tsx`
-- [ ] `src/components/placements/college-drive-row-lifecycle-action.tsx`
-- [ ] `src/components/placements/college-interview-status-actions.tsx`
-- [ ] `src/components/placements/college-legacy-drive-settings.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/hr/recruiter-profile-details-editor.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-company-create.tsx`
+- [x] `src/components/placements/college-drive-archive-action.tsx`
+- [x] `src/components/placements/college-drive-bulk-actions.tsx`
+- [x] `src/components/placements/college-drive-deadline-action.tsx`
+- [x] `src/components/placements/college-drive-row-lifecycle-action.tsx`
+- [x] `src/components/placements/college-interview-status-actions.tsx`
+- [x] `src/components/placements/college-legacy-drive-settings.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
 - [ ] `src/components/placements/learner-applications-browse.tsx`
 - [ ] `src/components/placements/learner-career-calendar.tsx`
 - [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
