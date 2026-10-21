@@ -4,7 +4,7 @@ export const COLLEGE_APPLICATION_STAGES=[
  "APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED",
 ] as const;
 export const collegeStageCommandSchema=z.object({
- action:z.enum(["MOVE","REINSTATE"]),
+ action:z.enum(["MOVE","REINSTATE","CORRECT"]),
  applicationIds:z.array(z.string().uuid()).max(100).default([]).refine(ids=>new Set(ids).size===ids.length,
   "Duplicate applications are not allowed"),
  matchingFilter:driveApplicationsQuerySchema.optional(),
@@ -15,7 +15,9 @@ export const collegeStageCommandSchema=z.object({
 }).strict().superRefine((v,ctx)=>{
  if((v.matchingFilter && v.applicationIds.length) || (!v.matchingFilter && v.applicationIds.length===0))
   ctx.addIssue({code:"custom",path:["applicationIds"],message:"Select page applicants or all matching applicants, not both"});
- if(v.action==="MOVE"&&!v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Choose a new application stage"});
+ if(v.action!=="REINSTATE"&&!v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Choose a new application stage"});
+ if(v.action==="CORRECT"&&v.reason.trim().length<10)
+  ctx.addIssue({code:"custom",path:["reason"],message:"Explain the exceptional correction in at least 10 characters"});
  if(v.action==="REINSTATE"&&v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Reinstate uses the previous stage"});
 });
 export type CollegeStageCommand=z.infer<typeof collegeStageCommandSchema>;
@@ -47,3 +49,12 @@ export const LEGACY_APPLICATION_STAGE_SOURCE={
  REJECTED:"placement_application_screenings + college_stage_history",
  WITHDRAWN:"placement_applications.status + withdrawal history",
 } as const;
+
+/** Exceptional staff-only corrections to the presentation stage. These do not
+ * silently rewrite the screened decision, offer or verified joining record. */
+export const COLLEGE_APPLICATION_CORRECTIONS:Readonly<Record<string,readonly string[]>>={
+ SHORTLISTED:["APPLIED"],
+ ASSESSMENT:["APPLIED"],
+ INTERVIEW:["APPLIED","ASSESSMENT"],
+ HIRED:["OFFERED"],
+};

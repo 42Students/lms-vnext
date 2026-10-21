@@ -600,7 +600,7 @@ export function TpoRoundDriveDayReadOnly({
         <div className="space-y-3">
           <label className="block text-sm font-semibold text-body">
             Roll numbers
-            <Textarea rows={7} value={pasteText} disabled={pasteBusy}
+            <Textarea rows={5} autoFocus value={pasteText} disabled={pasteBusy}
               onChange={event=>setPasteText(event.target.value)} className="mt-1"
               placeholder="Paste one roll number per line"/>
           </label>
