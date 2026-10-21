@@ -358,6 +358,6 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/ui/input.tsx`
 - [x] `src/components/ui/legacy-overlays.css`
 - [x] `src/components/ui/needs-doing-chips.tsx`
-- [ ] `src/components/ui/textarea.tsx`
-- [ ] `src/styles/legacy-skin.css`
-- [ ] `src/styles/micro-details.css`
+- [x] `src/components/ui/textarea.tsx`
+- [x] `src/styles/legacy-skin.css`
+- [x] `src/styles/micro-details.css`
