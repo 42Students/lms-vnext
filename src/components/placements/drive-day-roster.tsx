@@ -192,7 +192,7 @@ export function DriveDayRoster({
         }
       />
 
-      <section className="grid grid-cols-2 overflow-hidden border-y border-border xl:grid-cols-4">
+      <section className="grid grid-cols-1 md:grid-cols-2 overflow-hidden border-y border-border xl:grid-cols-4">
         {[
           ["On roster", counts.total],
           ["Checked in", counts.present],
@@ -267,7 +267,7 @@ export function DriveDayRoster({
                   </p>
                 </div>
 
-                <div className="grid min-w-0 grid-cols-2 gap-2 md:flex md:flex-wrap">
+                <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2 md:flex md:flex-wrap">
                   <Button
                     size="sm"
                     className="min-h-11 w-full min-w-0 md:min-h-9 md:w-auto"

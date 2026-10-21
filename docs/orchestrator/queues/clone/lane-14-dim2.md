@@ -188,17 +188,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/courses/faculty-report-student-table.tsx`
 - [x] `src/components/courses/learner-rich-response-editor.tsx`
 - [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-create.tsx`
-- [ ] `src/components/electives/college-slot-manager.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/people/faculty-profile-text-section.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-company-create.tsx`
-- [ ] `src/components/placements/drive-day-roster.tsx`
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
+- [x] `src/components/courses/super-admin-lesson-create.tsx`
+- [x] `src/components/electives/college-slot-manager.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/hr/recruiter-profile-details-editor.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-text-section.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-company-create.tsx`
+- [x] `src/components/placements/drive-day-roster.tsx`
 - [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`
 - [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
 - [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
