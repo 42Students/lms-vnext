@@ -73,19 +73,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/components/ui/inline-notice.tsx`
 - [x] `src/styles/micro-details.css`
 - [x] `src/app/(authenticated)/tpo/audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/components/activity/activity-center.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/courses/admin-offering-teachers-panel.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-recent-placement-activity.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/components/activity/activity-center.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/courses/admin-offering-teachers-panel.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-recent-placement-activity.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
 - [ ] `src/components/ui/date-input.tsx`
 - [ ] `src/components/verification/VerificationWorkspace.tsx`
