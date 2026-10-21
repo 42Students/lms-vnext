@@ -1,7 +1,9 @@
 import { z } from "zod";
 export const learnerSupportListQuerySchema=z.object({
   status:z.enum(["ALL","PENDING","APPROVED","REJECTED","CANCELLED"]).optional(),
-  type:z.enum(["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
+  type:z.enum(["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION",
+    "ABSENCE_DISPUTE","CORRECTION_WITH_PROOF","OFF_CAMPUS_OFFER",
+    "OFFER_ACCEPTANCE_DISPUTE","REGISTRATION_CHANGE","PLACEMENT_AFTER_PLACEMENT"]).optional(),
   page:z.coerce.number().int().min(1).max(1000).optional(),
   pageSize:z.coerce.number().int().min(1).max(200).optional(),
 }).strict();
@@ -43,7 +45,7 @@ export function placementRequestTypeLabel(value:string){
     case "APPLICATION_WITHDRAWAL":return "Application withdrawal";
     case "ROUND_RESCHEDULE":return "Interview or round reschedule";
     case "OFFER_EXTENSION":return "Offer deadline extension";
-    default:return "Placement request";
+    default:return LEGACY_LEARNER_REQUEST_LABELS[value]??"Placement request";
   }
 }
 
@@ -57,7 +59,7 @@ export type LearnerGeneralRequestHistorySource={
 };
 export type LearnerUnifiedRequestHistoryItem={
  id:string;source:"PLACEMENT"|"GENERAL";type:string;status:string;
- reason:string;requestedAt:Date;decisionNote:string|null;jobTitle:string|null;
+ reason:string;requestedAt:Date;decisionNote:string|null;jobTitle:string|null;updatedAt:Date|null;
 };
 export function mergeLearnerPersonalRequestHistory(
  placementRows:readonly LearnerSupportRequestRow[],
@@ -67,12 +69,12 @@ export function mergeLearnerPersonalRequestHistory(
   id:row.request.id,source:"PLACEMENT" as const,type:row.request.requestType,
   status:row.request.status,reason:row.request.reason,
   requestedAt:row.request.requestedAt,decisionNote:row.request.decisionNote,
-  jobTitle:row.job.title,
+  jobTitle:row.job.title,updatedAt:row.request.updatedAt,
  }));
  const general=generalRows.map(row=>({
   id:row.id,source:"GENERAL" as const,type:row.kind,status:row.status,
   reason:row.reason,requestedAt:row.requestedAt,decisionNote:row.decisionNote,
-  jobTitle:null,
+  jobTitle:null,updatedAt:null,
  }));
  return [...placement,...general].sort((left,right)=>
   right.requestedAt.getTime()-left.requestedAt.getTime()||
