@@ -192,3 +192,13 @@
 | `src/components/courses/admin-offering-section-preview.tsx` | 30 | body 14px spec vs text-sm 14px; caption 12px spec vs text-xs 12px; heading text #172033 vs --lms-heading; heading font-weight 600 vs font-semibold | none |
 | `src/components/courses/college-assessment-aggregate.tsx` | 51 | h1 desktop 30px/600/#172033 vs shared PageHeader 30px/600/#172033; body 14px spec vs text-sm 14px; caption 12px spec vs text-xs 12px; heading font-weight 600 vs font-semibold | none |
 | `src/components/courses/college-assignment-create.tsx` | 22 | body 14px spec vs text-sm 14px; caption 12px spec vs text-xs 12px; heading font-weight 600 vs font-semibold | none |
+| `src/components/courses/college-content-aggregate.tsx` | 61 | h1 desktop 30px/600/#172033 spec vs PageHeader 30px/600/#172033; body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading weight 600 vs font-semibold | none |
+| `src/components/courses/college-learning-directory.tsx` | 227 | h1 desktop 30px/600/#172033 spec vs PageHeader 30px/600/#172033; body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading weight 600 vs font-semibold | none |
+| `src/components/courses/college-live-classes-directory.tsx` | 37 | h1 desktop 30px/600/#172033 spec vs PageHeader 30px/600/#172033; body 14px vs text-sm=14px; caption 12px vs text-xs=12px; action font-weight 650 vs font-[650]; heading weight 600 vs font-semibold | none |
+| `src/components/courses/college-quiz-create.tsx` | 37 | body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading weight 600 vs font-semibold | none |
+| `src/components/courses/faculty-assessment-overview.tsx` | 32 | body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading weight 600 vs font-semibold | none |
+| `src/components/courses/faculty-assignment-editor.tsx` | 35 | body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading color #172033 vs --lms-heading; heading weight 600 vs font-semibold | none |
+| `src/components/courses/faculty-assignment-review.tsx` | 29 | body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading weight 600 vs font-semibold | none |
+| `src/components/courses/faculty-choice-quiz-builder.tsx` | 93 | body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading color #172033 vs --lms-heading; heading weight 600 vs font-semibold | none |
+| `src/components/courses/faculty-content-editor.tsx` | 21 | caption 12px vs text-xs=12px; heading weight 600 vs font-semibold; caption 12px spec vs global 12px | none |
+| `src/components/courses/faculty-course-home-signals.tsx` | 40 | body 14px vs text-sm=14px; caption 12px vs text-xs=12px; heading color #172033 vs --lms-heading; action font-weight 650 vs font-[650]; heading weight 600 vs font-semibold | none |
