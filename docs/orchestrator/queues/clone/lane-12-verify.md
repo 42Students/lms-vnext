@@ -55,7 +55,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regre
 - [x] `src/components/placements/tpo-round-result-entry-form.tsx`
 - [x] `src/components/placements/tpo-trust-toggle.tsx`
 - [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
 - [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
