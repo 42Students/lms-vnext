@@ -21,7 +21,7 @@ export default async function CollegeCreateProjectPage() {
     <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
     <PageHeader title="Create workspace"
       description="Choose the published template and learners for this workspace."
-      actions={<Link href="/college/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to workspaces</Link>} />
+      actions={<Link href="/college/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto justify-center">Back to workspaces</Link>} />
     <CreateProjectControl standalone collegeId={collegeId} basePath="/college/projects"
       templates={templates.map(template=>({
         templateId:template.templateId,title:template.title,version:template.version,summary:template.summary,
