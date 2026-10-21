@@ -165,7 +165,7 @@ export function FacultyLessonAuthoring({
   const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||externalLinkTitle.trim()||startsAt||
     endsAt||dueAt||durationSeconds!==""||contentPoints!=="1"||maxPoints!==""||maxAttempts!=="1"||
     allowedAssignmentMethods.length!==1||allowedAssignmentMethods[0]!=="WRITTEN_RESPONSE"||
-    assignmentResources.length>0||
+    assignmentResources.some(row=>!(row.kind==="INSTRUCTIONS"&&row.title==="Instructions"&&row.body===""))||
     questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
 
   useEffect(()=>{
@@ -447,7 +447,9 @@ export function FacultyLessonAuthoring({
           allowedMethods:allowedAssignmentMethods,sequence:nextAssignmentSequence,
         };
         if(enableAssignmentResources&&deliveryId){
-          const checked=facultyAssignmentResourcesSchema.safeParse(assignmentResources);
+          const resourcesForSave=assignmentResources.filter(row=>
+            !(row.kind==="INSTRUCTIONS"&&row.title==="Instructions"&&!row.body?.trim()));
+          const checked=facultyAssignmentResourcesSchema.safeParse(resourcesForSave);
           if(!checked.success)throw new Error(
             checked.error.issues[0]?.message??"Check the assignment resources.");
           const receipt=await post(
