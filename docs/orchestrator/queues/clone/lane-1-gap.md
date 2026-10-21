@@ -53,26 +53,26 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MobileAuthEmailFallbackSendRequest.java`
 - [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/RecruiterEmailLoginStartRequest.java`
 - [x] U014 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthHandoffToken.java`
-- [ ] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthToken.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/EmailVerificationToken.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertSignatureAccount.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LoginUser.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/MobileLoginAttempt.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java`
-- [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/User.java`
-- [ ] U022 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/UserSession.java`
-- [ ] U023 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java`
-- [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/auth/handoff.js`
-- [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/campaign-unsubscribe/[token].js`
-- [ ] U026 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/profile.js`
-- [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/college-join/[token].js`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/company-join/[token].js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/company-share/[token].js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/e2e/superadmin-login.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/learn/profile.js`
-- [ ] U032 (FE page) `docs/legacy-source/frontend/src/pages/login.js`
-- [ ] U033 (FE page) `docs/legacy-source/frontend/src/pages/mentor/profile.js`
-- [ ] U034 (FE page) `docs/legacy-source/frontend/src/pages/recruiter-invite/[token].js`
-- [ ] U035 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/profile.js`
-- [ ] U036 (Cross-cutting area) `cross/01: Authentication: login, OTP, tokens, sessions, logout, password/identity rules, rate limits, error messages`
-- [ ] U037 (Cross-cutting area) `cross/21: Error, loading and empty states, offline behaviour, session expiry handling`
+- [x] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthToken.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/EmailVerificationToken.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertSignatureAccount.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LoginUser.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/MobileLoginAttempt.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java`
+- [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/User.java`
+- [x] U022 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/UserSession.java`
+- [x] U023 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java`
+- [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/auth/handoff.js`
+- [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/campaign-unsubscribe/[token].js`
+- [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/profile.js`
+- [x] U027 (FE page) `docs/legacy-source/frontend/src/pages/college-join/[token].js`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/company-join/[token].js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/company-share/[token].js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/e2e/superadmin-login.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/learn/profile.js`
+- [x] U032 (FE page) `docs/legacy-source/frontend/src/pages/login.js`
+- [x] U033 (FE page) `docs/legacy-source/frontend/src/pages/mentor/profile.js`
+- [x] U034 (FE page) `docs/legacy-source/frontend/src/pages/recruiter-invite/[token].js`
+- [x] U035 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/profile.js`
+- [x] U036 (Cross-cutting area) `cross/01: Authentication: login, OTP, tokens, sessions, logout, password/identity rules, rate limits, error messages`
+- [x] U037 (Cross-cutting area) `cross/21: Error, loading and empty states, offline behaviour, session expiry handling`
