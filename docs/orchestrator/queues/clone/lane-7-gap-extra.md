@@ -6,14 +6,14 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L12-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java`
-- [ ] L12-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyTeachingAssignmentController.java`
-- [ ] L13-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerScheduleController.java`
-- [ ] L14-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeCompany.java`
-- [ ] L14-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/InterviewEditForm.js`
-- [ ] L15-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterCollegeController.java`
-- [ ] L17-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/PublicJobResponseDTO.java`
-- [ ] L17-U031 (Cross-cutting area) `cross/17: Projects end to end: workspaces, teams, tasks, mentors, meetings, submissions, evaluation`
-- [ ] L18-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/JobImportantDateEventDTO.java`
-- [ ] L18-U031 (Cross-cutting area) `cross/18: People management: onboarding, bulk import, profile fields, suspension, roles, deletion`
-- [ ] L19-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CourseController.java`
+- [x] L12-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CompanyDomain.java`
+- [x] L12-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyTeachingAssignmentController.java`
+- [x] L13-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerScheduleController.java`
+- [x] L14-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeCompany.java`
+- [x] L14-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/InterviewEditForm.js`
+- [x] L15-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterCollegeController.java`
+- [x] L17-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/PublicJobResponseDTO.java`
+- [x] L17-U031 (Cross-cutting area) `cross/17: Projects end to end: workspaces, teams, tasks, mentors, meetings, submissions, evaluation`
+- [x] L18-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/JobImportantDateEventDTO.java`
+- [x] L18-U031 (Cross-cutting area) `cross/18: People management: onboarding, bulk import, profile fields, suspension, roles, deletion`
+- [x] L19-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CourseController.java`

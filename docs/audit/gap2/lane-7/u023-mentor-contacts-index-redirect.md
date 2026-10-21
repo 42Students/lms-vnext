@@ -1,0 +1,41 @@
+# U023 — Mentor contacts index compatibility redirect
+
+Legacy page: `docs/legacy-source/frontend/src/pages/mentor/contacts/index.js` (alias mentor/contacts/index.js; full file read, 13 lines). Legacy backend controller/service/validator/entity/migration: **NONE** — server-only redirect without API or model. vNext: `src/app/(authenticated)/mentor/contacts/[[...contactsTab]]/page.tsx` (alias mentor/contacts/[[...contactsTab]]/page.tsx; full file read). Authorization/target closure: `src/app/(authenticated)/mentor/layout.tsx` (mentor/layout.tsx) and `src/app/(authenticated)/mentor/projects/page.tsx` (mentor/projects/page.tsx). No browser-based observation claimed.
+
+| ID | Facet | Legacy behaviour (file:line) | vNext behaviour (file:line, or NONE) | Verdict | Severity | Fix | Effort |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| G2-7-023-001 | F01 | mentor/contacts/index.js:1-7 responds to /mentor/contacts with getServerSideProps temporary redirect to /mentor/projects | mentor/contacts/[[...contactsTab]]/page.tsx:1-6 optional catch-all redirects to /mentor/projects | MATCH | P3 | Keep exact canonical Projects destination and temporary redirect | S |
+| G2-7-023-002 | F01 | mentor/contacts/index.js:1-7 only root contacts index belongs to this page | mentor/contacts/[[...contactsTab]]/page.tsx:3-6 also captures child tab paths via optional catch-all | EXTRA | P3 | Keep broader backward compatibility as documented | S |
+| G2-7-023-003 | F01 | mentor/contacts/index.js:4 redirect to /mentor/projects without preserving query | mentor/contacts/[[...contactsTab]]/page.tsx:5 literal redirect without query | MATCH | P3 | Leave stale contacts query ignored | S |
+| G2-7-023-004 | F02 | mentor/contacts/index.js:10-12 returns null, no page container, banner or card | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 immediately redirects, no layout | MATCH | P3 | No legacy contact layout to recreate | S |
+| G2-7-023-005 | F03 | mentor/contacts/index.js:10-12 renders no buttons, links, icons, help or counters | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 renders no visible elements | MATCH | P3 | N/A redirection only | S |
+| G2-7-023-006 | F04 | mentor/contacts/index.js:1-12 no API field or user record rendering | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no read of contact data | MATCH | P3 | N/A no data shown | S |
+| G2-7-023-007 | F05 | mentor/contacts/index.js:1-12 no contacts list, columns, filters, sort or pagination | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 only redirects | MATCH | P3 | Do not add obsolete directory UI | S |
+| G2-7-023-008 | F06 | mentor/contacts/index.js:1-12 no form fields or submit/cancel behaviors | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no form | MATCH | P3 | N/A no form workflow | S |
+| G2-7-023-009 | F07 | mentor/contacts/index.js:1-7 no client/server validation or field-level error text | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no form errors or parse | MATCH | P3 | N/A only fixed route destination | S |
+| G2-7-023-010 | F08 | mentor/contacts/index.js:1-12 no toast, success banner or confirmation | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 emits none | MATCH | P3 | N/A no messages or timer | S |
+| G2-7-023-011 | F09 | mentor/contacts/index.js:1-12 opens no modal, drawer, menu or popover | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 opens none | MATCH | P3 | N/A redirect only | S |
+| G2-7-023-012 | F10 | mentor/contacts/index.js:1-7 server redirect, no API request or DB mutation | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 server redirect, no mutation | MATCH | P3 | Keep side-effect-free route | S |
+| G2-7-023-013 | F11 | mentor/contacts/index.js:1-7 no explicit role check in this file | mentor/layout.tsx:10-20 redirects unauthorized role to /dashboard first | EXTRA | P2 | Verify old outer auth/layout access path to avoid changing status semantics | M |
+| G2-7-023-014 | F11 | mentor/contacts/index.js:1-7 does not check college Projects feature before redirect | mentor/contacts/[[...contactsTab]]/page.tsx:4-5 likewise delegates to mentor/projects/page.tsx:49-57 | MATCH | P3 | Let target enforce Projects access | S |
+| G2-7-023-015 | F12 | mentor/contacts/index.js:3-6 fixed destination no dependent status/date or uniqueness rule | mentor/contacts/[[...contactsTab]]/page.tsx:5 fixed destination | MATCH | P3 | N/A no calculations or business transitions | S |
+| G2-7-023-016 | F13 | mentor/contacts/index.js:1-12 no loading, empty, offline, expired-session or retry UI | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no intermediate UI | MATCH | P3 | Downstream Projects route owns those states | S |
+| G2-7-023-017 | F13 | mentor/contacts/index.js:1-7 redirect evaluated server-side, not via useEffect | mentor/contacts/[[...contactsTab]]/page.tsx:4-5 server redirect | MATCH | P3 | Maintain immediate redirect without skeleton flash | S |
+| G2-7-023-018 | F14 | mentor/contacts/index.js:1-12 no export, import, download or upload actions | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no file operations | MATCH | P3 | N/A no file requirements | S |
+| G2-7-023-019 | F15 | mentor/contacts/index.js:1-12 no notifications or email template interactions | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no messaging | MATCH | P3 | N/A no recipients or queued tasks | S |
+| G2-7-023-020 | F16 | mentor/contacts/index.js:10-12 null render regardless of screen width | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no rendered content on tablet/phone | MATCH | P3 | N/A no responsive elements | S |
+| G2-7-023-021 | F17 | mentor/contacts/index.js:10-12 no keyboard focus targets or screen-reader labels | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no controls or labels | MATCH | P3 | Verify focus lands correctly on target Projects page | S |
+| G2-7-023-022 | F18 | mentor/contacts/index.js:4 only path /mentor/projects, no visible prose | mentor/contacts/[[...contactsTab]]/page.tsx:5 same target and no prose | MATCH | P3 | N/A no wording differences | S |
+| G2-7-023-023 | F19 | mentor/contacts/index.js:1-7 redirect before fetching any contacts or paginating | mentor/contacts/[[...contactsTab]]/page.tsx:4-5 redirect without reads | MATCH | P3 | Keep no intermediate data fetch | S |
+| G2-7-023-024 | F20 | mentor/contacts/index.js:1-7 URL query discarded by fixed redirect target | mentor/contacts/[[...contactsTab]]/page.tsx:5 query discarded by fixed target | MATCH | P3 | Avoid translating obsolete contacts query params | S |
+| G2-7-023-025 | F20 | mentor/contacts/index.js:3-6 permanent:false temporary redirect, avoids cached permanent rewire | mentor/contacts/[[...contactsTab]]/page.tsx:5 Next.js redirect temporary behavior | MATCH | P3 | Retain temporary semantics | S |
+| G2-7-023-026 | F21 | mentor/contacts/index.js:1-12 no webhooks, jobs, backend service or integration | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no integration | MATCH | P3 | N/A no background jobs | S |
+| G2-7-023-027 | F22 | mentor/contacts/index.js:1-12 no tables, columns, DTO, indexes, enums or migrations used | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 no data model accessed | MATCH | P3 | N/A no schema change | S |
+| G2-7-023-028 | F23 | mentor/contacts/index.js:1-7 dedicated index page for the root contacts path | mentor/contacts/[[...contactsTab]]/page.tsx:3-6 shared route with dynamic contacts tabs | EXTRA | P3 | Document route consolidation; no behavior loss | S |
+| G2-7-023-029 | F23 | mentor/contacts/index.js:10-12 deliberately drops contacts content, returns null | mentor/contacts/[[...contactsTab]]/page.tsx:4-6 also drops contacts content | MATCH | P3 | Do not restore obsolete contact tabs | S |
+
+## Unit summary
+
+Rows **29**, facets **23/23**. Verdicts {"MATCH":26,"EXTRA":3}. Severities {"P3":28,"P2":1}. Effort {"S":28,"M":1}.
+
+Top three points: (1) **MATCH** root /mentor/contacts issues same temporary redirect to /mentor/projects, with no Contacts view. (2) **EXTRA** vNext consolidates root and child tab redirects in one optional catch-all route. (3) **P2 authorization sequencing check** vNext mentor layout performs role redirect before route action; compare legacy outer layout/session behavior live for unauthenticated visitors. This page intentionally has no UI, data model or API side effects.
