@@ -19,3 +19,10 @@
 
 - Shared auth login feedback design / G2-1-032-036/038, G2-1-032-037, G2-1-036-027: legacy robot oops animation and AntD keyed toast require shared component/design owner; lane-13 kept single focused inline error to avoid inaccessible stacked errors. Compare placement/4s vs 5s durations only in visual verification.
 - Tenant-specific JNTU sign-in / G2-20-006-031: legacy Mobile number is required differs from global Enter your mobile number; apply only with approved tenant-specific sign-in mode, not across every college.
+
+- Faculty attendance report endpoint / G2-14-009-071: optional server-side monthInput filter is now present in getFacultyAttendanceWorkspace; wire a month query/loader with request-race handling and calendar errors before claiming full month-scoped UX (current SSR loads all by default).
+- Attendance authorization / G2-14-009-046/047, G2-15-009-051, G2-18-009-059/060: College Admin/Super Admin must use distinct college-scoped admin oversight and mutation routes; do NOT let admin bypass faculty teaching assignment in faculty-service.ts.
+- Attendance data migration / G2-14-009-043/079, G2-15-009-014/049/085, G2-19-009-028/055: legacy classScheduleId/classId/courseId/studentId numbers need trusted offline crosswalk to UUID event/delivery/membership and timezone-aware backfill; no old users/data in vNext.
+
+- Attendance routes + UI / G2-2-027-026/027/028/029/030, G2-15-031-021: map missing/invalid UUID schedule event, empty mark batch, teaching-scope violation, missing class and stale roster to correct local field-specific copy; service now emits Zod issue for empty and over-1000 submission and keeps 1000 total as explicit vNext cap. Do not expose foreign session existence in 404.
+- Attendance product owner / G2-2-027-036/048/051/052/053/094/096: confirm intentional full-roster atomic save, class-start/correction window and admin-service split against legacy 500 partial-write flow; do not claim parity on these semantic differences until signed off.

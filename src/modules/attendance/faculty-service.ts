@@ -4,8 +4,10 @@ import {
   and,
   asc,
   eq,
+  gte,
   inArray,
   isNull,
+  lt,
   sql,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -66,6 +68,22 @@ const sessionInputSchema = z
       ctx.addIssue({code:"custom",path:["endsAt"],message:"A class can be at most 12 hours. Check AM/PM."});
   });
 
+/**
+ * Month cursor is an India-local YYYY-MM, converted to a half-open UTC range
+ * on the DB query. Existing workspace callers omit it and retain full history
+ * until the month-switch UI is wired to a range-scoped fetch endpoint.
+ */
+function facultyIndiaMonthBounds(month: string) {
+  const validMonth = z.string().regex(/^(19\d{2}|20\d{2}|2100)-(0[1-9]|1[0-2])$/).parse(month);
+  const year = Number(validMonth.slice(0, 4));
+  const index = Number(validMonth.slice(5, 7)) - 1;
+  const offset = 330 * 60_000; // IST is UTC+05:30, no DST.
+  return {
+    start: new Date(Date.UTC(year, index, 1) - offset),
+    end: new Date(Date.UTC(year, index + 1, 1) - offset),
+  };
+}
+
 const bulkInputSchema = z
   .object({
     deliveryId: uuid,
@@ -101,6 +119,16 @@ const bulkInputSchema = z
         });
         break;
       }
+    }
+    const total = value.absentMembershipIds.length + value.presentMembershipIds.length;
+    if (total === 0) {
+      ctx.addIssue({code:"custom",path:["presentMembershipIds"],
+        message:"Nothing to record — provide at least one absent or present learner"});
+    }
+    // New UUID roster batches permit up to 1000 (legacy numeric API had 500).
+    if (total > 1000) {
+      ctx.addIssue({code:"custom",path:["presentMembershipIds"],
+        message:"Maximum 1000 learners per request"});
     }
   });
 
@@ -225,7 +253,9 @@ export async function getFacultyDeliveryRoster(
 export async function getFacultyAttendanceWorkspace(
   context: RequestContext,
   deliveryIdInput: string,
+  monthInput?: string,
 ) {
+  const monthBounds = monthInput ? facultyIndiaMonthBounds(monthInput) : null;
   const delivery = await requireFacultyDelivery(
     context,
     deliveryIdInput,
@@ -292,6 +322,8 @@ export async function getFacultyAttendanceWorkspace(
           delivery.sectionId,
         ),
         eq(sectionScheduleEvents.status, "SCHEDULED"),
+        monthBounds ? gte(sectionScheduleEvents.startsAt,monthBounds.start) : undefined,
+        monthBounds ? lt(sectionScheduleEvents.startsAt,monthBounds.end) : undefined,
       ),
     )
     .orderBy(
@@ -448,6 +480,20 @@ export async function createFacultyAttendanceSession(
   }
 }
 
+/**
+ * vNext replacement for legacy POST /api/v1/attendance/bulk:
+ * - numeric classScheduleId -> tenant-scoped UUID scheduleEventId in the path;
+ * - numeric studentId[] -> ACTIVE collegeMembership.id[] for this delivery;
+ * - presentMembershipIds/absentMembershipIds together cover the entire current
+ *   delivery roster; legacy partial batches are deliberately not accepted;
+ * - first mark writes an absence-only record set + a MARKED session;
+ * - corrections require an optimistic markedAt token and an audit explanation.
+ *
+ * The write is all-or-none, not the old "some succeeded / retry failed IDs"
+ * operation. On a network-uncertain result clients must reload persisted marks
+ * before retrying. College Admin / Super Admin access uses separate scoped
+ * admin services, not an exemption to persisted Faculty teaching assignment.
+ */
 export async function markFacultyAttendance(
   context: RequestContext,
   scheduleEventIdInput: string,
@@ -476,6 +522,8 @@ export async function markFacultyAttendance(
     ...input.absentMembershipIds,
     ...input.presentMembershipIds,
   ]);
+  // Fail atomically when the browser's reviewed roster and current ACTIVE
+  // enrollment no longer match; never apply just the still-valid subset.
   if (
     rosterIds.size !== submitted.size ||
     [...rosterIds].some((id) => !submitted.has(id))
@@ -705,6 +753,9 @@ export async function markFacultyAttendance(
       markedPresent:
         input.presentMembershipIds.length,
       markedAt: writtenAt,
+      // Atomic all-or-none contract: a successful save cannot be partial.
+      attendanceComplete: true as const,
+      failed: [] as const,
     };
   });
 }
