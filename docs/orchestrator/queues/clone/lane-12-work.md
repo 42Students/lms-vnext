@@ -31,7 +31,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_team_page.tsx.md` (edit src/app/(authenticated)/tpo/team/page.tsx; 15 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_admin-ui_super-admin-scoped-people-service.ts.md` (edit src/modules/admin-ui/super-admin-scoped-people-service.ts; 15 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_bug-tracker_report-service.ts.md` (edit src/modules/bug-tracker/report-service.ts; 15 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_admin-ui_super-admin-placement-applications-service.ts.md` (edit src/modules/admin-ui/super-admin-placement-applications-service.ts; 14 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_admin-ui_super-admin-placement-applications-service.ts.md` (edit src/modules/admin-ui/super-admin-placement-applications-service.ts; 14 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_announcements_page.tsx.md` (edit src/app/(authenticated)/tpo/announcements/page.tsx; 13 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_reports_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/page.tsx; 13 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_drive-day_page.tsx.md` (edit src/app/(authenticated)/tpo/drive-day/page.tsx; 11 findings; best P1)
