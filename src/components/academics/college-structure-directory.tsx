@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeDirectoryPageSize, CollegeDirectoryRefresh } from "./college-directory-page-size";
+import { CollegeDirectoryInstantFilters } from "./college-directory-instant-filters";
 import { CollegeClassScopeFilters } from "./college-class-scope-filters";
 import {
   classCapacityLabel,
@@ -44,26 +45,54 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
   const classes = data.kind === "CLASSES";
   const title = classes ? "Classes & Sections" : "Electives";
   const path = classes ? "/college/classes" : "/college/electives";
+  const filtered = Object.entries(data.query).some(([key,value]) =>
+    !["page","pageSize"].includes(key) && value !== undefined && value !== null &&
+    value !== "" && value !== "ALL");
+  const exportUrl = "/api/academics/college-classes-export?" +
+    new URLSearchParams({q:data.query.q ?? "",
+      ...(data.kind === "CLASSES" && data.query.programId ? {programId:data.query.programId} : {}),
+      ...(data.kind === "CLASSES" && data.query.cohortCode ? {cohortCode:data.query.cohortCode} : {}),
+    }).toString();
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title={title}
-        description={classes ? "Create teaching sections within a batch, manage capacity and schedule recurring sessions from the same roster." : undefined}
+        description={classes ? "Create class sections and manage their students, capacity and recurring sessions." :
+          "Manage elective slots, course offerings and eligible students."}
         actions={<Link href="/college/academics"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Academic workspace
         </Link>}
       />
-      <div className={classes ? "grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(280px,5fr)_minmax(0,7fr)]" : "contents"}>
-      {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
-      <div className="min-w-0 space-y-[var(--lms-space-4)]">
+      <div className={classes ? "grid min-w-0 items-start gap-[var(--lms-space-4)] lg:grid-cols-24" : "contents"}>
+      {prepend ? <div data-slot="page-tools" className="min-w-0 lg:col-span-10">{prepend}</div> : null}
+      <section className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface lg:col-span-14"
+        aria-label={classes ? "Existing Classes/Sections" : "Elective slots"}>
+        <header className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border p-4">
+          <div>
+            <h2 className="text-base font-semibold text-foreground">
+              {classes ? "Existing Classes/Sections" : "Elective slots"}
+            </h2>
+            <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")}
+              {classes ? " classes" : " elective slots"}</p>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <CollegeDirectoryRefresh />
+            {classes ? <a href={exportUrl}
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
+              aria-label="Export classes CSV">Export classes.csv</a> : null}
+            {!classes && electiveOptions ? <CollegeSlotManager options={electiveOptions} /> : null}
+          </div>
+        </header>
+        <CollegeDirectoryInstantFilters formId="college-structure-directory-filters" />
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {classes ? "Class, batch or program" : "Elective, program or description"}
           <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={data.query.q}
             className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search class, program, batch or capacity" : "Search registered records"} />
         </label>}
-        action={<Button type="submit" form="college-structure-directory-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
+        action={filtered ? <Link href={path}
+          className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Clear filters</Link> : null}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-structure-directory-filters" method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           {classes && data.kind === "CLASSES" ? <CollegeClassScopeFilters programs={data.programs} cohorts={classOptions?.cohorts ?? []}
@@ -360,10 +389,10 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
             <Button variant="primary" type="submit" className="min-h-11 md:hidden">
               Filter
             </Button>
-            <Link href={path}
+            {filtered ? <Link href={path}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Clear
-            </Link>
+            </Link> : null}
           </div>
         </form>
       </section></FilterBar>
@@ -481,7 +510,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
           : "Offered-course counts represent nondeleted active elective offerings with college-owned courses. Slots do not prove that the elective feature is enabled or that learner selections are open. Selection finalization and capacity enforcement are not implemented here."}
  
       </p>
-      </div>
+      </section>
       </div>
     </div>
   );
