@@ -39,7 +39,7 @@ Facets (all mandatory):
 - F23 Anything in vNext that does NOT exist in the legacy unit (EXTRA) and anything in legacy that vNext dropped on purpose (document the reason if known)
 
 One unit at a time: finish the unit file completely before opening the next. Tick [x] the unit here in the same push as its file. Push to chatgpt/chat-1-b with [chat-1] after every 2 units (git fetch and rebase right before). Units:
-- [ ] U001 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java`
+- [x] U001 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java`
 - [ ] U002 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AuthController.java`
 - [ ] U003 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyProfileController.java`
 - [ ] U004 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerProfileController.java`
