@@ -133,26 +133,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/college/lecture-halls/error.tsx`
 - [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
 - [x] `src/app/(authenticated)/college/lessons/error.tsx`
-- [ ] `src/app/(authenticated)/college/people/error.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/error.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/programs/error.tsx`
-- [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
-- [ ] `src/app/(authenticated)/college/quizzes/error.tsx`
-- [ ] `src/app/(authenticated)/college/resources/error.tsx`
+- [x] `src/app/(authenticated)/college/people/error.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/error.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/programs/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/templates/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
+- [x] `src/app/(authenticated)/college/quizzes/error.tsx`
+- [x] `src/app/(authenticated)/college/resources/error.tsx`
 - [ ] `src/app/(authenticated)/college/semester-courses/error.tsx`
 - [ ] `src/app/(authenticated)/college/semesters/error.tsx`
 - [ ] `src/app/(authenticated)/college/students/[membershipId]/error.tsx`
