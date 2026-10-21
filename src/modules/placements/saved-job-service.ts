@@ -7,6 +7,14 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { listLearnerPlacementJobs } from "./learner-job-service";
 import { PlacementsServiceError } from "./errors";
+import { placementTableExists } from "./staged-tables";
+
+export class SavedJobsStorageUnavailableError extends Error {
+  constructor() {
+    super("SAVED_JOBS_NOT_CONFIGURED");
+    this.name = "SavedJobsStorageUnavailableError";
+  }
+}
 
 const savedJobId = z.string().uuid();
 
@@ -15,10 +23,11 @@ const savedJobId = z.string().uuid();
  * before placement_saved_jobs is added to the numbered Drizzle migration.
  */
 async function requireVisiblePlacements(context: RequestContext) {
-  // Use journaled eligibility decisions and the common paid-module guard.
-  // The DB08 lifecycle table is not yet registered; this saved-job service
-  // cannot depend on it until W01's migration lands.
-  return requireLearnerPlacementAccess(context);
+  const learner = await requireLearnerPlacementAccess(context);
+  if (!await placementTableExists("placement_saved_jobs")) {
+    throw new SavedJobsStorageUnavailableError();
+  }
+  return learner;
 }
 
 
@@ -78,6 +87,8 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       jobId: placementSavedJobs.jobId,
       savedAt: placementSavedJobs.savedAt,
       title: placementJobs.title,
+      jobStatus: placementJobs.status,
+      applicationDeadline: placementJobs.applicationDeadline,
     })
     .from(placementSavedJobs)
     .innerJoin(placementJobs, eq(placementJobs.id, placementSavedJobs.jobId))
@@ -85,11 +96,14 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       eq(placementSavedJobs.collegeId, learner.collegeId),
       eq(placementSavedJobs.membershipId, learner.id),
       eq(placementJobs.collegeId, learner.collegeId),
-      eq(placementJobs.status, "PUBLISHED"),
     ))
     .orderBy(desc(placementSavedJobs.savedAt));
-  // Jobs no longer in the learner's feed must not leak through bookmarks.
+  // A saved-row is evidence of a learner's previous access in THIS college.
+  // Closed, cancelled and archived jobs remain historical saved items, even
+  // after their deadline passes. Still enforce today's eligibility/visibility
+  // for any live published job; an old bookmark must not bypass a new policy.
   const feed = await listLearnerPlacementJobs(context);
   const visibleIds = new Set(feed.map((entry) => entry.job.id));
-  return rows.filter((row) => visibleIds.has(row.jobId));
+  return rows.filter((row) =>
+    row.jobStatus !== "PUBLISHED" || visibleIds.has(row.jobId));
 }
