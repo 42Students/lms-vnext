@@ -43,6 +43,7 @@ import {
 } from "./validation";
 
 export type CollegeServiceErrorCode =
+  | "COLLEGE_APPOINTEE_INVALID"
   | "ORGANIZATION_NOT_FOUND"
   | "COLLEGE_NOT_FOUND"
   | "COLLEGE_CODE_CONFLICT";
@@ -554,6 +555,17 @@ export async function updateCollege(
       .where(and(eq(organizations.id,college.organizationId),eq(organizations.status,"ACTIVE")))
       .for("share").limit(1);
     if(!parent)throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
+    const appointIds=[input.chairMembershipId,input.viceChairMembershipId]
+      .filter((id):id is string=>typeof id==="string");
+    for(const membershipId of new Set(appointIds)){
+      const [eligible]=await tx.select({id:collegeMemberships.id})
+        .from(collegeMemberships)
+        .where(and(eq(collegeMemberships.id,membershipId),
+          eq(collegeMemberships.collegeId,collegeId),
+          eq(collegeMemberships.status,"ACTIVE")))
+        .limit(1);
+      if(!eligible)throw new CollegeServiceError("COLLEGE_APPOINTEE_INVALID");
+    }
     const [updated]=await tx.update(colleges).set({
       ...input,updatedAt:new Date(),
     }).where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).returning();
