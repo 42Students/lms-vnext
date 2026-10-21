@@ -146,3 +146,6 @@
 - G2-18-028-001: legacy overview deep-link numeric workspace IDs and ?collegeId require an explicit trusted ID crosswalk; canonical section page rejects unsupported query overrides and relies on selected Super Admin scope.
 
 - Project workspace create Back G2-8-028-002: parent link removed on active editor to avoid bypassing its existing useProjectEditorDiscardGuard. Global header/navigation still needs a shared SPA route/scope transition guard for unsaved planning if the shell can navigate externally.
+
+- Inbound mail provider/source owners: approval gates in `docs/audit/gap-fix/inbound-mail-cutover-lane-5.md`; migration 0068 schema alone does not provide signed source ingestion or historical MySQL V225 mapping.
+- Account lifecycle/auth owners: verify `college-admin-lifecycle-contract-lane-5.md` cross-college session blast radius and reactivation guards against token/session state and audit receipts; not changed by UI lane.
