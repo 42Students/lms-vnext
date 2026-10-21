@@ -34,7 +34,6 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const [options,setOptions]=useState<Candidate[]>([]);
  const [selected,setSelected]=useState<string[]>([]);
  const [initial,setInitial]=useState<string[]>([]);
- const [mode,setMode]=useState<"ADD"|"REPLACE">("ADD");
  const [page,setPage]=useState(1);
  const [searchErrors,setSearchErrors]=useState("");
  const sequence=useRef(0);
@@ -167,7 +166,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     {error&&loaded?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
      <Button type="button" variant="secondary" className="w-full sm:w-auto" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-     <Button type="button" className="w-full sm:w-auto" loading={busy} disabled={busy||!loaded||!changed||capExceeded} onClick={()=>setConfirmOpen(true)}>
+     <Button type="button" className="w-full sm:w-auto" loading={busy} disabled={busy||!loaded||!changed||capExceeded} onClick={()=>{if(removedIds.length>0)setConfirmOpen(true);else void save();}}>
       {busy?"Saving…":mode==="ADD"?"Add learners":"Replace roster"}
      </Button>
     </div>

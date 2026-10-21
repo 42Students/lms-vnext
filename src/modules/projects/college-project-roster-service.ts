@@ -38,11 +38,17 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
    ?existingLearners.filter(x=>!selected.has(x.membershipId)):[];
   if(toRemove.length && input.confirmRemoval!==true)
    throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
-  if(existingLearners.length-toRemove.length+
-      input.learnerMembershipIds.filter(id=>!existingLearners.some(member=>member.membershipId===id)).length>500)
-   throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
   const learnerIds=new Set(existingLearners.map(x=>x.membershipId));
-  const toAdd=input.learnerMembershipIds.filter(id=>!learnerIds.has(id));
+  const toAdd=[...new Set(input.learnerMembershipIds)].filter(id=>!learnerIds.has(id));
+  // Capacity is the union of retained existing members and genuinely new
+  // learner membership IDs, not a raw checkbox count. Legacy User ID and
+  // FACULTY/LEARNER labels map to current membership UUID and projectMembers
+  // roleKind, preserving mentor linkage on projectInstances independently.
+  const after=new Set([
+   ...existingLearners.filter(x=>!toRemove.some(rem=>rem.id===x.id)).map(x=>x.membershipId),
+   ...toAdd,
+  ]);
+  if(after.size>500)throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
   if(toAdd.some(id=>existing.some(x=>x.membershipId===id)))
    throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
   if(toAdd.length){
