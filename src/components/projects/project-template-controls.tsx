@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  type FormEvent,
-  useState,
-} from "react";
+import {type FormEvent,useEffect,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -296,6 +293,7 @@ export function ProjectTemplateActions({
   selectedCollegeId,
   assignedToSelectedCollege,
   allowGlobalActions = true,
+  blueprint,
 }: {
   templateId: string;
   title: string;
@@ -303,8 +301,23 @@ export function ProjectTemplateActions({
   selectedCollegeId: string | null;
   assignedToSelectedCollege: boolean;
   allowGlobalActions?: boolean;
+  blueprint?:{overview:{deliverables:readonly string[]};sprints:readonly unknown[];tasks:readonly unknown[]};
 }) {
   const lifecycle=projectTemplateGlobalActions(status);
+  const [overviewDirty,setOverviewDirty]=useState(false);
+  useEffect(()=>{
+   const listener=(event:Event)=>{
+    const data=(event as CustomEvent<{templateId:string;dirty:boolean}>).detail;
+    if(data?.templateId===templateId)setOverviewDirty(data.dirty===true);
+   };
+   window.addEventListener("project-template-editor-dirty",listener);
+   return()=>window.removeEventListener("project-template-editor-dirty",listener);
+  },[templateId]);
+  const missing=[
+   ...(blueprint&&!blueprint.overview.deliverables.length?["deliverables"]:[]),
+   ...(blueprint&&!blueprint.sprints.length?["sprints"]:[]),
+   ...(blueprint&&!blueprint.tasks.length?["tasks"]:[]),
+  ];
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, setPending] =
@@ -323,6 +336,12 @@ export function ProjectTemplateActions({
     method: "POST" | "DELETE",
     body?: unknown,
   ) {
+    if(label==="Publish template"&&(overviewDirty||missing.length)){
+      showToast({tone:"error",title:overviewDirty?
+       "Save your overview changes before publishing":"Complete the template before publishing",
+       description:missing.length?"Missing "+missing.join(", "):"Save or discard your overview changes first."});
+      return;
+    }
     setPending(label);
     try {
       await projectMutation(
@@ -398,7 +417,9 @@ export function ProjectTemplateActions({
           <Button
             size="sm"
             loading={pending === "Publish template"}
-            disabled={pending !== null}
+            disabled={pending !== null || overviewDirty || missing.length>0}
+            title={overviewDirty?"Save your overview changes before publishing":
+              missing.length?"Complete "+missing.join(", ")+" before publishing":undefined}
             onClick={() =>
               void mutate(
                 "Publish template",
@@ -411,6 +432,17 @@ export function ProjectTemplateActions({
           </Button>
         ) : null}
 
+        {allowGlobalActions&&lifecycle.canPublish&&(overviewDirty||missing.length>0)?
+          <p role="status" className="text-xs text-warning-text">
+            {overviewDirty?"Save your overview changes before publishing.": "Publishing requires "+
+            missing.join(", ")+". "}
+            {missing.includes("deliverables")?<a className="ml-1 underline"
+              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/overview"}>Edit overview</a>:null}
+            {missing.includes("sprints")?<a className="ml-1 underline"
+              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/sprints"}>Add sprints</a>:null}
+            {missing.includes("tasks")?<a className="ml-1 underline"
+              href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/tasks"}>Add tasks</a>:null}
+          </p>:null}
         {allowGlobalActions && lifecycle.canUnpublish ? (
           <Button
             size="sm"
