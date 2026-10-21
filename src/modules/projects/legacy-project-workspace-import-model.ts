@@ -10,7 +10,7 @@ import {
  * selected-college crosswalk before calling the normal scoped create service.
  * The service must still re-check memberships and the pinned template.
  */
-const legacyId=z.number().int().positive().safe();
+const legacyId=z.number().int().positive().max(Number.MAX_SAFE_INTEGER);
 const legacyInput=z.object({
   id:legacyId,
   collegeId:legacyId,
