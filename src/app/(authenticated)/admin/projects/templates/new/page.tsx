@@ -14,16 +14,23 @@ export default async function NewSuperAdminTemplatePage(){
     description="Clear the selected college and organization in the Super Admin scope switcher before authoring global project templates."
     action={<PageBackLink href="/admin/projects/templates" label="Back to templates"/>}/>
  </div>;
- return <div className="min-w-0 space-y-4 md:space-y-5">
-  <PageBackLink href="/admin/projects/templates" label="Back to templates" />
+ // The inherited admin layout renders the Super Admin Projects group tabs.
+ // Do not duplicate them here; legacy creation lived INSIDE that tabstrip.
+ return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
   <PageHeader title="Create project template"
-   description="Define the reusable blueprint for workspaces. College-scoped administrators cannot publish global templates."/>
+   description="Define the reusable blueprint for workspaces."
+   actions={<PageBackLink href="/admin/projects/templates" label="Back to templates" />}/>
+  <section aria-label="Project template form" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-space-6)]">
+   <p className="mb-[var(--lms-space-4)] text-sm text-muted-foreground">
+    Keep the template generic. Live meetings, activity, and submission state belong to workspaces.
+   </p>
+   <SuperAdminTemplateCreateForm/>
+  </section>
   <Banner tone="info" role="status">
-    This is a platform-wide project template. Publishing a global blueprint is
-    independent of any single college's Projects module availability. College
-    assignments and workspace creation remain subject to each college's effective
-    module access and membership permissions.
+    College-scoped administrators cannot publish global templates. This is a
+    platform-wide project template, independent of any single college's
+    Projects module availability. Workspace creation still requires the
+    effective college module permissions and an active membership.
   </Banner>
-  <SuperAdminTemplateCreateForm/>
  </div>;
 }

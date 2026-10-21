@@ -70,7 +70,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_groups_admin-read-service.ts.md` (edit src/modules/groups/admin-read-service.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-student-csv-model.ts.md` (edit src/modules/people/college-student-csv-model.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-directory-person-editor-service.ts.md` (edit src/modules/people/college-directory-person-editor-service.ts; 4 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_authenticated_admin_projects_templates_new_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/new/page.tsx; 4 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_authenticated_admin_projects_templates_new_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/new/page.tsx; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-faculty-lifecycle-service.ts.md` (edit src/modules/people/college-faculty-lifecycle-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-admin-profile-edit-service.ts.md` (edit src/modules/people/college-admin-profile-edit-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_log-alerts_admin-service.ts.md` (edit src/modules/log-alerts/admin-service.ts; 3 findings; best P2)
