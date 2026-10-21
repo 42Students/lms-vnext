@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, exists, gte, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, exists, gte, ilike, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
   placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments,placementCandidateAcademicEvidence } from "@/db/schema";
@@ -25,8 +25,10 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
   const [job]=await db.select({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status})
     .from(placementJobs)
-    .where(and(eq(placementJobs.id,input.jobId),eq(placementJobs.collegeId,collegeId),
-      isNull(placementJobs.archivedAt))).limit(1);
+    // Historical placements remain readable after a drive is archived.
+    // The TPO membership, persisted placements.manage permission and college
+    // scope still apply; archive only disables mutation/public discovery.
+    .where(and(eq(placementJobs.id,input.jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
   if(!job) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   const projection=await db.transaction(async tx=>{
    const since=tpoApplicantSubmittedSince(input.submittedWithin,new Date());
