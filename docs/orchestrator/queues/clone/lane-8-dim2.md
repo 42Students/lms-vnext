@@ -59,10 +59,10 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/admin/super-admin-platform-block-action.tsx`
 - [x] `src/components/admin/super-admin-student-import-history.tsx`
 - [x] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-restore-action.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/admin/tenant-restore-action.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
 - [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
 - [ ] `src/components/attendance/admin-attendance-workspace.tsx`
 - [ ] `src/components/attendance/college-attendance-policy-form.tsx`
