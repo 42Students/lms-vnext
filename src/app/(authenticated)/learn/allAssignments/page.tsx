@@ -116,6 +116,11 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
       }),
     );
 
+  const coursesCount = new Set(items.map(item => item.courseId)).size;
+  const thisMonth = new Intl.DateTimeFormat("en-CA", {timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+  const snapshotMonth = thisMonth.format(new Date(overview.snapshotNowMs));
+  const createdThisMonth = items.filter(item => thisMonth.format(new Date(item.createdAt)) === snapshotMonth).length;
+
   return (
     <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
       <PageHeader
@@ -125,24 +130,14 @@ async function LearnerAssignmentsContent({searchParams}:{searchParams:Promise<As
             <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
               {items.length} {items.length === 1 ? "Assignment" : "Assignments"}
             </span>
-            {items.length > 0 ? (
+            {coursesCount > 0 ? (
               <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-                {new Set(items.map(item => item.courseId)).size} {new Set(items.map(item => item.courseId)).size === 1 ? "Course" : "Courses"}
+                {coursesCount} {coursesCount === 1 ? "Course" : "Courses"}
               </span>
             ) : null}
-            {items.filter(item => {
-              const date = new Date(item.createdAt);
-              const now = new Date(overview.snapshotNowMs);
-              return date.getUTCFullYear() === now.getUTCFullYear() &&
-                date.getUTCMonth() === now.getUTCMonth();
-            }).length > 0 ? (
+            {createdThisMonth > 0 ? (
               <span className="rounded-lg border border-border px-3 py-1.5 font-medium">
-                {items.filter(item => {
-                  const date = new Date(item.createdAt);
-                  const now = new Date(overview.snapshotNowMs);
-                  return date.getUTCFullYear() === now.getUTCFullYear() &&
-                    date.getUTCMonth() === now.getUTCMonth();
-                }).length} this month
+                {createdThisMonth} this month
               </span>
             ) : null}
           </div>
