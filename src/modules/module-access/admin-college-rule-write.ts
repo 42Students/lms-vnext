@@ -24,10 +24,17 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
   });
   const where=and(eq(moduleAccessRules.scopeType,"COLLEGE"),eq(moduleAccessRules.scopeId,college.id),eq(moduleAccessRules.module,input.module));
   const [existing]=await tx.select({id:moduleAccessRules.id,enabled:moduleAccessRules.enabled,locked:moduleAccessRules.locked})
-   .from(moduleAccessRules).where(where).limit(1);
+   .from(moduleAccessRules).where(where).for("update").limit(1);
   const before=existing?{enabled:existing.enabled,locked:existing.locked}:null;
   if(!collegeRuleSame(input.expected,before))throw new StudentRuleConflict("STALE_RULE");
   if(collegeRuleNoChange(before,input))return {module:input.module,enabled:existing?.enabled??null,locked:existing?.locked??false,unchanged:true};
+  // A college-local lock prevents any value change or removal until a
+  // persisted Super Admin explicitly unlocks the *same* stored value first.
+  // This is a two-step operation, never an implicit unlock+toggle.
+  if(before?.locked && (input.action==="INHERIT" ||
+    input.enabled!==before.enabled || input.locked===true)){
+    throw new StudentRuleConflict("LOCAL_LOCKED");
+  }
   if(input.action==="SET"){
    const ancestors=await tx.select({locked:moduleAccessRules.locked})
     .from(moduleAccessRules)
@@ -49,7 +56,9 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_MODULE_RULE_CHANGED,importance:"HIGH",
    subjectType:"COLLEGE",subjectId:college.id,
    summary:"Super Admin changed a college module rule",
-   metadata:{module:input.module,before,after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:input.locked}},
+   metadata:{module:input.module,before,after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:input.locked},
+    legacyCategory:"COLLEGE_FEATURE_TOGGLE",legacySettingKey:"module."+input.module,
+    inheritedLocked:false,actorPermission:"college.manage"},
   });
   return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:input.action==="INHERIT"?false:input.locked,unchanged:false};
  });

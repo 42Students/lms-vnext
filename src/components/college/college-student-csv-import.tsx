@@ -134,7 +134,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
               const text=await file.text();
               if(revision!==fileRevision.current)return;
               setCsv(text);
-              const count=Math.max(0,text.split(/\\r?\\n/).filter(row=>row.trim()).length-1);
+              const count=Math.max(0,text.split(/\r?\n/).filter(row=>row.trim()).length-1);
               setSummary({tone:"info",message:"Parsed "+count+" row(s). Select program & class, then Validate or Create."});
             }catch(error){
               if(revision===fileRevision.current)
