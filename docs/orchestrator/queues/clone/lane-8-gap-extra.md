@@ -16,8 +16,8 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L12-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AssignmentUploadReceipt.java`
 - [x] L12-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/team.js`
 - [x] L13-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminInboundMailController.java`
-- [ ] L14-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AppSetting.java`
-- [ ] L14-U031 (Cross-cutting area) `cross/14: Academic structure: departments, batches, semesters, sections, course delivery, teaching assignments, promotion`
+- [x] L14-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AppSetting.java`
+- [x] L14-U031 (Cross-cutting area) `cross/14: Academic structure: departments, batches, semesters, sections, course delivery, teaching assignments, promotion`
 - [ ] L15-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PlacementJobController.java`
 - [ ] L17-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoPlacementsPageController.java`
 - [ ] L18-U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/NotificationService.java`
