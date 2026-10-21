@@ -47,8 +47,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/courses/index.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/student-groups.js`
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/syllabusDetail.js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js`
-- [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/EmailVariableValidator.java`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js`
+- [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/EmailVariableValidator.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationServiceImpl.java`
 - [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/SmsService.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/learners/LearnerSearchController.java`
