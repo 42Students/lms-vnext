@@ -811,12 +811,13 @@ export async function PlacementCalendarWorkspace({
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid min-w-0 gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
         {([
-          {focus:"OVERDUE" as const,label:"Follow-ups overdue (last 90 days)",value:needsKnown?overdue.length:null},
+          {focus:"OVERDUE" as const,label:"Follow-ups overdue",value:needsKnown?overdue.length:null},
           {focus:"BLOCKED" as const,label:"Rounds on a blocked date",value:needsKnown&&blockedDays?.ready?blockedRounds.length:null},
           {focus:"BUSY" as const,label:"Busy days (3 or more)",value:needsKnown?busyDays.length:null},
         ]).map(item=><Link key={item.focus}
           href={calendarHref(basePath,audience,state,{focus:state.focus===item.focus?null:item.focus})}
           aria-current={state.focus===item.focus?"true":undefined}
+          title={item.focus==="OVERDUE"?"Last 90 days":item.label}
           className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           <strong className="block text-lg">{item.value===null?"Unavailable":item.value}</strong>
           {item.label}{state.focus===item.focus?" · Selected":""}
