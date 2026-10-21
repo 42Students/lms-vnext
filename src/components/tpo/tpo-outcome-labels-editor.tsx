@@ -88,6 +88,6 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   <Button variant="primary" type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
    className="min-h-11 min-[768px]:min-h-9 text-sm">Save changes</Button>
   {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
-  {notice?<p role="status" className="text-sm text-success-text">{notice}</p>:null}
+  {notice?<p role="status" className="rounded-[8px] border border-[rgba(5,150,105,0.25)] bg-[var(--lms-success-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-success-text)]">{notice}</p>:null}
  </section>;
 }
