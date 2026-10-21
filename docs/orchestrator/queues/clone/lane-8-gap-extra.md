@@ -20,7 +20,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L14-U031 (Cross-cutting area) `cross/14: Academic structure: departments, batches, semesters, sections, course delivery, teaching assignments, promotion`
 - [x] L15-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PlacementJobController.java`
 - [x] L17-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoPlacementsPageController.java`
-- [ ] L18-U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/NotificationService.java`
-- [ ] L18-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoOfferController.java`
+- [x] L18-U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/NotificationService.java`
+- [x] L18-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoOfferController.java`
 - [ ] L19-U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LectureHall.java`
 - [ ] L19-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js`
