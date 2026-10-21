@@ -116,7 +116,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0093_recruiter_invite_code.sql.md` (edit drizzle/0093_recruiter_invite_code.sql; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_college-signin.ts.md` (edit src/db/schema/college-signin.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_admin_faculty-assignment_batch_route.ts.md` (edit src/app/api/admin/faculty-assignment/batch/route.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_faculty-assessment-route-boundary.ts.md` (edit src/modules/courses/faculty-assessment-route-boundary.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_faculty-assessment-route-boundary.ts.md` (edit src/modules/courses/faculty-assessment-route-boundary.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-drive-requests.ts.md` (edit src/db/schema/placement-drive-requests.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_learner-application-detail-model.ts.md` (edit src/modules/placements/learner-application-detail-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_season-service.ts.md` (edit src/modules/placements/season-service.ts; 1 findings; best P2)
