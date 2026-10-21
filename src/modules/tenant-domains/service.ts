@@ -260,6 +260,61 @@ export async function deleteTenantDomain(
   await repository.deleteDomain(domain.id, confirmationHost);
 }
 
+/**
+ * Read-only host resolution diagnostic for the global platform administrator.
+ * Unlike the public resolver it never reads a verification token, returns a
+ * private domain row, or changes tenant DNS state. An administrator acting in
+ * one organization/college cannot use this to enumerate other tenants.
+ */
+export type TenantHostResolutionPreview =
+  | {
+      status: "TENANT_NOT_FOUND";
+      tenant: null;
+      canonicalHost: null;
+      shouldRedirect: false;
+    }
+  | {
+      status: "TENANT";
+      tenant: ResolvedTenantHost;
+      canonicalHost: string;
+      shouldRedirect: boolean;
+    };
+
+export async function previewTenantHostResolution(
+  context: RequestContext,
+  rawHost: string,
+  repository: TenantDomainRepository,
+): Promise<TenantHostResolutionPreview> {
+  if (
+    !isSuperAdmin(context) ||
+    context.adminScope?.organizationId ||
+    context.adminScope?.collegeId
+  ) {
+    throw new AuthorizationError("admin-scope.select");
+  }
+  requirePermission(context, "admin-scope.select");
+  const host = normalizeRequestHost(rawHost);
+  // Only verified hosts belonging to an active college/organization resolve.
+  const tenant = await repository.resolveVerifiedHost(host);
+  if (!tenant) {
+    return {
+      status: "TENANT_NOT_FOUND",
+      tenant: null,
+      canonicalHost: null,
+      shouldRedirect: false,
+    };
+  }
+  // The current runtime resolves only exact registered hostnames. Redirect
+  // intent can be true only if the resolver actually returns another host;
+  // never guess a primary hostname from organization or college metadata.
+  return {
+    status: "TENANT",
+    tenant,
+    canonicalHost: tenant.host,
+    shouldRedirect: host !== tenant.host,
+  };
+}
+
 export async function resolveTenantFromHost(
   rawHost: string,
   repository: TenantDomainRepository,
