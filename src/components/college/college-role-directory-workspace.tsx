@@ -70,7 +70,7 @@ export async function CollegeRoleDirectoryWorkspace({
         <ErrorState
           title="Invalid directory filters"
           description={collegeRoleDirectoryFilterMessage(error)}
-          action={<Link href={path} className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear directory filters</Link>}
+          action={<Link href={path} className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear directory filters</Link>}
         />
       </div>
     );
@@ -92,7 +92,7 @@ export async function CollegeRoleDirectoryWorkspace({
           <PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />
         ) : (
           <Link href="/college/students/register"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-[650] text-white hover:bg-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-[650] text-white hover:bg-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Register students
           </Link>
         )}
@@ -101,34 +101,34 @@ export async function CollegeRoleDirectoryWorkspace({
       {kind === "LEARNER" ? <nav aria-label="Student directory tools"
         className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/students/import"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Import CSV</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import CSV</Link>
         <CollegeStudentImportHistory />
         <details className="min-w-0">
-          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV exports</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">CSV exports</summary>
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
             <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export visible students.csv</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export visible students.csv</Link>
             <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export Learner CSV (max 1,000)</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export Learner CSV (max 1,000)</Link>
           </div>
         </details>
         <Link href="/college/people"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">People directory</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People directory</Link>
       </nav> : null}
       {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
-        <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Import faculty CSV</Link>
+        <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import faculty CSV</Link>
         <details className="min-w-0">
-          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export Faculty CSV (max 1,000)</summary>
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export Faculty CSV (max 1,000)</summary>
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
             <Link href={"/api/college/roles/export-visible?kind="+kind+"&"+
               new URL(collegeRoleDirectoryExportHref(kind,result.filter),"https://lms.invalid").searchParams.toString()}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export visible faculty.csv</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export visible faculty.csv</Link>
             <Link href={collegeRoleDirectoryExportHref(kind,result.filter)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export Faculty CSV (max 1,000)</Link>
+              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export Faculty CSV (max 1,000)</Link>
           </div>
         </details>
-        <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">People directory</Link>
+        <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People directory</Link>
       </nav> : null}
       <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-2 gap-3 border-y border-border py-3 md:grid-cols-3">
         {[
@@ -343,7 +343,7 @@ export async function CollegeRoleDirectoryWorkspace({
           <Button variant="primary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
             Apply
           </Button>
-          <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+          <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Clear
           </Link>
         </form>
@@ -367,7 +367,7 @@ export async function CollegeRoleDirectoryWorkspace({
               <li key={item.membershipId} className="min-w-0 space-y-2 border-b border-border py-3">
                 <div className="min-w-0">
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
-                    className="break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{item.name}</Link>
+                    className="break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.name}</Link>
                   <p className="mt-1 break-all text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
@@ -380,13 +380,13 @@ export async function CollegeRoleDirectoryWorkspace({
                 <p className="text-xs text-muted-foreground">Joined {joinedLabel(item.joinedAt)} IST</p>
                 <div className="flex flex-wrap gap-3 text-sm">
                   <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">View contact card</Link>
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View contact card</Link>
                   {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile verification</Link>:null}
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Profile verification</Link>:null}
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
-                <details className="min-w-0"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">More actions</summary><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
+                <details className="min-w-0"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More actions</summary><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
                 <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
@@ -408,16 +408,16 @@ export async function CollegeRoleDirectoryWorkspace({
               columns={[
                 {key:"person",header:"Person",mobilePriority:"primary",cell:item=><>
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
-                    className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     {item.name}
                   </Link>
                   <p className="mt-1 text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
                   <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     View contact card
                   </Link>
                   {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     Profile verification
                   </Link>:null}
                 </>},
