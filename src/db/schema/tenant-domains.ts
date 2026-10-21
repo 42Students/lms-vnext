@@ -53,9 +53,11 @@ export const tenantDomains = pgTable(
  * to college UUIDs, and unverified source primary flags are quarantined. */
 export function canonicalTenantHost(value:string):string{
  const host=value.trim().toLowerCase().replace(/\.$/,"");
- if(host.length>253||host.length<4||host.includes("/")||host.includes(":")||
-   !/^[a-z0-9.-]+$/.test(host)||host.includes("..")||
-   host.startsWith(".")||host.endsWith("."))
+ const labels=host.split(".");
+ if(host.length>253||labels.length<2||labels.some(label=>
+    label.length>63||!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(label))||
+    !/^(?:[a-z]{2,63}|xn--[a-z0-9-]{2,59})$/.test(labels[labels.length-1]??"")||
+    /^\d+(?:\.\d+){3}$/.test(host))
   throw new Error("Invalid tenant domain host");
  return host;
 }
@@ -69,7 +71,14 @@ export function legacyPrimaryTenantDomainCandidate(input:{
   throw new Error("Unmapped legacy tenant college");
  if(input.isPrimary&&!input.isVerified)
   throw new Error("Unverified legacy primary must be reviewed before activation");
- const verified=input.isVerified&&Boolean(input.verifiedAt);
+ const sourceTimestamp=input.verifiedAt?.trim()??"";
+ if(input.isVerified!==Boolean(sourceTimestamp))
+  throw new Error("Legacy domain verification status and timestamp conflict");
+ if(sourceTimestamp&&(
+    !/(?:Z|[+-]\d{2}:\d{2})$/.test(sourceTimestamp)||
+    !Number.isFinite(Date.parse(sourceTimestamp))))
+  throw new Error("Legacy domain verification timestamp requires timezone review");
+ const verified=input.isVerified&&Boolean(sourceTimestamp);
  return {collegeId:input.resolvedCollegeId,host:canonicalTenantHost(input.host),
    isPrimary:input.isPrimary&&verified,isVerified:verified};
 }

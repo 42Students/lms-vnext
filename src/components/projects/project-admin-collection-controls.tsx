@@ -88,6 +88,9 @@ export function ProjectAdminFilters({
   filterView?: "NOT_SUBMITTED";
 }) {
   const router=useRouter();
+  // Risk listings keep a fixed 25-row page, unlike the other workspaces.
+  const fixedRiskPageSize=includeRiskSort;
+  const searchKey=searchParamName??(legacyWorkspaces?"search":"q");
   const [searchText,setSearchText]=useState(query.q??"");
   const updateUrl=useCallback((key:string,value:string)=>{
     const current=new URLSearchParams(window.location.search);
@@ -100,21 +103,20 @@ export function ProjectAdminFilters({
   useEffect(()=>{setSearchText(query.q??"");},[query.q]);
   useEffect(()=>{
     if(searchText===(query.q??""))return;
-    const timer=window.setTimeout(()=>updateUrl(legacyWorkspaces?"search":"q",searchText),350);
+    const timer=window.setTimeout(()=>updateUrl(searchKey,searchText),350);
     return ()=>window.clearTimeout(timer);
-  },[searchText,query.q,legacyWorkspaces,updateUrl]);
+  },[searchText,query.q,searchKey,updateUrl]);
   return (
     <form method="get" onSubmit={event=>{event.preventDefault();
-      updateUrl(legacyWorkspaces?"search":"q",searchText);}}
+      updateUrl(searchKey,searchText);}}
       role="search"
       className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]"
     >
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Search
         <Input
-          name={searchParamName??(legacyWorkspaces ? "search" : "q")}
+          name={searchKey}
           type="search"
-          defaultValue={query.q ?? ""}
           placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
           className="w-full min-w-0"
           value={searchText}

@@ -29,7 +29,7 @@ export function normalizeLegacyPlatformOverride(input:{
 }):{scopeType:"GLOBAL"|"COLLEGE";scopeId:string;key:string;value:string}{
  const kind=input.scopeType?.trim().toUpperCase()??"";
  const key=input.key.trim();
- if(!key||key.length>120||key.includes("\\u0000")||input.value.length>4096)
+ if(!key||key.length>120||/[\u0000-\u001f\u007f]/.test(key)||input.value.length>4096)
   throw new Error("Legacy override needs manual key/value review");
  if(kind===""||kind==="GLOBAL"){
   if(input.scopeId&&input.scopeId.trim().toUpperCase()!=="GLOBAL")
@@ -41,6 +41,11 @@ export function normalizeLegacyPlatformOverride(input:{
  if(kind!=="COLLEGE"||!input.resolvedCollegeId||
   !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(input.resolvedCollegeId))
   throw new Error("Legacy college scope cannot be verified");
+ const oldScope=input.scopeId?.trim()??"";
+ if(!oldScope||(
+   /^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(oldScope)&&
+   oldScope.toLowerCase()!==input.resolvedCollegeId.toLowerCase()))
+  throw new Error("Legacy scope ID does not match the approved college crosswalk");
  return {scopeType:"COLLEGE",scopeId:input.resolvedCollegeId,key,value:input.value};
 }
 /** Importers group identical normalized scope+key and choose the latest
@@ -49,8 +54,16 @@ export function legacyOverrideWinner<T extends {updatedAt:string;legacyId:number
  rows:readonly T[],
 ):T{
  if(!rows.length)throw new Error("No source overrides");
- const ordered=[...rows].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||b.legacyId-a.legacyId);
- if(ordered.length>1&&ordered[0].updatedAt===ordered[1].updatedAt&&
+ const verified=rows.map(row=>{
+  if(!Number.isSafeInteger(row.legacyId)||row.legacyId<1||
+     !/(?:Z|[+-]\d{2}:\d{2})$/.test(row.updatedAt)||
+     !Number.isFinite(Date.parse(row.updatedAt)))
+   throw new Error("Legacy override timestamp or identity requires review");
+  return {row,instant:Date.parse(row.updatedAt)};
+ });
+ const ordered=verified.sort((a,b)=>b.instant-a.instant||
+   b.row.legacyId-a.row.legacyId).map(item=>item.row);
+ if(ordered.length>1&&Date.parse(ordered[0].updatedAt)===Date.parse(ordered[1].updatedAt)&&
     ordered[0].legacyId===ordered[1].legacyId)
   throw new Error("Ambiguous legacy override winner");
  return ordered[0];
