@@ -687,9 +687,14 @@ export function SuperAdminHrAccounts({
         Account totals are temporarily unavailable. The directory is still usable.
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
       </p>}
-      {statusSummary ? <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-4">{([
-        ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled (not deleted)",statusSummary?.disabled],
-      ] as const).map(([label,value])=><div key={label} className="min-w-0 border-r border-border pr-[var(--lms-space-4)] even:border-r-0 md:even:border-r md:last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl> : null}
+      {statusSummary ? <dl className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4">{([
+        ["Accounts",statusSummary.accounts],
+        ["Active on page",list?.items.filter(account=>account.status==="ACTIVE").length??0],
+        ["Suspended on page",list?.items.filter(account=>account.status==="ARCHIVED").length??0],
+        ["Deleted on page",list?.items.filter(account=>account.legacyStatus==="DELETED").length??0],
+      ] as const).map(([label,value])=><div key={label} className="min-w-0 rounded-[8px] border border-border bg-surface p-3">
+       <dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd>
+      </div>)}</dl> : null}
       <form
         key={[
           filters.q,
@@ -698,7 +703,7 @@ export function SuperAdminHrAccounts({
         ].join("|")}
         method="get"
         action="/admin/recruiters"
-        className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto_auto_auto]"
+        className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto_auto_auto_auto]"
       >
         <label className="col-span-2 grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold lg:col-span-1 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Search
@@ -740,7 +745,11 @@ export function SuperAdminHrAccounts({
 
         </Disclosure>
 
-        <Button type="submit" className="min-h-11 w-full lg:min-h-9 lg:w-auto">Apply filters</Button>
+        <Button type="submit" className="min-h-11 w-full lg:min-h-9 lg:w-auto">Search</Button>
+        <Button type="button" variant="secondary" className="min-h-11 w-full gap-2 lg:min-h-9 lg:w-auto"
+         disabled={refreshing} onClick={()=>startRefresh(()=>router.refresh())}>
+         <svg aria-hidden="true" className={refreshing?"size-4 animate-spin":"size-4"} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/></svg>{refreshing?"Refreshing…":"Refresh"}
+        </Button>
 
         <Link
           href="/admin/recruiters"
@@ -750,20 +759,12 @@ export function SuperAdminHrAccounts({
         </Link>
       </form>
 
-      {loadError ? (
-        <ErrorState
-          title="Recruiter accounts could not be loaded"
-          description={loadError}
-          action={
-            <Button
-              variant="secondary"
-              onClick={() => router.refresh()}
-            >
-              Retry
-            </Button>
-          }
-        />
-      ) : !list ? (
+      {loadError?<Alert tone="error" title="Recruiter accounts could not be loaded">
+        <p>{loadError}</p>
+        <Button type="button" variant="secondary" size="sm" className="self-start min-h-11 md:min-h-9"
+         onClick={()=>startRefresh(()=>router.refresh())} disabled={refreshing}>Retry</Button>
+       </Alert>:null}
+      {!list ? (
         <ErrorState
           description="No valid account listing was returned."
         />
@@ -825,7 +826,7 @@ export function SuperAdminHrAccounts({
                 ))}
               </div>
               <div className="hidden min-w-0 lg:block print:block">
-                <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} rows={list.items} columns={columns} getRowKey={(account) => account.userId} />
+                <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show.</p>} rows={list.items} columns={columns} mobileMode="scroll" className="min-w-0 [&_table]:min-w-[980px]" caption="Recruiter accounts" getRowKey={(account) => account.userId} />
               </div>
             </>
           )}
