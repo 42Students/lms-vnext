@@ -5,7 +5,7 @@ import {
   AdminAttendanceWorkspace,
   type AdminAttendanceWorkspaceData,
 } from "@/components/attendance/admin-attendance-workspace";
-import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { SuperAdminAttendanceSettingsEditor } from "@/components/admin/super-admin-attendance-settings-editor";
 import { PageHeader } from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -38,19 +38,14 @@ export default async function SuperAdminAttendancePage({
     context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {
-    return (
-      <div className="min-w-0 space-y-6">
-        <PageHeader
-          
-          title="Attendance"
-          description="Attendance oversight requires an exact college safety scope."
-        />
-        <EmptyState
-          title="Select a college to continue"
-          description="Choose a college in the header above to see its attendance."
-        />
-      </div>
-    );
+    return <div className="min-w-0">
+      <Alert tone="warning" title="Select a college to continue" role="alert">
+        <span className="inline-flex items-start gap-2">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="m12 3 10 18H2L12 3Z" /><path d="M12 9v5m0 3h.01" /></svg>
+          Choose a college in the header above to see its attendance.
+        </span>
+      </Alert>
+    </div>;
   }
 
   const query = await searchParams;
@@ -85,10 +80,11 @@ export default async function SuperAdminAttendancePage({
     query.courseId ?? requestedDelivery?.courseId ?? null;
   const delivery =
     options.deliveries.find(
-      (entry) =>
-        entry.sectionId === selectedSectionId &&
-        entry.courseId === selectedCourseId,
-    ) ?? requestedDelivery ?? null;
+      entry => entry.deliveryId === query.deliveryId &&
+        entry.sectionId === selectedSectionId && entry.courseId === selectedCourseId,
+    ) ?? options.deliveries.find(
+      entry => entry.sectionId === selectedSectionId && entry.courseId === selectedCourseId,
+    ) ?? null;
   const gridResult=delivery
     ? await getAdminAttendanceGrid(context,{
         collegeId,deliveryId:delivery.deliveryId,month,
@@ -139,7 +135,7 @@ export default async function SuperAdminAttendancePage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Attendance"
-        description="Review monthly attendance by class and course, correct recent records, and check attendance percentage."
+        description="Review monthly attendance by class and course, correct recent records, and export the same grid shown on screen."
       />
       <section aria-label="Attendance policy" className="space-y-2 border-b border-border pb-4">
         <h2 className="font-semibold text-foreground">Attendance policy</h2>

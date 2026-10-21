@@ -21,8 +21,21 @@ export default async function RetiredHandoffPage({
     ? params.returnTo
     : typeof params.next === "string" ? params.next : null;
   const target = safeReturnTo(requested);
-  // Discard recursive handoff URLs and any legacy token, even when present.
-  const returnTo = target && !target.startsWith("/auth/handoff") ? target : null;
+  // A retired handoff must never redeem the supplied token, read its
+  // destination from localStorage, or forward arbitrary query parameters
+  // (including nested auth/code/session secrets) to a subsequent URL.
+  const safeTarget = target && !target.startsWith("/auth/handoff") &&
+    !target.startsWith("/auth/") ? new URL(target, "https://lms.invalid") : null;
+  const permitted = new Set(["tab", "view", "page", "month",
+    "deliveryId", "courseId", "sectionId"]);
+  const retained = new URLSearchParams();
+  safeTarget?.searchParams.forEach((value,key)=>{
+    if(permitted.has(key) && value.length <= 120)retained.set(key,value);
+  });
+  const returnTo = safeTarget ? safeTarget.pathname +
+    (retained.size ? "?" + retained.toString() : "") : null;
+  // The canonical sign-in screen shows the explicit retired-link warning
+  // while keeping credentials out of browser history and out of referrers.
   redirect("/login?auth=handoff-retired" +
     (returnTo ? "&returnTo=" + encodeURIComponent(returnTo) : ""));
 }

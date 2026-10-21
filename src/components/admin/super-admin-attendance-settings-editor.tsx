@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation";
@@ -10,6 +10,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  collegeId:string;eligibilityThresholdPercent:number;correctionWindowHours:number;maxCorrectionHours?:number;
 }){
  const router=useRouter();
+ const actionLock=useRef(false);
  const [threshold,setThreshold]=useState(String(eligibilityThresholdPercent));
  const [hours,setHours]=useState(String(correctionWindowHours));
  const [saving,setSaving]=useState(false),[confirming,setConfirming]=useState(false);
@@ -56,9 +57,10 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   finally{setReloading(false);}
  }
  async function save(){
-  if(saving||!selectedField)return;
+  if(saving||actionLock.current||!selectedField)return;
   const valid=selectedField==="correctionWindowHours"?withinRange:thresholdValid;
   if(!valid)return;
+  actionLock.current=true;
   setSaving(true);setMessage("");setFailed(false);
   try{
    const response=await fetch("/api/attendance/admin/policy",{
@@ -73,8 +75,48 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
    setSource("COLLEGE");setConfirming(false);setSelectedField(null);
    setMessage("Saved");router.refresh();
   }catch(error){setMessage(error instanceof Error&&error.message!=="Failed"?error.message:"Attendance setting could not be saved. Try again.");setFailed(true);}
-  finally{setSaving(false);}
+  finally{actionLock.current=false;setSaving(false);}
  }
+ async function resetField(field:"correctionWindowHours"|"eligibilityThresholdPercent"){
+  if(saving||reloading||actionLock.current)return;
+  actionLock.current=true;
+  setSaving(true);setFailed(false);setMessage("");
+  const value=field==="correctionWindowHours"
+    ?DEFAULT_ATTENDANCE_POLICY.correctionWindowHours
+    :DEFAULT_ATTENDANCE_POLICY.eligibilityThresholdPercent;
+  const label=field==="correctionWindowHours"?"Late marking allowed for":"Minimum attendance";
+  try{
+   const response=await fetch("/api/attendance/admin/policy",{
+    method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
+    body:JSON.stringify({collegeId,field,
+      expectedValue:field==="correctionWindowHours"?savedHours:savedThreshold,value}),
+   });
+   if(!response.ok)throw new Error(response.status===409
+     ?"Attendance setting changed elsewhere. Reload this field before resetting."
+     :"Couldn't reset attendance setting. Retry.");
+   const data=await response.json() as {
+     policy:{correctionWindowHours:number;eligibilityThresholdPercent:number};
+     hasCollegeOverride:boolean;
+   };
+   setSavedHours(data.policy.correctionWindowHours);
+   setSavedThreshold(data.policy.eligibilityThresholdPercent);
+   if(field==="correctionWindowHours")setHours(String(data.policy.correctionWindowHours));
+   else setThreshold(String(data.policy.eligibilityThresholdPercent));
+   setSource(data.hasCollegeOverride?"COLLEGE":"DEFAULT");
+   setMessage(label+" reset to default");
+   router.refresh();
+  }catch(error){
+   setFailed(true);
+   setMessage(error instanceof Error?error.message:"Couldn't reset attendance setting. Retry.");
+  }finally{
+   actionLock.current=false;setSaving(false);
+  }
+ }
+ useEffect(()=>{
+  if(!message||failed)return;
+  const timer=window.setTimeout(()=>setMessage(""),4_000);
+  return ()=>window.clearTimeout(timer);
+ },[message,failed]);
  return <section aria-label="Attendance policy" className="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-[var(--lms-heading)]">Attendance policy</h2>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
@@ -86,8 +128,8 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <span className="text-xs font-normal text-muted-foreground">{source==="COLLEGE"?"College policy":source==="DEFAULT"?"Default (24 hours)":"Policy source unavailable"}</span>
     <div className="flex flex-wrap gap-2">
      <Button size="sm" type="button" disabled={saving||reloading||!hoursDirty||!withinRange} onClick={()=>requestSave("correctionWindowHours")}>Save</Button>
-     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void reloadField("correctionWindowHours")}>Reload</Button>
-     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>setHours(String(DEFAULT_ATTENDANCE_POLICY.correctionWindowHours))}>Use default value</Button>
+     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} aria-label="Reload late marking policy" onClick={()=>void reloadField("correctionWindowHours")}>Reload</Button>
+     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void resetField("correctionWindowHours")}>Reset to default</Button>
     </div>
     <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected (hours). The legacy tenant editor allowed up to 8,760 hours; this college allows up to {maxCorrectionHours} hours under its effective attendance policy. A higher value cannot be saved here.</span>
    </div>
@@ -99,14 +141,14 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <span className="text-xs font-normal text-muted-foreground">{source==="COLLEGE"?"College policy":source==="DEFAULT"?"Default (75%)":"Policy source unavailable"}</span>
     <div className="flex flex-wrap gap-2">
      <Button size="sm" type="button" disabled={saving||reloading||!thresholdDirty||!thresholdValid} onClick={()=>requestSave("eligibilityThresholdPercent")}>Save</Button>
-     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void reloadField("eligibilityThresholdPercent")}>Reload</Button>
-     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>setThreshold(String(DEFAULT_ATTENDANCE_POLICY.eligibilityThresholdPercent))}>Use default value</Button>
+     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} aria-label="Reload minimum attendance policy" onClick={()=>void reloadField("eligibilityThresholdPercent")}>Reload</Button>
+     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void resetField("eligibilityThresholdPercent")}>Reset to default</Button>
     </div>
     <span id="minimum-attendance-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </div>
   </div>
   <p className="hidden text-sm text-body print:block leading-[22px]">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
-  <p className="text-xs text-muted-foreground print:hidden">Source: {source==="COLLEGE"?"Custom college override":source==="DEFAULT"?"Effective default (no college override)":"Unavailable; reload to verify"} · Each Save changes only its own setting. Use default value selects 24 hours or 75%, but does not remove the college override. Platform/organization inheritance is not inferred.</p>
+  <p className="text-xs text-muted-foreground print:hidden">Source: {source==="COLLEGE"?"Custom college override":source==="DEFAULT"?"Effective default (no college override)":"Unavailable; reload to verify"} · Each Save changes only its own setting. Reset to default saves 24 hours or 75% for this college. It does not delete the separate college policy row. Platform/organization inheritance is not inferred.</p>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance setting for this college?"
    description="Only the chosen setting changes. The other value stays at its latest saved value." confirmVariant="primary" confirmLabel="Save setting"

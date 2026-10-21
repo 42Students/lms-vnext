@@ -156,7 +156,13 @@ export function LoginForm({
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [recruiterEntry, setRecruiterEntry] = useState(false);
   useEffect(() => {
-    setRecruiterEntry(new URLSearchParams(window.location.search).get("recruiter") === "email");
+    const query = new URLSearchParams(window.location.search);
+    setRecruiterEntry(query.get("recruiter") === "email");
+    if (query.get("auth") === "handoff-retired") {
+      // Legacy handoff target labels are unauthenticated local hints. Never
+      // reuse them after retiring cross-host raw-token handoff.
+      window.localStorage.removeItem("lms_handoff_target_label");
+    }
   }, []);
   const errorSummaryRef=useRef<HTMLDivElement>(null);
   const contactRef=useRef<HTMLInputElement>(null);
