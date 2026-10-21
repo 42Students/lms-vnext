@@ -27,9 +27,19 @@ export async function GET(request:Request){
   const context=await getCurrentRequestContext();
   const records:Awaited<ReturnType<typeof listCollegeClasses>>["items"]=[];
   let total=0;
-  for(let page=1;page<=10;page++){
+  for(let page=1;page<=100;page++){
    const result=await listCollegeClasses(context,{...parsed.data,page});
-   total=result.total;records.push(...result.items);
+   if(page===1){
+    total=result.total;
+    if(total>10000)return Response.json({
+      error:"CLASS_EXPORT_TOO_LARGE",
+      message:"Filter the list to at most 10,000 classes before exporting."
+    },{status:413});
+   }else if(result.total!==total){
+    return Response.json({error:"CLASS_EXPORT_CHANGED",
+      message:"The class directory changed. Refresh and export again."},{status:409});
+   }
+   records.push(...result.items);
    if(page>=result.totalPages)break;
   }
   const rows:(string|number|null)[][]=records.map(row=>[
@@ -37,6 +47,6 @@ export async function GET(request:Request){
    row.capacity,row.activeLearners,row.status,
   ]);
   return csvResponse(["id","name","code","programId","batchId","description",
-   "maxStudents","students","status"],rows,"classes.csv",records.length<total);
+   "maxStudents","students","status"],rows,"classes.csv",false);
  }catch(error){return apiErrorResponse(error);}
 }

@@ -11,7 +11,7 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-5_u008-superadmin-classes.md.md` (new; 36 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-5_u008-superadmin-classes.md.md` (new; 36 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-2_admin-attendance-controller.md.md` (new; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-13_l19-u029-readiness-gate.md.md` (new; 29 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_app_authenticated_admin_electives_page.tsx.md` (edit src/app/(authenticated)/admin/electives/page.tsx; 27 findings; best P2)
