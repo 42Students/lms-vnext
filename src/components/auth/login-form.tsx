@@ -73,13 +73,18 @@ const ERROR_MESSAGES: Record<string, string> = {
     "This account is disabled. Contact your administrator.",
   ACCOUNT_SUSPENDED:
     "This account is suspended. Contact your college administrator.",
+  ACCOUNT_UNAVAILABLE:
+    "This account can't sign in right now. Contact your college administrator.",
+  USER_NOT_FOUND:
+    "This account can't sign in right now. Contact your college administrator.",
   TOO_MANY_REQUESTS:
     "Too many codes were requested. Try again in about 10 minutes.",
   TOO_SOON: "A code was just sent. Wait a few seconds before asking for another.",
   OTP_DELIVERY_FAILED: "We couldn't send the text message just now. Try again, or get the code by email.",
   INCORRECT_OTP: "That code isn't right. Check it and try again.",
-  OTP_EXPIRED: "This code can't be used any more. Ask for a new one to continue.",
-  INVALID_ATTEMPT: "This code can't be used any more. Ask for a new one to continue.",
+  OTP_EXPIRED: "This code has expired. Ask for a new one.",
+  EMAIL_OTP_EXPIRED: "This code has expired. Ask for a new one.",
+  INVALID_ATTEMPT: "This code has expired. Ask for a new one.",
   OTP_ATTEMPTS_EXCEEDED:
     "Too many wrong codes. Ask for a new one.",
   WRONG_TENANT: "This code was asked for on another college's address. Start again here.",
@@ -89,19 +94,25 @@ const ERROR_MESSAGES: Record<string, string> = {
   SECOND_FACTOR_UNAVAILABLE:
     "This administrator account needs both a verified phone number and email address.",
   CHANNEL_DISABLED: "This college does not allow that sign-in method. Select an available method.",
+  LOGIN_METHOD_DISABLED: "This college does not allow that sign-in method. Select an available method.",
+  INVALID_EMAIL: "We couldn't find an account with that email.",
+  MOBILE_AUTH_TIMEOUT: "That took too long. Check your connection and try again.",
+  EMAIL_NOT_FOUND: "No email is saved on this account. Use the code sent to your phone.",
   COMPANY_EMAIL_REQUIRED:
     "Use your work email. Personal email (Gmail, Yahoo, Outlook and similar) can't be used for recruiting.",
   RECRUITER_COLLEGE_ADDRESS:
-    "Recruiters sign in at their college's placement address, for example klu.42lms.com. You'll find it in your invitation email.",
-  INVALID_CHOICE: "The available accounts have changed. Refresh and choose an account again.",
+    "Recruiters sign in at their college's placement address, for example klu.42lms.com. It's in your invitation email.",
+  INVALID_CHOICE: "The list of accounts changed. Choose your account again.",
   AUTH_NOT_CONFIGURED:
     "Sign-in is temporarily unavailable. Please try again shortly.",
 };
 
 const RESTART_ERRORS = new Set([
   "OTP_EXPIRED",
+  "EMAIL_OTP_EXPIRED",
   "INVALID_ATTEMPT",
   "OTP_ATTEMPTS_EXCEEDED",
+  "ACCOUNT_SUSPENDED",
 ]);
 
 /**
@@ -165,7 +176,7 @@ export function LoginForm({
       setAttempt(stored.attempt);
       setChannel(stored.attempt.channel);
       setCooldown(Math.max(0, Math.ceil((stored.nextResendAt - Date.now()) / 1000)));
-      setNotice("Your verification is still in progress. Use the code already sent or request another when available.");
+      setNotice("You have a code from an interrupted sign-in. Use the code already sent, or request another when the resend timer ends.");
     });
     return () => { live = false; };
   }, []);
@@ -186,12 +197,12 @@ export function LoginForm({
     const safeRetry = typeof retryAfterSeconds === "number" &&
       Number.isInteger(retryAfterSeconds) && retryAfterSeconds >= 1 &&
       retryAfterSeconds <= 3600 ? retryAfterSeconds : null;
-    const known = errorCode==="NOT_REGISTERED" && channel==="EMAIL"
+    const known = (errorCode==="NOT_REGISTERED"||errorCode==="INVALID_EMAIL") && channel==="EMAIL"
       ?"We couldn't find an account with that email.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
       ?"We couldn't send the email just now. Try again.":errorCode==="NO_ACCOUNT_FOR_DOMAIN"
       ?(channel==="EMAIL"?"This email isn't registered at this college.":"This number isn't registered at this college.")+
        " If you belong to another college, use the main sign-in page (42lms.com).":
-       errorCode==="CHANNEL_DISABLED"
+       (errorCode==="CHANNEL_DISABLED"||errorCode==="LOGIN_METHOD_DISABLED")
       ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
         "This college signs in with email. Use your email instead."):
        errorCode?ERROR_MESSAGES[errorCode]:undefined;
@@ -248,7 +259,8 @@ export function LoginForm({
       if (!result) return;
       if (!result.ok) { setNotice(null); return fail(result.data.error,result.data.retryAfterSeconds); }
       setErrorCode(null);
-      setNotice(channel === "PHONE" ? "Your code is on its way." : "Your email code is on its way.");
+      setNotice(channel === "PHONE" ? "Your code is on its way." :
+        "We sent a code to " + result.data.maskedContact + ". It expires in 5 minutes.");
       setAttempt(result.data);
       saveLoginAttempt({
         attempt: result.data,
