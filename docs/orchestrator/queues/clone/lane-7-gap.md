@@ -48,7 +48,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/audit.js`
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/delivery.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/index.js`
-- [ ] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js`
+- [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js`
 - [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js`
 - [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js`
 - [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js`
