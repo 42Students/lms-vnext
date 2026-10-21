@@ -45,7 +45,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_college-promotion-confirmation.tsx.md` (edit src/components/academics/college-promotion-confirmation.tsx; 10 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_electives_college-elective-offering-manager.tsx.md` (edit src/components/electives/college-elective-offering-manager.tsx; 10 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-program-mutation-model.ts.md` (edit src/modules/academics/college-program-mutation-model.ts; 9 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_program-service.ts.md` (edit src/modules/academics/program-service.ts; 9 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_program-service.ts.md` (edit src/modules/academics/program-service.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-program-mutation-service.ts.md` (edit src/modules/academics/college-program-mutation-service.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-section-mutation-service.ts.md` (edit src/modules/academics/college-section-mutation-service.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_college-structure-directory.tsx.md` (edit src/components/academics/college-structure-directory.tsx; 9 findings; best P1)
