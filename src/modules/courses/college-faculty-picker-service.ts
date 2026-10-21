@@ -50,7 +50,7 @@ export async function searchCollegeFacultySuggestions(
  requirePermission(context,"courses.manage",{
   collegeId:college.id,organizationId:college.organizationId,
  });
- const pattern="%"+input.q.replace(/[\\%_]/g,value=>"\\\\"+value)+"%";
+ const pattern="%"+input.q.replace(/[\\%_]/g,value=>"\\"+value)+"%";
  const rows=await getDb().select({
   membershipId:collegeMemberships.id,
   displayName:users.displayName,email:users.email,
