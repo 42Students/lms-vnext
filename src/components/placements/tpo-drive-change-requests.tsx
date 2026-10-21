@@ -11,10 +11,14 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
 import {StatusBadge} from "@/components/ui/status-badge";
 type Party="TPO"|"COMPANY";
-type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
+type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
  decisionNote:string|null;messages:Array<{id:string;senderParty:string;body:string;sentAt:string}>};
-const fields=[["DEADLINE","Application deadline"],["PAY","Pay / package"],["ELIGIBILITY","Eligibility"],["LOCATION","Location"],["ROUNDS","Interview rounds"],["OTHER","Other"]] as const;
+const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],
+ ["JOB_TYPE","Job type"],["WORK_MODE","Mode"],["DEADLINE","Application deadline"],
+ ["CTC","CTC"],["STIPEND","Stipend"],["MIN_CGPA","Minimum CGPA"],
+ ["BRANCHES","Branches"],["OTHER","Other"],["ROUNDS","Interview rounds"],
+ ["PAY","Pay / package"],["ELIGIBILITY","Eligibility"]] as const;
 export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
  const router=useRouter();const [mode,setMode]=useState<"SUGGEST"|"ASK">("SUGGEST");
  const [field,setField]=useState<(typeof fields)[number][0]>("DEADLINE");
@@ -64,21 +68,25 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request type
-     <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
+     <Select value={field==="OTHER"?"ASK":mode} disabled={field==="OTHER"}
+      onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
       className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Field
      <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
       className="min-h-11 min-[768px]:min-h-9">
       {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Change or question
+   {field!=="OTHER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    {mode==="ASK"?"What would you like to ask?":"Proposed new value"}
     <Textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
-     className="min-h-11 min-[768px]:min-h-9"/></label>
-   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why is this needed?
-    <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
-     className="min-h-11 min-[768px]:min-h-9"/></label>
-   <Button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
-    onClick={()=>void send({action:"CREATE",field,mode,proposedValue:value.trim(),reason:reason.trim()})}
+     className="min-h-11 min-[768px]:min-h-9"/></label>:null}
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    {field==="OTHER"?"Say what should change":"Why is this needed? (optional)"}
+    <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={field==="OTHER"?3:undefined}
+     maxLength={1000} rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
+   <Button type="button" disabled={busy||(field==="OTHER"?reason.trim().length<3:value.trim().length<2)}
+    onClick={()=>void send({action:"CREATE",field,mode:field==="OTHER"?"ASK":mode,
+     proposedValue:field==="OTHER"?"":value.trim(),reason:reason.trim()})}
     variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
   </Disclosure>
@@ -87,11 +95,13 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
     <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
+      <h3 className="font-semibold">{(item.legacyField??item.field).replaceAll("_"," ")} · {item.mode==="SUGGEST"?"propose":item.mode.toLowerCase()}</h3>
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
      <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px]">{item.proposedValue}</p>
-     <p className="break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
+     <p className="break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">
+     {item.reason==="No reason provided"?"Reason not provided":"Why: "+item.reason}
+     {" · From "}{item.proposerParty==="TPO"?"placement cell":"company"}</p>
      {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
      <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
       {item.messages.length===0?<p className="text-sm text-body leading-[22px]">No discussion yet.</p>:null}
@@ -106,14 +116,15 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         onClick={()=>void send({action:"COMMENT",requestId:item.id,body:(notes[item.id]??"").trim()})}
         variant="secondary">Reply</Button>
        {item.status==="OPEN"&&item.targetParty===party?(
-        ["ACCEPT","ANSWER","DECLINE"] as const).map(action=>
-         <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||(notes[item.id]??"").trim().length<3}
+        (item.mode==="ASK"?["ANSWER","DECLINE"] as const:["ACCEPT","DECLINE"] as const).map(action=>
+         <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
+          disabled={busy||(action!=="ACCEPT"&&(notes[item.id]??"").trim().length<1)}
           onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
            setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
           variant={action==="DECLINE"?"danger":"secondary"}>
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
        {item.status==="OPEN"&&item.proposerParty===party&&item.createdByUserId===userId?
-        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||(notes[item.id]??"").trim().length<3}
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy}
          onClick={()=>setConfirmation({action:"WITHDRAW",requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
          variant="danger">Withdraw</Button>:null}
       </div>

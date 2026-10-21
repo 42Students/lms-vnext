@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,desc,eq,gt,inArray,lt,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
- placementJobs,placementRecruiterCollegeGrants,users} from "@/db/schema";
+ placementJobs,placementJobRoleOptions,placementRecruiterCollegeGrants,users} from "@/db/schema";
 import {placementDriveChangeRequests,placementDriveChangeRequestMessages} from "@/db/schema/placement-drive-change-requests";
 import {placementTpoMessageThreads,placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
@@ -99,7 +99,9 @@ async function announce(tx:Parameters<Parameters<ReturnType<typeof getDb>["trans
  }
 }
 const FIELD_LABELS:Record<string,string>={DEADLINE:"Application deadline",PAY:"Pay / package",
- ELIGIBILITY:"Eligibility",LOCATION:"Location",ROUNDS:"Interview rounds",OTHER:"Other"};
+ ELIGIBILITY:"Eligibility",LOCATION:"Location",ROUNDS:"Interview rounds",OTHER:"Other",
+ ROLE_TITLE:"Role title",DESCRIPTION:"Description",JOB_TYPE:"Job type",WORK_MODE:"Mode",
+ CTC:"CTC",STIPEND:"Stipend",MIN_CGPA:"Minimum CGPA",BRANCHES:"Branches"};
 export async function getDriveChangeRequests(context:RequestContext,jobId:unknown,cursor?:string|null){
  const {job,party}=await scoped(context,jobId);
  const storageReady=true; // registered in 0114
@@ -137,7 +139,8 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
   requests:requests.map(r=>({
    ...r,createdAt:r.createdAt.toISOString(),updatedAt:r.updatedAt.toISOString(),
    decidedAt:r.decidedAt?.toISOString()??null,resolvedAt:r.decidedAt?.toISOString()??null,
-   createdByName:names.get(r.createdByUserId)??null,fieldLabel:FIELD_LABELS[r.field]??"Other",
+   createdByName:names.get(r.createdByUserId)??null,
+   fieldLabel:FIELD_LABELS[r.legacyField??r.field]??FIELD_LABELS[r.field]??"Other",
    kind:r.mode==="SUGGEST"?"PROPOSE":"ASK",
    direction:r.proposerParty==="TPO"?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
    answerValue:r.status==="ANSWERED"?r.decisionNote:null,
@@ -160,15 +163,25 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   if(input.action==="CREATE"){
    const target:Party=party==="TPO"?"COMPANY":"TPO";
-   const mode=input.field==="OTHER"?"ASK":input.mode;
+   const mode=input.field==="OTHER"?"ASK":input.mode==="PROPOSE"?"SUGGEST":input.mode;
+   const canonicalField={
+    ROLE_TITLE:"OTHER",DESCRIPTION:"OTHER",JOB_TYPE:"OTHER",WORK_MODE:"OTHER",
+    CTC:"PAY",STIPEND:"PAY",MIN_CGPA:"ELIGIBILITY",BRANCHES:"ELIGIBILITY",
+   }[input.field]??input.field;
    if(input.field!=="OTHER"){
     const [duplicate]=await tx.select({id:placementDriveChangeRequests.id})
      .from(placementDriveChangeRequests).where(and(
       eq(placementDriveChangeRequests.jobId,job.id),
       eq(placementDriveChangeRequests.proposerParty,party),
-      eq(placementDriveChangeRequests.field,input.field),
-      eq(placementDriveChangeRequests.status,"OPEN"))).limit(1);
+      eq(placementDriveChangeRequests.field,canonicalField),
+      eq(placementDriveChangeRequests.status,"OPEN"),
+      eq(placementDriveChangeRequests.legacyField,input.field))).limit(1);
     if(duplicate)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   }
+   if(mode==="SUGGEST"&&["PAY","CTC","STIPEND"].includes(input.field)){
+    const [{total}]=await tx.select({total:sql<number>`count(*)::integer`})
+     .from(placementJobRoleOptions).where(eq(placementJobRoleOptions.jobId,job.id));
+    if(total>1)throw new Error("This drive has multiple roles. Please ask for the package instead.");
    }
    if(mode==="SUGGEST"&&input.field==="LOCATION"&&
     lockedJob.locations.join(", ").trim().toLocaleLowerCase("en-IN")===
@@ -183,9 +196,18 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    }
    if(target==="COMPANY"&&(await recipients(tx,job,"COMPANY")).length===0)
     throw new PlacementsServiceError("PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE");
+   // The schema requires both pieces of text even for ASK/OTHER. For an
+   // ASK, proposedValue stores the question, NOT a replacement or an applied
+   // value. The optional rationale is never silently promoted to an edit.
+   const questionOrValue=input.field==="OTHER"?(input.reason.trim()||input.proposedValue.trim()):
+     (input.proposedValue.trim()||input.reason.trim());
+   const proposedValue=mode==="SUGGEST"&&["CTC","STIPEND","MIN_CGPA","PAY"].includes(input.field)
+    ?Number(input.proposedValue).toFixed(2):questionOrValue;
+   const reason=input.reason.trim().length>=3?input.reason.trim():"No reason provided";
    const [created]=await tx.insert(placementDriveChangeRequests).values({
     jobId:job.id,createdByUserId:context.user.id,proposerParty:party,targetParty:target,
-    mode,field:input.field,proposedValue:input.proposedValue,reason:input.reason,
+    mode,field:canonicalField,legacyField:input.field,
+    proposedValue,reason,
    }).returning();
    await announce(tx,context,job,target,"PLACEMENTS_DRIVE_CHANGE_REQUEST_CREATED",created.id,
     "New "+input.field.toLowerCase()+" change request for "+job.title+".");
@@ -208,8 +230,9 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   if(request.status!=="OPEN")throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
   if(request.updatedAt.toISOString()!==input.expectedUpdatedAt)
    throw new PlacementsServiceError("PLACEMENT_REQUEST_STALE");
-  if(input.action==="ACCEPT"&&(request.mode!=="SUGGEST"||request.field==="OTHER"))
-   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  if(input.action==="ACCEPT"&&(request.mode!=="SUGGEST"||
+   request.legacyField==="OTHER"||(!request.legacyField&&request.field==="OTHER")))
+   throw new Error("This one asks for a detail: answer it instead");
   if(input.action==="ANSWER"&&request.mode!=="ASK")
    throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   if(input.action==="WITHDRAW"){
@@ -234,7 +257,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   await announce(tx,context,job,party==="TPO"?"COMPANY":"TPO",
    ready?"PLACEMENTS_DRIVE_CHANGES_MADE":"PLACEMENTS_DRIVE_CHANGE_REQUEST_DECIDED",request.id,
    ready?"The company answered your change requests for "+job.title+"; ready to review again.":
-    "Your change request about "+request.field.toLowerCase()+" was "+status.toLowerCase()+". "+input.note);
+    "Your change request about "+(request.legacyField??request.field).toLowerCase()+" was "+status.toLowerCase()+". "+input.note);
   return {id:updated.id,status};
  });
 }
