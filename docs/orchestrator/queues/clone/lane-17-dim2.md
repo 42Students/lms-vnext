@@ -271,18 +271,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/tpo/grid/grid-workspace.tsx`
 - [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx`
-- [ ] `src/components/tpo/tpo-companies-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-custom-job-type-placed.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/tpo/tpo-student-outcome-pill.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-academic-import-preview.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
+- [x] `src/components/tpo/tpo-companies-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-custom-job-type-placed.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/tpo/tpo-student-outcome-pill.tsx`
 - [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
 - [ ] `src/components/tpo/tpo-team-decision-toggle.tsx`
 - [ ] `src/components/tpo/tpo-team-follow-controls.tsx`
