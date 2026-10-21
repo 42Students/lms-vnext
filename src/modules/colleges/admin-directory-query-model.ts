@@ -27,3 +27,15 @@ export function parseAdminDirectorySearchParams(raw:Record<string,string|string[
   const parsed=adminDirectoryQuerySchema.safeParse(params);
   return parsed.success?parsed.data:null;
 }
+
+/** Legacy /search top-N adapter. Older numeric org IDs need a trusted
+ * college/organization crosswalk before they can be applied as UUID scope.
+ * These filters are input validation, never authorization by themselves.
+ */
+export const legacyCollegeDirectorySearchSchema=z.strictObject({
+ query:z.string().trim().max(100).default(""),
+ state:z.string().trim().max(80).optional(),
+ city:z.string().trim().max(100).optional(),
+ orgId:z.union([z.string().uuid(),z.string().regex(/^[0-9]+$/)]).optional(),
+ limit:decimalPageSize.default(15),
+});

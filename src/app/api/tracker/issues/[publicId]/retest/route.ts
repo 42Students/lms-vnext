@@ -30,7 +30,11 @@ export async function POST(
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
     const issue = await retestBugTrackerIssueForAdmin(context, publicId, body);
-    return NextResponse.json({ issue });
+    // The persisted issue is the post-transition result, including its new
+    // status and version. Keep the envelope for vNext clients, but expose an
+    // explicit refresh token rather than a stale pre-action snapshot.
+    return NextResponse.json({ issue, status:issue.status, version:issue.version },
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return bugTrackerApiError(error);
   }
