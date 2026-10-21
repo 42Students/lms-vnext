@@ -141,9 +141,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         {student.participationDecidedAt?" · "+when(student.participationDecidedAt.toString()):""}</p>
       </div>:null}
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-       <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement eligibility</Link>
+       <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Placement eligibility</Link>
        <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
-        className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Discuss with team</Link>
+        className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Discuss with team</Link>
       </div>
     </>:null}
     {tab==="Placement"?<>
@@ -162,9 +162,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
       {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-3">
         <span className="min-w-0 break-words [overflow-wrap:anywhere]">{row.title} · {row.status.replaceAll("_"," ")}</span>
-        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Open drive</Link>
       </div>)}
-      <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Manage placement participation</Link>
+      <Link href={participation} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Manage placement participation</Link>
       <TpoStudentNudgePanel key={student.membershipId} rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
@@ -183,7 +183,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
           onSuccess={()=>void fetchDetail()}/>:null}
       </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
-       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review student&apos;s requests</Link>
+       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Review student&apos;s requests</Link>
     </>:null}
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>
@@ -196,7 +196,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         <p className="break-words [overflow-wrap:anywhere]">{row.body}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.createdAt)}</p>
       </article>)}
-      <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open placement history</Link>
+      <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Open placement history</Link>
     </>:null}
     {detail?.truncated&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p className="text-xs text-warning-text">
       Most recent records shown; open the full Requests or History page for older entries.
@@ -209,7 +209,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        <p className="mt-1 text-xs text-muted-foreground">{when(row.occurredAt)} · {row.eventType}</p>
       </li>)}</ol>
       <p>Open the tenant-authorized historical application, round result, offer and joining timeline.</p>
-      <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View full placement history</Link>
+      <Link href={history} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">View full placement history</Link>
     </>:null}
    </div>
 
