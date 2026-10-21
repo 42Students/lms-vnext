@@ -174,9 +174,7 @@ export async function listSuperAdminFeatureControls(
     // Escape LIKE wildcards: search is a literal substring, not a raw
     // operator pattern. ILIKE supports appropriate trigram indexes when
     // installed; never interpolate untrusted SQL into a raw expression.
-    const needle=query.q.replace(/[\\%_]/g,"\\    const nameMatch=sql`position(lower(${query.q}) in lower(${colleges.name})) > 0`;
-    const codeMatch=sql`position(lower(${query.q}) in lower(${colleges.code})) > 0`;
-    conditions.push(query.searchField==="NAME"?nameMatch:query.searchField==="CODE"?codeMatch:sql`(${nameMatch} or ${codeMatch})`);");
+    const needle=query.q.replace(/[\\%_]/g,(value)=>"\\"+value);
     const pattern="%"+needle+"%";
     const nameMatch=ilike(colleges.name,pattern);
     const codeMatch=ilike(colleges.code,pattern);
