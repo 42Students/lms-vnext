@@ -158,82 +158,32 @@ function eventKindLabel(event: PlacementCalendarEvent) {
   return "Round";
 }
 
-function RecruiterCalendarEventCard({
-  event,
-}: {
-  event: PlacementCalendarEvent;
-}) {
-  const href = eventHref(event);
-
-  return (
-    <article className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
-            {event.companyName}
-          </p>
-          {event.collegeName ? (
-            <p className="mt-1 text-xs text-muted-foreground">College: {event.collegeName}</p>
-          ) : null}
-
-          <h3 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
-            {event.title}
-          </h3>
-
-          {event.jobTitle ? (
-            <p className="mt-1 text-sm text-body">
-              {event.jobTitle}
-            </p>
-          ) : null}
-          {event.note ? <p className="mt-1 text-sm text-body">{event.note}</p> : null}
-
-          <p className="mt-2 text-sm text-body">
-            <time dateTime={event.startsAt.toISOString()}>
-              {eventDateTime(event.startsAt)}{event.endsAt ? ` to ${eventTime(event.endsAt)}` : ""} IST
-            </time>
-          </p>
-
-          {event.venue ? (
-            <p className="mt-1 text-sm text-body">
-              Venue: {event.venue}
-            </p>
-          ) : null}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <StatusBadge
-            tone={
-              event.kind === "APPLICATION_DEADLINE"
-                ? "warning"
-                : "info"
-            }
-          >
-            {eventKindLabel(event)}
-          </StatusBadge>
-
-          <StatusBadge
-            tone={
-              event.status === "COMPLETED"
-                ? "success"
-                : event.status === "PROPOSED" ? "warning" : event.status === "CANCELLED" ? "error" : "neutral"
-            }
-          >
-            {event.status === "PROPOSED" && event.kind === "INTERVIEW_SLOT"
-              ? "Waiting for the cell" : event.status.replaceAll("_", " ")}
-          </StatusBadge>
-        </div>
-      </div>
-
-      {href ? (
-        <Link
-          href={href}
-          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold min-[768px]:min-h-9 text-primary-text hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-        >
-          Open hiring drive →
-        </Link>
-      ) : null}
-    </article>
-  );
+function RecruiterCalendarEventCard({event}:{event:PlacementCalendarEvent}){
+ const href=eventHref(event);
+ const details=<div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+   <div className="min-w-0 flex-1">
+     <div className="flex flex-wrap items-center gap-2 text-xs font-semibold text-primary-text">
+       <time dateTime={event.startsAt.toISOString()}>{eventTime(event.startsAt)} IST</time>
+       <StatusBadge tone={event.kind==="APPLICATION_DEADLINE"?"warning":event.kind==="INTERVIEW_SLOT"?"success":"info"}>{eventKindLabel(event)}</StatusBadge>
+     </div>
+     <h3 className="mt-1 break-words text-sm font-semibold text-[var(--lms-heading)]">{event.title}</h3>
+     <p className="mt-1 break-words text-xs text-muted-foreground">
+       {[event.jobTitle,event.venue,event.note].filter(Boolean).join(" · ")||event.companyName}
+     </p>
+     {event.collegeName?<p className="mt-1 text-xs text-muted-foreground">{event.companyName} · {event.collegeName}</p>:null}
+   </div>
+   <div className="shrink-0 text-right">
+     {event.status==="PROPOSED"&&event.kind==="INTERVIEW_SLOT"?
+       <StatusBadge tone="warning">Waiting for the placement cell</StatusBadge>:
+       <StatusBadge tone={event.status==="COMPLETED"?"success":event.status==="CANCELLED"?"error":"neutral"}>
+        {event.status.replaceAll("_"," ")}
+       </StatusBadge>}
+   </div>
+ </div>;
+ const className="block min-w-0 rounded-[var(--lms-control-radius)] border-b border-[var(--lms-canvas-border)] px-3 py-3 transition-colors hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]";
+ return href?<Link href={href} className={className} aria-label={event.title+" · "+(event.jobTitle??"")+" · Open hiring drive"}>
+  {details}
+ </Link>:<article className={className}>{details}</article>;
 }
 
 /** Match the legacy foldWeek: combine slots only with a round on the same
@@ -283,7 +233,7 @@ export default async function HrCalendarPage({
   const query = await searchParams;
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader title="Recruiter Calendar" />
+      <PageHeader title="Calendar" />
       <ErrorState title="Invalid calendar filters" description="Review the selected date, view and event filters."
         action={<Link href="/hr/calendar" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
     </div>;
@@ -308,7 +258,7 @@ export default async function HrCalendarPage({
   if (requestedCollegeId && (!z.string().uuid().safeParse(requestedCollegeId).success ||
       !grants.some(grant => grant.collegeId === requestedCollegeId))) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Recruiter Calendar"/>
+      <PageHeader title="Calendar"/>
       <ErrorState title="College calendar unavailable"
         description="Select a college where your recruiter access is active."
         retryHref="/hr/calendar" retryLabel="Choose college"/>
@@ -316,7 +266,7 @@ export default async function HrCalendarPage({
   }
   if (grants.length > 1 && !requestedCollegeId) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Recruiter Calendar" description="Choose the college whose drive calendar you want to view."/>
+      <PageHeader title="Calendar" description="Choose the college whose drive calendar you want to view."/>
       <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant => ({
         key: grant.collegeId, label: grant.collegeName,
         href: calendarHref(anchor, view, category, grant.collegeId),
@@ -331,10 +281,10 @@ export default async function HrCalendarPage({
     }, selectedCollegeId ?? undefined);
   } catch {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Recruiter Calendar"/>
+      <PageHeader title="Calendar"/>
       <ErrorState title="Could not load the calendar"
-        description="Your calendar could not be loaded. Your saved rounds and interview dates have not changed."
-        retryHref={calendarHref(anchor, view, category, selectedCollegeId)} retryLabel="Retry calendar"/>
+        description="The calendar is temporarily unavailable. Your saved rounds and interview dates have not changed."
+        retryHref={calendarHref(anchor, view, category, selectedCollegeId)} retryLabel="Retry"/>
     </div>;
   }
 
@@ -365,18 +315,35 @@ export default async function HrCalendarPage({
 
   const heading =
     view === "week"
-      ? `${dateLabel(window.from)} – ${dateLabel(window.to)}`
+      ? `${shortDayLabel(window.from)} to ${dateLabel(window.to)}`
       : monthLabel(anchor);
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        title="Recruiter Calendar"
+        title="Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
-        actions={<Link href="/hr/placements"
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+              <nav aria-label="Calendar period navigation" className={styles.nav}>
+                <Link href={calendarHref(previous,view,category,selectedCollegeId)}
+                  aria-label={view==="week"?"Previous week":"Previous month"}
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M12 8H4m4-4L4 8l4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </Link>
+                <Link href={calendarHref(today,view,category,selectedCollegeId)}
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  Today
+                </Link>
+                <Link href={calendarHref(next,view,category,selectedCollegeId)}
+                  aria-label={view==="week"?"Next week":"Next month"}
+                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
+                  <svg aria-hidden="true" viewBox="0 0 16 16" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.6"><path d="M4 8h8m-4-4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </Link>
+              </nav>
+          <Link href="/hr/placements"
           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 md:w-auto">
           Drives →
-        </Link>}
+        </Link></div>}
       />
       {noCollegeAccess ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-6">
@@ -404,7 +371,7 @@ export default async function HrCalendarPage({
             <h2 className="sr-only">Calendar controls</h2>
             <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-end min-[768px]:justify-between">
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground">{heading}</p>
+                <p data-testid="recruiter.calendar.range" className="text-sm font-semibold text-foreground">{heading}</p>
                 {view !== "week" ? <p className="mt-1 text-sm text-body">
                   {dateLabel(window.from)} – {dateLabel(window.to)} · IST
                 </p> : null}
@@ -422,22 +389,7 @@ export default async function HrCalendarPage({
                 href:calendarHref(anchor,view,option,selectedCollegeId)}))}/>
 
             <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 min-[1100px]:flex-row min-[1100px]:items-start min-[1100px]:justify-between">
-              <nav aria-label="Calendar period navigation" className={styles.nav}>
-                <Link href={calendarHref(previous,view,category,selectedCollegeId)}
-                  aria-label={view==="week"?"Previous week":"Previous month"}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
-                  ← Previous
-                </Link>
-                <Link href={calendarHref(today,view,category,selectedCollegeId)}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
-                  Today
-                </Link>
-                <Link href={calendarHref(next,view,category,selectedCollegeId)}
-                  aria-label={view==="week"?"Next week":"Next month"}
-                  className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
-                  Next →
-                </Link>
-              </nav>
+
               <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start">
                 <details className="min-w-0">
                   <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
@@ -482,10 +434,10 @@ export default async function HrCalendarPage({
           ) : null}
 
           {eventCount === 0 ? (
-            <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
-              description="Rounds, slots and deadlines appear here as soon as they are dated."
-              action={<Link href={calendarHref(today,view,category,selectedCollegeId)}
-                className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text min-[768px]:min-h-9">Today</Link>} />
+            <div data-testid="recruiter.calendar.empty">
+              <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
+                description="Rounds, slots and deadlines appear here as soon as they are dated." />
+            </div>
           ) : null}
 
           {view === "month" && eventCount > 0 ? (
@@ -496,7 +448,7 @@ export default async function HrCalendarPage({
               <div className="space-y-3 min-[1100px]:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles.mobileDay}>
-                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{dateLabel(day.day)}</h3>
+                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{dateLabel(day.day)}{day.day===today?" · Today":""}</h3>
                     <div className={styles.mobileEvents}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
@@ -649,7 +601,7 @@ export default async function HrCalendarPage({
                   className="space-y-3"
                 >
                   <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
-                    {dateLabel(day.day)}
+                    {new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"short",timeZone:"UTC"}).format(new Date(day.day+"T12:00:00Z"))}
                     {day.day === today
                       ? " · Today"
                       : ""}
