@@ -73,7 +73,7 @@ export function CollegeStudentImportHistory(){
         {key:"failed",header:"Failed",cell:row=>row.failed,mobilePriority:"secondary"},
       ]}
       empty={<EmptyState title="No bulk import history" description="No bulk imports have been recorded yet."/>}/>:null}
-    {(rows.length>0||page>1||hasNext)&&!error?<nav aria-label="Import history pages" className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)] text-sm">
+    {(rows.length>0||page>1||hasNext)&&!error?<nav aria-label="Import history pages" className="flex min-w-0 items-center justify-between gap-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)] text-sm flex-wrap">
      <Button variant="secondary" type="button" disabled={page<=1||busy} onClick={()=>void load(page-1)}
       className="min-h-11 flex-1 md:min-h-9 md:flex-none">Previous</Button>
      <span className="shrink-0 py-[var(--lms-space-2)] text-center">Page {page}</span>
