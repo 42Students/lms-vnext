@@ -123,16 +123,23 @@ export async function getLearnerClassSchedule(
           learnerProgramEnrollments.membershipId,
           membership.id,
         ),
-        eq(
-          learnerProgramEnrollments.status,
-          "ACTIVE",
+        // Current sections plus previously attended, ended sections when
+        // reading an explicit historical date window. A learner may see their
+        // own past term after graduation, but never another learner's roster.
+        or(
+          and(
+            eq(learnerProgramEnrollments.status, "ACTIVE"),
+            eq(sectionEnrollments.status, "ACTIVE"),
+            eq(sections.status, "ACTIVE"),
+            inArray(academicPeriods.status, ["PLANNED", "ACTIVE"]),
+          ),
+          ...(visibleWindow ? [and(
+            inArray(sectionEnrollments.status, ["COMPLETED", "WITHDRAWN"]),
+            inArray(academicPeriods.status, ["ACTIVE", "CLOSED"]),
+            sql`${academicPeriods.endDate} >= ${visibleWindow.from.toISOString().slice(0,10)}::date`,
+            sql`${academicPeriods.startDate} <= ${visibleWindow.to.toISOString().slice(0,10)}::date`,
+          )] : []),
         ),
-        eq(sectionEnrollments.status, "ACTIVE"),
-        eq(sections.status, "ACTIVE"),
-        inArray(academicPeriods.status, [
-          "PLANNED",
-          "ACTIVE",
-        ]),
       ),
     )
     .orderBy(
@@ -143,6 +150,9 @@ export async function getLearnerClassSchedule(
   // The course roster is the canonical union of primary-section learners and
   // ACTIVE group-backed elective memberships. Never infer elective access from
   // the host section alone.
+  // Delivery-scoped course options are intentionally narrower than the
+  // full program catalog: primary classes and elective group rosters confer
+  // access, but mere curriculum membership never exposes other classes.
   const accessible = await listLearnerCourseDeliveries(context);
   const deliveryIds = [...new Set(accessible.map(course => course.deliveryId))];
   const coursesList = [...new Map(accessible.map(course => [
@@ -154,11 +164,14 @@ export async function getLearnerClassSchedule(
   if (placements.length === 0 && deliveryIds.length === 0)
     return { sections: [], courses: [], events: [] };
 
-  const primarySectionIds = placements.map(row => row.sectionId);
+  const primarySectionIds = [...new Set(placements.map(row => row.sectionId))];
   const authorizedLink = deliveryIds.length
     ? inArray(sectionScheduleEventCourses.deliveryId, deliveryIds)
     : sql<boolean>`false`;
 
+  // Window end is exclusive UTC (next-day midnight for inclusive date
+  // filters); >= start includes an event ending exactly at the requested
+  // lower boundary. Legacy local date strings must be migrated to IST first.
   const events = await db
     .select({
       id: sectionScheduleEvents.id,
