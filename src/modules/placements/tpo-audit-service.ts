@@ -443,6 +443,49 @@ function auditDateFilters(
     );
   }
 
+  // Original LMS: OR within each filter checklist; AND between checklists.
+  // Every value is a bound SQL parameter, including multi-value URL facets.
+  const aboutText = sql`upper(coalesce(record.event_type, '') || ' ' || coalesce(record.subject_type, ''))`;
+  const about = sql`case
+    when record.kind = 'SHARE' or ${aboutText} like '%SHARE%' or ${aboutText} like '%DOWNLOAD%' then 'SHARE'
+    when ${aboutText} like '%BULK%' then 'BULK'
+    when ${aboutText} like '%SETTINGS%' or ${aboutText} like '%RULES%' or ${aboutText} like '%CONFIG%' then 'SETTINGS'
+    when ${aboutText} like '%RECRUITER%' or ${aboutText} like '%LEAD%' then 'RECRUITER_LEAD'
+    when ${aboutText} like '%STUDENT%' or ${aboutText} like '%LEARNER%' then 'STUDENT'
+    when record.kind in ('OFFER', 'JOINING') or ${aboutText} like '%OFFER%' then 'OFFER'
+    when record.kind in ('ROUND', 'RESULT') or ${aboutText} like '%ROUND%' or ${aboutText} like '%RESULT%' then 'ROUND'
+    when ${aboutText} like '%DRIVE%' or ${aboutText} like '%JOB%' or ${aboutText} like '%APPLICATION%' then 'DRIVE'
+    else 'GENERAL' end`;
+  if (query.f_about.length) {
+    conditions.push(sql`${about} in (${sql.join(query.f_about.map((value) => sql`${value.toUpperCase()}`), sql`, `)})`);
+  }
+  if (query.f_event.length) {
+    const actions = query.f_event.map((value) => sql`(
+      lower(record.event_type) = ${value.toLowerCase()}
+      or lower(replace(replace(record.event_type, '_', ' '), '.', ' ')) = ${value.toLowerCase()}
+      or lower(record.detail) = ${value.toLowerCase()}
+    )`);
+    conditions.push(sql`(${sql.join(actions, sql` or `)})`);
+  }
+  if (query.f_who.length) {
+    const actors = query.f_who.map((value) => sql`lower(coalesce(
+      nullif(trim(actor.display_name), ''),
+      case when record.actor_user_id is null then 'System'
+        else 'Account no longer available' end)) = ${value.toLowerCase()}`);
+    conditions.push(sql`(${sql.join(actors, sql` or `)})`);
+  }
+  if (query.f_when.length) {
+    const localTime = sql`(record.occurred_at at time zone 'Asia/Kolkata')`;
+    const localNow = sql`(now() at time zone 'Asia/Kolkata')`;
+    const when: SQL[] = [];
+    for (const value of query.f_when) {
+      if (value === 'TODAY') when.push(sql`${localTime} >= date_trunc('day', ${localNow})`);
+      else if (value === 'WEEK') when.push(sql`${localTime} > ${localNow} - interval '7 days'`);
+      else if (value === 'MONTH') when.push(sql`${localTime} > ${localNow} - interval '30 days'`);
+      else if (value === 'OLDER') when.push(sql`${localTime} <= ${localNow} - interval '30 days'`);
+    }
+    conditions.push(when.length ? sql`(${sql.join(when, sql` or `)})` : sql`false`);
+  }
   if (query.who) conditions.push(sql`position(lower(${query.who}) in lower(coalesce(actor.display_name,''))) > 0`);
   if (query.q) {
     conditions.push(sql`
