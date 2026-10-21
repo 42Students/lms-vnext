@@ -1,8 +1,10 @@
 import {
   and,
   asc,
+  desc,
   eq,
   inArray,
+  isNotNull,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -17,6 +19,7 @@ import {
   placementJobs,
   placementCollegeRules,
   placementJobEligibilityPolicies,
+  placementOffers,
   placementBatchRegistrations,
 } from "@/db/schema";
 import {
@@ -216,6 +219,23 @@ export async function listLearnerPlacementJobs(
       policyByJobId.get(row.job.id)?.allowedSectionIds ?? [],activeSectionIds,
     ),
   );
+  // Read released offers only for the learner's already scoped application IDs.
+  // Draft/unreleased recruiter decisions must never appear in learner status.
+  const applicationIds=[...new Set(targetedRows.map(row=>row.application?.id)
+    .filter((id):id is string=>typeof id==="string"))];
+  const releasedOffers=applicationIds.length?await getDb().select({
+    applicationId:placementOffers.applicationId,status:placementOffers.status,
+  }).from(placementOffers).where(and(
+    inArray(placementOffers.applicationId,applicationIds),
+    isNotNull(placementOffers.releasedAt),
+    eq(placementOffers.kind,"OFFER"),
+  )).orderBy(desc(placementOffers.version),desc(placementOffers.id)):[];
+  const latestOfferStatus=new Map<string,string>();
+  for(const offer of releasedOffers){
+    if(!latestOfferStatus.has(offer.applicationId)){
+      latestOfferStatus.set(offer.applicationId,offer.status);
+    }
+  }
 
   // Apply the same current-college held-offer limit that the write path
   // checks again under locks. This controls only the affordance, not access.
@@ -292,6 +312,13 @@ export async function listLearnerPlacementJobs(
         roleOption: row.roleOption,
         company: row.company,
         application,
+        offerStatus:application?latestOfferStatus.get(application.id)??null:null,
+        // Compatibility display derived from application + latest released offer.
+        // These labels do not change vNext application or joining lifecycle facts.
+        legacyDisplayStatus:!application?null:application.status==="WITHDRAWN"?"WITHDRAWN":
+          latestOfferStatus.get(application.id)==="ACCEPTED"?"HIRED":
+          latestOfferStatus.get(application.id)==="ISSUED"?"OFFERED":
+          latestOfferStatus.get(application.id)==="DECLINED"?"REJECTED":"APPLIED",
         eligibility,
         deadlinePassed,
         canApply: canShowLearnerSelfApply(applyContext),
