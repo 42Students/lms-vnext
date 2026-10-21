@@ -2,12 +2,15 @@ import {
   and,
   asc,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { z } from "zod";
 import {
   collegeMemberships,
   sectionFacultyAssignments,
+  sections,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -204,4 +207,111 @@ export async function endSectionFacultyAssignment(
   }
 
   return updated;
+}
+
+
+/**
+ * Legacy bulk faculty mapping is atomic: no write happens until every section
+ * and every faculty membership has passed the same college and role checks.
+ * A section ADVISOR/COORDINATOR assignment never grants course-delivery access;
+ * course and elective permissions must be checked against explicit teaching
+ * grants, not inferred from this roster.
+ */
+export async function bulkCreateSectionFacultyAssignments(
+  context: RequestContext,
+  rawInput: unknown,
+) {
+  const input = z.array(createSectionFacultyAssignmentInputSchema)
+    .min(1).max(200).parse(rawInput);
+  const keys = new Set<string>();
+  for (const candidate of input) {
+    const key = `${candidate.sectionId}:${candidate.membershipId}:${candidate.role}`;
+    if (keys.has(key)) {
+      throw new AcademicsServiceError("FACULTY_ASSIGNMENT_CONFLICT");
+    }
+    keys.add(key);
+  }
+
+  // Prevalidate the entire operation before opening a write transaction.
+  const checked = await Promise.all(input.map(async candidate => {
+    const [section, member] = await Promise.all([
+      loadSectionScope(candidate.sectionId),
+      loadAcademicsMembership(candidate.membershipId),
+    ]);
+    requirePermission(context, "academics.manage", {
+      organizationId: section.organizationId,
+      collegeId: section.collegeId,
+    });
+    requireAcademicRole(member, "FACULTY");
+    if (section.status !== "ACTIVE")
+      throw new AcademicsServiceError("SECTION_NOT_FOUND");
+    if (member.collegeId !== section.collegeId)
+      throw new AcademicsServiceError("MEMBERSHIP_COLLEGE_MISMATCH");
+    return section.collegeId;
+  }));
+  if (new Set(checked).size !== 1)
+    throw new AcademicsServiceError("MEMBERSHIP_COLLEGE_MISMATCH");
+
+  try {
+    return await getDb().transaction(async tx =>
+      tx.insert(sectionFacultyAssignments).values(input).returning()
+    );
+  } catch (error) {
+    throw mapAssignmentConstraint(error);
+  }
+}
+
+/**
+ * Reversible term-scoped faculty assignment lifecycle for batch promotion.
+ * Only this transition's deactivated rows can be reactivated; manually ended
+ * or legacy-deleted assignments are not silently restored.
+ */
+export async function transitionCohortFacultyAssignmentTerm(
+  context: RequestContext,
+  rawInput: unknown,
+) {
+  const input = z.object({
+    cohortId: z.string().uuid(),
+    academicPeriodId: z.string().uuid(),
+    action: z.enum(["DEACTIVATE", "REACTIVATE"]),
+  }).strict().parse(rawInput);
+  const [section] = await getDb().select({ id: sections.id })
+    .from(sections)
+    .where(and(eq(sections.cohortId, input.cohortId),
+      eq(sections.academicPeriodId, input.academicPeriodId)))
+    .limit(1);
+  if (!section) throw new AcademicsServiceError("SECTION_NOT_FOUND");
+  const scope = await loadSectionScope(section.id);
+  requirePermission(context, "academics.manage", {
+    organizationId: scope.organizationId,
+    collegeId: scope.collegeId,
+  });
+
+  try {
+    return await getDb().transaction(async tx => {
+      const assignments = await tx.select({
+        id: sectionFacultyAssignments.id,
+        endedAt: sectionFacultyAssignments.endedAt,
+        legacyDeactivatedAt: sectionFacultyAssignments.legacyDeactivatedAt,
+        legacyWasDeleted: sectionFacultyAssignments.legacyWasDeleted,
+      }).from(sectionFacultyAssignments)
+        .innerJoin(sections, eq(sections.id, sectionFacultyAssignments.sectionId))
+        .where(and(eq(sections.cohortId, input.cohortId),
+          eq(sections.academicPeriodId, input.academicPeriodId)))
+        .for("update");
+      const affected = assignments.filter(row => input.action === "DEACTIVATE"
+        ? row.endedAt === null
+        : row.endedAt !== null && row.legacyDeactivatedAt !== null &&
+          row.legacyWasDeleted !== true);
+      if (affected.length === 0) return { changed: 0 };
+      const now = new Date();
+      await tx.update(sectionFacultyAssignments).set(input.action === "DEACTIVATE"
+        ? { endedAt: now, legacyDeactivatedAt: now, updatedAt: now }
+        : { endedAt: null, legacyDeactivatedAt: null, updatedAt: now })
+        .where(inArray(sectionFacultyAssignments.id, affected.map(row => row.id)));
+      return { changed: affected.length };
+    });
+  } catch (error) {
+    throw mapAssignmentConstraint(error);
+  }
 }
