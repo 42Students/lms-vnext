@@ -135,7 +135,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       <Banner tone="info">
         <div className="space-y-2">
           <strong>How this page works</strong>
-          <p>Switch optional Projects and Placements modules on or off for part of the college.
+          <p>Switch Projects and Electives access at the relevant academic scope. Placements is enabled or disabled only at college scope or above.
             Courses &amp; Content is always available; individual course permissions are managed in Courses.</p>
           <p><strong>Inherit</strong> follows the setting above it. An explicit <strong>On</strong> or <strong>Off</strong> is shown in bold; narrower settings win unless a higher level is locked.</p>
           <p>Student counts show the population under each scope, not the number whose effective access will change. To change one student, search above; for many, use the bulk action on the Students page.</p>
@@ -307,7 +307,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section id="academic-module-rules" aria-label="Academic module rules" className="scroll-mt-24 border-t border-border pt-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Department, Program, Batch and Class access</h2>
-        <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Placements eligibility is decided by the placement cell; that control is read-only here.</p>
+        <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Placements eligibility is decided by the placement cell in TPO Batches; college-or-broader module access is shown above. Lower-level Placements rules are ignored by the resolver.</p>
         {academicRead.ok ? <>
           <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicRead.value}/>
           {academicRead.value.length>0?<div className="min-w-0 overflow-x-auto">
@@ -354,7 +354,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             cohorts, sections and memberships belonging
             to this college. These are configured values,
             not independently evaluated learner access.
-            Placements follows the active learner academic scope, higher-level locks and individual policy.
+            Placements module access follows college-or-broader rules, not these stored descendant overrides. Individual placement eligibility is managed by the placement cell in the TPO Batches workspace, separately from module access.
           </p>
         </div>
 
