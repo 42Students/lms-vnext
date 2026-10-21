@@ -1,5 +1,4 @@
 import "server-only";
-import {z} from "zod";
 import {and,eq,exists,inArray,isNull,sql} from "drizzle-orm";
 import {replaceCollegeProjectRosterSchema} from "./college-project-roster-model";
 import {getDb} from "@/db/client";
@@ -14,14 +13,7 @@ import type {RequestContext} from "@/modules/identity/context";
 
 /** COL-projects-15: one all-or-nothing learner-roster replacement. Class teams stay managed by their own workflow. */
 export async function replaceCollegeProjectLearners(context:RequestContext,projectId:string,raw:unknown){
- const input=replaceCollegeProjectRosterSchema.extend({
-  learnerMembershipIds:z.array(z.string().uuid()).max(500)
-   .refine(values=>new Set(values).size===values.length,"Each learner must be selected once."),
-  // Additive by default: replacing the roster requires an explicit choice,
-  // and removing active learners needs a separate confirmation.
-  mode:z.enum(["ADD","REPLACE"]).default("ADD"),
-  confirmRemoval:z.boolean().optional(),
- }).parse(raw);
+ const input=replaceCollegeProjectRosterSchema.parse(raw);
  const scope=await requireProjectManageAccess(context,projectId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({
