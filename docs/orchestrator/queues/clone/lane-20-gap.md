@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/500.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/api/hello.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/enterprises.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/home.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/index.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/home.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/index.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/privacy-policy.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/universities.js`
 - [ ] U009 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/R2StorageUtils.java`
