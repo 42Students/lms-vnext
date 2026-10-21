@@ -1,6 +1,7 @@
 import {
   and,
   asc,
+  desc,
   eq,
   isNull,
   ne,
@@ -11,7 +12,10 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   cohorts,
+  cohortProgressionState,
   departments,
+  learnerProgramEnrollments,
+  programTerms,
   programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -330,33 +334,41 @@ export async function updateProgram(
       : undefined;
 
   try {
-    const [updated] = await db
-      .update(programs)
-      .set({
+    return await db.transaction(async tx => {
+      // Serialize edits to the parent before checking any affected term or
+      // cohort progression. A concurrent shorter duration cannot bypass the
+      // same program-row lock in a second administrative request.
+      const [current] = await tx.select({
+        id: programs.id, durationTerms: programs.durationTerms,
+      }).from(programs).where(and(
+        eq(programs.id, programId), eq(programs.status, "ACTIVE"),
+      )).for("update").limit(1);
+      if (!current) throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+      if (durationTerms !== undefined && durationTerms < current.durationTerms) {
+        const [[term], [progression]] = await Promise.all([
+          tx.select({number:programTerms.termNumber})
+            .from(programTerms).where(eq(programTerms.programId,programId))
+            .orderBy(desc(programTerms.termNumber)).limit(1),
+          tx.select({number:cohortProgressionState.currentTermNumber})
+            .from(cohortProgressionState)
+            .innerJoin(cohorts,eq(cohorts.id,cohortProgressionState.cohortId))
+            .where(eq(cohorts.programId,programId))
+            .orderBy(desc(cohortProgressionState.currentTermNumber)).limit(1),
+        ]);
+        if (durationTerms < Math.max(term?.number ?? 0,progression?.number ?? 0))
+          throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
+      }
+      const [updated] = await tx.update(programs).set({
         ...scalarInput,
-        ...(departmentId !== undefined
-          ? { departmentId }
-          : {}),
-        ...(durationTerms !== undefined
-          ? { durationTerms }
-          : {}),
+        ...(departmentId !== undefined ? { departmentId } : {}),
+        ...(durationTerms !== undefined ? { durationTerms } : {}),
         updatedAt: new Date(),
-      })
-      .where(
-        and(
-          eq(programs.id, programId),
-          eq(programs.status, "ACTIVE"),
-        ),
-      )
-      .returning();
-
-    if (!updated) {
-      throw new AcademicsServiceError(
-        "PROGRAM_NOT_FOUND",
-      );
-    }
-
-    return withLegacyProgramDuration(updated);
+      }).where(and(
+        eq(programs.id, programId), eq(programs.status, "ACTIVE"),
+      )).returning();
+      if (!updated) throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+      return withLegacyProgramDuration(updated);
+    });
   } catch (error) {
     if (error instanceof AcademicsServiceError) {
       throw error;
@@ -380,42 +392,42 @@ export async function archiveProgram(
   });
 
   const db = getDb();
-  const [dependent] = await db
-    .select({ id: cohorts.id })
-    .from(cohorts)
-    .where(
-      and(
-        eq(cohorts.programId, programId),
-        ne(cohorts.status, "ARCHIVED"),
-      ),
-    )
-    .limit(1);
-
-  if (dependent) {
-    throw new AcademicsServiceError(
-      "PROGRAM_HAS_COHORTS",
-    );
-  }
-
-  const [archived] = await db
-    .update(programs)
-    .set({
-      status: "ARCHIVED",
-      updatedAt: new Date(),
-    })
-    .where(
-      and(
-        eq(programs.id, programId),
-        eq(programs.status, "ACTIVE"),
-      ),
-    )
-    .returning();
-
-  if (!archived) {
-    throw new AcademicsServiceError(
-      "PROGRAM_NOT_FOUND",
-    );
-  }
-
-  return archived;
+  return db.transaction(async tx => {
+    // Physical delete is intentionally retired: historical enrollments and
+    // term references survive an archive. Serialize against live mutations,
+    // and fail closed for ALL linked records, including archived cohorts.
+    const [current] = await tx.select({ id: programs.id })
+      .from(programs).where(and(
+        eq(programs.id,programId), eq(programs.status,"ACTIVE"),
+      )).for("update").limit(1);
+    if (!current) throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+    const [[cohort],[term],[enrollment]] = await Promise.all([
+      tx.select({id:cohorts.id}).from(cohorts)
+        .where(eq(cohorts.programId,programId)).limit(1),
+      tx.select({id:programTerms.id}).from(programTerms)
+        .where(eq(programTerms.programId,programId)).limit(1),
+      tx.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+        .where(eq(learnerProgramEnrollments.programId,programId)).limit(1),
+    ]);
+    // Preserve the existing typed legacy error code. A dedicated dependency
+    // enum is an API-contract change and belongs with the route owner.
+    if (cohort || term || enrollment)
+      throw new AcademicsServiceError("PROGRAM_HAS_COHORTS");
+    const [archived] = await tx.update(programs)
+      .set({ status:"ARCHIVED",updatedAt:new Date() })
+      .where(and(eq(programs.id,programId),eq(programs.status,"ACTIVE")))
+      .returning();
+    if (!archived) throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_ARCHIVED,
+      collegeId:scope.collegeId,
+      organizationId:scope.organizationId,
+      subjectType:"program",
+      subjectId:archived.id,
+      subjectLabel:archived.name,
+      summary:"Program archived",
+      metadata:{departmentId:archived.departmentId,code:archived.code},
+    });
+    return archived;
+  });
 }
