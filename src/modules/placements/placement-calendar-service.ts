@@ -630,7 +630,7 @@ export async function listPlacementCalendarEvents(
          status:row.status,timezone:null,venue:null,note:null,completedAt:null,
         }]:[];
       const additional:PlacementCalendarEvent[]=imported.filter(item=>
-        !firstMatching||item.index!==firstMatching.index).filter(item=>
+        !standard.length||!firstMatching||item.index!==firstMatching.index).filter(item=>
          !input.kind||input.kind==="JOB_IMPORTANT_DATE"||
          (input.kind==="APPLICATION_DEADLINE"&&item.applicationDeadline)
         ).map(item=>({

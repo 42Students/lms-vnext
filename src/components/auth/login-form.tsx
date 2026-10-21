@@ -65,8 +65,7 @@ function loadLoginAttempt(): SavedAttempt | null {
 
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_CONTACT: "Enter a valid phone number or email address.",
-  NOT_REGISTERED:
-    "This number isn't registered. Check it, or sign in with your email.",
+  NOT_REGISTERED: "Sign-in is not available for these details. Check your contact and try again.",
   NO_ACCOUNT_FOR_DOMAIN:
     "No account was found for this contact on this college's site.",
   ACCOUNT_DISABLED:
@@ -95,7 +94,7 @@ const ERROR_MESSAGES: Record<string, string> = {
     "This administrator account needs both a verified phone number and email address.",
   CHANNEL_DISABLED: "This college does not allow that sign-in method. Select an available method.",
   LOGIN_METHOD_DISABLED: "This college does not allow that sign-in method. Select an available method.",
-  INVALID_EMAIL: "We couldn't find an account with that email.",
+  INVALID_EMAIL: "Sign-in is not available for these details. Check your contact and try again.",
   MOBILE_AUTH_TIMEOUT: "That took too long. Check your connection and try again.",
   EMAIL_NOT_FOUND: "No email is saved on this account. Use the code sent to your phone.",
   COMPANY_EMAIL_REQUIRED:
@@ -165,6 +164,8 @@ export function LoginForm({
   const [notice, setNotice] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
   const [emailCooldown, setEmailCooldown] = useState(0);
+  const [emailResends,setEmailResends]=useState(0);
+  const codeRef=useRef<HTMLInputElement>(null);
 
   useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
   useEffect(() => {
@@ -197,11 +198,10 @@ export function LoginForm({
     const safeRetry = typeof retryAfterSeconds === "number" &&
       Number.isInteger(retryAfterSeconds) && retryAfterSeconds >= 1 &&
       retryAfterSeconds <= 3600 ? retryAfterSeconds : null;
-    const known = (errorCode==="NOT_REGISTERED"||errorCode==="INVALID_EMAIL") && channel==="EMAIL"
-      ?"We couldn't find an account with that email.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
+    const known = (errorCode==="NOT_REGISTERED"||errorCode==="INVALID_EMAIL")
+      ?"Sign-in is not available for these details. Check your contact and try again.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
       ?"We couldn't send the email just now. Try again.":errorCode==="NO_ACCOUNT_FOR_DOMAIN"
-      ?(channel==="EMAIL"?"This email isn't registered at this college.":"This number isn't registered at this college.")+
-       " If you belong to another college, use the main sign-in page (42lms.com).":
+      ?"These details cannot sign in at this college. Check the address or use the main sign-in page (42lms.com).":
        (errorCode==="CHANNEL_DISABLED"||errorCode==="LOGIN_METHOD_DISABLED")
       ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
         "This college signs in with email. Use your email instead."):
@@ -269,6 +269,7 @@ export function LoginForm({
       });
       setCode("");
       setSecondCode("");
+      setEmailResends(0);
       setCooldown(RESEND_SECONDS);
     } catch {
       setError("That took too long. Check your connection and try again.");
@@ -281,6 +282,9 @@ export function LoginForm({
   async function verify(event: React.FormEvent) {
     event.preventDefault();
     if (busy || !attempt) return;
+    if(!code.trim()){
+      setError("OTP is required");codeRef.current?.focus();return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -308,7 +312,7 @@ export function LoginForm({
   }
 
   async function sendEmailCode() {
-    if (busy || !attempt) return;
+    if (busy || !attempt||emailResends>=5) return;
     setBusy(true);
     setError(null);
     setNotice(null);
@@ -321,6 +325,7 @@ export function LoginForm({
       if (!result.ok) return fail(result.data.error,result.data.retryAfterSeconds);
       setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 5 minutes.`);
       setEmailCooldown(EMAIL_RESEND_SECONDS);
+      setEmailResends(count=>Math.min(5,count+1));
       setCooldown(RESEND_SECONDS);
       if (attempt) saveLoginAttempt({
         attempt,
@@ -503,6 +508,7 @@ export function LoginForm({
             </span>
             <Input
               name="code"
+              ref={codeRef}
               value={code}
               onChange={(event) =>
                 setCode(event.target.value.replace(/\D/g, "").slice(0, 6))
@@ -567,10 +573,10 @@ export function LoginForm({
               <Button variant="ghost"
                 type="button"
                 onClick={() => void sendEmailCode()}
-                disabled={busy || emailCooldown > 0}
+                disabled={busy || emailCooldown > 0 || emailResends>=5}
                 className="inline-flex min-h-11 items-center font-medium text-primary-text underline-offset-2 hover:underline disabled:text-muted-foreground disabled:no-underline md:min-h-9"
               >
-                {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
+                {emailResends>=5?"Email resend limit reached":emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
               </Button>
             ) : null}
           </div>
