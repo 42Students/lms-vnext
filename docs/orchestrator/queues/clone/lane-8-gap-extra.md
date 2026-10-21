@@ -22,5 +22,5 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L17-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoPlacementsPageController.java`
 - [x] L18-U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/NotificationService.java`
 - [x] L18-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoOfferController.java`
-- [ ] L19-U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LectureHall.java`
-- [ ] L19-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js`
+- [x] L19-U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LectureHall.java`
+- [x] L19-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/meetings.js`
