@@ -309,3 +309,36 @@ export async function skillSynonymExists(context: RequestContext, raw: unknown) 
     .where(sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`).limit(1);
   return Boolean(record);
 }
+
+/** Explicit v1/v2 usage events stay independent. The current user must have
+ * catalog access; HTTP callers separately enforce same-origin mutations.
+ * Synchronous awaited SQL writes avoid silently dropping events on worker exit.
+ * No user identifier is stored in either legacy counter. */
+export async function recordSkillSelection(
+  context: RequestContext,
+  raw: {name:string;source:"v1"|"v2";skillId?:string},
+) {
+  requireCatalogReader(context);
+  const data=z.object({
+    name:z.string().trim().min(1).max(200),
+    source:z.enum(["v1","v2"]),
+    skillId:z.string().uuid().optional(),
+  }).strict().parse(raw);
+  const name=data.name.toLocaleLowerCase("en-US");
+  if(data.source==="v1"){
+    if(!data.skillId)throw new Error("CANONICAL_SKILL_REQUIRED");
+    const updated=await getDb().update(db10Skills).set({
+      usageCount:sql`${db10Skills.usageCount}+1`,
+    }).where(and(eq(db10Skills.id,data.skillId),eq(db10Skills.isActive,true)))
+      .returning({id:db10Skills.id});
+    if(!updated.length)throw new Error("SKILL_NOT_FOUND");
+  }else{
+    await getDb().insert(db10SkillUsage).values({
+      skillName:name,usageCount:1,
+    }).onConflictDoUpdate({
+      target:db10SkillUsage.skillName,
+      set:{usageCount:sql`${db10SkillUsage.usageCount}+1`,lastUsed:sql`now()`},
+    });
+  }
+  invalidateSkillCatalogSearchCache();
+}
