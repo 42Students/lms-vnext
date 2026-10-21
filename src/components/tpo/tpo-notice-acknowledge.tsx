@@ -5,6 +5,9 @@ import {useState} from "react";
 export function TpoNoticeAcknowledge({id}:{id:string}){
  const [read,setRead]=useState(false),[busy,setBusy]=useState(false);
  const [error,setError]=useState("");
+ // Reading is silent in the old LMS; successful acknowledgement disappears
+ // instead of becoming a new "Read confirmed" success button.
+ if(read)return null;
  return <div className="mt-3 space-y-1">
   <Button variant="secondary" type="button" disabled={read||busy}
    className="min-h-11 min-[768px]:min-h-9 text-sm"
@@ -16,10 +19,10 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
      });
      if(!response.ok)throw new Error("Read status couldn't be saved");
      const result=await response.json() as {read:boolean};
-     if(result.read)setRead(true);else setError("No delivered notification is available to acknowledge yet.");
+     if(result.read)setRead(true);else setError("This notice is not available to mark read yet.");
     }catch(e){setError(e instanceof Error?e.message:"Read status couldn't be saved");}
     finally{setBusy(false);}
-   }}>{busy?"Saving…":read?"Read confirmed":"Mark notice read"}</Button>
+   }}>{busy?"Saving…":"Mark notice read"}</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
  </div>;
 }
