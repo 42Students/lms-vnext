@@ -47,13 +47,13 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-8.md: surface | regres
 - [x] `src/components/groups/college-study-member-actions.tsx`
 - [x] `src/components/admin/super-admin-legacy-group-tabs.tsx`
 - [x] `src/components/college/college-legacy-group-tabs.tsx`
-- [ ] `src/components/placements/college-drive-legacy-nav.tsx`
-- [ ] `src/components/public/browser-support-notice.tsx`
-- [ ] `src/components/public/public-page-loading.tsx`
-- [ ] `src/components/ui/button-group.tsx`
-- [ ] `src/components/ui/input-group.tsx`
-- [ ] `src/components/ui/password-input.tsx`
-- [ ] `src/app/(authenticated)/teach/error.tsx`
+- [x] `src/components/placements/college-drive-legacy-nav.tsx`
+- [x] `src/components/public/browser-support-notice.tsx`
+- [x] `src/components/public/public-page-loading.tsx`
+- [x] `src/components/ui/button-group.tsx`
+- [x] `src/components/ui/input-group.tsx`
+- [x] `src/components/ui/password-input.tsx`
+- [x] `src/app/(authenticated)/teach/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/loading.tsx`
 - [ ] `src/app/(authenticated)/error.tsx`
 - [ ] `src/app/(authenticated)/loading.tsx`
