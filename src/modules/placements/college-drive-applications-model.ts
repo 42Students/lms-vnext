@@ -10,6 +10,9 @@ export const driveApplicationsQuerySchema = z.object({
   cohortId: z.string().uuid().optional(),
   appliedFrom: z.iso.date().optional(),
   appliedTo: z.iso.date().optional(),
+  minScore:z.coerce.number().int().min(0).max(100).optional(),
+  maxScore:z.coerce.number().int().min(0).max(100).optional(),
+  skills:z.string().trim().max(100).default(""),
   screening: z.enum(["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
@@ -20,7 +23,7 @@ export const DRIVE_APPLICATION_BULK_CAP = 3000;
 
 export function driveApplicationsParams(raw: Record<string,string|string[]|undefined>) {
   const input: Record<string,string> = {};
-  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","page"] as const) {
+  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","minScore","maxScore","skills","page"] as const) {
     const value = raw[key];
     // The legacy page tolerates malformed optional filters, but identifiers
     // must fail closed rather than silently broadening an academic scope.
@@ -42,7 +45,8 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
   if (input.page && !/^[1-9]\\d{0,3}$/.test(input.page)) delete input.page;
   const result = driveApplicationsQuerySchema.safeParse(input);
   if(!result.success || (result.data.appliedFrom && result.data.appliedTo &&
-     result.data.appliedFrom>result.data.appliedTo)) return null;
+     result.data.appliedFrom>result.data.appliedTo) ||
+    (result.data.minScore!==undefined&&result.data.maxScore!==undefined&&result.data.minScore>result.data.maxScore))return null;
   return result.data;
 }
 export function driveApplicationsHref(jobId: string, query: DriveApplicationsQuery, exportCsv = false) {
@@ -56,6 +60,9 @@ export function driveApplicationsHref(jobId: string, query: DriveApplicationsQue
   if (query.cohortId) params.set("cohortId",query.cohortId);
   if (query.appliedFrom) params.set("appliedFrom",query.appliedFrom);
   if (query.appliedTo) params.set("appliedTo",query.appliedTo);
+  if(query.minScore!==undefined)params.set("minScore",String(query.minScore));
+  if(query.maxScore!==undefined)params.set("maxScore",String(query.maxScore));
+  if(query.skills)params.set("skills",query.skills);
   if (query.screening !== "ALL") params.set("screening",query.screening);
   if (!exportCsv && query.page > 1) params.set("page",String(query.page));
   const suffix = exportCsv ? "/export" : "";

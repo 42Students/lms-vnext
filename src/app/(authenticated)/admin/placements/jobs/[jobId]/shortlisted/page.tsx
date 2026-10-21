@@ -11,5 +11,5 @@ export default async function SuperAdminShortlistedApplicationsPage({params}:{
  const context=await getCurrentRequestContext();
  requireSuperAdminSelectedCollege(context,"placements.manage");
  const {jobId}=await params;
- redirect("/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications?stage=ASSESSMENT");
+ redirect("/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications?shortlisted=true&stage=ASSESSMENT");
 }
