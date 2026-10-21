@@ -90,12 +90,23 @@ export const collegeBranding = pgTable(
 export function normalizeLegacyCollegeBranding(input: {
   legacyCollegeId: number; legacyBrandingId: number | null;
   isDeleted: boolean | null; logoUrl: string | null;
+  /** Historical preference, not the active college_signin_policies row. */
+  legacyLoginMethods?: string | null;
 }, mappedColleges: ReadonlyMap<number,string>) {
   const collegeId = mappedColleges.get(input.legacyCollegeId);
   if (!collegeId) return null;
   // Source URLs cannot be served from this schema without trusted upload/signing.
+  // Keep the source spelling for migration review without bypassing the
+  // separately versioned, host-resolved sign-in policy.
+  const sourceLoginMethods = input.legacyLoginMethods?.trim().toUpperCase() ?? null;
+  if (sourceLoginMethods !== null && ![
+    "EMAIL_PHONE", "PHONE_EMAIL", "EMAIL_ONLY", "PHONE_ONLY",
+  ].includes(sourceLoginMethods)) {
+    throw new Error("Unsupported historical college sign-in preference");
+  }
   return {collegeId,legacyCollegeId:input.legacyCollegeId,
     legacyBrandingId:input.legacyBrandingId,legacyWasDeleted:input.isDeleted,
+    legacyLoginMethods:sourceLoginMethods,
     legacyLogoSourceUrl:input.logoUrl,logoUrl:null,
     legacyBrandingArchivedAt: input.isDeleted === true ? new Date(0) : null};
 }
