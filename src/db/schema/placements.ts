@@ -495,6 +495,10 @@ export const placementJobs = pgTable(
     }>(),
     employmentType: varchar("employment_type", { length: 24 })
       .notNull(),
+    /** College-facing legacy job-type label; employmentType remains the existing normalized category. */
+    jobTypeLabel: varchar("job_type_label", { length: 40 }),
+    /** Snapshot on each drive for eligibility, held-offer and report decisions. */
+    countsAsPlaced: boolean("counts_as_placed").notNull().default(true),
     workMode: varchar("work_mode", { length: 24 }).notNull(),
     locations: text("locations")
       .array()
