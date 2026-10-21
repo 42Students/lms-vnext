@@ -28,7 +28,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
    <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">Select a class to see the shared and Section-specific learning items available in this Course Offering.</p>
   </div>
   <form method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 flex-1 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+   <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
     <Select className="min-h-11 md:min-h-9"
      name="deliveryId" defaultValue={data.selected?.deliveryId??""}>
      <option value="">Showing every section&apos;s content together</option>
