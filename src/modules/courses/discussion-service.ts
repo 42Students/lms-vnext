@@ -3,6 +3,7 @@ import "server-only";
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   isNull,
@@ -31,6 +32,15 @@ import {facultyDiscussionModerationSchema,facultyDiscussionTokenMatches}
  from "./faculty-discussion-moderation-model";
 import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
 
+/** Crosswalk for legacy classroom courseId+classId:
+ * resolve the requesting learner/faculty's verified Section Delivery UUID
+ * first; never accept a client-selected class ID as a grant to another tenant.
+ * Discussion history uses (createdAt,id) for paging and (updatedAt,id) for
+ * delta/upsert/tombstones, with timestamps as exact PostgreSQL UTC strings.
+ * Sender display names remain current-directory values, not historical
+ * snapshots; a profile edit must not rewrite stored messages or identities.
+ * Old lesson Discussion is represented by the delivery feed until a scoped
+ * per-content thread identifier is persisted. */
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
@@ -48,6 +58,8 @@ const createDiscussionMessageSchema = z.object({
 export function courseDiscussionErrorMessage(code: string): string {
   switch (code) {
     case "DISCUSSION_MESSAGE_NOT_FOUND": return "Message not found";
+    case "LESSON_CONTENT_NOT_FOUND": return "Lesson content not found";
+    case "AUTHENTICATION_REQUIRED": return "Authentication required";
     case "DISCUSSION_MODERATION_ACCESS_DENIED": return "Only faculty or admin can pin messages";
     case "DISCUSSION_POST_ACCESS_DENIED": return "You do not have access to post in this classroom";
     case "DISCUSSION_STALE_VERSION": return "This message changed. Reload the discussion and try again.";
@@ -163,8 +175,8 @@ export async function listCourseDiscussionMessages(
     ))
     .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
     .limit(page.limit + 1);
-  // Pinning remains visible even after its message is outside the newest page.
-  // This uses the same already-authorized Section, and does not load the feed.
+  // First pinned by chronological legacy order remains highlighted across
+  // pages. Count and highlighted content are both delivery-scoped.
   const [highlightedPinned] = await getDb()
     .select({
       id: courseDiscussionMessages.id,
@@ -182,8 +194,15 @@ export async function listCourseDiscussionMessages(
       eq(courseDiscussionMessages.pinned, true),
       isNull(courseDiscussionMessages.deletedAt),
     ))
-    .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
+    .orderBy(asc(courseDiscussionMessages.createdAt), asc(courseDiscussionMessages.id))
     .limit(1);
+  const [countRow]=await getDb().select({total:count()})
+    .from(courseDiscussionMessages).where(and(
+      eq(courseDiscussionMessages.deliveryId,deliveryId),
+      eq(courseDiscussionMessages.pinned,true),
+      isNull(courseDiscussionMessages.deletedAt),
+    ));
+  const pinnedCount=countRow?.total??0;
 
   const hasOlder = fetched.length > page.limit;
   const messages = (hasOlder ? fetched.slice(0, page.limit) : fetched).reverse();
@@ -195,8 +214,13 @@ export async function listCourseDiscussionMessages(
       ...row,
       createdAtExact: cursorCreatedAt,
       isMine: context.membership?.id === row.senderMembershipId,
+      senderAvatarInitials:(row.senderName??"Student").trim().split(/\s+/)
+       .slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join("")||"ST",
+      // Do not leak private avatar/object keys or another learner's academic
+      // identifier to an unrelated member of the class.
     })),
     highlightedPinned: highlightedPinned ?? null,
+    pinnedCount,
     nextCursor: hasOlder && oldest
       ? { beforeCreatedAt: oldest.cursorCreatedAt, beforeId: oldest.id }
       : null,
@@ -302,6 +326,8 @@ export async function listCourseDiscussionChanges(
           pinned: row.pinned,
           updatedAtExact: row.updatedAtExact,
           isMine: context.membership?.id === row.senderMembershipId,
+          senderAvatarInitials:(row.senderName??"Student").trim().split(/\s+/)
+            .slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join("")||"ST",
         }),
     nextCursor: hasMore && last
       ? { since: last.updatedAtExact, afterId: last.id }
