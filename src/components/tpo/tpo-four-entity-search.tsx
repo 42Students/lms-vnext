@@ -14,6 +14,7 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
  const [results,setResults]=useState<Suggestion[]>([]);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState(false);
+ const [retry,setRetry]=useState(0);
  const term=query.trim();
  useEffect(()=>{
   if(term.length<2){setResults([]);setLoading(false);setError(false);return;}
@@ -35,7 +36,7 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
    .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
   },250);
   return()=>{window.clearTimeout(timer);controller.abort();};
- },[term]);
+ },[term,retry]);
  return <section className="min-w-0 space-y-3 border-b border-border bg-surface px-3 py-4"
    aria-label="Search all placement records">
   <label className="grid max-w-xl gap-2 text-sm font-semibold text-foreground">
@@ -51,7 +52,7 @@ export function TpoFourEntitySearch({initialQuery=""}:{initialQuery?:string}){
        results.length+" matching result(s) across four categories"}
     </p>
     {error?<Button type="button" variant="secondary" size="sm"
-      onClick={()=>setQuery(value=>value+" ")}>Retry search</Button>:null}
+      onClick={()=>setRetry(value=>value+1)}>Retry search</Button>:null}
   </div>
   {term.length>=2&&!loading&&!error?<div className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-4">
     {groups.map(group=><section key={group} className="min-w-0 border border-border bg-surface p-3">
