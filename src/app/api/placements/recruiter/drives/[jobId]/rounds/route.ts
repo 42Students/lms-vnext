@@ -29,8 +29,16 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
   return NextResponse.redirect(location,303);
  }catch(error){
   if(error instanceof PlacementsServiceError){
-   const conflict=error.code==="PLACEMENT_ROUND_STALE"||error.code==="PLACEMENT_ROUND_NOT_EDITABLE";
-   return NextResponse.json({error:conflict?"STALE_OR_USED_ROUND":"NOT_FOUND"},{status:conflict?409:404});
+   const stale=error.code==="PLACEMENT_ROUND_STALE";
+   const notEditable=error.code==="PLACEMENT_ROUND_NOT_EDITABLE";
+   if(stale||notEditable)return NextResponse.json({
+    error:stale?"PLACEMENT_ROUND_STALE":"PLACEMENT_ROUND_NOT_EDITABLE",
+    message:stale
+     ?"This round changed or has already been used for results or interviews. Refresh the rounds before trying again."
+     :"This round cannot be changed. Check the round name and the 12-round limit.",
+   },{status:409});
+   return NextResponse.json({error:"NOT_FOUND",
+    message:"This drive is unavailable or your recruiter access has ended."},{status:404});
   }
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_ROUND"},{status:400});
   throw error;
