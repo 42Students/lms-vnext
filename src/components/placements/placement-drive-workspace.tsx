@@ -32,6 +32,7 @@ import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service
 import {countUnreleasedTpoSelections} from "@/modules/placements/tpo-drive-selection-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
+import {tpoDriveLegacyInnerTabs} from "@/modules/placements/tpo-drive-tab-model";
 import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
@@ -433,12 +434,12 @@ export async function PlacementDriveWorkspace({
             {nextStep.primary.label}
           </Link>
           {nextStep.more.length > 0 ? (
-            <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <span className="font-semibold text-body">Also waiting:</span>
               {nextStep.more.slice(0,3).map(step => (
-                <Link key={step.href} href={step.href}
-                  className="group inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                  <span className="block font-semibold">{step.label}</span>
-                  <span className="mt-1 block break-words text-xs text-body group-hover:text-white">{step.description}</span>
+                <Link key={step.href} href={step.href} title={step.description}
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                  {step.label} →
                 </Link>
               ))}
             </div>
@@ -446,13 +447,12 @@ export async function PlacementDriveWorkspace({
         </section>
       ) : null}
       {isTpo?<nav aria-label="Drive sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
-       {([
-        ["Overview",driveHref],["Applicants",applicationsHref??driveHref+"/applications"],
-        ["Rounds",isTpo?driveHref+"/candidate-schedule":driveHref+"/schedule"],
-        ["Offers",isTpo?driveHref+"/offers":driveHref+"/applications"],
-        ["Requests","#drive-request-actions"],["Settings",isSuperAdminDrive?driveHref+"/settings":"#draft-drive-editor"],
-       ] as const).map(([label,href])=><Link key={label} href={href}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link hover:bg-primary-subtle md:min-h-9">{label}</Link>)}
+        {tpoDriveLegacyInnerTabs(jobId,{
+          applicants:screening?.length,rounds:driveDay.rounds.length,
+          offers:offerCandidates?.filter(item=>item.offer?.status==="ISSUED"||
+            item.offer?.status==="ACCEPTED").length,
+        }).map(tab=><Link key={tab.href} href={tab.href}
+          className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle md:min-h-9">{tab.label}</Link>)}
       </nav>:null}
       {isTpo?<TpoDriveRefreshControl/>:null}
       {isTpo&&job.status==="DRAFT"?
