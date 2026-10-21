@@ -11,8 +11,8 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-14_l19-u026-module-access-controller.md.md` (new; 17 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-2_admin-college-dashboard-controller.md.md` (new; 11 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-14_l19-u026-module-access-controller.md.md` (new; 17 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-2_admin-college-dashboard-controller.md.md` (new; 11 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.part1of2.md` (new; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.part2of2.md` (new; 12 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-2_admin-assignment-content-write-controller.md.part1of2.md` (new; 20 findings; best P1)
