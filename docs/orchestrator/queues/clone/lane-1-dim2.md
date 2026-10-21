@@ -313,56 +313,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/review-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/not-found.tsx`
-- [ ] `src/app/(authenticated)/superadmin/not-found.tsx`
-- [ ] `src/app/(authenticated)/teach/courses/page.tsx`
-- [ ] `src/app/(authenticated)/teach/not-found.tsx`
-- [ ] `src/app/(authenticated)/teacher/allAssignments/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/error.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/page.tsx`
+- [x] `src/app/(authenticated)/mentor/review-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/error.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/page.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
+- [x] `src/app/(authenticated)/notifications/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/not-found.tsx`
+- [x] `src/app/(authenticated)/superadmin/not-found.tsx`
+- [x] `src/app/(authenticated)/teach/courses/page.tsx`
+- [x] `src/app/(authenticated)/teach/not-found.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/error.tsx`
+- [x] `src/app/(authenticated)/teacher/allAssignments/page.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/error.tsx`
+- [x] `src/app/(authenticated)/teacher/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/error.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendanceDetail/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
