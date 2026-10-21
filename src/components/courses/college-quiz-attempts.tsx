@@ -49,7 +49,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </Button>
   {opened?<div role="region" aria-label="Quiz submissions, scroll for more attempts" tabIndex={0}
-   className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   className="max-h-80 overflow-y-auto overscroll-contain rounded border border-border bg-surface p-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
    {error?<Alert tone="error" className="flex-row flex-wrap items-center gap-2">{error}
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={loading} onClick={()=>void open(page)}>Retry</Button>
    </Alert>:null}
