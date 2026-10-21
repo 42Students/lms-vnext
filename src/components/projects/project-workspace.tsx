@@ -535,6 +535,25 @@ export function ProjectWorkspace({
       activeSection === "team" &&
       section === "meetings");
   const renderTime = new Date();
+  // Same seven-day category threshold as the legacy at-risk workspace detail;
+  // preserve the category when a bookmarked link contains an older day count.
+  const lastActivity = workspace.activity.length
+    ? workspace.activity.reduce((latest,event)=>
+      event.occurredAt>latest?event.occurredAt:latest,
+      workspace.activity[0]!.occurredAt)
+    : workspace.project.updatedAt;
+  const inactiveDays = Math.floor(Math.max(0,renderTime.getTime()-lastActivity.getTime())/86400000);
+  const stalled = !["ARCHIVED","COMPLETED"].includes(workspace.project.status) &&
+    inactiveDays>=7;
+  const activeBlocker=Boolean(workspace.project.blocker?.trim()) ||
+    workspace.tasks.some(task=>task.status==="BLOCKED");
+  const awaitingReview=["SUBMITTED","UNDER_REVIEW"].includes(
+    readiness.finalSubmission.latest?.status??"");
+  const riskSignals = [
+    ...(stalled?["No activity in "+inactiveDays+" day"+(inactiveDays===1?"":"s")]:[]),
+    ...(activeBlocker?["Blocked: "+(workspace.project.blocker?.trim()||"Blocked task")]:[]),
+    ...(awaitingReview?["Pending review"]:[]),
+  ];
   const archived = workspace.project.status === "ARCHIVED";
   const readOnly = archived || workspace.project.status === "COMPLETED" || readOnlyOverride;
   const tasksBySprint = new Map<
@@ -635,6 +654,17 @@ export function ProjectWorkspace({
           }))} />
       ) : null}
 
+      {mode === "ADMIN" && show("summary") && riskSignals.length>0 ?
+        <section role="status" aria-label="Current workspace risk"
+          className={"border-y px-4 py-3 text-sm "+
+            (riskSignals.length>=3?"border-error-border bg-error-subtle":
+              "border-warning-border bg-warning-subtle")}>
+          <p className="font-semibold text-foreground">
+            Flagged as at-risk ({riskSignals.length} signal{riskSignals.length===1?"":"s"})
+          </p>
+          <p className="mt-1 text-body">{riskSignals.join(" · ")}</p>
+        </section> : null}
+
       {mode === "ADMIN" && riskReason ? (() => {
         const reasons = riskReason.split(",").map(reason=>reason.trim()).filter(Boolean);
         const hadBlocker = reasons.some(reason=>/^(BLOCKER|Active blocker)$/i.test(reason));
@@ -642,7 +672,10 @@ export function ProjectWorkspace({
         const blockerActive = Boolean(workspace.project.blocker?.trim()) ||
           workspace.tasks.some(task=>task.status==="BLOCKED");
         const reviewActive = workspace.taskSubmissions.some(item=>item.status==="SUBMITTED");
-        const mismatch = (hadBlocker&&!blockerActive)||(hadReview&&!reviewActive);
+        const hadStaleness=reasons.some(reason=>
+          /^(STALLED|No activity in \d+ days?|No recent activity)$/i.test(reason));
+        const mismatch = (hadBlocker&&!blockerActive)||(hadReview&&!reviewActive)||
+          (hadStaleness&&!stalled);
         return <section role="status"
           className="border-y border-info-border bg-info-subtle px-4 py-3 text-sm">
           <p className="flex items-center gap-2 font-semibold text-foreground">
