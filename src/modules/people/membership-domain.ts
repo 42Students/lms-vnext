@@ -120,3 +120,25 @@ export function membershipLifecycleActionResult(
     : input.action==="SUSPEND" ? "Membership suspended."
     : input.action==="REACTIVATE" ? "Membership reactivated." : "Membership ended."};
 }
+
+/** Explicit safe replacement for old destructive account controls. A college
+ * membership is not an independent identity: one person can belong to several
+ * colleges and roles, and activity/learning/placement records are retained. */
+export const MEMBERSHIP_ADMIN_ACTION_EXPLANATIONS = {
+  end: "End access to this college without deleting the person's shared account or history.",
+  delete: "Permanent account deletion is not available here. End membership access or request a reviewed erasure.",
+  bulkUndo: "Undo imported memberships with an audited reversal. Existing learning, attendance and placement records are retained.",
+  impersonate: "Sign in as a student or faculty member is not permitted. Use an audited, permission-scoped support view.",
+  otpUnlock: "Reset only a verified account's OTP lockout through the authorized identity support action; never bypass verification.",
+} as const;
+export function membershipAdminLegacyAction(
+  action: "DELETE_STUDENT" | "DELETE_FACULTY" | "UNDO_BULK_IMPORT" | "IMPERSONATE" | "CLEAR_OTP_LOCKOUT",
+): { allowed: false; alternative: keyof typeof MEMBERSHIP_ADMIN_ACTION_EXPLANATIONS } {
+  switch (action) {
+    case "DELETE_STUDENT":
+    case "DELETE_FACULTY": return {allowed:false,alternative:"delete"};
+    case "UNDO_BULK_IMPORT": return {allowed:false,alternative:"bulkUndo"};
+    case "IMPERSONATE": return {allowed:false,alternative:"impersonate"};
+    case "CLEAR_OTP_LOCKOUT": return {allowed:false,alternative:"otpUnlock"};
+  }
+}

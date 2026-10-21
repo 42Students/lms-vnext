@@ -53,3 +53,34 @@ export const lessonContentMaterials = pgTable(
     check("lesson_content_materials_shape_ck", sql`(${table.kind} = \'LINK\' and ${table.externalUrl} is not null and ${table.storageKey} is null and ${table.originalName} is null and ${table.mimeType} is null and ${table.sizeBytes} is null) or (${table.kind} = \'FILE\' and ${table.externalUrl} is null and ${table.storageKey} is not null and ${table.originalName} is not null and ${table.mimeType} is not null and ${table.sizeBytes} is not null)`),
   ],
 );
+
+/** Server-validated file metadata contract for the old resource composer.
+ * This does NOT attest a GCS object or virus scan; the upload completion
+ * service must verify bytes, generation, clean scan and ownership separately. */
+export const LESSON_MATERIAL_FILE_LIMIT_BYTES = 50 * 1024 * 1024;
+export const LESSON_MATERIAL_MAX_ITEMS = 20;
+export const LESSON_MATERIAL_ALLOWED_EXTENSIONS = [
+  "pdf","doc","docx","ppt","pptx","xls","xlsx","txt","csv",
+  "png","jpg","jpeg","gif","webp","zip",
+] as const;
+
+export function lessonMaterialFileInputError(
+  input: { name: string; size: number },
+  existingCount: number,
+): string | null {
+  if (!Number.isSafeInteger(existingCount) || existingCount < 0 ||
+      existingCount >= LESSON_MATERIAL_MAX_ITEMS)
+    return "You can add up to 20 materials.";
+  if (!Number.isSafeInteger(input.size) || input.size <= 0 ||
+      input.size > LESSON_MATERIAL_FILE_LIMIT_BYTES)
+    return "Each file must be 50 MB or smaller.";
+  const filename = input.name.trim();
+  if (filename.length < 3 || filename.length > 255 ||
+      filename.includes("/") || filename.includes("\\") ||
+      filename.includes("\0"))
+    return "Enter a valid file name.";
+  const extension = filename.split(".").at(-1)?.toLowerCase();
+  if (!extension || !LESSON_MATERIAL_ALLOWED_EXTENSIONS.some(item => item === extension))
+    return "This file type is not supported.";
+  return null;
+}

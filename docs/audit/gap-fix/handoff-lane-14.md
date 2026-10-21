@@ -161,3 +161,7 @@
 - Wave3 P0 courses/API owner: G2-5-020-049, G2-19-031-129, G2-5-020-002 — promote isolated lesson-content discussion route and permissioned read/write only after DB05 registration, content/delivery enrollment, scoped author and tenant-negative tests; never conflate delivery chat.
 - Wave3 P0 lane 15/skills owner: G2-5-016-048 — certify 0236 skills migration, journal and catalog activation; maintain independent usage counters and nonunique synonym semantics, including duplicate pairs.
 - Wave3 college/auth owners: G2-15-020-016/-044/-073 — fetch verified college branding loginMethods at host-bound auth entry; protect EMAIL_ONLY/PHONE_ONLY per tenant without changing globally shared student login.
+
+- Wave3 P1 auth owner: G2-1-014-016 — staged `authHandoffAtomicConsumeStatement` now locks/revalidates active user, membership, college, organization, verified host and unspent MAC in a single claim; wire through authorized cross-host endpoint only after DB01 registration, host-origin verification and race/expiry tests.
+- Wave3 P1 course resource owner: G2-17-008-020 — `lessonMaterialFileInputError` codifies 20 file / 50 MB / allowlisted extension preflight; integrate into authoring UI and GCS attestation, do not treat metadata as verified file.
+- Wave3 P1 people/admin UI and identity owners: G2-18-031-085 — display `MEMBERSHIP_ADMIN_ACTION_EXPLANATIONS` in admin controls; audited membership END is not global deletion, separate approved import rollback, erasure review, and OTP unlock service remain required.
