@@ -10,11 +10,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/admin/attendance/page.tsx`
 - [x] `src/app/(authenticated)/admin/audit/page.tsx`
 - [x] `src/app/(authenticated)/admin/batch-promotion/error.tsx`
-- [ ] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/error.tsx`
-- [ ] `src/app/(authenticated)/admin/classes/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/error.tsx`
+- [x] `src/app/(authenticated)/admin/classes/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
