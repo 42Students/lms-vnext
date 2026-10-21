@@ -23,6 +23,7 @@ export function HrRecruiterBell(){
  [loading,setLoading]=useState(false),[error,setError]=useState(""),[saveError,setSaveError]=useState("");
  const [now,setNow]=useState(()=>Date.now());
  const markAllGate=useRef(createHrBellMutationGate());
+ const autoReadKey=useRef<string|null>(null);
  const loadGate=useRef(createRecruiterBellRequestGate());
  const triggerRef=useRef<HTMLButtonElement>(null);
  const rootRef=useRef<HTMLDivElement>(null);
@@ -80,6 +81,17 @@ export function HrRecruiterBell(){
   document.addEventListener("keydown",key);
   return ()=>{document.removeEventListener("pointerdown",pointer);document.removeEventListener("keydown",key);};
  },[open,mobile]);
+ // Legacy auto-read is safe only when every unread receipt is present in
+ // the current authorized 40-row feed. Hidden/older items remain unread.
+ useEffect(()=>{
+  if(!open||state?.status!=="READY"||state.unread===0||state.hiddenUnread>0||
+     state.items.length===0)return;
+  const key=state.items.map(item=>item.id).join(":")+":"+state.unread;
+  if(autoReadKey.current===key)return;
+  autoReadKey.current=key;
+  void markAll();
+ },[open,state]);
+
  async function markAll(){
   if(!markAllGate.current.tryBegin())return;
   setLoading(true);setSaveError("");
