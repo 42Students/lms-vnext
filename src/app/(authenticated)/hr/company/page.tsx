@@ -69,13 +69,13 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>} /></div>;
-  const result = await getRecruiterCompanyTeam(context, requestedCollegeId).catch(error=>{
+  const result = await getRecruiterCompanyTeam(context, requestedCollegeId, tab==="team").catch(error=>{
     if(error instanceof AuthorizationError)throw error;
     return null;
   });
   if(!result)return <div className="min-w-0 space-y-4">
     <PageHeader title="Company & Team"/>
-    <ErrorState title="We couldn&apos;t load your account" description="Your recruiter college access could not be loaded."
+    <ErrorState title="Could not load this" description="Your recruiter college access could not be loaded."
       action={<Link href="/hr/company" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
   </div>;
 
@@ -100,9 +100,27 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     );
   }
 
-  const jobs = await listOwnRecruiterPlacementJobs(context,result.grant.collegeId);
+  let jobs: Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>;
+  try {
+    jobs = await listOwnRecruiterPlacementJobs(context,result.grant.collegeId);
+  } catch {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Company & Team"/>
+      <ErrorState title="Could not load this"
+        description="The company drive summary is unavailable. Retry to reload this college; no changes were made."
+        retryHref={"/hr/company?collegeId="+encodeURIComponent(result.grant.collegeId)+(tab==="team"?"&tab=team":"")}
+        retryLabel="Retry"/>
+    </div>;
+  }
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
-  const attributedDriveCounts:Record<string,number>=tab==="team" ? await recruiterTeamAttributedDriveCounts(context,result.grant.collegeId,result.company.relationshipId,jobs) : {};
+  let attributedDriveCounts: Record<string,number> = {};
+  let teamCountsUnavailable = false;
+  if (tab==="team") {
+    try {
+      attributedDriveCounts = await recruiterTeamAttributedDriveCounts(context,
+        result.grant.collegeId,result.company.relationshipId,jobs);
+    } catch { teamCountsUnavailable = true; }
+  }
   // Public logo URL/industry are not present in the normalized relationship read.
   // Resolve only the already-authorized company identity; never expose the private object path.
   const [profile]=tab==="company" ? await getDb().select({
@@ -111,6 +129,17 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   }).from(placementCompanies).where(eq(placementCompanies.id,result.company.id)).limit(1) : [null];
   const publicLogo=profile?.logoPublicUrl && /^https:\/\/[^\s]+$/i.test(profile.logoPublicUrl)?profile.logoPublicUrl:null;
   const companyDomains=result.company.primaryDomain ? ["@"+result.company.primaryDomain.replace(/^@/,"")] : [];
+  if (tab==="team" && (!Array.isArray(result.team) ||
+    !result.team.every(member => typeof member.userId === "string" &&
+      typeof member.displayName === "string" && typeof member.isYou === "boolean"))) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Company & Team"/>
+      <ErrorState title="Team data is incomplete"
+        description="Could not load this team. Your company information is unchanged."
+        retryHref={"/hr/company?collegeId="+encodeURIComponent(result.grant.collegeId)+"&tab=team"}
+        retryLabel="Retry team"/>
+    </div>;
+  }
   const matchingTeam = searchHrTeam(result.team,teamQuery.data);
   const teamPageResult = hrTeamPage(matchingTeam,teamPage.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
@@ -216,6 +245,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               className="min-h-11 min-w-0 w-full min-[768px]:min-h-9 min-[768px]:max-w-sm min-[768px]:flex-1"/>
             <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </form>
+          {teamCountsUnavailable ? <p role="alert" className="mb-3 border-l-2 border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3 text-sm text-warning-text">Could not load this team’s drive counts. Retry Team to restore counts.</p> : null}
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
           </p>

@@ -12,7 +12,7 @@ import {isVerifiedHrRoundMutation,hrRoundEditorHasUnsavedChanges} from "@/module
 
 type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
- createdByYou:boolean;updatedAt:string};
+ createdByYou:boolean;updatedAt:string;inUse?:boolean};
 const kinds:readonly [Kind,string][]=[
  ["TALK","Company talk"],["TEST","Online test"],["VENDOR_TEST","Vendor test"],
  ["GD","Group discussion"],["INTERVIEW","Interview"],
@@ -33,8 +33,9 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
  const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
+ const [nameError,setNameError]=useState("");
  const {pending,run}=useGuardedAction({timeoutMs:30000});
- const reset=()=>{setOpen(false);setConfirmRemove(false);setConfirmDiscard(false);setActive(null);setName("");setError("");};
+ const reset=()=>{setOpen(false);setConfirmRemove(false);setConfirmDiscard(false);setActive(null);setName("");setError("");setNameError("");};
  const dirty=hrRoundEditorHasUnsavedChanges({name,kind,mode},active);
  function requestClose(){
   if(pending)return;
@@ -45,12 +46,12 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
   if(pending||readOnly)return;
   setActive(row);setName(row?.name??"");
   setKind(kinds.some(item=>item[0]===row?.kind)?row!.kind as Kind:"INTERVIEW");
-  setMode(row?.mode??"");setError("");setOpen(true);setNotice("");
+  setMode(row?.mode??"");setError("");setNameError("");setOpen(true);setNotice("");
  }
  async function submit(action:"CREATE"|"UPDATE"|"REMOVE"){
   if(pending||readOnly)return;
-  setError("");
-  if(action!=="REMOVE"&&!name.trim()){setError("Enter a round name");return;}
+  setError("");setNameError("");
+  if(action!=="REMOVE"&&!name.trim()){setNameError("Give the round a name");return;}
   const form=new FormData();
   form.set("action",action);
   if(action!=="REMOVE"){
@@ -82,7 +83,7 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
    });
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not save this round. Try again.");}
  }
- const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING";
+ const canEdit=(row:Row)=>row.createdByYou&&row.status==="PENDING"&&!row.inUse;
  return <div className="space-y-3">
   {!readOnly?<Button type="button" onClick={()=>edit(null)}
    variant="primary" className="min-h-11 w-full md:w-auto md:min-h-9">
@@ -99,7 +100,10 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
      <label className="grid min-w-0 gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
-      <Input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} className="w-full"/>
+      <Input required maxLength={100} value={name} aria-invalid={Boolean(nameError)}
+       aria-describedby={nameError?"round-name-error":undefined}
+       onChange={e=>{setName(e.target.value);setNameError("");}} className="w-full"/>
+      {nameError?<span id="round-name-error" role="alert" className="text-xs font-normal text-error">{nameError}</span>:null}
      </label>
      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
       <Select value={kind} onChange={e=>setKind(e.target.value as Kind)} className="w-full">

@@ -93,8 +93,8 @@ export function CollegeClassCreate({ cohorts, periods,
         setName(""); setCode(""); setDescription("");
         formRef.current?.querySelector<HTMLInputElement>('[name="className"]')?.focus();
         const className=result.data.name;
-        setNotice('Created class “'+className+'”. Next, register or move students into this section.');
-        showToast({tone:"success",title:'Created class “'+className+'”.',
+        setNotice("Class created successfully. Next, register or move students into this section.");
+        showToast({tone:"success",title:"Class created successfully",
          description:"Next, register or move students into this section."});
         router.refresh();
       } catch (error) {
@@ -225,6 +225,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
     event.preventDefault();
     if(pending)return;
     setNotice("");
+    if (!capacity.trim()) { setNotice("Maximum must be a whole number from 1 to 200"); return; }
     const parsed = updateCollegeSectionSchema.safeParse({ ...draft, confirm: true });
     if (!parsed.success) {
       setNotice(parsed.error.issues[0]?.message ?? "Invalid class changes.");
@@ -235,8 +236,8 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false); setDiscardConfirm(false);
-        setNotice('Updated class “'+name+'”.');
-        showToast({tone:"success",title:'Updated class “'+name+'”.'});
+        setNotice("Class updated successfully");
+        showToast({tone:"success",title:"Class updated successfully"});
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Failed to update class."));
@@ -291,8 +292,8 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (blank means unlimited)
-          <Input type="number" min={1} max={200} step={1} value={capacity}
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum students (1–200)
+          <Input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={e => setCapacity(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
