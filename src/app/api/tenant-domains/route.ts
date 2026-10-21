@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     const context = await getCurrentRequestContext();
     const intent=createTenantDomainInputSchema.parse(body);
     const domain=await createTenantDomainWithRuntime(context,intent);
-    return NextResponse.json({domain,
+    return NextResponse.json({domain,compatibilityStatus:"CREATED",
       nextStep:tenantDomainPrimaryNextStep({isPrimary:intent.isPrimary,domainId:domain.id,verified:domain.isVerified}),
       message:intent.isPrimary?"Domain added. Verify DNS before making it primary.":"Domain added.",
     },{status:201});

@@ -9,6 +9,7 @@ import {
   editTenantDomainHost,
   listTenantDomains,
   resolveTenantFromHost,
+  previewTenantHostResolution,
   setPrimaryTenantDomain,
   verifyTenantDomain,
 } from "./service";
@@ -81,4 +82,11 @@ export function deleteTenantDomainWithRuntime(
 
 export function resolveTenantFromHostWithRuntime(host: string) {
   return resolveTenantFromHost(host, drizzleTenantDomainRepository);
+}
+
+/** Global-only diagnostic: never resolves an unverified host or fetches DNS. */
+export function previewTenantHostResolutionWithRuntime(
+ context:RequestContext,host:string,
+){
+ return previewTenantHostResolution(context,host,drizzleTenantDomainRepository);
 }
