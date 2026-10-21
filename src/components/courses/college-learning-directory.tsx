@@ -86,8 +86,8 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <Select name="periodStatus" defaultValue={data.query.periodStatus}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
-                <option value="PLANNED">PLANNED</option>
-                <option value="ACTIVE">ACTIVE</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
                 <option value="CLOSED">CLOSED</option>
               </Select>
             </label>
@@ -97,8 +97,8 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <Select name="courseStatus" defaultValue={data.query.courseStatus}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="ARCHIVED">ARCHIVED</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
               </Select>
             </label>
           ) : null}
@@ -113,8 +113,8 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <Select name="programStatus" defaultValue={data.query.programStatus}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="ARCHIVED">ARCHIVED</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
               </Select>
             </label>
           ) : null}
@@ -123,10 +123,10 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <Select name="cohortStatus" defaultValue={data.query.cohortStatus}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
-                <option value="PLANNED">PLANNED</option>
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="COMPLETED">COMPLETED</option>
-                <option value="ARCHIVED">ARCHIVED</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
+                <option value="COMPLETED">Completed</option>
+                <option value="ARCHIVED">Archived</option>
               </Select>
             </label>
           ) : null}
@@ -135,8 +135,8 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <Select name="periodStatus" defaultValue={data.query.periodStatus}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
-                <option value="PLANNED">PLANNED</option>
-                <option value="ACTIVE">ACTIVE</option>
+                <option value="PLANNED">Planned</option>
+                <option value="ACTIVE">Active</option>
                 <option value="CLOSED">CLOSED</option>
               </Select>
             </label>
@@ -146,8 +146,8 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <Select name="courseStatus" defaultValue={data.query.courseStatus}
                 className="min-h-11 md:min-h-9">
                 <option value="ALL">All</option>
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="ARCHIVED">ARCHIVED</option>
+                <option value="ACTIVE">Active</option>
+                <option value="ARCHIVED">Archived</option>
               </Select>
             </label>
           ) : null}

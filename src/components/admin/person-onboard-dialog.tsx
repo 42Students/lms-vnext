@@ -213,7 +213,7 @@ export function PersonOnboardDialog({
             />
           </div>
           {forcedRole==="FACULTY" ? <fieldset className="space-y-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:col-span-2">
-            <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty Type</legend>
+            <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty type</legend>
             <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body md:min-h-9">
               <Checkbox checked={registerAsMentor} disabled={pending}
                 onChange={event=>setRegisterAsMentor(event.target.checked)}/>

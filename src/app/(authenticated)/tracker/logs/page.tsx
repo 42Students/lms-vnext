@@ -36,7 +36,7 @@ export default async function TrackerLogsPage({
   const header = (
     <>
       <PageHeader
-        title="Known Errors"
+        title="Known errors"
         description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
       />
       <TrackerAdminNav />
@@ -56,7 +56,7 @@ export default async function TrackerLogsPage({
     return (
       <div className="min-w-0 space-y-4">
         {header}
-        <Alert tone="warning">Known Errors persistence is staged but not enabled. W01 must register and replay the DB10 log-alert tables before this page can read data. This message is not a healthy-log status.</Alert>
+        <Alert tone="warning">Known errors persistence is staged but not enabled. W01 must register and replay the DB10 log-alert tables before this page can read data. This message is not a healthy-log status.</Alert>
       </div>
     );
   }
