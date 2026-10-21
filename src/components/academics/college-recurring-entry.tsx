@@ -22,7 +22,7 @@ export function CollegeRecurringEntry({ options }: { options: Options }) {
     </Button>
     <Dialog open={open} onOpenChange={setOpen} title="Recurring class sessions"
       className="max-w-[720px]" bodyClassName="max-h-[70dvh]">
-      <CollegeRecurringPreview {...options} />
+      <CollegeRecurringPreview {...options} onCancel={()=>setOpen(false)} />
     </Dialog>
   </>;
 }
