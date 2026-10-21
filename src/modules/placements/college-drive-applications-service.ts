@@ -19,6 +19,7 @@ import {
   DRIVE_APPLICATION_EXPORT_CAP, DRIVE_APPLICATION_BULK_CAP,
 } from "./college-drive-applications-model";
 
+const LEGACY_CSV_EXPORT_CAP=20_000;
 function pattern(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
@@ -27,7 +28,7 @@ export async function listCollegeDriveApplications(
   context: RequestContext,
   jobIdInput: unknown,
   raw: unknown,
-  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number;
+  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number;exportCap?:number;
     sort?:"AGE_ASC"|"AGE_DESC"|"SCORE_ASC"|"SCORE_DESC"|"SUBMITTED_DESC"; } = {},
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
@@ -41,6 +42,9 @@ export async function listCollegeDriveApplications(
   const pageSize = options.pageSize===undefined||!Number.isFinite(options.pageSize)
     ?DRIVE_APPLICATIONS_PAGE_SIZE
     :Math.max(1,Math.min(100,Math.floor(options.pageSize)));
+  // Only the audited legacy CSV adapter may request the historic 20k cap.
+  const exportCap=options.exportCap===LEGACY_CSV_EXPORT_CAP?
+    LEGACY_CSV_EXPORT_CAP:DRIVE_APPLICATION_EXPORT_CAP;
   const [drive] = await db.select({ id: placementJobs.id, title: placementJobs.title,
     companyName: placementCompanies.name, legacyJobId: placementJobs.legacyJobId,
   }).from(placementJobs)
@@ -64,6 +68,9 @@ export async function listCollegeDriveApplications(
     partialScore: sql<number | null>`null::integer`.as("partial_score"),
     screeningReason: placementApplicationScreenings.internalReason,
     name: users.displayName,
+    legacyFirstName:users.legacyFirstName,
+    legacyLastName:users.legacyLastName,
+    legacyLearnerId:learnerProfiles.legacyLearnerId,
     email: users.email,
     collegeName: colleges.name,
     lastStatusUpdatedAt:sql<Date>`greatest(${placementApplications.submittedAt},${placementApplications.statusUpdatedAt},${placementCollegeApplicationStages.movedAt},${placementApplicationScreenings.updatedAt})`.as("last_status_updated_at"),
@@ -113,13 +120,18 @@ export async function listCollegeDriveApplications(
       query.skills?sql`exists(select 1 from jsonb_array_elements(
         case when jsonb_typeof(${learnerProfiles.profileDocument}->'skills')='array'
           then ${learnerProfiles.profileDocument}->'skills' else '[]'::jsonb end
-        ) skill(value) where lower(coalesce(skill.value->>'name',
-          skill.value->>'skill',skill.value#>>'{}','')) like lower(${pattern(query.skills)}))`:undefined,
+        ) skill(value) where coalesce(skill.value->>'name',
+          skill.value->>'skill',skill.value#>>'{}','') ilike ${pattern(query.skills)})`:undefined,
       query.screening === "ALL" ? undefined
         : query.screening === "UNRECORDED" ? isNull(placementApplicationScreenings.applicationId)
         : eq(placementApplicationScreenings.status, query.screening),
-      query.q ? or(
+      query.q && ![drive.title,drive.companyName].some(value=>
+        value.toLocaleLowerCase("en-IN").includes(query.q.toLocaleLowerCase("en-IN"))) ? or(
         ilike(users.displayName, pattern(query.q)),
+        ilike(users.legacyFirstName, pattern(query.q)),
+        ilike(users.legacyLastName, pattern(query.q)),
+        sql`concat_ws(' ',nullif(trim(${users.legacyFirstName}),''),
+          nullif(trim(${users.legacyLastName}),'')) ilike ${pattern(query.q)}`,
         ilike(users.email, pattern(query.q)),
         ilike(learnerProfiles.rollNumber, pattern(query.q)),
         ilike(placementJobRoleOptions.title, pattern(query.q)),
@@ -141,7 +153,7 @@ export async function listCollegeDriveApplications(
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
     db.select().from(source).orderBy(...order)
-      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : pageSize)
+      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? exportCap : pageSize)
       .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * pageSize),
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
@@ -157,7 +169,7 @@ export async function listCollegeDriveApplications(
   })), total,
     pageSize,scoreSortAvailable:true as const,
     stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
-    truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
+    truncated: options.exportAll && total > exportCap,
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
   };
 }
@@ -234,26 +246,45 @@ export async function listLegacyCollegeDriveApplications(
  };
 }
 
-/** Legacy CSV has application identifiers and audit actor alongside the
- * applicant fields. A null algorithm score stays blank rather than zero. */
+/** Keep the historical CSV column order for consumers of the old
+ * PlacementJobController route. The source remains strictly one-college and
+ * one-job; an absent old algorithm score is blank, never invented. */
 export async function exportLegacyCollegeDriveApplicationsCsv(
  context:RequestContext,jobId:unknown,raw:unknown,
 ){
- const data=await listCollegeDriveApplications(context,jobId,raw,{exportAll:true});
- const headings=["applicationId","jobId","jobTitle","companyName","learnerId",
-  "learnerName","learnerEmail","status","screeningStatus","score",
-  "partialScore","appliedAt","source","notes","rejectionReason",
-  "submittedBy","legacyApplicationId","legacyJobId"];
+ const compatible=legacyCollegeApplicationsQuerySchema.safeParse(raw);
+ const filters=compatible.success?{
+  q:compatible.data.q,status:compatible.data.status,
+  source:compatible.data.source,stage:compatible.data.applicationStatus,
+  departmentId:compatible.data.departmentId,programId:compatible.data.programId,
+  cohortId:compatible.data.cohortId,page:1,
+ }:raw;
+ const data=await listCollegeDriveApplications(context,jobId,filters,{
+  exportAll:true,exportCap:LEGACY_CSV_EXPORT_CAP,
+ });
+ const headings=["applicationId","jobId","jobTitle","companyName",
+  "learnerId","firstName","lastName","email","applicationStatus",
+  "screeningScore","isPartialScore","appliedAt","source",
+  "internalNotes","rejectionReason"];
+ const dateTime=new Intl.DateTimeFormat("sv-SE",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",second:"2-digit",hourCycle:"h23",
+ });
  const rows:(string|number|null)[][]=data.items.map(row=>[
-  row.id,data.drive.id,data.drive.title,data.drive.companyName,row.membershipId,
-  row.name,row.email,row.stage,row.screening??"",row.screeningScore,
-  row.partialScore,row.submittedAt.toISOString(),row.source,"",
-  row.screeningReason,row.submittedByName,row.legacyApplicationId,data.drive.legacyJobId,
+  row.legacyApplicationId??row.id,data.drive.legacyJobId??data.drive.id,
+  data.drive.title,data.drive.companyName,row.legacyLearnerId??row.membershipId,
+  row.legacyFirstName??row.name,row.legacyLastName??"",row.email,row.stage,
+  // The old weighted algorithm score/partial flag were removed in vNext.
+  // An applied round result is a separate measurement and must not masquerade as one.
+  null,null,dateTime.format(row.submittedAt).replace(" ","T"),row.source,
+  "", "",
  ]);
+ const truncatedLine=data.truncated?"# Export truncated at "+LEGACY_CSV_EXPORT_CAP+
+  " rows ("+data.total+" total). Narrow the export scope (e.g. by job) to export the rest.":"";
+ const csv=placementReportCsv(headings,rows)+"\r\n"+
+  (truncatedLine?truncatedLine+"\r\n":"");
  return {
-  csv:"\uFEFF"+placementReportCsv(headings,rows),
-  exported:data.items.length,total:data.total,truncated:data.truncated,
-  warning:data.truncated?"Export limited to "+DRIVE_APPLICATION_EXPORT_CAP+
-   " matching applications. Narrow the filters and export the remainder.":null,
+  csv,exported:data.items.length,total:data.total,truncated:data.truncated,
+  warning:truncatedLine||null,filename:"job-applications.csv",
  };
 }
