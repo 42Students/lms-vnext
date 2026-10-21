@@ -10,7 +10,17 @@ export async function POST(request:Request,{params}:RouteContext){
   try{
     const context=await getCurrentRequestContext();
     const {projectId}=await params;
-    const project=await restoreProjectInstance(context,projectId,await request.json());
-    return NextResponse.json({project,message:"Project restored"});
+    const payload:unknown=await request.json();
+    // A historical collegeId must match the selected authorized college.
+    if(payload&&typeof payload==="object"&&!Array.isArray(payload)&&
+      "collegeId" in payload){
+      const claimed=(payload as {collegeId?:unknown}).collegeId;
+      if(typeof claimed!=="string"||claimed!==context.adminScope?.collegeId)
+        return NextResponse.json({error:"PROJECT_NOT_FOUND"},{status:404});
+    }
+    const clean=payload&&typeof payload==="object"&&!Array.isArray(payload)?
+      Object.fromEntries(Object.entries(payload).filter(([key])=>key!=="collegeId")):payload;
+    const project=await restoreProjectInstance(context,projectId,clean);
+    return NextResponse.json({project,data:project,status:"OK",message:"Project restored"});
   }catch(error){return apiErrorResponse(error);}
 }

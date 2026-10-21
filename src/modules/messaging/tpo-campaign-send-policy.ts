@@ -41,9 +41,11 @@ export function assertCampaignRecipientCap(total:number):number {
  */
 export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:string}>(
   candidates:readonly T[],
-):{recipientIds:string[];suppressed:Record<Exclude<ReturnType<typeof campaignRecipientDisposition>,"ELIGIBLE">|"DUPLICATE",number>} {
-  // The 500 limit is on unique eligible recipients, not the whole CRM roster.
-  // A roster with 600 unsubscribed contacts and 1 eligible lead is sendable.
+):{recipientIds:string[];selectedCount:number;eligibleCount:number;
+ suppressed:Record<Exclude<ReturnType<typeof campaignRecipientDisposition>,"ELIGIBLE">|"DUPLICATE",number>} {
+  // The old 500-person selection cap includes unsubscribed contacts.
+  // This list is the chosen subset, never the whole CRM directory.
+  assertCampaignRecipientCap(candidates.length);
   const suppressed={NO_EMAIL:0,UNSUBSCRIBED:0,BOUNCED:0,NOT_NOW:0,DUPLICATE:0};
   const seen=new Set<string>();
   const seenIds=new Set<string>();
@@ -58,7 +60,8 @@ export function planTpoCampaignRecipients<T extends CampaignRecipientFact & {id:
     assertCampaignRecipientCap(recipientIds.length+1);
     recipientIds.push(row.id);
   }
-  return {recipientIds,suppressed};
+  return {recipientIds,selectedCount:candidates.length,
+    eligibleCount:recipientIds.length,suppressed};
 }
 
 /** A campaign snapshot authorizes no future send by itself. Re-read the live
