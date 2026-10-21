@@ -314,17 +314,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/branding/loading.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
