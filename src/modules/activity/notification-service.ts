@@ -249,10 +249,14 @@ export async function requireStaffNotificationAudience(
           .where(eq(sections.id, draft.classId))
           .limit(1)
       : [];
-    const scopedCollegeId = selectedSection?.collegeId ??
-      (isSuperAdmin(context)
-        ? context.adminScope?.collegeId
-        : context.membership?.collegeId) ?? null;
+    const pinnedCollegeId = (isSuperAdmin(context)
+      ? context.adminScope?.collegeId
+      : context.membership?.collegeId) ?? null;
+    if (selectedSection && pinnedCollegeId &&
+        selectedSection.collegeId !== pinnedCollegeId) {
+      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    }
+    const scopedCollegeId = pinnedCollegeId ?? selectedSection?.collegeId ?? null;
     const scopedOrganizationId = (isSuperAdmin(context)
       ? context.adminScope?.organizationId
       : context.membership?.organizationId) ?? null;
@@ -847,8 +851,10 @@ export async function listScopedAdminNotificationPage(
       else 'SENT'
     end
   `;
+  // Counts and paged results share the same tenant AND academic-context
+  // filters; selecting a class/course must not show college-wide totals.
+  appendNotificationContextFilters(scopeConditions, options);
   const conditions = [...scopeConditions];
-  appendNotificationContextFilters(conditions, options);
   if (options.deliveryStatus) conditions.push(eq(status, options.deliveryStatus));
   const where = and(...conditions);
   const db = getDb();
