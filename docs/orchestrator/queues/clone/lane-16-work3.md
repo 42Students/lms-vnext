@@ -4,9 +4,9 @@ Packets moved to you from other lanes. Work them AFTER your own queue (lane-16-w
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-sprint-delete-service.ts.md` (edit src/modules/projects/mentor-sprint-delete-service.ts; 4 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-schedule-mutation-model.ts.md` (edit src/modules/attendance/faculty-schedule-mutation-model.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_courses_page.tsx.md` (edit src/app/(authenticated)/mentor/courses/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-sprint-delete-service.ts.md` (edit src/modules/projects/mentor-sprint-delete-service.ts; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-schedule-mutation-model.ts.md` (edit src/modules/attendance/faculty-schedule-mutation-model.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_courses_page.tsx.md` (edit src/app/(authenticated)/mentor/courses/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-20_r2-storage-utils.md.md` (new; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-resource-controls.tsx.md` (edit src/components/projects/project-resource-controls.tsx; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-roster-verification-bulk.tsx.md` (edit src/components/tpo/tpo-roster-verification-bulk.tsx; 3 findings; best P1)

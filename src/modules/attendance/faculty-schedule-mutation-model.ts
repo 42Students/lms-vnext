@@ -13,8 +13,11 @@ export const facultyAttendanceScheduleSchema=z.discriminatedUnion("action",[
     expectedUpdatedAt:timestamp,confirm:z.literal(true),
   }),
 ]).superRefine((v,ctx)=>{
-  if(new Date(v.endsAt)<=new Date(v.startsAt))
+  const durationMs=Date.parse(v.endsAt)-Date.parse(v.startsAt);
+  if(durationMs<=0)
     ctx.addIssue({code:"custom",path:["endsAt"],message:"Invalid session window"});
+  else if(durationMs>12*60*60*1000)
+    ctx.addIssue({code:"custom",path:["endsAt"],message:"A class cannot last longer than 12 hours"});
 });
 export const facultyAttendanceScheduleParamsSchema=z.object({
   deliveryId:z.string().uuid(),
