@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -14,7 +15,22 @@ import { AuthorizationError, requirePermission } from "@/modules/permissions/pol
 import {ManagedCollegeSubdomain} from "@/components/admin/managed-college-subdomain";
 import {getManagedCollegeSubdomain} from "@/modules/tenant-domains/managed-subdomain-service";
 
-export default async function CollegeWebAddress({ params }: {
+function CollegeWebAddressLoading() {
+ return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading web address">
+  <PageHeader title="Web address"/>
+  <div className="min-w-0 rounded-lg border border-border bg-surface p-4">
+   <div className="h-5 w-32 animate-pulse rounded bg-muted"/>
+   <div className="mt-4 h-4 w-3/4 animate-pulse rounded bg-muted"/>
+   <div className="mt-4 h-10 w-full max-w-md animate-pulse rounded bg-muted"/>
+  </div>
+ </div>;
+}
+export default function CollegeWebAddress({params}:{params:Promise<{collegeId:string}>}) {
+ return <Suspense fallback={<CollegeWebAddressLoading/>}>
+  <CollegeWebAddressContent params={params}/>
+ </Suspense>;
+}
+async function CollegeWebAddressContent({ params }: {
  params: Promise<{collegeId: string}>;
 }) {
  const {collegeId} = await params;
@@ -44,11 +60,33 @@ export default async function CollegeWebAddress({ params }: {
    <Banner tone="info" role="status">
      Save or discard web-address edits before switching the selected college or leaving this setup section.
    </Banner>
-   <section aria-label="Managed college address" className="min-w-0">
+   <section aria-label="Web address" className="min-w-0 rounded-lg border border-border bg-surface p-4">
+     <div className="flex flex-wrap items-center justify-between gap-3">
+       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Web address</h2>
+       <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
+         className="inline-flex min-h-9 items-center gap-2 rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+           <path d="M20 11a8 8 0 1 0-2.2 5.5"/><path d="M20 4v7h-7"/>
+         </svg>
+         Reload
+       </Link>
+     </div>
+     <p className="my-3 max-w-3xl text-sm text-body">
+       The address students and staff open to sign in.
+       {managedResult.status==="fulfilled"&&managedResult.value.ready?
+        " It works straight away, with HTTPS, as soon as you allot it.":
+        " Allotment becomes available after the platform wildcard DNS and HTTPS certificate are verified."}
+     </p>
+     {managedResult.status==="fulfilled"&&managedResult.value.currentHost?
+       <p role="status" className="mb-3 flex flex-wrap items-center gap-2 rounded-lg border border-success bg-success-subtle px-3 py-2 text-sm">
+         <strong>Live at</strong>
+         <a href={"https://"+managedResult.value.currentHost} target="_blank" rel="noopener noreferrer"
+           className="break-all font-semibold text-primary-text underline">{managedResult.value.currentHost} ↗</a>
+       </p>:null}
      {managedResult.status==="fulfilled" ? <ManagedCollegeSubdomain collegeId={college.id} initial={managedResult.value}/> :
-       <ErrorState title="Couldn't load the web address."
+       <ErrorState title="Couldn't load the web address"
          description="The managed college subdomain could not be loaded. Existing custom addresses remain available."
-         action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"}
+         action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain?reload=1"}
            className="font-semibold text-primary-text underline">Retry web address</Link>}/>}
    </section>
    <Disclosure ariaLabel="Verified custom addresses" title="Verified custom addresses" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
