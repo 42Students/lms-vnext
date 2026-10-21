@@ -32,6 +32,34 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [notice, setNotice] = useState<string | null>(null);
   const [editing, setEditing] = useState<{ id: string; credits: string; position: string } | null>(null);
   const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [courseType, setCourseType] = useState<"CORE" | "ELECTIVE">("CORE");
+  const [switchDraft, setSwitchDraft] = useState<{ kind: "program" | "term"; value: string } | null>(null);
+  const [discardEdit, setDiscardEdit] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<{ program?: string; term?: string; courses?: string; credits?: string }>({});
+
+  function applyScopeChange(kind: "program" | "term", value: string) {
+    setFieldErrors({}); setError(null); setNotice(null); setEditing(null);
+    if (kind === "program") { setProgramId(value); setTermId(""); }
+    else setTermId(value);
+  }
+
+  function requestScopeChange(kind: "program" | "term", value: string) {
+    if (selectedIds.length) setSwitchDraft({ kind, value });
+    else applyScopeChange(kind, value);
+  }
+
+  function cancelEditing() {
+    if (!editing) return;
+    const original = data.mapped.find(item => item.id === editing.id);
+    const originalPosition = original
+      ? orderedPeers(original).findIndex(item => item.id === original.id) + 1 : 0;
+    if (original && (editing.credits !== String(original.credits ?? 3) ||
+      editing.position !== String(originalPosition))) {
+      setDiscardEdit(true);
+      return;
+    }
+    setEditing(null);
+  }
 
   async function send() {
     if (!confirm || inFlight.current) return;
@@ -66,24 +94,36 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     });
   }
 
-  const termChoices = data.terms.filter(term => term.isActive && term.programId === programId);
+  // Legacy permits viewing historical semesters, but inactive semesters remain read-only.
+  const termChoices = data.terms.filter(term => term.programId === programId);
   const selectedIds = draftByTerm[termId] ?? [];
   const mappedIds = new Set(data.mapped.filter(item => item.termId === termId).map(item => item.courseId));
   const selectedTerm = data.terms.find(term => term.id === termId);
-  const availableCourses = data.courses.filter(course =>
-    selectedTerm && course.departmentId === selectedTerm.departmentId && !mappedIds.has(course.id));
+  // Back-end scope validates college ownership, not same-department membership.
+  const availableCourses = data.courses.filter(course => selectedTerm && !mappedIds.has(course.id));
+  const editableTerm = selectedTerm?.isActive === true;
   const currentMappings = data.mapped.filter(item => item.termId === termId);
 
   function prepare(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const inputs = selectedIds.map(courseId => collegeTermCourseAddSchema.safeParse({
-      programTermId: termId, courseId, type: "CORE", credits: 3,
-    }));
-    if (!inputs.length || inputs.some(item => !item.success)) {
-      setError("Select one or more eligible courses for the semester.");
+    if (!programId || !termId) {
+      setFieldErrors({ program: !programId ? "Select a program" : undefined,
+        term: !termId ? "Select a semester" : undefined });
       return;
     }
-    setError(null); setNotice(null);
+    if (!editableTerm || error) {
+      setError("Load the selected semester before adding courses.");
+      return;
+    }
+    const inputs = selectedIds.map(courseId => collegeTermCourseAddSchema.safeParse({
+      programTermId: termId, courseId, type: courseType, credits: 3,
+    }));
+    if (!inputs.length || inputs.some(item => !item.success)) {
+      setFieldErrors({ courses: "Select at least one course." });
+      setError("Select at least one course.");
+      return;
+    }
+    setFieldErrors({}); setError(null); setNotice(null);
     setConfirm({ type: "ADD", body: { mappings: inputs.flatMap(item => item.success ? [item.data] : []) } });
   }
 
@@ -93,7 +133,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       credits: creditsValue.trim() === "" ? 3 : Number(creditsValue), position,
     });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Check mapping details.");
+      setFieldErrors({ credits: "Enter credits" });
+      setError(parsed.error.issues[0]?.message ?? "Course mapping was not updated");
       return;
     }
     setError(null);
@@ -107,13 +148,15 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         });
         const previous = data.mapped.find(row => row.id === id);
         const oldPosition = previous ? orderedPeers(previous).findIndex(row => row.id === id) + 1 : position;
-        setNotice(oldPosition === position ? "Semester course mapping updated." : "Semester course order saved.");
+        setNotice(oldPosition === position
+          ? `Updated mapping for “${previous?.courseName ?? "course"}”.`
+          : "Semester course order saved.");
         setEditing(null);
         router.refresh();
       } catch (cause) {
         setError(cause instanceof FriendlyFetchError && cause.code
           ? collegeTermMappingErrorMessage(cause.code)
-          : "Unable to update mapping. Refresh and try again.");
+          : "Course mapping was not updated");
       }finally{
         inFlight.current=false;
       }
@@ -131,46 +174,59 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
-          if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
-          setProgramId(event.target.value); setTermId("");
+          requestScopeChange("program", event.target.value);
         }} className="min-h-11 w-full md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
           {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
+        {fieldErrors.program ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.program}</span> : null}
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
         <Select required value={termId} onChange={event => {
-          if(selectedIds.length)setNotice("Unsaved course choices are retained.");
-          setTermId(event.target.value);
+          requestScopeChange("term", event.target.value);
         }} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>
-          {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber})</option>)}
+          {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber}){t.isActive ? "" : " — Archived"}</option>)}
         </Select>
+        {fieldErrors.term ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.term}</span> : null}
       </label>
 </div>
-    {termId ? <Disclosure title="Add courses" className="min-w-0 border-y border-border py-2" contentClassName="pt-3">
+    {termId && editableTerm ? <Disclosure title="Add courses" className="min-w-0 border-y border-border py-2" contentClassName="pt-3">
       <form onSubmit={prepare} className="grid min-w-0 gap-3">
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses to Add
         <Select multiple size={8} value={selectedIds}
-          disabled={!termId} onChange={event => setDraftByTerm(current => ({
-            ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
-          }))} className="min-h-40 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
+          disabled={!editableTerm || pending} onChange={event => {
+            setFieldErrors(current => ({ ...current, courses: undefined }));
+            setError(null);
+            setDraftByTerm(current => ({
+              ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
+            }));
+          }} className="min-h-40 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           {availableCourses.map(c => <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </Select>
         <span className="text-xs font-normal text-muted-foreground">
           Choose multiple courses; already-mapped courses are excluded. Selection is retained per semester.
         </span>
+        {fieldErrors.courses ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.courses}</span> : null}
+      </label>
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
+        <Select value={courseType} onChange={event => setCourseType(event.target.value as "CORE" | "ELECTIVE")}
+          className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground md:min-h-[var(--lms-control-height)]">
+          <option value="CORE">{TERM_MAPPING_COPY.core}</option>
+          <option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
+        </Select>
       </label>
       {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
       <div className="flex items-end sm:justify-end">
-        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !termId || !selectedIds.length}>
+        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !!error || !editableTerm || !termId || !selectedIds.length}>
           {TERM_MAPPING_COPY.addButton}
         </Button>
       </div>
       </form>
     </Disclosure> : null}
     {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
+    !editableTerm && currentMappings.length === 0 ? <p className="text-sm text-body">Archived semester — read-only. No courses mapped.</p> :
     currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
       <DataTable
         caption="Semester course mappings"
@@ -223,29 +279,29 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2 sm:col-span-2">
                   <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="submit" disabled={pending}
                     >Save</Button>
-                  <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
+                  <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={pending} onClick={cancelEditing}
                     >Cancel</Button>
                 </div>
               </form>
             ) : (
               <div className="flex min-w-0 flex-wrap gap-2">
-                <Button className="min-h-11 md:min-h-9" variant="secondary" type="button" disabled={pending}
+                <Button className="min-h-11 md:min-h-9" variant="secondary" type="button" disabled={pending || !editableTerm}
                   
                   onClick={()=>setEditing({
                     id:row.id,credits:row.credits===null?"3":String(row.credits),
                     position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
                   })}>Edit</Button>
-                <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending||orderedPeers(row)[0]?.id===row.id}
+                <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row)[0]?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" up"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</Button>
-                <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
+                <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row).at(-1)?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" down"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id)+2)}>↓</Button>
-                <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending}
+                <Button className="min-h-11 md:min-h-9" size="sm" variant="danger" disabled={pending || !editableTerm}
                   onClick={()=>{setError(null);setNotice(null);setConfirm({type:"REMOVE",id:row.id});}}>
                   {TERM_MAPPING_COPY.removeButton}
                 </Button>
@@ -253,8 +309,22 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             )},
         ]}
       />}
+    {termId && !editableTerm ? <p role="status" className="text-sm text-muted-foreground">This is an archived semester. Existing curriculum mappings are read-only.</p> : null}
     {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
     {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
+    <ConfirmDialog open={switchDraft !== null} onOpenChange={open => { if (!open) setSwitchDraft(null); }}
+      title={switchDraft?.kind === "program"
+        ? "Switch programs with unsaved course choices?" : "Switch semesters with unsaved course choices?"}
+      description={`${selectedIds.length} unsaved course choice(s) will be retained for this semester.`}
+      confirmLabel={switchDraft?.kind === "program" ? "Switch program" : "Switch semester"}
+      onConfirm={() => {
+        if (switchDraft) applyScopeChange(switchDraft.kind, switchDraft.value);
+        setSwitchDraft(null);
+      }} />
+    <ConfirmDialog open={discardEdit} onOpenChange={setDiscardEdit}
+      title="Discard mapping changes?" description="Your unsaved mapping changes will be lost."
+      confirmLabel="Discard changes" confirmVariant="danger"
+      onConfirm={() => { setEditing(null); setDiscardEdit(false); }} />
     <ConfirmDialog open={confirm !== null} onOpenChange={value => { if (!value && !pending) setConfirm(null); }}
       title={confirm?.type === "REMOVE"
         ? TERM_MAPPING_COPY.removeTitle(data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course")
