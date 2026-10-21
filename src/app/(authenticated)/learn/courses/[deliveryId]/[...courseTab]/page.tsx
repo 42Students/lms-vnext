@@ -76,6 +76,21 @@ export default async function LearnerCourseTabPage({
     redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+(suffix?"?"+suffix:""));
   }
 
+  if (courseTab.length > 1) {
+    // Legacy catch-all URLs accept a first valid tab and ignore descendants.
+    // Canonicalize only after verifying the learner owns this delivery.
+    await getLearnerCourseWorkspace(context, deliveryId);
+    const safeQuery = new URLSearchParams();
+    for (const [key, value] of Object.entries(query).slice(0, 20)) {
+      if (key.length > 100) continue;
+      const one = Array.isArray(value) ? value[0] : value;
+      if (typeof one === "string" && one.length <= 500) safeQuery.set(key, one);
+    }
+    const suffix = safeQuery.toString();
+    redirect("/learn/courses/" + encodeURIComponent(deliveryId) + "/" +
+      encodeURIComponent(activeTab) + (suffix ? "?" + suffix : ""));
+  }
+
   const [workspaceResult, deliveriesResult, instructorsResult] = await Promise.allSettled([
     getLearnerCourseWorkspace(context, deliveryId),
     listLearnerCourseDeliveries(context, { includeHistorical: true }),
