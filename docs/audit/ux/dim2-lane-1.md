@@ -387,3 +387,15 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=PageHeader; 375 title20px=shared; subtitle14px=shared | fixes: none
 - `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=PageHeader; 375 title20px=shared; subtitle14px=shared | fixes: none
 - `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=PageHeader; 375 title20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx` | instances H2/B0/T3/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx` | instances H2/B0/T2/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/response-followups/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/response-followups/page.tsx` | instances H2/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/results/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/teacher/results/page.tsx` | instances H2/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/announcements/page.tsx` | instances H3/B0/T1/F1/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: filter spacing 1 × 12/16→8px
+- `src/app/(authenticated)/tpo/audit/actors/page.tsx` | instances H2/B0/T0/F1/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/audit/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
