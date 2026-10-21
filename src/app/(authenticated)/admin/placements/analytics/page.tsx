@@ -134,7 +134,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company totals</h2>
    <div className="grid min-w-0 gap-[var(--lms-space-3)] lg:grid-cols-2">{groups.map(group=>
      <article key={group.companyName} className="min-w-0 border-b border-border py-[var(--lms-space-4)]">
-      <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{group.companyName}</h3>
+      <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{group.companyName}</h3>
       <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
        {metricKeys.map(key=><div key={key} className="min-w-0">
         <dt className="break-words text-body">{hiringMetricLabel(key)}</dt>
