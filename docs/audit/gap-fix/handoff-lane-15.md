@@ -568,3 +568,26 @@
 - G2-4-021-063 — src/modules/tracker report, search and activity services; report UI: Define IST/source zone on migration to prevent wrong incident chronology.
 - G2-4-021-065 — src/modules/tracker report, search and activity services; report UI: Backfill missing/duplicate legacy IDs with logged reconciliation.
 - G2-8-031-068 — src/modules/tracker report, search and activity services; report UI: Document legacy bug status/attachment field mapping and migration consequences; no data migration expected but functional parity required.
+
+## Wave2 project admin collection control dependent query/status behavior
+- G2-10-031-014 — src/modules/projects/admin workspace list query/parser and caller pages: Match each list's status model and clear URL defaults.
+- G2-10-031-015 — src/modules/projects/admin workspace list query/parser and caller pages: Adopt debounced search with robust deep links.
+- G2-10-028-019 — src/modules/projects/admin workspace list query/parser and caller pages: Restore immediate debounced search.
+- G2-10-028-021 — src/modules/projects/admin workspace list query/parser and caller pages: Match pagination position/counter wording.
+- G2-10-028-023 — src/modules/projects/admin workspace list query/parser and caller pages: Restore clearable one-click controls.
+- G2-10-028-024 — src/modules/projects/admin workspace list query/parser and caller pages: Apply page size immediately.
+- G2-10-028-045 — src/modules/projects/admin workspace list query/parser and caller pages: Verify/mobile match table scroll and controls at 320/375/768px.
+- G2-11-028-016 — src/modules/projects/admin workspace list query/parser and caller pages: Legacy dedicated deleted list has no status/search filters, only page/size; vNext user must choose ARCHIVED from Workspace status filter.
+- G2-11-028-017 — src/modules/projects/admin workspace list query/parser and caller pages: Legacy page sizes 10,20,50,100 and total string N-M of N deleted workspaces; vNext directory supports 10/20/50/100 but generic pagination copy.
+- G2-7-001-058 — src/modules/projects/admin workspace list query/parser and caller pages: Restore exact section title and search copy.
+- G2-7-019-011 — src/modules/projects/admin workspace list query/parser and caller pages: Match inline search and clearable select interaction without Apply/Clear requirement.
+- G2-7-019-026 — src/modules/projects/admin workspace list query/parser and caller pages: Restore exact placeholder and live 350ms search.
+- G2-7-019-032 — src/modules/projects/admin workspace list query/parser and caller pages: Support immediate clear; filter applied without extra submit.
+- G2-7-019-034 — src/modules/projects/admin workspace list query/parser and caller pages: Apply page-size changes without separate confirmation.
+- G2-7-019-075 — src/modules/projects/admin workspace list query/parser and caller pages: Restore both placeholders and avoid different field labels.
+- G2-7-019-080 — src/modules/projects/admin workspace list query/parser and caller pages: Restore debounce with request cancelation for live text searching.
+- G2-10-031-008 — src/modules/projects/admin workspace list query/parser and caller pages: Match per-resource labels, avoid one-size-fits-all statuses.
+- G2-10-028-049 — src/modules/projects/admin workspace list query/parser and caller pages: Restore export wording.
+- G2-7-019-029 — src/modules/projects/admin workspace list query/parser and caller pages: Render row range plus total with exact legacy suffix.
+- G2-7-019-033 — src/modules/projects/admin workspace list query/parser and caller pages: Match status picker clear button and placeholder `Status`.
+- G2-7-019-070 — src/modules/projects/admin workspace list query/parser and caller pages: Compare search width and toolbar wrapping at 375,768,1280; match legacy compact layout.
