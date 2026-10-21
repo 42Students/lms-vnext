@@ -67,11 +67,15 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         ["firstName","name"],["name","name"],["phone","mobile"],
         ["mobile","mobile"],["email","email"],["code","code"],
       ];
+      const serverErrors:Partial<Record<Field,string>>={};
       for(const [serverField,field] of candidates){
-        if(fields[serverField]){
-          setFieldErrors(previous=>({...previous,[field]:fields[serverField]}));
-          return;
+        if(fields[serverField] && !serverErrors[field]){
+          serverErrors[field]=fields[serverField];
         }
+      }
+      if(Object.keys(serverErrors).length){
+        setFieldErrors(previous=>({...previous,...serverErrors}));
+        return;
       }
     }
     setActionError(error instanceof Error?error.message:fallback);
@@ -166,7 +170,10 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       const result=outcome as Record<string,unknown>;
       if(result.accepted!==true ||
          (result.outcome!=="JOINED" && result.outcome!=="PENDING_HR") ||
-         typeof result.signInEmail!=="string" || !result.signInEmail.trim()){
+         typeof result.signInEmail!=="string" || !result.signInEmail.trim() ||
+         result.signInEmail.trim().toLowerCase()!==invite?.contactEmail?.trim().toLowerCase()){
+        // An accepted response must affirm the SAME email that received OTP.
+        // An unrelated mailbox is not proof of an authorized college grant.
         setActionError(UNCONFIRMED);
         return;
       }
@@ -182,7 +189,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     busyRef.current=true;
     setBusy(true);setActionError("");
     try{
-      if(!invite?.contactEmail?.trim()){
+      if(!invite?.contactEmail?.trim() ||
+         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(invite.contactEmail)){
         setFieldErrors({email:"Ask the placement cell to add your work email to the invitation."});
         return;
       }
