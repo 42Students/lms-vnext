@@ -6,11 +6,11 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L12-U031 (Cross-cutting area) `cross/12: Global shell: header, sidebar, menus per role, breadcrumbs, route titles, redirects, 404/403/500 pages`
-- [ ] L13-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js`
-- [ ] L14-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterDriveController.java`
-- [ ] L15-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeBranding.java`
-- [ ] L15-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js`
+- [x] L12-U031 (Cross-cutting area) `cross/12: Global shell: header, sidebar, menus per role, breadcrumbs, route titles, redirects, 404/403/500 pages`
+- [x] L13-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/tasks.js`
+- [x] L14-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterDriveController.java`
+- [x] L15-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeBranding.java`
+- [x] L15-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js`
 - [ ] L17-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NotificationController.java`
 - [ ] L18-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/QuizAttempt.java`
 - [ ] L18-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NewProgramController.java`

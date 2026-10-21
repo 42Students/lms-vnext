@@ -53,26 +53,26 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U012 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java`
 - [x] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeSummaryController.java`
 - [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java`
-- [ ] U015 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseProgressController.java`
-- [ ] U016 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminJobController.java`
-- [ ] U017 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminLearnerProgressController.java`
-- [ ] U018 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminLessonBulkController.java`
-- [ ] U019 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminNotificationDeliveryController.java`
-- [ ] U020 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminProjectController.java`
-- [ ] U021 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminProjectTemplateController.java`
-- [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminQuizController.java`
-- [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminSmsLogController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AnnouncementController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AssignmentController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AttendanceBulkController.java`
-- [ ] U028 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/BaseController.java`
-- [ ] U029 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/BatchController.java`
-- [ ] U030 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ChoicesController.java`
-- [ ] U031 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassController.java`
-- [ ] U032 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassScheduleController.java`
-- [ ] U033 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassroomController.java`
-- [ ] U034 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClientErrorReportController.java`
-- [ ] U035 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClientSettingsController.java`
-- [ ] U036 (Cross-cutting area) `cross/02: Authorization: role and permission matrix for every account type (learner, faculty, mentor, college admin, TPO, HR/recruiter, super admin), edge guards, tenant rules`
-- [ ] U037 (Cross-cutting area) `cross/22: i18n, copy, date/time/number/currency formats, accessibility conventions`
+- [x] U015 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseProgressController.java`
+- [x] U016 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminJobController.java`
+- [x] U017 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminLearnerProgressController.java`
+- [x] U018 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminLessonBulkController.java`
+- [x] U019 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminNotificationDeliveryController.java`
+- [x] U020 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminProjectController.java`
+- [x] U021 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminProjectTemplateController.java`
+- [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminQuizController.java`
+- [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminRecycleBinController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminSmsLogController.java`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AnnouncementController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AssignmentController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AttendanceBulkController.java`
+- [x] U028 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/BaseController.java`
+- [x] U029 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/BatchController.java`
+- [x] U030 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ChoicesController.java`
+- [x] U031 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassController.java`
+- [x] U032 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassScheduleController.java`
+- [x] U033 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClassroomController.java`
+- [x] U034 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClientErrorReportController.java`
+- [x] U035 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ClientSettingsController.java`
+- [x] U036 (Cross-cutting area) `cross/02: Authorization: role and permission matrix for every account type (learner, faculty, mentor, college admin, TPO, HR/recruiter, super admin), edge guards, tenant rules`
+- [x] U037 (Cross-cutting area) `cross/22: i18n, copy, date/time/number/currency formats, accessibility conventions`
