@@ -178,7 +178,7 @@ export default async function TpoHome(){
  <PageHeader title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
  <div role="group" aria-label="Placement overview"
-  className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface lg:grid-cols-4">
+  className="grid min-w-0 grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface lg:grid-cols-4">
   {[
     {label:rows[1]?.title ?? "Drives",value:operationsResult?operations.summary.publishedJobs:"—",detail:rows[1]?.status,href:rows[1]?.href},
     {label:rows[2]?.title ?? "Students",value:studentStats?.summary.placementPool??"—",detail:rows[2]?.status,href:rows[2]?.href},

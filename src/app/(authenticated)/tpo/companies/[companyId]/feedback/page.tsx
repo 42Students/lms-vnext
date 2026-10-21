@@ -44,7 +44,7 @@ export default async function TpoCompanyFeedbackPage({
       <PageHeader title={data.companyName + " · Internal feedback"}
         description="Recorded TPO recruiter notes for contacts explicitly linked to this college-company relationship."
         actions={<Link href={"/tpo/companies/" + encodeURIComponent(companyId)}
-          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center">
           ← Company details
         </Link>}/>
       {!data.available ? (
@@ -86,7 +86,7 @@ export default async function TpoCompanyFeedbackPage({
                         {dateFormat.format(new Date(item.recordedAtIso))} IST
                       </time>
                     </div>
-                    <p className="whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{item.note}</p>
+                    <p className="whitespace-pre-wrap break-words text-sm text-body">{item.note}</p>
                   </li>
                 ))}
               </ul>
@@ -107,7 +107,7 @@ export default async function TpoCompanyFeedbackPage({
           </nav>:null}
         </>
       )}
-      <p className="text-xs text-muted-foreground leading-5">
+      <p className="text-xs text-muted-foreground">
         This is an internal TPO CRM note log, not company-submitted ratings,
         verified recruiter responses or delivered messages. Notes can contain
         sensitive business context; they are not exposed to learners or recruiters.
