@@ -628,3 +628,155 @@ A server-scoped bulk grade publish changes access control, audit, pagination and
 - G2-19-027-098 | `src/components/courses/admin-course-overview.tsx` | Make bulk visibility reachable to college admins under same role policy and preserve selection/partial failures.
 
 Course catalogue status/visibility, optimistic updates and restoration are Courses/schema ownership. Legacy hidden and archived states cannot be conflated; migration and data-retention decisions required. **13/13 handed off, not fixed**.
+
+## Project workspace readiness — lane-7 handoff (2026-10-21)
+
+- G2-17-028-008 | `src/modules/projects/readiness-service.ts` | Add scoped per-task evidence coverage read (completed tasks with submission URL) to service/DTO and legacy-labeled metric with zero-completion special text
+- G2-17-028-011 | `src/modules/projects/readiness-service.ts` | Product decision: keep legacy readiness independent of release shipping or explicitly document change and update visible rule/warning; don't silently reinterpret gate
+- G2-17-028-018 | `src/modules/projects/readiness-override-service.ts` | Crosswalk nullable Boolean true/false/null to enum, and preserve clear semantics and active override display
+- G2-17-028-024 | `src/modules/projects/readiness-service.ts` | Use one scoped workspace view/readiness shape or BFF with embedded proof tasks; avoid an extra unsynchronized fetch for coverage
+- G2-17-028-025 | `src/modules/projects/readiness-override-service.ts` | Keep business intent equivalent through payload/status mapping, reject outside-scope IDs; align parent form behavior
+- G2-17-028-026 | `src/modules/projects/readiness-override-service.ts` | Ensure latest state and author/time still visible after migration, including cleared override and old records
+- G2-17-028-027 | `src/components/projects/project-readiness-workspace.tsx` | Render distinct `No college selected` shell/banner on missing selected scope; never suppress nav tabs
+- G2-17-028-029 | `src/modules/projects/readiness-service.ts` | Align readiness gate formula with legacy: verify task/sprint completion and submission conditions, make release policy decision before parity sign-off
+- G2-17-028-040 | `src/modules/projects/readiness-service.ts` | Clarify status normalization for migrated tasks; count submissions that are valid URLs, not whitespace or stale data; test zero tasks
+- G2-17-028-044 | `src/modules/projects/readiness-override-service.ts` | Preserve historical override read model or migrate records to append-only activity events (no data migration desired? confirm on live old data)
+- G2-17-028-045 | `src/modules/projects/readiness-service.ts` | Publish explicit DTO mapping including readinessState/reason and proofCoverage; avoid UI comparing non-equivalent flags
+- G2-17-028-047 | `src/components/projects/project-readiness-workspace.tsx` | Restore distinct missing legacy regions; record expected zero-count and override-off screenshots
+
+Project execution readiness is stricter than legacy submit-ready and uses append-only override events, not mutable workspace booleans. Model owner must decide semantics, audit migration and UI proof coverage. **12/12 handed off, not fixed**.
+
+## College attendance controller — lane-7 handoff (2026-10-21)
+
+- G2-2-009-010 | `src/components/attendance/admin-attendance-workspace.tsx` | On correction open refetch exact record state with server denial/error instead of relying on potentially stale grid.
+- G2-2-009-022 | `src/modules/attendance/admin-attendance-service.ts` | Add error state refusing correction when fresh marker record cannot be loaded.
+- G2-2-009-038 | `src/modules/attendance/admin-attendance-service.ts` | Align server to UI future-session policy, or explicitly approve pre-session corrections; prevent deep-link bypass.
+- G2-2-009-039 | `src/components/attendance/admin-attendance-workspace.tsx` | Add detail fetch skeleton/error and hard-disable correction until verified.
+- G2-2-009-044 | `src/components/attendance/admin-attendance-workspace.tsx` | Export aggregate attended/marked ratio identical to displayed legacy grid.
+- G2-2-009-063 | `src/components/attendance/admin-attendance-workspace.tsx` | Restore live record read/verification before allowing writes and exact modal UI.
+- G2-2-009-020 | `src/app/(authenticated)/college/attendance/page.tsx` | Show date-specific validation messages on any date-range client.
+- G2-2-009-019 | `src/app/(authenticated)/college/attendance/page.tsx` | Map invalid tenant scope to safe same error semantic.
+- G2-2-009-021 | `src/modules/attendance/admin-attendance-service.ts` | Provide exact invalid reason error to admin.
+- G2-2-009-023 | `src/components/attendance/admin-attendance-workspace.tsx` | Restore operation-specific failure copy.
+- G2-2-009-024 | `src/components/attendance/admin-attendance-workspace.tsx` | Keep action-specific success wording or document combined toast.
+- G2-2-009-025 | `src/components/attendance/admin-attendance-workspace.tsx` | Include chosen session timestamp in success acknowledgement.
+
+Attendance row correction permissions and fresh-record checks must be server-enforced, not only disabled client controls; consistent per-session CSV and exact success labels require Attendance owner. **12/12 handed off, not fixed**.
+
+## College project template detail — lane-7 handoff (2026-10-21)
+
+- G2-7-005-002 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Add primary use-template CTA to `/college/projects/create?templateId=<UUID>` preselecting assigned version.
+- G2-7-005-003 | `src/modules/projects/template-service.ts` | Bridge old integer-ID bookmarks via redirect/lookup if legacy deep-link migration required.
+- G2-7-005-019 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Restore use-template form launch; keep editing disabled.
+- G2-7-005-021 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Catch access/not found/database read separately; show legacy Retry and failure message.
+- G2-7-005-026 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Add deep link to full workspace create form, never lightweight duplicate modal.
+- G2-7-005-029 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Restore CTA to authoritative create route.
+- G2-7-005-031 | `src/modules/projects/template-service.ts` | Determine whether old catalog exposed all published templates; if so add read-only browsing or assignment explanation.
+- G2-7-005-053 | `src/db/schema/projects.ts + template migration` | Define template migration/model adapter for ID, lifecycle timestamp and all JSON section fields.
+- G2-7-005-056 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Restore only full create CTA, not preview or modal.
+- G2-7-005-057 | `src/modules/projects/template-service.ts` | Ensure scope/authorization and catalog visibility meet product requirements.
+- G2-7-005-022 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Render true not-found/no-assignment state distinct from service errors.
+- G2-7-005-023 | `src/components/projects/project-admin-missing-college.tsx` | Restore exact no-college message and project nav.
+
+The project template detail already does scoped read-only assignment, but its create-deep-link must target an authorized form and assigned version. Projects owner must wire form/use CTA and explicit errors. **12/12 handed off, not fixed**.
+
+## College dashboard summary — lane-7 handoff (2026-10-21)
+
+- G2-2-013-009 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Map legacy enrolments with college via class, not merely active membership role.
+- G2-2-013-018 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Use individual settled COUNT queries for FOUR summary metrics; unaffected tiles must still load.
+- G2-2-013-020 | `src/modules/admin-ui/college-dashboard-cards-service.ts` | Allow permitted scoped Super Admin reader equivalent under selected acting-college context.
+- G2-2-013-022 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Preserve legacy count membership fallback or document deliberate status policy change.
+- G2-2-013-026 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Implement per-field fallback null; never replace failure with zero.
+- G2-2-013-035 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Isolate failures and preserve precision of '—' vs real zero.
+- G2-2-013-038 | `src/modules/admin-ui/college-dashboard-cards-model.ts` | Return partial counts and carry null per failing dimension.
+- G2-2-013-039 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Separate summary dependency from unrelated setup metrics.
+- G2-2-013-014 | `src/app/(authenticated)/college/page.tsx` | Map new route failure to safe equivalent copy.
+- G2-2-013-015 | `src/app/(authenticated)/college/page.tsx` | Verify 401/redirect semantics for unauthenticated API/SSR clients.
+- G2-2-013-016 | `src/modules/admin-ui/college-dashboard-cards-service.ts` | Version old REST response envelope for clients, no success toast requirement.
+
+College dashboard summary totals require independent failures with nullable counts; do not fabricate zero for failed queries or broaden selected-college scope. Dashboard/Admin UI owner must decouple setup queries. **11/11 handed off, not fixed**.
+
+## ZeptoMail event template mapping — lane-7 handoff (2026-10-21)
+
+- G2-2-003-004 | `src/modules/notifications/zeptomail-config.ts` | Introduce audited typed event-to-template lookup and channel matrix for 19 legacy events.
+- G2-2-003-005 | `src/modules/notifications/zeptomail-provider.ts` | Port event-specific property keys into typed provider configuration; protect OTP templates separately.
+- G2-2-003-011 | `src/modules/notifications/zeptomail-provider.ts` | Add startup validation enumerating each email-enabled event with missing ID and aggregate warning.
+- G2-2-003-012 | `src/modules/notifications/zeptomail-provider.ts` | Reject literal placeholder value across all email send paths.
+- G2-2-003-016 | `src/modules/notifications/zeptomail-config.ts` | Add startup readiness audit and operational health metric, respecting non-production send restrictions.
+- G2-2-003-017 | `src/modules/notifications/zeptomail-provider.ts` | Implement explicit legacy-event dispatch adapter with complete channel and merge-variable coverage.
+- G2-2-003-021 | `src/modules/notifications/zeptomail-provider.ts` | Encode six-event email allowlist and refuse other legacy events unless owner explicitly expands.
+- G2-2-003-022 | `src/modules/notifications/zeptomail-provider.ts` | Enforce negative event-channel policy to prevent cost/privacy regressions.
+- G2-2-003-027 | `src/modules/notifications/zeptomail-config.ts` | Implement reviewed registry of each legacy event, channel and template binding; add channel tests.
+- G2-2-003-014 | `src/modules/notifications/zeptomail-provider.ts` | Expose structured skip counts to ops without exposing recipients/credentials.
+- G2-2-003-013 | `src/modules/notifications/zeptomail-config.ts` | Provide non-sensitive log/metric for complete event template provisioning.
+
+Notification channel matrix and provider templates belong to Messaging/Notifications. Missing template IDs must not trigger sends, and expanding permitted email events carries privacy and cost consequences. **11/11 handed off, not fixed**.
+
+## Lesson Resource uploads — lane-7 handoff (2026-10-21)
+
+- G2-6-025-002 | `src/modules/storage/file-policy.ts` | Provide a lesson Resource file kind with course/delivery scope, not project-resource reuse.
+- G2-6-025-005 | `src/modules/courses/lesson-resource-materials-service.ts` | Provide authenticated per-file Open/download action instead of public URL.
+- G2-6-025-008 | `src/modules/storage/file-policy.ts` | Introduce distinct typed Resource namespace before issuing grants.
+- G2-6-025-026 | `src/modules/storage/file-lifecycle.ts` | Store immutable Resource parent content/offering/delivery IDs and verify on upload completion.
+- G2-6-025-027 | `src/modules/courses/lesson-resource-materials-service.ts` | Add atomic FILE grant/complete/attach, consumed token, object head, scan and tenant binding.
+- G2-6-025-049 | `src/db/schema/lesson-content-materials.ts` | Wire material FILE rows with grant/complete/attestation transition and scoped signed downloads.
+- G2-6-025-018 | `src/modules/courses/lesson-resource-materials-service.ts` | Preserve unauthenticated 401 vs authenticated 403 with exact UI wording.
+- G2-6-025-019 | `src/modules/courses/lesson-resource-materials-service.ts` | Map typed 403 to legacy complete staff-only message in upload UI.
+- G2-6-025-020 | `src/modules/storage/file-policy.ts` | Use new equivalent Resource-specific bad-request copy, without trusting caller-provided scope.
+- G2-6-025-021 | `src/modules/storage/file-policy.ts` | Translate storage error codes to exact legacy Resource messages and field helper text.
+- G2-6-025-023 | `src/modules/storage/file-lifecycle.ts` | Offer explicit storage-unavailable recovery, avoid exposing provider stack.
+
+Existing signed storage intentionally prevents public download URLs. Course Resource FILE attachments require a scoped grant, HEAD/scan attestation and one-time receipt consumption before exposing downloads. Storage/Courses schema owned elsewhere. **11/11 handed off, not fixed**.
+
+## TPO batch eligibility and invitation — lane-7 handoff (2026-10-21)
+
+- G2-6-023-004 | `src/modules/placements/tpo-batch-workspace-read-service.ts` | Build total/eligible/placed/unbatched journey strip and same section ordering.
+- G2-6-023-006 | `src/modules/placements/tpo-batch-workspace-read-service.ts` | Expose exact counts and quick-action badges per batch from authorized queries.
+- G2-6-023-017 | `src/modules/placements/batch-participation-service.ts` | Support clear-to-NOT_DECIDED semantics via row removal, notes and per-scope decision provenance.
+- G2-6-023-019 | `src/modules/placements/tpo-batch-workspace-read-service.ts` | Map no-college error to literal copy and 403 scope selection affordance.
+- G2-6-023-020 | `src/modules/placements/batch-participation-service.ts` | Restore exact invalid-decision client and HTTP messaging.
+- G2-6-023-021 | `src/modules/placements/batch-participation-service.ts` | Clone literal validation wording and field-level placement.
+- G2-6-023-022 | `src/modules/placements/batch-participation-service.ts` | Map error codes to legacy complete wording; disable appropriate button.
+- G2-6-023-024 | `src/modules/placements/batch-participation-service.ts` | Match confirmation/result summary and success count wording, not just event creation.
+- G2-6-023-025 | `src/modules/placements/tpo-batch-reminder-service.ts` | Render legacy Reminded N student(s) / Everyone has chosen already variants.
+- G2-6-023-026 | `src/modules/placements/tpo-batch-rules-service.ts` | Return complete effective policy or revalidate/refetch after save.
+
+TPO cohort/eligibility/invitation read and writes span Placements batch ownership. 'Not decided' clearing must preserve audit and cannot be silently conflated with INELIGIBLE. **10/10 handed off, not fixed**.
+
+## Super Admin departments — lane-7 handoff (2026-10-21)
+
+- G2-18-030-002 | `src/app/(authenticated)/admin/departments/page.tsx` | Document product decision: Super Admin all-college view intentionally removed for safety; offer explicit selected-college scope UX, not silent empty list
+- G2-18-030-036 | `src/modules/academics/department-service.ts` | Document intentionally removed unscoped listing; if global directory required, add new server-authorized paged cross-college view
+- G2-18-030-037 | `src/app/api/academics/departments/[departmentId]/route.ts` | Document snakeCase→server tenant mapping and DELETE→ARCHIVE migration; old API clients must use new safe endpoints
+- G2-18-030-039 | `src/modules/academics/college-department-mutation-service.ts` | Test selected-college SA acting scope authorization, no privilege via forged college ID, explicit missing-scope error
+- G2-18-030-041 | `src/modules/academics/college-department-mutation-service.ts` | Explain archived children still block even when active count chips show zero; provide count/blocker reason from server
+- G2-18-030-046 | `src/app/(authenticated)/admin/departments/page.tsx` | Catch list failure at page boundary, render error and retry rather than server exception or bogus no-results
+- G2-18-030-058 | `src/db/schema/academics.ts` | Document legacy int→UUID ID translation, tenant scope and archivedAt vs delete for integrations/export
+- G2-18-030-059 | `src/db/schema/academics.ts` | Confirm archived data retention and dependency uniqueness; old reports must not assume deleted rows disappear physically
+
+Selected-college scoping and archive-rather-than-delete are intentionally safer vNext defaults; preserving global unscoped lookup would require explicit pagination/privacy scope. Academics/admin owner must implement error/state polish. **8/8 handed off, not fixed**.
+
+## Super Admin login route — lane-7 handoff (2026-10-21)
+
+- G2-6-031-001 | `src/app/superadmin-login/page.tsx` | Restore legacy route's recognizable branded login surface or record approved single-login consolidation and preserve returnTo.
+- G2-6-031-019 | `src/components/auth/login-form.tsx` | Confirm whether explicit consent is still legally required; if yes restore checkbox/disabled rule with acknowledgement tracking.
+- G2-6-031-038 | `src/components/auth/login-form.tsx` | Get owner/legal decision on affirmative consent vs informational text.
+- G2-6-031-022 | `src/components/auth/login-form.tsx` | Restore exact text or document improved actionable contact language.
+- G2-6-031-023 | `src/components/auth/login-form.tsx` | Match message and toast duration/position if strict clone outweighs usability.
+- G2-6-031-024 | `src/components/auth/login-form.tsx` | Show exact error message on attempted empty submit; ensure keyboard flow.
+- G2-6-031-026 | `src/components/auth/login-form.tsx` | Match literal OTP Sent! toast style/duration if parity required.
+- G2-6-031-027 | `src/app/login/page.tsx` | Match placement and 4-second toast if route-specific parity; retain accessible persistent alert if approved.
+
+Unifying login across roles is intentional; affirmative OTP Terms consent requires legal/policy signoff and cannot be reinstated solely for styling. Auth owner should retain non-enumerating error and OTP security even if legacy copy is requested. **8/8 handed off, not fixed**.
+
+## Semester management clone — lane-7 handoff (2026-10-21)
+
+- G2-18-029-002 | `src/app/(authenticated)/admin/semesters/page.tsx` | Restore 10/14 side-by-side card layout at lg, stack below breakpoint
+- G2-18-029-005 | `src/app/(authenticated)/admin/semesters/page.tsx` | Recreate compact tools in list card header, including search placeholder
+- G2-18-029-006 | `src/components/admin/super-admin-semester-create-control.tsx` | Open by default in bordered card, vertical fields and plus icon
+- G2-18-029-007 | `src/components/admin/super-admin-semester-create-control.tsx` | Field-level errors, red alert headings, sticky failed-record Retry delete
+- G2-18-029-013 | `src/app/(authenticated)/admin/semesters/page.tsx` | Retain old same-scope rows and warning Couldn't refresh semesters
+- G2-18-029-016 | `src/app/(authenticated)/admin/semesters/page.tsx` | Apply old breakpoints and mobile horizontal table overflow
+- G2-18-029-008 | `src/components/admin/super-admin-semester-create-control.tsx` | After create select its program for visible new row; preserve toast
+
+Academic semester create/list visual layout and server fetch are shared Academic/Admin UI areas. Restore clone grid and safe retry with UI owner; semester number/program validation must remain scoped. **7/7 handed off, not fixed**.

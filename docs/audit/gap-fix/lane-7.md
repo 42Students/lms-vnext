@@ -67,3 +67,23 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-2_admin-assignment-publish-controller.md.md` | 13/13 findings reviewed and handed off with code target. No out-of-area Courses grade publish mutation/API edits, preserved permission/CAS requirements. **Handoff not fixed**, static source review only.
 
 - `NEW_docs_audit_gap2_lane-7_l19-u027-course-controller.md.md` | 13/13 findings reviewed and handed off with code target. No out-of-area Courses catalogue service/schema/UI edits, preserved permission/CAS requirements. **Handoff not fixed**, static source review only.
+
+- `NEW_docs_audit_gap2_lane-13_l17-u028-workspace-readiness.md.md` | All 12 findings read; exact-ID/project targets assigned to Projects readiness and override service/UI. No shared-files edited; release shipping gate and legacy evidence metric require product decision. **Handoff, not fixed**, no CI.
+
+- `NEW_docs_audit_gap2_lane-2_admin-attendance-controller.md.md` | All 12 findings read; exact-ID/project targets assigned to Attendance workspace/service/route. No shared-files edited; server-enforced future-session restrictions and record refetch require secure read API. **Handoff, not fixed**, no CI.
+
+- `NEW_docs_audit_gap2_lane-7_u005-college-admin-project-template-detail.md.md` | 12/12 findings reviewed with per-ID target handoff in Projects template read-only detail/UI/service. 0 files outside lane area edited. **Handoff, not fixed**, no code execution or CI.
+
+- `NEW_docs_audit_gap2_lane-2_admin-college-summary-controller.md.md` | 11/11 findings reviewed with per-ID target handoff in College Admin dashboard-card/setup-checklist services. 0 files outside lane area edited. **Handoff, not fixed**, no code execution or CI.
+
+- `NEW_docs_audit_gap2_lane-2_zeptomail-template-id-resolver.md.md` | 11/11 findings mapped to Notification template resolver/provider owner files. No code outside lane scope altered, security/tenant boundary retained. **Handoff, not fixed**; static only.
+
+- `NEW_docs_audit_gap2_lane-6_resource-upload-controller.md.md` | 11/11 findings mapped to Storage policy/lifecycle and Courses lesson materials owner files. No code outside lane scope altered, security/tenant boundary retained. **Handoff, not fixed**; static only.
+
+- `NEW_docs_audit_gap2_lane-6_tpo-batches-controller.md.md` | 10/10 findings reviewed and routed by ID to TPO batch participation/rules/read services. No out-of-area edits; no CI. **Handoff, not fixed**.
+
+- `NEW_docs_audit_gap2_lane-13_l18-u030-superadmin-departments.md.md` | 8/8 findings reviewed and routed by ID to Academic departments page, mutation service and schema. No out-of-area edits; no CI. **Handoff, not fixed**.
+
+- `NEW_docs_audit_gap2_lane-6_superadmin-login.md.md` | 8/8 packet findings triaged with exact target paths; no changes to shared sign-in and consent/auth outside lane ownership. **Handoff, not fixed**, no code/CI execution.
+
+- `NEW_docs_audit_gap2_lane-14_l18-u029-semester-management.md.md` | 7/7 packet findings triaged with exact target paths; no changes to Academic semester form/page outside lane ownership. **Handoff, not fixed**, no code/CI execution.
