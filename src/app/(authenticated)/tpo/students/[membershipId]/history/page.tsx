@@ -56,7 +56,7 @@ export default async function TpoLearnerPlacementHistoryPage({
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
           <Link
             href="/tpo/students"
-            className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="lms-inline-link inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >← Back to Students</Link>
           <Link
             href={"/tpo/students/" +
@@ -104,7 +104,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   </p>
                   {item.addedByCollege?<p className="mt-1 text-sm font-semibold">Added by the college</p>:null}
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                    className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open drive</Link>:null}
+                    className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open drive</Link>:null}
                 </div>
                 <span className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-1 text-xs font-semibold text-foreground">
                   {item.applicationStatus}
@@ -224,12 +224,12 @@ export default async function TpoLearnerPlacementHistoryPage({
         <span>Page {history.page} of {history.totalPages} · {history.total} application(s)</span>
         <div className="flex gap-4">
           {history.page > 1 ? (
-            <Link href={href(history.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            <Link href={href(history.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               ← Previous
             </Link>
           ) : null}
           {history.page < history.totalPages ? (
-            <Link href={href(history.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            <Link href={href(history.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               Next →
             </Link>
           ) : null}
