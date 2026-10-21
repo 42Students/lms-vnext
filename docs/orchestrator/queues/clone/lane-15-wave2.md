@@ -63,7 +63,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_project-audit-staged.ts.md` (edit src/db/schema/project-audit-staged.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_college_departments_departmentId_route.ts.md` (edit src/app/api/college/departments/[departmentId]/route.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_mobile-navigation.tsx.md` (edit src/components/shell/mobile-navigation.tsx; 5 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_globals.css.md` (edit src/app/globals.css; 5 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_globals.css.md` (edit src/app/globals.css; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_company-share_column-model.ts.md` (edit src/modules/placements/company-share/column-model.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_people_faculty-self-document_route.ts.md` (edit src/app/api/people/faculty-self-document/route.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_learner-support-request-model.ts.md` (edit src/modules/placements/learner-support-request-model.ts; 4 findings; best P2)
