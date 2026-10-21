@@ -1,6 +1,5 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import {DataTable} from "@/components/ui/data-table";
 import { Disclosure } from "@/components/ui/disclosure";
 
 import { Button } from "@/components/ui/button";
@@ -26,13 +25,6 @@ import { FacultyAssessmentLifecycle } from "./faculty-assessment-lifecycle";
 type Overview = Awaited<ReturnType<typeof getFacultyAssessmentOverview>>;
 type Assessment = Overview["assignments"][number] | Overview["quizzes"][number];
 const PAGE_SIZE = 20;
-function assessmentStatus(item:Assessment){
- if(item.status==="DRAFT")return item.kind==="QUIZ"&&!item.dueAt?"Needs due date":"Draft";
- if(item.status==="CLOSED")return "Closed";
- if(item.status==="ARCHIVED")return "Archived";
- if(item.status==="PUBLISHED"&&item.dueAt&&new Date(item.dueAt).getTime()<Date.now())return "Closed";
- return item.status==="PUBLISHED"?"Open":item.status;
-}
 
 export function FacultyAssessmentOverview({
   overview,
@@ -79,12 +71,12 @@ export function FacultyAssessmentOverview({
   );
 
   const formatDate = (date: Date | string | null) => {
-    if (!date) return "-";
+    if (!date) return "No due date";
     const value = new Date(date);
     return Number.isNaN(value.getTime())
       ? "Date unavailable"
       : new Intl.DateTimeFormat("en-IN", {
-          timeZone:"Asia/Kolkata",month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true,
+          timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
         }).format(value);
   };
 
@@ -102,6 +94,7 @@ export function FacultyAssessmentOverview({
 
   return (
     <div className="min-w-0 space-y-6">
+      <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
         <Badge  tone="neutral">
           {items.length} {kind === "QUIZ" ? (items.length === 1 ? "Quiz" : "Quizzes") : (items.length === 1 ? "Assignment" : "Assignments")}
@@ -111,7 +104,6 @@ export function FacultyAssessmentOverview({
         </Badge>
       </div>
 
-      <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <Disclosure title={kind==="QUIZ"?"Quizzes by Course":"Assignments by Course"} className="border-b border-border pb-3">
         <ul className="mt-3 grid gap-2 text-sm text-body md:grid-cols-2">
           {Array.from(new Set(items.map(item=>item.courseCode))).sort().map(code=>
@@ -182,7 +174,7 @@ export function FacultyAssessmentOverview({
           description="Change Course or Status to see other assessments."
         />
       ) : (
-        <div className="min-w-0 divide-y divide-border md:hidden" aria-label={kind === "QUIZ" ? "All quizzes" : "All assignments"}>
+        <div className="min-w-0 divide-y divide-border" aria-label={kind === "QUIZ" ? "All quizzes" : "All assignments"}>
           {rows.map((item) => (
             <article
               key={`${item.deliveryId}:${item.id}`}
@@ -192,7 +184,7 @@ export function FacultyAssessmentOverview({
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge tone={item.status === "PUBLISHED" ? "success" : item.status === "DRAFT" ? "warning" : "neutral"}>
-                      {assessmentStatus(item)}
+                      {item.status==="DRAFT"&&item.kind==="QUIZ"&&!item.dueAt?"Needs due date":item.status==="DRAFT"?"Draft":item.status==="PUBLISHED"?"Open":item.status==="CLOSED"?"Closed":"Archived"}
                     </StatusBadge>
                     <StatusBadge tone="info">
                       {item.authoredDeliveryId ? "This Section" : "Shared Offering"}
@@ -201,9 +193,9 @@ export function FacultyAssessmentOverview({
                   <h2 className="mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                     <Button type="button" variant="link" size="sm"
                       className="h-auto min-h-11 max-w-full justify-start whitespace-normal break-words p-0 text-left font-semibold text-inherit underline-offset-2 hover:underline md:min-h-9"
-                      aria-label={`View ${item.kind === "QUIZ" ? "quiz" : "assignment"} ${item.title||"Untitled"}`}
+                      aria-label={`View ${item.kind === "QUIZ" ? "quiz" : "assignment"} ${item.title}`}
                       onClick={()=>setViewedKey(`${item.deliveryId}:${item.id}`)}>
-                      {item.title.trim()||"Untitled"}
+                      {item.title}
                     </Button>
                   </h2>
                   <p className="mt-1 break-words text-sm text-body leading-[22px]">
@@ -327,85 +319,6 @@ export function FacultyAssessmentOverview({
               )}
             </article>
           ))}
-        </div>
-        <div className="hidden min-w-0 md:block">
-          <DataTable
-            caption={kind==="QUIZ"?"My Quizzes":"My Assignments"}
-            mobileMode="scroll"
-            rows={rows}
-            getRowKey={item=>item.deliveryId+":"+item.id}
-            empty={<EmptyState title={kind==="QUIZ"?"No quizzes yet":"No assignments yet"}/>}
-            columns={[
-              {key:"overview",header:"Overview",mobilePriority:"primary" as const,
-                className:"w-[18%] max-w-[210px]",
-                cell:(item)=><button type="button"
-                  className="min-h-9 w-full truncate text-left font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-                  aria-label={"View "+(item.kind==="QUIZ"?"quiz ":"assignment ")+(item.title.trim()||"Untitled")}
-                  onClick={()=>setViewedKey(item.deliveryId+":"+item.id)}>
-                  {item.title.trim()||"Untitled"}
-                </button>},
-              {key:"course",header:"Course",mobilePriority:"secondary" as const,
-                className:"w-[11%] max-w-[140px]",
-                cell:(item)=><span className="block truncate" title={item.courseName}>{item.courseName}</span>},
-              {key:"lesson",header:"Lesson",mobilePriority:"secondary" as const,
-                className:"w-[10%] max-w-[130px]",
-                cell:(item)=><span className="block truncate" title={item.lessonName}>{item.lessonName}</span>},
-              {key:"due",header:"Due Date",mobilePriority:"secondary" as const,
-                className:"w-[12%] whitespace-nowrap",
-                cell:(item)=>formatDate(item.dueAt)},
-              {key:"status",header:"Status",mobilePriority:"secondary" as const,
-                className:"w-[8%]",
-                cell:(item)=><StatusBadge tone={assessmentStatus(item)==="Open"?"success":
-                  assessmentStatus(item)==="Needs due date"?"warning":"neutral"}>
-                  {assessmentStatus(item)}</StatusBadge>},
-              {key:"results",header:"Results",mobilePriority:"secondary" as const,
-                className:"w-[13%]",
-                cell:(item)=>item.kind==="QUIZ"?
-                  <StatusBadge tone={item.resultsPublished?"success":"neutral"}>
-                    {item.resultsPublished?"Released":"Withheld"}</StatusBadge>:
-                  <span className="text-xs text-muted-foreground">{item.hasSubmissions?"Submissions recorded":"Not submitted"}</span>},
-              {key:"submissions",header:"Submissions",mobilePriority:"secondary" as const,
-                className:"w-[11%]",
-                cell:(item)=>item.kind==="QUIZ"?"View report":item.hasSubmissions?"Received":"None"},
-              {key:"actions",header:"Actions",mobilePriority:"action" as const,
-                className:"md:sticky md:right-0 md:z-20 md:bg-surface min-w-[230px] w-[17%]",
-                cell:(item)=><div className="flex min-w-[210px] flex-wrap items-center gap-2">
-                  <Button type="button" variant="secondary" size="sm"
-                    aria-label={"Preview "+(item.kind==="QUIZ"?"quiz ":"assignment ")+(item.title||"Untitled")}
-                    onClick={()=>setViewedKey(item.deliveryId+":"+item.id)}>
-                    Preview
-                  </Button>
-                  <Link href={"/teacher/report/"+(item.kind==="QUIZ"?"quiz":"assignment")+"/"+item.id+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                    className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
-                    View report
-                  </Link>
-                  {item.facultyOwned?<FacultyAssessmentEditor assessment={{
-                    id:item.id,kind:item.kind,title:item.title,description:item.description,
-                    dueAt:item.dueAt,status:item.status,updatedAt:item.updatedAt,
-                    ...(item.kind==="QUIZ"?{maxAttempts:item.maxAttempts}:{
-                      maxPoints:item.maxPoints,hasSubmissions:item.hasSubmissions,
-                      allowedMethods:normalizeAssignmentMethods(item.allowedSubmissionMethods),
-                      deliveryId:item.deliveryId,
-                    }),
-                  }}/> : null}
-                  {item.facultyOwned?<FacultyAssessmentLifecycle
-                    kind={item.kind} id={item.id} deliveryId={item.deliveryId}
-                    updatedAt={item.updatedAt} status={item.status}
-                    owned={item.facultyOwned}/>:null}
-                  {item.kind==="QUIZ"?<FacultyQuizReview
-                    quizTitle={item.title} quizId={item.id}
-                    autoOpen={kind==="QUIZ"&&initialQuizId===item.id}
-                    deliveryId={item.deliveryId} status={item.status}
-                    resultsPublished={item.resultsPublished}
-                    updatedAt={new Date(item.updatedAt).toISOString()}
-                    deliveryOwned={item.facultyOwned}/>:
-                    <FacultyAssignmentReview
-                      filesEnabled={filesEnabled} assignmentId={item.id}
-                      deliveryId={item.deliveryId} maxPoints={item.maxPoints}
-                      status={item.status}/>}
-                </div>},
-            ]}
-          />
         </div>
       )}
 
