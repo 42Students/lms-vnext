@@ -97,7 +97,7 @@ export default async function TpoTeamPage({searchParams}:{
       {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
        <Link key={value} href={"/tpo/team?tab=people&sort="+value}
         aria-current={peopleSort===value?"page":undefined}
-        className={(peopleSort===value?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary min-[768px]:min-h-9":"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 py-2 text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text min-[768px]:min-h-9")+" focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"}>
+        className={(peopleSort===value?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary min-[768px]:min-h-9":"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 py-2 text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text min-[768px]:min-h-9")+" focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>
         {label}
        </Link>)}
       {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
@@ -133,7 +133,7 @@ export default async function TpoTeamPage({searchParams}:{
          <dd className="font-semibold">
           {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
            <Link href={href} title={"Open "+label.toLowerCase()+" records"}
-            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{count}</Link>}
+            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{count}</Link>}
          </dd>
         </div>)}
        </dl>:null}
@@ -178,7 +178,7 @@ export default async function TpoTeamPage({searchParams}:{
       visibleConversations.length?<ul className="mt-3 divide-y divide-border">{visibleConversations.map(row=>
        <li key={row.id} className="min-w-0 py-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
            tone="neutral">
           {row.unreadCount} unread
