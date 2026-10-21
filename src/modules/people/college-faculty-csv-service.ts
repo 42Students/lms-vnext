@@ -19,6 +19,43 @@ const requestSchema = z.object({
 }).strict().refine(value=>value.action==="PREVIEW"||value.confirm===true,{
   path:["confirm"],message:"Confirm registration before importing",
 });
+/** Legacy JSON bulk faculty rows require an explicit scoped UUID department.
+ * Historic numeric dept_id values have no trusted UUID map in greenfield vNext.
+ * The authenticated college membership, never college_id, determines scope.
+ */
+const legacyBulkFacultyRow=z.strictObject({
+ firstName:z.string().optional(),first_name:z.string().optional(),
+ lastName:z.string().optional(),last_name:z.string().optional(),
+ contactMobile:z.string().optional(),contact_mobile:z.string().optional(),
+ contactMail:z.string().optional(),contact_mail:z.string().optional(),
+ facultyType:z.string().optional(),faculty_type:z.string().optional(),
+ deptId:z.number().int().optional(),dept_id:z.number().int().optional(),
+ departmentId:z.string().uuid().optional(),department_id:z.string().uuid().optional(),
+});
+const legacyBulkFacultyRequest=z.strictObject({
+ action:z.enum(["PREVIEW","IMPORT"]).default("PREVIEW"),
+ confirm:z.boolean().optional(),
+ faculty:z.array(legacyBulkFacultyRow).min(1).max(500),
+ collegeId:z.number().int().optional(),college_id:z.number().int().optional(),
+}).refine(x=>x.action==="PREVIEW"||x.confirm===true,{
+ path:["confirm"],message:"Confirm registration before importing",
+});
+function facultyJsonToCsv(input:z.infer<typeof legacyBulkFacultyRequest>){
+ const escaped=(v:string)=>'"'+v.replaceAll('"','""')+'"';
+ const line=(values:readonly string[])=>values.map(escaped).join(",");
+ return [line(FACULTY_CSV_COLUMNS),...input.faculty.map(item=>{
+  const requestedType=item.facultyType??item.faculty_type??"LECTURER";
+  const type=requestedType.toUpperCase()==="MENTOR"?"Mentor":
+   requestedType.toUpperCase()==="LECTURER"?"Lecturer":requestedType;
+  return line([
+   item.firstName??item.first_name??"",
+   item.lastName??item.last_name??"",
+   item.contactMobile??item.contact_mobile??"",
+   item.contactMail??item.contact_mail??"",
+   type,item.departmentId??item.department_id??"",
+  ]);
+ })].join("\n");
+}
 type CsvFacultyRow = {
   displayName:string;phoneE164:string;email:string;employmentType:string;
   primaryDepartmentId:string;
@@ -26,7 +63,11 @@ type CsvFacultyRow = {
 type FacultyImportResult = {row:number;status:"VALID"|"INVALID"|"IMPORTED"|"FAILED"|"PARTIAL";detail:string;membershipId?:string};
 
 export async function runCollegeFacultyCsv(context:RequestContext,raw:unknown) {
-  const input=requestSchema.parse(raw);
+  const incoming=z.union([requestSchema,legacyBulkFacultyRequest]).parse(raw);
+  const input="csv" in incoming?incoming:requestSchema.parse({
+   action:incoming.action,confirm:incoming.confirm,
+   csv:facultyJsonToCsv(incoming),
+  });
   const member=context.membership;
   if(!member||member.status!=="ACTIVE")throw Error("COLLEGE_MEMBERSHIP_REQUIRED");
   requirePermission(context,"people.manage",{
@@ -57,7 +98,7 @@ export async function runCollegeFacultyCsv(context:RequestContext,raw:unknown) {
     if(row.length!==FACULTY_CSV_COLUMNS.length)errors.push("COLUMN_COUNT_MISMATCH");
     if(!firstName||!lastName||name.length>255)errors.push("FIRST_AND_LAST_NAME_REQUIRED");
     if(!z.string().uuid().safeParse(primaryDepartmentId).success)
-      errors.push("DEPARTMENT_REQUIRED");
+      errors.push("DEPARTMENT_UUID_REQUIRED");
     if(!/^\+[1-9]\d{7,14}$/.test(phone))errors.push("MOBILE_INVALID");
     if(email&&!z.email().safeParse(email).success)errors.push("EMAIL_INVALID");
     if(employmentType.length>128)errors.push("FACULTY_TYPE_TOO_LONG");

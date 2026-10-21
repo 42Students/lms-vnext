@@ -7,6 +7,12 @@ import {requireAttendanceCollege} from "./admin-service";
 import {attendanceParentContactInputSchema,attendanceParentSmsBody,canNotifyVerifiedParent,type AttendanceParentSmsKind} from "./parent-sms-model";
 import {sendAttendanceParentSms} from "./parent-sms-provider";
 import {z} from "zod";
+/** Stable legacy-compatible purpose codes, independent of queue status.
+ * An outbox row is a command, never proof of a provider attempt or delivery.
+ */
+export const ATTENDANCE_PARENT_SMS_PURPOSE={
+ ABSENT:"attendance.absence",CORRECTED:"attendance.correction",
+} as const satisfies Record<AttendanceParentSmsKind,string>;
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 async function parentTablesReady(tx:Tx):Promise<boolean>{
  const found=await tx.execute(sql`select
@@ -212,7 +218,17 @@ export async function getAttendanceParentSmsSupportHistory(
   eq(attendanceParentSmsOutbox.collegeId,college.id),
   eq(attendanceParentSmsOutbox.membershipId,input.membershipId)))
   .orderBy(sql`${attendanceParentSmsOutbox.createdAt} desc`).limit(25);
- return {ready:true,reason:null,attempts};
+ return {ready:true,reason:null,
+  attempts:attempts.map(attempt=>({
+   ...attempt,
+   purpose:ATTENDANCE_PARENT_SMS_PURPOSE[attempt.kind as AttendanceParentSmsKind],
+   evidenceType:"OUTBOX_COMMAND" as const,
+   // Correlate provider evidence only in the separately authorized SMS
+   // delivery-attempt ledger; an ACCEPTED command is not handset delivery.
+   providerEvidenceSource:"sms_delivery_attempts" as const,
+  })),
+  providerAcceptanceIsNotHandsetDelivery:true as const,
+ };
 }
 
 /** Privacy-safe migration gate from legacy learner-mobile absence SMS.
