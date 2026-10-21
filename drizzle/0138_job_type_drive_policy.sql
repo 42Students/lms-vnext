@@ -49,3 +49,34 @@ DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
 --> statement-breakpoint
 CREATE UNIQUE INDEX "placement_tpo_job_types_college_label_uq"
  ON "placement_tpo_job_types"("college_id", lower("label"));
+--> statement-breakpoint
+-- Enforce the last-active rule at commit, including five virtual built-in choices.
+-- A deferred trigger permits an atomic bulk edit to hide a built-in while adding
+-- another type in the same transaction without a transient false rejection.
+CREATE OR REPLACE FUNCTION "assert_tpo_job_types_keep_active"() RETURNS trigger
+LANGUAGE plpgsql AS $$
+DECLARE selected_college uuid;
+DECLARE active_options integer;
+BEGIN
+ IF TG_OP = 'DELETE' THEN
+  selected_college := OLD.college_id;
+ ELSE
+  selected_college := NEW.college_id;
+ END IF;
+ SELECT 5 - count(*) FILTER (WHERE is_builtin)
+       + count(*) FILTER (WHERE active)
+ INTO active_options
+ FROM "placement_tpo_job_types"
+ WHERE college_id = selected_college;
+ IF active_options < 1 THEN
+  RAISE EXCEPTION 'Keep at least one job type switched on'
+   USING ERRCODE = '23514', CONSTRAINT = 'placement_tpo_job_types_last_active_ck';
+ END IF;
+ RETURN NULL;
+END;
+$$;
+--> statement-breakpoint
+CREATE CONSTRAINT TRIGGER "placement_tpo_job_types_last_active_ck"
+AFTER INSERT OR UPDATE OR DELETE ON "placement_tpo_job_types"
+DEFERRABLE INITIALLY DEFERRED FOR EACH ROW
+EXECUTE FUNCTION "assert_tpo_job_types_keep_active"();

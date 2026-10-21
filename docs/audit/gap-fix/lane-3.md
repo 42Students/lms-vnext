@@ -1,6 +1,6 @@
 # Lane chat-3 — GAP v2 fix evidence
 
-Branch: `chatgpt/chat-3-b`. Source: `docs/orchestrator/queues/clone/lane-3-fix.md`.
+Branch: `chatgpt/chat-3-b`. Historical source: `docs/orchestrator/queues/clone/lane-3-fix.md`; current wave-1 source: `docs/orchestrator/queues/clone/lane-3-work.md`.
 Validation mode: static source review only. No application execution, tests, lint, typecheck or CI.
 
 ## IN PROGRESS — `docs/audit/gap2/lane-3/job-types.md`
@@ -13,7 +13,7 @@ Validation mode: static source review only. No application execution, tests, lin
 - **Skipped rows:** none formally skipped yet. Existing membership model and virtual built-in defaults intentionally retained.
 
 ## Queue
-All 28 documents remain unticked pending full GAP/MISSING closure and static syntax review. Never infer runtime parity from authored code alone.
+Historical 28-document job-types queue remains unticked here. The separate wave-1 Courses queue contains 64 packets, which remain unticked until their complete GAP/MISSING findings are fixed or explicitly reconciled. Never infer runtime parity from authored code alone.
 
 ## Wave 1 — Courses / assignment submission (2026-10-21, static review)
 

@@ -22,7 +22,7 @@ const legacyLabelSchema=z.string().transform((raw,ctx)=>{
 });
 const createSchema=z.object({label:legacyLabelSchema,countsAsPlaced:z.boolean()}).strict();
 export class TpoConfigError extends Error{
- constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"|"TPO_JOB_TYPE_IN_USE"){
+ constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"|"TPO_JOB_TYPE_IN_USE"|"TPO_JOB_TYPE_INVALID_LIST",public readonly detail?:string){
   super(code);this.name="TpoConfigError";
  }
 }
@@ -291,7 +291,9 @@ const bulkJobTypeSchema=z.array(z.object({
 
 /** Settings parity: save all visibility/placed/name/add/remove edits in one tenant-scoped transaction. */
 export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
- const input=bulkJobTypeSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ const parsed=bulkJobTypeSchema.safeParse(raw);
+ if(!parsed.success)throw new TpoConfigError("TPO_JOB_TYPE_INVALID_LIST","Send the list of job types");
+ const input=parsed.data,collegeId=await requireTpoBatchActor(ctx);
  if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
@@ -335,7 +337,10 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
   // Remove absent custom types before renames; only unused labels may be removed.
   for(const old of existing){
    if(old.isBuiltin||isTpoBuiltinJobType(old.label)||seenIds.has(old.id))continue;
-   if((counts.get(old.label.toLowerCase())??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
+   const oldDrives=counts.get(old.label.toLowerCase())??0;
+   if(oldDrives>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE",
+    '"'+old.label+'" is used by '+oldDrives+' drive'+(oldDrives===1?'':'s')+
+    ': switch it off instead of deleting it');
    await tx.delete(placementTpoJobTypes).where(and(
     eq(placementTpoJobTypes.id,old.id),eq(placementTpoJobTypes.collegeId,collegeId)));
   }
