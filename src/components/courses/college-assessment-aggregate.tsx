@@ -15,6 +15,7 @@ import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
 import {CollegeAssignmentActions} from "./college-assignment-actions";
+import { CollegeAssessmentCourseSectionFilters, type AssessmentDirectoryCourse, type AssessmentDirectorySection } from "./college-assessment-course-section-filters";
 import {CollegeQuizActions} from "./college-quiz-actions";
 import {CollegeQuizAttempts} from "./college-quiz-attempts";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
@@ -36,6 +37,8 @@ type Data = {
   pageSize: number;
   totalPages: number;
   reviewDeliveries: {offeringId:string;deliveryId:string;sectionName:string;sectionCode:string}[];
+  directoryCourses: AssessmentDirectoryCourse[];
+  directorySections: AssessmentDirectorySection[];
 };
 
 function formatDue(value: Date | null) {
@@ -123,14 +126,12 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               <option value="ARCHIVED">Archived</option>
             </Select>
           </label>
-          <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.courseCode || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
+          <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
+            sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
+            initialDeliveryId={data.query.deliveryId??""}/>
+          <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
             <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assessment directory filters</summary>
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Exact course code
-            <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11 md:min-h-9" />
-          </label>
           <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
