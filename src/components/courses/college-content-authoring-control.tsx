@@ -374,6 +374,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    title={kind==="RESOURCE"?"Discard the changes to this resource?":"Discard lesson-content edits?"}
    description="Unsaved changes will be lost." confirmLabel="Discard changes"
    onConfirm={()=>{setDiscardOpen(false);setOpen(false);}}/>
+  <Link href="/college/content-order" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+   Arrange Section syllabus across all content types →
+  </Link>
   {kind==="YOUTUBE"&&lessons.length>0?<section aria-label="Video content type" className="min-w-0 space-y-3 border-b border-border pb-4">
    <fieldset className="flex flex-wrap items-center gap-4 border-0 p-0" aria-label="Video type">
     <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
