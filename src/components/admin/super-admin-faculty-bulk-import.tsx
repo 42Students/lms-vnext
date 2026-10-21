@@ -31,14 +31,14 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  const rowIssues:string[]=[];
  const mobileRows=new Map<string,number>(),emailRows=new Map<string,number>();
  parsedRows.forEach((row,index)=>{
-   const rowNumber=index+2;
+   const rowNumber=index+1;
    const earlierMobile=mobileRows.get(row.phoneE164);
-   if(earlierMobile!==undefined)rowIssues.push("Row "+rowNumber+": Duplicate mobile in file (row "+earlierMobile+").");
+   if(earlierMobile!==undefined)rowIssues.push("Record "+rowNumber+": Duplicate mobile in file (record "+earlierMobile+").");
    else mobileRows.set(row.phoneE164,rowNumber);
    if(row.email){
      const normalized=row.email.trim().toLowerCase();
      const earlierEmail=emailRows.get(normalized);
-     if(earlierEmail!==undefined)rowIssues.push("Row "+rowNumber+": Duplicate email in file (row "+earlierEmail+").");
+     if(earlierEmail!==undefined)rowIssues.push("Record "+rowNumber+": Duplicate email in file (record "+earlierEmail+").");
      else emailRows.set(normalized,rowNumber);
    }
  });
