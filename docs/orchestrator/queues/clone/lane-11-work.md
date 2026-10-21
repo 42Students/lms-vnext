@@ -108,7 +108,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_academics_page.tsx.md` (edit src/app/(authenticated)/admin/academics/page.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_components_admin_super-admin-attendance-settings-editor.tsx.md` (edit src/components/admin/super-admin-attendance-settings-editor.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_semester-courses_page.tsx.md` (edit src/app/(authenticated)/admin/semester-courses/page.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_departments_page.tsx.md` (edit src/app/(authenticated)/admin/departments/page.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_departments_page.tsx.md` (edit src/app/(authenticated)/admin/departments/page.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_not-found.tsx.md` (edit src/app/(authenticated)/admin/not-found.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_hr_page.tsx.md` (edit src/app/(authenticated)/admin/hr/page.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_admin_settings_overrides_route.ts.md` (edit src/app/api/admin/settings/overrides/route.ts; 2 findings; best P1)
