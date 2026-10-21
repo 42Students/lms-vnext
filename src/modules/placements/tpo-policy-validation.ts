@@ -11,11 +11,12 @@ const expectedVersion = z.number()
 export const placementCollegeRulesPatchSchema = z.object({
   collegeId,
   expectedVersion,
+  // The college rules endpoint accepts release/accept only. SELECTED is a
+  // pre-release roster decision, not an issued offer and cannot count placed.
   countsAsPlacedAt: z.enum([
-    "SELECTED",
     "OFFER_RELEASED",
     "OFFER_ACCEPTED",
-  ]).optional(),
+  ],{error:"Counts as placed must be when the offer is released or accepted"}).optional(),
   maxHeldOffers: z.number().int().min(TPO_RULE_LIMITS.maxHeldOffers.min).max(TPO_RULE_LIMITS.maxHeldOffers.max).optional(),
   upliftPct: z.number().int().min(TPO_RULE_LIMITS.upliftPct.min).max(TPO_RULE_LIMITS.upliftPct.max).optional(),
   minResponseHours: z.number().int().min(TPO_RULE_LIMITS.minResponseHours.min).max(TPO_RULE_LIMITS.minResponseHours.max).optional(),
