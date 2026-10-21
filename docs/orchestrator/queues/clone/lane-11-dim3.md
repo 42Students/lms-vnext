@@ -29,25 +29,25 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/projects/project-resource-files-panel.tsx`
 - [x] `src/components/projects/super-admin-template-subview-page.tsx`
 - [x] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/ui/breadcrumbs.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/input-group.tsx`
-- [ ] `src/components/ui/pagination.tsx`
-- [ ] `src/components/ui/table.tsx`
-- [ ] `src/styles/micro-details.css`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/mentor-projects-unavailable.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/projects/super-admin-template-create-form.tsx`
-- [ ] `src/components/shell/topbar/account-menu.tsx`
-- [ ] `src/components/tpo/tpo-audit-grid.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/textarea.tsx`
+- [x] `src/components/tpo/recruiter-roster-display-controls.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/ui/breadcrumbs.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/input-group.tsx`
+- [x] `src/components/ui/pagination.tsx`
+- [x] `src/components/ui/table.tsx`
+- [x] `src/styles/micro-details.css`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/mentor-projects-unavailable.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/projects/super-admin-template-create-form.tsx`
+- [x] `src/components/shell/topbar/account-menu.tsx`
+- [x] `src/components/tpo/tpo-audit-grid.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/textarea.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
 - [ ] `src/components/academics/learner-class-schedule.tsx`
