@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,sql,inArray,isNotNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,inAppNotifications,collegeMemberships,users} from "@/db/schema";
+import {activityEvents,inAppNotifications,collegeMemberships,learnerProfiles,users} from "@/db/schema";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -22,23 +22,38 @@ export async function getTpoNoticeReadSummary(context:RequestContext,rawId:unkno
   .from(activityEvents).where(and(eq(activityEvents.collegeId,college.id),
    eq(activityEvents.subjectType,"announcement"),eq(activityEvents.subjectId,id),
    eq(activityEvents.eventType,"placements.tpo_notice.created"))).limit(1);
- if(!event)return {delivered:0,read:0,unread:[],notDelivered:true};
+ if(!event)return {delivered:0,read:0,unread:[],unreadDetails:[],
+  notDelivered:true,unreadStatus:"NOT_DELIVERED" as const};
  const [counts,unread]=await Promise.all([
   getDb().select({delivered:sql<number>`count(*)::integer`,
     read:sql<number>`count(*) filter(where ${inAppNotifications.readAt} is not null)::integer`})
    .from(inAppNotifications).where(eq(inAppNotifications.eventId,event.id)),
-  getDb().select({name:users.displayName,readAt:inAppNotifications.readAt})
+  getDb().select({
+    name:users.displayName,rollNumber:learnerProfiles.rollNumber,
+    branch:sql<string | null>`(select d.name from learner_program_enrollments e
+      join programs p on p.id=e.program_id
+      join departments d on d.id=p.department_id
+      where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+      limit 1)`,
+    readAt:inAppNotifications.readAt,
+  })
    .from(inAppNotifications)
    .innerJoin(users,eq(users.id,inAppNotifications.userId))
    .innerJoin(collegeMemberships,and(eq(collegeMemberships.userId,users.id),
-     eq(collegeMemberships.collegeId,college.id)))
+     eq(collegeMemberships.collegeId,college.id),
+     eq(collegeMemberships.status,"ACTIVE")))
+   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
    .where(and(eq(inAppNotifications.eventId,event.id),
     sql`${inAppNotifications.readAt} is null`))
    .limit(500),
  ]);
  return {delivered:Number(counts[0]?.delivered??0),
   read:Number(counts[0]?.read??0),unread:unread.map(item=>item.name),
-  notDelivered:Number(counts[0]?.delivered??0)===0};
+  unreadDetails:unread.map(item=>({name:item.name??"Name not recorded",
+    rollNumber:item.rollNumber,branch:item.branch})),
+  notDelivered:Number(counts[0]?.delivered??0)===0,
+  unreadStatus:Number(counts[0]?.delivered??0)===0?"NOT_DELIVERED":
+    unread.length===0?"ALL_READ":"UNREAD_REMAINING"};
 }
 /** Only a user's own delivered notification is acknowledged; no arbitrary membership ID. */
 export async function markOwnTpoNoticeRead(context:RequestContext,rawId:unknown){
@@ -56,7 +71,12 @@ export async function markOwnTpoNoticeRead(context:RequestContext,rawId:unknown)
    eq(activityEvents.subjectType,"announcement"),
    eq(activityEvents.subjectId,id),
    eq(activityEvents.eventType,"placements.tpo_notice.created"),
-   eq(db10Announcements.senderType,"TPO")))
+   eq(db10Announcements.senderType,"TPO"),
+   // Only explicitly released receipts may be acknowledged; a scheduled or
+   // recalled notification is not equivalent to a legacy read row.
+   sql`coalesce(${inAppNotifications.deliveryStatus},'SENT')='SENT'`,
+   sql`${inAppNotifications.deletedAt} is null`,
+   sql`${db10Announcements.deletedAt} is null`))
   .limit(1);
  if(!row)return {read:false as const};
  await markOwnNotificationRead(context,row.notificationId);

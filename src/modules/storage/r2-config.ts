@@ -20,6 +20,23 @@ import { PrivateObjectStorageError } from "./storage-errors";
  * and objects are only ever served via short-lived signed URLs, never through
  * R2_PUBLIC_URL. Production stays strict.
  */
+/** A legacy-null R2 component maps to a retryable 503 state, never an
+ * unscoped fallback bucket or public URL. Safe to show on a settings page. */
+export const PRIVATE_R2_RETRYABLE_STATUS = 503;
+export function privateR2SetupState(env:NodeJS.ProcessEnv=process.env):{
+  configured:boolean;status:200|503;message:string;
+} {
+  try {
+    getPrivateR2Config(env);
+    return {configured:true,status:200,message:"Private document storage is ready."};
+  } catch(error) {
+    if(error instanceof PrivateObjectStorageError) {
+      return {configured:false,status:503,message:PRIVATE_R2_SETUP_MESSAGE};
+    }
+    throw error;
+  }
+}
+
 export function getPrivateR2Config(
   env: NodeJS.ProcessEnv = process.env,
 ): S3Config {
@@ -36,6 +53,9 @@ export function getPrivateR2Config(
       keyPrefix.includes("//") || /[\\x00-\\x1f]/.test(keyPrefix))) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
   }
+  // Check all known legacy public bucket names. There is no public-URL
+  // resolver for a private object; it must be retrieved via an authorized
+  // resource row and a time-limited signed grant.
   if (bucket === env.R2_BUCKET_NAME?.trim()) {
     const sharedBucketAllowed =
       env.APP_ENV === "development" && keyPrefix.length > 0 &&
