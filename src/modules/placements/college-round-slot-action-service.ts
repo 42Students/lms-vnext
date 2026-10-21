@@ -1,4 +1,5 @@
 import "server-only";
+import {z} from "zod";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {and,asc,desc,eq,exists,ilike,inArray,ne,lt,gt,gte,notExists,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -18,14 +19,14 @@ async function scope(ctx:RequestContext,raw:unknown){
  if(!job)throw Error("Placement drive not found");
  return {collegeId,job};
 }
-function viewSlot(s:typeof slots.$inferSelect,outcome?:string){
+function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null){
  const virtual=s.room.startsWith("https://");
  return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId??"",
   status:s.status==="CANCELLED"?"CANCELLED":outcome??"SCHEDULED",
   scheduledAt:s.startsAt.toISOString(),
   durationMinutes:Math.round((s.endsAt.getTime()-s.startsAt.getTime())/60000),
   mode:virtual?"VIRTUAL":"ON_CAMPUS",venue:virtual?null:s.room,
-  meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:null,
+  meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:feedback??null,
   version:s.version,interviewType:s.legacyInterviewType,
   roundDescription:s.legacyRoundDescription};
 }
@@ -139,19 +140,27 @@ export async function getCollegeRoundSlotAppointments(
   .limit(appointmentPageSize).offset((appointmentPage-1)*appointmentPageSize);
  const ids=bookings.map(row=>row.id);
  const events=ids.length?await db.select({id:activityEvents.id,subjectId:activityEvents.subjectId,
-  eventType:activityEvents.eventType,occurredAt:activityEvents.occurredAt})
+  eventType:activityEvents.eventType,occurredAt:activityEvents.occurredAt,
+  metadata:activityEvents.metadata})
   .from(activityEvents).where(and(eq(activityEvents.collegeId,collegeId),
    eq(activityEvents.subjectType,"placement_round_candidate_slot"),
    inArray(activityEvents.subjectId,ids),
    inArray(activityEvents.eventType,["PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
-    "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW"])))
+    "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW","PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK"])))
   .orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id)):[];
  const outcomes=new Map<string,string>();
- for(const event of events)if(event.subjectId)outcomes.set(event.subjectId,
+ const feedbackBySlot=new Map<string,string>();
+ for(const event of events){
+  if(!event.subjectId)continue;
+  if(event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK"){
+   const metadata=event.metadata as Record<string,unknown>|null;
+   if(typeof metadata?.feedback==="string")feedbackBySlot.set(event.subjectId,metadata.feedback);
+  }else outcomes.set(event.subjectId,
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");
+ }
  return {job,storageReady:true,rounds,candidates,
   candidateTotal,appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
-  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id)))};
+  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id)))};
 }
 
 export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){
@@ -328,5 +337,66 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
   }).onConflictDoNothing();
   return {id:booked.id,status:cmd.action==="SCHEDULE"||cmd.action==="EDIT"?
    "SCHEDULED":cmd.action,version:booked.version};
+ });
+}
+
+/** Feedback is an immutable staff-authored interview event. Private scores
+ * stay in the college-scoped audit metadata; learner notification is generic. */
+const collegeInterviewFeedbackSchema=z.object({
+ interviewId:z.string().uuid(),expectedVersion:z.number().int().positive(),
+ score:z.number().int().min(1).max(5),
+ feedback:z.string().trim().min(3).max(2000),
+ confirmed:z.literal(true),
+}).strict();
+export async function submitCollegeInterviewFeedback(ctx:RequestContext,rawJobId:unknown,raw:unknown){
+ const input=collegeInterviewFeedbackSchema.parse(raw);
+ const {collegeId,job}=await scope(ctx,rawJobId);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
+ return getDb().transaction(async tx=>{
+  const [appointment]=await tx.select().from(slots)
+   .where(and(eq(slots.id,input.interviewId),eq(slots.jobId,job.id),eq(slots.status,"BOOKED")))
+   .for("update").limit(1);
+  if(!appointment||!appointment.applicationId||appointment.version!==input.expectedVersion)
+   throw Error("Interview changed; refresh and retry.");
+  const [completed]=await tx.select({id:activityEvents.id}).from(activityEvents)
+   .where(and(eq(activityEvents.subjectId,appointment.id),
+    eq(activityEvents.collegeId,collegeId),
+    eq(activityEvents.subjectType,"placement_round_candidate_slot"),
+    eq(activityEvents.eventType,"PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"))).limit(1);
+  if(!completed)throw Error("Complete the interview before submitting feedback.");
+  const [prior]=await tx.select({id:activityEvents.id}).from(activityEvents)
+   .where(and(eq(activityEvents.collegeId,collegeId),
+    eq(activityEvents.subjectId,appointment.id),
+    eq(activityEvents.subjectType,"placement_round_candidate_slot"),
+    eq(activityEvents.eventType,"PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK"))).limit(1);
+  if(prior)throw Error("Feedback is already recorded for this interview.");
+  const [candidate]=await tx.select({userId:collegeMemberships.userId})
+   .from(placementApplications).innerJoin(collegeMemberships,
+    eq(collegeMemberships.id,placementApplications.membershipId))
+   .where(and(eq(placementApplications.id,appointment.applicationId),
+    eq(placementApplications.jobId,job.id),eq(collegeMemberships.collegeId,collegeId))).limit(1);
+  if(!candidate)throw Error("Applicant is no longer in this college.");
+  const [saved]=await tx.update(slots).set({
+    version:appointment.version+1,changedByUserId:ctx.user.id,updatedAt:new Date(),
+   }).where(and(eq(slots.id,appointment.id),eq(slots.version,appointment.version)))
+   .returning({version:slots.version});
+  if(!saved)throw Error("Interview changed; refresh and retry.");
+  const [event]=await tx.insert(activityEvents).values({
+   organizationId:acting.organizationId,collegeId,
+   actorUserId:ctx.user.id,
+   actorMembershipId:ctx.membership?.collegeId===collegeId?ctx.membership.id:null,
+   module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK",
+   subjectType:"placement_round_candidate_slot",subjectId:appointment.id,
+   summary:"Interview feedback recorded",
+   metadata:{jobId:job.id,applicationId:appointment.applicationId,
+    roundId:appointment.roundId,score:input.score,feedback:input.feedback,
+    version:saved.version},
+  }).returning({id:activityEvents.id});
+  await tx.insert(inAppNotifications).values({
+   userId:candidate.userId,eventId:event.id,title:"Interview update",
+   body:"Interview feedback has been recorded for "+job.title+".",
+   actionHref:"/learn/my-placements/interviews",
+  }).onConflictDoNothing();
+  return {ok:true,version:saved.version};
  });
 }

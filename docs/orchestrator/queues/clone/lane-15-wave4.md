@@ -4,9 +4,9 @@ Packets moved to you from lanes that still had a lot left. Same rules as your ot
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_public-recruiter-invite-accept-service.ts.md` (edit src/modules/placements/public-recruiter-invite-accept-service.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_college-round-slot-action-service.ts.md` (edit src/modules/placements/college-round-slot-action-service.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_public-recruiter-invite-accept-service.ts.md` (edit src/modules/placements/public-recruiter-invite-accept-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_college-round-slot-action-service.ts.md` (edit src/modules/placements/college-round-slot-action-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_NEW_docs_audit_gap2_lane-15_u005-learner-placement-job-detail.md.md` (new; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_components_placements_placement-drive-workspace.tsx.md` (edit src/components/placements/placement-drive-workspace.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_components_placements_tpo-round-drive-day-read-only.tsx.md` (edit src/components/placements/tpo-round-drive-day-read-only.tsx; 2 findings; best P1)

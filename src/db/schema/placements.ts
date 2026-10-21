@@ -282,6 +282,8 @@ export const placementRecruiterCollegeGrants = pgTable(
       .references(() => placementCompanyRelationships.id, {
         onDelete: "restrict",
       }),
+    /** Lead ownership is resolved by FK in migration 0197, not from client input. */
+    pendingRecruiterLeadId: uuid("pending_recruiter_lead_id"),
     status: varchar("status", { length: 24 })
       .notNull()
       .default("ACTIVE"),
@@ -336,7 +338,10 @@ export const placementRecruiterCollegeGrants = pgTable(
         table.recruiterUserId,
         table.companyRelationshipId,
       )
-      .where(sql`${table.status} = 'ACTIVE'`),
+      .where(sql`${table.status} in ('ACTIVE', 'PENDING_RECRUITER')`),
+    index("placement_recruiter_grants_pending_recruiter_idx")
+      .on(table.recruiterUserId, table.status)
+      .where(sql`${table.status} = 'PENDING_RECRUITER'`),
     index("placement_recruiter_college_grants_recruiter_status_idx").on(
       table.recruiterUserId,
       table.status,
@@ -371,11 +376,11 @@ export const placementRecruiterCollegeGrants = pgTable(
     ),
     check(
       "placement_recruiter_college_grants_status_ck",
-      sql`${table.status} in ('ACTIVE', 'REVOKED')`,
+      sql`${table.status} in ('ACTIVE', 'REVOKED', 'PENDING_RECRUITER')`,
     ),
     check(
       "placement_recruiter_college_grants_lifecycle_ck",
-      sql`(${table.status} = 'ACTIVE' and ${table.revokedByUserId} is null and ${table.revokedAt} is null)
+      sql`(${table.status} in ('ACTIVE', 'PENDING_RECRUITER') and ${table.revokedByUserId} is null and ${table.revokedAt} is null)
         or (${table.status} = 'REVOKED' and ${table.revokedByUserId} is not null and ${table.revokedAt} is not null)`,
     ),
   ],

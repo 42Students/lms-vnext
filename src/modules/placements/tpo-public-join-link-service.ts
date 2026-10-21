@@ -1,11 +1,13 @@
 import "server-only";
 
 import { createHash, randomBytes } from "node:crypto";
-import { and, desc, eq, gt, isNull } from "drizzle-orm";
+import { and, desc, eq, gt, isNull, inArray, sql } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   activityEvents, colleges, placementCompanies,
   placementCompanyRelationships, placementPublicJoinLinks,
+  placementJobs, placementPublicExternalJobLinks,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -195,5 +197,100 @@ export async function setTpoPublicJoinLinkEnabled(context:RequestContext,raw:unk
    metadata:{scope:input.scope,enabled:input.enabled},
   });
   return {enabled:input.enabled};
+ });
+}
+
+/** A public job application link is not a recruiter onboarding invitation.
+ * The same link is valid only while the scoped job is published and external. */
+const publicJobIdSchema=z.string().uuid();
+export async function getTpoExternalJobShare(context:RequestContext,rawJobId:unknown){
+ const {college}=await requireTpoLinkScope(context);
+ const jobId=publicJobIdSchema.parse(rawJobId);
+ const [row]=await getDb().select({
+  id:placementJobs.id,status:placementJobs.status,
+  applicationMode:placementJobs.applicationMode,
+  slug:placementJobs.publicExternalSlug,
+ }).from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,college.id))).limit(1);
+ if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
+ if(!["HYBRID","EXTERNAL_ONLY"].includes(row.applicationMode))return {eligible:false,path:null};
+ return {eligible:true,path:row.slug&&row.status==="PUBLISHED"?
+  "/public/placement-job/"+row.slug:null};
+}
+
+/** Generate an unguessable job slug while holding the single job row lock.
+ * A cancelled/closed/draft/internal drive can never publish a shareable link. */
+export async function createTpoExternalJobShare(context:RequestContext,rawJobId:unknown){
+ const {college,membership}=await requireTpoLinkScope(context);
+ const jobId=publicJobIdSchema.parse(rawJobId);
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status,
+   applicationMode:placementJobs.applicationMode,slug:placementJobs.publicExternalSlug})
+   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
+    eq(placementJobs.collegeId,college.id))).for("update").limit(1);
+  if(!job)throw new TpoPublicJoinLinkError("NOT_FOUND");
+  if(job.status!=="PUBLISHED"||!["HYBRID","EXTERNAL_ONLY"].includes(job.applicationMode))
+   throw new TpoPublicJoinLinkError("NOT_FOUND");
+  const slug=job.slug??("smr-"+randomBytes(8).toString("hex"));
+  const [already]=await tx.select({id:placementPublicExternalJobLinks.id})
+   .from(placementPublicExternalJobLinks)
+   .where(and(eq(placementPublicExternalJobLinks.jobId,job.id),
+    eq(placementPublicExternalJobLinks.collegeId,college.id),
+    eq(placementPublicExternalJobLinks.slug,slug),
+    isNull(placementPublicExternalJobLinks.revokedAt))).limit(1);
+  if(!already){
+   await tx.insert(placementPublicExternalJobLinks).values({
+    jobId:job.id,collegeId:college.id,slug,
+   });
+  }
+  if(!job.slug)await tx.update(placementJobs).set({publicExternalSlug:slug})
+   .where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,college.id)));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:context.user.id,actorMembershipId:membership.id,
+   module:"PLACEMENTS",eventType:"PLACEMENTS_EXTERNAL_JOB_LINK_SHARED",
+   subjectType:"placement_job",subjectId:job.id,
+   summary:"External application link shared",metadata:{applicationMode:job.applicationMode},
+  });
+  return {eligible:true,path:"/public/placement-job/"+slug};
+ });
+}
+
+/** Public presentation is intentionally small: never include applicants,
+ * recruiter invitation state, college grants or private employer contacts. */
+export async function readPublicExternalJobShare(rawSlug:string){
+ if(!/^smr-[0-9a-f]{16}$/.test(rawSlug))throw new TpoPublicJoinLinkError("NOT_FOUND");
+ return getDb().transaction(async tx=>{
+  const [row]=await tx.select({
+   id:placementJobs.id,collegeId:placementJobs.collegeId,
+   title:placementJobs.title,description:placementJobs.description,
+   applicationMode:placementJobs.applicationMode,
+   externalApplicationUrl:placementJobs.externalApplicationUrl,
+   applicationDeadline:placementJobs.applicationDeadline,
+   companyName:placementCompanies.name,
+   linkId:placementPublicExternalJobLinks.id,
+  }).from(placementPublicExternalJobLinks)
+   .innerJoin(placementJobs,and(eq(placementJobs.id,placementPublicExternalJobLinks.jobId),
+     eq(placementJobs.collegeId,placementPublicExternalJobLinks.collegeId)))
+   .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,placementJobs.collegeId)))
+   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+   .where(and(eq(placementPublicExternalJobLinks.slug,rawSlug),
+    isNull(placementPublicExternalJobLinks.revokedAt),eq(placementJobs.status,"PUBLISHED"),
+    inArray(placementJobs.applicationMode,["HYBRID","EXTERNAL_ONLY"]),
+    eq(placementJobs.publicExternalSlug,rawSlug),
+    eq(placementCompanyRelationships.status,"ACTIVE"),eq(placementCompanies.status,"ACTIVE")))
+   .limit(1);
+  if(!row)throw new TpoPublicJoinLinkError("NOT_FOUND");
+  await tx.update(placementPublicExternalJobLinks)
+   .set({viewsCount:sql`${placementPublicExternalJobLinks.viewsCount}+1`})
+   .where(eq(placementPublicExternalJobLinks.id,row.linkId));
+  return {job:{id:row.id,title:row.title,description:row.description,
+   companyName:row.companyName,applicationMode:row.applicationMode,
+   applicationDeadline:row.applicationDeadline?.toISOString()??null,
+   externalApplicationUrl:row.externalApplicationUrl}};
  });
 }
