@@ -20,6 +20,13 @@ import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 
+/** Legacy placement import contract. vNext uses UUID and timestamptz (IST
+ * source civil dates require explicit timezone conversion), never reuses
+ * integer IDs as authorization identifiers. Legacy soft-deleted companies
+ * import as ARCHIVED and retain the source tombstone. Global company identity
+ * is canonical; college relationships carry CRM notes and access grants.
+ * Domain trust is per placement_company_domains row, not inferred from
+ * placement_companies.verifiedAt. No historical data is auto-migrated. */
 export const placementCompanies = pgTable(
   "placement_companies",
   {
@@ -75,6 +82,8 @@ export const placementCompanies = pgTable(
       and (${table.websiteUrl} is null or length(${table.websiteUrl}) <= 500)
       and (${table.logoPublicUrl} is null or length(${table.logoPublicUrl}) <= 500)
       and (${table.industry} is null or length(${table.industry}) <= 100)`),
+    check("placement_companies_legacy_about_ck",sql`
+      ${table.about} is null or length(${table.about})<=2000`),
     check("placement_companies_legacy_deleted_ck",sql`
       ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     index("placement_companies_verified_idx").on(table.verifiedAt),
@@ -213,7 +222,11 @@ export const placementRecruiterProfiles = pgTable(
       .references(() => placementCompanies.id, {
         onDelete: "restrict",
       }),
+    /** Legacy designation label maps to title for UI display. */
     title: varchar("title", { length: 160 }),
+    suspendedAt: timestamp("suspended_at", {withTimezone:true}),
+    suspensionReason: varchar("suspension_reason",{length:500}),
+    legacyRecruiterId: integer("legacy_recruiter_id"),
     status: varchar("status", { length: 24 })
       .notNull()
       .default("ACTIVE"),
@@ -239,9 +252,14 @@ export const placementRecruiterProfiles = pgTable(
       table.companyId,
       table.status,
     ),
+    uniqueIndex("placement_recruiter_profiles_legacy_id_uq")
+      .on(table.legacyRecruiterId).where(sql`${table.legacyRecruiterId} is not null`),
+    check("placement_recruiter_profiles_suspension_ck",sql`
+      (${table.status} = 'SUSPENDED') = (${table.suspendedAt} is not null)
+      and (${table.suspensionReason} is null or length(${table.suspensionReason}) <= 500)`),
     check(
       "placement_recruiter_profiles_status_ck",
-      sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+      sql`${table.status} in ('ACTIVE', 'SUSPENDED', 'ARCHIVED')`,
     ),
     check(
       "placement_recruiter_profiles_archive_shape_ck",
@@ -539,6 +557,24 @@ export const placementJobs = pgTable(
   "placement_jobs",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Source IDs/slugs are import locators, never tenant-independent grants. */
+    legacyJobId: integer("legacy_job_id"),
+    legacySlug: varchar("legacy_slug",{length:160}),
+    legacySeasonId: integer("legacy_season_id"),
+    legacyPostedAt: timestamp("legacy_posted_at",{withTimezone:true}),
+    legacyCreatorRole: varchar("legacy_creator_role",{length:24}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacyIsDraft: boolean("legacy_is_draft"),
+    legacyIsActive: boolean("legacy_is_active"),
+    legacyVisibilityType: varchar("legacy_visibility_type",{length:24}),
+    legacyTargeting: jsonb("legacy_targeting").$type<Record<string,unknown>>(),
+    legacyDriveMode: varchar("legacy_drive_mode",{length:24}),
+    legacyJobCategory: varchar("legacy_job_category",{length:24}),
+    legacyCategoryOverrideReason: varchar("legacy_category_override_reason",{length:500}),
+    legacyResultsAutoApply: boolean("legacy_results_auto_apply"),
+    legacyScreeningVersion: integer("legacy_screening_version"),
+    legacyCandidatePreferences: jsonb("legacy_candidate_preferences")
+      .$type<Record<string,unknown>>(),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -635,6 +671,20 @@ export const placementJobs = pgTable(
   },
   (table) => [
     uniqueIndex("placement_jobs_id_college_uq").on(table.id, table.collegeId),
+    uniqueIndex("placement_jobs_legacy_id_uq").on(table.legacyJobId)
+      .where(sql`${table.legacyJobId} is not null`),
+    uniqueIndex("placement_jobs_legacy_slug_uq").on(sql`lower(${table.legacySlug})`)
+      .where(sql`${table.legacySlug} is not null`),
+    check("placement_jobs_legacy_targeting_ck",sql`
+      ${table.legacyTargeting} is null or jsonb_typeof(${table.legacyTargeting}) = 'object'`),
+    check("placement_jobs_legacy_preferences_ck",sql`
+      ${table.legacyCandidatePreferences} is null or
+      jsonb_typeof(${table.legacyCandidatePreferences})='object'`),
+    check("placement_jobs_legacy_category_ck",sql`
+      ${table.legacyCategoryOverrideReason} is null or
+      length(${table.legacyCategoryOverrideReason})<=500`),
+    check("placement_jobs_legacy_deleted_ck",sql`
+      ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     check("placement_jobs_version_ck", sql`${table.version} > 0`),
     index("placement_jobs_college_status_idx").on(
       table.collegeId,
@@ -729,6 +779,8 @@ export const placementJobRoleOptions = pgTable(
         onDelete: "cascade",
       }),
     title: text("title").notNull(),
+    /** Original package-array order, separate from job role identity. */
+    position: smallint("position"),
     employmentType: varchar("employment_type", {
       length: 24,
     }).notNull(),
@@ -780,6 +832,10 @@ export const placementJobRoleOptions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_role_options_job_position_uq").on(table.jobId,table.position)
+      .where(sql`${table.position} is not null and ${table.status} = 'ACTIVE'`),
+    check("placement_role_options_position_ck",sql`
+      ${table.position} is null or ${table.position} between 0 and 100`),
     // Parent key for the role-option/job composite FK on applications.
     uniqueIndex("placement_job_role_options_id_job_uq").on(table.id, table.jobId),
     uniqueIndex(
@@ -799,6 +855,8 @@ export const placementJobRoleOptions = pgTable(
     index(
       "placement_job_role_options_job_status_idx",
     ).on(table.jobId, table.status),
+    check("placement_job_role_options_legacy_title_ck",sql`
+      length(trim(${table.title})) between 1 and 100`),
     check(
       "placement_job_role_options_status_ck",
       sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
@@ -1085,6 +1143,15 @@ export const placementEligibilityOverrides = pgTable(
 );
 
 
+/** Historical application crosswalk: old learner_id -> scoped membership_id,
+ * job_id -> canonical job UUID; old applied_at -> first_applied_at, last
+ * submission -> submitted_at; old rejection text -> candidate-facing screening
+ * message, other internal notes -> private artifacts. Legacy one-application
+ * per job differs intentionally from vNext one-per-role-option enrollment.
+ * Old APPLIED displays as SUBMITTED; WITHDRAWN is not a shortlist stage.
+ * Offer letters and score provenance are joined from offers and screening,
+ * never from a fabricated application score. Imported legacy_deleted rows
+ * must not be silently resurrected as active applications. */
 export const placementApplications = pgTable(
   "placement_applications",
   {
@@ -1457,6 +1524,11 @@ export const placementJobRounds = pgTable(
         onDelete: "restrict",
       }),
     sequence: integer("sequence").notNull(),
+    legacyRoundId: integer("legacy_round_id"),
+    /** Round description and assessment/interview subtype are presentation data. */
+    legacyRoundDescription: text("legacy_round_description"),
+    legacyInterviewType: varchar("legacy_interview_type",{length:80}),
+    legacyMode: varchar("legacy_mode",{length:20}),
     kind: varchar("kind", { length: 24 }).notNull(),
     name: text("name").notNull(),
     mode: varchar("mode", { length: 24 }),
@@ -1501,6 +1573,10 @@ export const placementJobRounds = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_job_rounds_legacy_id_uq").on(table.legacyRoundId)
+      .where(sql`${table.legacyRoundId} is not null`),
+    check("placement_job_rounds_legacy_description_ck",sql`
+      ${table.legacyRoundDescription} is null or length(${table.legacyRoundDescription}) <= 2000`),
     uniqueIndex("hr_interview_round_job_parent_uq").on(
       table.id,
       table.jobId,
@@ -1747,6 +1823,11 @@ export const placementRoundResults = pgTable(
 );
 
 
+/** Offer migration crosswalk: respondBy -> expiresAt, letterUrl ->
+ * offerLetterUrl, legacy createdAt -> legacyCreatedAt, source numeric ID ->
+ * legacyOfferId, and version -> per-application issuance ordinal. Joining date
+ * is a civil DATE, not an instant. Provider acceptance is not learner response.
+ * Staff/audited release and terminal withdrawal are separate lifecycle facts. */
 export const placementOffers = pgTable(
   "placement_offers",
   {

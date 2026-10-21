@@ -191,3 +191,171 @@
 - College lessons partial load G2-17-007-033: maintain last valid rows in list component state when a subsequent partial scope fetch fails; show warning `Couldn't refresh lessons` plus Retry while retaining actual cached rows; error.tsx alone can't render the old list.
 
 - Class schedule creator UI G2-2-032-046: show verified create success toast and legacy duration from UI design source only after authorized POST acknowledgment; never show success on 401/403.
+
+## Wave 2 placements part 1 (schema-owned and downstream cross-file findings)
+- G2-15-019-001 — src/modules/placements/company-service.ts / admin-company directory: Map historical identity, retire old source without replacing canonical company
+- G2-15-019-004 — src/modules/placements/company-service.ts / admin-company directory: Align API length validation or approve expanded length
+- G2-15-019-005 — src/modules/placements/company-service.ts / admin-company directory: Document max length conversion and API validations
+- G2-15-019-006 — src/modules/placements/company-service.ts / admin-company directory: Map creator records and freeze historical role provenance
+- G2-15-019-018 — src/modules/placements/application-service.ts / application detail presentation: Explicit ID/time/status migration crosswalk
+- G2-15-019-021 — src/modules/placements/company-service.ts / admin-company directory: Migrate URL to public asset or signed storage representation
+- G2-15-019-031 — src/modules/placements/application-service.ts / application detail presentation: Document no-migration vNext identity choice and import compatibility
+- G2-15-019-032 — src/modules/placements/company-service.ts / admin-company directory: Provide column-by-column transformation checklist
+- G2-1-009-013 — src/app/(authenticated)/learn/profile/academic-record/page.tsx: Show gap years, distinguish unknown vs zero and source.
+- G2-1-009-051 — src/app/(authenticated)/learn/profile/academic-record/page.tsx: Convert integer basis points exactly; preserve fraction rounding and `0` vs null.
+- G2-10-004-048 — src/modules/placements/company-domain-service.ts / domain verification UI: Check verification propagates across all domains and recruiter drive company matching
+- G2-10-011-083 — src/modules/placements/offer-service.ts / offer detail presentation: Create field-level mapping for all statuses/notes/offers and preserve unique learner/job constraints.
+- G2-10-012-080 — src/modules/placements/job-service.ts / job detail presentation: Provide explicit legacy job status mapping including expired independent of state.
+- G2-12-020-001 — src/modules/placements/company-domain-service.ts / domain verification UI: Keep child/global primary-domain synchronization and explicit source of truth.
+- G2-12-020-045 — src/modules/placements/company-domain-service.ts / domain verification UI: Restore per-domain 'Verified by 42' badge copy/status.
+- G2-12-019-003 — src/modules/placements/offer-service.ts / offer detail presentation: Project same field groupings from normalized relations into detail UI.
+- G2-12-019-004 — src/modules/placements/offer-service.ts / offer detail presentation: Preserve applicant identity and offer-letter display via joins.
+- G2-12-019-009 — src/modules/placements/job-service.ts / job detail presentation: Retain firstAppliedAt/history timestamps on reapplication.
+- G2-12-019-010 — src/modules/placements/job-service.ts / job detail presentation: Project last actor/time using history and avoid exposing internal actors to learners.
+- G2-12-019-016 — src/modules/placements/job-service.ts / job detail presentation: Project candidate-facing reason, enforce 500 char equivalent.
+- G2-12-019-018 — src/modules/placements/offer-service.ts / offer detail presentation: Expose issued offer letter with time through offer relation.
+- G2-12-019-019 — src/modules/placements/job-service.ts / job detail presentation: Project fair score and partial-data flag from screening evaluation.
+- G2-12-019-024 — src/modules/placements/job-service.ts / job detail presentation: Make duplicate policy explicit in Apply CTA and API.
+- G2-12-019-025 — src/modules/placements/company-service.ts / admin-company directory: Restore company portal reference field with controlled max length.
+- G2-12-019-027 — src/modules/placements/job-service.ts / job detail presentation: Add PAP toggle or documented moved feature.
+- G2-12-019-041 — src/modules/placements/job-service.ts / job detail presentation: Track later eligibility reversal/flag timestamp.
+- G2-12-019-043 — src/modules/placements/job-service.ts / job detail presentation: Define imported legacy fallback and error for missing role option.
+- G2-12-019-044 — src/modules/placements/offer-service.ts / offer detail presentation: Distinguish missing vs zero score in admin view.
+- G2-12-019-047 — src/modules/placements/offer-service.ts / offer detail presentation: Pass approved candidate-specific link and status transitions through notice payload.
+- G2-12-019-050 — src/modules/placements/offer-service.ts / offer detail presentation: Restore old stage wording and explanatory labels.
+- G2-12-019-052 — src/modules/placements/job-service.ts / job detail presentation: Benchmark applicant retrieval by drive/learner with one-per-job semantics.
+- G2-12-019-058 — src/modules/placements/application-service.ts / application detail presentation: Define archive/soft-delete migration and retention rules.
+- G2-13-010-012 — src/modules/placements/job-service.ts / job detail presentation: Maintain withdrawn terminal and reapply alternate flow only with prior-status gate.
+- G2-13-010-061 — src/modules/placements/job-service.ts / job detail presentation: Repair migrated null stage to explicit initial stage; no untracked null workflow.
+- G2-13-015-011 — src/modules/placements/offer-service.ts / offer detail presentation: Map respondBy→expiresAt and letterUrl→offerLetterUrl, with null 'to be announced' display
+- G2-13-015-015 — src/modules/placements/offer-service.ts / offer detail presentation: Order latest by source created timestamp with version tie-breaker; ensure stable multi-version display
+- G2-13-015-016 — src/modules/placements/offer-service.ts / offer detail presentation: Wire scheduled expiration and external-dispute finalization with explicit parity outcomes
+- G2-13-015-037 — src/modules/placements/offer-service.ts / offer detail presentation: Specify application status after offer withdrawal and exact learner notification semantics
+- G2-13-015-052 — src/modules/placements/offer-service.ts / offer detail presentation: Add expiry/status partial index if recurring sweeps become expensive across colleges
+- G2-13-015-056 — src/modules/placements/offer-service.ts / offer detail presentation: Specify migration table mapping, history versioning and legacy ID preservation
+
+## Wave 2 placements part 2 (cross-file authorized parity)
+- G2-13-015-060 — src/modules/placements/application-service.ts, company service and presentation: Align legacy ordering to createdAt vs issuedAt and release-to-expire mapping
+- G2-14-011-009 — src/modules/placements/job-service.ts and role editor: Make field by field display adapter including unstructured CTC text
+- G2-14-015-007 — src/modules/placements/application-service.ts, company service and presentation: Document field alias lifecycleStatus to status in compatibility projection
+- G2-14-015-009 — src/modules/placements/application-service.ts, company service and presentation: Crosswalk tabs and filtering for SENT_BACK/REQUEST/REJECTED
+- G2-14-016-010 — src/modules/placements/recruiter-service.ts and recruiter UI: Preserve revoker role in activity metadata or schema history
+- G2-14-016-031 — src/modules/placements/recruiter-service.ts and recruiter UI: Define historical reactivation or new-row provenance
+- G2-14-019-005 — src/modules/placements/round-service.ts and candidate round pages: Map roundDescription to contextual round instructions shown to candidates
+- G2-14-019-006 — src/modules/placements/round-service.ts and candidate round pages: Show room vs meeting URL by mode with original fallback
+- G2-14-019-009 — src/modules/placements/round-service.ts and candidate round pages: Preserve interviewType as typed annotation or name crosswalk
+- G2-14-019-013 — src/modules/placements/round-service.ts and candidate round pages: Map historical boolean to explicit recommendation action when known
+- G2-14-019-056 — src/modules/placements/round-service.ts and candidate round pages: Add mapping to original candidate-facing status wording
+- G2-14-019-057 — src/modules/placements/round-service.ts and candidate round pages: Map ONLINE to VIRTUAL and OFFLINE to ON_CAMPUS
+- G2-14-019-058 — src/modules/placements/round-service.ts and candidate round pages: Preserve sub-type labels in round titles
+- G2-14-020-007 — src/modules/placements/application-service.ts, company service and presentation: Resolve owner faculty membership and fallback labels on import
+- G2-14-020-012 — src/modules/placements/recruiter-service.ts and recruiter UI: Preserve invite funnel metrics as append-only events/counters
+- G2-14-020-018 — src/modules/placements/application-service.ts, company service and presentation: Backfill counters and event retention
+- G2-14-020-032 — src/modules/placements/application-service.ts, company service and presentation: Map deleted true to archived with tombstone reason
+- G2-14-020-039 — src/modules/placements/application-service.ts, company service and presentation: Implement idempotent joins and precise metrics
+- G2-14-020-050 — src/modules/placements/application-service.ts, company service and presentation: Use same trusted/opens/joins labels in company engagement view
+- G2-14-020-053 — src/modules/placements/application-service.ts, company service and presentation: Ensure rate limits and dedup to protect counters
+- G2-14-020-061 — src/modules/placements/application-service.ts, company service and presentation: Map historical soft-deletes and restores
+- G2-15-015-018 — src/modules/placements/application-service.ts, company service and presentation: Align min3 at server/DB or document intentional one-char allowance.
+- G2-15-015-060 — src/modules/placements/application-service.ts, company service and presentation: Align writer/readers to one canonical schema/decision values.
+- G2-15-015-064 — src/modules/placements/application-service.ts, company service and presentation: Enforce exact >=3 on migrated/new writes.
+- G2-15-014-012 — src/modules/placements/round-service.ts and candidate round pages: Map legacy testLink to new testUrl and resultsDue to resultsDueAt explicitly.
+- G2-15-014-049 — src/modules/placements/round-service.ts and candidate round pages: Preserve external assessment link and URL validation in fields.
+- G2-15-014-062 — src/modules/placements/application-service.ts, company service and presentation: Verify transaction reorder doesn't violate transient uniqueness.
+- G2-15-014-063 — src/modules/placements/round-service.ts and candidate round pages: Choose source IST policy and preserve exact local wall-time.
+- G2-15-016-007 — src/modules/placements/recruiter-service.ts and recruiter UI: Use Designation visible label while mapping to title.
+- G2-15-016-008 — src/modules/placements/recruiter-service.ts and recruiter UI: Expose old suspended/reason staff state and reinstate semantics.
+- G2-15-016-014 — src/modules/placements/recruiter-service.ts and recruiter UI: Preserve creator actor role and optimistic revision via updatedAt token.
+- G2-15-016-023 — src/modules/placements/recruiter-service.ts and recruiter UI: Persist/display staff suspension reason if recruiter suspensions supported.
+- G2-15-016-039 — src/modules/placements/recruiter-service.ts and recruiter UI: Clarify SUSPENDED vs ARCHIVED mapping and restore eligibility.
+- G2-15-016-054 — src/modules/placements/recruiter-service.ts and recruiter UI: Use old visible label Designation where exact clone required.
+- G2-16-014-011 — src/modules/placements/application-service.ts, company service and presentation: Document old-ID compatibility if migration needed.
+- G2-16-014-030 — src/modules/placements/application-service.ts, company service and presentation: Map enums intentionally and label accurately.
+- G2-16-014-032 — src/modules/placements/application-service.ts, company service and presentation: Verify application job/learner join indexes.
+- G2-16-014-033 — src/modules/placements/application-service.ts, company service and presentation: Add partial status/expiry and dispute-deadline indexes.
+- G2-16-014-035 — src/modules/placements/application-service.ts, company service and presentation: Implement strict DB-clock cutoff with idempotent cascade.
+- G2-16-014-037 — src/modules/placements/application-service.ts, company service and presentation: Record historical mapping or approved no-migration choice.
+
+## Wave 2 placements part 3 (authorized projection and migration handoffs)
+- G2-16-014-038 — src/modules/placements job, application and company read/write projections: Verify CTC conversion, null joins, lifecycle timelines.
+- G2-16-014-039 — src/modules/placements job, application and company read/write projections: Add partial due indexes and test query plan.
+- G2-16-015-007 — src/modules/placements job, application and company read/write projections: Document integer→UUID mapping for programs and legacy batch-to-cohort; avoid silently dropping cohort targeting.
+- G2-16-015-037 — src/modules/placements job, application and company read/write projections: Document migration schema correspondence and data preservation before cutover.
+- G2-17-014-008 — src/modules/placements job, application and company read/write projections: Map IDs, audit creator and timestamp to normalized history.
+- G2-17-014-045 — src/modules/placements job, application and company read/write projections: Backfill creator to service actor or sentinel carefully; convert IST if known.
+- G2-17-021-009 — src/modules/placements job, application and company read/write projections: Render in IST/local time without shifting calendar day.
+- G2-17-021-037 — src/modules/placements job, application and company read/write projections: Create stable legacy int/slug→UUID mapping if public deep links survive.
+- G2-18-011-007 — src/modules/placements job, application and company read/write projections: Compose same learner-readable round/date string from joined round/screening state.
+- G2-18-011-008 — src/modules/placements job, application and company read/write projections: Retrieve audited withdrawal reason from history/metadata and use exact UI copy.
+- G2-18-011-038 — src/modules/placements job, application and company read/write projections: Build action-to-table side effect matrix including withdrawn/declined offers.
+- G2-18-011-046 — src/modules/placements job, application and company read/write projections: Migrate withdrawn rows and support own history without resurrecting terminal stage.
+- G2-18-011-068 — src/modules/placements job, application and company read/write projections: Build event/topic routing matrix, ensure exactly-once post-commit observer behavior.
+- G2-2-016-007 — src/modules/placements job, application and company read/write projections: Document field-to-field read model and maintain company display from canonical source
+- G2-2-016-052 — src/modules/placements job, application and company read/write projections: Document IDs/fields/filters and import compatibility (migration explicitly not required)
+- G2-2-016-157 — src/modules/placements job, application and company read/write projections: Document field-by-field ID, ownership, status and version mapping
+- G2-2-016-158 — src/modules/placements job, application and company read/write projections: Preserve migrated historical statuses, source and version semantics in new columns
+- G2-19-022-137 — src/modules/placements job, application and company read/write projections: Produce field-level migration matrix for legacy settings, blocked dates, notification defaults, job types
+- G2-20-011-007 — src/modules/placements job, application and company read/write projections: Map status/actor/reason fields explicitly and adopt bounds or documented new schema
+- G2-20-011-023 — src/modules/placements job, application and company read/write projections: Use service/system identity for automated transitions or nullable audited actor with reason
+- G2-20-011-031 — src/modules/placements job, application and company read/write projections: Document APPLIED→SUBMITTED and display migration-compatible status label
+- G2-20-011-033 — src/modules/placements job, application and company read/write projections: Normalize status and implement idempotency for retrying same request
+- G2-20-011-036 — src/modules/placements job, application and company read/write projections: Document schema field/constraint/index mapping for all historical states
+- G2-20-012-009 — src/modules/placements job, application and company read/write projections: Map legacy APPLIED to SUBMITTED in UI/copy and history
+- G2-20-012-025 — src/modules/placements job, application and company read/write projections: Map state machine and initial status labels
+- G2-20-012-039 — src/modules/placements job, application and company read/write projections: Map active job/application identity and status fields, no migration if empty prod
+- G2-3-013-008 — src/modules/placements job, application and company read/write projections: Legacy fields applicationId INT, old/new status varchar50, changedAt local datetime, changedBy nullable INT, rejectionReason varchar500. vNext UUID parent/actor required UUID, from/to varchar24, reason text, occurredAt timestamptz and optional cascadeId. Map all fields/constraints.
+- G2-3-013-015 — src/modules/placements job, application and company read/write projections: Legacy writer trims statuses, normalizes blank oldStatus to null and caps rejectionReason at 500. VNext status history schema stores text reason without bound; add exact boundary validation.
+- G2-3-013-039 — src/modules/placements job, application and company read/write projections: Legacy repeated identical status case-insensitively no-op; vNext strict enum/history CHECK prevents duplicate but may surface DB failure for two concurrent writes. Add expected-state compare and typed conflict.
+- G2-3-013-045 — src/modules/placements job, application and company read/write projections: Legacy query excludes soft-deleted records; vNext history schema has no deleted flag and always returns rows. If deleted historic rows migrate, filter tombstones during import rather than exposing them.
+- G2-3-015-029 — src/modules/placements job, application and company read/write projections: Legacy active learner-visible job requires active=true,deleted=false,not draft,visibilityType != EXTERNAL_ONLY; vNext PUBLISHED + archivedAt null and related company status, but no external-only visibilityType. Define explicit ATS-only exclusion.
+- G2-3-015-040 — src/modules/placements job, application and company read/write projections: Legacy sorts IDs before fetching rows to avoid MySQL JSON sort buffer overflow and restores that order; vNext SQL sorts projected joined rows, small paginated slices. Keep indices/limits for JSON-heavy records.
+- G2-3-015-044 — src/modules/placements job, application and company read/write projections: Legacy slug existence COUNT includes deleted rows to prevent reuse; vNext UUID PK with no legacy jobSlug uniqueness check. Add compatibility slug reservation map if importing old links.
+- G2-3-015-048 — src/modules/placements job, application and company read/write projections: Legacy companyId index/group counts with legacy name fallback; vNext relationship_id index no equivalent name-linked history. Model company legacy alias and scoped usage aggregates.
+- G2-12-014-066 — src/modules/placements job, application and company read/write projections: Legacy only isDeleted=false records cached, vNext DB application status and lifecycle check no isDeleted column; historic deleted visibility contract differs.
+- G2-13-019-003 — src/modules/placements job, application and company read/write projections: Company name/logo duplicated on legacy job; vNext references normalized company relationship.
+- G2-13-019-004 — src/modules/placements job, application and company read/write projections: RoleOptions JSON replaced by normalized placementJobRoleOptions and eligibility-policy tables.
+- G2-13-019-006 — src/modules/placements job, application and company read/write projections: Responsibilities, string location and CTC range become legacyPostingDetails, locations text[] and min/max INR.
+- G2-13-019-008 — src/modules/placements job, application and company read/write projections: Legacy four target department/program/batch/class FKs replaced by other eligibility scopes.
+- G2-13-019-009 — src/modules/placements job, application and company read/write projections: postedDate + importantDates case-insensitive application deadline reconciliation differs from publishedAt/deadline and typed JSON.
+
+## Wave2 placements part4 cross-file implementations
+- G2-13-019-010 — placement service/authorized page owner: Legacy nullable season and owner faculty FKs vs mandatory UUID season/optional ownerMembership.
+- G2-13-019-019 — placement service/authorized page owner: POOL drive mode, REGULAR/DREAM/SUPER_DREAM and override reason collapsed into other flags/policies.
+- G2-13-019-025 — placement service/authorized page owner: Legacy screeningVersion v1 invariant not present on placementJobs table.
+- G2-13-019-026 — placement service/authorized page owner: Legacy resultsAutoApply and cancelledAt represented by independent lifecycle/event fields, not same scalar flags.
+- G2-13-019-029 — placement service/authorized page owner: Company logo direct 500-char URL moved into global company/object path branding.
+- G2-13-019-032 — placement service/authorized page owner: Last-saved actor/time legacy fields require equivalent audit projections.
+- G2-13-019-036 — placement service/authorized page owner: Potential assessment URL visibility regression from nested legacyPostingDetails in vNext DTO.
+- G2-13-019-038 — placement service/authorized page owner: Legacy ON_CAMPUS/POOL/OFF_CAMPUS, Regular/Dream/Super Dream wording not direct new labels.
+- G2-13-019-039 — placement service/authorized page owner: Legacy denormalized companyName/logo avoid join; normalized company requires indexed relationship join.
+- G2-13-019-043 — placement service/authorized page owner: MySQL JPA JSON model vs PostgreSQL Drizzle normalized placement job, changed migrations/deployment dependencies.
+- G2-13-019-044 — placement service/authorized page owner: Legacy jdUrl requires storage provider mapping to signed asset APIs.
+- G2-13-019-046 — placement service/authorized page owner: Legacy candidatePreferences keys (skills, graduation year, preferredCity) vs vNext typed subset, possible data loss.
+- G2-13-019-049 — placement service/authorized page owner: POOL and SUPER_DREAM/categoryOverrideReason not direct mapped in job entity.
+- G2-3-031-069 — placement service/authorized page owner: Legacy activeCollegeCount and Status SUSPENDED/DELETED vs vNext grant count and ARCHIVED/DISABLED; explicit status transform.
+- G2-4-015-017 — placement service/authorized page owner: Define cross-college preference duplication and identity mapping.
+- G2-4-015-018 — placement service/authorized page owner: Define preference archive/restoration when membership ends.
+- G2-4-015-041 — placement service/authorized page owner: Backfill legacy null as true, false remains false.
+- G2-4-015-058 — placement service/authorized page owner: Explicitly migrate null to enabled.
+- G2-12-015-004 — placement service/authorized page owner: Restore legacy visual field order in package editor.
+- G2-12-015-007 — placement service/authorized page owner: Default missing legacy package name while resolving same-name collisions.
+- G2-12-015-013 — placement service/authorized page owner: Add stable position ordering and import existing array order.
+- G2-12-015-037 — placement service/authorized page owner: Flag duplicate source roles and resolve losslessly during migration.
+- G2-13-020-009 — placement service/authorized page owner: Enforce legacy max100 and report oversized imported values.
+- G2-13-020-010 — placement service/authorized page owner: Map description→about and 2000 max.
+- G2-13-020-013 — placement service/authorized page owner: Document migrated created-by and legacy provenance separately.
+- G2-13-020-014 — placement service/authorized page owner: Map true/false from timestamp+user, preserve old verifier attribution.
+- G2-13-020-036 — placement service/authorized page owner: Map deleted vs archived state and merged redirects across both layers.
+- G2-13-020-048 — placement service/authorized page owner: Add precise constraints and import violations report.
+- G2-13-030-008 — placement service/authorized page owner: Join scoped learner identity and show same fallback.
+- G2-13-030-010 — placement service/authorized page owner: Map timezone/format, star rating, recommendation and privacy-protected notes.
+- G2-4-023-015 — placement service/authorized page owner: Map verified bool and deleted state without reviving archived/merged records.
+- G2-4-023-070 — placement service/authorized page owner: Use legacy-ID to UUID map and backfill link identities without exposing raw hashes.
+- G2-13-021-008 — placement service/authorized page owner: Map legacy ID to application UUID and keep uniqueness.
+- G2-13-021-015 — placement service/authorized page owner: Keep separate auto status lifecycle if reintroducing scores.
+- G2-13-021-050 — placement service/authorized page owner: Document soft delete and retention policy.
+- G2-5-013-008 — placement service/authorized page owner: Create field crosswalk including null placeholders/currency precision/optional dates
+- G2-5-013-020 — placement service/authorized page owner: Map attachment to offer document record and keep old URL validation behavior
+- G2-5-013-049 — placement service/authorized page owner: Report terminal rejection using screening stage and withdrawal separately
+- G2-5-013-060 — placement service/authorized page owner: Map visibility vs application channel to avoid off-platform leaks
+- G2-5-013-068 — placement service/authorized page owner: Map signed file/document link to normalized offer attachment feature
