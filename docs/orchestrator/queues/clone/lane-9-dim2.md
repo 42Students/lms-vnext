@@ -140,7 +140,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/placements/college-drive-bulk-actions.tsx`
 - [x] `src/components/placements/college-drive-deadline-action.tsx`
 - [x] `src/components/placements/college-drive-row-lifecycle-action.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
 - [ ] `src/components/placements/college-legacy-drive-settings.tsx`
 - [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
 - [ ] `src/components/placements/learner-applications-browse.tsx`
