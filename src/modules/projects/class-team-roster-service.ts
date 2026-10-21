@@ -1,5 +1,6 @@
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, ilike, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { containsLikePattern } from "@/lib/sql-match";
 import { cohorts, collegeMemberships, departments, learnerProfiles, learnerProgramEnrollments, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -43,14 +44,21 @@ export async function requireTeamCreationAuthority(context: RequestContext, coll
   return college;
 }
 
-export async function listProjectTeamClasses(context: RequestContext, collegeId: string) {
+export async function listProjectTeamClasses(
+  context: RequestContext, collegeId: string, options:{q?:string;limit?:number}={},
+) {
   const college = await requireTeamCreationAuthority(context, collegeId);
+  const query=options.q?.trim().slice(0,120)??"";
+  const pattern="%"+query.replace(/[\\%_]/g,"\\  const college = await requireTeamCreationAuthority(context, collegeId);
+  return getDb().select({ id: sections.id, name: sections.name, code: sections.code })")+"%";
+  const limit=Math.min(500,Math.max(1,options.limit??500));
   return getDb().select({ id: sections.id, name: sections.name, code: sections.code })
     .from(sections).innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
-    .where(and(eq(departments.collegeId, college.id), eq(sections.status, "ACTIVE")))
-    .orderBy(asc(sections.name), asc(sections.id)).limit(500);
+    .where(and(eq(departments.collegeId, college.id), eq(sections.status, "ACTIVE"),
+      query?or(ilike(sections.name,pattern),ilike(sections.code,pattern)):undefined))
+    .orderBy(asc(sections.name), asc(sections.id)).limit(limit);
 }
 
 export async function loadClassTeamRoster(context: RequestContext, collegeId: string, classId: string) {
@@ -85,4 +93,43 @@ export async function loadClassTeamRoster(context: RequestContext, collegeId: st
   })).sort((a,b) => a.rollNumber.localeCompare(b.rollNumber, undefined, {numeric: true}) || a.membershipId.localeCompare(b.membershipId));
   if (new Set(members.map(member => member.membershipId)).size !== members.length) throw new ProjectsServiceError("PROJECT_CLASS_ROSTER_DUPLICATE");
   return { collegeId: college.id, classId: section.id, className: section.name, revision: classRosterRevision(section.id, members), members };
+}
+
+/** Paged, server-filtered active college learners for standalone workspaces.
+ * Does not expose contact details, and selected IDs are revalidated on creation.
+ */
+export async function listStandaloneProjectLearnerCandidates(
+ context:RequestContext,collegeId:string,q:string,page:number,
+){
+ const college=await requireTeamCreationAuthority(context,collegeId);
+ const query=q.trim().slice(0,120);
+ const pattern=containsLikePattern(query);
+ const pageSize=50;
+ const rows=await getDb().selectDistinct({
+  membershipId:collegeMemberships.id,
+  displayName:users.displayName,
+  rollNumber:learnerProfiles.rollNumber,
+  registrationNumber:learnerProfiles.registrationNumber,
+ }).from(collegeMemberships)
+ .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+ .innerJoin(learnerProgramEnrollments,and(
+   eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+   eq(learnerProgramEnrollments.status,"ACTIVE")))
+ .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+ .where(and(eq(collegeMemberships.collegeId,college.id),
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+   query?or(ilike(users.displayName,pattern),ilike(learnerProfiles.rollNumber,pattern),
+     ilike(learnerProfiles.registrationNumber,pattern)):undefined))
+ .orderBy(asc(users.displayName),asc(collegeMemberships.id),
+   asc(learnerProfiles.rollNumber),asc(learnerProfiles.registrationNumber))
+ .limit(pageSize+1).offset(page*pageSize);
+ return {
+  candidates:rows.slice(0,pageSize).map(row=>({
+   membershipId:row.membershipId,displayName:row.displayName??"Unnamed learner",
+   rollNumber:row.rollNumber||row.registrationNumber||"—",
+  })),
+  hasMore:rows.length>pageSize,
+ };
 }

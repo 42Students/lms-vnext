@@ -17,10 +17,11 @@ const destructiveWarning =
   "Edits made to the current ones are not kept. This happens regardless of the checkbox below, " +
   "which only controls whether blank title/summary/overview fields get refilled from the new template.";
 
-export function ProjectChangeTemplateControl({ projectId, status, expectedUpdatedAt }: {
+export function ProjectChangeTemplateControl({ projectId, status, expectedUpdatedAt, hasTemplate = false }: {
   projectId: string;
   status: string;
   expectedUpdatedAt: string;
+  hasTemplate?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -35,6 +36,40 @@ export function ProjectChangeTemplateControl({ projectId, status, expectedUpdate
   const [error, setError] = useState<string | null>(null);
   const searchSequence = useRef(0);
   const saving = useRef(false);
+  const deepLinkChecked = useRef(false);
+  useEffect(()=>{
+    if(deepLinkChecked.current)return;
+    deepLinkChecked.current=true;
+    const link=new URL(window.location.href);
+    if(link.searchParams.get("openTemplate")!=="1")return;
+    link.searchParams.delete("openTemplate");
+    window.history.replaceState(null,"",link.pathname+link.search+link.hash);
+    // Recheck before opening. A stale link must never offer to replace
+    // plan content that was attached after the original page load.
+    if(hasTemplate||!["PLANNED","ACTIVE"].includes(status))return;
+    const controller=new AbortController();
+    void fetch("/api/projects/"+encodeURIComponent(projectId),{
+      signal:controller.signal,credentials:"same-origin",cache:"no-store",
+    }).then(async response=>{
+      if(!response.ok)throw new Error(await projectApiError(response));
+      return response.json() as Promise<{workspace?:{project?:{
+        updatedAt?:string;templateVersionId?:string|null;
+      }}}>;
+    }).then(data=>{
+      if(controller.signal.aborted)return;
+      const current=data.workspace?.project;
+      if(!current||current.templateVersionId||current.updatedAt!==expectedUpdatedAt){
+        showToast({tone:"info",title:"Workspace changed",
+          description:"Refresh the summary before changing its template."});
+        router.refresh();return;
+      }
+      setOpen(true);
+    }).catch(()=>{
+      if(!controller.signal.aborted)showToast({tone:"error",title:"Failed to load workspace",
+        description:"Retry the template action from the workspace summary."});
+    });
+    return()=>controller.abort();
+  },[hasTemplate,projectId,status,expectedUpdatedAt,router,showToast]);
 
   useEffect(() => {
     if (!open) {
