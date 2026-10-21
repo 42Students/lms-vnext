@@ -165,6 +165,7 @@ export const db10BugReportAttachments = pgTable("bug_report_attachments", {
 }, t => [
   uniqueIndex("db10_bug_report_attachments_key_uq").on(t.storageKey),
   index("db10_bug_report_attachments_report_time_idx").on(t.bugReportId, t.createdAt),
+  index("db10_bug_report_attachments_limit_idx").on(t.bugReportId,t.id),
   check("db10_bug_report_attachments_mime_ck",
     sql.raw('"content_type" in (\'image/png\',\'image/jpeg\',\'image/webp\')')),
   check("db10_bug_report_attachments_size_ck",
