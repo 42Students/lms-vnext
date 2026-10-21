@@ -10,6 +10,9 @@ import {
 } from "@/components/academics/learner-class-schedule";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerClassSchedule } from "@/modules/academics/learner-schedule-service";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { AcademicsServiceError } from "@/modules/academics/errors";
+import { CoursesServiceError } from "@/modules/courses/errors";
 
 export default async function LearnerCalendarPage({searchParams}:{
   searchParams:Promise<{view?:string|string[];month?:string|string[];deliveryId?:string|string[]}>;
@@ -21,8 +24,20 @@ export default async function LearnerCalendarPage({searchParams}:{
   const window=learnerCalendarVisibleWindow(validated.data.month,now);
   const context =
     await getCurrentRequestContext();
-  const schedule =
-    await getLearnerClassSchedule(context,window);
+  let schedule: Awaited<ReturnType<typeof getLearnerClassSchedule>>;
+  let scheduleWarning: string | null = null;
+  try {
+    schedule = await getLearnerClassSchedule(context, window);
+  } catch (error) {
+    // Access and validation failures must still reach the authenticated error
+    // boundary. A transient timetable failure stays within the page as a
+    // dismissible warning, so the learner can navigate or retry.
+    if (error instanceof AuthorizationError ||
+        error instanceof AcademicsServiceError ||
+        error instanceof CoursesServiceError) throw error;
+    scheduleWarning = "Unable to load class schedule. Please try again.";
+    schedule = { sections: [], courses: [], events: [], courseLookupWarning: null };
+  }
   // Today and upcoming are independent of whichever calendar month is visible.
   // Each metric window is bounded and re-authorized for this learner.
   const metrics = await Promise.allSettled(
@@ -80,7 +95,7 @@ export default async function LearnerCalendarPage({searchParams}:{
         events={events}
         metricEvents={metricEvents}
         courseLookupWarning={schedule.courseLookupWarning}
-        metricsWarning={metricsWarning}
+        metricsWarning={metricsWarning ?? scheduleWarning}
         initialView={filters.view}
         initialAnchor={filters.anchor}
         initialSelectedDeliveryIds={filters.selectedDeliveryIds}

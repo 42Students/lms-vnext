@@ -14,6 +14,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
 import {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
@@ -55,7 +56,16 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader title="Messages"/>
   <ErrorState title="Invalid conversation filters" description="Review the college and conversation filters."
     action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset</Link>}/></div>;
- const result=await listHrConversations(context,parsed.data);
+ const result=await listHrConversations(context,parsed.data).catch((error:unknown)=>{
+   if(error instanceof AuthorizationError)throw error;
+   return null;
+ });
+ if(!result)return <div className="min-w-0 space-y-3">
+   <PageHeader title="Messages"/>
+   <ErrorState title="Could not load your messages"
+     description="Your inbox could not be refreshed. Please try again."
+     retryHref="/hr/conversations" retryLabel="Retry"/>
+ </div>;
  const generalLookup=result.status==="READY"
   ?await listHrConversations(context,{
     collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
@@ -87,7 +97,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader title="Messages"
    description={result.status==="READY"
     ? result.total.toLocaleString("en-IN")+" conversation"+(result.total===1?"":"s")+
-      " · "+result.unreadInView+" unread message"+(result.unreadInView===1?"":"s")+" on this page"
+      " · "+result.unreadTotal+" unread message"+(result.unreadTotal===1?"":"s")
     : "Conversations with the placement cell, one per drive, plus a general one."}
    actions={<div className="flex flex-wrap items-center gap-3">
      {result.status==="READY"?<RecruiterGeneralDrawer>

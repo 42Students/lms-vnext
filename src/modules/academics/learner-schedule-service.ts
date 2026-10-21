@@ -167,7 +167,7 @@ export async function getLearnerClassSchedule(
         error instanceof CoursesServiceError ||
         error instanceof AcademicsServiceError) throw error;
     courseLookupWarning =
-      "Could not load course choices. Your class timetable is still available; retry to load course-linked sessions.";
+      "Failed to load course data. Calendar events may be incomplete. Please try refreshing the page.";
   }
   const deliveryIds = [...new Set(accessible.map(course => course.deliveryId))];
   const coursesList = [...new Map(accessible.map(course => [
