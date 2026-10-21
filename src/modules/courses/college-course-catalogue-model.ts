@@ -4,7 +4,7 @@ export const collegeCourseCatalogueQuerySchema=z.object({
  q:z.string().trim().max(100).default(""),
  sort:z.enum(["NAME_ASC","NAME_DESC","CODE_ASC","CODE_DESC"]).default("NAME_ASC"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
- pageSize:z.enum(["25","50","100"]).optional(),
+ pageSize:z.enum(["10","25","50","100"]).optional(),
 }).strict();
 export type CollegeCourseCatalogueQuery=z.infer<typeof collegeCourseCatalogueQuerySchema>;
 export const COLLEGE_COURSE_CATALOGUE_PAGE_SIZE=25;

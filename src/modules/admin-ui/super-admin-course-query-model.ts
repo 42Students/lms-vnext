@@ -8,10 +8,11 @@ import {collegeCourseCatalogueQuerySchema} from "@/modules/courses/college-cours
 export function parseSuperAdminCourseQuery(
   raw:Record<string,string|string[]|undefined>,
 ) {
-  const keys=new Set(["q","sort","page","pageSize","duplicate"]);
+  const keys=new Set(["q","sort","page","pageSize","duplicate","create"]);
   if(Object.keys(raw).some(key=>!keys.has(key)) ||
      Object.values(raw).some(Array.isArray) ||
      (raw.page!==undefined && (typeof raw.page!=="string" || !/^[0-9]+$/.test(raw.page))) ||
+     (raw.create!==undefined && raw.create!=="1") ||
      (raw.duplicate!==undefined &&
       (typeof raw.duplicate!=="string" || !z.uuid().safeParse(raw.duplicate).success)))
     return null;
@@ -20,5 +21,5 @@ export function parseSuperAdminCourseQuery(
     q:raw.q,sort:raw.sort,page:raw.page,pageSize:raw.pageSize,
   });
   if(!parsed.success)return null;
-  return {catalogueQuery:parsed.data,duplicateCourseId:raw.duplicate as string|undefined};
+  return {catalogueQuery:parsed.data,duplicateCourseId:raw.duplicate as string|undefined,openCreateCourse:raw.create==="1"};
 }
