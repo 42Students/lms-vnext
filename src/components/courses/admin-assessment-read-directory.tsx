@@ -136,7 +136,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
                   <SuperAdminQuizSubmissionsDialog title={item.title.trim()||"Untitled quiz"} count={item.activityCount}>
                     <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
                       specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries}
-                      status={item.status}/>
+                      status={item.status} dueAt={item.dueAt?.toISOString()??null}/>
                   </SuperAdminQuizSubmissionsDialog>
                   {(item.resultsReleaseReady||item.resultsPublished)&&
                     (item.status==="PUBLISHED"||item.status==="CLOSED")?
