@@ -55,10 +55,10 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/tpo/JobOfferRepository.java`
 - [x] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobEligibility.java`
 - [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/QuizQuestion.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectResource.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ImageEntry.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/College.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectResource.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LessonContents.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ImageEntry.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/College.java`
 - [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AdminAuditLog.java`
 - [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoPublicLinkController.java`
 - [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementController.java`
