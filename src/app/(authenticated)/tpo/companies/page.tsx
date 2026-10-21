@@ -129,14 +129,14 @@ export default async function TpoCompanyMemoryPage({
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-end">
             <TpoCompanyCreateForm />
             <details className="group min-w-0 sm:relative">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">
                 Company links
               </summary>
               <nav aria-label="Other company destinations" className="mt-2 flex min-w-0 flex-col gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 sm:absolute sm:right-0 sm:z-20 sm:w-52 sm:shadow-sm">
-                <Link href="/tpo/companies/archived" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                <Link href="/tpo/companies/archived" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   Archived relationships
                 </Link>
-                <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   Recruiter leads
                 </Link>
               </nav>
@@ -260,7 +260,7 @@ export default async function TpoCompanyMemoryPage({
                   search: query.search,
                   pageSize: query.pageSize,
                   sort: query.sort,
-                })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                })} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                   First page
                 </Link>
               }
@@ -309,7 +309,7 @@ export default async function TpoCompanyMemoryPage({
         </nav> : null}
 
         <details className="border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-          <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">About company counts</summary>
+          <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">About company counts</summary>
           <p className="max-w-3xl pb-2 leading-5">
           Offer counts represent persisted offer records, including
           historical declined and withdrawn statuses. Confirmed joins
