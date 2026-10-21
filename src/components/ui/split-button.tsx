@@ -30,9 +30,9 @@ export function SplitButton({
       </Button>
       {disabled || loading
         ? <Button variant="secondary" size="icon" disabled aria-label={menuLabel} className="min-h-11 min-w-11 shrink-0 !rounded-l-none md:min-h-9 md:min-w-9">
-            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3"><path d="m6 9 6 6 6-6" /></svg>
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="m6 9 6 6 6-6" /></svg>
           </Button>
-        : <Dropdown align="end" label={menuLabel} triggerClassName="min-h-11 min-w-11 shrink-0 !rounded-l-none md:min-h-9 md:min-w-9 focus-visible:!outline-offset-[3px] focus-visible:!outline-[var(--lms-primary-text)]" trigger={<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3 w-3"><path d="m6 9 6 6 6-6" /></svg>}>
+        : <Dropdown align="end" label={menuLabel} triggerClassName="min-h-11 min-w-11 shrink-0 !rounded-l-none md:min-h-9 md:min-w-9 focus-visible:!outline-offset-[3px] focus-visible:!outline-[var(--lms-primary-text)]" trigger={<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><path d="m6 9 6 6 6-6" /></svg>}>
             {menu}
           </Dropdown>}
     </div>
