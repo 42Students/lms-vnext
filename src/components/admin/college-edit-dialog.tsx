@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useRef,
   useState,
   useTransition,
@@ -10,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 
 export type EditableCollege = {
   id: string;
@@ -30,6 +32,7 @@ export function CollegeEditDialog({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const { askConfirm, dialog } = useConfirmFlow();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(college.name);
   const [city, setCity] = useState(college.city ?? "");
@@ -43,7 +46,32 @@ export function CollegeEditDialog({
   const [postalCode,setPostalCode]=useState(college.postalCode??"");
   const [pending, startTransition] = useTransition();
   const inFlightRef=useRef(false);
-
+  const dirty = name !== college.name || city !== (college.city ?? "") ||
+    state !== (college.state ?? "") || country !== (college.country ?? "") ||
+    addressLine1 !== (college.addressLine1 ?? "") ||
+    addressLine2 !== (college.addressLine2 ?? "") ||
+    landmark !== (college.landmark ?? "") || postalCode !== (college.postalCode ?? "");
+  useEffect(() => {
+    if (!open || !dirty) return;
+    const guard = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", guard);
+    return () => window.removeEventListener("beforeunload", guard);
+  }, [dirty, open]);
+  function requestClose() {
+    if (pending || inFlightRef.current) {
+      showToast({ tone: "info", title: "Wait for the current college setup action to finish." });
+      return;
+    }
+    if (!dirty) {
+      setOpen(false);
+      return;
+    }
+    void askConfirm("Discard college changes? Keep editing to preserve your unsaved changes.")
+      .then(confirmed => { if (confirmed && !inFlightRef.current) setOpen(false); });
+  }
 
   function save() {
     if(inFlightRef.current||pending||!name.trim())return;
@@ -71,11 +99,15 @@ export function CollegeEditDialog({
       if (!response.ok) {
         showToast({
           tone: "error",
-          title: "College update failed",
+          title: "Failed to update college",
           description:
             payload?.error === "COLLEGE_NOT_FOUND"
               ? "The college is no longer active or accessible."
-              : "The college could not be updated.",
+              : response.status === 409
+                ? "Another administrator changed this college. Reload before editing."
+                : response.status === 400
+                  ? "Please check the entered college values."
+                  : "The college could not be updated.",
         });
         return;
       }
@@ -87,7 +119,7 @@ export function CollegeEditDialog({
       });
       router.refresh();
       } catch {
-        showToast({tone:"error",title:"College update failed",description:"The college could not be updated."});
+        showToast({tone:"error",title:"Failed to update college",description:"The college could not be updated."});
       } finally {
         inFlightRef.current=false;
       }
@@ -96,6 +128,7 @@ export function CollegeEditDialog({
 
   return (
     <>
+      {dialog}
       <Button
         variant="secondary"
         size="sm"
@@ -115,17 +148,17 @@ export function CollegeEditDialog({
 
       <Dialog
         open={open}
-        onOpenChange={next=>{if(!pending)setOpen(next);}}
+        onOpenChange={next=>{if(next)setOpen(true);else requestClose();}}
         dismissible={!pending}
         title={`Edit ${college.name}`}
-        description={`College code ${college.code} and organization ownership are intentionally immutable here.`}
+        description={`College code ${college.code} and organization ownership cannot be changed after creation. For a different legal owner or identifier, create a new college and plan an authorized migration.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
               className="min-h-11 md:min-h-9"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={requestClose}
             >
               Cancel
             </Button>
@@ -141,6 +174,9 @@ export function CollegeEditDialog({
         }
       >
         <div aria-busy={pending} className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+          {dirty ? <p role="status" className="md:col-span-2 text-sm text-warning-text">
+            You have unsaved college changes. Closing will ask whether to discard them.
+          </p> : null}
 
 
           <div className="md:col-span-2">
