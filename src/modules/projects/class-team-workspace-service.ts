@@ -24,6 +24,18 @@ import { ProjectsServiceError, postgresConstraintName, isRetryableProjectTransac
 
 export async function createClassTeamWorkspaces(context: RequestContext, raw: unknown) {
   const input = createClassTeamWorkspacesSchema.parse(raw);
+  // The old session always injected college/organization; the current
+  // switcher selects a college UUID. Never let a stale creator tab silently
+  // replay a preview against an organization or college switched since then.
+  if(isSuperAdmin(context) && (
+    !context.adminScope?.collegeId ||
+    context.adminScope.collegeId!==input.collegeId ||
+    !context.adminScope.organizationId
+  ))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  if(!isSuperAdmin(context) && (
+    !context.membership || context.membership.collegeId!==input.collegeId ||
+    context.membership.status!=="ACTIVE"
+  ))throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope = await requireTeamCreationAuthority(context, input.collegeId);
   // Only the persisted current class may be used; the browser cannot supply learners.
   await loadClassTeamRoster(context, scope.id, input.classId);
