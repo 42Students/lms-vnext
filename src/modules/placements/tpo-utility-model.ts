@@ -28,19 +28,12 @@ export const TPO_MORE_GROUPS = [
  ]},
 ] as const;
 
+/** Exact legacy TpoProfileCard role copy. The membership switcher
+ * continues to use its own canonical role labels. */
 export function formatTpoProfileRole(
   role: string,
 ): string {
-  if (role === "TPO") return "TPO";
-
-  return role
-    .toLowerCase()
-    .split("_")
-    .filter(Boolean)
-    .map(
-      (part) =>
-        part.charAt(0).toUpperCase() +
-        part.slice(1),
-    )
-    .join(" ");
+  if (role === "TPO") return "Placement officer";
+  if (role === "ADMIN" || role === "COLLEGE_ADMIN") return "College admin (acts as placement officer)";
+  return "Placement team";
 }

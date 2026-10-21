@@ -233,12 +233,12 @@ async function MentorProjectsContent({
       matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
     .sort((a,b) => query.sort === "PROGRESS"
       ? compareMentorProjectsByProgress(a.project,b.project,
-          mentorTaskProgress(workCounts.get(a.project.id))?.percent,
-          mentorTaskProgress(workCounts.get(b.project.id))?.percent)
+          mentorTaskProgress(workCounts.get(a.project.id),a.project.progressPercent)?.percent,
+          mentorTaskProgress(workCounts.get(b.project.id),b.project.progressPercent)?.percent)
       : query.sort === "PROGRESS_DESC"
       ? compareMentorProjectsByMostProgress(a.project,b.project,
-          mentorTaskProgress(workCounts.get(a.project.id))?.percent,
-          mentorTaskProgress(workCounts.get(b.project.id))?.percent)
+          mentorTaskProgress(workCounts.get(a.project.id),a.project.progressPercent)?.percent,
+          mentorTaskProgress(workCounts.get(b.project.id),b.project.progressPercent)?.percent)
       : query.sort === "OPEN_TASKS"
       ? compareMentorProjectsByOpenTasks(a.project,b.project,
           workCounts.get(a.project.id)?.open ?? 0, workCounts.get(b.project.id)?.open ?? 0)
@@ -321,8 +321,8 @@ async function MentorProjectsContent({
             updatedAt:
               row.project.updatedAt,
             memberCount: teamSizes.get(row.project.id) ?? 0,
-            progressPercent: mentorTaskProgress(workCounts.get(row.project.id))?.percent ?? undefined,
-            progressDetail: mentorTaskProgress(workCounts.get(row.project.id))?.label,
+            progressPercent: mentorTaskProgress(workCounts.get(row.project.id),row.project.progressPercent)?.percent ?? undefined,
+            progressDetail: mentorTaskProgress(workCounts.get(row.project.id),row.project.progressPercent)?.label,
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,

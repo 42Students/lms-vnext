@@ -26,6 +26,23 @@ const LEGACY_SKILL_ALIASES: Readonly<Record<string,string>> = {
  nlp:"natural language processing",ds:"data science",db:"database",
  fe:"frontend",be:"backend",ui:"user interface",ux:"user experience",
  qa:"quality assurance",pm:"project management",
+ html5:"html",css3:"css",scss:"sass",sass:"scss",jsx:"react",tsx:"typescript",
+ reactjs:"react",reactnative:"react native",nextjs:"next.js",next:"next.js",
+ vuejs:"vue.js",angularjs:"angular",nodejs:"node.js",expressjs:"express",
+ nestjs:"nestjs",postgres:"postgresql",pgsql:"postgresql",pg:"postgresql",
+ mysql:"mysql",mongo:"mongodb",nosql:"nosql",redisdb:"redis",oracle:"oracle database",
+ dotnet:".net",aspnet:"asp.net",cplus:"c++",cplusplus:"c++",csharpnet:"c#",
+ springboot:"spring boot",spring:"spring framework",hibernate:"hibernate",
+ microservices:"microservices",restapi:"rest api",graphql:"graphql",grpc:"grpc",
+ devops:"devops",cicd:"ci/cd",terraform:"terraform",tf:"tensorflow",
+ pytorch:"pytorch",sklearn:"scikit-learn",opencv:"opencv",pandas:"pandas",
+ numpy:"numpy",llm:"large language models",genai:"generative ai",
+ nlu:"natural language understanding",cv:"computer vision",
+ oops:"object oriented programming",oop:"object oriented programming",
+ dsa:"data structures and algorithms",algo:"algorithms",
+ uxui:"user experience",figma:"figma",agile:"agile",scrum:"scrum",
+ powerbi:"power bi",excel:"microsoft excel",gdocs:"google docs",
+
 };
 
 /** Bounded Levenshtein fallback: return 3 when the distance exceeds 2.
@@ -63,8 +80,9 @@ const columns = {
  * Preserves legacy v1's exact/prefix/display/contains tier ordering and
  * popularity/priority boosts while also consulting *persisted* synonym rows.
  * Bounded typo search and legacy shortcuts are restored here. The catalog
- * import/migration, global fuzzy index, and ephemeral recent-skills cache remain
- * separately tracked; this service cannot promise unbounded full-catalog parity.
+ * import/migration remains guarded by readiness. The name-keyed last_used
+ * tracking table handles recent/popularity ranking without a separate volatile
+ * cache; the bounded fallback intentionally avoids extension requirements.
  */
 async function readSkillCatalogUncached(input: SkillCatalogQuery) {
   const db = getDb();
@@ -171,17 +189,25 @@ async function readSkillCatalogUncached(input: SkillCatalogQuery) {
     )
     .limit(input.limit);
   if (q.length < 3 || items.length >= Math.min(5,input.limit)) return { items };
-  // Legacy typo search happens only if fewer than five direct/prefix results.
-  // Bound SQL candidates and in-memory edit distance; no unindexed table-wide
-  // Levenshtein call or unrestricted scan is introduced.
+  // Tolerate a misspelled FIRST character and single missing letters too:
+  // requiring the same first letter made "pyhton" recoverable but not
+  // "y Python" / "avascript". Keep a bounded, deterministic candidate
+  // sample; the DB does not require a pg_trgm extension.
   const first=q.slice(0,1);
+  const stem=q.slice(1,Math.min(4,q.length));
   const candidates=await db.select(columns).from(db10Skills)
     .where(and(base,sql<boolean>`(
+      abs(length(lower(${db10Skills.name}))-${q.length})<=2 or
+      abs(length(lower(${db10Skills.displayName}))-${q.length})<=2
+    ) and (
       left(lower(${db10Skills.name}),1)=${first} or
-      left(lower(${db10Skills.displayName}),1)=${first}
+      left(lower(${db10Skills.displayName}),1)=${first} or
+      position(${stem} in lower(${db10Skills.name}))>0 or
+      position(${stem} in lower(${db10Skills.displayName}))>0
     )`))
-    .orderBy(desc(db10Skills.usageCount),asc(db10Skills.displayName),asc(db10Skills.id))
-    .limit(250);
+    .orderBy(desc(db10Skills.searchPriority),desc(db10Skills.usageCount),
+      asc(db10Skills.displayName),asc(db10Skills.id))
+    .limit(1200);
   const used=new Set(items.map(item=>item.id));
   const fuzzy=candidates.flatMap(row=>{
     if(used.has(row.id))return [];
