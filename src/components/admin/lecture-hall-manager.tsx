@@ -12,6 +12,7 @@ import { Menu, MenuItem } from "@/components/ui/menu";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -68,7 +69,7 @@ function errorText(payload: {
     case "HALL_CAPACITY_CONFLICT":
       return "The new capacity is below the configured capacity of an upcoming scheduled class.";
     case "DEPARTMENT_NOT_FOUND":
-      return "That department isn't an active department of this college.";
+      return "Department must belong to the same college as the lecture hall (and be active).";
     case "INVALID_REQUEST":
       return payload.issues?.[0]?.message ?? "Check the fields and try again.";
     default:
@@ -140,11 +141,13 @@ export function LectureHallManager({
     const values = isNew ? createDraft : draft;
     const setError = isNew ? setCreateError : setFormError;
     const capacity = Number(values.capacity);
+    if (!collegeId) return setError("College is required.");
     if (!values.name.trim()) return setError("Please enter room name");
+    if (values.name.trim().length > 255) return setError("Room name must be 255 characters or less");
     if (!values.roomType) return setError("Select a room type");
-    if (!Number.isInteger(capacity) || capacity < 1 || capacity > 1000) {
-      return setError("Capacity must be between 1 and 1000.");
-    }
+    if (!Number.isInteger(capacity)) return setError("Capacity must be a whole number.");
+    if (capacity < 1) return setError("Capacity must be at least 1.");
+    if (capacity > 1000) return setError("Capacity must be 1000 or less.");
     setError(null);
 
     inFlightRef.current=true;
@@ -182,7 +185,7 @@ export function LectureHallManager({
       });
       router.refresh();
       } catch {
-        setError("Could not save the hall. Check your connection and retry.");
+        setError(isNew ? "Could not create the room. Try again." : "Could not save the room. Try again.");
       } finally {inFlightRef.current=false;}
     });
   }
@@ -211,7 +214,8 @@ export function LectureHallManager({
       setArchiving(null);
       showToast({
         tone: "success",
-        title: status === "ARCHIVED" ? "Hall archived" : "Hall restored",
+        title: status === "ARCHIVED" ? "Lecture hall archived" : "Lecture hall restored",
+        description: status === "ARCHIVED" ? "Scheduled class history is preserved. This room can be restored." : undefined,
       });
       router.refresh();
       } catch {
@@ -234,15 +238,19 @@ export function LectureHallManager({
               <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
               <Select id="create-hall-dept" className="min-h-11 w-full md:min-h-9" value={createDraft.departmentId}
                 onChange={(event) => setCreateDraft({ ...createDraft, departmentId: event.target.value })}>
-                <option value="">Select department (optional)</option>
+                <option value="">{LECTURE_HALL_COPY.departmentPlaceholder}</option>
                 {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
               </Select>
             </div>
             <div>
               <label className={field} htmlFor="create-hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
               <Input id="create-hall-name" className="min-h-11 w-full md:min-h-9" maxLength={255} required
+                aria-invalid={Boolean(createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must"))}
+                aria-describedby={createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ? "create-hall-name-error" : undefined}
                 placeholder={LECTURE_HALL_COPY.namePlaceholder} value={createDraft.name}
                 onChange={(event) => setCreateDraft({ ...createDraft, name: event.target.value })}/>
+              {createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ?
+                <p id="create-hall-name-error" role="alert" className="mt-1 text-xs text-error">{createError}</p> : null}
             </div>
             <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
               <div>
@@ -261,7 +269,7 @@ export function LectureHallManager({
             </div>
             <div>
               <label className={field} htmlFor="create-hall-description">{LECTURE_HALL_COPY.descriptionLabel}</label>
-              <Input id="create-hall-description" className="min-h-11 w-full md:min-h-9" maxLength={255}
+              <Textarea id="create-hall-description" rows={2} className="w-full" maxLength={255}
                 placeholder={LECTURE_HALL_COPY.descriptionPlaceholder} value={createDraft.description}
                 onChange={(event) => setCreateDraft({ ...createDraft, description: event.target.value })}/>
             </div>
@@ -355,13 +363,18 @@ export function LectureHallManager({
           ) : null}
           <div>
             <label className={field} htmlFor="hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
-            <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} placeholder={LECTURE_HALL_COPY.namePlaceholder}
+            <Input className="min-h-11 md:min-h-9" id="hall-name" value={draft.name} maxLength={255} required
+              aria-invalid={Boolean(formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must"))}
+              aria-describedby={formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ? "edit-hall-name-error" : undefined}
+              placeholder={LECTURE_HALL_COPY.namePlaceholder}
               onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+            {formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ?
+              <p id="edit-hall-name-error" role="alert" className="mt-1 text-xs text-error">{formError}</p> : null}
           </div>
           <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] md:grid-cols-2">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
-              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} value={draft.capacity}
+              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
             <div>
@@ -379,7 +392,7 @@ export function LectureHallManager({
             <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
             <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
-              <option value="">Shared by all departments</option>
+              <option value="">{LECTURE_HALL_COPY.departmentPlaceholder}</option>
               {departments.map((d) => (
                 <option key={d.id} value={d.id}>{d.name}</option>
               ))}
@@ -387,7 +400,7 @@ export function LectureHallManager({
           </div>
           <div>
             <label className={field} htmlFor="hall-desc">{LECTURE_HALL_COPY.descriptionLabel}</label>
-            <Input className="min-h-11 md:min-h-9" id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
+            <Textarea rows={2} className="w-full" id="hall-desc" value={draft.description} maxLength={255} placeholder={LECTURE_HALL_COPY.descriptionPlaceholder}
               onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
           </div>
         </div>
