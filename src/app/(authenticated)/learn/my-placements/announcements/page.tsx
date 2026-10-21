@@ -66,8 +66,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const searchedNotices=searchLearnerNotices(filterLearnerNoticesBySource(learnerPlacementNoticeView(allNotices,pinnedOnly),source),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const sortedNotices=sortLearnerNotices(notices,sortKey);
-  const noticeNow=new Date().getTime();
-  const focused=learnerNoticeFocusPage(sortedNotices,filters.page,filters.focus);
+   const focused=learnerNoticeFocusPage(sortedNotices,filters.page,filters.focus);
   const pages = paginateOwnOffers(sortedNotices,focused.page,15);
   const pageClamped=learnerNoticePageWasClamped(filters.page,pages.page,sortedNotices.length,focused.found);
   const noticePageUrl=(page:number)=>learnerNoticePageHref({
@@ -84,6 +83,12 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <PageHeader title={LEARNER_LEGACY_NOTICES_TITLE}
           description="Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown." />
         {hadInvalidNoticeFilters ? <Banner tone="warning" className="mt-2">Some notice filters were invalid and have been reset to safe defaults.</Banner> : null}
+        {ready && (!collegeNoticesRead.available || !personalAlerts.available) ? (
+          <Banner tone="error" role="alert" className="mt-2" action={
+            <Link href="/learn/my-placements/announcements"
+              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+          }>Couldn&apos;t load everything. The available notices are shown below.</Banner>
+        ) : null}
       </div>
       <nav aria-label="Placement notice views" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0">
         <a href="#college-notices" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Announcements</a>
@@ -192,8 +197,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               <div className="flex flex-wrap items-center gap-2">
                 {notice.isPinned ? <Badge  tone="info">Pinned</Badge> : null}
                 {notice.updatedAt ? <Badge  tone="info">Updated</Badge> : null}
-                {noticeNow-Date.parse(notice.createdAt)<7*24*60*60*1000 && noticeNow>=Date.parse(notice.createdAt)
-                  ? <Badge  tone="info">New</Badge>:null}
+                {/* Never present a recent publication as unread without a receipt. */}
               </div>
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">

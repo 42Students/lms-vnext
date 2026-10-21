@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   NotificationList,
@@ -8,6 +9,7 @@ import { NotificationToolbar } from "@/components/activity/notification-toolbar"
 import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import {
@@ -24,17 +26,27 @@ export default async function FacultyNotificationsPage({
   searchParams,
 }: {
   searchParams: Promise<{
-    view?: string;
-    beforeCreatedAt?: string;
-    beforeId?: string;
+    view?: string | string[];
+    tab?: string | string[];
+    beforeCreatedAt?: string | string[];
+    beforeId?: string | string[];
   }>;
 }) {
   const context = await getCurrentRequestContext();
   const membership = requireFacultyNotificationsAccess(context);
 
-  const { view, cursor, invalid } = parseFacultyInboxQuery(await searchParams);
+  const { tab, ...query } = await searchParams;
+  const scopeTabs = ["all", "personal", "college", "department", "faculty"] as const;
+  // Keep the old ?tab= deep links without treating an invalid tab as a
+  // query for a foreign or unfiltered recipient.
+  if (tab !== undefined &&
+      (typeof tab !== "string" || !scopeTabs.includes(tab as typeof scopeTabs[number]))) {
+    redirect(FACULTY_INBOX + "?view=all");
+  }
+  const scopeTab = typeof tab === "string" ? tab : "all";
+  const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
-  const [page, unreadCount, announcements] = await Promise.all([
+  const [page, unreadCount, announcementRead] = await Promise.all([
     invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
@@ -46,12 +58,22 @@ export default async function FacultyNotificationsPage({
     countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context)
-      : Promise.resolve([]),
+          .then(items => ({ available: true as const, items }))
+          .catch(error => {
+            if (error instanceof AuthorizationError) throw error;
+            return { available: false as const, items: [] };
+          })
+      : Promise.resolve({ available: false as const, items: [] }),
   ]);
+  const announcements = announcementRead.items.filter(item =>
+    scopeTab === "all" ||
+    (scopeTab !== "personal" && item.receiverType.toLowerCase() === scopeTab),
+  );
 
   const nextHref = page.nextCursor
     ? FACULTY_INBOX + "?" + new URLSearchParams({
         view,
+        ...(scopeTab !== "all" ? { tab: scopeTab } : {}),
         beforeCreatedAt: page.nextCursor.beforeCreatedAt.toISOString(),
         beforeId: page.nextCursor.beforeId,
       }).toString()
@@ -70,9 +92,21 @@ export default async function FacultyNotificationsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
-      <PageHeader
-        title="Notifications"
-      />
+      <PageHeader title="Notifications" />
+      <nav aria-label="Notification audience" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
+        {scopeTabs.map(value => (
+          <Link key={value}
+            href={FACULTY_INBOX + "?" + new URLSearchParams({
+              ...(value === "all" ? {} : { tab: value }),
+              ...(view === "unread" ? { view } : {}),
+            }).toString()}
+            aria-current={scopeTab === value ? "page" : undefined}
+            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold capitalize text-primary-text aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)]">
+            {value}
+          </Link>
+        ))}
+      </nav>
+      {scopeTab === "all" || scopeTab === "personal" ? (
       <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
         <h2 id="faculty-personal-notifications" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Personal notifications
@@ -105,7 +139,13 @@ export default async function FacultyNotificationsPage({
           </>
         )}
       </section>
-      <AnnouncementFeed
+      ) : null}
+      {announcementsEnabled && !announcementRead.available ? (
+        <Alert tone="warning">
+          Couldn't refresh notifications. Your personal notifications remain available.
+          <Link href={FACULTY_INBOX} className="ml-2 font-semibold text-primary-text underline">Retry</Link>
+        </Alert>
+      ) : scopeTab !== "personal" ? <AnnouncementFeed
         enabled={announcementsEnabled}
         items={announcements.map((announcement) => ({
           id: announcement.id,
@@ -116,7 +156,7 @@ export default async function FacultyNotificationsPage({
           isPinned: announcement.isPinned,
           createdAt: announcement.createdAt,
         }))}
-      />
+      /> : null}
     </div>
   );
 }
