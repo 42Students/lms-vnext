@@ -94,7 +94,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
           issuePublicId:item.issuePublicId,
         }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">
           Create tracker issue
         </Link>
       </div>
