@@ -448,30 +448,44 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
             <DataTable caption="Elective slot directory" rows={data.items}
               getRowKey={item=>item.id}
               empty={<p>No elective slots match these filters.</p>}
+              mobileMode="scroll"
               columns={[
-                {key:"slot",header:"Elective slot",mobilePriority:"primary",cell:item=>
-                  <span className="font-semibold text-foreground">{item.name}</span>},
-                {key:"program",header:"Program / semester",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName} · Semester {item.semesterNumber}</span>},
-                {key:"period",header:"Year / academic period",mobilePriority:"secondary",cell:item=><>
-                  {item.academicYear ?? "Year not recorded"}
-                  <p className="mt-1 text-xs text-muted-foreground">{item.periodName ?? "No academic period linked"}</p>
-                </>},
-                {key:"credits",header:"Credits / choices",mobilePriority:"secondary",cell:item=>
-                  <span>{item.credits} credits · Pick: {electiveSelectionLabel(item.minPick,item.maxPick)}</span>},
+                {key:"slot",header:"Slot",mobilePriority:"primary",className:"min-w-[180px]",cell:item=>
+                  <div className="min-w-0">
+                    <Link href={"/college/electives/"+encodeURIComponent(item.id)}
+                      className="font-semibold text-primary-text hover:underline">{item.name}</Link>
+                    {item.description ? <p title={item.description}
+                      className="mt-1 max-w-[200px] truncate text-xs text-muted-foreground">
+                      {item.description}
+                    </p> : null}
+                  </div>},
+                {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
+                  item.programName || ("Program #"+item.programId)},
+                {key:"sem",header:"Sem",mobilePriority:"secondary",cell:item=>item.semesterNumber},
+                {key:"year",header:"Year",mobilePriority:"secondary",cell:item=>item.academicYear??"—"},
+                {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>item.credits},
+                {key:"pick",header:"Pick",mobilePriority:"secondary",cell:item=>
+                  electiveSelectionLabel(item.minPick,item.maxPick)},
+                {key:"offerings",header:"Offerings",mobilePriority:"secondary",cell:item=>item.activeOfferings??0},
                 {key:"students",header:"Students",mobilePriority:"secondary",cell:item=>
-                  <span title="Distinct actively assigned learners across the slot’s active course groups. Not pending picks.">{item.confirmedStudents}</span>},
-                {key:"offerings",header:"Active offerings",mobilePriority:"secondary",cell:item=>item.activeOfferings},
-                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>{item.status}</StatusBadge>},
-                {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
-                  <div className="flex flex-wrap items-start gap-2">
-                    {electiveOptions && item.status === "ACTIVE" ? <>
-                      <Link href={"/college/electives/"+encodeURIComponent(item.id)}
-                        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
+                  <span title="Distinct actively assigned learners, not pending choices.">
+                    {item.confirmedStudents??0}
+                  </span>},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+                  <StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>
+                    {item.status==="ACTIVE"?"Active":"Archived"}
+                  </StatusBadge>},
+                {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[250px]",cell:item=>
+                  <div className="flex min-w-[250px] flex-wrap items-center gap-2">
+                    <Link href={"/college/electives/"+encodeURIComponent(item.id)}
+                      className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+                      Open
+                    </Link>
+                    {electiveOptions && item.status==="ACTIVE" ? <>
                       <CollegeSlotManager options={electiveOptions} row={item}/>
                       <CollegeElectiveOfferingManager slotId={item.id}/>
                       <Link href={"/college/electives/"+encodeURIComponent(item.id)+"/allocate"}
-                        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
+                        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text">
                         Eligible students
                       </Link>
                     </> : null}
