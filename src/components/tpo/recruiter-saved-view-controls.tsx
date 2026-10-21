@@ -84,9 +84,9 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  }
  const active=views.find(view=>view.id===selected);
  return <section aria-label="Saved recruiter views" className="min-w-0 space-y-3 border-y border-border py-3">
-  <h2 className="font-semibold">Saved views</h2>
-  {ready===null?<p role="status" className="text-sm">Loading views…</p>:
-   !ready?<p role="status" className="text-sm">Saved views are unavailable until storage is registered.</p>:<>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Saved views</h2>
+  {ready===null?<p role="status" className="text-sm leading-[22px]">Loading views…</p>:
+   !ready?<p role="status" className="text-sm leading-[22px]">Saved views are unavailable until storage is registered.</p>:<>
    <div className="grid min-w-0 grid-cols-1 items-center gap-2 md:grid-cols-2 xl:grid-cols-3">
     <Input aria-label="View name" maxLength={100} placeholder="View name" value={name}
      onChange={e=>setName(e.target.value)} className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border px-3 md:min-h-9"/>
@@ -96,7 +96,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      onClick={()=>void apply("CREATE")}>Save current view</Button>
    </div>
    {views.length?<div className="space-y-2">
-    <p role="status" className="text-xs text-muted-foreground">{views.length} saved views · {views.filter(view=>view.pinned).length} of 5 pinned</p>
+    <p role="status" className="text-xs text-muted-foreground leading-[20px]">{views.length} saved views · {views.filter(view=>view.pinned).length} of 5 pinned</p>
     {views.some(view=>view.pinned)?<nav aria-label="Pinned recruiter views" className="flex min-w-0 flex-wrap gap-2">
       {views.filter(view=>view.pinned).map(view=><Button variant="secondary" key={view.id} type="button"
         className={button} onClick={()=>open(view)} title={view.note??undefined}>
@@ -128,10 +128,10 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
        <Button variant="secondary" type="button" className={button} onClick={()=>setDeleteReview(null)}>Cancel</Button>
      </>:<Button variant="secondary" type="button" className={button} disabled={busy} onClick={()=>setDeleteReview(active.id)}>Delete</Button>}
      <Button variant="secondary" type="button" className={button} onClick={()=>download(active)}>Download view</Button>
-     <p className="w-full text-xs text-muted-foreground">{active.note||"No note"}</p>
+     <p className="w-full text-xs text-muted-foreground leading-[20px]">{active.note||"No note"}</p>
     </div>:null}
-   </div>:<p className="text-sm">No saved recruiter views yet.</p>}
+   </div>:<p className="text-sm leading-[22px]">No saved recruiter views yet.</p>}
   </>}
-  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+  {notice?<p role="status" className="text-sm leading-[22px]">{notice}</p>:null}
  </section>;
 }
