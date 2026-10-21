@@ -143,6 +143,16 @@ export default async function SuperAdminCompaniesPage({
       <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Show deleted (archived) companies →</Link>
       <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Active companies →</Link>
     </div>
+    <div className="grid min-w-0 grid-cols-2 border-t border-border md:grid-cols-3">
+      {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
+        ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
+        ["Relationships", data.relationships],["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
+        <div key={label} className="min-w-0 border-b border-border px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
+          <p className="m-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
+        </div>)}
+    </div>
+    <p className="text-xs leading-5 text-muted-foreground">Search company names, other names and domains. For industry-specific review, open More filters to narrow the college relationship set. Filter changes reset to the first page.</p>
     <SuperAdminCompanySearch key={"COLLEGE:"+data.query.q+":"+data.query.status+":"+data.query.companyStatus}
       mode="COLLEGE" initialQuery={data.query.q}
       initialDeleted={data.query.status==="ALL"&&data.query.companyStatus==="ALL"}/>
@@ -219,15 +229,7 @@ export default async function SuperAdminCompaniesPage({
        <SuperAdminCollegeCompanyCreate collegeId={context.adminScope.collegeId}/>
       </div>:null}
     <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
-    <div className="grid min-w-0 grid-cols-2 border-t border-border md:grid-cols-3">
-      {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
-        ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
-        ["Relationships", data.relationships],["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
-        <div key={label} className="min-w-0 border-b border-border px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
-          <p className="m-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
-        </div>)}
-    </div>
+
     <DataTable caption="This college's companies" columns={collegeColumns} rows={collegeRows}
       getRowKey={row=>row.relationshipId}
       empty={<EmptyState title={data.query.q?"No matching companies":"No companies yet"}
