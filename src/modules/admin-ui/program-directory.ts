@@ -61,9 +61,9 @@ function quoteCsv(raw: string | number) {
 
 export function adminProgramsCsv(rows: readonly AdminProgramRow[]) {
   const data: (string | number)[][] = [
-    ["ID", "Program", "Code", "Department", "Duration Terms", "Semesters", "Batches", "Classes"],
+    ["id", "name", "durationYears", "departmentId", "semesters", "batches", "classes"],
     ...rows.map((row) => [
-      row.id, row.name, row.code, row.departmentName, row.durationTerms,
+      row.id, row.name, row.durationTerms / 2, row.departmentId,
       row.contents?.semesters ?? "", row.contents?.batches ?? "", row.contents?.classes ?? "",
     ]),
   ];
