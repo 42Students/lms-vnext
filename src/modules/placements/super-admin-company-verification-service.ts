@@ -1,7 +1,7 @@
 import "server-only";
 import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementCompanies} from "@/db/schema";
+import {placementCompanies,placementCompanyDomains} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -21,14 +21,43 @@ export async function setSuperAdminGlobalCompanyVerification(context:RequestCont
    primaryDomain:placementCompanies.primaryDomain,
   }).from(placementCompanies).where(eq(placementCompanies.id,input.companyId)).for("update").limit(1);
   if(!company||company.status!=="ACTIVE")throw new Error("Company unavailable for verification.");
-  if(Boolean(company.verifiedAt)===input.verified)
-   return {companyId:company.id,verified:input.verified,changed:false};
-  const [saved]=await tx.update(placementCompanies).set({
-   verifiedAt:input.verified?new Date():null,
-   verifiedByUserId:input.verified?context.user.id:null,
-   updatedAt:new Date(),
-  }).where(eq(placementCompanies.id,company.id)).returning({id:placementCompanies.id});
-  if(!saved)throw new Error("Company changed. Refresh and retry.");
+  const domains=await tx.select({
+    id:placementCompanyDomains.id,
+    domain:placementCompanyDomains.domain,
+    verifiedBy42:placementCompanyDomains.verifiedBy42,
+    verifiedAt:placementCompanyDomains.verifiedAt,
+  }).from(placementCompanyDomains)
+    .where(eq(placementCompanyDomains.companyId,company.id)).for("update");
+  const primary=company.primaryDomain?
+    domains.find(row=>row.domain.toLowerCase()===company.primaryDomain?.toLowerCase()):null;
+  // The global Verify action expressly attests the registered primary domain.
+  // Never imply that additional, unreviewed domains were also verified.
+  if(input.verified&&!primary)
+    throw new Error("Register a primary company domain before verification.");
+  const companyChanged=Boolean(company.verifiedAt)!==input.verified;
+  const domainChanged=input.verified?
+    !primary?.verifiedBy42||!primary?.verifiedAt:
+    domains.some(row=>row.verifiedBy42||row.verifiedAt!==null);
+  if(!companyChanged&&!domainChanged)
+    return {companyId:company.id,verified:input.verified,changed:false};
+  const now=new Date();
+  if(companyChanged){
+    const [saved]=await tx.update(placementCompanies).set({
+      verifiedAt:input.verified?now:null,
+      verifiedByUserId:input.verified?context.user.id:null,
+      updatedAt:now,
+    }).where(eq(placementCompanies.id,company.id)).returning({id:placementCompanies.id});
+    if(!saved)throw new Error("Company changed. Refresh and retry.");
+  }
+  if(input.verified&&primary){
+    await tx.update(placementCompanyDomains).set({
+      verifiedBy42:true,verifiedAt:now,verifiedByUserId:context.user.id,
+    }).where(eq(placementCompanyDomains.id,primary.id));
+  }else if(!input.verified){
+    await tx.update(placementCompanyDomains).set({
+      verifiedBy42:false,verifiedAt:null,verifiedByUserId:null,
+    }).where(eq(placementCompanyDomains.companyId,company.id));
+  }
   await recordActivityEventInTransaction(tx,context,{
    eventType:input.verified?ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_VERIFIED:
     ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_UNVERIFIED,
@@ -37,7 +66,9 @@ export async function setSuperAdminGlobalCompanyVerification(context:RequestCont
    summary:input.verified?"Company verified by 42":"Company global verification removed",
    metadata:{previousVerified:Boolean(company.verifiedAt),verified:input.verified,
     primaryDomain:company.primaryDomain,
-    domainProofNotInferred:true},
+    verifiedPrimaryDomain:input.verified?primary?.domain??null:null,
+    domainProofAttestedByAction:input.verified,
+    subsidiaryDomainsRemainUnverified:input.verified},
   });
   return {companyId:company.id,verified:input.verified,changed:true};
  });

@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   cohorts, courseOfferings, courseSectionDeliveries, courses, sections,
-  departments, electiveOfferings, electiveSlots, lmsGroupMembers, lmsGroups, programs,
+  departments, electiveOfferings, electiveSlots, groupBackedClassOfferings, lmsGroupMembers, lmsGroups, programs,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -150,6 +150,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
       group = updated;
     }
     if (!group) throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
+    let backedAcademicPeriodId: string | null = null;
     {
       const [delivery] = await tx.select({
         id: courseSectionDeliveries.id,
@@ -180,11 +181,26 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
           (slot.academicPeriodId !== null && slot.academicPeriodId !== delivery.offeringPeriodId)) {
         throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
       }
+      backedAcademicPeriodId=delivery.offeringPeriodId;
     }
+    if(!backedAcademicPeriodId)
+      throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
+    // Match the old one-step elective allocation: a roster-backed class is
+    // created together with the elective offering under the same transaction.
+    // The canonical section delivery remains the course/term authority.
+    const [backedClass]=await tx.insert(groupBackedClassOfferings).values({
+      academicPeriodId:backedAcademicPeriodId,
+      rosterGroupId:group.id,
+      name:(slot.name+" · "+course.id.slice(0,8)).slice(0,150),
+      status:"ACTIVE",
+    }).returning({id:groupBackedClassOfferings.id});
+    if(!backedClass)
+      throw new ElectivesServiceError("ELECTIVE_DELIVERY_MISMATCH");
     try {
       const [offering] = await tx.insert(electiveOfferings).values({
         slotId: slot.id, courseId: course.id, groupId: group.id,
         backedDeliveryId: input.backedDeliveryId,
+        backedClassOfferingId:backedClass.id,
         capacity: input.capacity,
       }).returning();
       return offering!;
