@@ -388,7 +388,7 @@ function JobActions({
       <>
         <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           <StatusBadge tone="success">
-            Applied · {humanize(receipt.channel)}
+            {learnerApplicationStageLabel(application?.stage ?? receipt.status)} · {humanize(receipt.channel)}
           </StatusBadge>
           <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-3 text-sm">
             <p className="font-semibold text-foreground">You're in — application sent</p>
@@ -667,7 +667,7 @@ export function LearnerPlacementJobs({
   if (items.length === 0) {
     return (
       <EmptyState
-        title="No live opportunities yet"
+        title="No open jobs right now"
         description="Published opportunities for your college will appear here with your eligibility and application state."
       />
     );
@@ -679,11 +679,18 @@ export function LearnerPlacementJobs({
     roles.push(item);
     byDrive.set(item.job.id,roles);
   }
-  const grouped=[...byDrive.values()].flatMap(roles=>
-    roles.map((item,index)=>({item,firstRole:index===0,roleCount:roles.length})));
+  // One semantic job card per published drive; roles are choices within it.
+  // Save, application status and receipt actions remain role-specific.
+  const grouped=[...byDrive.entries()];
   return (
     <div className="grid min-w-0 gap-4">
-      {grouped.map(({item,firstRole,roleCount}) => {
+      {grouped.map(([driveId,roles]) => (
+        <article key={driveId} className="min-w-0 border-t border-border py-5"
+          aria-label={roles[0]?.job.title ?? "Placement drive"}>
+          <div className="divide-y divide-border/60">
+          {roles.map((item,index) => {
+        const firstRole=index===0;
+        const roleCount=roles.length;
         const failedChecks =
           item.eligibility.checks.filter(
             (check) => check.status === "FAIL",
@@ -694,10 +701,10 @@ export function LearnerPlacementJobs({
           );
 
         return (
-          <article
+          <section
             key={item.roleOption.id}
-            className={"min-w-0 py-4 first:pt-0 last:pb-0 md:py-5 "+(firstRole?"border-t border-border":"border-t border-dashed border-border/60")}
-             aria-label={item.job.title+" · "+item.roleOption.title}
+            className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-5"
+            aria-label={item.job.title+" · "+item.roleOption.title}
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
@@ -726,6 +733,7 @@ export function LearnerPlacementJobs({
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
+              {firstRole?<StatusBadge tone="info">{item.job.jobTypeLabel?.trim() || humanize(item.job.employmentType)}</StatusBadge>:null}
                {item.application ? (
                  <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
                    {learnerApplicationStageLabel(item.application.stage??item.application.status)}
@@ -836,9 +844,12 @@ export function LearnerPlacementJobs({
             <div className="mt-5 border-t border-border pt-4">
               <JobActions item={item} />
             </div>
-          </article>
+          </section>
         );
-      })}
+          })}
+          </div>
+        </article>
+      ))}
     </div>
   );
 }
