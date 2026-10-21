@@ -109,7 +109,7 @@ function ResourceForm({
         />
       </label>
       {!isLearner ? <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" open={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Resource details</summary>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Resource details</summary>
         <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
           <Select value={metadata.resourceType}
