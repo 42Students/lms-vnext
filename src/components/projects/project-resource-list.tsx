@@ -120,23 +120,16 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const currentOrder=(row:ResourceRow)=>row.status==="ACTIVE"?
    stableOrder.indexOf(row.id):rows.length+row.sequence;
  return <section aria-label="Project resource directory" className="space-y-3">
-  {legacySummary?<div className="min-w-0 space-y-2">
-    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Project references</p>
-    <h3 className="text-lg font-semibold leading-[26px] text-[var(--lms-heading)]">Keep everything the team needs in one curated place</h3>
-    <p className="text-sm leading-[22px] text-body">Add only useful project references, label them clearly, and include access notes when a link or file needs a college account, permission request, or other prerequisite.</p>
-  </div>:null}
-  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4"
-    aria-label={legacySummary?"Resource library summary":"Resource counts"}>
-   {(legacySummary?([["Resources",rows.length],["Links",links],["Files & media",rows.length-links],
-     ["With access notes",withAccessNotes]] as const):([["Total",rows.length],["Showing",filtered.length],
-     ["Links",links],["Files",files],["Other",other],["Drafts",drafts],["Archived",archive],["Pinned",pinnedCount]] as const))
-     .map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+  {/* The admin library editor immediately above owns the legacy headline
+      and four metric chips; duplicating them in the read-only list would
+      produce two different-looking resource library headers. */}
+  {!legacySummary?<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4" aria-label="Resource counts">
+   {([["Total",rows.length],["Showing",filtered.length],["Links",links],["Files",files],
+      ["Other",other],["Drafts",drafts],["Archived",archive],["Pinned",pinnedCount]] as const)
+      .map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
        <strong>{label}</strong><p className="mt-1 tabular-nums">{value}</p>
-     </div>)}
-  </div>
-  {legacySummary?<details className="text-sm text-body"><summary className="min-h-9 cursor-pointer font-semibold text-link">Additional resource counts</summary>
-    <p className="mt-2 text-xs text-muted-foreground">Showing {filtered.length} · Drafts {drafts} · Archived {archive} · Pinned {pinnedCount}</p>
-  </details>:null}
+      </div>)}
+  </div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     {(!legacySummary||grouped)?<label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
