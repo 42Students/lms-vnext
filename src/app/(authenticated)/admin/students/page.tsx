@@ -5,6 +5,9 @@ import {PageBackLink} from "@/components/ui/page-back-link";
 import {formatSuperAdminImportWhen} from "@/modules/admin-ui/super-admin-import-date-model";
 import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-membership-lifecycle-actions";
 import {CollegePersonEditAction} from "@/components/college/college-person-edit-action";
+import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
+import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
+import {Alert} from "@/components/ui/alert";
 import {StudentClassMoveAction} from "@/components/college/student-class-move-action";
 import {SuperAdminStudentBulkAccess} from "@/components/admin/super-admin-student-bulk-access";
 import Link from "next/link";
@@ -31,24 +34,21 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  let peopleFilters:Awaited<ReturnType<typeof getSuperAdminPeopleFilterOptions>>|null=null;
  let choices:Awaited<ReturnType<typeof getSuperAdminStudentRegisterOptions>>|null=null;
  let importHistory:Awaited<ReturnType<typeof listSuperAdminStudentCsvImportHistory>>=[];
+ let filtersUnavailable=false,choicesUnavailable=false,historyUnavailable=false;
  if(context.adminScope?.collegeId){
-  try{
-   // Never display registration or bulk-import actions with partially loaded
-   // college-scoped choices. A failed history or roster policy read is not an
-   // empty authorized register.
-   [peopleFilters,choices,importHistory]=await Promise.all([
-    getSuperAdminPeopleFilterOptions(context),
-    getSuperAdminStudentRegisterOptions(context),
-    listSuperAdminStudentCsvImportHistory(context),
-   ]);
-  }catch{
-   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Students"/>
-    <ErrorState title="Student register unavailable"
-     description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
-     action={<Link href="/admin/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Retry student register</Link>}/>
-   </div>;
-  }
+  // Academic choices and import history are independent reads. Their failure must
+  // disable the affected operation, not hide an otherwise authorized roster.
+  const [filtersResult,choicesResult,historyResult]=await Promise.allSettled([
+   getSuperAdminPeopleFilterOptions(context),
+   getSuperAdminStudentRegisterOptions(context),
+   listSuperAdminStudentCsvImportHistory(context),
+  ]);
+  if(filtersResult.status==="fulfilled")peopleFilters=filtersResult.value;
+  else filtersUnavailable=true;
+  if(choicesResult.status==="fulfilled")choices=choicesResult.value;
+  else choicesUnavailable=true;
+  if(historyResult.status==="fulfilled")importHistory=historyResult.value;
+  else historyUnavailable=true;
  }
  const importRuns=importHistory.map(run=>{
    const meta=run.metadata;
@@ -62,16 +62,19 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
-    <a href="#register-student" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Register New Student ↓</a>
+    {choices?<a href="#register-student" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Register New Student ↓</a>:null}
     <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
+  {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <Link href="/admin/students" className="font-semibold underline">Retry academic filters</Link></Alert>:null}
+  {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
+  {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
   {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-4"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-4">
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
       <h2 id="bulk-register-students-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Bulk Register Students</h2>
-      <SuperAdminStudentImportHistory runs={importRuns}/>
+      {historyUnavailable?<span role="status" className="text-xs text-muted-foreground">History unavailable</span>:<SuperAdminStudentImportHistory runs={importRuns}/>}
     </div>
     <p className="text-sm text-body leading-[22px]">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
     <details className="min-w-0">
@@ -87,5 +90,10 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Bulk module access controls</summary>
     <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
    </details>}
-  renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
+  renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto">
+    <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>
+    {peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}
+    <CollegePersonAuditModal membershipId={row.id} name={row.title} kind="LEARNER"/>
+    <CollegePersonProfileOverviewModal membershipId={row.id} name={row.title} kind="LEARNER"/>
+   </div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
 }
