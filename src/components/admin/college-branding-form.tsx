@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Alert } from "@/components/ui/alert";
@@ -67,7 +67,19 @@ export function CollegeBrandingForm({
 }) {
   const { showToast } = useToast();
   const [values, setValues] = useState<BrandingFormValues>(initial);
+  const savedValues = useRef<BrandingFormValues>(initial);
   const [version,setVersion]=useState(initialVersion);
+  const dirty = canEdit &&
+    JSON.stringify(clean(values)) !== JSON.stringify(clean(savedValues.current));
+  useEffect(() => {
+    if (!dirty) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirty]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [saving, startSave] = useTransition();
   // A transition is not a synchronous double-click guard.
@@ -105,6 +117,7 @@ export function CollegeBrandingForm({
       };
 
       if (response.ok) {
+        savedValues.current = values;
         if(data.branding && Number.isInteger(data.branding.version))
           setVersion(data.branding.version);
         setErrors({});
@@ -121,18 +134,19 @@ export function CollegeBrandingForm({
         setErrors(next);
       }
       showToast({
-        title:
+        title: "Couldn't save branding",
+        description:
           response.status === 403
-            ? "You can't change this college's branding"
+            ? "You can't change this college's branding."
             : response.status === 409
               ? "Branding changed in another tab. Your edits are preserved. Refresh before saving again."
               : response.status === 413
                 ? "Branding settings are too large. Shorten the URLs and try again."
-                : "Check the highlighted fields",
+                : data.issues?.length ? "Check the highlighted fields." : "Please try again.",
         tone: "error",
       });
       } catch {
-        showToast({title:"Could not save branding. Check your connection and try again.",tone:"error"});
+        showToast({title:"Couldn't save branding",description:"Check your connection and try again.",tone:"error"});
       } finally {
         savingRef.current = false;
       }
@@ -146,6 +160,9 @@ export function CollegeBrandingForm({
         className="order-first min-w-0 space-y-[var(--lms-space-4)] print:hidden"
       >
         {!canEdit ? <Alert tone="info">You can view this branding but not change it.</Alert> : null}
+        {dirty ? <p role="status" className="text-xs text-warning-text">
+          Unsaved branding changes. Leaving or switching pages may discard your edits.
+        </p> : null}
         <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Colours</h2>
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
@@ -216,7 +233,7 @@ export function CollegeBrandingForm({
 
         {canEdit ? (
           <Button type="submit" loading={saving} disabled={saving} className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
-            {saving ? "Saving…" : "Save branding"}
+            Save
           </Button>
         ) : null}
       </form>

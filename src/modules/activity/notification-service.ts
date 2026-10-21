@@ -140,10 +140,13 @@ const deliverySchema = z
  * authored-notice store are available.
  */
 export const staffNotificationDraftSchema = z.object({
-  title: z.string().trim().min(1).max(200),
-  htmlContent: z.string().trim().min(1).max(50_000),
+  title: z.string().trim().min(1, "Title is required")
+    .max(200, "Title cannot exceed 200 characters"),
+  htmlContent: z.string().trim().min(1, "HTML content is required")
+    .max(50_000, "HTML content cannot exceed 50000 characters"),
   classId: z.string().uuid().optional(),
   courseId: z.string().uuid().optional(),
+  courseSlug: z.string().trim().min(1).max(64).optional(),
   assessmentUrl: z.string().trim().url()
     .refine((value) => {
       const protocol = new URL(value).protocol;
@@ -152,9 +155,9 @@ export const staffNotificationDraftSchema = z.object({
     .optional(),
   scheduledAt: z.string().trim().min(1).max(40)
     .refine(validStaffNotificationSchedule, "scheduledAt must be yyyy-MM-dd HH:mm:ss")
-    .optional(),
+    .nullish(),
 }).strict().refine(
-  (input) => Boolean(input.classId) !== Boolean(input.courseId),
+  (input) => Boolean(input.classId || input.courseId || input.courseSlug),
   { message: "classId or courseId required", path: ["classId"] },
 );
 
@@ -188,6 +191,19 @@ export async function requireStaffNotificationAudience(
   }
 
   const db = getDb();
+  // Resolve the optional legacy course slug before checking persisted scope.
+  // The slug takes precedence over any submitted course ID.
+  let resolvedCourseId = draft.courseId ?? null;
+  if (draft.courseSlug) {
+    const [bySlug] = await db.select({ id: courses.id }).from(courses)
+      .where(and(
+        eq(courses.slug, draft.courseSlug),
+        eq(courses.status, "ACTIVE"),
+        isNull(courses.deletedAt),
+      )).limit(1);
+    if (!bySlug) throw new Error("Course not found for slug");
+    resolvedCourseId = bySlug.id;
+  }
   const [scope] = draft.classId
     ? await db.select({
         collegeId: colleges.id,
@@ -207,16 +223,36 @@ export async function requireStaffNotificationAudience(
         .innerJoin(departments, eq(departments.id, courses.departmentId))
         .innerJoin(colleges, eq(colleges.id, departments.collegeId))
         .where(and(
-          eq(courses.id, draft.courseId!),
+          eq(courses.id, resolvedCourseId!),
           eq(courses.status, "ACTIVE"),
+          isNull(courses.deletedAt),
           eq(colleges.status, "ACTIVE"),
         )).limit(1);
 
   if (!scope) throw new ActivityServiceError("ACTIVITY_SCOPE_NOT_FOUND");
+  if (draft.classId && resolvedCourseId) {
+    // A legacy notice can carry class AND course; reject cross-class/college
+    // retargeting unless a currently active delivery links these exact IDs.
+    const [currentDelivery] = await db.select({ id: courseSectionDeliveries.id })
+      .from(courseSectionDeliveries)
+      .innerJoin(courseOfferings,
+        eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .innerJoin(courses,
+        eq(courses.id, courseOfferings.courseId))
+      .where(and(
+        eq(courseSectionDeliveries.sectionId, draft.classId),
+        eq(courseOfferings.courseId, resolvedCourseId),
+        eq(courseOfferings.status, "ACTIVE"),
+        eq(courses.status, "ACTIVE"),
+        isNull(courses.deletedAt),
+        isNull(courseSectionDeliveries.endedAt),
+      )).limit(1);
+    if (!currentDelivery) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
   const audience: StaffNotificationAudience = {
     ...scope,
     classId: draft.classId ?? null,
-    courseId: draft.courseId ?? null,
+    courseId: resolvedCourseId,
   };
   if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) {
     requirePermission(context, "courses.manage", scope);
@@ -245,7 +281,7 @@ export async function requireStaffNotificationAudience(
         .innerJoin(courseOfferings,
           eq(courseOfferings.id, courseSectionDeliveries.offeringId))
         .where(and(
-          eq(courseOfferings.courseId, draft.courseId!),
+          eq(courseOfferings.courseId, resolvedCourseId!),
           eq(courseTeachingAssignments.membershipId, context.membership.id),
           isNull(courseTeachingAssignments.endedAt),
           isNull(courseSectionDeliveries.endedAt),
@@ -267,13 +303,13 @@ export async function resolveStaffNotificationRecipients(
 ) {
   const { draft, audience } = await requireStaffNotificationAudience(context, rawDraft);
   const db = getDb();
-  const courseSection = draft.courseId
+  const courseSection = audience.courseId && !draft.classId
     ? await db.select({ sectionId: courseSectionDeliveries.sectionId })
         .from(courseSectionDeliveries)
         .innerJoin(courseOfferings,
           eq(courseOfferings.id, courseSectionDeliveries.offeringId))
         .where(and(
-          eq(courseOfferings.courseId, draft.courseId),
+          eq(courseOfferings.courseId, audience.courseId!),
           eq(courseOfferings.status, "ACTIVE"),
           isNull(courseSectionDeliveries.endedAt),
         ))

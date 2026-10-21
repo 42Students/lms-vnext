@@ -4,7 +4,7 @@ import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementApplicationScreeningHistory,
- placementJoiningOutcomes,placementJobs,placementOffers} from "@/db/schema";
+ placementJoiningOutcomes,placementJobs,placementOffers,users} from "@/db/schema";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
@@ -19,16 +19,30 @@ export async function getCollegeApplicationPipeline(context:RequestContext,rawJo
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const data=await listCollegeDriveApplications(context,jobId,raw);
  const storageReady=true;
- const stageRows=data.items.length?await getDb().select().from(placementCollegeApplicationStages)
+ const stageRows=data.items.length?await getDb()
+  .select({stage:placementCollegeApplicationStages,
+   movedByName:users.displayName})
+  .from(placementCollegeApplicationStages)
+  .leftJoin(users,eq(users.id,placementCollegeApplicationStages.movedByUserId))
   .where(and(eq(placementCollegeApplicationStages.jobId,jobId),
    inArray(placementCollegeApplicationStages.applicationId,data.items.map(x=>x.id)))):[];
- const stages=new Map(stageRows.map(x=>[x.applicationId,x]));
- return {...data,collegeId,storageReady,items:data.items.map(row=>({
-  ...row,stage:stages.get(row.id)?.stage??(row.screening==="SHORTLISTED"?"SHORTLISTED":
-   row.screening==="REJECTED"?"REJECTED":"APPLIED"),
-  previousStage:stages.get(row.id)?.previousStage??null,
-  stageVersion:stages.get(row.id)?.version??null,
- }))};
+ const stages=new Map(stageRows.map(x=>[x.stage.applicationId,x]));
+ return {...data,collegeId,storageReady,items:data.items.map(row=>{
+  const state=stages.get(row.id);
+  // Withdrawal trumps mutable pipeline projections and is never moveable.
+  const effectiveStage=row.status==="WITHDRAWN"?"WITHDRAWN":
+   state?.stage.stage??row.stage;
+  return {...row,
+   stage:effectiveStage,
+   previousStage:state?.stage.previousStage??null,
+   stageVersion:state?.stage.version??null,
+   stageMovedByName:state?.movedByName??null,
+   stageMovedAt:state?.stage.movedAt.toISOString()??null,
+   allowedNextStages:row.status==="WITHDRAWN"?[]:
+    [...(COLLEGE_APPLICATION_TRANSITIONS[effectiveStage]??[])],
+   canReinstate:row.status==="SUBMITTED"&&effectiveStage==="REJECTED",
+  };
+ })};
 }
 export async function mutateCollegeApplicationStages(context:RequestContext,rawJobId:unknown,raw:unknown){
  const acting=await resolveActingCollege(context,"placements.manage");
@@ -140,12 +154,14 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      if(!allowed)throw Error("The screening decision cannot be changed from its current state.");
      await tx.update(placementApplicationScreenings).set({
       status:target,decidedAt:new Date(),decidedByUserId:context.user.id,
-      candidateMessage:target==="REJECTED"?input.reason:null,internalReason:input.reason,
+      // Internal staff reason is never disclosed to a learner.
+      candidateMessage:target==="REJECTED"?"Your application was not selected.":null,
+      internalReason:input.reason,
       updatedAt:new Date(),
      }).where(eq(placementApplicationScreenings.applicationId,applicationId));
      await tx.insert(placementApplicationScreeningHistory).values({
       applicationId,fromStatus:screeningStatus,toStatus:target,
-      candidateMessage:target==="REJECTED"?input.reason:null,
+      candidateMessage:target==="REJECTED"?"Your application was not selected.":null,
       internalReason:input.reason,actorUserId:context.user.id,
      });
     }
@@ -153,12 +169,14 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      stage:next,previousStage:from,version:old.version+1,
      reason:input.reason,movedByUserId:context.user.id,
      movedAt:new Date(),updatedAt:new Date(),
-    }).where(eq(placementCollegeApplicationStages.id,old.id))
+    }).where(and(eq(placementCollegeApplicationStages.id,old.id),
+      eq(placementCollegeApplicationStages.version,old.version)))
      .returning({id:placementCollegeApplicationStages.id}):
      await tx.insert(placementCollegeApplicationStages).values({
       jobId,applicationId,stage:next,previousStage:from,reason:input.reason,
       movedByUserId:context.user.id,
      }).returning({id:placementCollegeApplicationStages.id});
+    if(!saved)throw Error("Application stage changed. Reload the pipeline and try again.");
     await tx.insert(placementCollegeApplicationStageHistory).values({
      stageId:saved.id,fromStage:from,toStage:next,reason:input.reason,
      actorUserId:context.user.id,
@@ -174,7 +192,9 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     await tx.insert(inAppNotifications).values({
      userId:application.userId,eventId:audit.id,
      title:"Your placement application was updated",
-     body:"Your placement stage is now "+next.toLowerCase().replaceAll("_"," ")+". "+input.reason,
+     body:next==="REJECTED"?
+      "Your application was not selected. See My applications for the latest status.":
+      "Your placement stage is now "+next.toLowerCase().replaceAll("_"," ")+".",
      actionHref:"/learn/my-placements/applications",
     }).onConflictDoNothing();
     return next;
