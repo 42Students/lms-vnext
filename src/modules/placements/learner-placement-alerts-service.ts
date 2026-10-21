@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, desc, eq, isNull, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { activityEvents, inAppNotifications } from "@/db/schema";
@@ -34,6 +34,10 @@ export async function getOwnLearnerPlacementAlerts(context: RequestContext,raw:u
       eq(inAppNotifications.userId, context.user.id),
       eq(activityEvents.collegeId, membership.collegeId),
       eq(activityEvents.module, "PLACEMENTS"),
+      // College announcement entries appear in the official Notices feed.
+      // Do not repeat their bell notifications as personal placement updates.
+      or(isNull(inAppNotifications.actionHref),
+        sql`${inAppNotifications.actionHref} NOT LIKE '/learn/my-placements/announcements%'`),
       ...(input.unreadOnly ? [isNull(inAppNotifications.readAt)] : []),
     ))
     .orderBy(desc(inAppNotifications.createdAt), desc(inAppNotifications.id))
@@ -52,6 +56,8 @@ export async function getUnreadOwnLearnerPlacementAlertCount(context:RequestCont
    eq(inAppNotifications.userId,context.user.id),
    eq(activityEvents.collegeId,membership.collegeId),
    eq(activityEvents.module,"PLACEMENTS"),
+   or(isNull(inAppNotifications.actionHref),
+     sql`${inAppNotifications.actionHref} NOT LIKE '/learn/my-placements/announcements%'`),
    isNull(inAppNotifications.readAt),
   ));
  return result?.count??0;

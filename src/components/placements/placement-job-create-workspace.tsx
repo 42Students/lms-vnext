@@ -1,5 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import type { ReactNode } from "react";
+import Link from "next/link";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,sections,cohorts,programs as programsTable,departments} from "@/db/schema";
@@ -14,6 +15,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import { listPlacementCompanies } from "@/modules/placements/company-service";
 import { listPlacementSeasons } from "@/modules/placements/season-service";
 import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 export async function PlacementJobCreateWorkspace({
   context,
@@ -30,23 +32,24 @@ export async function PlacementJobCreateWorkspace({
   initialCompanyName?: string;
   preFormActions?: ReactNode;
 }) {
-  const [companies, programs, seasons] =
-    await Promise.all([
-      listPlacementCompanies(
-        context,
-        collegeId,
-      ),
-      listPrograms(
-        context,
-        collegeId,
-      ),
-      listPlacementSeasons(
-        context,
-        collegeId,
-      ),
-    ]);
-
-  const jobTypes=await listPlacementJobTypeChoices(context,collegeId);
+  // A failed supporting-list request must not erase the entire new-drive form.
+  // Authorization failures are different: never render a partial authorized view.
+  const support = await Promise.allSettled([
+    listPlacementCompanies(context,collegeId),
+    listPrograms(context,collegeId),
+    listPlacementSeasons(context,collegeId),
+    listPlacementJobTypeChoices(context,collegeId),
+  ] as const);
+  for (const result of support) {
+    if (result.status==="rejected" && result.reason instanceof AuthorizationError) {
+      throw result.reason;
+    }
+  }
+  const companies = support[0].status==="fulfilled" ? support[0].value : [];
+  const programs = support[1].status==="fulfilled" ? support[1].value : [];
+  const seasons = support[2].status==="fulfilled" ? support[2].value : [];
+  const jobTypes = support[3].status==="fulfilled" ? support[3].value : [];
+  const supportLoadFailed = support.some(result=>result.status==="rejected");
 
   // TPO-drives-25: one college-scoped aggregate, never one query per company.
   // TPO-drives-26: only this college's completed, non-archived drives can be cloned.
@@ -75,15 +78,20 @@ export async function PlacementJobCreateWorkspace({
     isNull(placementJobs.archivedAt)))
     .groupBy(placementJobs.companyRelationshipId);
   const memoryByRelationship=new Map(memoryRows.map(row=>[row.relationshipId,row]));
-  const cohortGroups = await Promise.all(
+  const cohortResults = await Promise.allSettled(
     programs.map(async (program) => ({
       program,
-      cohorts: await listCohorts(
-        context,
-        program.id,
-      ),
+      cohorts: await listCohorts(context,program.id),
     })),
   );
+  for (const result of cohortResults) {
+    if(result.status==="rejected" && result.reason instanceof AuthorizationError) {
+      throw result.reason;
+    }
+  }
+  const cohortGroups = cohortResults.flatMap(result=>
+    result.status==="fulfilled" ? [result.value] : []);
+  const cohortsLoadFailed = cohortResults.some(result=>result.status==="rejected");
 
   // One scoped query for active classes, never one request per cohort.
   const sectionRows=await getDb().select({
@@ -105,6 +113,10 @@ export async function PlacementJobCreateWorkspace({
         description="Build the opportunity students will see"
         actions={<PageBackLink href={basePath} label="Back to Drives" />}
       />
+      {supportLoadFailed || cohortsLoadFailed ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+        Some company or academic setup data could not be loaded. The available fields remain editable, but review company, season and eligibility choices before creating a drive.{" "}
+        <Link href={basePath+"/new"} className="font-semibold text-primary-text underline">Retry setup data</Link>
+      </p> : null}
       {preFormActions ? <div className="min-w-0">{preFormActions}</div> : null}
       {pastDrives.length>0?<Disclosure title="Clone a past drive" className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
         <p className="my-2 text-xs text-body">Shows up to 20 recent completed drives. Cloning makes a new draft; dates, learners, rounds, outcomes, offers and external links are never carried over.</p>

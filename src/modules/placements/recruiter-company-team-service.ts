@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, sql } from "drizzle-orm";
+import { and, asc, eq, gt, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges,
@@ -91,7 +91,9 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+      // Historic NULL valid_until means an indefinite grant, not expiry.
+      or(isNull(placementRecruiterCollegeGrants.validUntil),
+        gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
     ))
     .innerJoin(users,and(
       eq(users.id,context.user.id),
@@ -106,10 +108,12 @@ export async function getRecruiterCompanyTeam(
     ))
     .limit(1);
 
+  // Missing persisted active grant or relationship is revoked access, never
+  // a silently guessed company. Nullable expiry remains valid until revoked.
   if (!company) throw new AuthorizationError("placements.recruiter.read");
 
   const team = await db
-    .select({
+    .selectDistinct({
       userId: users.id,
       displayName: users.displayName,
       email: users.email,
@@ -127,7 +131,9 @@ export async function getRecruiterCompanyTeam(
       // HR-TEAM-RECIPIENT-45: expired/unverified colleagues are not active
       // placement-cell contacts even if their profile is still ACTIVE.
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+      // Historic NULL valid_until means an indefinite grant, not expiry.
+      or(isNull(placementRecruiterCollegeGrants.validUntil),
+        gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
       eq(placementRecruiterProfiles.companyId, company.id),
       eq(placementRecruiterProfiles.status, "ACTIVE"),
       eq(users.platformStatus, "ACTIVE"),
