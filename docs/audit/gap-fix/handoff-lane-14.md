@@ -141,3 +141,6 @@
 
 - Course content progress reset and latest-attempt service / lane 15 migration reviewer | G2-2-015-092, G2-2-017-057 | Registered original 0098 intentionally unchanged; add already proposed 0203 drop-old-pair/create attempt triple unique and DESC latest index after read/write consumers are attempt-aware and concurrent resets serialized.
 - Groups legacy scoped importer / admin groups service | G2-3-024-044/-045 | Map source group, member/event LONG IDs and source learner/roll/numeric college/org to UUID membership, verify tenant lifecycle, deleted state, actor provenance and roll collisions before 0242 registration or any import; preserve native version CAS and audit.
+
+- `src/app/api/auth/devices/route.ts` owner | G2-1-002-042 | Add explicit same-origin own-account revoke-ALL action calling `revokeAllOwnSessions(session.userId)` (not existing revokeOtherSessions), clear current opaque cookie and membership/role/admin scope cookies, prevent caller-controlled userId; admin target revocation already uses `revokeAllSessionsForUser`.
+- Placement drive-change service and lane-15 migration owner | G2-5-023-062/-063 | Apply 0230 after duplicate OPEN rows preflight; do NOT alter registered 0114. Keep source field/actor snapshots and transactionally reject same proposed/current field value; allow multiple OTHER.
