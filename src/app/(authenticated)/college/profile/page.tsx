@@ -26,7 +26,7 @@ export default async function CollegeAdminProfilePage({
   ]);
   if(profileResult.status==="rejected")return <div className="min-w-0 space-y-6">
     <PageHeader title="Profile"/>
-    <ErrorState title="Failed to load profile" description="Couldn’t refresh profile. Your existing details have not been changed."
+    <ErrorState title="Failed to load profile." description="Couldn't refresh profile. Your saved details have not been changed. Retry to load your profile."
       action={<Link href="/college/profile" prefetch={false} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>}/>
 
   </div>;
