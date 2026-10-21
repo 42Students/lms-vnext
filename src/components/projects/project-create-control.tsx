@@ -223,7 +223,7 @@ export function CreateProjectControl({
       const createdId = result.project?.id;
       if (!createdId) {
         showToast({
-          tone: "warning",
+          tone: "info",
           title: "Workspace created",
           description: "The workspace was created but could not be opened. Return to the workspaces list.",
         });
