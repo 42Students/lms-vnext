@@ -74,6 +74,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  };
  const savingLock=useRef(false);
  const [editing,setEditing]=useState<Appointment|null>(null);
+ const [clonedFrom,setClonedFrom]=useState<string|null>(null);
  const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(rounds[0]?.id??"");
  const [applicationId,setApplicationId]=useState(candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
@@ -150,6 +151,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   ].map(quoteCsv).join(",")),
  ].join("\r\n");
  function open(row?:Appointment){
+  setClonedFrom(null);
   setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
   setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
   const prefill=row?toLocal(row.scheduledAt):"";
@@ -164,6 +166,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   setRoundDescription(row?.roundDescription??rounds.find(r=>r.id===(row?.roundId??rounds[0]?.id))?.name??"");
   setDirty(false);setConfirmDiscard(false);
   setError("");setSuccess("");setFieldErrors({});setShow(true);
+ }
+ function cloneCancelled(row:Appointment){
+  open(row);
+  // Reuse the old details as a new audited scheduling request, never send
+  // an EDIT mutation against a cancelled appointment/version.
+  setEditing(null);
+  setClonedFrom(row.id);
+  setReason("");
  }
  function closeSetup(){
   if(busy){showToast({tone:"info",title:"Wait for interview submission to finish."});return;}
@@ -301,6 +311,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        aria-label={"Download calendar file for "+eventTitle(row)}
        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">↓ Download .ics</a>:null}
       {row.status==="SCHEDULED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>open(row)}>Edit</Button>:null}
+      {row.status==="CANCELLED"&&rounds.some(round=>round.id===row.roundId&&
+        ["SCHEDULED","PENDING"].includes(round.status))?
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>cloneCancelled(row)}>Run it again (copy)</Button>:null}
+      {row.status==="SCHEDULED"?<>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>decide(row,"COMPLETED")}>Completed</Button>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>decide(row,"NO_SHOW")}>No Show</Button>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>decide(row,"CANCEL")}>Cancel</Button>
+      </>:null}
       {row.status==="COMPLETED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
      </div>
     </article>;
@@ -357,6 +375,11 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       </svg>Download .ics</a>:null}
      {row.status==="COMPLETED"?<Button type="button" variant="secondary"
       disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
+     {row.status==="CANCELLED"&&rounds.some(round=>round.id===row.roundId&&
+        ["SCHEDULED","PENDING"].includes(round.status))?
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>cloneCancelled(row)}>
+        Run it again (copy)
+       </Button>:null}
      {row.status==="SCHEDULED"?<>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
        >Edit</Button>
@@ -383,14 +406,22 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
+    {clonedFrom?<Banner tone="info" role="status">
+      Reusing a cancelled interview. Choose a new date and time before scheduling; the cancelled record will not be changed.
+    </Banner>:null}
+    {appointments.filter(row=>row.applicationId===applicationId&&row.id!==editing?.id&&row.status!=="CANCELLED").length>0?
+      <Banner tone="info" role="status">This candidate has another interview in this drive. Check the time, room and interviewer before scheduling another.</Banner>:null}
     {editing?.status==="RESCHEDULE_REQUESTED"?<Banner tone="warning" role="status">
       <strong>Reschedule requested.</strong> Review the candidate’s request before applying a new slot.
       {editing.outcomeNote?<p className="mt-2 whitespace-pre-wrap">{editing.outcomeNote}</p>:null}
     </Banner>:null}
-    {editing?<div className="rounded-[8px] border border-border bg-[#fafafa] p-3 text-sm"
-      aria-label="Editing interview for selected candidate">
+    {currentCandidate?<div className="rounded-[8px] border border-border bg-[#fafafa] p-3 text-sm"
+      aria-label="Interview candidate details">
       <strong className="block">{currentCandidate?.name?.trim()||"Candidate"}</strong>
-      <span className="block text-xs text-muted-foreground">{currentRound?.name||"Interview round"} · Job {jobId.slice(0,8)}</span>
+      <span className="block text-xs text-muted-foreground">
+       {currentRound?.name||"Interview round"} · {jobTitle??"Drive "+jobId.slice(0,8)}
+       {companyName?" · "+companyName:""}
+      </span>
     </div>:null}
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={Boolean(editing)}
      onChange={e=>{setRoundId(e.target.value);setDirty(true);}} className="w-full">
