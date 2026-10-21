@@ -14,6 +14,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Input } from "@/components/ui/input";
 import { FacultyAssignmentMethodPicker } from "./faculty-assignment-method-picker";
+import { LessonResourceMaterialsControl } from "./lesson-resource-materials-control";
 import type { AssignmentMethod } from "@/modules/courses/assignment-submission-methods";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -120,6 +121,9 @@ export function FacultyLessonAuthoring({
   const [success, setSuccess] =
     useState<string | null>(null);
   const [publishNow,setPublishNow]=useState(true);
+  const [createdResourceTarget,setCreatedResourceTarget]=useState<{
+    contentId:string;lessonId:string;deliveryId:string|null;
+  }|null>(null);
   const [discardConfirm,setDiscardConfirm]=useState(false);
 
   function reset() {
@@ -151,6 +155,7 @@ export function FacultyLessonAuthoring({
 
   function discardDraft(){
     setMode(null);setError(null);setSuccess(null);reset();
+    setCreatedResourceTarget(null);
     setDiscardConfirm(false);
   }
   function close(){
@@ -451,6 +456,10 @@ export function FacultyLessonAuthoring({
         );
       }
 
+      if(mode==="RESOURCE"&&createdContentId){
+        // Parent UUID is now authoritative; child links are scoped separately.
+        setCreatedResourceTarget({contentId:createdContentId,lessonId,deliveryId});
+      }
       if(createdContentId&&publishNow){
         try{
           await post("/api/courses/lesson-contents/"+
@@ -1211,6 +1220,23 @@ export function FacultyLessonAuthoring({
           until signed Cloud Storage upload receipts
           are available.
         </p>
+      ) : null}
+      {createdResourceTarget &&
+       createdResourceTarget.lessonId===lessonId &&
+       createdResourceTarget.deliveryId===deliveryId ? (
+        <section className="mt-4 min-w-0 space-y-2 border-t border-border pt-4" aria-label="Resource material authoring">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-sm font-semibold">Materials for the saved Resource</p>
+            <Button type="button" size="sm" variant="secondary"
+              onClick={()=>setCreatedResourceTarget(null)}>Done adding materials</Button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Add titled HTTPS links or review verified FILE materials.
+            Unverified files cannot be published as attachments.
+          </p>
+          <LessonResourceMaterialsControl key={createdResourceTarget.contentId}
+            contentId={createdResourceTarget.contentId} deliveryId={deliveryId} editable/>
+        </section>
       ) : null}
       <ConfirmDialog open={discardConfirm} onOpenChange={value=>{if(!submitting)setDiscardConfirm(value);}}
         title="Discard this content draft?" confirmLabel="Discard draft"

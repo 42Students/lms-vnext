@@ -377,6 +377,9 @@ export async function createCourse(
           officialCode:input.officialCode??null,
           cardColor:input.cardColor??null,
           takeaways:input.takeaways??null,
+          introductionHeading:input.introductionHeading??"In this Course",
+          enabled:input.enabled??true,
+          legacyAllowedForDisplay:input.enabled??true,
           description: input.description ?? null,
         })
         .returning();

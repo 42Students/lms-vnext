@@ -12,6 +12,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
@@ -32,7 +33,7 @@ type PeriodOption = Option & {
   endDate: string;
 };
 type SectionOption = Option & { cohortId: string; academicPeriodId: string };
-type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null;takeaways?:string|null };
+type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null;takeaways?:string|null;introductionHeading?:string|null;enabled?:boolean };
 type OfferingOption = {
   id: string;
   courseName: string;
@@ -111,10 +112,12 @@ export function AdminCourseCreatePanel({
   const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
+  const [introductionHeading,setIntroductionHeading]=useState(duplicated?.introductionHeading??"In this Course");
+  const [visibleToStudents,setVisibleToStudents]=useState(duplicated?.enabled??true);
   const superAdmin=courseBasePath.startsWith("/admin/");
 
   const [courseDescription, setCourseDescription] = useState(copy?.description??"");
-  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code"|"description"|"cardColor",string>>>({});
+  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor",string>>>({});
 
   const [offeringCourseId, setOfferingCourseId] = useState("");
   const [offeringCohortId, setOfferingCohortId] = useState("");
@@ -190,7 +193,7 @@ export function AdminCourseCreatePanel({
 
   function createCourse(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code"|"description"|"cardColor",string>> = {};
+    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor",string>> = {};
     if (!courseDepartmentId) issues.department = "Select a department";
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
@@ -200,6 +203,8 @@ export function AdminCourseCreatePanel({
     if (superAdmin && officialCode.trim().length > 40)
       issues.code = "Maximum 40 characters";
     if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
+    if (superAdmin && !introductionHeading.trim()) issues.heading = "Enter the heading";
+    else if (superAdmin && introductionHeading.trim().length > 255) issues.heading = "Maximum 255 characters";
     if (superAdmin && !courseDescription.trim())
       issues.description = "Enter course description";
     if (superAdmin && cardColor.trim() && !/^#[0-9a-fA-F]{6}$/.test(cardColor.trim()))
@@ -210,6 +215,7 @@ export function AdminCourseCreatePanel({
         : issues.name ? "course-name"
         : issues.shortTitle ? "course-short-title"
         : issues.code ? (superAdmin ? "course-official-code" : "course-code")
+        : issues.heading ? "course-introduction-heading"
         : issues.description ? "course-description" : "course-card-color";
       document.getElementById(field)?.focus();
       return;
@@ -223,11 +229,13 @@ export function AdminCourseCreatePanel({
         officialCode:superAdmin?officialCode.trim()||null:undefined,
         cardColor:superAdmin?cardColor.trim()||null:null,
         takeaways:superAdmin?takeaways.trim()||null:undefined,
+        introductionHeading:superAdmin?introductionHeading.trim():undefined,
+        enabled:visibleToStudents,
         description: courseDescription.trim() || null,
       }),
       `Created course “${courseName.trim()}”.`,
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setCreateErrors({});if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setVisibleToStudents(true);setCreateErrors({});if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -356,11 +364,23 @@ export function AdminCourseCreatePanel({
             <Input id="course-code" value={courseCode} onChange={(event) => {setCourseCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="CS201" maxLength={64} required />
             {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
           </div>}
+          {superAdmin?<div className="md:col-span-2">
+            <FieldLabel htmlFor="course-introduction-heading">In this Course – Heading</FieldLabel>
+            <Input id="course-introduction-heading" value={introductionHeading}
+              onChange={event=>{setIntroductionHeading(event.target.value);setCreateErrors(old=>({...old,heading:undefined}));}}
+              maxLength={255} required aria-invalid={Boolean(createErrors.heading)}
+              placeholder="In this Course"/>
+            {createErrors.heading?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.heading}</p>:null}
+          </div>:null}
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-description">{superAdmin ? "In this Course – Description" : "Description"}</FieldLabel>
             <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder={superAdmin?"Enter course description":"Optional Course description"} required={superAdmin} />
             {createErrors.description ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.description}</p> : null}
           </div>
+          <label className="md:col-span-2 flex min-h-11 items-center gap-3 text-sm text-body">
+            <Checkbox checked={visibleToStudents} onChange={event=>setVisibleToStudents(event.target.checked)}/>
+            Course visible to students
+          </label>
         </div>
         <div className="mt-4">
           <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending}>Create Course</Button>
