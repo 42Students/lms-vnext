@@ -123,3 +123,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-16_u020-college.md.md` | G2-16-020-019 handed to src/modules/colleges/service.ts + faculty-chair association model/migration; chair/vice-chair historical FK and tenant scope require college schema association, not changed here. **Not fixed**, no execution/CI.
 
 - `NEW_docs_audit_gap2_lane-20_job-application-status-history-service-impl.md.md` | G2-20-011-015 handed to src/modules/placements/application-status-history-service.ts + parent status mutation transaction; status-history write is currently transactional and deliberately fail-closed; product decision needed before any fail-open downgrade. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_student-image-controller.md.md` | G2-20-024-017 reviewed; student-image gallery is still staged only and protected object storage is required. Exact target handoff recorded, no schema/verification/gallery mutation. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_student-image.md.md` | G2-20-015-025 reviewed; student-image gallery is still staged only and protected object storage is required. Exact target handoff recorded, no schema/verification/gallery mutation. **Not fixed**, no execution/CI.
