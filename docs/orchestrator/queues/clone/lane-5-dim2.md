@@ -510,17 +510,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [ ] `src/components/tpo/tpo-campaign-compose.tsx`
 - [x] `src/components/tpo/tpo-campaign-send-control.tsx`
 - [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
-- [ ] `src/components/tpo/tpo-company-team-composer.tsx`
+- [x] `src/components/tpo/tpo-company-team-composer.tsx`
 - [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [ ] `src/components/tpo/tpo-company-visibility-editor.tsx`
-- [ ] `src/components/tpo/tpo-custom-job-type-placed.tsx`
-- [ ] `src/components/tpo/tpo-custom-job-type-rename.tsx`
+- [x] `src/components/tpo/tpo-custom-job-type-placed.tsx`
+- [x] `src/components/tpo/tpo-custom-job-type-rename.tsx`
 - [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
 - [ ] `src/components/tpo/tpo-find-shortcut.tsx`
 - [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tpo/tpo-home-return-refresh.tsx`
+- [x] `src/components/tpo/tpo-home-return-refresh.tsx`
 - [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
+- [x] `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
 - [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
 - [ ] `src/components/tpo/tpo-notice-acknowledge.tsx`
