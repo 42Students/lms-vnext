@@ -33,14 +33,14 @@ export default async function FacultyContactDetailPage({
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
         Back to Contacts
       </Link>} />
-    <div className="grid min-w-0 gap-5 md:grid-cols-2">
-    <section className="min-w-0 border-b border-border pb-5">
+    <div className="grid min-w-0 gap-4 md:grid-cols-2">
+    <section className="min-w-0 border-b border-border pb-6">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Public department</h2>
       <p className="mt-3 text-sm text-body leading-[22px]">
         {contact.departmentName ?? "No department recorded"}
       </p>
     </section>
-    <section className="min-w-0 border-b border-border pb-5">
+    <section className="min-w-0 border-b border-border pb-6">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Current college roles</h2>
       {contact.roles.length === 0
         ? <div role="status" className="mt-3 space-y-1 text-sm leading-5 text-body">
