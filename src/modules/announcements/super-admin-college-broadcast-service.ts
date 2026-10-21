@@ -38,7 +38,14 @@ export async function listSuperAdminBroadcastColleges(context:RequestContext){
  for(const row of rows)requirePermission(context,"college.read",{collegeId:row.id,organizationId:row.organizationId});
  return rows.map(row=>({id:row.id,label:row.label}));
 }
-/** Creates one persisted DB10 recipient-scoped notice per college; no external delivery. */
+/**
+ * Immediate SUPER_ADMIN-to-placement-cell broadcast only. This is not the
+ * college-admin scheduled notification delivery operator: no cancel/retry
+ * mutation and no due worker exist here, so do not infer a scheduled send or
+ * relax audience authorization merely because the payload names a college.
+ * Each recipient college requires active-org/college, active TPO audience and
+ * explicit college.manage permission; the reviewed exact set is immutable.
+ */
 export async function publishSuperAdminCollegeBroadcast(context:RequestContext,raw:unknown){
  if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))throw new AuthorizationError("college.manage");
  requirePermission(context,"admin-scope.select");
