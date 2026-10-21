@@ -25,7 +25,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_super-admin-college-broadcast-service.ts.part2of2.md` (edit src/modules/announcements/super-admin-college-broadcast-service.ts; 12 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_profile-validation.ts.part1of2.md` (edit src/modules/people/profile-validation.ts; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_profile-validation.ts.part2of2.md` (edit src/modules/people/profile-validation.ts; 10 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-8_attend.md.part1of2.md` (new; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-8_attend.md.part1of2.md` (new; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-8_attend.md.part2of2.md` (new; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_service.ts.md` (edit src/modules/announcements/service.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-5_u009-attendance-shared-component.md.md` (new; 16 findings; best P1)
