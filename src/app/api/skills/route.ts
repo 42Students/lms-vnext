@@ -1,8 +1,11 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { NextResponse } from "next/server";
-import { ZodError } from "zod";
+import { ZodError, z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { isSameOriginRequest } from "@/auth/origin";
 import { getDb } from "@/db/client";
+import { activityEvents } from "@/db/schema";
+import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import {
   db10Skills,
   db10SkillSynonyms,
@@ -112,6 +115,9 @@ export async function GET(request: Request) {
     }
 
     if (requestedMode === "stats") {
+      // Operational aggregate includes organization-wide tracking data.
+      if (!isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))
+        return NextResponse.json({error:"FORBIDDEN"},{status:403});
       const db = getDb();
       const [skills] = await db.select({ total: sql<number>`count(*)::integer` })
         .from(db10Skills).where(eq(db10Skills.isActive, true));
@@ -147,7 +153,7 @@ export async function GET(request: Request) {
       { headers: { "Cache-Control": "private, no-store" } },
     );
   } catch (error) {
-    if (error instanceof ZodError) {
+    if (error instanceof ZodError || error instanceof SyntaxError) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
     // Do not hide authentication/authorization failures behind a legacy 500.
@@ -165,5 +171,94 @@ export async function GET(request: Request) {
       );
     }
     return mapped;
+  }
+}
+
+const skillSelectionSchema=z.strictObject({
+  skillId:z.uuid().optional(),
+  skillIds:z.array(z.uuid()).max(25).optional(),
+  confirmed:z.literal(true),
+}).refine(value=>Boolean(value.skillId||value.skillIds?.length),
+  {message:"Select at least one skill"});
+/**
+ * One atomic, at-most-once selection per authenticated actor and immutable
+ * idempotency token. The globally unique activity dedupe key is the durable
+ * claim: rollback also rolls back the usage increments. Client retries with
+ * the same token and IDs return success without incrementing again.
+ *
+ * v1 numeric skill IDs must be resolved by an explicitly scoped migration
+ * adapter; never reinterpret untrusted legacy integers as a UUID.
+ */
+export async function POST(request: Request) {
+  if (!isSameOriginRequest(request))
+    return NextResponse.json({error:"FORBIDDEN"},{status:403});
+  if (!skillsCatalogRuntimeEnabled())
+    return NextResponse.json({error:"DB10_SKILLS_MIGRATIONS_PENDING"},
+      {status:503,headers:{"Cache-Control":"private, no-store"}});
+  try {
+    const context=await getCurrentRequestContext();
+    if(!canReadSkillCatalog(context))
+      return NextResponse.json({error:"FORBIDDEN"},{status:403});
+    const token=request.headers.get("idempotency-key");
+    if(!token||!z.uuid().safeParse(token).success)
+      return NextResponse.json({error:"IDEMPOTENCY_KEY_REQUIRED"},{status:400});
+    const input=skillSelectionSchema.parse(await request.json());
+    const ids=[...new Set([...(input.skillIds??[]),...(input.skillId?[input.skillId]:[])])].sort();
+    const dedupeKey=`skills:usage:${context.user.id}:${token}`;
+    const result=await getDb().transaction(async tx=>{
+      const existing=await tx.select({id:db10Skills.id,name:db10Skills.name})
+        .from(db10Skills).where(and(
+          eq(db10Skills.isActive,true),inArray(db10Skills.id,ids),
+        )).orderBy(db10Skills.id).for("update");
+      if(existing.length!==ids.length)return "SKILL_NOT_FOUND" as const;
+      // Unique index on activity_events.dedupe_key serializes concurrent
+      // requests with the same idempotency key across all app replicas.
+      const receipt=await tx.insert(activityEvents).values({
+        actorUserId:context.user.id,
+        module:"PLATFORM",eventType:"skills.selection.recorded",
+        importance:"LOW",subjectType:"SKILL_SELECTION",
+        subjectId:context.user.id,
+        summary:"Authenticated skill selection recorded",
+        metadata:{skillIds:ids,selectedCount:ids.length},
+        dedupeKey,
+      }).onConflictDoNothing().returning({id:activityEvents.id});
+      if(!receipt.length){
+        const [previous]=await tx.select({metadata:activityEvents.metadata})
+          .from(activityEvents).where(eq(activityEvents.dedupeKey,dedupeKey)).limit(1);
+        const previousIds=previous?.metadata?.skillIds;
+        if(!Array.isArray(previousIds)||JSON.stringify(previousIds)!==JSON.stringify(ids))
+          return "IDEMPOTENCY_CONFLICT" as const;
+        return "ALREADY_RECORDED" as const;
+      }
+      const now=new Date();
+      for(const skill of existing){
+        await tx.update(db10Skills).set({
+          usageCount:sql`${db10Skills.usageCount} + 1`,updatedAt:now,
+        }).where(eq(db10Skills.id,skill.id));
+        await tx.insert(db10SkillUsage).values({
+          skillName:skill.name.toLocaleLowerCase("en-US"),
+          usageCount:1,lastUsed:now,
+        }).onConflictDoUpdate({target:db10SkillUsage.skillName,set:{
+          usageCount:sql`${db10SkillUsage.usageCount} + 1`,
+          lastUsed:now,
+        }});
+      }
+      return "RECORDED" as const;
+    });
+    if(result==="SKILL_NOT_FOUND")
+      return NextResponse.json({error:"SKILL_NOT_FOUND"},{status:404});
+    if(result==="IDEMPOTENCY_CONFLICT")
+      return NextResponse.json({error:"IDEMPOTENCY_CONFLICT"},{status:409});
+    const compat=new URL(request.url).searchParams.get("compat");
+    return NextResponse.json(
+      compat==="v1"||compat==="v2"?
+        {status:"success",message:"Selection recorded",data:{selected:ids.length}}:
+        {recorded:true,selected:ids.length,replayed:result==="ALREADY_RECORDED"},
+      {headers:{"Cache-Control":"private, no-store"}},
+    );
+  }catch(error){
+    if(error instanceof ZodError||error instanceof SyntaxError)
+      return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    return apiErrorResponse(error);
   }
 }
