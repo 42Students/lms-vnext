@@ -11,6 +11,76 @@ import {requireTpoJobCollege,requireTpoJobActor,auditTpoJobChange} from "./tpo-j
 import {placementJobIdSchema} from "./validation";
 import {tpoWaitlistPromotionSchema,waitlistPreviewToken,decideWaitlistReleaseSettlement,canonicalWaitlistPreviewCollections} from "./tpo-waitlist-promotion-model";
 
+/** Historic IDs are provenance, not authorization. Map them using persisted,
+ * unique source IDs AND the current TPO college before linking to vNext.
+ * The legacy offer-next action operated on an offer; vNext reserves the next
+ * free seat for the drive after checking all active offers and waitlist rows.
+ */
+export const TPO_LEGACY_WAITLIST_ROUTE_CROSSWALK=[
+ {old:"GET /offers/{offerId}/offer-next-preview",
+  current:"GET /api/placements/tpo/jobs/{jobId}/waitlist-promote",label:"Offer to next waitlisted",
+  requirement:"Resolve legacyOfferId -> UUID offer -> current college-scoped job"},
+ {old:"POST /offers/{offerId}/offer-next",
+  current:"POST /api/placements/tpo/jobs/{jobId}/waitlist-promote",label:"Offer to next waitlisted",
+  requirement:"Current expectedPreviewToken, confirmed action and audited reason"},
+ {old:"POST /drives/{jobId}/auto-apply",
+  current:"Drive round-results automatic apply",label:"Auto-apply",
+  requirement:"Preserve pass-only automatic action; never silently mark missing students failed"},
+] as const;
+export const TPO_LEGACY_WAITLIST_STATUS_CROSSWALK={
+ sourceWaitlisted:"HOLD",sourcePass:"PASS",sourceNotCleared:"FAIL",
+ sourceOfferReleased:"ISSUED",sourceOfferAccepted:"ACCEPTED",
+ sourceOfferDeclined:"DECLINED",sourceOfferExpired:"EXPIRED",
+} as const;
+const legacyPositiveId=(value:unknown)=>{
+ if(typeof value==="number"&&Number.isSafeInteger(value)&&value>0)return value;
+ if(typeof value==="string"&&/^[1-9][0-9]{0,9}$/.test(value)){
+  const parsed=Number(value);return Number.isSafeInteger(parsed)?parsed:null;
+ }
+ return null;
+};
+/** For server-side legacy address redirects only. Missing/ambiguous historical
+ * identities fail closed instead of being treated as current UUIDs.
+ */
+export async function resolveLegacyTpoWaitlistHref(
+ context:RequestContext,input:{jobId?:unknown;offerId?:unknown;roundId?:unknown},
+):Promise<string|null>{
+ const collegeId=await requireTpoJobCollege(context),db=getDb();
+ const oldJob=legacyPositiveId(input.jobId),oldOffer=legacyPositiveId(input.offerId),
+  oldRound=legacyPositiveId(input.roundId);
+ if(oldJob===null&&oldOffer===null&&oldRound===null)return null;
+ const jobRows=oldOffer!==null
+  ?await db.select({id:placementJobs.id}).from(placementOffers)
+     .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+     .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+     .where(and(eq(placementOffers.legacyOfferId,oldOffer),eq(placementJobs.collegeId,collegeId)))
+     .limit(2)
+  :oldRound!==null
+  ?await db.select({id:placementJobs.id}).from(placementJobRounds)
+     .innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
+     .where(and(eq(placementJobRounds.legacyRoundId,oldRound),eq(placementJobs.collegeId,collegeId)))
+     .limit(2)
+  :await db.select({id:placementJobs.id}).from(placementJobs)
+     .where(and(eq(placementJobs.legacyJobId,oldJob!),eq(placementJobs.collegeId,collegeId)))
+     .limit(2);
+ if(jobRows.length!==1)return null;
+ const jobId=jobRows[0]!.id;
+ // If a bookmark supplied more than one ID they must resolve to ONE job.
+ if(oldJob!==null){
+  const [check]=await db.select({id:placementJobs.id}).from(placementJobs)
+   .where(and(eq(placementJobs.legacyJobId,oldJob),eq(placementJobs.id,jobId),
+    eq(placementJobs.collegeId,collegeId))).limit(1);
+  if(!check)return null;
+ }
+ if(oldRound!==null){
+  const [check]=await db.select({id:placementJobRounds.id}).from(placementJobRounds)
+   .where(and(eq(placementJobRounds.legacyRoundId,oldRound),
+    eq(placementJobRounds.jobId,jobId))).limit(1);
+  if(!check)return null;
+ }
+ return "/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/waitlist";
+}
+
 export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
