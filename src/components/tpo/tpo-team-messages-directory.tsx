@@ -57,21 +57,14 @@ export async function TpoTeamMessagesDirectory({
  const safeQuery=query.trim().slice(0,120);
  const view=selectedFilter(filter??"following");
  const safePage=Number.isSafeInteger(page)?Math.min(1000,Math.max(1,page)):1;
- const data=await listMyTpoInternalThreads(context,safeQuery,safePage).catch(()=>null);
+ const data=await listMyTpoInternalThreads(context,safeQuery,safePage,
+  safeQuery.length>=2?"all":view).catch(()=>null);
  if(!data||data.status!=="READY")return <ErrorState title="Could not load conversations"
   description="Team conversations are temporarily unavailable. The Recruiters tab remains accessible."
   action={<Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Retry</Link>}/>;
- const all=data.items;
- const visible=safeQuery.length>=2?all:all.filter(item=>{
-  if(view==="all")return true;
-  if(view==="following")return item.following;
-  if(view==="me")return item.asksForMe>0||item.unreadCount>0;
-  if(view==="asks")return item.openAsks>0;
-  if(view==="decisions")return item.hasDecisions;
-  if(view==="drives")return item.kind==="DRIVE";
-  if(view==="companies")return item.kind==="COMPANY";
-  return item.kind==="TOPIC";
- });
+ // The scoped reader applies the filter in SQL before LIMIT/OFFSET.
+ // Do not re-filter the 100-row page: this hides matches on later pages.
+ const visible=data.items;
  const requested=selectedId&&tpoThreadIdSchema.safeParse(selectedId).success?selectedId:undefined;
  const explicit=Boolean(requested||selectedId==="everyone");
  const unreadCandidate=visible.find(item=>item.following&&item.unreadCount>0);
@@ -94,7 +87,7 @@ export async function TpoTeamMessagesDirectory({
   if(nextPage>1)params.set("page",String(nextPage));
   return "/tpo/messages?"+params.toString();
  };
- const displayedCount=visible.length;
+ const displayedCount="totalCount" in data?data.totalCount:visible.length;
  const today=new Date();
  return <section role="tabpanel" aria-label="Team conversations" className="min-w-0">
   <TpoLiveRefresh intervalMs={30000}/>
@@ -114,7 +107,7 @@ export async function TpoTeamMessagesDirectory({
        {label}
       </Link>)}
      </nav>
-     <p className="text-xs text-muted-foreground">{displayedCount} {displayedCount===1?"conversation":"conversations"} shown on this page{data.hasMore?" · More results available":""}</p>
+     <p className="text-xs text-muted-foreground">{visible.length} of {displayedCount} {displayedCount===1?"conversation":"conversations"}{data.hasMore?" · More results available":""}</p>
     </div>
     {safeQuery.length<2?<Link href={href("everyone")} aria-current={showEveryone?"page":undefined}
      className={"flex min-h-16 items-center gap-3 border-b border-border px-3 py-3 hover:bg-primary-subtle "+
