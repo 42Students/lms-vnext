@@ -259,3 +259,43 @@
 - Regressions fixed: 1 — an arbitrary truthy jobId in a success response could close the confirmation and navigate even when persisted clone was unverified. Read full action, shared ConfirmDialog, Button, InlineNotice, toast and guarded-action callback, TPO clone route/service, lane-2 polish evidence. Added checks that jobId is UUID-shaped, sourceJobId matches the selected drive and status is DRAFT before redirect. Preserve error toast/menu closure, action label, duplicate prevention and checked permissions.
 - Extra fixes: 0. Full-width phone menu control, compact tablet dimensions and pending-safe dialog are already aligned.
 - Files changed: `src/components/placements/tpo-drive-clone-action.tsx`; source only, no CI.
+
+## Verify2 — 11. `src/components/placements/tpo-trust-toggle.tsx`
+- Regressions fixed: 1 — company trust toggle reported success after any 2xx without checking its returned relationship or trust value. Read component, TPO role-checked API/transaction service, shared ConfirmDialog, Textarea, Button, InlineNotice, and both lane-2/lane-3 polish entries. Require matching relationshipId and nextTrusted plus changedAt receipt before reset/success/refresh; preserve reason helper useId, 8–500 character validation, optimistic expectedTrusted token, in-flight ref, and danger semantics for removal.
+- Extra fixes: 0. Dialog label, text area and confirmation remain touch-safe at 375 and compact at 768.
+- Files changed: `src/components/placements/tpo-trust-toggle.tsx`; static only, no CI.
+
+## Verify2 — 12. `src/components/tpo/tpo-notice-undo-toast.tsx`
+- Regressions fixed: 0. Read timer lifecycle, valid timestamp gating, native undo POST with expectedVersion/UNDO_SEND, useFormStatus pending-aware Button, ToastAction and lane-2/lane-18 proof. The 30-second limit, exactly preserved labels, form endpoint/method/hidden fields, 1-second display cadence and initial/expired states remain intact; no broken tags or API mismatch.
+- Extra fixes: 0. Toast region and full-width 44px phone action remain aligned.
+- Files changed: verified, no change. Static source review; no CI.
+
+## Verify2 — 13. `src/app/(authenticated)/admin/hr/page.tsx`
+- Regressions fixed: 0. Read account page/query parser, recruiter list projection and SuperAdminHrAccounts client hierarchy, loading/error route, PageHeader/ErrorState, permission/layout. Scope, summary fallback, pagination and /admin/recruiters destinations preserved; no missing imports, TSX or type-mismatched props identified.
+- Extra fixes: 1 — Reset filters now fills 375px width and centers, compact at 768.
+- Files changed: `src/app/(authenticated)/admin/hr/page.tsx`; source only, no CI.
+
+## Verify2 — 14. `src/components/admin/organization-create-form.tsx`
+- Regressions fixed: 1 — a 2xx create response could toast success and discard the draft before validating a persisted organization-id receipt. Reviewed tenant creation caller, POST route, createdOrganizationStepHref, useGuardedAction/useFormDraft, Input/Button/Alert and lane-5/7 polish. Now require valid receipt before success/clear/optional stage navigation, preserve draft and show safe uncertainty otherwise. Original request fields, 409 handling, wording of success and responsive controls retained.
+- Extra fixes: 0. Existing 375px full-width action and 768px grid are balanced.
+- Files changed: `src/components/admin/organization-create-form.tsx`; static no CI.
+
+## Verify2 — 15. `src/components/admin/tenant-settings-editor.tsx`
+- Regressions fixed: 1 — independent settings PATCH could double-submit in the React state commit window and rendered any successful JSON response as a result list without validating per-key outcomes. Read editor, OtherTenantSettings child, legacy key spec, settings page, scoped override API/transaction service, shared Disclosure/ConfirmDialog/Input/Textarea/Button and lane-5/lane-7 polish. Added synchronous lock and receipt shape/count/status/key validation before reporting results. Original per-key optimistic versions, high-impact review/rollout warning, grouped disclosures and role scope retained.
+- Extra fixes: 0; 375/768 group/form geometry already follows legacy spacing and touch sizes.
+- Files changed: `src/components/admin/tenant-settings-editor.tsx`; static only, no CI.
+
+## Verify2 — 16. `src/components/tracker/audit-finding-status-action.tsx`
+- Regressions fixed: 1 — any 2xx workflow result could report a saved status without verifying the issued tracker record. Read source, workflow endpoint/service, audit-finding status model, Select/Button/ConfirmDialog and lane-3 polish proof. Require returned issue's publicId/status to match target before claiming success; preserve expectedVersion, in-flight ref, 409 recovery, keyboard confirmation and fields/labels.
+- Extra fixes: 0. Current/Selected summary and responsive one/two-column actions remain aligned.
+- Files changed: `src/components/tracker/audit-finding-status-action.tsx`; static only, no CI.
+
+## Verify2 — 17. `src/components/admin/admin-revoke-sessions.tsx`
+- Regressions fixed: 1 — action interpolated an unchecked revoked count into success after arbitrary successful HTTP response. Read device-sessions route/caller, college-scoped POST service, shared ConfirmDialog/Button, apiFetch/useGuardedAction and lane-5/lane-6 polish evidence. Require nonnegative safe integer count before dismissal/success/refresh; preserve confirmation, cross-college effect, audit copy and failure state.
+- Extra fixes: 0. Destructive trigger and bounded explanation retain touch-safe phone/tablet hierarchy.
+- Files changed: `src/components/admin/admin-revoke-sessions.tsx`; static only, no CI.
+
+## Verify2 — 18. `src/components/admin/super-admin-batch-graduate-action.tsx`
+- Regressions fixed: 1 — any 2xx graduation response could report completion without matching cohort status. Read action, guarded POST endpoint, final-semester/graduation service, ConfirmDialog/Button/useGuardedAction and lane-6 evidence. Require response cohort id match and status COMPLETED before closing confirmation/announcing success; keep original workflow, stale and not-ready errors, danger intent and labels.
+- Extra fixes: 0. Original full-width phone control, dialog and status are aligned.
+- Files changed: `src/components/admin/super-admin-batch-graduate-action.tsx`; static source only, no CI/browser.
