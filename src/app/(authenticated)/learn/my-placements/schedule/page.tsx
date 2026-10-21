@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
 import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
+import { loadLearnerCareerCalendarSupplements } from "@/modules/placements/learner-career-calendar-feed-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
@@ -59,6 +60,13 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now) as {
     ahead: WorkspaceRound[]; past: WorkspaceRound[]; undated: WorkspaceRound[];
   };
+  // Read deadlines and college no-drive dates independently of round bookings.
+  // Missing staged storage is reported, never disguised as an empty calendar.
+  const calendarSupplementResult = view === "calendar"
+    ? await loadLearnerCareerCalendarSupplements(context).catch(() => ({
+        supplements: [], warnings: ["Calendar dates could not be loaded. Refresh to retry."],
+      }))
+    : null;
   const today = initialCareerCalendarDay();
   const needsConfirmation=ahead.filter(row=>roundCanBeManaged(row)&&!row.learnerConfirmedAt).length;
   const rounds = workspace.rounds.map(row => ({
@@ -218,7 +226,12 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       {view==="calendar"?<section aria-label="Calendar" className="space-y-2">
 
         <Suspense fallback={<p role="status">Calendar</p>}>
-          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
+          {calendarSupplementResult?.warnings.length ?
+            <p role="status" className="mb-3 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+              {calendarSupplementResult.warnings.join(" ")}
+            </p> : null}
+          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds}
+            supplements={calendarSupplementResult?.supplements ?? []} surface="schedule" />
         </Suspense>
       </section>:null}
       {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">

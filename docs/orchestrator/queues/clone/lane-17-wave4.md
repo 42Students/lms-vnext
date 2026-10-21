@@ -38,7 +38,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_college-term-mapping-service.ts.md` (edit src/modules/academics/college-term-mapping-service.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-missing-college.tsx.md` (edit src/components/projects/project-admin-missing-college.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_courses_super-admin-content-directory-service.ts.md` (edit src/modules/courses/super-admin-content-directory-service.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_learner-career-calendar-model.ts.md` (edit src/modules/placements/learner-career-calendar-model.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_learner-career-calendar-model.ts.md` (edit src/modules/placements/learner-career-calendar-model.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_tenants_page.tsx.md` (edit src/app/(authenticated)/admin/tenants/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_settings_recruiter-grants_route.ts.md` (edit src/app/api/placements/tpo/settings/recruiter-grants/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_api_activity_admin-export_route.ts.md` (edit src/app/api/activity/admin-export/route.ts; 1 findings; best P2)
