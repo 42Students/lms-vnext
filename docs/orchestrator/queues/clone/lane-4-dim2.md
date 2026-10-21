@@ -40,11 +40,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/error.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/error.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/error.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/error.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
 - [ ] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
 - [ ] `src/app/(authenticated)/admin/lessons/error.tsx`
 - [ ] `src/app/(authenticated)/admin/lessons/page.tsx`
