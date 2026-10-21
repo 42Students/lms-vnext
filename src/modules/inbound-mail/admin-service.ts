@@ -7,10 +7,12 @@ import {inboundMailListQuerySchema} from "./message-model";
 import {z} from "zod";
 import {inboundMailMessagesStaged} from "./staged-schema";
 import {inboundMailStatusTransitionAllowed} from "./triage-transition-model";
+import {safeInboundPreview} from "./message-model";
 
 export type InboundMailItem={
  id:string;receivedAt:Date;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
+ bodyPreview?:string;
 };
 export type InboundMailPage={
  available:boolean;items:readonly InboundMailItem[];page:number;hasMore:boolean;total:number|null;toReadCount:number|null;
@@ -65,7 +67,7 @@ export async function listInboundMailForAdmin(
  if(!await repository.tableExists())
   return {available:false,items:[],page:input.page,hasMore:false,total:null,toReadCount:null};
  const [items,total,toReadCount]=await Promise.all([repository.list(input),repository.count?repository.count(input):Promise.resolve(null),repository.count?repository.count({...input,status:"NEW",q:"",page:1,recipient:undefined}):Promise.resolve(null)]);
- return {available:true,items:items.slice(0,50),page:input.page,hasMore:items.length>50,total,toReadCount};
+ return {available:true,items:items.slice(0,50).map(item=>({...item,bodyPreview:safeInboundPreview(item.bodyPlain)})),page:input.page,hasMore:items.length>50,total,toReadCount};
 }
 
 /** Version-checked inbound triage mutation. Global Super Admin only: incoming
@@ -96,3 +98,34 @@ export async function changeInboundMailStatusForAdmin(
    version:inboundMailMessagesStaged.version});
  return updated?{kind:"UPDATED" as const,...updated}:{kind:"STALE" as const};
 }
+
+/**
+ * A separately authorized full-body read for a selected inbox entry. An
+ * inbox drawer may call this from an authenticated GET /:id endpoint after
+ * rendering the short preview; no unauthenticated webhook may use this path.
+ * Missing IDs stay null for a generic 404 without leaking message existence
+ * to a non-Super Admin.
+ */
+export async function getInboundMailDetailForAdmin(
+ context:RequestContext,
+ rawId:unknown,
+):Promise<InboundMailItem|null>{
+ requirePermission(context,"admin-scope.select");
+ if(!isSuperAdmin(context)||context.adminScope?.collegeId||
+    context.adminScope?.organizationId)throw new AuthorizationError("admin-scope.select");
+ const id=z.uuid().parse(rawId);
+ if(!await drizzleInboundMailAdminRepository.tableExists())return null;
+ const t=inboundMailMessagesStaged;
+ const [row]=await getDb().select({
+  id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,
+  toAddress:t.toAddress,subject:t.subject,bodyPlain:t.bodyPlain,
+  status:t.status,version:t.version,
+ }).from(t).where(eq(t.id,id)).limit(1);
+ return row??null;
+}
+
+/** List previews never imply successful automatic recruiter posting. The
+ * original schema lacks routingStatus, kind, thread, handled actor and date.
+ * Those fields require a verified migration, not inference from mail address
+ * or the separate NEW/TRIAGED/RESOLVED manual triage state. */
+export const INBOUND_ROUTING_METADATA_READY=false;
