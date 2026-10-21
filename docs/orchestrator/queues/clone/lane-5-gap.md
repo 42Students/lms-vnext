@@ -51,8 +51,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js`
 - [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/teacher/calendar.js`
 - [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/calendar.js`
-- [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/AdminJobService.java`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/classes/ClassSearchController.java`
+- [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/AdminJobService.java`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/classes/ClassSearchController.java`
 - [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobApplicationStatusHistoryRepository.java`
 - [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/SkillSynonym.java`
 - [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTemplateVersion.java`
