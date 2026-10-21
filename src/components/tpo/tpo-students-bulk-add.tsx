@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -54,6 +55,8 @@ export function TpoStudentsBulkAdd({
   const [busy, setBusy] = useState(false);
   const {run:runGuarded,pending:guardedPending}=useGuardedAction();
   const [confirmOpen,setConfirmOpen]=useState(false);
+  const [setupOpen,setSetupOpen]=useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
   const [includeIneligible,setIncludeIneligible]=useState(false);
   const [overrideReason,setOverrideReason]=useState("");
   const [roleError, setRoleError] = useState("");
@@ -68,6 +71,19 @@ export function TpoStudentsBulkAdd({
   const visibleDrives=drives.filter(drive=>
    (drive.companyName+" "+drive.title).toLocaleLowerCase("en-IN").includes(driveSearch.toLocaleLowerCase("en-IN").trim()));
 
+  function requestSetupClose(){
+    if(busy||guardedPending)return;
+    if(driveId||selected.length>0||includeIneligible||overrideReason.trim()){
+      setDiscardOpen(true);return;
+    }
+    setSetupOpen(false);
+  }
+  function discardSetup(){
+    setDiscardOpen(false);setSetupOpen(false);setSelected([]);
+    setDriveId("");setRoleOptionId("");setRoles([]);setDriveSearch("");
+    setIncludeIneligible(false);setOverrideReason("");setRoleError("");setError("");
+    setReviewedSelection("");setAlreadyAppliedCount(null);
+  }
   async function loadRoles(jobId: string) {
     setDriveId(jobId);
     setRoles([]);
@@ -111,7 +127,8 @@ export function TpoStudentsBulkAdd({
       });
      if(response.totalChecked!==pageSelected.length)
       throw new Error("Selection changed during review");
-     setAlreadyAppliedCount(response.alreadyAppliedCount);setReviewedSelection(selectionFingerprint);setConfirmOpen(true);
+     setAlreadyAppliedCount(response.alreadyAppliedCount);setReviewedSelection(selectionFingerprint);
+     setSetupOpen(false);setConfirmOpen(true);
      });
     }catch{setError("Could not check existing applications. Your selection remains for retry.");}
     finally{setBusy(false);}
@@ -183,10 +200,19 @@ export function TpoStudentsBulkAdd({
           The server rechecks each selected college membership, drive and role.
         </p>
       </div>
+      <Button type="button" variant="secondary" disabled={busy||guardedPending||drives.length===0}
+        className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>setSetupOpen(true)}>
+        Add students to drive
+      </Button>
       {drives.length === 0 ? (
         <EmptyState title="No open drives are available." description="Create or publish a drive before adding learners."/>
       ) : (
-        <>
+        <Dialog open={setupOpen} onOpenChange={open=>{if(open)setSetupOpen(true);else requestSetupClose();}}
+          title="Add selected students to a drive"
+          description="Choose a published drive, select learners, and review existing applications before adding."
+          className="max-w-[48rem]"
+          footer={<Button type="button" variant="secondary" disabled={busy||guardedPending}
+            onClick={requestSetupClose}>Discard</Button>}>
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search open drives
             <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="search" value={driveSearch} onChange={event=>{
               const nextSearch=event.target.value;
@@ -264,9 +290,13 @@ export function TpoStudentsBulkAdd({
               {busy ? "Checking learners…" : "Review and add selected"}
             </Button>
           </div>
-        </>
+        </Dialog>
       )}
       {pageSelected.length>200?<Alert tone="error">Select at most 200 students for this drive. The same selection remains available for other actions.</Alert>:null}
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title="Discard add-to-drive setup?"
+        description="Discard the selected learners, drive, role and inclusion reason?"
+        confirmLabel="Discard changes" onConfirm={discardSetup}/>
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
         title="Add selected students to a drive"
         description={"Add "+pageSelected.length+" selected learner(s) to "+
