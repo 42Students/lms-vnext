@@ -17,7 +17,7 @@ const courseNameSchema = z
   .string()
   .trim()
   .min(1)
-  .max(255);
+  .max(255,"Maximum 255 characters");
 
 const courseCodeSchema = z
   .string()
@@ -29,19 +29,24 @@ const courseCodeSchema = z
     "Code may contain letters, numbers, dots, underscores and hyphens",
   );
 
-const courseShortTitleSchema=z.string().trim().min(1).max(120);
-const courseOfficialCodeSchema=z.string().trim().max(64).nullable();
+const courseShortTitleSchema=z.string().trim().min(1,"Enter short display name")
+ .max(64,"Maximum 64 characters");
+const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters").nullable();
+/** Immutable legacy/public course slug; the department-local code is separate. */
+export const courseSlugSchema=z.string().trim()
+ .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
 const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable();
 
 export const createCourseInputSchema = z.object({
   departmentId: z.string().uuid(),
+  parentCourseId:z.string().uuid().nullable().optional(),
   name: courseNameSchema,
   code: courseCodeSchema,
   shortTitle:courseShortTitleSchema.optional(),
   officialCode:courseOfficialCodeSchema.optional(),
   cardColor:courseCardColorSchema.optional(),
   takeaways:z.string().trim().max(2000).nullable().optional(),
-  introductionHeading:z.string().trim().min(1).max(255).optional(),
+  introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
   enabled:z.boolean().optional(),
   description: z
     .string()
@@ -57,10 +62,13 @@ export const updateCourseInputSchema = z
     expectedUpdatedAt: z.string().datetime({ offset: true }),
     name: courseNameSchema.optional(),
     code: courseCodeSchema.optional(),
+    parentCourseId:z.string().uuid().nullable().optional(),
     shortTitle:courseShortTitleSchema.optional(),
     officialCode:courseOfficialCodeSchema.optional(),
     cardColor:courseCardColorSchema.optional(),
     takeaways:z.string().trim().max(2000).nullable().optional(),
+    introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
+    enabled:z.boolean().optional(),
     description: z
       .string()
       .trim()
@@ -249,10 +257,13 @@ export const learningPathTransitionSchema =
     action: z.enum(["PUBLISH", "UNPUBLISH", "ARCHIVE"]),
   }).strict();
 
+const legacyLessonNameSchema=z.string().trim()
+ .min(1,"Lesson name is required")
+ .max(255,"Lesson name must not exceed 255 characters");
 export const createCourseLessonInputSchema =
   z.object({
     learningPathId: learningPathIdSchema,
-    name: courseNameSchema,
+    name: legacyLessonNameSchema,
     description: z
       .string()
       .trim()
@@ -270,7 +281,7 @@ export const createCourseLessonInputSchema =
 export const updateCourseLessonInputSchema =
   z
     .object({
-      name: courseNameSchema.optional(),
+      name: legacyLessonNameSchema.optional(),
       description: z
         .string()
         .trim()
