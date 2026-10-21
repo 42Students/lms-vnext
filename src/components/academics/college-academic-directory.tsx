@@ -33,10 +33,18 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
   const semesters = data.kind === "SEMESTERS";
   const title = semesters ? "Semesters" : "Batches";
   const path = semesters ? "/college/semesters" : "/college/batches";
+  const hasFilters = Object.entries(data.query).some(([key, value]) =>
+    !["page","pageSize"].includes(key) && value !== undefined && value !== null &&
+      value !== "" && value !== "ALL");
+  const pageStart = data.total ? Math.min(data.total, (data.query.page-1)*data.query.pageSize+1) : 0;
+  const pageEnd = Math.min(data.total, data.query.page*data.query.pageSize);
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title={title}
+        description={semesters
+          ? "Manage semesters, their courses and credits."
+          : "Manage cohorts, their academic year and current semester."}
         actions={<>
           {actions}
           <Link href="/college/academics"
@@ -45,18 +53,27 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           </Link>
         </>}
       />
-      {prepend ? <section aria-label="Batch actions" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">{prepend}</section> : null}
-      {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 min-[1200px]:grid-cols-24">
+        <div className="min-w-0 min-[1200px]:col-span-10">
+          {prepend ? <section aria-label="Batch actions" className="min-w-0">{prepend}</section> : null}
+          {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
+        </div>
+        <section className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface min-[1200px]:col-span-14"
+          aria-label={semesters ? "Existing Semesters" : "Existing Batches"}>
+          <h2 className="border-b border-border px-4 py-3 text-base font-semibold text-foreground">
+            {semesters ? "Semesters" : "Existing Batches"}
+          </h2>
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {semesters ? "Semester or program" : "Batch or program"}
           <Input form="college-academic-directory-filters" name="q" type="search" maxLength={100} defaultValue={data.query.q}
-            placeholder="Search name or code" className="min-h-11 min-w-0 md:min-h-9" />
+            placeholder={semesters ? "Search semesters" : "Search batch, year, program or status"}
+            className="min-h-11 min-w-0 md:min-h-9" />
         </label>}
         action={<Button type="submit" form="college-academic-directory-filters" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-academic-directory-filters" action={path} method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid max-w-[200px] gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 min-w-0 md:min-h-9">
@@ -80,9 +97,10 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
                 </>
               ) : (
                 <>
-                  <option value="PLANNED">Planned</option>
                   <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
                   <option value="COMPLETED">Completed</option>
+                  <option value="PLANNED">Planned</option>
                   <option value="ARCHIVED">Archived</option>
                 </>
               )}
@@ -231,16 +249,17 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
             <Button variant="primary" type="submit" className="min-h-11 md:hidden">
               Filter
             </Button>
-            <Link href={path} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+            {hasFilters ? <Link href={path} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
               Clear
-            </Link>
+            </Link> : null}
           </div>
         </form>
       </section></FilterBar>
 
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-b border-[var(--lms-canvas-border)]">
         <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
-          {data.total.toLocaleString("en-IN")} matching {semesters ? "program terms" : "cohorts"}
+          {data.total.toLocaleString("en-IN")} {semesters ? "semesters" : "batches"} ·
+          {hasFilters ? " filtered results" : " all records"}
         </p>
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
@@ -323,7 +342,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</span>
+        <span className="text-muted-foreground">{pageStart}–{pageEnd} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <CollegeDirectoryPageSize current={data.query.pageSize} />
         <div className="flex gap-2">
           {data.query.page > 1 ? (
@@ -340,6 +359,8 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           ) : null}
         </div>
       </nav>
+        </section>
+      </div>
       <p className="text-xs leading-5 text-muted-foreground">
         {semesters
           ? "Mapped course counts include registered curriculum mappings within this college only. Deletion is denied when mappings or non-archived batches exist; editing never changes the assigned program or semester number."
