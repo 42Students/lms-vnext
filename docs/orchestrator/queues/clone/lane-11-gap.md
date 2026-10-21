@@ -49,7 +49,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/[roundId].js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/index.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId]/edit.js`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId]/edit.js`
 - [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/index.js`
 - [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/new.js`
 - [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/tpo/home.js`
