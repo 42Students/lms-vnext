@@ -415,42 +415,42 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [x] `src/components/courses/college-live-classes-directory.tsx`
 - [x] `src/components/courses/college-quiz-attempts.tsx`
 - [x] `src/components/courses/college-quiz-create.tsx`
-- [ ] `src/components/courses/expandable-course-description.tsx`
-- [ ] `src/components/courses/expandable-course-update.tsx`
+- [x] `src/components/courses/expandable-course-description.tsx`
+- [x] `src/components/courses/expandable-course-update.tsx`
 - [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-method-picker.tsx`
+- [x] `src/components/courses/faculty-assignment-method-picker.tsx`
 - [ ] `src/components/courses/faculty-assignment-review.tsx`
 - [ ] `src/components/courses/faculty-contacts-table.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
 - [ ] `src/components/courses/faculty-course-list.tsx`
 - [ ] `src/components/courses/faculty-course-roster.tsx`
 - [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
 - [ ] `src/components/courses/faculty-course-workspace.tsx`
 - [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-report-csv-download.tsx`
+- [x] `src/components/courses/faculty-report-csv-download.tsx`
 - [ ] `src/components/courses/learner-assessment-overview.tsx`
 - [ ] `src/components/courses/learner-course-discussion.tsx`
 - [ ] `src/components/courses/learner-course-list.tsx`
 - [ ] `src/components/courses/learner-course-overview.tsx`
 - [ ] `src/components/courses/learner-course-workspace.tsx`
 - [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
 - [ ] `src/components/courses/learner-youtube-player.tsx`
 - [ ] `src/components/courses/quiz-attempt-control.tsx`
 - [ ] `src/components/courses/super-admin-content-directory-page.tsx`
 - [ ] `src/components/groups/college-group-import-preview.tsx`
-- [ ] `src/components/hr/hr-company-reports-grid.tsx`
+- [x] `src/components/hr/hr-company-reports-grid.tsx`
 - [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-job-applicants-grid.tsx`
-- [ ] `src/components/hr/hr-proposal-history-grid.tsx`
+- [x] `src/components/hr/hr-job-applicants-grid.tsx`
+- [x] `src/components/hr/hr-proposal-history-grid.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/hr-round-editor-grid.tsx`
-- [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
-- [ ] `src/components/hr/recruiter-calendar-legacy.module.css`
+- [x] `src/components/hr/hr-round-editor-grid.tsx`
+- [x] `src/components/hr/hr-unsent-drive-alert.tsx`
+- [x] `src/components/hr/recruiter-calendar-legacy.module.css`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
 - [ ] `src/components/hr/recruiter-profile-access.tsx`
-- [ ] `src/components/marketing/marketing-layout.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/marketing/marketing-layout.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
 - [ ] `src/components/placements/college-drive-pipeline-overview.tsx`
 - [ ] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`

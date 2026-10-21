@@ -40,7 +40,7 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
     mobilePrimaryKeys={["drive","status","applied","offered"]}
     rowActions={row=><div className="flex flex-wrap items-center gap-2">
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(row.id)}
-        className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Open drive
       </Link>
     </div>}/>;
