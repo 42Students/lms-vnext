@@ -68,11 +68,11 @@ export default async function TpoShortlistSharePreviewPage({
     <form action={path} method="get" className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:items-end sm:gap-3">
       {preservedHistory.shareStatus?<Input type="hidden" name="shareStatus" value={preservedHistory.shareStatus}/>:null}
       {preservedHistory.sharePage?<Input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
-      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
+      <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
         <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
           placeholder="Learner name" />
       </label>
-      <Button type="submit" className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">
+      <Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">
         Search
       </Button>
       <Link href={path} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link sm:w-auto underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>

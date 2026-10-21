@@ -16,7 +16,7 @@ export default async function TpoPlacementsOverviewPage() {
     redirect("/dashboard");
   }
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         
         title={TPO_OWNER_PAGE_COPY.placementOperations}
