@@ -12,6 +12,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { equalsIgnoreCase } from "@/lib/sql-match";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   colleges,
@@ -172,13 +173,9 @@ export async function searchPlacementRecruiterGrants(
 ) {
   const collegeId = createPlacementCompanyInputSchema.shape.collegeId.parse(collegeIdInput);
   await requirePlacementManageScope(context, collegeId);
-  const search = (options.q ?? "").trim();
-  const page = options.page ?? 0;
-  const size = options.size ?? 20;
-  if (search.length > 120 || !Number.isSafeInteger(page) || page < 0 || page > 10000 ||
-      !Number.isSafeInteger(size) || size < 1 || size > 100) {
-    throw new PlacementsServiceError("PLACEMENT_RECRUITER_INVALID_INPUT");
-  }
+  const search = z.string().trim().max(120).parse(options.q ?? "");
+  const page = z.number().int().min(0).max(10000).parse(options.page ?? 0);
+  const size = z.number().int().min(1).max(100).parse(options.size ?? 20);
   const term = "%" + search.replace(/[\\%_]/g, match => "\\" + match) + "%";
   const scope = and(
     eq(placementCompanyRelationships.collegeId, collegeId),
