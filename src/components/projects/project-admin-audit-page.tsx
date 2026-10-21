@@ -65,6 +65,11 @@ const inputClass = "w-full";
 
 /** Project-only event labels never imply a destructive action was reversible. */
 function projectActionLabel(raw:string){
+ // The vNext scoped revoke action is the legacy template-unassignment audit
+ // equivalent. Keep the recorded event type intact for exports and filters.
+ if(raw===ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED||
+    raw===ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNASSIGNED)
+   return "Template unassigned";
  const key=raw.replace(/^projects[._]/i,"").replaceAll("_"," ").replaceAll("."," ");
  const phrase=key.trim().toLowerCase();
  return phrase?phrase[0].toUpperCase()+phrase.slice(1):"Updated";
