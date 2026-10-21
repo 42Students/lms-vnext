@@ -70,22 +70,22 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     updatedAt: sql<Date>`${sections.updatedAt}`.mapWith(sections.updatedAt).as("section_updated_at"),
     capacity: sections.capacity,
     description: sections.description,
-    programId: sql<string>`${programs.id}`.as("class_program_id"),
-    programName: sql<string>`${programs.name}`.as("class_program_name"),
-    cohortName: sql<string>`${cohorts.name}`.as("class_cohort_name"),
+    programId: sql<string | null>`${programs.id}`.as("class_program_id"),
+    programName: sql<string | null>`${programs.name}`.as("class_program_name"),
+    cohortName: sql<string | null>`${cohorts.name}`.as("class_cohort_name"),
     periodName: sql<string>`${academicPeriods.name}`.as("class_period_name"),
   }).from(sections)
-    .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
-    .innerJoin(programs, eq(programs.id, cohorts.programId))
-    .innerJoin(departments, and(
-      eq(departments.id, programs.departmentId),
-      eq(departments.collegeId, collegeId),
-    ))
+    // The college-owned academic period anchors damaged imported class links;
+    // a broken cohort/program can still be shown, never a foreign college's class.
     .innerJoin(academicPeriods, and(
       eq(academicPeriods.id, sections.academicPeriodId),
       eq(academicPeriods.collegeId, collegeId),
     ))
+    .leftJoin(cohorts, eq(cohorts.id, sections.cohortId))
+    .leftJoin(programs, eq(programs.id, cohorts.programId))
+    .leftJoin(departments, eq(departments.id, programs.departmentId))
     .where(and(
+      or(eq(departments.collegeId, collegeId), isNull(departments.id)),
       query.programId ? eq(programs.id, query.programId) : undefined,
       query.departmentCode ? eq(departments.name, query.departmentCode) : undefined,
       query.periodEndsOnOrBefore ? lte(academicPeriods.endDate, query.periodEndsOnOrBefore) : undefined,
@@ -126,6 +126,8 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     scopedPrograms(collegeId),
   ]);
   const ids = baseRows.map(row => row.id);
+  // A failed dependency count is unknown, not zero. Keep the directory usable.
+  let enrollmentCountsAvailable = true;
   const counts = ids.length ? await db.select({
     sectionId: sectionEnrollments.sectionId,
     enrolled: count(),
@@ -152,11 +154,14 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
       inArray(sectionEnrollments.sectionId, ids),
       eq(sectionEnrollments.status, "ACTIVE"),
     ))
-    .groupBy(sectionEnrollments.sectionId) : [];
+    .groupBy(sectionEnrollments.sectionId).catch(() => {
+      enrollmentCountsAvailable = false;
+      return [] as { sectionId: string; enrolled: number }[];
+    }) : [];
   const countById = new Map(counts.map(item => [item.sectionId, item.enrolled]));
   const items = baseRows.map(item => ({
     ...item,
-    activeLearners: countById.get(item.id) ?? 0,
+    activeLearners: enrollmentCountsAvailable ? countById.get(item.id) ?? 0 : null,
   }));
   const total = totals[0]?.total ?? 0;
   return {
@@ -227,6 +232,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       query.q ? or(
         ilike(electiveSlots.name, searchPattern(query.q)),
         ilike(programs.name, searchPattern(query.q)),
+        ilike(electiveSlots.description, searchPattern(query.q)),
       ) : undefined,
     )).as("college_structure_electives");
 
