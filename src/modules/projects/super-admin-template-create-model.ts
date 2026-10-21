@@ -11,7 +11,7 @@ export type TemplateCreateResource={key:string;title:string;url:string;descripti
  * Create Template workflow. Row keys are stable across reorders and edits.
  */
 export function initialSuperAdminTemplateDraft(input:{
- slug:string;title:string;summary:string;goal:string;
+ slug:string;title:string;summary:string;goal:string;summaryOverrideReason?:string;
  release?:string;sprint?:string;task?:string;priority?:string;
  acceptanceCriteria?:string;releaseDescription?:string;sprintDescription?:string;
  taskDescription?:string;overviewDescription?:string;resourceTitle?:string;
@@ -34,8 +34,17 @@ export function initialSuperAdminTemplateDraft(input:{
   ?[{key:"resource-1",title:input.resourceTitle??"",url:input.resourceUrl??"",description:""}]
   :[]);
  const clean=(value:string)=>value.trim();
- const derivedSummary=clean(input.summary)||
-   (clean(input.goal).split(/\r?\n/).find(Boolean)??clean(input.title)).slice(0,160);
+ // Legacy create derives at most 160 characters from the first goal line,
+ // falling back to the title. An explicitly different summary needs a
+ // recorded human reason before it can override that default.
+ const defaultSummary=(clean(input.goal).split(/\r?\n/).find(Boolean)??clean(input.title)).slice(0,160);
+ const requestedSummary=clean(input.summary);
+ const reason=clean(input.summaryOverrideReason??"");
+ if(requestedSummary.length>160)
+  throw new Error("Template summary cannot exceed 160 characters.");
+ if(requestedSummary&&requestedSummary!==defaultSummary&&reason.length<10)
+  throw new Error("Explain why this template needs a custom summary (at least 10 characters).");
+ const derivedSummary=requestedSummary||defaultSummary;
  const payload={
   slug:clean(input.slug).toLowerCase(),title:clean(input.title),
   ...(derivedSummary?{summary:derivedSummary}:{}),
