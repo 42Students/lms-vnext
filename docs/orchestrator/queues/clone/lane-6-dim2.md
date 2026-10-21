@@ -259,30 +259,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/placements/college-report-navigation.tsx`
 - [x] `src/components/placements/learner-applications-browse.tsx`
 - [x] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-general-requests.tsx`
-- [ ] `src/components/placements/learner-own-drive-journey.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/learner-prep-assignment-cards.tsx`
-- [ ] `src/components/placements/learner-recent-placement-activity.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-bulk-offer-withdraw.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-job-create-workspace.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-bar-chart.tsx`
-- [ ] `src/components/placements/super-admin-drive-tabs.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-drawer.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/learner-general-requests.tsx`
+- [x] `src/components/placements/learner-own-drive-journey.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/learner-prep-assignment-cards.tsx`
+- [x] `src/components/placements/learner-recent-placement-activity.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-job-create-workspace.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-bar-chart.tsx`
+- [x] `src/components/placements/super-admin-drive-tabs.tsx`
+- [x] `src/components/placements/tpo-applicant-review-drawer.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
 - [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
 - [ ] `src/components/placements/tpo-general-requests-panel.tsx`
 - [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
