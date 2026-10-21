@@ -117,3 +117,8 @@
 
 ## Legacy v2 class search compatibility routes
 - `/api/v2/classes` and subroutes `/search`, `/popular`, `/program`, `/category`, `/exists`, `/:id/select`, `/refresh` require verified identity and scoped search entities independent of `/api/academics/sections` section CRUD. G2-5-014-001/-025/-037/-042/-082/-026/-030/-031/-032/-033/-034: decide versioned old-client support and build explicit entity mapping plus pagination, role checks, stable telemetry and refresh acknowledgement. No in-memory cache refresh or fake `Selection recorded` is permitted on the create route. The current handler returns an actionable 400 on missing cohort scope, not legacy global authorization response.
+
+## Batch promotion preview impact enrichment and graduation
+- `src/modules/academics/college-batch-promotion-service.ts` and callers in college/admin batch-promotion pages — G2-9-028-034/G2-9-022-034: compute authorized distinct class count and old-only vs shared faculty deactivation forecast in the preview, pass explicit counts into `CollegePromotionConfirmation` with no guessed values. Existing confirmation now displays safe counts and version/term/year while noting unknown faculty/class details.
+- Graduation-only G2-9-002-037 belongs to `src/components/admin/super-admin-batch-graduate-action.tsx` and separate `GRADUATE` server contract; preserve closeable error/Retry and do not route graduation to PROMOTE.
+- Dirty cancel G2-9-002-029/-040 belongs to editable batch-promotion selection form, not this final read-only `ConfirmDialog` (only immutable props); add explicit discard prompt when unsaved editable year/status fields exist.
