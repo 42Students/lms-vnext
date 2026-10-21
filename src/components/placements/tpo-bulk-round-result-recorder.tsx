@@ -9,7 +9,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {resolveBulkRoundLearnerTokens} from "@/modules/placements/tpo-bulk-round-result-model";
@@ -49,6 +49,7 @@ export function TpoBulkRoundResultRecorder({
   const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
   const [failUnselected,setFailUnselected]=useState(false);
   const [busy, setBusy] = useState(false);
+  const stageInFlight = useRef(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
@@ -73,7 +74,7 @@ export function TpoBulkRoundResultRecorder({
   }
 
   async function stageSelected(confirmed=false) {
-    if (busy || selected.length === 0 || pendingTotal > 25 ||
+    if (busy || stageInFlight.current || selected.length === 0 || pendingTotal > 25 ||
       ((outcome !== "PASS" || failUnselected) && message.trim().length === 0) ||
       (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
       setError(outcome==="HOLD"&&(!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000)
@@ -104,6 +105,7 @@ export function TpoBulkRoundResultRecorder({
     }
     if(!confirmed){setConfirmOpen(true);return;}
 
+    stageInFlight.current = true;
     setReportedOutcomeByApplicant(Object.fromEntries(entries.map(entry=>[entry.result.applicationId,entry.result.outcome])));
     setBusy(true);
     setError(null);
@@ -131,6 +133,7 @@ export function TpoBulkRoundResultRecorder({
         "refresh the page and check individual statuses before retrying.",
       );
     } finally {
+      stageInFlight.current = false;
       setBusy(false);setConfirmOpen(false);
     }
   }
@@ -258,7 +261,7 @@ export function TpoBulkRoundResultRecorder({
           </Button>
         </>
       )}
-      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} pending={busy}
+      <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!busy)setConfirmOpen(next);}} pending={busy}
         title={"Stage "+pendingTotal+" result(s) as "+({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome])+"?"}
         description={(failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"")+"Each successful result will be audited individually. This does NOT publish results; a completed round requires separate APPLY confirmation. Some rows may succeed even if others fail. Continue?"}
         confirmLabel="Review and confirm staged results" onConfirm={()=>void stageSelected(true)}/>
