@@ -109,3 +109,18 @@ export const tenantDomainActionSchema = z.object({
 export type CreateTenantDomainInput = z.infer<
   typeof createTenantDomainInputSchema
 >;
+
+/** Legacy TenantAdminController conflict vocabulary and actionable guidance.
+ * The registered domain-service must continue enforcing the UNIQUE host
+ * claim and verified-before-primary rule; mapping text is never a permission
+ * or validation bypass. */
+export function tenantDomainLegacyConflict(errorCode: string):
+  {status:409;error:"HOST_ALREADY_EXISTS"|"DOMAIN_NOT_VERIFIED";message:string}|null {
+ if(errorCode==="HOST_CONFLICT"||errorCode==="HOST_ALREADY_EXISTS")
+  return {status:409,error:"HOST_ALREADY_EXISTS",
+   message:"This address is already registered to another college."};
+ if(errorCode==="DOMAIN_NOT_VERIFIED")
+  return {status:409,error:"DOMAIN_NOT_VERIFIED",
+   message:"Verify this address before making it the main one."};
+ return null;
+}

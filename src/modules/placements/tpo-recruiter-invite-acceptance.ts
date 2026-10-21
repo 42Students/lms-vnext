@@ -70,3 +70,33 @@ export async function acceptRecruiterInvite(
   });
   if (!won) throw new RecruiterInviteError("INVITE_INVALID");
 }
+
+/** Safe read-only state for an authenticated recruiter's pending invitations.
+ * This mapper consumes already-authorized rows; it cannot discover or accept
+ * invitations by email and does not expose the bearer token or token hash.
+ * The owner must add a scoped query and CAS-backed acceptance endpoint before
+ * mounting a consent panel. */
+export type RecruiterPendingInviteRow = Readonly<{
+ id:string;
+ collegeName:string;
+ companyName:string;
+ invitedAt:Date;
+ expiresAt:Date;
+ alreadyAccepted:boolean;
+}>;
+export function projectRecruiterPendingInvites(
+ rows:readonly RecruiterPendingInviteRow[],
+ now=new Date(),
+) {
+ return rows.filter(row=>!row.alreadyAccepted &&
+   row.expiresAt.getTime()>now.getTime() &&
+   row.invitedAt.getTime()<=now.getTime())
+  .map(row=>({
+   id:row.id,
+   collegeName:row.collegeName,
+   companyName:row.companyName,
+   invitedAt:row.invitedAt.toISOString(),
+   expiresAt:row.expiresAt.toISOString(),
+   actionLabel:"Review invitation",
+  }));
+}
