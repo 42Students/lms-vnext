@@ -32,7 +32,12 @@ export function DepartmentActions({
   const [discardOpen, setDiscardOpen] = useState(false);
   const [archiveError, setArchiveError] = useState("");
   const [editError, setEditError] = useState("");
-  const hasDependencies = usage === null || usage === undefined || (usage.programs + usage.courses + usage.faculty) > 0;
+  const countsUnknown=usage===null||usage===undefined;
+  const hasDependencies=countsUnknown||Boolean(usage&&(usage.programs+usage.courses+usage.faculty)>0);
+  const dependencyDetail=countsUnknown?"Dependency counts unavailable — refresh to retry.":
+    [usage?.programs?usage.programs+" linked programs":null,
+     usage?.courses?usage.courses+" linked courses":null,
+     usage?.faculty?usage.faculty+" faculty assignments":null].filter(Boolean).join(", ");
   function requestEditClose() {
     if (pending) return;
     if (nextName.trim() !== name) setDiscardOpen(true);
@@ -156,32 +161,23 @@ export function DepartmentActions({
   return (
     <>
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] print:hidden sm:flex-row sm:items-center md:justify-end">
-      <Button variant="secondary" size="sm" disabled={pending}
-        aria-label={"Edit department "+name} title="Edit department"
-        onClick={() => {setNextName(name);setEditError("");setOpen(true);}}>
-        <span aria-hidden="true">✎</span> {DEPARTMENT_COPY.editButton}
+      <Button variant="ghost" size="icon-sm" disabled={pending}
+        aria-label={"Edit department "+name} title={"Edit department "+name}
+        onClick={()=>{setNextName(name);setEditError("");setOpen(true);}}>
+        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16.5 3.5l4 4L9 19H5v-4L16.5 3.5z"/></svg>
       </Button>
-      <Button variant="secondary" size="sm" disabled={pending||hasDependencies}
-        aria-label={"Archive department "+name}
-        title={hasDependencies?"Resolve linked programs, courses and faculty or refresh unknown counts before archiving.":"Archive this department"}
+      <Button variant="ghost" size="icon-sm" disabled={pending||hasDependencies}
+        aria-label={"Delete department "+name} title={hasDependencies?dependencyDetail:"Delete department "+name+" (soft archive)"}
+        className="text-[var(--lms-error)]"
         onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>
-        <span aria-hidden="true">⌫</span> Archive
+        <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v7m4-7v7"/></svg>
       </Button>
-      <Dropdown label="Department actions" trigger="More" align="end" mobileSheet triggerClassName="md:!min-h-9">
-        <Menu className="w-full min-w-0">
-          <MenuItem disabled={pending || hasDependencies}
-            title={hasDependencies ? "Move or resolve its programs, courses and faculty assignments before archiving." : "Archive this department"}
-            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
-            Delete Department
-          </MenuItem>
-        </Menu>
-      </Dropdown>
-      <Button size="sm" type="button" variant="danger" disabled={pending||hasDependencies}
-        title={hasDependencies?"Delete requires no active programs, courses or faculty assignments":"Delete (soft archive) department"}
-        onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>Delete</Button>
+      {countsUnknown?<Button type="button" size="sm" variant="secondary" disabled={pending}
+        aria-label={"Refresh dependency counts for "+name} onClick={()=>router.refresh()}>Refresh counts</Button>:null}
       </div>
       {archiveError&&!archiveOpen?<Alert tone="error" title="Department was not archived" className="mt-2">
         <p>{archiveError}</p>
+        {dependencyDetail?<p>{dependencyDetail}</p>:null}
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="secondary" disabled={pending||hasDependencies}
             onClick={()=>{setArchiveOpen(true);setArchiveError("");}}>Retry archive</Button>
@@ -248,7 +244,7 @@ export function DepartmentActions({
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         dismissible={!pending}
         title="Delete department"
-        description={`Delete ${name}? This is a soft delete. It can be done only after moving all linked programs, courses and faculty assignments.`}
+        description={`Delete ${name}? This is a soft delete. ${dependencyDetail||"No linked dependencies remain."}`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
