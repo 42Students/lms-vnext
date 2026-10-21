@@ -18,7 +18,7 @@ export function TpoProfileRefresh() {
         setNotice("");
         startTransition(() => {
           router.refresh();
-          setNotice("Profile refreshed. If information is outdated, ask your college administrator.");
+          setNotice("Requested the latest profile details. If information is outdated, ask your college administrator.");
         });
       }}>
       {pending ? "Refreshing profile…" : "Refresh profile"}
