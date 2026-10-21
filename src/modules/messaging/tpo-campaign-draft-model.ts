@@ -10,6 +10,16 @@ export const tpoCampaignDraftSchema=z.strictObject({
  templateKey:z.string().trim().min(2).max(160)
   .refine(isCampaignTemplateKey,"Use a provisioned, non-OTP campaign template"),
 });
+/** Legacy form boundary: explicit labels, maximum lengths and optional recipient
+ * selection. The provider-approved template key is never synthesized. */
+export const TPO_CAMPAIGN_DRAFT_FIELDS=[
+ {name:"title",label:"Campaign title",maxLength:160,required:true},
+ {name:"subject",label:"Email subject",maxLength:200,required:true},
+ {name:"body",label:"Email body",maxLength:10000,required:true},
+ {name:"segment",label:"Recipients",maxLength:null,required:true},
+ {name:"selectedLeadIds",label:"Selected recruiters",maxLength:100,required:false},
+ {name:"templateKey",label:"Verified email template",maxLength:160,required:true},
+] as const;
 export const CAMPAIGN_DRAFT_UNAVAILABLE="Campaign drafts are not ready. Your college needs registered campaign draft storage and a verified recruiter CRM before campaign records can be saved.";
 export const CAMPAIGN_DELIVERY_UNAVAILABLE="Campaign delivery is not enabled. A dedicated non-OTP campaign template, provider, suppression checks and delivery receipts must be verified before sending.";
 

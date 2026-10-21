@@ -27,6 +27,17 @@ export const SEMESTER_COPY = {
  * the legacy message placement. Inline forms keep validation errors; a
  * second success notice should not duplicate an already shown toast.
  */
+/** Only a safe local message is rendered, never raw database relation names,
+ * private SQL constraints or college identifiers from a failed mutation. */
+export function semesterSafeError(code:string){
+ const errors:Record<string,string>={
+  SEMESTER_NAME_TAKEN:"A semester with this name already exists. Choose another name.",
+  SEMESTER_NOT_FOUND:"This semester is no longer available. Refresh the list.",
+  SEMESTER_HAS_MAPPINGS:"Remove linked course mappings before deleting this semester.",
+  SEMESTER_HAS_BATCHES:"Move or complete linked batches before deleting this semester.",
+ };
+ return errors[code]??"Couldn't save the semester. Check the fields and try again.";
+}
 export const SEMESTER_SUCCESS_FEEDBACK="TOAST" as const;
 
 /** Legacy table shorthand for a numbered semester, for example `Sem 3`. */

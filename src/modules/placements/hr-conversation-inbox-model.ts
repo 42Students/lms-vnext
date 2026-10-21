@@ -33,6 +33,18 @@ export function onlyUnreadRecruiterThreads<T extends {id:string}>(
  rows:readonly T[],unreadIds:ReadonlySet<string>,enabled:boolean,
 ):T[]{return enabled?rows.filter(row=>unreadIds.has(row.id)):[...rows];}
 
+export function recruiterUnreadGlobalSummary<T extends {id:string;unreadCount?:number|null}>(
+ rows:readonly T[],authorizedThreadIds:ReadonlySet<string>){
+ const unique=new Set<string>();let unread=0,threads=0;
+ for(const row of rows){
+  if(unique.has(row.id)||!authorizedThreadIds.has(row.id))continue;
+  unique.add(row.id);const n=row.unreadCount??0;
+  if(Number.isSafeInteger(n)&&n>0){unread+=n;threads++;}
+ }
+ return {unread,threads};
+}
+/** When lastMessageAt is null, the thread remains in creation chronology.
+ * Archived or withdrawn drives are filtered by caller-authorized job scope. */
 export function orderRecruiterConversations<T extends {
  id:string;lastMessageAt:Date|null;createdAt:Date;
 }>(rows:readonly T[],order:"LATEST"|"OLDEST"):T[]{

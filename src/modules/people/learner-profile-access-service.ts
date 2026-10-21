@@ -75,6 +75,18 @@ export async function requireStaffLearnerProfileReadAccess(
  if(!teaching)throw new AuthorizationError("people.manage");
  return {membershipId:learner.id,collegeId:learner.collegeId,reason:"CURRENT_TEACHER" as const};
 }
+/** User-visible outcome after the same permission checks as the underlying
+ * read. A missing own-profile row is different from a denied/foreign ID, but
+ * that distinction must not be exposed to unauthorized callers. */
+export function learnerProfileReadFeedback(result:"OWN_MISSING"|"DENIED"|"UNAVAILABLE"){
+ if(result==="OWN_MISSING")return {title:"Profile not set up yet",
+  description:"Your learner details are not available yet. Contact your College Admin to complete enrollment.",
+  retryable:false};
+ if(result==="UNAVAILABLE")return {title:"Could not load your profile",
+  description:"Your profile service is temporarily unavailable. Try again.",retryable:true};
+ return {title:"Profile access denied",
+  description:"You don't have permission to view this profile.",retryable:false};
+}
 export function learnerProfileIdentityDenial(){
  return "Identity details are restricted to learners and college administrators.";
 }

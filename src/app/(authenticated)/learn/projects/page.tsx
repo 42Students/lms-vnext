@@ -153,7 +153,7 @@ export default async function LearnerProjectsPage({
   const rows = filtered.slice((page - 1) * size, page * size);
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div role="region" aria-label="Learner project directory" aria-live="polite" className="min-w-0 space-y-5">
       <PageHeader title="Projects" description="Choose a project to open its workspace." />
       {invalidFilters ? <Banner tone="warning" role="status">
         Some project filters were invalid and have been reset to safe defaults.
