@@ -167,3 +167,46 @@ export async function reviewAdminProjectSubmission(
   return {submission:updated,review,message:adminDeliveryToast(input.action)};
  });
 }
+
+/** Merge normalized revisions, immutable review decisions and delivery events
+ * into the single chronological story provided by the legacy workspace. */
+export async function listAdminProjectDeliveryHistory(ctx:RequestContext,rawProjectId:string){
+ const scope=await requireProjectManageAccess(ctx,id.parse(rawProjectId));
+ const [versions,reviews,events]=await Promise.all([
+  getDb().select({
+   id:projectSubmissions.id,version:projectSubmissions.version,
+   status:projectSubmissions.status,summary:projectSubmissions.summary,
+   createdAt:projectSubmissions.createdAt,createdBy:projectSubmissions.createdByMembershipId,
+   submittedAt:projectSubmissions.submittedAt,submittedBy:projectSubmissions.submittedByMembershipId,
+  }).from(projectSubmissions).where(eq(projectSubmissions.projectId,scope.project.id)),
+  getDb().select().from(projectSubmissionReviews)
+   .where(eq(projectSubmissionReviews.projectId,scope.project.id)),
+  getDb().select().from(projectDeliveryEvents)
+   .where(eq(projectDeliveryEvents.projectId,scope.project.id)),
+ ]);
+ const entries=[
+  ...versions.flatMap(item=>[
+   {id:item.id+":created",submissionId:item.id,action:"DRAFT_SAVED",
+    occurredAt:item.createdAt,actorMembershipId:item.createdBy,feedback:null,
+    snapshot:{version:item.version,status:"DRAFT",summary:item.summary}},
+   ...(item.submittedAt?[{
+    id:item.id+":submitted",submissionId:item.id,action:"SUBMITTED",
+    occurredAt:item.submittedAt,actorMembershipId:item.submittedBy,feedback:null,
+    snapshot:{version:item.version,status:"SUBMITTED",summary:item.summary},
+   }]:[]),
+  ]),
+  ...reviews.map(row=>({
+   id:row.id,submissionId:row.submissionId,action:row.decision,
+   occurredAt:row.reviewedAt,actorMembershipId:row.reviewedByMembershipId,
+   feedback:row.feedback,snapshot:{decision:row.decision,reviewedByUserId:row.reviewedByUserId},
+  })),
+  ...events.map(row=>({
+   id:row.id,submissionId:row.submissionId,
+   action:row.legacyAction??row.eventType,occurredAt:row.occurredAt,
+   actorMembershipId:row.actorMembershipId,feedback:row.legacyFeedback??row.reason,
+   snapshot:{status:row.legacyStatus??null,notes:row.legacyNotes??null},
+  })),
+ ];
+ return entries.sort((a,b)=>a.occurredAt.getTime()-b.occurredAt.getTime()||
+  a.id.localeCompare(b.id));
+}
