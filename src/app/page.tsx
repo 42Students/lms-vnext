@@ -99,11 +99,22 @@ export default async function HomePage({
     : null;
 
   const requested = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
+  const requestHeaders = await headers();
+  const tenant = await resolveRequestTenant(requestHeaders.get("host"));
+  // Canonicalize only to an independently verified PRIMARY for the exact
+  // resolved college. Do not trust X-Forwarded-Host or raw destination strings.
+  // The router serves only root or its /login rewrite here; these are the only
+  // paths allowed to cross hosts. Browsers carry the current fragment forward
+  // on redirects that omit a replacement fragment.
+  if (tenant.kind === "college" && tenant.shouldRedirectToCanonicalHost && tenant.canonicalHost) {
+    const pagePath = requestHeaders.get("x-lms-path")?.split("?")[0] === "/login" ? "/login" : "/";
+    const destination = new URL(pagePath, "https://" + tenant.canonicalHost);
+    if (authValue) destination.searchParams.set("auth", authValue);
+    if (recruiterValue) destination.searchParams.set("recruiter", recruiterValue);
+    if (requested) destination.searchParams.set("returnTo", requested);
+    redirect(destination.toString());
+  }
   if (await isSignedIn()) redirect(safeReturnTo(requested) ?? "/dashboard");
-
-  const tenant = await resolveRequestTenant(
-    (await headers()).get("host"),
-  );
   // PUB-auth-public-39: platform visitors see the minimal public landing,
   // while college hosts and explicit sign-in links keep the OTP entry screen.
   // The proxy supplies the canonical path; do not use untrusted forwarded hosts.
