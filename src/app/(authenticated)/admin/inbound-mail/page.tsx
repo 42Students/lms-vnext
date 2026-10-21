@@ -7,7 +7,7 @@ import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {requirePermission} from "@/modules/permissions/policy";
-import {listInboundMailForAdmin} from "@/modules/inbound-mail/admin-service";
+import {listInboundMailForAdmin, INBOUND_ROUTING_METADATA_READY} from "@/modules/inbound-mail/admin-service";
 import {inboundMailListQuerySchema} from "@/modules/inbound-mail/message-model";
 import {InboundMailList} from "@/components/admin/inbound-mail-list";
 
@@ -18,14 +18,42 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  requirePermission(context,"admin-scope.select");
  const header=<PageHeader eyebrow="Super Admin" title="Inbound mail" description="Private incoming messages. No automatic replies or outbound sends are performed."/>;
  const params=await searchParams;
+ // Inbox payloads may contain messages addressed to other organizations.
+ // The persisted vNext inbox contract is deliberately global-only.
+ if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+  return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+    <Alert tone="warning">
+      Inbound mail is available only in the global Super Admin scope.
+      Clear the organization and college selection in the header to continue.
+      No other college's private incoming messages were loaded.
+    </Alert>
+  </div>;
+ const oldShow=one(params.show);
+ const mappedShow=oldShow==="OPEN"?"NEW":oldShow==="DONE"?"RESOLVED":oldShow==="ALL"?"ALL":null;
+ if(oldShow==="REPLIES"||oldShow==="POSTED")
+  return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+    <Alert tone="warning">
+      Posted to conversations is not available. Message routing outcomes have not been migrated to the inbox schema;
+      a Being handled message must not be represented as a posted reply.
+      {" "}<Link href="/admin/inbound-mail" className="font-semibold text-primary-text underline">Return to To read</Link>
+    </Alert>
+  </div>;
  // Duplicate/repeated query keys are ambiguous across proxies and URLs.
  // Reject them instead of choosing a different filter value by render order.
- const repeated=["status","q","recipient","page"].some(key=>
+ const repeated=["status","q","recipient","page","show"].some(key=>
    Array.isArray(params[key]));
- const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
- if(repeated||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+ const parsed=inboundMailListQuerySchema.safeParse({status:one(params.status)??mappedShow??"NEW",q:one(params.q),recipient:one(params.recipient),page:one(params.page)});
+ if(repeated||(oldShow&&!mappedShow)||(oldShow&&params.status!==undefined)||!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
    <Alert tone="warning">Invalid filters. <Link href="/admin/inbound-mail" className="inline-flex items-center min-h-11 md:min-h-9 lms-inline-link font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Reset</Link></Alert></div>;
- const data=await listInboundMailForAdmin(context,parsed.data);
+ const result=await listInboundMailForAdmin(context,parsed.data)
+  .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
+ if(!result.ok)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+   <Alert tone="warning">
+     Couldn't load inbound mail. Please try again. No unverified message rows are displayed.
+     {" "}<Link href="/admin/inbound-mail" className="font-semibold text-primary-text underline">Retry inbox</Link>
+   </Alert>
+ </div>;
+ const data=result.value;
  if(!data.available)return <div className="min-w-0 space-y-4 md:space-y-6">{header}
   <Alert tone="warning">
    <p>Inbound mail storage has not been registered or deployed. The inbox is unavailable; this is not a zero-message result.</p>
@@ -46,6 +74,11 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
  const tabs=[{value:"NEW",label:"To read",count:data.toReadCount},{value:"TRIAGED",label:"Being handled",count:null},
   {value:"RESOLVED",label:"Done",count:null},{value:"ALL",label:"All",count:null}] as const;
  return <div className="min-w-0 space-y-4 md:space-y-6">{header}
+  {!INBOUND_ROUTING_METADATA_READY?<Alert tone="info">
+    Posted to conversations cannot be shown yet: the verified routing outcome is not stored in this inbox.
+    Being handled tracks manual triage only; it does not confirm a recruiter reply was delivered.
+    Only persisted inbox messages appear here.
+  </Alert>:null}
   <Tabs ariaLabel="Inbound mail views" value={parsed.data.status} renderPanel={false}
     items={tabs.map(tab=>{
      const url=new URLSearchParams(base);url.set("status",tab.value);
