@@ -33,7 +33,8 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   try{
    const r=await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId)+
     "/rollback","POST",{versionId:selectedVersion.id,expectedTemplateVersion:currentVersion,
-      confirmed:true}) as {version:{version:number}};
+      confirmed:true,expectedAssignedCollegeCount:impact.assignedCollegeCount,
+      expectedPinnedWorkspaceCount:impact.pinnedWorkspaceCount}) as {version:{version:number}};
    setNotice("Template rolled back to version "+selectedVersion.version+
     " as new version "+r.version.version+".");
    showToast({tone:"success",title:"Template rolled back",
@@ -74,8 +75,8 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   </label>
   <p className="text-xs text-muted-foreground">
     Review is tied to this template, selected snapshot and current version.
-    If someone publishes another version before you confirm, the server must reject
-    the stale expectedTemplateVersion rather than silently accept a different diff.
+    If the template version, assigned colleges, or pinned workspace count changes,
+    this reviewed impact preview is stale. Refresh and review before retrying.
   </p>
   <Button variant="secondary" type="button" disabled={!enabled||busy||!reviewed} onClick={()=>void rollback()}
    className="min-h-11 w-full sm:min-h-9 sm:w-auto">

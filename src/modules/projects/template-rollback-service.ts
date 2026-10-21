@@ -15,6 +15,8 @@ const rollbackSchema=z.strictObject({
  versionId:z.string().uuid(),
  expectedTemplateVersion:z.number().int().min(1),
  confirmed:z.literal(true),
+ expectedAssignedCollegeCount:z.number().int().min(0).optional(),
+ expectedPinnedWorkspaceCount:z.number().int().min(0).optional(),
 });
 
 /** Read-only blast-radius preview. No workspaces are mutated on content
@@ -73,6 +75,20 @@ export async function rollbackProjectTemplate(context:RequestContext,templateIdI
       eq(projectTemplateVersions.id,input.versionId))).limit(1);
   if(!prior)throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
   if(prior.version===template.currentVersion)throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
+  const [assigned,pinned]=await Promise.all([
+    tx.select({total:count()}).from(projectTemplateCollegeAssignments)
+      .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
+        isNull(projectTemplateCollegeAssignments.revokedAt))),
+    tx.select({total:count()}).from(projectInstances)
+      .where(eq(projectInstances.templateId,templateId)),
+  ]);
+  const assignedCollegeCount=Number(assigned[0]?.total??0);
+  const pinnedWorkspaceCount=Number(pinned[0]?.total??0);
+  if((input.expectedAssignedCollegeCount!==undefined&&
+       input.expectedAssignedCollegeCount!==assignedCollegeCount)||
+     (input.expectedPinnedWorkspaceCount!==undefined&&
+       input.expectedPinnedWorkspaceCount!==pinnedWorkspaceCount))
+    throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
   const blueprint=projectTemplateBlueprintSchema.parse(prior.blueprint);
   const now=new Date();
   const [updated]=await tx.update(projectTemplates).set({
@@ -92,11 +108,11 @@ export async function rollbackProjectTemplate(context:RequestContext,templateIdI
    summary:"Super Admin rolled back a project template version",
    metadata:{restoredFromVersion:prior.version,previousCurrentVersion:template.currentVersion,
     newCurrentVersion:updated.currentVersion,publishedVersionUnchanged:template.publishedVersion,
-    existingWorkspacesUnchanged:true},
+    existingWorkspacesUnchanged:true,assignedCollegeCount,pinnedWorkspaceCount,rollbackSemantics:"CONTENT_VERSION_ONLY"},
    groupKey:"template:"+template.id,
   });
   return {template:updated,version,restoredFromVersion:prior.version,
     impact:{existingWorkspaces:"unchanged",publishedVersion:template.publishedVersion,
-      currentVersion:updated.currentVersion}};
+      currentVersion:updated.currentVersion,assignedCollegeCount,pinnedWorkspaceCount,lifecycleUnchanged:template.status}};
  });
 }

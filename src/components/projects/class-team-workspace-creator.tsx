@@ -31,6 +31,7 @@ type CohortCreationOutcome={
  created:{projectId:string;title:string;learnerMembershipId:string}[];
  alreadyCovered:number;requested:number;
  individualResults:{membershipId:string;status:"CREATED"|"ALREADY_COVERED";projectId:string|null;title:string|null}[];
+ batchMode?:"ATOMIC";failedCount?:number;committed?:boolean;
 };
 
 
@@ -254,6 +255,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         primaryMentorMembershipId:primaryMentorMembershipId||undefined,initialStatus,
         teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
       }) as CohortCreationOutcome;
+      if(result.batchMode==="ATOMIC"&&result.committed!==true)
+        throw new Error("Creation was not committed. Refresh the roster before retrying.");
       setOutcome(result);
       setOutcomeRestored(false);setUnconfirmedRows([]);
       setOutcomeCheckedAt(new Date().toISOString());

@@ -99,7 +99,7 @@ export function CreateProjectTemplateControl() {
         tone: "success",
         title: "Template created",
         description:
-          "Draft version 1 is ready for review and publishing.",
+          "Review the draft before publishing.",
       });
       setOpen(false);
       reset();
@@ -314,6 +314,7 @@ export function ProjectTemplateActions({
    return()=>window.removeEventListener("project-template-editor-dirty",listener);
   },[templateId]);
   const missing=[
+   ...(!blueprint?["template version"]:[]),
    ...(blueprint&&!blueprint.overview.deliverables.length?["deliverables"]:[]),
    ...(blueprint&&!blueprint.sprints.length?["sprints"]:[]),
    ...(blueprint&&!blueprint.tasks.length?["tasks"]:[]),
@@ -336,7 +337,11 @@ export function ProjectTemplateActions({
     method: "POST" | "DELETE",
     body?: unknown,
   ) {
-    if(label==="Publish template"&&(overviewDirty||missing.length)){
+    if(overviewDirty&&["Publish template","Unpublish template","Archive template"].includes(label)){
+      showToast({tone:"error",title:"Save your overview changes before changing template status"});
+      return;
+    }
+    if(label==="Publish template"&&missing.length){
       showToast({tone:"error",title:overviewDirty?
        "Save your overview changes before publishing":"Complete the template before publishing",
        description:missing.length?"Missing "+missing.join(", "):"Save or discard your overview changes first."});
@@ -448,7 +453,8 @@ export function ProjectTemplateActions({
             size="sm"
             variant="secondary"
             loading={pending === "Unpublish template"}
-            disabled={pending !== null}
+            disabled={pending !== null || overviewDirty}
+            title={overviewDirty?"Save overview changes first":undefined}
             onClick={() =>
               void mutate(
                 "Unpublish template",
@@ -501,7 +507,8 @@ export function ProjectTemplateActions({
           <Button
             size="sm"
             variant="secondary"
-            disabled={pending !== null}
+            disabled={pending !== null || overviewDirty}
+            title={overviewDirty?"Save overview changes first":undefined}
             onClick={() =>
               setConfirmArchive(true)
             }
