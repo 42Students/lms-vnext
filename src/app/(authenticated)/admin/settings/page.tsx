@@ -77,7 +77,9 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     :null;
   const attendancePolicy=attendanceResult?.ok?attendanceResult.value:null;
   const scopeLabel=adminControlScopeTag(context.adminScope);
-  const documentedControls=allSections.reduce((sum,section)=>sum+section.items.length,0);
+  const documentedControls=allSections.reduce((sum,section)=>sum+section.items.filter(item=>
+    editorScope==="COLLEGE"?item.origin!=="PLATFORM":item.origin!=="COLLEGE").length,0);
+  const editingLabel=organizationOnly?"Disabled":editorData?.ready?"Available":"Select scope";
 
 
   return (
@@ -89,15 +91,24 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Authentication and privileged access checklist →</Link>}
       />
 
-      <section aria-label="Tenant Settings overview" className="min-w-0 border-b border-border pb-4">
-        <p className="text-sm font-semibold text-body">Runtime configuration · {scopeLabel}</p>
+      <section aria-label="Tenant Settings overview" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
+        <div className="flex flex-wrap items-center gap-3">
+          <p className="text-sm font-semibold text-body">Runtime configuration</p>
+          <span className="rounded-full border border-[var(--lms-primary)] bg-primary-subtle px-3 py-1 text-xs font-semibold text-primary-text">{scopeLabel}</span>
+        </div>
         <h2 className="mt-1 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Settings with explicit execution scope</h2>
+        <p className="text-sm leading-6 text-body">These values are not an inheritance tree: each backend reader asks for one exact scope. The page therefore keeps platform and college settings separate and blocks new organization-level values that nothing consumes.</p>
         <dl className="mt-3 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 md:grid-cols-3 md:divide-x md:divide-y-0">
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Documented controls</dt><dd className="mt-2 break-words text-xl font-semibold tabular-nums leading-7 text-[var(--lms-heading)]">{documentedControls} visible inventory settings</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored keys</dt><dd className="mt-2 font-semibold tabular-nums text-[24px] leading-[1.3] text-[var(--lms-heading)]">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
-          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Editing</dt><dd className="mt-2 break-words font-semibold text-[var(--lms-body-text)]">{editorData?.ready?scopeLabel:"Select an authorized scope"}</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Documented controls</dt><dd className="mt-2 break-words text-xl font-semibold tabular-nums leading-7 text-[var(--lms-heading)]">{documentedControls}</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored keys</dt><dd className="mt-2 font-semibold tabular-nums text-[24px] leading-[1.3] text-[var(--lms-heading)]">{editorData?.ready?editorData.entries.length:"Unavailable"}</dd></div>
+          <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Editing</dt><dd className="mt-2 break-words font-semibold text-[var(--lms-body-text)]">{editingLabel}</dd></div>
         </dl>
       </section>
+      <Banner tone="info" role="status">
+        <p className="font-semibold">Each setting applies at one level only</p>
+        <p className="mt-2">A setting is either platform-wide or per college, never both: a college does not fall back to the platform value, it falls back to the built-in default. Each setting below is listed only at the level where it takes effect.</p>
+        <p className="mt-2 text-xs">This screen is configuration values only. For organization or college setup, web addresses and branding, use <Link href="/admin/tenants" className="font-semibold underline">Tenant Setup</Link>.</p>
+      </Banner>
       <section
         role="status"
         aria-label="Settings scope"
@@ -120,15 +131,25 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         <p className="mt-2 text-sm leading-6 text-body">
           Global settings · Organization (no applicable setting overrides) · College settings
         </p>
-        {organizationOnly ? <Banner tone="warning" role="status" className="mt-3">
-          No setting applies at organization level. Clear the Super Admin safety scope
-          to edit global overrides, or select one college for college-level settings.
-        </Banner> : null}
+        {organizationOnly?<Banner tone="warning" role="status" className="mt-3">
+          <strong>No setting applies at organization level.</strong> No runtime reader consumes organization-level settings. Existing stored keys are for inspection or cleanup only; adding or saving ORG settings is disabled. Choose Global for platform-wide values or College for per-college settings.
+        </Banner>:null}
+        {context.adminScope?.collegeId?<Banner tone="warning" role="status" className="mt-3">
+          <strong>Clear the college in the header to edit platform-wide settings</strong>
+          <p className="mt-2">While a college is selected, platform-wide settings are locked, so a change for every college is never made by accident while working on one.</p>
+        </Banner>:null}
+        <div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+          <span className="text-sm font-semibold">Editing scope:</span>
+          <span className="rounded-md border border-border px-3 py-2 text-sm">{organizationOnly?"Organization — unused":editorScope==="COLLEGE"?"College settings":"Platform-wide settings"}</span>
+          <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Choose another scope</Link>
+          <Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">Refresh</Link>
+        </div>
       </section>
       {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
        <Banner tone="warning">
+        {organizationOnly?<p className="font-semibold">Select a college to view its settings.</p>:null}
         {editorResult&&!editorResult.ok
           ?"Settings could not be loaded or saved safely. Existing settings were not changed."
           :organizationOnly

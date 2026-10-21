@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import {DataTable} from "@/components/ui/data-table";
 import {Input} from "@/components/ui/input";
@@ -44,7 +45,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   if (!context.adminScope?.collegeId) {
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader  title="Semesters" />
-      <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its semesters." />
+      <Alert tone="warning" role="status"><strong>Select a college to manage semesters.</strong> The semester grid is college-scoped. Choose a college in the header to avoid showing stale data from another campus.</Alert>
     </div>;
   }
 
@@ -78,11 +79,17 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
       actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Semester–Course Mapping</Link>} />
     <AcademicSetupSteps step={3} showRefresh={false} />
-    <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
+    <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <section aria-label="Create New Semester" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5">
+        <h2 className="mb-4 text-lg font-semibold text-[var(--lms-heading)]">Create New Semester</h2>
+        <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
+      </section>
+      <div className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5">
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Semesters</h2>
     <section className="border-b border-border pb-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]" aria-label="Search semesters">
         <label className="grid min-w-44 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester or program
-          <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
+          <Input name="q" type="search" defaultValue={data.query.q} maxLength={100} placeholder="Search semesters"
             className="min-h-11 w-full min-w-0 md:min-h-9" />
         </label>
         <label className="grid min-w-40 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
@@ -128,24 +135,26 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </div>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
       <p role="status" className="m-0 break-words text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching semesters</p>
-      <DataTable
+      <div className="min-w-0 overflow-x-auto"><DataTable
         caption="Semesters"
         rows={data.items}
         getRowKey={row=>row.id}
         columns={[
           {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
           {key:"number",header:"Semester #",mobilePriority:"secondary",cell:row=>"Sem "+row.termNumber},
-          {key:"name",header:"Name",mobilePriority:"primary",cell:row=>row.name},
+          {key:"name",header:"Name",mobilePriority:"primary",cell:row=>row.name?.trim()||"Semester "+row.termNumber},
           {key:"credits",header:"Credits",mobilePriority:"secondary",cell:row=>row.mappedCredits??"—"},
           {key:"courses",header:"Courses",mobilePriority:"secondary",cell:row=>row.mappedCourses},
-          {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.isActive?"success":"neutral"}>{row.isActive?"Active":"Inactive"}</StatusBadge>},
+          {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.isActive?"info":"error"}>{row.isActive?"Active":"Inactive"}</StatusBadge>},
           {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeSemesterRowActions row={row}/>},
         ]}
         empty={<EmptyState title="No semesters found" description="No semesters match these filters. Create a program first, then add semesters."
           action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Clear filters</Link>}/>}
-      />
+      /></div>
     </section>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}
       hrefForPage={page=>pageHref({...data.query,page})} />
+      </div>
+    </div>
   </div>;
 }

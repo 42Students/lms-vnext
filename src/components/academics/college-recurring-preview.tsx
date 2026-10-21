@@ -6,7 +6,8 @@ import { Select } from "@/components/ui/select";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
-import { useState, useTransition, type FormEvent } from "react";
+import { useEffect, useState, useTransition, type FormEvent } from "react";
+import {useRouter} from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
@@ -31,12 +32,23 @@ export function CollegeRecurringPreview({
   classes, halls, faculty, deliveries, defaultSectionId = "",
 }: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[];
   defaultSectionId?: string }) {
+  const router=useRouter();
   const chosen = classes.find(item => item.id === defaultSectionId);
   const [sectionId, setSectionId] = useState(chosen?.id ?? "");
   const [title, setTitle] = useState("Class session");
   const [deliveryId, setDeliveryId] = useState("");
   const [skipped, setSkipped] = useState<Array<{localDate:string;reasons:string[]}>>([]);
   const [created, setCreated] = useState<number | null>(null);
+  const [requested,setRequested]=useState<number|null>(null);
+  const [savedSessionIds,setSavedSessionIds]=useState<string[]>([]);
+  const [discardOpen,setDiscardOpen]=useState(false);
+  const [dirty,setDirty]=useState(false);
+  useEffect(()=>{
+   if(!dirty)return;
+   const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+   window.addEventListener("beforeunload",warn);
+   return ()=>window.removeEventListener("beforeunload",warn);
+  },[dirty]);
   const [lastPreviewKey, setLastPreviewKey] = useState("");
   function previewKey() {
     return JSON.stringify({sectionId,from,to,weekdays,startTime,endTime,title,facultyId,hallId,deliveryId});
@@ -57,6 +69,7 @@ export function CollegeRecurringPreview({
   const invalidRange = Boolean((from && to && from > to) || (startTime && endTime && endTime <= startTime));
   function onClass(id: string) {
     setSectionId(id);
+    setDirty(true);
     setDeliveryId("");
     const entry = classes.find((item) => item.id === id);
     setFrom(entry?.periodStart ?? "");
@@ -68,6 +81,7 @@ export function CollegeRecurringPreview({
   }
   function preview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setDirty(true);
     if (pending || invalidRange) return;
     setError("");
     setResult(null);
@@ -112,7 +126,7 @@ export function CollegeRecurringPreview({
     setSkipped([]);
     startTransition(async () => {
       try {
-        const value=await apiFetch<{created?:number;skipped?:Array<{localDate:string;reasons:string[]}>}>(
+        const value=await apiFetch<{created?:number;requested?:number;sessionIds?:string[];skipped?:Array<{localDate:string;reasons:string[]}>}>(
           "/api/academics/sections/recurring-execute",{
           method: "POST", headers: {"content-type":"application/json"},
           body: JSON.stringify({
@@ -123,6 +137,9 @@ export function CollegeRecurringPreview({
           }),
         });
         setCreated(value.created ?? 0);
+        setRequested(value.requested ?? result.slots.length);
+        setSavedSessionIds(value.sessionIds ?? []);
+        setDirty(false);
         setSkipped(value.skipped ?? []);
         setResult(null);
         setLastPreviewKey("");
@@ -133,13 +150,17 @@ export function CollegeRecurringPreview({
   }
   return (
     <section className="min-w-0 space-y-[var(--lms-space-4)]">
-      <p className="max-w-[75ch] text-sm text-body leading-[22px]">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div><h2 className="text-lg font-semibold">Create recurring class schedule</h2>
+         <p className="max-w-[75ch] text-sm text-body leading-[22px]">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p></div>
+        <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):router.push("/college/classes")}>Cancel</Button>
+      </div>
       {classes.length === 0 ? (
         <Alert tone="info">
           No active classes are registered for this college. Create a class before previewing a schedule.
         </Alert>
       ) : (
-        <form onSubmit={preview} aria-busy={pending} className="min-w-0 space-y-[var(--lms-space-4)]">
+        <form onSubmit={preview} onChange={()=>setDirty(true)} aria-busy={pending} className="min-w-0 space-y-[var(--lms-space-4)]">
           <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session title
             <Input disabled={pending} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}
@@ -184,6 +205,12 @@ export function CollegeRecurringPreview({
           </div>
           <fieldset className="min-w-0 space-y-[var(--lms-space-3)]">
             <legend className="text-sm font-semibold text-body">Repeat on weekdays</legend>
+            <p className="text-xs text-muted-foreground">Day names map to Sunday=0 through Saturday=6, in India Standard Time.</p>
+            <label className="flex min-h-11 items-center gap-2 text-sm font-medium">
+             <Checkbox disabled={pending} checked={weekdays.length===7}
+               onChange={e=>{setDirty(true);setWeekdays(e.target.checked?[0,1,2,3,4,5,6]:[]);}} />
+             Every day
+            </label>
             <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] sm:grid-cols-4 lg:grid-cols-7">
               {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, index) => (
                 <label key={day} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-[var(--lms-space-3)] text-sm text-body">
@@ -221,7 +248,8 @@ export function CollegeRecurringPreview({
         </form>
       )}
       {created !== null ? <Alert tone="success" className="space-y-2">
-        <p>Created {created} scheduled sessions.</p>
+        <p>Requested: {requested??created+skipped.length} · Created: {created} · Failed or skipped: {skipped.length}</p>
+        {savedSessionIds.length>0?<p className="text-xs text-body">Created session IDs: {savedSessionIds.join(", ")}</p>:null}
         {skipped.length > 0 && <>
           <p className="font-semibold">These dates were skipped:</p>
           <ul className="list-inside list-disc">{skipped.map(item =>
@@ -254,6 +282,10 @@ export function CollegeRecurringPreview({
           </div>
         )}
       </section> : null}
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title="Discard recurring schedule changes?"
+        description="Your unsaved session pattern and preview will be lost."
+        confirmLabel="Discard changes" onConfirm={()=>{setDirty(false);setDiscardOpen(false);router.push("/college/classes");}}/>
       <ConfirmDialog open={confirming} onOpenChange={setConfirming}
         title="Create recurring sessions?"
         description={`Create ${result?.ready ?? 0} clear sessions? Conflicting dates will be skipped and listed after saving.`}
