@@ -73,6 +73,7 @@ export function ProjectAdminFilters({
   includeRiskSort = false,
   legacyWorkspaces = false,
   atRiskHref = "/admin/projects/at-risk",
+  searchParamName,
   filterView,
 }: {
   query: ProjectAdminCollectionQuery;
@@ -80,6 +81,7 @@ export function ProjectAdminFilters({
   includeRiskSort?: boolean;
   legacyWorkspaces?: boolean;
   atRiskHref?:string;
+  searchParamName?:"q"|"search";
   filterView?: "NOT_SUBMITTED";
 }) {
   return (
@@ -90,7 +92,7 @@ export function ProjectAdminFilters({
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Search
         <Input
-          name={legacyWorkspaces ? "search" : "q"}
+          name={searchParamName??(legacyWorkspaces ? "search" : "q")}
           type="search"
           defaultValue={query.q ?? ""}
           placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
