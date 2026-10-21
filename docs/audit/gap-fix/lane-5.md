@@ -259,3 +259,24 @@
 
 ## Packet 53 — Project template historical comparison
 - Historical comparison now marks unreadable snapshot specifically and never exposes rollback on failed comparison. The rollback control requires explicit "I reviewed these changes" acknowledgement, keyed to template+selected snapshot+current template version; mutation still sends expectedTemplateVersion to server and prompts again. Copy discloses that lifecycle publication/archive fields are not restored from blueprint snapshots. Full server-side compare digest token and historical full-snapshot migration require backend changes. No code/tests/CI run.
+
+## Packet 54 — Super Admin project workspace deep-link
+- Added strict UUID recovery with back navigation and preserved only whitelisted, bounded from/reason query context when redirecting legacy project index to canonical Summary. Added legacy workspace Audit alias route that validates/authorizes exact project before redirect to canonical Audit section. No unsafe arbitrary parameter reflection or cross-college lookup.
+- G2-20-028-010/020, G2-4-029-001 and G2-20-028-007 reviewed. No app execution, tests or CI.
+
+## Packet 55 — Super Admin project templates index
+- Restored current-page CSV filename project-templates.csv and four-column Title/Version/Lifecycle/Summary contract; clearly labeled current permissioned page vs all filtered results (G2-6-029-048).
+- Exact Templates could not be loaded recovery label, existing scoped Retry filters preserved (G2-6-029-028).
+- Archive success toast "Template archived" and fallback "Failed to archive template" (G2-6-029-029/031). Reconciliation of async current list uses router.refresh rather than premature optimistic deletion. No app execution, tests or CI.
+
+## Packet 56 — College branding setup
+- Branding preview, stored policy and college identity now settle independently; authorized failures continue denying access and unavailable data shows exact "Couldn't load branding for this college." with retry and no partial form state. Added warning to save edits before scope switch because page-local editor is per selected college. G2-9-030-025/029 page-local changes; G2-5-030-018 cross-tab dirty/busy registry deferred. No code/test/CI run.
+
+## Packet 57 — Super Admin legacy hiring dashboard
+- Legacy /admin/placements/hiring now redirects to the canonical scoped /admin/placements/analytics hiring metrics, funnel and company report. Allows only bounded analytic filter keys; rejects arbitrary query passthrough. Existing Analytics service retains unified validated counts rather than synthetic old GET shapes. G2-10-008-001 page route parity addressed; G2-10-008-063 remains a service/API compatibility handoff. No code/test/CI run.
+
+## Packet 58 — Selected-college Super Admin applications
+- No scope now shows exact legacy "Organization context required for job application search." and a selected-college recovery cue, rather than querying any applications. An optional filter lookup failure no longer hides the protected directory. Existing item links lead to authorized application detail and stage history; private contact/resume/notes remain protected pending explicit need-to-know service. Reviewed G2-11-030-009 and G2-12-014-023; first requires permissioned detail service handoff. No code/tests/CI run.
+
+## Packet 59 — Candidate interviews canonical route
+- The old Super Admin Interviews entry now maps to the already implemented selected-college Calendar candidate appointment list (default agenda view, bounded whitelisted date/company/job/round-kind filters), rather than prioritizing round-level records that lack Confirmed/Reschedule/No Show lifecycle. Calendar already reads actual bookings with independent retry. Existing detailed round pages remain addressable. G2-5-007-012/028 page route resolved via canonical consumer; same-scope stale list retention remains calendar-service handoff. No code/tests/CI run.

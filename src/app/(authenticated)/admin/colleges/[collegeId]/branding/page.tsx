@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
+import {Banner} from "@/components/ui/banner";
 import {Disclosure} from "@/components/ui/disclosure";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { CollegeBrandingPreview } from "@/components/admin/college-branding-preview";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
 import {CollegeLogoUploader} from "@/components/admin/college-logo-uploader";
@@ -27,9 +29,29 @@ export default async function SuperAdminCollegeBrandingPage({
   }
 
 
-  const branding = await getSuperAdminCollegeBrandingPreview(context, collegeId);
-  if (!branding) notFound();
-  const [persisted,tenant]=await Promise.all([getCollegeBranding(context,collegeId),getSuperAdminTenantLifecycleDetail(context,collegeId)]);
+  const [previewResult,persistedResult,tenantResult]=await Promise.allSettled([
+    getSuperAdminCollegeBrandingPreview(context,collegeId),
+    getCollegeBranding(context,collegeId),
+    getSuperAdminTenantLifecycleDetail(context,collegeId),
+  ]);
+  for(const value of [previewResult,persistedResult,tenantResult]){
+    if(value.status==="rejected"&&value.reason instanceof AuthorizationError)throw value.reason;
+  }
+  if(previewResult.status==="fulfilled"&&!previewResult.value)notFound();
+  if(previewResult.status==="rejected"||persistedResult.status==="rejected"||
+    tenantResult.status==="rejected")return <div className="min-w-0 space-y-4">
+    <PageHeader title="Look and feel"
+      actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College overview"/>}/>
+    <ErrorState title="Couldn't load branding for this college."
+      description="Saved branding and tenant identity could not be verified. No unsaved changes were applied."
+      action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/branding"}
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        Retry branding
+      </Link>}/>
+  </div>;
+  const branding=previewResult.value;
+  if(!branding)notFound();
+  const persisted=persistedResult.value,tenant=tenantResult.value;
   const canEdit=can(context,"college.manage",{collegeId,organizationId:tenant.organizationId});
 
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
@@ -40,6 +62,11 @@ export default async function SuperAdminCollegeBrandingPage({
         Verify web address
       </Link> : null}
     </div>}/>
+    <Banner tone="warning" role="status">
+      Switching the selected college discards unsaved branding edits. Save changes before
+      leaving or changing the active college in the header. The current editor is scoped
+      to this college only.
+    </Banner>
     <section aria-label="Edit college branding" className="min-w-0 space-y-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
      <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Edit college branding</h2>
      <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Upload and crop your square logo above, then edit colours and sign-in appearance.</p>

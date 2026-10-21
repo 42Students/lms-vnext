@@ -127,3 +127,12 @@
 
 - Hiring analytics G2-10-008-080/053/058: last-good report snapshots require strict selected-college+exact query+permission cache identity, not a generic client error-boundary global value. Existing filter service exposes per-resource failures, surfaced in page.
 - Template version history G2-8-029-046/048/050: server should accept reviewed compare digest issued under same version read with immutable snapshot binding and enforce optimistic expectedTemplateVersion on rollback; old full JSON lifecycle states are intentionally outside current blueprint snapshots. UI now requires explicit acknowledgement but does not claim backend digest binding.
+
+- Super Admin project template export G2-6-029-048: current page is bounded 20 rows; matching ALL filtered templates needs separate authorized streaming export if legacy behavior must apply beyond visible page.
+- Legacy workspace deep-links G2-20-028-020: only from/reason are intentionally carried into canonical summary. Legacy unknown filter keys and numeric IDs require explicit migration mapping, not query passthrough. Workspace Audit alias validated/authorized before redirect.
+
+- G2-5-030-018: Branding setup still requires shared route/scope transition dirty-busy registry; page warning is advisory, not an interception.
+- G2-10-008-063: legacy hiring metrics, funnel, company-report GET response envelopes are intentionally replaced by one validated tenant-scoped Analytics report. Define external API adapters only after explicit caller compatibility review, not by inventing endpoint payloads in the redirect.
+
+- G2-11-030-009: Super Admin learner application detail already provides authorized stage history, but contact email/phone, resume, notes require separate evidence-based field permissions and exact college membership scope; do not append private columns to broad directory.
+- G2-5-007-028: candidate Calendar booked interview feed already isolates fetch errors; last-good historical appointment state must be cached with selected-college, date window, role and exact filters to avoid leaking across scope transitions.

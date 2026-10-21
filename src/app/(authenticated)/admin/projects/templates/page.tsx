@@ -49,7 +49,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   return <div className="min-w-0 space-y-4 md:space-y-6">
    <PageHeader title="Templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-   <ErrorState title="Project templates unavailable"
+   <ErrorState title="Templates could not be loaded"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
     action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Retry loading templates</Link>}/>
   </div>;
@@ -73,6 +73,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
   </form>
   <ListToolbar label="Global project templates" viewCount={data.total}
     exportAction={<SuperAdminTemplatePageExport items={data.items}/>} />
+  <p className="m-0 text-xs text-muted-foreground">Export CSV downloads project-templates.csv (Title, Version, Lifecycle, Summary) for the current permissioned page, not every filtered template.</p>
   <p className="m-0 break-words text-xs text-muted-foreground">Page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   <DataTable<(typeof data.items)[number]>
     caption="Global project template catalogue"
