@@ -64,6 +64,10 @@ async function loadActiveOrganization(organizationId: string) {
   return organization;
 }
 
+/** Archived organizations retain their legacy name reservation (isDeleted did
+ * not remove the unique-name contract). The DB currently has a partial ACTIVE
+ * unique index; this explicit check also protects archived-name collisions.
+ */
 async function assertUniqueActiveName(
   name: string,
   excludeOrganizationId?: string,
@@ -71,7 +75,6 @@ async function assertUniqueActiveName(
   const db = getDb();
 
   const conditions = [
-    eq(organizations.status, "ACTIVE"),
     sql<boolean>`lower(${organizations.name}) = ${name.toLowerCase()}`,
   ];
 
@@ -169,6 +172,12 @@ export async function createOrganization(
   try {
     return await db.transaction(async tx=>{
       await assertPersistedPlatformPermission(tx,context,"organization.manage");
+      // Cooperating create and rename calls serialize on the normalized
+      // legacy name, including archived entries, without locking all tenants.
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(lower(${input.name}),0))`);
+      const [collision]=await tx.select({id:organizations.id}).from(organizations)
+       .where(sql`lower(${organizations.name}) = ${input.name.toLowerCase()}`).limit(1);
+      if(collision)throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
       const [created]=await tx.insert(organizations).values({name:input.name})
        .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
         updatedAt:organizations.updatedAt});
@@ -209,6 +218,11 @@ export async function renameOrganization(
   try {
     return await db.transaction(async tx=>{
       await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(lower(${input.name}),0))`);
+      const [collision]=await tx.select({id:organizations.id}).from(organizations)
+       .where(and(ne(organizations.id,organizationId),
+         sql`lower(${organizations.name}) = ${input.name.toLowerCase()}`)).limit(1);
+      if(collision)throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
       const [locked]=await tx.select({id:organizations.id}).from(organizations)
         .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
         .for("update").limit(1);
