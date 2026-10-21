@@ -337,7 +337,7 @@ const educationSchema = z
     gradeObtained: textValue(64),
     maxGrade: textValue(64),
     qualifyingExam: textValue(120),
-    examRank: textValue(120),
+    examRank: textValue(120).optional(),
     examDetails: z
       .record(
         z.string().max(120),
