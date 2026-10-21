@@ -30,7 +30,7 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
  const deliveryId=selectedSection?.id??null;
  const contentKey=[selected?.id??"",deliveryId??"shared",kind].join(":");
 
- return <details aria-label="Create lesson content" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+ return <details open aria-label="Create lesson content" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
   <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">Add {kind==="VIDEOS"?"video":kind==="LIVE_CLASSES"?"live class":"resource"}</summary>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-4)]">
    {!lessons.length?<p role="status" className="text-sm text-muted-foreground">Create a course offering, learning path and lesson before adding content.</p>:<>
@@ -51,7 +51,7 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
       <Select value={deliveryId??""} onChange={event=>setSectionId(event.target.value)}
        className="min-h-11 w-full md:min-h-9">
-       <option value="">All sections (shared lesson content)</option>
+       <option value="">All content in this lesson (new resources go to every section)</option>
        {courseSections.map(item=><option key={item.id} value={item.id}>{item.sectionName}</option>)}
       </Select>
      </label>
