@@ -108,7 +108,7 @@ export default async function TrackerLogsPage({
         </div>
       </details>
       {items.length === 40 ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground leading-[20px]">
           Showing the most recent 40 signatures. Historical pagination is not yet implemented.
         </p>
       ) : null}

@@ -59,15 +59,15 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
       </label>:null}
       <Button variant="primary" type="submit" className="min-h-11 self-end md:min-h-9">Filter</Button>
     </form></FilterBar>
-    <p className="m-0 break-words text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
+    <p className="m-0 break-words text-sm text-muted-foreground leading-[22px]">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>
     {data.items.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {data.items.map(item => <article key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.title}</h2>
+          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.title}</h2>
           <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>{item.status}</StatusBadge>
         </div>
-        <p className="mt-1 break-words text-sm text-body">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
-        <p className="mt-2 break-words text-xs text-muted-foreground">{item.deliverySpecific ? "Section-specific" : "Shared offering"} · {item.points} maximum points</p>
+        <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
+        <p className="mt-2 break-words text-xs text-muted-foreground leading-[20px]">{item.deliverySpecific ? "Section-specific" : "Shared offering"} · {item.points} maximum points</p>
         <dl className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-sm text-body">
           <div><dt className="text-xs text-muted-foreground">Due</dt><dd className="break-words">{formatDue(item.dueAt)}</dd></div>
           <div><dt className="text-xs text-muted-foreground">{assignment ? "Submissions" : "Attempts"}</dt>
@@ -112,7 +112,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}
         label={title + " pages"} showBoundaryLinks={false} />
     </div>
-    <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
+    <p className="text-xs text-muted-foreground leading-[20px]">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
     <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }
