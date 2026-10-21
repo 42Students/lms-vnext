@@ -64,7 +64,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_admin-offering-section-preview.tsx.md` (edit src/components/courses/admin-offering-section-preview.tsx; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_assignment-file-open-control.tsx.md` (edit src/components/courses/assignment-file-open-control.tsx; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_messaging_tpo-campaign-dispatch-service.ts.md` (edit src/modules/messaging/tpo-campaign-dispatch-service.ts; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_college-assessment-export-model.ts.md` (edit src/modules/courses/college-assessment-export-model.ts; 8 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_college-assessment-export-model.ts.md` (edit src/modules/courses/college-assessment-export-model.ts; 8 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_verification_SuperAdminVerificationPanel.tsx.md` (edit src/components/verification/SuperAdminVerificationPanel.tsx; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_platform-settings_service.ts.md` (edit src/modules/platform-settings/service.ts; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_assignments_assignmentId_file-upload_route.ts.md` (edit src/app/api/courses/assignments/[assignmentId]/file-upload/route.ts; 6 findings; best P2)
