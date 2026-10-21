@@ -1,7 +1,10 @@
 import { DateInput } from "@/components/ui/date-input";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
-import {DataTable} from "@/components/ui/data-table";
+import {Tabs} from "@/components/ui/tabs";
+import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
+import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-thread-detail-service";
+import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -19,6 +22,7 @@ import {TpoInboxSearch} from "@/components/tpo/tpo-inbox-search";
 import { listTpoMessageRecruiters } from "@/modules/placements/tpo-recruiter-message-recipients-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 import {
   TPO_MESSAGE_STATUSES,
@@ -30,6 +34,8 @@ import {
 } from "@/modules/placements/tpo-messages-service";
 
 type SearchParams = {
+  tab?: string | string[];
+  thread?: string | string[];
   status?: string | string[];
   from?: string | string[];
   to?: string | string[];
@@ -69,6 +75,7 @@ export default async function TpoMessagesPage({
 
   const now = new Date();
   const raw = await searchParams;
+  if (first(raw.tab) === "team") redirect("/tpo/team?tab=conversations");
 
   const parsed = tpoMessagesQuerySchema.safeParse({
     status: first(raw.status) || undefined,
@@ -84,7 +91,7 @@ export default async function TpoMessagesPage({
       <div className="min-w-0 space-y-6">
         <PageHeader
           title="Messages"
-          description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
+          description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."
         />
         <ErrorState
           title="Invalid message filters"
@@ -102,10 +109,15 @@ export default async function TpoMessagesPage({
     );
   }
 
-  const result = await getTpoMessagesInbox(
-    context,
-    parsed.data,
-  );
+  const result = await getTpoMessagesInbox(context, parsed.data).catch(error=>{
+    if (error instanceof AuthorizationError) throw error;
+    return null;
+  });
+  if (!result) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
+    <ErrorState title="Couldn&apos;t load conversations" description="This refresh failed. Retry."
+      action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+  </div>;
 
   const {
     query,
@@ -130,7 +142,7 @@ export default async function TpoMessagesPage({
   // when the recruiter-thread tables are not available.
   if(!isRecruiterInbox)return <div className="min-w-0 space-y-6">
    <PageHeader title="Messages"
-    description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
+    description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
     action={<Link href="/tpo/notifications"
@@ -139,6 +151,11 @@ export default async function TpoMessagesPage({
      </Link>}/>
   </div>;
 
+
+  const requestedThread=first(raw.thread);
+  const selected=items.find(item=>item.id===requestedThread) ?? items[0] ?? null;
+  const detail=selected && isRecruiterInbox
+    ? await getTpoRecruiterThreadDetail(context,selected.id).catch(()=>null) : null;
 
   const rangeStart =
     total === 0
@@ -162,7 +179,7 @@ export default async function TpoMessagesPage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Messages"
-        description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
+        description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."
         actions={
           <div className="flex w-full flex-col items-stretch gap-2 min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
@@ -176,12 +193,14 @@ export default async function TpoMessagesPage({
           </div>
         }
       />
+      <Tabs ariaLabel="Messages" renderPanel={false} value="recruiters" items={[
+        {value:"recruiters",label:"Recruiters",href:"/tpo/messages"},
+        {value:"team",label:"Team",href:"/tpo/team?tab=conversations"}]}/>
       <TpoLiveRefresh intervalMs={4000}/>
 
-      <section
-        role="status"
-        className="border-b border-border pb-4"
-      >
+      <details className="min-w-0 border-b border-border pb-4">
+        <summary className="min-h-9 cursor-pointer text-sm font-semibold text-body">Communication details</summary>
+        <section role="status">
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             {sourceLabel}
@@ -245,24 +264,10 @@ export default async function TpoMessagesPage({
           <StatTile key={metric.label} label={metric.label} value={metric.value} className={tpoTileStyles.tile+" !rounded-none !border-0 !bg-transparent !px-1 !py-2 !shadow-none"} />
         ))}
       </section>
+      </details>
 
-      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex min-w-0 gap-2 overflow-x-auto pb-2 min-[768px]:flex-wrap min-[768px]:overflow-visible min-[768px]:pb-0">
-        {([
-          ["ALL","All",summary.total],
-          ["REPLY","Reply",summary.reply],
-          ["UNREAD","Unread",summary.unread],
-        ] as const).map(([status,label,count])=><Link
-          key={status}
-          href={tpoMessagesHref({...commonFilters,status,page:1})}
-          aria-current={query.status===status?"page":undefined}
-          className={"inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] "+
-            (query.status===status?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)]":
-              "border-border bg-surface text-body hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)]")}>
-            {label} ({count})
-          </Link>)}
-      </nav> : null}
       <section className="border-b border-border pb-4">
-        <details open={Boolean(query.from || query.to || query.q || pageSize !== 25)} className="group">
+        <details open={Boolean(query.from || query.to || pageSize !== 25)} className="group">
           <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[16px] font-semibold leading-[26px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] [&::-webkit-details-marker]:hidden">Communication filters <span aria-hidden="true" className="ml-2 text-primary-text group-open:rotate-180">⌄</span></summary>
 
         <form
@@ -314,11 +319,7 @@ export default async function TpoMessagesPage({
 
           <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
-            {isRecruiterInbox?<TpoInboxSearch
-              value={query.q} placeholder="Recruiter, subject or message"/>:
-              <Input type="search" name="q" maxLength={120} defaultValue={query.q}
-                placeholder="TPO name or event type"
-                className="min-h-11 md:min-h-9"/>}
+            <Input type="search" name="q" maxLength={120} defaultValue={query.q} placeholder="Search recruiter or drive" className="min-h-11 md:min-h-9"/>
           </label>
 
           <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -353,77 +354,94 @@ export default async function TpoMessagesPage({
         </details>
       </section>
 
-      <section className="space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              {sourceLabel}
-            </h2>
-            <p className="mt-1 text-sm text-body">
-              {total === 0
-                ? "No matching persisted records"
-                : rangeStart > total
-                  ? `Page ${page} is beyond the available results`
-                  : `Showing ${rangeStart}–${rangeEnd} of ${total} records`}
-            </p>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Most recent first · IST
-          </p>
+      <section aria-label="Recruiter messages inbox" className="min-w-0 space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="m-0 text-lg font-semibold">Recruiter conversations</h2>
+          <span className="text-xs text-muted-foreground">{total} conversations · Most recent first · IST</span>
         </div>
-
-        {items.length === 0 ? (
-          <EmptyState
-            action={<Link href="/tpo/messages" className="md:min-h-9 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
-            title="No matching communication records"
-            description={
-              isRecruiterInbox
-                ? "No recruiter threads match these filters. Start a new conversation from Messages."
-                : "No persisted TPO placement notifications match these filters. Recruiter conversations are currently unavailable, not confirmed empty."
-            }
-          />
-        ) : (
-          <DataTable
-            caption="Recruiter conversation and notification records"
-            rows={items}
-            getRowKey={item=>item.id}
-            empty={<EmptyState title="No matching communication records" description={
-              isRecruiterInbox
-                ?"No recruiter threads match these filters. Start a new conversation from Messages."
-                :"No persisted TPO placement notifications match these filters. Recruiter conversations are currently unavailable, not confirmed empty."
-            }/>}
-            columns={[
-              {key:"participant",header:isRecruiterInbox?"Recruiter":"TPO recipient",
-               mobileLabel:isRecruiterInbox?"Recruiter":"TPO recipient",mobilePriority:"primary",
-               cell:item=><div className="min-w-0">
-                <strong className="break-words text-foreground">{item.participantName}</strong>
-                {item.companyName?<p className="mt-1 text-xs text-muted-foreground">{item.companyName}</p>:null}
-                {item.waitingForYou?<StatusBadge tone="warning" className="mr-2">Waiting for you</StatusBadge>:null}
-                {item.accessEnded?<StatusBadge tone="neutral">Access ended</StatusBadge>:null}
-               </div>},
-              {key:"subject",header:"Subject",mobileLabel:"Subject",mobilePriority:"action",
-               cell:item=><div className="min-w-0">
-                {isRecruiterInbox?<Link className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline"
-                  href={"/tpo/messages/"+encodeURIComponent(item.id)}>{item.subject} →</Link>:
-                 <span className="break-words text-body">{item.subject}</span>}
-                {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?
-                  <p className="mt-1 line-clamp-2 break-words text-xs text-muted-foreground">{query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview}</p>:null}
-               </div>},
-              {key:"status",header:"Status",mobileLabel:"Status",mobilePriority:"secondary",
-               cell:item=><StatusBadge tone={item.status==="UNREAD"?"info":"neutral"}>{labelStatus(item.status)}</StatusBadge>},
-              {key:"count",header:isRecruiterInbox?"Message records":"Record type",
-               mobileLabel:isRecruiterInbox?"Message records":"Record type",mobilePriority:"secondary",
-               cell:item=>isRecruiterInbox?<span>{item.messageCount??0} · {item.unreadCount??0} unread recruiter message records</span>:"In-app notification"},
-              {key:"when",header:"Last activity",mobileLabel:"Last activity",mobilePriority:"secondary",
-               cell:item=><time dateTime={item.occurredAt.toISOString()}>{formatTpoInboxTime(item.occurredAt,now)}</time>},
-              {key:"context",header:"Context",mobileLabel:"Context",mobilePriority:"action",
-               cell:item=>item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
-                className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open related job →</Link>:
-                <span className="text-muted-foreground">{isRecruiterInbox?"General conversation":"Recipient notification"}</span>},
-            ]}
-          />
-        )}
-
+        <div className="grid min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:min-h-[520px] md:grid-cols-[minmax(260px,40%)_minmax(0,1fr)]">
+          <aside aria-label="Conversation inbox" className="min-w-0 border-b border-border md:border-b-0 md:border-r">
+            <div className="space-y-3 border-b border-border p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="font-semibold">Inbox</h3>
+                <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id}/>
+              </div>
+              <nav aria-label="Recruiter inbox filters" className="flex min-w-0 flex-wrap gap-2">
+                {([["ALL","All",summary.total],["REPLY","Reply",summary.reply],["UNREAD","Unread",summary.unread]] as const).map(([status,label,count])=>
+                  <Link key={status} href={tpoMessagesHref({...commonFilters,status,page:1})}
+                    aria-current={query.status===status?"page":undefined}
+                    className={"inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] "+
+                      (query.status===status?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:border-primary hover:text-primary-text")}>
+                    {label} ({count)}
+                  </Link>)}
+              </nav>
+              <label className="grid gap-2 text-xs font-semibold text-muted-foreground">
+                Search recruiter or drive
+                <TpoInboxSearch value={query.q} placeholder="Search recruiter or drive"/>
+              </label>
+            </div>
+            {items.length===0 ? <div className="p-4"><EmptyState
+              title={query.q.trim()?"No conversations match this search.":"No conversations yet."}
+              description={query.q.trim()?"Try another recruiter or drive.":"Start a new message to a recruiter."}/></div> :
+              <ul className="divide-y divide-border">
+                {items.map(item=>{
+                  const href="/tpo/messages?"+new URLSearchParams({
+                    status:query.status,page:String(page),pageSize:String(pageSize),
+                    ...(query.q?{q:query.q}:{}),...(query.from?{from:query.from}:{}),
+                    ...(query.to?{to:query.to}:{}),thread:item.id,
+                  }).toString();
+                  const active=selected?.id===item.id;
+                  return <li key={item.id}>
+                    <Link href={href} aria-current={active?"page":undefined}
+                      aria-label={item.participantName+": "+item.subject}
+                      className={"block min-h-14 px-4 py-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--lms-primary-text)] "+
+                        (active?"bg-primary-subtle":"hover:bg-[var(--lms-primary-subtle)]")}>
+                      <div className="flex min-w-0 items-center justify-between gap-2">
+                        <strong className="truncate">{item.participantName}</strong>
+                        <time dateTime={item.occurredAt.toISOString()} className="shrink-0 text-xs text-muted-foreground">{formatTpoInboxTime(item.occurredAt,now)}</time>
+                      </div>
+                      <p className="mt-1 truncate text-xs text-muted-foreground">{item.companyName??"General conversation"} · {item.subject}</p>
+                      {item.lastPreview?<p className="mt-1 line-clamp-2 break-words text-xs">{item.lastPreview}</p>:null}
+                      <div className="mt-1 flex flex-wrap items-center gap-1">
+                        {item.status==="UNREAD"?<StatusBadge tone="info">Unread {item.unreadCount??""}</StatusBadge>:null}
+                        {item.waitingForYou?<StatusBadge tone="warning">Waiting for you</StatusBadge>:null}
+                        {item.accessEnded?<StatusBadge tone="neutral">Access ended</StatusBadge>:null}
+                      </div>
+                    </Link>
+                  </li>;
+                })}
+              </ul>}
+          </aside>
+          <div aria-label="Selected conversation" className="min-w-0 space-y-4 p-4">
+            {!selected?<EmptyState title="No conversations yet." description="Select a recruiter conversation to read and reply."/>:
+              !detail?<ErrorState title="Could not load this conversation" description="This refresh failed. Retry."
+                action={<Link href={"/tpo/messages/"+encodeURIComponent(selected.id)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>:
+              <>
+                <div className="border-b border-border pb-3">
+                  <h3 className="text-lg font-semibold">{selected.participantName}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{selected.subject}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{detail.total} messages · Latest 100 · IST</p>
+                </div>
+                <div role="log" aria-label="Recruiter conversation messages" aria-live="polite" className="max-h-[520px] space-y-3 overflow-y-auto">
+                  {detail.messages.length===0?<EmptyState title="No messages yet."/>:
+                    detail.messages.map(message=><article key={message.id}
+                      className={bubbleStyles.bubble+" "+(message.senderType==="TPO"?bubbleStyles.mine:"")}>
+                      <p className="text-xs text-muted-foreground">
+                        {message.senderType==="RECRUITER"?"Recruiter":"You"} · {" "}{formatTpoInboxTime(message.createdAt,now)}
+                      </p>
+                      <p className="mt-2 whitespace-pre-wrap break-words text-sm">{message.body}</p>
+                    </article>)}
+                </div>
+                <TpoRecruiterMessageReply threadId={selected.id} actorUserId={context.user.id}
+                  unread={detail.messages.some(message=>message.senderType==="RECRUITER"&&!message.readAt)}/>
+                <Link href={"/tpo/messages/"+encodeURIComponent(selected.id)}
+                  className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+                  Open full conversation →
+                </Link>
+              </>}
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">Showing {rangeStart}–{rangeEnd} of {total}. Filters are scoped to the selected college.</p>
         <nav
           aria-label="Messages pagination"
           className="flex flex-col items-stretch gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between"
