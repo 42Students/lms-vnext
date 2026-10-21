@@ -1,4 +1,7 @@
 import Link from "next/link";
+import {and,asc,eq,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {courseOfferings,courseSectionDeliveries,sections,courses,departments} from "@/db/schema";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminStudentCourseProgress} from "@/modules/courses/super-admin-student-course-progress";
 import {studentCourseCompletion} from "@/modules/courses/super-admin-student-progress-model";
@@ -17,21 +20,25 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const context=await getCurrentRequestContext();
  requirePermission(context,"admin-scope.select");
  const raw=await searchParams;
- const allowed=new Set(["offeringId","page","pageSize","sort"]);
+ const allowed=new Set(["offeringId","deliveryId","page","pageSize","sort"]);
  const validKeys=Object.keys(raw).every(key=>allowed.has(key) && !Array.isArray(raw[key]));
  const offeringId=validKeys?parseSuperAdminStudentProgressParams({offeringId:raw.offeringId}):null;
+ const requestedDelivery=typeof raw.deliveryId==="string"&&
+  /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw.deliveryId)
+   ?raw.deliveryId:null;
+ const invalidDelivery=raw.deliveryId!==undefined&&raw.deliveryId!==""&&!requestedDelivery;
  const pageSize=typeof raw.pageSize==="string"&&["20","50","100"].includes(raw.pageSize)
   ?Number(raw.pageSize):20;
  const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,6}$/.test(raw.page)
   ?Number(raw.page):1;
  const sort=raw.sort==="percent-desc"?"percent-desc":"percent-asc";
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Course Progress</Link>;
- if(!offeringId)return <div className="space-y-6">
+ if(!offeringId||invalidDelivery)return <div className="space-y-6">
   <PageHeader title="Course Progress"/>
   <ErrorState title="Choose a course offering" description="Course and class are required. Select a valid class and its taught course from Course Progress first; this page uses their authorized course offering, not separate legacy numeric IDs." action={back}/>
  </div>;
  let report:Awaited<ReturnType<typeof getSuperAdminStudentCourseProgress>>;
- try{report=await getSuperAdminStudentCourseProgress(context,{offeringId});}
+ try{report=await getSuperAdminStudentCourseProgress(context,{offeringId,deliveryId:requestedDelivery??undefined});}
  catch(error){
   // Do not expose SQL, stack traces or another tenant's identifiers in the error surface.
   const detail=error instanceof Error&&error.name==="AuthorizationError"
@@ -48,6 +55,23 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     </div>
   }/>
  </div>;}
+ // Scope choices are read only after the report has reverified this actor's
+ // persisted course permission, offering and selected college.
+ const classChoices=await getDb().select({
+   deliveryId:courseSectionDeliveries.id,
+   className:sections.name,
+   endedAt:courseSectionDeliveries.endedAt,
+   activeTeacher:sql<boolean>`exists(select 1 from course_teaching_assignments ta
+      where ta.delivery_id=${courseSectionDeliveries.id} and ta.ended_at is null)`,
+ }).from(courseSectionDeliveries)
+ .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+ .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+ .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+ .innerJoin(departments,eq(departments.id,courses.departmentId))
+ .where(and(eq(courseSectionDeliveries.offeringId,offeringId),
+   eq(departments.collegeId,report.collegeId)))
+ .orderBy(asc(sections.name),asc(courseSectionDeliveries.id))
+ .limit(200);
  const measuredCounts=report.rows.map(row=>row.totalVideos+row.totalAssignments+row.totalQuizzes);
  const lowestMeasured=measuredCounts.length?Math.min(...measuredCounts):0;
  const highestMeasured=measuredCounts.length?Math.max(...measuredCounts):0;
@@ -74,7 +98,8 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const shownRows=allRows.slice((page-1)*pageSize,page*pageSize);
  const reportHref=(nextPage:number,nextSize=pageSize,nextSort=sort)=>
    "/admin/course-progress/students?"+new URLSearchParams({
-     offeringId,page:String(nextPage),pageSize:String(nextSize),sort:nextSort,
+     offeringId,...(requestedDelivery?{deliveryId:requestedDelivery}:{}),
+     page:String(nextPage),pageSize:String(nextSize),sort:nextSort,
    }).toString();
  const hasMeasuredWork=report.rows.some(row=>row.totalVideos+row.totalAssignments+row.totalQuizzes>0);
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
@@ -82,6 +107,24 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     description="See measured completion for a class and course, then focus on the students furthest behind."
     actions={back}
   />
+  <form method="get" action="/admin/course-progress/students"
+    aria-label="Select a class for course progress"
+    className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
+    <input type="hidden" name="offeringId" value={offeringId}/>
+    <label className="grid gap-2 text-sm font-semibold text-[var(--lms-heading)]">
+      Class / taught course · active and past
+      <Select name="deliveryId" defaultValue={requestedDelivery??""} className="min-h-11 md:min-h-9">
+        <option value="">All currently active classes for this course</option>
+        {classChoices.map(choice=><option key={choice.deliveryId} value={choice.deliveryId}>
+          {choice.className} · {choice.endedAt?"Past delivery":choice.activeTeacher?"Active teaching assignment":"No active teaching assignment"}
+        </option>)}
+      </Select>
+    </label>
+    <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">View class progress</Button>
+    {classChoices.length===200?<p role="status" className="text-xs text-warning-text md:col-span-2">
+      Showing the first 200 class deliveries. Use the course directory for other historic classes.
+    </p>:null}
+  </form>
   <Alert tone="info" role="status">
     <strong>Measured work only.</strong> Progress counts videos watched to the end, assignments submitted and quizzes attempted.
     Resources are not counted, because they are marked done by the student&apos;s own click.
@@ -142,6 +185,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     <p className="text-sm text-body">Showing {allRows.length===0?0:(page-1)*pageSize+1}–{Math.min(page*pageSize,allRows.length)} of {allRows.length}{report.truncated?" returned":""} students</p>
     <form method="get" action="/admin/course-progress/students" className="flex flex-wrap items-end gap-2">
       <input type="hidden" name="offeringId" value={offeringId}/>
+      {requestedDelivery?<input type="hidden" name="deliveryId" value={requestedDelivery}/>:null}
       <input type="hidden" name="sort" value={sort}/>
       <label className="grid gap-1 text-sm font-semibold">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 md:min-h-9">
