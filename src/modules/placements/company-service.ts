@@ -274,7 +274,8 @@ export async function createPlacementCompany(
     if(!company){
       const [created]=await tx.insert(placementCompanies).values({
         name:input.name,websiteUrl:input.websiteUrl??null,
-        primaryDomain:domain,createdByUserId:context.user.id,
+        primaryDomain:domain,industry:input.industry??null,about:input.about??null,
+        createdByUserId:context.user.id,
       }).onConflictDoNothing().returning();
       company=created??null;
       if(!company){
