@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohortProgressionState, cohorts, collegeMemberships,
@@ -42,33 +42,76 @@ function ownCollege(context: RequestContext) {
   return member;
 }
 
-/** All options come from registered, tenant-owned programs and cohorts. */
-export async function listCollegePromotionOptions(context: RequestContext, raw: unknown) {
+/** Registered options are always tenant-owned. When paging is supplied, the
+ * database bounds the cohort query BEFORE rendering rather than slicing a
+ * potentially enormous list in the server component.
+ *
+ * Existing read-only call sites without paging keep their full directory
+ * contract for backward-compatible preview pickers.
+ */
+export async function listCollegePromotionOptions(
+  context: RequestContext, raw: unknown,
+  paging?: { page: number; pageSize: number; includeInactive?: boolean },
+) {
   const query = collegePromotionQuerySchema.parse(raw);
   const member = ownCollege(context);
   const db = getDb();
-  const [programChoices, cohortChoices] = await Promise.all([
-    db.select({ id: programs.id, name: programs.name, code: programs.code })
-      .from(programs).innerJoin(departments, and(
-        eq(departments.id, programs.departmentId),
-        eq(departments.collegeId, member.collegeId),
-      )).orderBy(asc(programs.name)),
-    db.select({
-      id: cohorts.id, name: cohorts.name, status: cohorts.status,
-      programId: programs.id, programName: programs.name,
-      currentTermNumber: cohortProgressionState.currentTermNumber,
-      currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
-      activeLearners: sql<number>`(select count(*)::integer from learner_program_enrollments lpe where lpe.cohort_id = ${cohorts.id} and lpe.status = 'ACTIVE')`.as("promotion_active_learners"),
-    }).from(cohorts)
-      .innerJoin(programs, eq(programs.id, cohorts.programId))
-      .leftJoin(cohortProgressionState,eq(cohortProgressionState.cohortId,cohorts.id))
-      .innerJoin(departments, and(
-        eq(departments.id, programs.departmentId),
-        eq(departments.collegeId, member.collegeId),
-      )).where(query.programId ? eq(programs.id, query.programId) : undefined)
-      .orderBy(asc(programs.name), asc(cohorts.name)),
+  const page = paging ? Math.max(1, Math.min(Math.trunc(paging.page) || 1, 10000)) : 1;
+  const pageSize = paging ? Math.max(1, Math.min(Math.trunc(paging.pageSize) || 10, 100)) : 0;
+  const visibility = paging && !paging.includeInactive ? eq(cohorts.status, "ACTIVE") : undefined;
+  const where = and(
+    query.programId ? eq(programs.id, query.programId) : undefined, visibility,
+  );
+  const programQuery = db.select({ id: programs.id, name: programs.name, code: programs.code })
+    .from(programs).innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, member.collegeId),
+    )).orderBy(asc(programs.name));
+  const cohortQuery = db.select({
+    id: cohorts.id, name: cohorts.name, status: cohorts.status,
+    programId: programs.id, programName: programs.name,
+    currentTermNumber: cohortProgressionState.currentTermNumber,
+    currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
+    // Legacy currentStudents counted learners assigned to a primary class,
+    // not every program enrollment or an elective group membership. Distinct
+    // enrollment membership IDs prevent duplicates across section history.
+    activeLearners: sql<number>`(
+      select count(distinct lpe.membership_id)::integer
+      from learner_program_enrollments lpe
+      inner join college_memberships cm
+        on cm.id = lpe.membership_id and cm.status = 'ACTIVE'
+        and cm.college_id = ${member.collegeId}::uuid
+      inner join section_enrollments se
+        on se.learner_enrollment_id = lpe.id and se.status = 'ACTIVE'
+      inner join sections sec
+        on sec.id = se.section_id and sec.cohort_id = ${cohorts.id}
+        and sec.status = 'ACTIVE'
+      where lpe.cohort_id = ${cohorts.id} and lpe.status = 'ACTIVE'
+    )`.as("promotion_primary_class_learners"),
+  }).from(cohorts)
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
+    .innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, member.collegeId),
+    )).where(where)
+    .orderBy(asc(programs.name), asc(cohorts.name));
+  const countQuery = db.select({ total: count() }).from(cohorts)
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments, and(
+      eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, member.collegeId),
+    )).where(where);
+  const [programChoices, cohortChoices, cohortCounts] = await Promise.all([
+    programQuery,
+    paging ? cohortQuery.limit(pageSize).offset((page - 1) * pageSize) : cohortQuery,
+    countQuery,
   ]);
-  return { programs: programChoices, cohorts: cohortChoices };
+  return {
+    programs: programChoices, cohorts: cohortChoices,
+    totalCohorts: cohortCounts[0]?.total ?? 0,
+    page, pageSize: paging ? pageSize : cohortChoices.length,
+  };
 }
 
 /** No mutation, no enrollment changes, and no implied bulk promotion. */
