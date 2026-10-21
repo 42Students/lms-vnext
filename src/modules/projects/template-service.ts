@@ -249,6 +249,8 @@ export async function createProjectTemplate(
   );
   const input =
     createProjectTemplateInputSchema.parse(rawInput);
+  // Global template authoring is intentionally independent of an individual
+  // college feature flag; assigning and materializing enforce module access.
   const db = getDb();
 
   try {

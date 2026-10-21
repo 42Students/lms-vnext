@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNotNull,isNull,ne} from "drizzle-orm";
+import {and,eq,isNotNull,isNull,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {projectInstances,projectMembers,projectSubmissions,projectSprints,projectTasks,sections,cohorts,programs,departments} from "@/db/schema";
@@ -76,7 +76,10 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    nextAction:input.nextAction,startDate:input.startDate,endDate:input.endDate,
    sprintLengthWeeks:input.sprintLengthWeeks,estimationUnit:input.estimationUnit,
    updatedAt:new Date(Math.max(Date.now(),row.updatedAt.getTime()+1)),
-  }).where(and(eq(projectInstances.id,row.id),eq(projectInstances.collegeId,scope.collegeId))).returning();
+  }).where(and(eq(projectInstances.id,row.id),
+    eq(projectInstances.collegeId,scope.collegeId),
+    sql`date_trunc('milliseconds', ${projectInstances.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`
+  )).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const updatedEvent=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_SUMMARY_UPDATED,
