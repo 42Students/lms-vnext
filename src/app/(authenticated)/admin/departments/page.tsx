@@ -2,7 +2,7 @@ import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
 import { DepartmentDirectory } from "@/components/admin/department-directory";
-import { EmptyState } from "@/components/ui/empty-state";
+
 import {Alert} from "@/components/ui/alert";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -61,14 +61,15 @@ export default async function SuperAdminDepartmentsPage({
         />
         <AcademicSetupSteps step={1}/>
         {recoveryChooser}
-        <div className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-          <EmptyState
-            title={recoveryType.platformLevel?"Select a college for department administration":"College scope required"}
-            description={recoveryType.platformLevel?
-              "Platform recovery uses the Deleted Items directory. Select a college to administer its departments.":
-              "Choose a college in the header above to search this type of archived record and manage its departments."}
-          />
-        </div>
+        <Alert tone="warning">
+          <div className="flex items-start gap-3">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" className="mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6m0 4h.01"/></svg>
+            <div>
+              <strong>Select a college to continue</strong>
+              <p>Choose a college in the header above to manage its departments and archived records.</p>
+            </div>
+          </div>
+        </Alert>
       </div>
     );
   }
@@ -91,6 +92,7 @@ export default async function SuperAdminDepartmentsPage({
     );
     usageResults.push(...batch);
   }
+  const incompleteUsage=usageResults.filter(result=>result.status==="rejected").length;
   const rows: DepartmentDirectoryRow[] = departments.map((department, index) => {
     const usage = usageResults[index];
     return {
@@ -106,6 +108,12 @@ export default async function SuperAdminDepartmentsPage({
     <div className="min-w-0 space-y-6">
       <PageHeader title="Departments"/>
       <AcademicSetupSteps step={1} />
+      {incompleteUsage>0?<Alert tone="warning">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span>Could not load dependency counts for {incompleteUsage} department(s). Their usage remains unknown; no archive decision should rely on a missing count.</span>
+          <Link href="/admin/departments" className="font-semibold text-primary-text underline">Retry counts</Link>
+        </div>
+      </Alert>:null}
       {recoveryChooser}
       <div className="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
         <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm">
