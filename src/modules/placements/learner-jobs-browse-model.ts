@@ -11,6 +11,25 @@ export function closingSoonIstDayEndMs(snapshotNowMs:number):number{
 }
 export const learnerDriveAvailabilitySchema = z.enum(["all","open","not-open","closed"]);
 
+/** Legacy JobSearchController route-by-route contract. A learner may search
+ * only an authorized college/targeted-job set; the numeric legacy IDs and
+ * global organization catalogue cannot bypass college membership scope.
+ * These are capability mappings, not public aliases or new API endpoints.
+ */
+export const LEGACY_LEARNER_JOB_SEARCH_CROSSWALK = {
+  search:"SCOPED_TYPEAHEAD",
+  popular:"SCOPED_PUBLISHED_JOBS",
+  organizations:"NO_GLOBAL_ORGANIZATION_CATALOG",
+  organization:"ACTIVE_COLLEGE_SCOPE_ONLY",
+  department:"SCOPED_DEPARTMENT_FACET",
+  program:"SCOPED_PROGRAM_FACET",
+  jobType:"SCOPED_JOB_TYPE_FACET",
+  categories:"SCOPED_JOB_TYPE_OPTIONS",
+  category:"SCOPED_JOB_TYPE_FACET",
+  stats:"SCOPED_PUBLISHED_JOBS",
+  refresh:"DB_READ_NO_GLOBAL_CACHE",
+} as const;
+
 /** Legacy /search was a scoped typeahead endpoint, not the full learner feed.
  * Always filter authorized, college-scoped rows before applying its limit.
  */
