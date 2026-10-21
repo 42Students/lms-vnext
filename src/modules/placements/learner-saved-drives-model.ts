@@ -10,7 +10,27 @@ export function learnerSavedDriveSummary(
  const visibleIds=new Set([...saved].filter(id=>available.has(id)));
  return {saved:visibleIds.size,expired:saved.size-visibleIds.size,visibleIds};
 }
-export function learnerSavedDriveCopy(saved:boolean){
- return saved?{action:"Remove from saved jobs",toast:"Removed from saved jobs"}:
-  {action:"Save for later",toast:"Saved for later"};
+export type LearnerBookmarkSurface="LIST"|"DETAIL";
+export function learnerSavedDriveCopy(
+ saved:boolean,surface:LearnerBookmarkSurface="DETAIL",
+){
+ return {
+  action:saved?"Remove from saved jobs":"Save for later",
+  tooltip:saved?"Saved":"Save for later",
+  iconLabel:saved?"Saved":"Not saved",
+  // List hearts update quietly; detail bookmarks use Ant-style success toast.
+  toast:surface==="DETAIL"?
+   (saved?"Removed from saved jobs":"Saved for later"):null,
+  showToast:surface==="DETAIL",
+ };
+}
+/** After mutation, show the copy for the completed action, not the new button
+ * state. This keeps exact legacy punctuation in the detail-level toast. */
+export function learnerSavedDriveMutationFeedback(
+ nowSaved:boolean,surface:LearnerBookmarkSurface,
+){
+ return {
+  announcement:nowSaved?"Saved for later":"Removed from saved jobs",
+  toast:surface==="DETAIL"?(nowSaved?"Saved for later":"Removed from saved jobs"):null,
+ };
 }
