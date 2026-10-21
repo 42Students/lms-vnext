@@ -68,7 +68,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     const mode=row.exception?.mode??row.mode;
     const venue=row.exception?.venue??row.venue;
     const join=row.exception?.meetingUrl??row.meetingUrl;
-    return <div className="mt-2 space-y-2 text-sm text-body">
+    return <div className="min-w-0 mt-2 space-y-2 text-sm text-body">
       <p>{row.roundKind.replaceAll("_"," ")} · {mode==="VIRTUAL"?"Online":mode==="ON_CAMPUS"?"On campus":mode} · {row.durationMinutes!=null?row.durationMinutes+" minutes":"Duration to be told"}</p>
       <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
       <div className="flex flex-wrap gap-3">
