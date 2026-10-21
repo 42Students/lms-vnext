@@ -20,7 +20,6 @@ import {recruiterOtpAttemptDecision,recruiterOtpMatches,recruiterInviteOtpSchema
 import {TpoRecruiterInviteServiceError} from "./tpo-recruiter-invite-service";
 import {publicRecruiterJoinedNotification} from "./public-join/join-notification-model";
 import {recruiterInviteAcceptanceBodySchema} from "./recruiter-invite-otp-accept-model";
-import type {RequestContext} from "@/modules/identity/context";
 
 /** Public signup is authorized solely by an invite bound to a known work email
  * plus its latest DELIVERED OTP. Never accept claimed user, email, company or college IDs.

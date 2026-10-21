@@ -114,8 +114,8 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
     {preview?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
        <p className="text-sm font-semibold">Submitted assignment PDF preview · {preview.name}</p>
-       <button type="button" onClick={()=>setPreview(null)}
-         className="min-h-9 rounded border border-border px-3 text-sm">Close preview</button>
+       <Button variant="secondary" type="button" onClick={()=>setPreview(null)}
+         >Close preview</Button>
       </div>
       <iframe key={preview.fileId} src={preview.url} title="Submitted assignment PDF preview"
         sandbox="allow-same-origin allow-downloads" referrerPolicy="no-referrer"

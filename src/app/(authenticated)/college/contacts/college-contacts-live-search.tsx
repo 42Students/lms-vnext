@@ -3,6 +3,7 @@
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 /** A compact legacy-style search with full college-scoped server results.
  * Search never exposes records outside the current membership.
@@ -32,7 +33,7 @@ export function CollegeContactsLiveSearch({value}:{value:string}){
    onChange={event=>setDraft(event.target.value)}
    onKeyDown={event=>{if(event.key==="Escape")setDraft("");}}
    className="min-h-11 w-full min-w-0 pl-9 pr-14 md:min-h-9"/>
-  {draft?<button type="button" aria-label="Clear contact search" onClick={()=>setDraft("")}
-   className="absolute right-2 top-1/2 -translate-y-1/2 rounded px-2 py-1 text-xs font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary">Clear</button>:null}
+  {draft?<Button variant="ghost" type="button" aria-label="Clear contact search" onClick={()=>setDraft("")}
+   className="absolute right-2 top-1/2">Clear</Button>:null}
  </span>;
 }
