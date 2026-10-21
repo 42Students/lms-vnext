@@ -28,6 +28,23 @@ export class SessionAuthenticationError extends Error {
   }
 }
 
+/** Explicit client recovery guidance; never suggests a retired refresh JWT. */
+export type SessionRecovery = {
+  action: "SIGN_IN" | "STEP_UP";
+  clearStoredSession: boolean;
+  retryRefresh: false;
+};
+
+export function sessionRecoveryFor(
+  code: SessionAuthenticationError["code"],
+): SessionRecovery {
+  if (code === "RECENT_SIGN_IN_REQUIRED") {
+    return { action: "STEP_UP", clearStoredSession: false, retryRefresh: false };
+  }
+  // Missing, invalid, expired, and revoked sessions require fresh sign-in.
+  return { action: "SIGN_IN", clearStoredSession: true, retryRefresh: false };
+}
+
 /**
  * Verifies the opaque `lms_session` token against the device-session table.
  * Fails closed: an unknown, expired or revoked token, a disabled user, or any
