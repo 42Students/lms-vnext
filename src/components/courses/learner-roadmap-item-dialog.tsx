@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
 
 // A deep-linked item may be opened automatically only until the learner
@@ -12,7 +13,7 @@ const dismissedFocusKeys=new Set<string>();
 /** Accessible lesson item with explicit locked and completed row states. */
 export function LearnerRoadmapItemDialog({
   children,title,kind,progress,caption,dueText,initiallyOpen=false,
-  highlighted=false,focusKey,locked=false,availability,onClose,
+  highlighted=false,focusKey,locked=false,availability,
 }:{
  children:ReactNode;
  title:string;
@@ -25,15 +26,15 @@ export function LearnerRoadmapItemDialog({
  focusKey?:string;
  locked?:boolean;
  availability?:"SCHEDULED"|"ENDED"|"AVAILABLE";
- onClose?:()=>void;
 }){
+ const router=useRouter();
  const [open,setOpen]=useState(()=>initiallyOpen&&
   (!focusKey||!dismissedFocusKeys.has(focusKey)));
  const [lockedNotice,setLockedNotice]=useState(false);
  function change(openNow:boolean){
   if(!openNow&&open){
    if(focusKey)dismissedFocusKeys.add(focusKey);
-   onClose?.();
+   router.refresh();
   }
   setOpen(openNow);
  }
