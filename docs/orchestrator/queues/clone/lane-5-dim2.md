@@ -495,7 +495,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
 - [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-after-college-editor.tsx`
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`
 - [ ] `src/components/tpo/tpo-audit-grid.tsx`
 - [ ] `src/components/tpo/tpo-batch-decision-control.tsx`
 - [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
