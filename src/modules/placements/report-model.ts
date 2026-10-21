@@ -19,6 +19,7 @@ export type PlacementReportJob = {
   companyId: string;
   companyName: string;
   employmentType: string;
+  countsAsPlaced?: boolean;
 };
 
 export type PlacementReportApplication = {
@@ -197,7 +198,8 @@ function bestAcceptedFullTimePackages(
     if (
       offer.status !== "ACCEPTED" ||
       (offer.kind ?? "OFFER") !== "OFFER" ||
-      jobsById.get(offer.jobId)?.employmentType !== "FULL_TIME"
+      (jobsById.get(offer.jobId)?.countsAsPlaced ??
+        (jobsById.get(offer.jobId)?.employmentType === "FULL_TIME")) === false
     ) {
       continue;
     }
@@ -219,12 +221,13 @@ function bestAcceptedFullTimePackages(
  * infer selection from mere screening/shortlisting; missing signal fails closed. */
 export function countsAsPlacedByCollegeRule(input: {
   employmentType: string;
+  countsAsPlaced?: boolean;
   offerStatus: string;
   offerKind?: string;
   countsAsPlacedAt: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   selectedOutcome?: boolean;
 }): boolean {
-  if (input.employmentType !== "FULL_TIME") return false;
+  if (!(input.countsAsPlaced ?? (input.employmentType === "FULL_TIME"))) return false;
   if (input.countsAsPlacedAt === "SELECTED") return input.selectedOutcome === true;
   if ((input.offerKind ?? "OFFER") !== "OFFER") return false;
   if (input.countsAsPlacedAt === "OFFER_RELEASED") {
@@ -301,6 +304,7 @@ export function summarizePlacementReports(
   const countsAt = input.countsAsPlacedAt ?? "OFFER_ACCEPTED";
   const offerCounts = (offer: PlacementReportOffer) => countsAsPlacedByCollegeRule({
     employmentType: jobsById.get(offer.jobId)?.employmentType ?? "",
+    countsAsPlaced: jobsById.get(offer.jobId)?.countsAsPlaced,
     offerStatus: offer.status,
     offerKind: offer.kind,
     countsAsPlacedAt: countsAt,
@@ -331,7 +335,8 @@ export function summarizePlacementReports(
       (offer) => offer.status === "WITHDRAWN",
     ).length,
     studentsAccepted: distinct(accepted.filter((offer) =>
-      jobsById.get(offer.jobId)?.employmentType === "FULL_TIME",
+      jobsById.get(offer.jobId)?.countsAsPlaced ??
+        (jobsById.get(offer.jobId)?.employmentType === "FULL_TIME"),
     ).map((offer) => offer.membershipId)).length,
     studentsPlaced: studentsPlaced.length,
     joined: accepted.filter(
@@ -566,6 +571,7 @@ export type PlacementReportPoolLearner = {
 };
 
 export type PlacementReportDetailedOffer = {
+  countsAsPlaced?: boolean;
   id: string;
   membershipId: string;
   jobId: string;
@@ -751,6 +757,7 @@ export function summarizePlacementReportDetails(input: {
     offers
       .filter((offer) => countsAsPlacedByCollegeRule({
         employmentType: offer.employmentType,
+        countsAsPlaced: offer.countsAsPlaced,
         offerStatus: offer.status,
         offerKind: offer.kind,
         countsAsPlacedAt: input.countsAsPlacedAt ?? "OFFER_ACCEPTED",
@@ -773,7 +780,7 @@ export function summarizePlacementReportDetails(input: {
     (offer) =>
       offer.status === "ACCEPTED" &&
       (offer.kind ?? "OFFER") === "OFFER" &&
-      offer.employmentType === "FULL_TIME",
+      (offer.countsAsPlaced ?? (offer.employmentType === "FULL_TIME")),
   );
 
   const knownCtc = acceptedFullTime
