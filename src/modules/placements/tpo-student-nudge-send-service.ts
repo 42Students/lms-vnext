@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
- activityEvents,collegeMemberships,inAppNotifications,membershipRoles,users,
+ activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -21,6 +21,9 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
  const input=tpoStudentNudgeInputSchema.parse(raw);
  const collegeId=await requireTpoBatchActor(context);
  const college=await requirePlacementManageScope(context,collegeId);
+ const [senderCollege]=await getDb().select({name:colleges.name}).from(colleges)
+   .where(eq(colleges.id,collegeId)).limit(1);
+ const senderName=(senderCollege?.name?.trim()||"College")+" Placement Cell";
  const digest=createHash("sha256").update(input.template+"\0"+input.message).digest("hex");
  const now=new Date(),day=now.toISOString().slice(0,10);
  const membership=context.membership;
@@ -82,7 +85,8 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
    purpose:{kind:"TPO",templateName:"student_nudge_"+input.template.toLowerCase()},
    toEmail:recipient.email,
    recipientName:recipient.displayName??"Learner",
-   senderName:"Placement Cell",
+   // Verified platform From address; legacy mail never set a Reply-To.
+   senderName,
    mergeInfo:{learnerName:recipient.displayName??"Learner",
     message:input.message,action:"Open LMS placements"},
   });

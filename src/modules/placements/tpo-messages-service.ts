@@ -201,6 +201,21 @@ function isNotificationUnread(
  * with distinct source labeling and no fabricated
  * conversation or outbound-delivery counts.
  */
+/** Legacy pulse analogue: read real persisted unread counts and newest item,
+ * not a fabricated socket/delivery receipt. Polling clients preserve their
+ * active thread and draft state when a refresh fails. No message body leaves
+ * this lightweight read; a paged thread view remains separately authorized.
+ */
+export async function getTpoMessagesPulse(context:RequestContext){
+ const inbox=await getTpoMessagesInbox(context,{page:1,pageSize:1,status:"ALL"});
+ const newest=inbox.items[0];
+ return {source:inbox.source,ready:inbox.recruiterConversationsAvailable,
+  total:inbox.summary.total,unread:inbox.summary.unread,
+  reply:inbox.summary.reply,lastId:newest?.id??null,
+  lastOccurredAt:newest?.occurredAt??null,
+  // True unread state comes from SQL or confirmed notification receipts.
+  liveTransport:"POLL_PERSISTED" as const};
+}
 export async function getTpoMessagesInbox(
   context: RequestContext,
   rawQuery: unknown = {},

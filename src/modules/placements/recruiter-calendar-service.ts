@@ -45,9 +45,14 @@ export function defaultRecruiterCalendarRange(now=new Date()){
  const formatter=new Intl.DateTimeFormat("en-CA",{
   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
  });
- const from=formatter.format(now);
+ const day=(date:Date)=>{
+  const parts=formatter.formatToParts(date);
+  const get=(type:string)=>parts.find(part=>part.type===type)?.value??"";
+  return get("year")+"-"+get("month")+"-"+get("day");
+ };
+ const from=day(now);
  const start=parseActivityDateBoundary(from,"from");
- return {from,to:formatter.format(new Date(start.getTime()+30*DAY_MS))};
+ return {from,to:day(new Date(start.getTime()+30*DAY_MS))};
 }
 
 export const recruiterCalendarQuerySchema = z

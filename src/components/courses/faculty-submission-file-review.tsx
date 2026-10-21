@@ -20,6 +20,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
   const [loading, setLoading] = useState(true);
   const [workingId, setWorkingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<{fileId:string;name:string;url:string;expiresAt:number}|null>(null);
   const loadingRef = useRef<AbortController | null>(null);
   const grantRef = useRef<AbortController | null>(null);
 
@@ -67,7 +68,14 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       if (grant.file.id !== file.id || grant.file.submissionId !== submissionId)
         throw new Error("The file permission does not match this submission.");
       if (controller.signal.aborted) return;
-      // The signed URL is never rendered, cached, persisted or logged.
+      // Signed URL stays in component memory only; it is never logged or
+      // stored. PDF preview uses the grant's short-lived inline permission.
+      if(file.contentType.toLowerCase()==="application/pdf"||
+        file.originalName.toLowerCase().endsWith(".pdf")){
+        setPreview({fileId:file.id,name:file.originalName,url:grant.url,
+          expiresAt:Date.parse(grant.expiresAt)});
+        return;
+      }
       const link = document.createElement("a");
       link.href = grant.url;
       link.target = "_blank";
@@ -77,7 +85,7 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
       link.click();
       link.remove();
     } catch (cause) {
-      if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : "Unable to load this submitted file");
+      if (!controller.signal.aborted) setError("Unable to load this file");
     } finally {
       grantRef.current = null;
       setWorkingId(null);
@@ -98,11 +106,26 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
           <span title={state.detail}><StatusBadge tone={state.tone}>{state.label}</StatusBadge></span>
           {state.usable ? <Button size="md" className="min-h-11 md:min-h-[var(--lms-control-height)]" loading={workingId===file.id} type="button" variant="secondary"
             disabled={workingId !== null} onClick={() => void open(file)}>
-            {workingId === file.id ? "Preparing file…" : "Open file"}
+            {workingId === file.id ? "Preparing file…" : file.contentType==="application/pdf"?"Preview PDF":"Open file"}
           </Button> : null}
         </li>;
       })}
     </ul>
+    {preview?<div className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+       <p className="text-sm font-semibold">Submitted assignment PDF preview · {preview.name}</p>
+       <button type="button" onClick={()=>setPreview(null)}
+         className="min-h-9 rounded border border-border px-3 text-sm">Close preview</button>
+      </div>
+      <iframe key={preview.fileId} src={preview.url} title="Submitted assignment PDF preview"
+        sandbox="allow-same-origin allow-downloads" referrerPolicy="no-referrer"
+        loading="lazy" className="h-[520px] w-full rounded border border-border bg-surface"/>
+      <p className="text-xs text-muted-foreground">
+        If the preview is unavailable, <a href={preview.url} target="_blank" rel="noopener noreferrer"
+          referrerPolicy="no-referrer" className="font-semibold text-primary-text underline">open this PDF in a new tab</a>.
+        This permission expires shortly.
+      </p>
+    </div>:null}
     {error ? <Alert tone="error">{error}</Alert> : null}
   </section>;
 }
