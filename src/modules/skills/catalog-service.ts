@@ -166,7 +166,25 @@ async function readSkillCatalogUncached(input: SkillCatalogQuery) {
     + ${db10Skills.searchPriority}
   )`;
 
-  const items = await db.select(columns).from(db10Skills)
+  async function selectDirectSkills() {
+    const directScore = sql<number>`(case
+      when ${normalized}=${searchTerm} then 100
+      when ${display}=${searchTerm} then 95
+      when ${namePrefix} then 80
+      when ${displayPrefix} then 75
+      when ${nameWordPrefix} then 60
+      when ${nameContains} then 40
+      when ${displayContains} then 35 else 0 end)
+      + least(floor(${db10Skills.usageCount}/10.0),50) + ${db10Skills.searchPriority}`;
+    return db.select(columns).from(db10Skills).where(and(
+      base,
+      sql<boolean>`(${namePrefix} or ${displayPrefix} or ${nameContains} or ${displayContains})`,
+    )).orderBy(desc(directScore),asc(sql`length(${db10Skills.name})`),
+      asc(db10Skills.displayName),asc(db10Skills.id)).limit(input.limit);
+  }
+  let items: Awaited<ReturnType<typeof selectDirectSkills>>;
+  try {
+    items = await db.select(columns).from(db10Skills)
     .where(and(
       base,
       sql<boolean>`(
@@ -182,6 +200,12 @@ async function readSkillCatalogUncached(input: SkillCatalogQuery) {
       asc(db10Skills.id),
     )
     .limit(input.limit);
+
+  } catch (error) {
+    if (!synonymTableNotInstalled(error)) throw error;
+    // Keep the primary name/display lookup available before alias backfill.
+    items = await selectDirectSkills();
+  }
   if (q.length < 3 || items.length >= Math.min(5,input.limit)) return { items };
   // Legacy typo search happens only if fewer than five direct/prefix results.
   // Bound SQL candidates and in-memory edit distance; no unindexed table-wide
