@@ -1,3 +1,5 @@
+"use client";
+import {useState} from "react";
 import type { CSSProperties } from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Card } from "@/components/ui/card";
@@ -15,11 +17,12 @@ function SignInStylePreview({
     : branding.desktopBackgroundUrl;
 
   const canvasStyle: CSSProperties = {
-    backgroundColor: branding.tokens.subtle,
+    backgroundColor: "#effbfa",
+    backgroundImage: "radial-gradient(circle at 14% 18%,rgba(10,124,136,.2),transparent 50%),radial-gradient(circle at 82% 84%,rgba(45,183,196,.18),transparent 55%)",
     ...(backgroundUrl
       ? {
           backgroundImage:
-            "linear-gradient(color-mix(in srgb, var(--lms-black) 12%, transparent),color-mix(in srgb, var(--lms-black) 12%, transparent)),url(" +
+            "linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)),url(" +
             JSON.stringify(backgroundUrl) +
             ")",
           backgroundSize: "cover",
@@ -31,63 +34,30 @@ function SignInStylePreview({
   return (
     <div
       aria-label={mobile ? "Mobile sign-in illustration" : "Desktop sign-in illustration"}
-      className={
-        mobile
-          ? "mx-auto flex aspect-[47/72] w-full max-w-56 max-w-full items-center justify-center overflow-hidden rounded-3xl border-4 border-border p-3 shadow-none"
-          : "flex min-h-80 items-center justify-center overflow-hidden rounded-[var(--college-card-radius,8px)] border border-border p-6"
-      }
-      style={canvasStyle}
+      className="relative mx-auto flex max-w-full shrink-0 items-center justify-center overflow-hidden rounded-xl border border-border"
+      style={{...canvasStyle,width:mobile?170:340,height:mobile?302:191,
+        paddingTop:mobile?28:0,alignItems:mobile?"flex-start":"center"}}
     >
-      <div
-        className={
-          mobile
-            ? "w-full rounded-[var(--lms-canvas-radius)] border-t-4 bg-surface p-4 shadow-lg"
-            : "w-full max-w-xs rounded-[var(--lms-canvas-radius)] border-t-4 bg-surface p-6 shadow-lg"
-        }
-        style={{ borderTopColor: branding.secondary }}
-      >
+      <div className="shrink-0 rounded-lg border border-[#e7ecf2] bg-white p-[10px] shadow-md"
+        style={{width:mobile?138:128}}>
+        <div className="mb-[7px] flex items-center gap-[5px] border-b border-[#e7ecf2] pb-[6px]">
         {branding.logoUrl ? (
           // An existing pure helper has verified the public HTTPS logo URL.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={branding.logoUrl}
             alt={branding.college.name + " logo"}
-            className="mb-3 h-10 max-w-full object-contain object-left"
+            className="h-4 w-4 shrink-0 object-contain"
             referrerPolicy="no-referrer"
           />
         ) : (
-          <div
-            className="mb-3 flex h-10 w-10 items-center justify-center rounded-[var(--lms-control-radius)] text-lg font-bold"
-            style={{
-              color: branding.tokens.text,
-              backgroundColor: branding.tokens.subtle,
-            }}
-            aria-hidden="true"
-          >
-            {branding.college.name.slice(0, 1).toUpperCase()}
-          </div>
+          <span aria-hidden="true" className="h-4 w-4 shrink-0 rounded-[4px] border border-[#0a7c8855] bg-[#0a7c8822]" />
         )}
-        <h3 className="m-0 text-sm font-semibold text-foreground">
-          {branding.college.name}
-        </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Sign in to your college
-        </p>
-        <div className="mt-5 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-2 text-xs text-muted-foreground">
-          Email or mobile number
+          <span aria-hidden="true" className="h-[5px] w-[50px] rounded-sm bg-[#172033]"/>
         </div>
-        <div
-          className="mt-3 rounded-[var(--lms-control-radius)] px-3 py-2 text-center text-xs font-semibold"
-          style={{
-            backgroundColor: branding.tokens.primary,
-            color: branding.tokens.onPrimary,
-          }}
-        >
-          Continue
-        </div>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          Illustration only · No live sign-in
-        </p>
+        <div aria-hidden="true" className="mb-2 h-[6px] w-[34px] rounded-sm bg-[#172033]"/>
+        <div aria-hidden="true" className="mb-[6px] h-3 rounded-[3px] border border-[#d6e1ee]"/>
+        <div aria-hidden="true" className="h-3 rounded-[3px] bg-[#0a7c88]"/>
       </div>
     </div>
   );
@@ -127,6 +97,7 @@ export function CollegeBrandingPreview({
   branding: AdminCollegeBrandingPreview;
 }) {
   const suppressed = Object.values(branding.suppressed).filter(Boolean).length;
+  const [previewMode,setPreviewMode]=useState<"desktop"|"mobile">("desktop");
 
   return (
     <div className="min-w-0 space-y-6">
@@ -248,17 +219,23 @@ export function CollegeBrandingPreview({
           Desktop and mobile sign-in style
         </h2>
         <p className="mb-4 text-sm text-body">
-          Illustrative layout with persisted public images and existing LMS contrast
-          maths. This is not a live tenant-host login or a pixel-perfect legacy preview.
+          A compact approximation of the classic 42LMS sign-in layout. The real login page may use the selected college's saved public background and logo.
         </p>
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Card as="article" className="p-4 md:p-4">
-            <h3 className="mb-3 text-sm font-semibold text-foreground">Desktop</h3>
-            <SignInStylePreview branding={branding} mobile={false} />
-          </Card>
-          <Card as="article" className="p-4 md:p-4">
-            <h3 className="mb-3 text-sm font-semibold text-foreground">Mobile</h3>
-            <SignInStylePreview branding={branding} mobile />
+        <div className="space-y-3">
+          <div role="group" aria-label="Sign-in preview size" className="inline-flex rounded-lg border border-border bg-surface p-1">
+            {(["desktop","mobile"] as const).map(mode=><button type="button" key={mode}
+              aria-pressed={previewMode===mode}
+              onClick={()=>setPreviewMode(mode)}
+              className={"min-h-9 rounded-md px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
+                (previewMode===mode?"bg-primary text-white":"bg-transparent text-body hover:bg-primary-subtle")}>
+              {mode==="desktop"?"Desktop":"Mobile"}
+            </button>)}
+          </div>
+          <Card as="article" className="max-w-[380px] p-4 md:p-4">
+            <SignInStylePreview branding={branding} mobile={previewMode==="mobile"}/>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Approximation — the real page also shows the floating symbols and the full sign-in form.
+            </p>
           </Card>
         </div>
       </section>
