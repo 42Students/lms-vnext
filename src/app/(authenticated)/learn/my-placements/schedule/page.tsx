@@ -31,8 +31,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const [workspaceResult,resultsResult,extrasResult]=await Promise.allSettled([
     getLearnerPlacementRequestWorkspace(context),
     listOwnAppliedPlacementResults(context),
-    view==="calendar"?listLearnerCareerCalendarSupplements(context):
-      Promise.resolve([] as CareerCalendarSupplement[]),
+    view==="calendar"?getLearnerCalendarExtras(context,extraStart,extraEnd):
+      Promise.resolve(null),
   ]);
   if(workspaceResult.status==="rejected"){
     if(workspaceResult.reason instanceof AuthorizationError)throw workspaceResult.reason;
@@ -48,7 +48,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const extras=extrasResult.status==="fulfilled"?extrasResult.value:null;
   const deadlineExtras=view==="calendar"
     ? await loadLearnerCareerCalendarSupplements(context).catch(()=>({
-      supplements:[],warnings:["Un-applied job deadlines could not be loaded."]
+      supplements:[],warnings:["Un-applied job deadlines could not be loaded."],
     })) : null;
   const ownResults=resultsResult.status==="fulfilled"?resultsResult.value:[];
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
@@ -73,14 +73,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now) as {
     ahead: WorkspaceRound[]; past: WorkspaceRound[]; undated: WorkspaceRound[];
   };
-  // Read deadlines and college no-drive dates independently of round bookings.
-  // Missing staged storage is reported, never disguised as an empty calendar.
-  const calendarSupplementResult = view === "calendar"
-    ? await loadLearnerCareerCalendarSupplements(context).catch(() => ({
-        supplements: [], warnings: ["Calendar dates could not be loaded. Refresh to retry."],
-      }))
-    : null;
-  const today = initialCareerCalendarDay();
+  // Calendar extras and job deadlines have independent sources, scoped
+  // to the learner's active college. Keep the rounds if either fails.
   const needsConfirmation=ahead.filter(row=>roundCanBeManaged(row)&&!row.learnerConfirmedAt).length;
   const rounds = workspace.rounds.map(row => ({
     ...row,
@@ -252,6 +246,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
               ?extras.blockedDateCount+" college exam/blocked date(s)."
               :"No exam/blocked dates recorded in this period."}</p>
         </div>:null}
+        <p className="text-xs text-muted-foreground" role="note">Legend: assessments and interviews · pre-placement talks · exam/blocked dates · application deadlines. All dates are IST.</p>
         {deadlineExtras?.warnings.length?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
           {deadlineExtras.warnings.join(" ")}
         </p>:null}
