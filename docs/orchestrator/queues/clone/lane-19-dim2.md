@@ -213,14 +213,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/tpo-batch-class-decision.tsx`
 - [x] `src/components/tpo/tpo-batch-decision-control.tsx`
 - [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-facet-filters.tsx`
-- [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-instant-search.tsx`
-- [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-batch-facet-filters.tsx`
+- [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
+- [x] `src/components/tpo/tpo-batch-instant-search.tsx`
+- [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
 - [ ] `src/components/tpo/tpo-company-team-composer.tsx`
 - [ ] `src/components/tpo/tpo-custom-job-type-rename.tsx`
 - [ ] `src/components/tpo/tpo-debar-control.tsx`
