@@ -169,6 +169,7 @@ export default async function HomePage({
         <div aria-hidden="true" className={styles.mobileBackdrop}
           style={{ backgroundImage: cssUrl(mobileBackground) }} />
       ) : null}
+      {!desktopBackground ? <LegacyLoginDecor /> : null}
 
       <header className={styles.brandHeader}>
         <div className={styles.brandRow}>
@@ -193,7 +194,7 @@ export default async function HomePage({
       <div className={styles.center}>
         <div className="relative w-full max-w-[468px]">
           {!desktopBackground ? <LegacyLoginMascot /> : null}
-          <section id="sign-in-content" tabIndex={-1} className={styles.card} aria-label="Sign in">
+          <section id="sign-in-content" tabIndex={-1} className={`${styles.card} relative z-10`} aria-label="Sign in">
           {message ? (
             <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
               <p className={styles.statusTitle}>{message.title}</p>
@@ -275,7 +276,7 @@ function cssUrl(value: string) {
  * this server-side fallback stays visible even if the OTP client has not hydrated. */
 function LegacyLoginMascot() {
   return <div aria-hidden="true"
-    className="pointer-events-none absolute -right-[142px] top-[8px] z-0 hidden h-[262px] w-[232px] xl:block">
+    className="pointer-events-none absolute -right-1 -top-[138px] z-0 h-[195px] w-[173px] lg:-right-[140px] lg:top-[8px] lg:h-[262px] lg:w-[232px]">
     <svg viewBox="0 0 232 262" className="h-full w-full" focusable="false">
       <defs>
         <linearGradient id="authRobotShell" x1="0" y1="0" x2="0" y2="1">
@@ -309,5 +310,33 @@ function LegacyLoginMascot() {
       <path d="M168 146 Q180 172 182 196" fill="none" stroke="#829daf" strokeWidth="17" strokeLinecap="round" />
       <circle cx="182" cy="200" r="10.5" fill="#f4f9fc" stroke="#adc3d2" strokeWidth="2" />
     </svg>
+  </div>;
+}
+
+/** Quiet, reduced-motion-friendly decoration derived from the legacy
+ * LoginDecor coding symbols. The LMS form stays above these shapes. */
+function LegacyLoginDecor() {
+  return <div aria-hidden="true"
+    className="pointer-events-none absolute inset-0 z-0 hidden overflow-hidden lg:block">
+    <svg viewBox="0 0 48 48" width="84" height="84" fill="none"
+      className="absolute left-[8%] top-[20%] -rotate-[8deg] text-[var(--auth-primary)] opacity-[.18]"
+      stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="9" width="38" height="30" rx="3.5" />
+      <path d="M13 19l6 5-6 5M23 30h11" />
+    </svg>
+    <svg viewBox="0 0 48 48" width="92" height="92" fill="none"
+      className="absolute right-[8%] top-[17%] rotate-[5deg] text-[var(--lms-body-text)] opacity-[.12]"
+      stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="5" y="8" width="38" height="32" rx="3.5" />
+      <path d="M5 15h38M19 22l-5 5 5 5M29 22l5 5-5 5M26 20l-4 14" />
+    </svg>
+    <svg viewBox="0 0 48 48" width="70" height="70" fill="none"
+      className="absolute right-[22%] bottom-[18%] -rotate-[6deg] text-[var(--auth-primary)] opacity-[.15]"
+      stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
+      <ellipse cx="24" cy="11" rx="14" ry="5" />
+      <path d="M10 11v26c0 2.8 6.3 5 14 5s14-2.2 14-5V11M10 24c0 2.8 6.3 5 14 5s14-2.2 14-5" />
+    </svg>
+    <span className="absolute left-[15%] bottom-[9%] font-mono text-3xl text-[var(--auth-primary)] opacity-[.16]">{"&&"}</span>
+    <span className="absolute right-[8%] bottom-[26%] font-mono text-3xl text-[var(--lms-body-text)] opacity-[.12]">{"//"}</span>
   </div>;
 }
