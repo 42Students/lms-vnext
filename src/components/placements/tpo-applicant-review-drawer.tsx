@@ -38,12 +38,12 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
      expectedUpdatedAt={app.screeningUpdatedAt}/>:
     <p role="status" className="text-sm text-body">This application is read-only. Review requires a published drive and a pending or held submitted application.</p>}
    <nav aria-label="Review neighbours" className="flex flex-col gap-2 border-t border-border pt-4 text-sm sm:flex-row sm:items-center sm:justify-between">
-    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">← Previous applicant</Link>:null}
-    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline">Next applicant →</Link>:null}
+    {previousId?<Link href={applicantHref(previousId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Previous applicant</Link>:null}
+    {nextId?<Link href={applicantHref(nextId)} className="inline-flex min-h-11 md:min-h-9 items-center text-[var(--lms-teal-deep)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next applicant →</Link>:null}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
    <Link href={applicantHref(app.id)}
-    className="inline-flex min-h-11 w-full items-center justify-center border-t border-[var(--lms-field-hover-border)] pt-3 text-sm font-[650] text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9 rounded-[var(--lms-control-radius)]">
+    className="inline-flex min-h-11 w-full items-center justify-center border-t border-[var(--lms-field-hover-border)] pt-3 text-sm font-[650] text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9 rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
     Open full applicant detail →
    </Link>
    </div>
