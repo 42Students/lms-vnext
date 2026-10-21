@@ -269,3 +269,15 @@
 
 - work2 #9 `tpo-draft-drive-model.ts` | G2-3-011-033: constrained canonical label syntax; added scoped picker helper allowing all active configured labels and hidden saved historical choice only in its existing edit context. Employment category remains separate; createPlacementJob already verifies tenant status/built-ins. UI sourcing of all five choices handed off.
 - work2 #10 `public-page/publication-service.ts` | G2-17-022-026: added live publish eligibility signal requiring explicit enabled/published state and current >=5 consented active learners; historical snapshot not treated as live approval. 12-month metric aggregation remains in scoped public-read service and is handed off.
+
+- work2 #11 `placements/offers/[offerId]/actions/route.ts` | G2-17-023-026: retained authenticated vNext `{offer}` client contract, documented direct-object legacy response adapter instead of breaking current consumers.
+- work2 #12 `college-drive-archive-action.tsx` | G2-9-013-047: explicitly announces accurate `Drive archived` on confirmed successful request before returning to archived drives, not legacy false deletion claim.
+
+- work2 #13 `college-drive-row-lifecycle-action.tsx` | G2-9-015-049: failed close/reopen impact preview now explicitly reassures that nothing changed; legacy deletion copy deliberately not misapplied because this control has no delete path.
+- work2 #14 `bug-tracker/admin-validation.ts` | G2-17-024-017: explicit human-readable Zod status/resolution labels for admin listing and workflow updates, while retaining strict enum checks.
+
+- work2 #15 `learner-notification-membership-service.ts` | G2-18-004-037: retained active college membership requirement without imposing current section/class prerequisite; exported classless notice hint. UI handoff for display rather than hiding college/direct notices.
+- work2 #16 `api/activity/route.ts` | G2-18-024-025: provided legacy-compatible actorNames/targetNames dictionaries from authorized response items; retained truthful vNext cursor. Skipped page/size/global total since unbounded offset totals cannot be derived accurately from cursor response; adapter handoff.
+
+- work2 #17 `tpo-company-detail-read-service.ts` | G2-11-007-066: preserved strict canonical UUID/relationship detail route while documenting separate job-only college-scoped company-memory route. No unsafe synthetic recruiter relationship; route owner handoff for name-based legacy bookmark.
+- work2 #18 `tpo-builtin-job-types-editor.tsx` | G2-3-011-023: exact `Job types were not saved` failure, server reason, dismiss and Retry with fresh version via router.refresh; retains controls and no stale blind resubmission.
