@@ -213,7 +213,7 @@ export function CollegeRecurringPreview({
                 onChange={(e) => setFrom(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 93 days)
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 200 matching sessions)
               <Input disabled={pending} type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
