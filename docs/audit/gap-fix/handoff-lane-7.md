@@ -875,3 +875,21 @@ Cohort-wide filtering and selection must not act on only current page under an a
 - G2-2-002-019 | `src/modules/storage/file-lifecycle.ts` | Ensure consumers show unavailable capability rather than 500, and avoid loading dependent route before guard.
 
 Do not relax strict account/key/bucket guard to match legacy one-flag readiness; unavailable R2 should return a localized typed 503 instead of breaking unrelated pages. **4/4 handed off, not fixed.**
+
+## TPO standalone request decisions — lane-7 handoff (2026-10-21)
+
+- G2-13-022-005 | `src/modules/placements/tpo-request-decision-service.ts` | Support independent registration/PAP request kinds without application or explicit behavior change.
+- G2-13-022-021 | `src/modules/placements/request-service.ts` | Allow standalone registration requests and persist choice changes.
+- G2-13-022-037 | `src/modules/placements/tpo-request-decision-service.ts` | Use college+learner request scope independent of nullable application.
+- G2-13-022-010 | `src/modules/placements/tpo-request-decision-service.ts + decision route error map` | Preserve 404 for missing IDs, differentiate malformed input via 400.
+
+Current TPO decision service inner-joins application+job and does not support nullable job/application kinds; owning service must authorize via membership/college without an ID oracle. **4/4 handed off, not fixed.**
+
+## Public job response contract — lane-7 handoff (2026-10-21)
+
+- G2-17-021-044 | `src/db/schema/placements.ts + public job redirect route` | Import old slug mapping and HTTP 301/308 redirects to stable public link.
+- G2-17-021-047 | `src/modules/placements/placement-legacy-posting-model.ts + schema migration` | Design row-level migration preserving public responsibilities, dates, salary, original slug and published timestamp.
+- G2-17-021-048 | `src/modules/placements/public-job-projection.ts` | Ensure DTO select explicitly whitelists needed nested JSON only; validate no accidental serialization.
+- G2-17-021-050 | `src/modules/placements/learner-job-service.ts + public job DTO route` | Keep public projection narrowly safe and never reuse learner eligibility view on public URLs.
+
+Do not expose private eligibility/targeting in anonymous DTOs or assume legacy numeric job IDs equal current UUIDs. **4/4 handed off, not fixed.**

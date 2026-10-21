@@ -107,3 +107,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_l14-u029-tpo-batch-detail.md.md` | 5/5 findings read and logged as cross-lane handoffs. 0 out-of-area edits. Full-cohort server filters, cross-page bulk controls, independent readiness panels belong to TPO; not fixed. No execution/CI.
 
 - `NEW_docs_audit_gap2_lane-2_r2-condition.md.md` | 4/4 findings read and logged as cross-lane handoffs. 0 out-of-area edits. Private R2 configuration intentionally requires all credentials and fails closed; contextual 503 and docs belong to Storage; not fixed. No execution/CI.
+
+- `NEW_docs_audit_gap2_lane-6_l13-u022-tpo-request-controller.md.md` | 4/4 finding IDs mapped to Placements TPO standalone-request scope and decision error contracts. No code outside lane-7 changed. **Handoff, not fixed**. No execution/CI.
+
+- `NEW_docs_audit_gap2_lane-7_l17-u021-public-job-response-dto.md.md` | 4/4 finding IDs mapped to public job migration, slug redirect, and whitelisted DTO projection. No code outside lane-7 changed. **Handoff, not fixed**. No execution/CI.
