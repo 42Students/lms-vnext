@@ -65,7 +65,7 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"project_task",subjectId:taskId,subjectLabel:task.title,
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id,
-      commentKind:comment.commentKind},
+      commentKind:comment.commentKind,taskStatusAtComment:task.status,taskUpdatedAtAtComment:task.updatedAt.toISOString()},
     groupKey:"project:"+scope.project.id,
   });
   for (const recipient of ["LEARNER","MENTOR"] as const) {

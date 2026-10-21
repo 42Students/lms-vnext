@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq } from "drizzle-orm";
+import { and, asc, count, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   attendanceRecords, attendanceSessions, cohorts, collegeMemberships,
@@ -86,7 +86,7 @@ export async function getCollegeStudentDetail(
       ))
       .where(and(
         eq(sectionEnrollments.status, "ACTIVE"),
-        eq(sectionEnrollments.learnerEnrollmentId, activeEnrollIds[0]),
+        inArray(sectionEnrollments.learnerEnrollmentId, activeEnrollIds),
       ))
     : [];
   // Only explicitly recorded statuses for MARKED sessions. PRESENT may have no row.

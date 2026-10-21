@@ -994,3 +994,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-19-020-027 / G2-4-021-001 | `src/modules/bug-tracker/readiness.ts + deployment` | Verify DB10 migration and acceptance before enabling tracker flag; not confirmed.
 - G2-17-030-012/-035 | `src/components/placements/placement-operations-overview.tsx + deadline API` | Add per-drive More actions and authorized Super Admin acting-college deadline endpoint.
+
+- G2-12-017-021/-062 | `src/modules/projects/task-comment-service.ts + comment schema` | Confirm eligible active non-assignee learner versus observer read-only permissions and persist immutable author/task snapshots on comment rows; activity metadata snapshot added.
+- G2-5-019-014 | `src/modules/people/college-student-detail-service.ts` | Add active term/semester mapping and historical class/cohort projection once academic period ownership verified.
