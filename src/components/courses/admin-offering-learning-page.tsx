@@ -34,6 +34,8 @@ export async function AdminOfferingLearningPage({
   backHref: string;
   deliveryId?:string|null;
 }) {
+  const retryHref=backHref+"/offerings/"+encodeURIComponent(offeringId)+
+   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
   const workspace =
     await getAdminOfferingLearningWorkspace(
       context,
@@ -54,7 +56,7 @@ export async function AdminOfferingLearningPage({
     Lessons couldn&apos;t be loaded. Internal Server Error. Your changes have not been made.
    </Alert>
    <Link href={backHref} className="font-semibold text-primary-text underline">Back to Courses</Link>
-   <a href={backHref+"?retryCourse="+encodeURIComponent(offeringId)}
+   <a href={retryHref}
     className="ml-3 font-semibold text-primary-text underline">Retry</a>
   </div>;
   const [rosterResult,sectionPreviewResult]=await Promise.allSettled([
@@ -110,12 +112,12 @@ export async function AdminOfferingLearningPage({
        {roster?<AdminOfferingTeachersPanel roster={roster}
         academicPeriodName={workspace.offering.academicPeriodName}/>:
         <Alert tone="warning" role="alert">Faculty assignments couldn&apos;t be loaded.
-         <a className="ml-2 font-semibold underline" href={backHref+"/"+encodeURIComponent(offeringId)+"#course-syllabus"}>Retry</a>
+         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
         </Alert>}
        {sectionPreview?<AdminOfferingSectionPreview data={sectionPreview}/>:
         <Alert tone="warning" role="alert" title="Server Notification">
          Sections couldn&apos;t be loaded, so you&apos;re seeing shared content only.
-         <a className="ml-2 font-semibold underline" href={backHref+"/"+encodeURIComponent(offeringId)+"#course-syllabus"}>Retry</a>
+         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
         </Alert>}
       </div>}/>
     </div>
