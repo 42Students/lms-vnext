@@ -175,3 +175,14 @@ src/components/college/college-person-profile-overview-modal.tsx | 27 responsive
 src/components/college/college-student-import-history.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | phone flex wrap
 src/components/college/student-class-move-action.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
 src/components/courses/admin-course-display-editor.tsx | 28 responsive instances | 375 min width zero ↔ min-w-0; 375 wraps ↔ flex-wrap; 375 sidebar hidden ↔ shell @max767 | none
+src/components/courses/admin-offering-learning-overview.tsx | 56 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone grid one column
+src/components/courses/assignment-multipart-parts-editor.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 sidebar hidden ↔ shell @max767 | none
+src/components/courses/college-assignment-review.tsx | 9 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 wraps ↔ flex-wrap | none
+src/components/courses/college-content-authoring-control.tsx | 61 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/courses/college-lesson-visibility-controls.tsx | 17 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/courses/faculty-assignment-material-links.tsx | 16 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/courses/faculty-content-editor.tsx | 21 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 grid 1 ↔ grid-cols-1 | none
+src/components/courses/faculty-course-tab-navigation.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/courses/faculty-report-student-table.tsx | 17 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | phone flex wrap
+src/components/courses/learner-rich-response-editor.tsx | 10 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone grid one column
+src/components/courses/super-admin-course-bulk-visibility.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 wraps ↔ flex-wrap | none
