@@ -1,5 +1,6 @@
 import {
   and,
+  desc,
   eq,
   sql,
 } from "drizzle-orm";
@@ -44,6 +45,7 @@ type ProgressContent = Awaited<
 
 type ProgressRow = {
   lastPositionSeconds: number;
+  durationSeconds?: number;
   completedAt: Date | null;
 } | null;
 
@@ -68,7 +70,7 @@ export function buildLearnerProgressView(
   minInProgressPercent = 5,
 ): LearnerProgressView {
   const durationSeconds =
-    content.durationSeconds ?? 0;
+    content.durationSeconds ?? progress?.durationSeconds ?? 0;
   // Without authored duration preserve genuine saved position for resume.
   // Unknown duration must never imply a percentage or completion.
   const lastPositionSeconds = durationSeconds > 0
@@ -175,8 +177,11 @@ async function loadProgressRow(
 ) {
   const [row] = await getDb()
     .select({
+      id: learnerContentProgress.id,
+      attempt: learnerContentProgress.attempt,
       lastPositionSeconds:
         learnerContentProgress.lastPositionSeconds,
+      durationSeconds: learnerContentProgress.durationSeconds,
       completedAt:
         learnerContentProgress.completedAt,
     })
@@ -193,6 +198,7 @@ async function loadProgressRow(
         ),
       ),
     )
+    .orderBy(desc(learnerContentProgress.attempt))
     .limit(1);
 
   return row ?? null;
@@ -230,22 +236,23 @@ export async function getLearnerContentProgress(
 async function atomicProgressUpdate(
   membershipId: string,
   contentId: string,
+  attempt: number,
   positionSeconds: number,
+  durationSeconds: number,
   shouldComplete: boolean,
 ) {
   const db = getDb();
   const now = new Date();
   const updateValues = {
     lastPositionSeconds: positionSeconds,
+    // Keep the captured duration for historic videos whose authored duration
+    // later becomes unavailable. Never downgrade a positive duration to 0.
+    durationSeconds: sql<number>`greatest(${learnerContentProgress.durationSeconds}, ${durationSeconds})`,
     updatedAt: now,
     ...(shouldComplete
       ? {
-          completedAt: sql<Date>`
-            coalesce(
-              ${learnerContentProgress.completedAt},
-              ${now}
-            )
-          `,
+          completedAt: sql<Date>`coalesce(${learnerContentProgress.completedAt}, ${now})`,
+          firstCompletedAt: sql<Date>`coalesce(${learnerContentProgress.firstCompletedAt}, ${now})`,
         }
       : {}),
   };
@@ -263,6 +270,14 @@ async function atomicProgressUpdate(
           learnerContentProgress.lessonContentId,
           contentId,
         ),
+        eq(learnerContentProgress.attempt, attempt),
+        // A retake started after this request read the old attempt must not
+        // let a stale device overwrite historical progress.
+        sql`${learnerContentProgress.attempt} = (
+          select max(latest.attempt) from learner_content_progress latest
+          where latest.membership_id = ${membershipId}
+          and latest.lesson_content_id = ${contentId}
+        )`,
       ),
     )
     .returning();
@@ -301,19 +316,29 @@ async function completeManualContentOnce(
     const [existing] = await tx.select().from(learnerContentProgress).where(and(
       eq(learnerContentProgress.membershipId, membershipId),
       eq(learnerContentProgress.lessonContentId, content.id),
-    )).limit(1);
+    )).orderBy(desc(learnerContentProgress.attempt)).limit(1);
     if (existing?.completedAt) return buildLearnerProgressView(content, existing);
     let saved: typeof learnerContentProgress.$inferSelect | undefined;
     if (existing) {
       [saved] = await tx.update(learnerContentProgress).set({
-        completedAt: now, updatedAt: now,
+        completedAt: now,
+        firstCompletedAt: sql<Date>`coalesce(${learnerContentProgress.firstCompletedAt}, ${now})`,
+        updatedAt: now,
       }).where(and(
         eq(learnerContentProgress.id, existing.id),
+        eq(learnerContentProgress.attempt, existing.attempt),
         sql`${learnerContentProgress.completedAt} is null`,
+        sql`${learnerContentProgress.attempt} = (
+          select max(latest.attempt) from learner_content_progress latest
+          where latest.membership_id = ${membershipId}
+          and latest.lesson_content_id = ${content.id}
+        )`,
       )).returning();
     } else {
       [saved] = await tx.insert(learnerContentProgress).values({
-        membershipId, lessonContentId: content.id, lastPositionSeconds: 0, completedAt: now,
+        membershipId, lessonContentId: content.id, lastPositionSeconds: 0,
+        durationSeconds: content.durationSeconds ?? 0,
+        completedAt: now, firstCompletedAt: now,
       }).returning();
     }
     if (!saved) throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
@@ -408,16 +433,17 @@ export async function saveLearnerContentProgress(
 
   if (!existing) {
     try {
+      const completedAt = shouldComplete ? new Date() : null;
       const [inserted] = await getDb()
         .insert(learnerContentProgress)
         .values({
           membershipId,
           lessonContentId: contentId,
-          lastPositionSeconds:
-            positionSeconds,
-          completedAt: shouldComplete
-            ? new Date()
-            : null,
+          attempt: 1,
+          lastPositionSeconds: positionSeconds,
+          durationSeconds: content.durationSeconds ?? 0,
+          completedAt,
+          firstCompletedAt: completedAt,
         })
         .returning();
 
@@ -429,17 +455,25 @@ export async function saveLearnerContentProgress(
     } catch (error) {
       if (
         postgresConstraintName(error) !==
-        "learner_content_progress_membership_content_uq"
+        "learner_content_progress_membership_content_attempt_uq"
       ) {
         throw error;
       }
     }
   }
 
+  // Re-read the current attempt after an insert race. A stale playback
+  // request never updates an earlier attempt after an admin retake.
+  const currentRow = await loadProgressRow(membershipId, contentId);
+  if (!currentRow) {
+    throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+  }
   const updated = await atomicProgressUpdate(
     membershipId,
     contentId,
+    currentRow.attempt,
     positionSeconds,
+    content.durationSeconds ?? 0,
     shouldComplete,
   );
 
