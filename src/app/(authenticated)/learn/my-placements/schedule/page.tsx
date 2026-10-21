@@ -10,6 +10,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
 import { initialCareerCalendarDay,shiftCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
 import {getLearnerCalendarExtras} from "@/modules/placements/learner-calendar-extras-service";
+import {loadLearnerCareerCalendarSupplements} from "@/modules/placements/learner-career-calendar-feed-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
@@ -44,6 +45,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const resultsUnavailable=resultsResult.status==="rejected";
   const extrasUnavailable=extrasResult.status==="rejected";
   const extras=extrasResult.status==="fulfilled"?extrasResult.value:null;
+  const deadlineExtras=view==="calendar"
+    ? await loadLearnerCareerCalendarSupplements(context).catch(()=>({
+      supplements:[],warnings:["Un-applied job deadlines could not be loaded."]
+    })) : null;
   const ownResults=resultsResult.status==="fulfilled"?resultsResult.value:[];
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
   // Newest request wins. A pending move must suppress attendance actions
@@ -238,9 +243,13 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
               ?extras.blockedDateCount+" college exam/blocked date(s)."
               :"No exam/blocked dates recorded in this period."}</p>
         </div>:null}
+        {deadlineExtras?.warnings.length?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
+          {deadlineExtras.warnings.join(" ")}
+        </p>:null}
         <Suspense fallback={<p role="status">Calendar</p>}>
           <LearnerCareerCalendar initialAnchor={today} todayAnchor={today}
-            rounds={rounds} supplements={extras?.supplements??[]} surface="schedule" />
+            rounds={rounds} supplements={[...(extras?.supplements??[]),...(deadlineExtras?.supplements??[])]}
+            surface="schedule" />
         </Suspense>
       </section>:null}
       {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">
