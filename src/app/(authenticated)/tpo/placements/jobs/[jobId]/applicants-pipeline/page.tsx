@@ -62,27 +62,27 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
    className="grid min-w-0 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter applicants pipeline">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
     <Select name="stage" defaultValue={data.stage} className="block min-h-11 w-full min-[768px]:min-h-9">
      {stages.map(s=><option key={s} value={s}>{s}</option>)}
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
     <Input name="search" defaultValue={data.search} maxLength={100}
      className="block min-h-11 w-full min-[768px]:min-h-9"/></label>
    <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[992px]:w-auto">Apply</Button>
    <details className="group col-span-full" open={data.channel !== "ALL" || data.eligibility !== "ALL" || data.flag !== "ALL" || data.sort !== "NEWEST" || data.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Filter applicants <span aria-hidden="true" className="ml-2">⌄</span></summary>
     <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application channel
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application channel
     <Select name="channel" defaultValue={data.channel} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">All channels</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
     <Select name="eligibility" defaultValue={data.eligibility} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
     <Select name="flag" defaultValue={data.flag} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">Any flag</option>
      <option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
@@ -90,12 +90,12 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
     <Select name="sort" defaultValue={data.sort} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
     <Select name="submittedWithin" defaultValue={data.submittedWithin} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">Any submission date</option><option value="LAST_7_DAYS">Last 7 × 24 hours</option>
      <option value="LAST_30_DAYS">Last 30 × 24 hours</option>

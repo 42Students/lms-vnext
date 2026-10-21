@@ -160,19 +160,19 @@ export default async function TpoPlacementSummaryPage({
           <form method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end" aria-label="Filter drive rows">
             {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
             {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-            <label className="grid min-w-40 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+            <label className="grid min-w-40 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
              <Select name="companyId" defaultValue={companyId} className="min-h-11 md:min-h-9">
               <option value="">All companies</option>
               {byCompany.map(row=><option key={row.companyId} value={row.companyId}>{row.companyName}</option>)}
              </Select>
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
              <Select name="workMode" defaultValue={workMode} className="min-h-11 md:min-h-9">
               <option value="">All modes</option><option value="ONSITE">Onsite</option>
               <option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
              </Select>
             </label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pay evidence
+            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Pay evidence
              <Select name="payCategory" defaultValue={payCategory} className="min-h-11 md:min-h-9">
               <option value="">All</option><option value="CTC_RECORDED">CTC recorded</option>
               <option value="STIPEND_RECORDED">Stipend recorded</option>

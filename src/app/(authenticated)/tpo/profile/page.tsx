@@ -42,7 +42,7 @@ export default async function TpoProfilePage() {
   const profile = await getOwnTpoProfile(context);
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="Profile"
         description="Your signed-in college membership and available faculty-backed profile information."
@@ -58,13 +58,13 @@ export default async function TpoProfilePage() {
 
       <section
         aria-label="Your TPO profile"
-        className="min-w-0 border-t border-border pt-5 md:pt-6"
+        className="min-w-0 border-t border-border pt-6 md:pt-6"
       >
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Account details
         </h2>
 
-        <dl className="mt-5 grid min-w-0 grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+        <dl className="mt-5 grid min-w-0 grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
           <ProfileField
             label="Display name"
             value={profile.displayName}

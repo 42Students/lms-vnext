@@ -247,7 +247,7 @@ export default async function TpoStudentRequestsPage({
         method="get"
         className="grid min-w-0 gap-3 border-y border-border py-4 sm:grid-cols-2 xl:grid-cols-3"
       >
-        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select
             name="status"
@@ -263,7 +263,7 @@ export default async function TpoStudentRequestsPage({
           </Select>
         </label>
 
-        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Search
           <Input
             name="search"
@@ -275,7 +275,7 @@ export default async function TpoStudentRequestsPage({
           />
         </label>
 
-        <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Page size
           <Select
             name="pageSize"
@@ -291,7 +291,7 @@ export default async function TpoStudentRequestsPage({
         <div className="sm:col-span-2 xl:col-span-3">
           <Button variant="primary"
             type="submit"
-            className="min-h-11 w-full px-5 sm:w-auto md:min-h-9"
+            className="min-h-11 w-full px-6 sm:w-auto md:min-h-9"
           >
             Apply filters
           </Button>
