@@ -41,6 +41,8 @@ import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorMeetingHistory} from "./mentor-meeting-history";
+import { ProjectMeetingPlanEditor } from "./project-meeting-plan-editor";
+import { projectMeetingPlanToken } from "@/modules/projects/project-meeting-plan-token";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -1727,6 +1729,22 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode === "ADMIN" && !readOnly && ["PLANNED", "ACTIVE"].includes(workspace.project.status) ? (
+            <ProjectMeetingPlanEditor projectId={workspace.project.id}
+              meetingsToken={projectMeetingPlanToken(workspace.meetings)}
+              meetings={workspace.meetings.filter(meeting => !meeting.deletedAt).map(meeting => ({
+                id: meeting.id, status: meeting.status, title: meeting.title,
+                agenda: meeting.agenda, startsAt: meeting.startsAt.toISOString(),
+                endsAt: meeting.endsAt.toISOString(), linkedSprintId: meeting.linkedSprintId,
+                linkedTaskId: meeting.linkedTaskId,
+              }))}
+              sprints={workspace.sprints.map(sprint => ({
+                id: sprint.id, title: sprint.title,
+              }))}
+              tasks={workspace.tasks.filter(task => !task.deletedAt).map(task => ({
+                id: task.id, title: task.title, sprintId: task.sprintId,
+              }))} />
+          ) : null}
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
