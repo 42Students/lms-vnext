@@ -58,7 +58,7 @@ export default async function MentorTeamHistoryPage({
       : <>
         <Tabs ariaLabel="Team membership history views" renderPanel={false} value={data.query.view} items={([["ALL","All records"],["OPEN","Open membership records"],["ENDED","Ended membership records"]] as const).map(([view,label])=>({value:view,label,href:mentorTeamHistoryHref(projectId,{view,role:data.query.role,primary:data.query.primary,order:data.query.order,page:1})}))}/>
         <FilterBar title="Filters"><form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} role="search" aria-label="Team history filters"
-          className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
+          className="grid min-w-0 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[repeat(3,minmax(0,1fr))_auto]">
           <Input type="hidden" name="view" value={data.query.view}/>
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registered role
             <Select name="role" defaultValue={data.query.role}

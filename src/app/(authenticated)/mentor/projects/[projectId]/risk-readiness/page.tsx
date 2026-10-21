@@ -63,7 +63,7 @@ export default async function MentorRiskReadinessPage({params,searchParams}:{
         A project without tasks is never assumed complete.
       </p>
       <FilterBar title="Filters"><form method="get" action={base+"/risk-readiness"} role="search" aria-label="Risk readiness filters"
-        className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+        className="grid min-w-0 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Show
           <Select name="focus" defaultValue={data.query.focus}
             className="min-h-11 md:min-h-9 border border-[var(--lms-canvas-border)] px-3">
