@@ -20,6 +20,19 @@ const inboundSchema=z.strictObject({
  attachments:z.array(z.strictObject({filename:z.string().max(255).optional(),
   contentType:z.string().max(128).optional()})).max(40).optional(),
 });
+/** Trusted Cloudflare Email Routing/D1 -> private HMAC gateway -> service.
+ * /api/internal/inbound-mail accepts all verified mail (OTHER plus REPLY).
+ * /api/internal/placements/recruiter-message-inbound accepts recruiter replies
+ * only, while both receipts are retained in inbound_mail_messages.
+ * No public endpoint trusts a sender-controlled From or Authentication-Results
+ * header. Worker failures must remain in D1 for retry, never be ACKed.
+ */
+export const VERIFIED_RECRUITER_INBOUND_ROUTES={
+ providerWorker:"CLOUDFLARE_EMAIL_ROUTING_D1",
+ generalIntake:"/api/internal/inbound-mail",
+ recruiterIntake:"/api/internal/placements/recruiter-message-inbound",
+ triage:"/admin/inbound-mail",
+} as const;
 export type RecruiterInboundOutcome=
  "POSTED"|"STORED"|"DUPLICATE"|"NO_THREAD"|"WRONG_SENDER"|
  "NOT_VERIFIED"|"EMPTY"|"ACCESS_ENDED"|"FAILED";
@@ -129,6 +142,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
     routeAttemptCount:routedStatus==="STORED"?0:1,
     lastRouteAttemptAt:routedStatus==="STORED"?null:new Date(),
     lastRouteErrorCode:routedStatus==="POSTED"||routedStatus==="STORED"?null:routedStatus,
+    nextRouteAttemptAt:["ACCESS_ENDED","FAILED"].includes(routedStatus)
+     ?new Date(Date.now()+60*60*1000):null,
     status:routedStatus==="POSTED"?"RESOLVED":"NEW",
     version:1,
    }).where(eq(inboundMailMessages.id,received.id));
@@ -192,7 +207,19 @@ export async function acceptAuthenticatedRecruiterEmailReply(
     threadId:placementRecruiterInboundEmailEvents.threadId})
     .from(placementRecruiterInboundEmailEvents)
     .where(eq(placementRecruiterInboundEmailEvents.messageIdHash,msgHash)).limit(1);
-  if(duplicate)return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
+  if(duplicate){
+   // The conversation event was already committed, but this provider alias
+   // generated a distinct inbox receipt. Resolve it instead of leaving a
+   // misleading unrouted NEW message in the operator triage queue.
+   await tx.update(inboundMailMessages).set({
+    kind:"REPLY",routingStatus:"POSTED",status:"RESOLVED",
+    threadId:duplicate.threadId,postedMessageId:duplicate.id,
+    recruiterUserId:state.recruiterUserId,collegeId:auth.rows[0].college_id,
+    routeAttemptCount:1,lastRouteAttemptAt:new Date(),
+    lastRouteErrorCode:null,version:1,
+   }).where(eq(inboundMailMessages.id,received.id));
+   return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
+  }
   const inserted=await tx.execute<{id:string}>(sql`
     insert into placement_tpo_messages(thread_id,sender_type,sender_user_id,body,delivery_channel)
     values(${state.threadId}::uuid,'RECRUITER',${state.recruiterUserId}::uuid,${replyBody},'EMAIL')
