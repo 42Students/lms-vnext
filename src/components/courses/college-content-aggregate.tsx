@@ -256,7 +256,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
              </StatusBadge>},
             {key:"content",header:"Content",mobilePriority:"secondary" as const,
              cell:(item:Item)=><div>
-              <CollegeContentPreview playback={item.playback} data={{
+              <CollegeContentPreview playback={item.playback} discussion={item.deliveryId?{contentId:item.id,deliveryId:item.deliveryId}:null} data={{
                title:item.title,course:item.courseName,lesson:item.lessonName,
                type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
                visible:item.visibleToStudents,details:collegeContentDuration(item.durationSeconds)}}/>
@@ -292,7 +292,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
              </div>},
             {key:"action",header:"Action",mobilePriority:"action" as const,
              cell:(item:Item)=><div className="flex min-w-28 flex-wrap items-center gap-2">
-              <CollegeContentPreview playback={item.playback} data={{
+              <CollegeContentPreview playback={item.playback} discussion={item.deliveryId?{contentId:item.id,deliveryId:item.deliveryId}:null} data={{
                title:item.title,course:item.courseName,lesson:item.lessonName,
                type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
                visible:item.visibleToStudents,details:materialCountLabel(item)}}/>

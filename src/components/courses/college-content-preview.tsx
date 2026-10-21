@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { LessonContentDiscussion } from "./lesson-content-discussion";
 
 type Preview = {
   title: string;
@@ -16,11 +17,13 @@ type Preview = {
   details: string;
 };
 
-export function CollegeContentPreview({ data, playback=null }: {
+export function CollegeContentPreview({ data, playback=null,discussion=null }: {
   data: Preview;
   playback?:{videoId:string;deliveryId:string}|null;
+  discussion?:{contentId:string;deliveryId:string}|null;
 }) {
   const [open, setOpen] = useState(false);
+  const [showDiscussion,setShowDiscussion]=useState(false);
   const [videoUrl,setVideoUrl]=useState<string|null>(null);
   const [loading,setLoading]=useState(false);
   const [videoError,setVideoError]=useState<string|null>(null);
@@ -113,6 +116,14 @@ export function CollegeContentPreview({ data, playback=null }: {
           {videoUrl?<video controls playsInline preload="metadata" src={videoUrl}
             className="aspect-video w-full rounded-[var(--lms-control-radius)] bg-black"
             aria-label={"Playback "+data.title}/>:null}
+        </div>:null}
+        {discussion?<div className="mt-4 border-t border-border pt-3">
+          <Button type="button" variant="secondary" size="sm"
+           onClick={()=>setShowDiscussion(value=>!value)}>
+           {showDiscussion?"Hide lesson discussion":"Show lesson discussion"}
+          </Button>
+          {showDiscussion?<LessonContentDiscussion key={discussion.contentId+":"+discussion.deliveryId}
+           contentId={discussion.contentId} deliveryId={discussion.deliveryId}/>:null}
         </div>:null}
         {data.type==="VIDEO"&&!playback?<p className="mt-3 text-xs text-muted-foreground">
           An old video key requires verified private-storage migration before playback can be granted.
