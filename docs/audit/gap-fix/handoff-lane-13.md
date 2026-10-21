@@ -43,3 +43,5 @@
 
 - College Admin attendance UI/service / G2-8-021-024/025/026/028/029: show exact roster mismatch, not-started, configured faculty correction hours, valid status and Marked absent wording; confirm UI supplies optional note and obeys prestart failure without bypass. Admin correction now writes note into scoped activity metadata; verify audit read access and retention controls before production.
 - Historical attendance / G2-8-021-001/009/010/012/013/036/059/064/066/069: documented trusted offline mapping and lossless soft-delete/event chronology, but no importer or migration authorized for vNext. Do not fabricate markedByUserId for unknown legacy actor; require explicit provenance design.
+
+- Faculty confirmation UX / G2-8-021-031: first-save receipt already reports markedAbsent/markedPresent and attendanceComplete:true; keep Attendance marked successfully FE copy while making N learner(s) accessible in a details view if parity requires. Do not present failed[] counts as if partial transactions are supported.
