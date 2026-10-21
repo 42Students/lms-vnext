@@ -49,11 +49,18 @@ export async function requirePersistedMentorInboxMembership(context:RequestConte
 export function projectLegacyMentorNotification(input:{
  created_at?:string|null;createdAt?:string|null;type:string;
  title:string;message:string;receiverType:string;
+ /** Resolved by a trusted legacy recipient-ID -> UUID user crosswalk. */
+ verifiedRecipientUserId?:string|null;legacyRecipientId?:string|number|null;
  readAt?:string|null;
 },ownUserId:string){
- if(input.receiverType.toUpperCase()!=="MENTOR"||!ownUserId)return null;
+ if(input.receiverType.toUpperCase()!=="MENTOR"||!ownUserId||
+    !input.verifiedRecipientUserId||input.verifiedRecipientUserId!==ownUserId||
+    input.legacyRecipientId==null)return null;
  const rawDate=input.created_at??input.createdAt;
- const occurredAt=rawDate?new Date(rawDate):null;
+ // Naive MySQL DATETIME is not an ISO instant. The import must supply a
+ // verified source zone and normalize before reaching this projection.
+ if(!rawDate||!/(?:Z|[+-]\\d{2}:\\d{2})$/.test(rawDate))return null;
+ const occurredAt=new Date(rawDate);
  if(!occurredAt||!Number.isFinite(occurredAt.getTime()))return null;
  const readAt=input.readAt?new Date(input.readAt):null;
  if(readAt&&!Number.isFinite(readAt.getTime()))return null;
@@ -82,5 +89,8 @@ export async function getMentorPersonalInbox(context: RequestContext, rawQuery: 
         isNull(inAppNotifications.readAt),
       )),
   ]);
-  return {query,cursor,page,unreadCount:Number(unread[0]?.total??0)};
+  return {query,cursor,page,unreadCount:Number(unread[0]?.total??0),
+  pageSize:50,hasOlder:Boolean(page.nextCursor),
+  olderCursor:page.nextCursor??null,
+  olderLabel:"Older"};
 }
