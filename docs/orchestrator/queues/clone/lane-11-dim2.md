@@ -213,14 +213,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/courses/learner-course-list.tsx`
 - [x] `src/components/courses/learner-course-overview.tsx`
 - [x] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/lesson-resource-materials-control.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/super-admin-content-actions.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/marketing/marketing-layout.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/marketing/marketing-layout.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [ ] `src/components/placements/college-drive-attention-cards.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
 - [ ] `src/components/placements/learner-applications-browse.tsx`
