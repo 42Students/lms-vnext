@@ -84,14 +84,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
 - [x] `src/app/(authenticated)/tpo/team/page.tsx`
 - [x] `src/app/page.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/placements/placement-job-create-workspace.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/super-admin-hr-account-dialog.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/placements/placement-job-create-workspace.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
 - [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [ ] `src/components/placements/tpo-drive-clone-action.tsx`
 - [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
