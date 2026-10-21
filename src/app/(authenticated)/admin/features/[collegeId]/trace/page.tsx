@@ -314,7 +314,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           aria-label="Selected learner module access"
         >
           <div className="border-b border-border pb-6">
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
               Why this learner sees these modules
             </h2>
 
@@ -339,7 +339,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </div>
 
           <section aria-label="Placement cell decision" className="border-t border-border pt-6">
-            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Placement cell decision</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Placement cell decision</h3>
             <p className="mt-2 text-sm text-body">{
               selected.placementParticipation.status==="NOT_DECIDED"?"Not decided yet":
               selected.placementParticipation.status==="ELIGIBLE"?"Eligible":
@@ -377,7 +377,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             Inspect membership overrides and locks →
           </Link>
           <section className="min-w-0 border-t border-border pt-6" aria-label="Student overrides and locks">
-            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Student overrides and locks</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
             <dl className="mt-3 grid min-w-0 gap-3 md:grid-cols-3">
               {membershipOverrideSummary(selected.modules).map(item => (
@@ -399,7 +399,7 @@ export default async function SuperAdminLearnerAccessTracePage({
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h3 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
+                  <h3 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
                     {module.label}
                   </h3>
                   <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">
@@ -461,7 +461,7 @@ export default async function SuperAdminLearnerAccessTracePage({
         </section>
       ) : (
         <section className="border-t border-border pt-6">
-          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
             Select a learner to explain access
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">
