@@ -70,6 +70,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <Link href="/admin/students" className="font-semibold underline">Retry academic filters</Link></Alert>:null}
   {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
+  <AdminScopedReadPage headingMode="section" intro={<>
   {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-4"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-4">
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
@@ -82,7 +83,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
     </details>
   </section>:null}
-  <AdminScopedReadPage headingMode="section" peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
+  </>} peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="students.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
