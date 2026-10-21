@@ -17,6 +17,10 @@ const KNOWN_ERROR_COPY: Readonly<Record<string, string>> = {
   CLASS_HAS_DEPENDENCIES: "Move students out and remove linked teaching, schedule and course records before reassigning this class.",
   CLASS_CAPACITY_BELOW_ENROLLMENT: "The maximum student limit cannot be lower than active enrolment. Move students out first.",
   CLASS_MIN_SIZE_ABOVE_CAPACITY: "The maximum student limit cannot be lower than the minimum student limit.",
+  CLASS_HAS_LEARNERS: "Cannot archive class: students are enrolled. Move students out first.",
+  CLASS_HAS_SCHEDULE: "Cannot archive class: scheduled sessions exist. Remove the class schedules first.",
+  CLASS_HAS_TEACHING: "Cannot archive class: faculty assignments are linked. Reassign the faculty first.",
+  CLASS_HAS_DELIVERIES: "Cannot archive class: course deliveries are linked. End or move the deliveries first.",
 };
 
 const MACHINE_CODE = /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/;
