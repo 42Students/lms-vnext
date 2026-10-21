@@ -188,6 +188,15 @@ export default async function LearnerPlacementsPage({
     }));
 
   const dashboard = learnerPlacementDashboard({
+    registrationRequired:registrationRead.status==="fulfilled"&&
+      registrationRead.value.stage==="OPEN"&&!registrationRead.value.hasRegistration,
+    optedOut:registrationRead.status==="fulfilled"&&
+      ["HIGHER_STUDIES","NOT_INTERESTED"].includes(registrationRead.value.choice??""),
+    placed:Boolean(countingAcceptedOffer),
+    pendingRescheduleRoundIds:(requestWorkspace?.requests??[])
+      .filter(row=>row.request.requestType==="ROUND_RESCHEDULE"&&
+        row.request.status==="PENDING"&&row.request.roundId!==null)
+      .map(row=>row.request.roundId!),
     jobs: (rows ?? []).map((row) => ({
       jobId: row.job.id,
       deadlinePassed: row.deadlinePassed,
