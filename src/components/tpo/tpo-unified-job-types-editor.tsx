@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -22,6 +21,16 @@ export type EditableJobType = {
   expectedVersion: string;
 };
 type Row = EditableJobType & { key: string };
+function AddIcon() {
+  return <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M12 5v14M5 12h14" />
+  </svg>;
+}
+function RemoveIcon() {
+  return <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 10v6M14 10v6" />
+  </svg>;
+}
 const NAME = /^[\p{L}\p{N} +&\/().,'-]{2,40}$/u;
 const normalize = (value: string) => value.trim().replace(/\s+/g, " ");
 const snapshot = (items: readonly Row[]) => JSON.stringify(items.map(
@@ -246,7 +255,7 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
               aria-label={"Remove " + row.label}
               title={row.drives > 0 ? "Used by drives: switch it off instead" : "Remove"}
               disabled={busy || row.drives > 0} onClick={() => remove(row.key)}>
-              <Trash2 aria-hidden="true" size={16}/></Button> : null}
+              <RemoveIcon/></Button> : null}
           </div>
         </div>)}
       </div>
@@ -275,7 +284,7 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
         <Button type="button" variant="secondary" onClick={add}
           disabled={busy || !normalizedNewName || !!nameProblem(newName, "new") || newPlaced === null ||
             rows.filter(row => !row.isBuiltin).length >= 30}>
-          <Plus size={15} aria-hidden="true"/> Add
+          <AddIcon/> Add
         </Button>
       </div>
     </section>
