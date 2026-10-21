@@ -25,6 +25,26 @@ function deadlineRelative(deadline:Date|null,now:Date):string{
  return "Application deadline passed "+Math.abs(delta)+" days ago";
 }
 
+/** Legacy driveNextAction precedence: open college question, completed
+ * hiring flow, shared candidates awaiting review, or wait for access.
+ * "To review" is not the entire shared-list count; the backend must supply
+ * pending-review state before any exact count is exposed here. */
+function recruiterDriveNextStep(status:string,requests:number,shared:number,deadline:Date|null,now:Date){
+ if(requests>0)return "The placement cell asked for a change. Answer the open request.";
+ if(status==="CLOSED")return "Hire again with a new request.";
+ if(shared===0)return "Wait for the placement cell to share the applicant list.";
+ if(deadline&&deadline<now)return "Review shared applicants and hiring rounds after the deadline.";
+ return "Review shared applicants and prepare the next hiring step.";
+}
+function recruiterDriveStatus(status:string,openRequests:number){
+ if(openRequests>0)return "Waiting for your reply";
+ if(status==="PUBLISHED")return "Live";
+ if(status==="CLOSED")return "Completed";
+ if(status==="CANCELLED")return "Cancelled";
+ if(status==="REJECTED")return "Rejected";
+ return status;
+}
+
 export function RecruiterPlacementPortfolio({
   jobs, returnTo, counts, now, unansweredRequests={}, sheetScopeKey,
 }: {
@@ -46,6 +66,9 @@ export function RecruiterPlacementPortfolio({
     );
   }
 
+  // Local sort retains original server order within equal request priority.
+  // Request-priority across pages must happen at the authorized DB query;
+  // client-side reordering cannot recover unseen rows.
   const sortedJobs=[...jobs].sort((a,b)=>
     Number((unansweredRequests[b.job.id]??0)>0)-Number((unansweredRequests[a.job.id]??0)>0));
   const sheetRows:HrRecruiterDriveSheetRow[]=sheetScopeKey?sortedJobs.map(item=>{
@@ -74,13 +97,8 @@ export function RecruiterPlacementPortfolio({
       deadlineLabel:job.applicationDeadline?
         new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(job.applicationDeadline):
         "Not recorded",
-      status:job.status==="PUBLISHED"?"Live":job.status==="CLOSED"?"Completed":job.status,
-      nextStep:requests>0?"The placement cell asked for a change. Answer the open request.":
-        job.status==="CLOSED"?"Hire again with a new request.":
-        sharedApplicants===0?"Wait for the placement cell to share the applicant list.":
-        job.applicationDeadline&&job.applicationDeadline<now?
-          "Review shared applicants and hiring rounds after the deadline.":
-          "Review shared applicants and prepare the next hiring step.",
+      status:recruiterDriveStatus(job.status,requests),
+      nextStep:recruiterDriveNextStep(job.status,requests,sharedApplicants,job.applicationDeadline,now),
       openHref:"/recruiter/drives/"+id+(returnTo?"?returnTo="+encodeURIComponent(returnTo):""),
       hireAgainHref:"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(id),
       hireAgainLabel:job.status==="CLOSED"?"Hire again":"Hire again with changes",
@@ -111,14 +129,18 @@ export function RecruiterPlacementPortfolio({
                       : "neutral"
                   }
                 >
-                  {item.job.status==="PUBLISHED"?"Live":item.job.status==="CLOSED"?"Completed":item.job.status}
+                  {recruiterDriveStatus(item.job.status,unansweredRequests[item.job.id]??0)}
                 </StatusBadge>
                 <span className="text-xs font-semibold text-muted-foreground">
                   {item.collegeName}
                 </span>
               </div>
               <h2 className="mt-2 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
-                {item.job.title}
+                <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+
+                  (returnTo?"?returnTo="+encodeURIComponent(returnTo):"")}
+                  className="rounded-[var(--lms-control-radius)] hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                  {item.job.title}
+                </Link>
               </h2>
               <p className="mt-1 break-words text-sm text-body leading-[22px]">
                 {item.companyName} ·{" "}
@@ -161,14 +183,9 @@ export function RecruiterPlacementPortfolio({
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
               {(unansweredRequests[item.job.id]??0)>0||counts?<p className="mt-2 text-sm text-body leading-[22px]">
-                Next: {(unansweredRequests[item.job.id]??0)>0?
-                  "The placement cell asked for a change. Answer the open request.":item.job.status==="CLOSED"
-                  ? "Hire again with a new request."
-                  : (counts?.[item.job.id]?.sharedApplicants??0)===0
-                    ? "Wait for the placement cell to share the applicant list."
-                    : item.job.applicationDeadline&&item.job.applicationDeadline<now
-                      ? "Review shared applicants and hiring rounds after the deadline."
-                      : "Review shared applicants and prepare the next hiring step."}
+                Next: {recruiterDriveNextStep(item.job.status,
+                  unansweredRequests[item.job.id]??0,counts?.[item.job.id]?.sharedApplicants??0,
+                  item.job.applicationDeadline,now)}
               </p>:null}
             </div>
             <Link
@@ -176,19 +193,20 @@ export function RecruiterPlacementPortfolio({
                 (returnTo ? "?returnTo=" + encodeURIComponent(returnTo) : "")}
               className="inline-flex min-h-11 w-full shrink-0 items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
             >
-              Open hiring flow
+              Open
             </Link>
           </div>
           <nav aria-label={"Actions for "+item.job.title}
             className="mt-2 flex min-w-0 flex-wrap items-center gap-x-5 gap-y-1">
-            <Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
+            {item.job.status==="CLOSED"?<Link href={"/hr/drives/new?collegeId="+encodeURIComponent(item.collegeId)+"&from="+encodeURIComponent(item.job.id)}
               className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-              {item.job.status==="CLOSED"?"Hire again":"Hire again with changes"}
-            </Link>
-            <Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"/messages"}
+              Hire again
+            </Link>:null}
+            {(unansweredRequests[item.job.id]??0)>0?<Link href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=requests"+
+              (returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
               className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Answer
-            </Link>
+            </Link>:null}
           </nav>
         </article>
       ))}
