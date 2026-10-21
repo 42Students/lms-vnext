@@ -25,10 +25,10 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MetricBar } from "@/components/ui/metric-bar";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { effectiveProjectSubmissionReady } from "@/modules/projects/readiness-override-model";
-import { projectResourceAuditAction } from "@/modules/projects/project-resource-audit-model";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
+import { ProjectResourceAuditList } from "./project-resource-audit-list";
 import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
 import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
@@ -1898,45 +1898,11 @@ export function ProjectWorkspace({
 
           {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?projectId=" + encodeURIComponent(workspace.project.id)}
             className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
-          {mode === "ADMIN" ? (() => {
-            const resourceEvents = workspace.activity.map(event => ({
-              event,
-              action: projectResourceAuditAction(event.eventType),
-            })).filter(row => row.action !== null);
-            const countAction = (value: string) => resourceEvents.filter(row => row.action === value).length;
-            type ResourceRow = (typeof resourceEvents)[number];
-            const columns: DataTableColumn<ResourceRow>[] = [
-              { key: "resource", header: "Resource", mobilePriority: "primary",
-                cell: row => row.event.summary },
-              { key: "action", header: "Action", mobilePriority: "secondary",
-                cell: row => <StatusBadge tone="neutral">{row.action}</StatusBadge> },
-              { key: "actor", header: "Actor", mobilePriority: "secondary",
-                cell: row => row.event.actorDisplayName || "System" },
-              { key: "when", header: "When", mobilePriority: "secondary",
-                cell: row => formatDateTime(new Date(row.event.occurredAt)) },
-            ];
-            return <section aria-label="Resource activity" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
-              <div>
-                <h3 className="text-base font-semibold text-foreground">Resource activity</h3>
-                <p className="mt-1 text-sm text-body">See who changed project resources and when</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  This view focuses on resource changes inside the workspace. Use the full audit trail for broader project events.
-                </p>
-              </div>
-              <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                {([["Changes",resourceEvents.length],["Added",countAction("Added")],
-                   ["Edited",countAction("Edited")+countAction("Saved")],["Removed",countAction("Removed")]] as const)
-                  .map(([name,count]) => <div key={name} className="border-b border-border px-2 py-2">
-                    <dt className="text-xs text-muted-foreground">{name}</dt>
-                    <dd className="mt-1 text-lg font-semibold tabular-nums">{count}</dd>
-                  </div>)}
-              </dl>
-              <DataTable columns={columns} rows={resourceEvents}
-                getRowKey={row => row.event.id} caption="Resource activity"
-                empty={<EmptyState title="No resource activity yet"
-                  description="Resource changes will appear here." />} />
-            </section>;
-          })() : null}
+          {mode === "ADMIN" ? <ProjectResourceAuditList events={workspace.activity.map(event => ({
+            id: event.id, eventType: event.eventType, summary: event.summary,
+            subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
+            occurredAt: event.occurredAt.toISOString(),
+          }))} /> : null}
           <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} />
 
 
