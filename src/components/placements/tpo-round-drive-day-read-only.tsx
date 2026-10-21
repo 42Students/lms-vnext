@@ -405,9 +405,18 @@ export function TpoRoundDriveDayReadOnly({
           </p>
         </div>
 
+        <label className="mb-3 block max-w-xl text-sm font-semibold text-body">
+          Search by student name or roll number
+          <Input type="search" value={rosterSearch}
+            onChange={event=>setRosterSearch(event.target.value)}
+            placeholder="Search roster" className="mt-1"/>
+        </label>
+        <p role="status" className="mb-3 text-xs text-muted-foreground">
+          Showing {shownRows.length} of {data.rows.length} roster students.
+        </p>
         <DataTable
           caption="Applicants in this round"
-          rows={data.rows}
+          rows={shownRows}
           getRowKey={student=>student.applicationId}
           empty={<EmptyState title="No eligible applicants currently appear in this round’s roster."
             action={<Link href={destinations.schedule} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>} />}
@@ -453,6 +462,47 @@ export function TpoRoundDriveDayReadOnly({
         />
       </section>
 
+      <ConfirmDialog open={gateTarget!==null}
+        onOpenChange={next=>{if(!next&&!gateBusy)setGateTarget(null);}}
+        title="Mark present?"
+        description={gateTarget?"Confirm check-in for "+gateTarget.displayName+" ("+(gateTarget.rollNumber??"no roll")+")?":undefined}
+        confirmLabel="Mark present" cancelLabel="Cancel" confirmVariant="primary" pending={gateBusy}
+        onConfirm={()=>{
+          const student=gateTarget;
+          if(!student)return;
+          void markPresent(student).then(ok=>{
+            if(ok){setGateTarget(null);setGateInput("");setGateSuccess(student.displayName+" marked present.");}
+          });
+        }}/>
+      <Dialog open={pasteOpen} dismissible={!pasteBusy}
+        onOpenChange={next=>{if(!pasteBusy)setPasteOpen(next);}}
+        title="Paste a list of roll numbers"
+        description="Enter one roll number per line. Only unambiguous roster matches can be checked in."
+        footer={<div className="flex w-full flex-wrap justify-end gap-2">
+          <Button type="button" variant="secondary" disabled={pasteBusy}
+            onClick={()=>setPasteOpen(false)}>Cancel</Button>
+          <Button type="button" disabled={locked||pasteBusy||pastePreview.tooMany||
+            pastePreview.matched.filter(row=>row.attendance!=="PRESENT").length===0}
+            loading={pasteBusy} onClick={()=>void markPasted()}>
+            Mark {pastePreview.matched.length} present
+          </Button>
+        </div>}>
+        <div className="space-y-3">
+          <label className="block text-sm font-semibold text-body">
+            Roll numbers
+            <Textarea rows={7} value={pasteText} disabled={pasteBusy}
+              onChange={event=>setPasteText(event.target.value)} className="mt-1"
+              placeholder="Paste one roll number per line"/>
+          </label>
+          <p className="text-xs text-body">
+            {pastePreview.matched.length} matched · {pastePreview.unresolved.length} unmatched or ambiguous.
+          </p>
+          {pastePreview.tooMany?<InlineNotice tone="error" message="Paste at most 50 roll numbers per batch."/>:null}
+          {pastePreview.unresolved.length>0?<p className="text-xs text-error">
+            Type more of the roll number for ambiguous entries. Unresolved: {pastePreview.unresolved.slice(0,5).join(", ")}
+          </p>:null}
+        </div>
+      </Dialog>
       <Disclosure title="Bulk stage round results" contentClassName="pt-3">
         <TpoBulkRoundResultRecorder
           roundId={data.round.id}
