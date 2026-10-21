@@ -155,3 +155,9 @@
 
 ### College DTO field crosswalk
 - Legacy College.id/organizationId/chairId/viceChairId INT → UUID college/org and nullable chair/vice membership UUID via audited college scoped maps; uniqueId→code; pinCode→postalCode; logo URL→authorized logoObjectPath; address1/2/landmark/city/state/country directly, soft-deleted→status ARCHIVED preserving history. Never assume all old faculty chairs are valid memberships or grant role automatically.
+
+## Packet 34 — messaging receipts
+- `src_db_schema_messaging-receipts.ts.md` | Added nullable-tenancy SMS append-only provider attempt ledger with HMAC recipient key, max-four-digit suffix, purpose/providerMessageId, truthful PROVIDER_ACCEPTED/FAILED/SUPPRESSED, bounded safe errorCode and time/suffix+purpose/college indexes (0162). G2-4-016-002/011/012/013/015/035/041/045/060, G2-8-018-056 schema foundation. Kept generic campaign receipts scoped to college and unchanged. | OTP/attendance/job/general dispatch instrumentation remains unimplemented by schema alone, so handoff to all sender owners including Exotel+DLT rejection, notification trace. 0162 NOT EXECUTED.
+
+## Packet 35 — college application stage history
+- `src_db_schema_placement-college-application-stages.ts.md` | Verified existing stage and immutable stageHistory models already cover G2-10-008-119, G2-10-011-055/084, G2-5-015-047, G2-9-010-058, G2-9-014-093/095/096. Application lifecycle SUBMITTED/WITHDRAWN, screening, stage, offers and joining intentionally separate; stage row already CAS version with timestamp/actor, history indexed by stage+time. Earlier packet2 added application statusUpdatedAt/by and version and private notes. | Unified timeline, status labels, shortlisting funnel, transactional CAS across stage/application and legacy history import are service-owned. No redundant applicationStatus column or duplicate migration.
