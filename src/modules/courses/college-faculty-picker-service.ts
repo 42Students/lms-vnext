@@ -34,6 +34,17 @@ export async function listCollegeFacultyPicker(context:RequestContext,collegeId:
  };
 }
 
+/** Legacy faculty endpoint crosswalk (all operations selected-college scoped):
+ * /search → GET /api/academics/faculty-suggestions?q=... (default 15)
+ * /popular → same route with mode=popular (default 10, actual active
+ *   teaching assignments rather than a client click counter).
+ * /college/{id} → the signed-in college selector, not a caller-provided id.
+ * /department/{id} → departmentId; /type → employmentType; limit <= 50.
+ * /colleges and /record-usage were legacy global cache features, retired
+ * under the one-workspace-per-role membership model. Never mutate popularity
+ * from search keystrokes, and never expose another tenant's faculty cache.
+ * Existing native select controls provide keyboard and scroll affordances.
+ */
 /** The old faculty typeahead defaulted to 15 hits. Keep this bounded path
  * separate from the 500-row course-editor picker and the paged people directory.
  * Popularity counters are not inferred from reads or written on a keystroke.
