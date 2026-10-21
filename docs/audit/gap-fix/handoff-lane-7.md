@@ -1009,3 +1009,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-9-013-056/-077/-078 | `src/modules/placements/job-service.ts + notification service` | Archive cascade must cancel nonterminal interviews, postcommit notify learners, audit once, preserve tenant scope and idempotency; preview now warns omission.
 - G2-9-015-067 | `src/modules/placements/college-drive-read-service.ts` | Explicitly map legacy isDraft/isActive categories to vNext statuses, include archived only with authorized filter.
+
+- G2-12-017-019/-024/-025 | `src/modules/projects/task-comment-service.ts + status mutation action` | Wire projectTaskSystemCommentSchema only from trusted actions, persist immutable progress/status snapshots; human comments stay NOTE/PROGRESS_UPDATE/FLAG_FOR_MENTOR.
+- G2-15-009-053 | `src/modules/attendance/faculty-attendance-service.ts + Faculty attendance UI` | Decide explicit pre-start/historical correction policy; change UI and server together with audit, never UI-only enable.
