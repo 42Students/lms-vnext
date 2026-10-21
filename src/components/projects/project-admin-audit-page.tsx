@@ -438,35 +438,70 @@ export async function ProjectAdminAuditPage({
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       </div>
-      <section aria-label="Workspace audit actions" className="space-y-2 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
-        <h2 className="text-base font-semibold text-foreground">Change log</h2>
-        <h2 className="text-sm font-semibold text-foreground">Workspace actions</h2>
-        <div className="divide-y divide-border">
-          {rawEvents.map(item=>{
-            const metadata=(item.event.metadata??{}) as Record<string,unknown>;
-            const workspaceId=linkedWorkspaceId({
-              subjectId:item.event.subjectId,subjectType:item.event.subjectType,
-              metadata,
-            });
-            return <div key={item.event.id} className="flex flex-wrap items-center justify-between gap-3 py-2 text-sm">
-              <div className="min-w-0">
-                <p className="break-words font-semibold">{item.event.subjectLabel??item.event.subjectType}</p>
-                <p className="break-words text-xs text-body">
-                  {item.event.eventType} · {item.actor.displayName??"System"} · {
-                    new Intl.DateTimeFormat("en-IN",{
-                      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-                    }).format(item.event.occurredAt)}
-                </p>
-              </div>
-              {workspaceId?<Link
-                href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
-                className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
-                Open workspace
-              </Link>:null}
-            </div>;
-          })}
+      <section aria-label="Change log" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-foreground">Change log</h2>
+          <p role="status" className="text-xs text-body">{rawEvents.length} actions on this page</p>
         </div>
+        {rawEvents.length===0?<p className="border-y border-border py-4 text-sm text-body">
+          {eventType||importance||subjectId||subjectType||from||to?
+            "No changes match these filters. Clear filters to see all activity.":
+            "No changes recorded yet."}
+        </p>:<div className="min-w-0 max-w-full overflow-x-auto">
+          <table className="w-full min-w-[760px] text-left text-sm">
+            <caption className="sr-only">Project change log by action, entity, actor and date</caption>
+            <thead><tr className="border-b border-border text-xs text-muted-foreground">
+              <th scope="col" className="p-3">Action</th>
+              <th scope="col" className="p-3">Entity</th>
+              <th scope="col" className="p-3">Actor</th>
+              <th scope="col" className="p-3">When</th>
+            </tr></thead>
+            <tbody>{rawEvents.map(item=>{
+              const event=item.event;
+              const metadata=(event.metadata??{}) as Record<string,unknown>;
+              const workspaceId=linkedWorkspaceId({subjectId:event.subjectId,
+                subjectType:event.subjectType,metadata});
+              return <tr key={event.id} className="border-b border-border align-top last:border-0">
+                <td className="min-w-[210px] p-3">
+                  <details>
+                    <summary className="cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary">
+                      <StatusBadge tone={destructiveProjectAction(event.eventType)?"error":"info"}>
+                        {projectActionLabel(event.eventType)}</StatusBadge>
+                      <span aria-hidden="true" className="ml-2">▾</span>
+                    </summary>
+                    <div className="mt-2 space-y-2 break-words text-xs text-body">
+                      <p>{event.summary}</p>
+                      <p>Action key: <code className="break-all">{event.eventType}</code></p>
+                      <p>Event ID: <code className="break-all">{event.id}</code></p>
+                      <div className="border-t border-border pt-2">{auditDetailValue(metadata)}</div>
+                    </div>
+                  </details>
+                </td>
+                <td className="min-w-[195px] p-3">
+                  <p className="font-semibold">{event.subjectLabel||auditEntityType(event.subjectType)}</p>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">{event.subjectType} · {event.subjectId}</p>
+                  <Link href={basePath+"/audit?"+(()=>{
+                    const params=new URLSearchParams(preservedRefreshQuery);
+                    params.set("subjectId",event.subjectId);return params.toString();
+                  })()} className="mt-1 inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+                    Filter to this entity
+                  </Link>
+                  {workspaceId?<Link href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
+                    className="block min-h-9 text-xs font-semibold text-link underline">Open workspace</Link>:null}
+                </td>
+                <td className="min-w-[145px] p-3">
+                  <p>{item.actor?.displayName||"System"}</p>
+                  {item.actor?.id?<p className="mt-1 break-all text-xs text-muted-foreground">{item.actor.id}</p>:null}
+                </td>
+                <td className="min-w-[160px] p-3 tabular-nums">
+                  <time dateTime={event.occurredAt.toISOString()}>{projectEventTime(event.occurredAt)}</time>
+                </td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>}
       </section>
+
       <ActivityCenter
         emptyActionHref={basePath + "/audit"}
         groups={groups}
