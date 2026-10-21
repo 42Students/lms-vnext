@@ -11,7 +11,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L14-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterDriveController.java`
 - [x] L15-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeBranding.java`
 - [x] L15-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/HiringDashboard.js`
-- [ ] L17-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NotificationController.java`
+- [x] L17-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NotificationController.java`
 - [ ] L18-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/QuizAttempt.java`
 - [ ] L18-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NewProgramController.java`
 - [ ] L19-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java`
