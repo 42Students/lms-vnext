@@ -195,18 +195,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/college/placements/drives/error.tsx`
 - [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
 - [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
-- [ ] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/college/profile/page.tsx`
-- [ ] `src/app/(authenticated)/college/programs/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/error.tsx`
+- [x] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/college/profile/page.tsx`
+- [x] `src/app/(authenticated)/college/programs/error.tsx`
 - [ ] `src/app/(authenticated)/college/projects/create/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/page.tsx`
 - [ ] `src/app/(authenticated)/college/projects/templates/page.tsx`
