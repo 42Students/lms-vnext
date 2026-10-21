@@ -100,7 +100,6 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         await mutate("POST", "/api/academics/semesters", parsed.data);
         setName("");
         setProgramId(parsed.data.programId);
-        setNotice(SEMESTER_COPY.createdMessage(parsed.data.name));
         showToast({ tone: "success", title: SEMESTER_COPY.createdMessage(parsed.data.name) });
         router.refresh();
       } catch (error) {
@@ -218,7 +217,6 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         setEditing(false);
         const message = name === row.name && isActive !== row.isActive
           ? "Status updated successfully." : SEMESTER_COPY.updatedMessage;
-        setNotice(message);
         showToast({ tone: "success", title: message });
         router.refresh();
       } catch (error) {
@@ -239,7 +237,6 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
       try {
         await mutate("DELETE", url, { confirm: true });
         setConfirming(false);
-        setNotice(SEMESTER_COPY.deletedMessage);
         showToast({ tone: "success", title: SEMESTER_COPY.deletedMessage });
         router.refresh();
       } catch (error) {

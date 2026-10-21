@@ -14,6 +14,7 @@ import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
 import { can } from "@/modules/permissions/policy";
 import {
   getTpoCompaniesView,
+  searchTpoCompanyCandidates,
   tpoCompaniesQuerySchema,
 } from "@/modules/placements/tpo-companies-view-service";
 import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-validation";
@@ -21,6 +22,8 @@ import {tpoCompanyFiltersShapeValid} from "@/modules/placements/tpo-company-url-
 type PageProps = {
   searchParams: Promise<{
     name?: string | string[];
+    discover?: string | string[];
+    q?: string | string[];
     directory?: string | string[];
     search?: string | string[];
     page?: string | string[];
@@ -86,6 +89,43 @@ export default async function TpoCompanyMemoryPage({
   const raw = await searchParams;
   if(!tpoCompanyFiltersShapeValid(raw))return invalidCompanyFilters();
   const name = first(raw.name)?.trim() ?? "";
+  const discoveryRequested=first(raw.discover)==="1"||first(raw.q)!==undefined;
+  const q=first(raw.q)?.trim()??"";
+  if(discoveryRequested&&!name){
+   if(q.length>120 || (q.length>0&&q.length<2))return invalidCompanyFilters();
+   const results=q?await searchTpoCompanyCandidates(context,{
+    collegeId:context.membership.collegeId,q,
+   }):null;
+   return <div className="min-w-0 space-y-4">
+    <PageHeader title="Find a company"
+     description="Search verified global employer names and domains. Private contacts and other colleges' relationships are never shown."/>
+    <form method="get" action="/tpo/companies" role="search" aria-label="Find a company"
+      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
+     <input type="hidden" name="discover" value="1"/>
+     <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold">Company name or domain
+      <Input type="search" name="q" minLength={2} maxLength={120} defaultValue={q}
+       placeholder="At least two characters" className="min-h-11"/>
+     </label>
+     <Button type="submit">Search companies</Button>
+    </form>
+    <p className="text-sm text-body">{results?
+      results.items.length+" matching global employer"+(results.items.length===1?"":"s")+
+      " (up to "+results.limit+" shown)":
+      "Enter a company name or domain to search."}</p>
+    {results?.items.length?<ul className="divide-y divide-border border-y border-border">
+     {results.items.map(item=><li key={item.companyId} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3">
+      <div className="min-w-0"><p className="font-semibold">{item.name}</p>
+       <p className="break-all text-sm text-body">{item.primaryDomain??"No verified primary domain"}</p>
+      </div>
+      <span className="text-sm text-muted-foreground">{item.linkedToCollege?
+       "Linked to your college":"Not linked to your college"}</span>
+     </li>)}
+    </ul>:q?<EmptyState title="No matching companies" description="Try another name or verified domain."/>:null}
+    <Link href="/tpo/companies?directory=1" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+     Back to college companies
+    </Link>
+   </div>;
+  }
 
   // Preserve named Company Memory deep links, but keep the legacy Engage
   // Companies view as the default without losing bookmarked directory filters.
@@ -128,6 +168,7 @@ export default async function TpoCompanyMemoryPage({
         actions={
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-end">
             <TpoCompanyCreateForm />
+            <Link href="/tpo/companies?discover=1" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Find global company</Link>
             <details className="group min-w-0 sm:relative">
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">
                 Company links

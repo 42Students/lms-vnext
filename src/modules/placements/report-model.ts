@@ -998,6 +998,13 @@ export function summarizePlacementReportDetails(input: {
   const offerByCompany = new Map<string, PlacementReportOfferFunnelRow>();
   const joiningByDrive = new Map<string, PlacementReportJoiningRow>();
   const joiningByCompany = new Map<string, PlacementReportJoiningRow>();
+  // One learner may hold multiple accepted offers from the same employer.
+  // Company reports count distinct learners while global and drive totals
+  // intentionally retain offer-level facts.
+  const companyLearnerOffers=new Map<string,Map<string,PlacementReportDetailedOffer>>();
+  const outcomeRank=(offer:PlacementReportDetailedOffer)=>
+   offer.joiningStatus==="JOINED"?4:offer.joiningStatus==="DEFERRED"?3:
+   offer.joiningStatus==="DID_NOT_JOIN"?2:1;
 
   for (const offer of offers) {
     countOffer(offerTotals, offer, asOfMs);
@@ -1051,7 +1058,18 @@ export function summarizePlacementReportDetails(input: {
       };
       joiningByCompany.set(offer.companyId, companyJoining);
     }
-    countJoining(companyJoining, offer);
+    const people=companyLearnerOffers.get(offer.companyId)??new Map<string,PlacementReportDetailedOffer>();
+    companyLearnerOffers.set(offer.companyId,people);
+    const previous=people.get(offer.membershipId);
+    if(!previous||outcomeRank(offer)>outcomeRank(previous)||
+       (outcomeRank(offer)===outcomeRank(previous)&&offer.id<previous.id))
+      people.set(offer.membershipId,offer);
+  }
+  for(const [companyId,people] of companyLearnerOffers){
+   const company=joiningByCompany.get(companyId);
+   if(!company)continue;
+   Object.assign(company,emptyJoiningCounts());
+   for(const offer of people.values())countJoining(company,offer);
   }
 
   const byLabel = <

@@ -14,6 +14,7 @@ import {CoursesServiceError} from "./errors";
 import {safeCourseVisibilityFailure} from "./bulk-visibility-failure-model";
 
 // Registered in migration 0129. Do not use this writer with an unregistered schema.
+// Metadata edits also require updatedAt millisecond CAS.
 const lessonTarget=z.strictObject({
  lessonId:z.uuid(),
  expectedUpdatedAt:z.iso.datetime({offset:true}),

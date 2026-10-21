@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
@@ -197,24 +198,26 @@ export async function updateCourseLesson(
   try {
     return await getDb().transaction(async (tx) => {
       await lockLiveLessonWriteAncestry(tx, path);
+      const {expectedUpdatedAt,...changes}=input;
       const [updated] = await tx
       .update(courseLessons)
       .set({
-        ...input,
-        updatedAt: new Date(),
+        ...changes,
+        updatedAt:sql<Date>`greatest(${courseLessons.updatedAt} + interval '1 millisecond',clock_timestamp())`,
       })
       .where(
         and(
           eq(courseLessons.id, lessonId),
           eq(courseLessons.status, "ACTIVE"),
           eq(courseLessons.learningPathId, current.learningPathId),
+          sql`date_trunc('milliseconds',${courseLessons.updatedAt}) = ${expectedUpdatedAt}::timestamptz`,
         ),
       )
       .returning();
 
     if (!updated) {
       throw new CoursesServiceError(
-        "LESSON_NOT_FOUND",
+        "LESSON_STALE_VERSION",
       );
     }
 
