@@ -44,6 +44,18 @@ const createDiscussionMessageSchema = z.object({
   confirmed:z.literal(true).optional(),
 }).strict();
 
+/** Legacy classroom error explanations; callers still own status codes. */
+export function courseDiscussionErrorMessage(code: string): string {
+  switch (code) {
+    case "DISCUSSION_MESSAGE_NOT_FOUND": return "Message not found";
+    case "DISCUSSION_MODERATION_ACCESS_DENIED": return "Only faculty or admin can pin messages";
+    case "DISCUSSION_POST_ACCESS_DENIED": return "You do not have access to post in this classroom";
+    case "DISCUSSION_STALE_VERSION": return "This message changed. Reload the discussion and try again.";
+    case "LEARNING_ACCESS_DENIED": return "You do not have access to this class or course";
+    default: return "Could not load this discussion. Reload the latest messages and try again.";
+  }
+}
+
 const historySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(60),
   beforeCreatedAt: z.string().datetime({ offset: true }).optional(),
@@ -330,6 +342,8 @@ export async function createCourseDiscussionMessage(
 
   return getDb().transaction(async (tx) => {
     if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
+    // Recheck the persisted teaching scope before the write, not only on read.
+    if(mode==="FACULTY")await assertLiveFacultyDiscussionModerator(tx,context,deliveryId);
     const [parent]=input.replyToMessageId
       ? await tx.select().from(courseDiscussionMessages)
         .where(and(eq(courseDiscussionMessages.id,input.replyToMessageId),
