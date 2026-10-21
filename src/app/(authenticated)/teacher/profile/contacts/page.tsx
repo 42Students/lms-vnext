@@ -8,7 +8,7 @@ export default async function FacultyOwnContactPage(){
  return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader title="Contact details"
   description="Your college-managed sign-in details and the status of optional contact fields."
-  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile</Link>}/>
+  actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Profile</Link>}/>
  <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
   <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Registered identity contact</h2>
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
