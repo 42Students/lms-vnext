@@ -67,33 +67,62 @@ export async function ProjectAdminReassignMentorPage({
   const mentors=mentorsRead.value;
   const workload=workloadRead.value;
 
-  const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
+  const sortedWorkload = [...workload].sort((left, right) =>
+    right.activeWorkspaces - left.activeWorkspaces ||
+    (left.mentorName ?? "").localeCompare(right.mentorName ?? "", "en-IN"),
+  );
+  const mentorCounts = sortedWorkload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="min-w-0 space-y-[16px]">
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Back to workspaces" />
         <PageHeader title="Bulk mentor reassignment"
-          description="Move selected non-archived project workspaces to a new primary mentor." />
+          description="Move multiple active workspaces to a new mentor at once" />
       </div>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
-      <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
-        <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
-          {workload.map(row => {
-            const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
-            const filter = row.mentorMembershipId ?? "UNASSIGNED";
-            return <Link key={filter}
-              href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
-              <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
-              <p className="text-sm leading-[22px]">{row.activeWorkspaces} active workspaces</p>
-              <p className="text-sm leading-[22px]">{row.atRisk} at risk</p>
-              {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
-                <StatusBadge tone="warning">Overloaded</StatusBadge> : null}
-            </Link>;
-          })}
-        </div>
+      <Disclosure title="Mentor workload" defaultOpen className="border-b border-border pb-4" contentClassName="pt-2">
+        <p className="mb-2 text-xs text-muted-foreground">
+          Active workspaces shows current assignments. At-risk counts workspaces needing attention.
+          A mentor is Overloaded when their active count is unusually high.
+        </p>
+        {sortedWorkload.length === 0 ? (
+          <p className="py-4 text-sm text-muted-foreground">No project workspaces available for this college</p>
+        ) : (
+          <div className="min-w-0 overflow-x-auto">
+            <table className="w-full min-w-[440px] border-collapse text-left text-sm">
+              <caption className="sr-only">Mentor workload sorted by active workspaces, highest first</caption>
+              <thead>
+                <tr className="border-b border-border">
+                  <th scope="col" className="px-3 py-2 font-semibold">Mentor</th>
+                  <th scope="col" className="px-3 py-2 text-right font-semibold" title="Active workspaces currently assigned">Active workspaces</th>
+                  <th scope="col" className="px-3 py-2 text-right font-semibold" title="Workspaces at risk">At-risk</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sortedWorkload.map(row => {
+                  const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
+                  const filter = row.mentorMembershipId ?? "UNASSIGNED";
+                  return (
+                    <tr key={filter} className="border-b border-border hover:bg-primary-subtle">
+                      <td className="px-3 py-3">
+                        <Link href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
+                          className="font-semibold text-[var(--lms-link-text)] underline-offset-2 hover:underline">
+                          {row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId ? "Mentor" : "Unassigned")}
+                        </Link>
+                        {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
+                          <span className="ml-2 inline-flex"><StatusBadge tone="warning">Overloaded</StatusBadge></span> : null}
+                      </td>
+                      <td className="px-3 py-3 text-right tabular-nums">{row.activeWorkspaces}</td>
+                      <td className="px-3 py-3 text-right tabular-nums">{row.atRisk}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </Disclosure>
-      <Disclosure title="Filters" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen={Boolean(mentorSearch || fromMentorId || query.q || query.status)}>
+      <Disclosure title="Filter by current mentor" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
         aria-label="Search all eligible mentors">
         {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
@@ -115,19 +144,18 @@ export async function ProjectAdminReassignMentorPage({
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-          Filter by current mentor
+          Current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
-            className="w-full">
-            <option value="">All mentors</option>
+            className="w-full min-w-[240px]">
+            <option value="">Any mentor — search by name</option>
             <option value="UNASSIGNED">Unassigned</option>
             {mentors.map(mentor => <option key={mentor.membershipId} value={mentor.membershipId}>
               {mentor.displayName ?? mentor.email ?? "Mentor"}
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 w-full md:min-h-9">
-          Apply mentor filter
-        </Button>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply mentor filter</Button>
+        {fromMentorId ? <Link href={basePath + "/reassign-mentor"} className="text-sm font-semibold underline">Clear current mentor</Link> : null}
       </form>
       </Disclosure>
       <ProjectMentorReassignment
