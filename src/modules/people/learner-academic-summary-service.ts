@@ -15,6 +15,7 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { buildOwnLearnerAcademicSummary } from "./learner-academic-summary-model";
+import { getOwnAcademicEvidence } from "@/modules/placements/eligibility-service";
 
 /**
  * Profile academic identity comes from a live enrollment, never client profile
@@ -81,11 +82,22 @@ export async function getOwnLearnerAcademicSummary(context: RequestContext) {
     throw new AuthorizationError("academics.read");
   }
   const current = enrolled[0] ?? null;
-  return buildOwnLearnerAcademicSummary({
+  // Scores belong to placement evidence, not enrollment. The placement service
+  // enforces persisted VERIFIED/SELF provenance; failure to read that optional
+  // evidence must never erase the learner\'s authenticated college enrollment.
+  const evidence = await getOwnAcademicEvidence(context).catch(() => null);
+  return {
+    ...buildOwnLearnerAcademicSummary({
     displayName: owner.displayName,
     programName: current?.programName ?? null,
     programCode: current?.programCode ?? null,
     cohortName: current?.cohortName ?? null,
     departmentName: current?.departmentName ?? null,
-  });
+    }),
+    placementEvidence: evidence ? {
+      source: evidence.source,
+      cgpa: evidence.cgpa,
+      undergraduatePercentage: evidence.undergraduatePercentage,
+    } : null,
+  };
 }
