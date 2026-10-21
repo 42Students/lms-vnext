@@ -73,7 +73,7 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text transition-colors duration-150 motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Attendance detail
       </Link>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
