@@ -12,7 +12,7 @@ import { listPlacementRecruiterGrants } from "@/modules/placements/recruiter-ser
 import { listPlacementSeasons } from "@/modules/placements/season-service";
 import { PlacementEmployerRelationships } from "./placement-employer-relationships";
 import { PlacementRecruiterAccess } from "./placement-recruiter-access";
-import { PlacementOperationsOverview } from "./placement-operations-overview";
+import { PlacementOperationsSnapshot } from "./placement-operations-snapshot";
 import { PlacementSeasonManager } from "./placement-season-manager";
 
 export async function PlacementOperationsWorkspace({
@@ -79,15 +79,8 @@ export async function PlacementOperationsWorkspace({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      {operations ? <PlacementOperationsOverview
-        operations={operations}
-        basePath={basePath}
-        showDriveSearch={basePath.startsWith("/admin/")}
-        staleDays={staleDays}
-      /> : <Alert tone="warning">
-        Couldn&apos;t load drives. Check your connection and retry.{retry}
-        Other placement settings remain available.
-      </Alert>}
+      <PlacementOperationsSnapshot key={collegeId} collegeId={collegeId}
+        operations={operations} basePath={basePath} staleDays={staleDays}/>
       <Disclosure title="Data retention report" className="border-b border-[var(--lms-canvas-border)]">
         <p className="pb-3 text-sm text-body">
           Retention checks use the selected college&apos;s real placements,
