@@ -45,6 +45,7 @@ export async function loadPlacementHeldOfferFacts(
       eq(placementJobs.id, placementApplications.jobId))
     .where(and(
       eq(placementJobs.collegeId, collegeId),
+      eq(placementJobs.countsAsPlaced, true),
       eq(placementApplications.membershipId, membershipId),
       eq(placementOffers.kind, "OFFER"),
       inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
