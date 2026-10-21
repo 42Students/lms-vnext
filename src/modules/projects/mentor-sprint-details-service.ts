@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { projectInstances, projectReleases, projectSprints } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -42,7 +42,8 @@ export async function updateMentorSprintDetails(
     await assertPersistedProjectMutationActor(tx,context,scope);
     const [sprint] = await tx.select().from(projectSprints)
       .where(and(eq(projectSprints.id,params.sprintId),
-        eq(projectSprints.projectId,scope.project.id)))
+        eq(projectSprints.projectId,scope.project.id),
+        isNull(projectSprints.deletedAt)))
       .for("update").limit(1);
     if (!sprint) throw new ProjectsServiceError("PROJECT_SPRINT_NOT_FOUND");
     if (!["PLANNED","ACTIVE"].includes(sprint.status)) {
