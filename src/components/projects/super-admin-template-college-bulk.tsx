@@ -48,20 +48,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
  const inFlight=useRef(false);
  const [notice,setNotice]=useState("");
  const [noticeTone,setNoticeTone]=useState<"success"|"warning">("success");
- const storageKey="project-template-bulk:"+templateId;
- useEffect(()=>{
-  try{
-   const stored=sessionStorage.getItem(storageKey);
-   const parsed=stored?JSON.parse(stored):null;
-   if(Array.isArray(parsed))setSelected(parsed.filter((id):id is string=>
-     typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)).slice(0,500));
-  }catch{setSelected([]);}
- },[storageKey]);
- useEffect(()=>{
-  try{sessionStorage.setItem(storageKey,JSON.stringify(selected));}catch{
-   // A blocked storage API affects convenience only; server CAS still applies.
-  }
- },[selected,storageKey]);
+
  const allowed=colleges.filter(row=>row.canAssign);
  const targets=selected.map(id=>colleges.find(row=>row.id===id)??{
    id,name:"Selected college "+id.slice(0,8),assigned:false,canAssign:true,
@@ -141,12 +128,19 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        {selected.length} selected across pages
       </span>
       <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row">
-       <Button type="button" variant="ghost" size="sm"
-        className="min-h-11 w-full sm:w-auto md:min-h-9"
-        disabled={pending||!allowed.length||allowed.every(row=>selected.includes(row.id))}
-        onClick={()=>setSelected(current=>[...new Set([...current,...allowed.map(row=>row.id)])].slice(0,500))}>
+       <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-9">
+        <Checkbox disabled={pending||!allowed.length}
+         checked={allowed.length>0&&allowed.every(row=>selected.includes(row.id))}
+         onChange={event=>{
+          setSelected(current=>event.target.checked
+           ?[...new Set([...current,...allowed.map(row=>row.id)])].slice(0,500)
+           :current.filter(id=>!allowed.some(row=>row.id===id)));
+          setSavedSelection(current=>event.target.checked
+           ?[...new Map([...current,...allowed].map(row=>[row.id,row] as const)).values()].slice(0,500)
+           :current.filter(row=>!allowed.some(candidate=>candidate.id===row.id)));
+         }}/>
         Select all on page
-       </Button>
+       </label>
        <Button type="button" variant="ghost" size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9"
         disabled={pending||!selected.length}
@@ -190,14 +184,14 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        loading={pending&&operation==="assign"}
        disabled={pending||!published||!selected.length}
        onClick={()=>setOperation("assign")}>
-       Assign selected
+       Assign selected ({selected.length})
       </Button>
       <Button type="button" variant="secondary"
        className="w-full sm:w-auto"
        loading={pending&&operation==="remove"}
        disabled={pending||!selected.length}
        onClick={()=>setOperation("remove")}>
-       Remove selected
+       Remove selected ({selected.length})
       </Button>
      </div>
     </>
