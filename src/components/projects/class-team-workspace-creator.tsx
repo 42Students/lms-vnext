@@ -397,13 +397,24 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
             A mentor is required before a workspace can be Active
           </span>:null}
       </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace mode
-        <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
-          <option value="WHOLE_CLASS">One team</option>
-          <option value="TEAMS">Split a class into teams</option>
-          <option value="INDIVIDUAL">One workspace per student</option>
-        </Select>
-      </label>
+      <fieldset className="space-y-2 md:col-span-2">
+       <legend className="text-[13px] font-semibold text-body">Workspace mode</legend>
+       <div role="radiogroup" aria-label="Workspace creation mode"
+        className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border p-1 sm:grid-cols-3">
+        {([
+          ["WHOLE_CLASS","One team"],
+          ["TEAMS","Split a class into teams"],
+          ["INDIVIDUAL","One workspace per student"],
+        ] as const).map(([value,title])=><label key={value}
+         className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold "+
+          (mode===value?"border-primary bg-primary-subtle text-link":"border-transparent bg-surface text-body")}>
+         <input type="radio" name="workspaceMode" value={value}
+          checked={mode===value} disabled={!plannerEditable}
+          onChange={()=>setMode(value)}/>
+         {title}
+        </label>)}
+       </div>
+      </fieldset>
       {mode==="TEAMS"?<>
         <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Preferred team size
           <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
@@ -447,6 +458,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
               const learner=names.get(row.membershipId);
               return <>{learner?.displayName??learner?.rollNumber??"Learner"}{learner?.rollNumber?" · "+learner.rollNumber:""}</>;
             }},
+            {key:"membershipId",header:"Learner ID",mobilePriority:"secondary",
+              cell:row=><span className="break-all text-xs tabular-nums">{row.membershipId}</span>},
             {key:"decision",header:"Decision",mobilePriority:"secondary",cell:row=>
               row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate"},
           ]}
@@ -532,7 +545,12 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           columns={[
             {key:"learner",header:"Learner",mobilePriority:"primary",cell:row=>names.get(row.membershipId)?.displayName??row.membershipId},
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.status==="CREATED"?"Created":"Already covered"},
-            {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>row.title??"Existing workspace"},
+            {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>
+              row.projectId?<a href={basePath+"/"+encodeURIComponent(row.projectId)+"/summary"}
+               className="font-semibold text-link underline">{row.title??"Open workspace"}</a>:
+               row.title??"Existing workspace"},
+            {key:"workspaceId",header:"Workspace ID",mobilePriority:"secondary",
+              cell:row=><span className="break-all text-xs tabular-nums">{row.projectId??"—"}</span>},
           ]}
           empty={<EmptyState title="No individual results" description="No individual results recorded." />}
         />
