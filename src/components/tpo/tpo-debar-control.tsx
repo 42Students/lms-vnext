@@ -81,24 +81,24 @@ export function TpoDebarControl({
 
   return (
     <section className="min-w-0 space-y-3 py-2">
-      <p className="mt-2 text-sm leading-6 text-body">
+      <p className="mt-2 text-sm text-body leading-[22px]">
         Debar records a learner-level Ineligible decision with a required reason.
         The student loses Placements self-service access and cannot submit new
         placement applications. Existing applications are not withdrawn, and
         no timed or drive-count-based debarment is created.
       </p>
-      <p className="mt-2 text-sm leading-6 text-body">
+      <p className="mt-2 text-sm text-body leading-[22px]">
         Removing this Debar-labelled override restores the existing class/batch
         inherited decision, which may still be Ineligible or Not decided.
         It does not restore a previous explicit Eligible override or erase
         the historical activity event.
       </p>
       {debarred ? (
-        <p className="mt-3 text-sm font-semibold text-warning">
+        <p className="mt-3 text-sm font-semibold text-warning leading-[22px]">
           Current Debar reason: {direct.reason?.slice(TPO_DEBAR_REASON_PREFIX.length)}
         </p>
       ) : unrelatedRestriction ? (
-        <p className="mt-3 text-sm text-warning">
+        <p className="mt-3 text-sm text-warning leading-[22px]">
           A learner-level Ineligible decision already exists without a Debar label.
           Use the standard participation form to review or change it; this control
           will not silently replace that decision.

@@ -84,7 +84,7 @@ export function TpoCompanyCreateForm() {
        </div>}>
           <form id={formId} onSubmit={(event) => void submit(event)}
             className="space-y-4">
-            <p className="text-sm text-body">
+            <p className="text-sm text-body leading-[22px]">
               Reuse an existing global employer when its identity matches; otherwise
               create a company and link it to your college.
             </p>
@@ -112,7 +112,7 @@ export function TpoCompanyCreateForm() {
                 onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, primaryDomain: event.target.value }));}}/>
             </label>
             </Disclosure>
-            {reviewing?<p role="status" className="break-words border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body">
+            {reviewing?<p role="status" className="break-words border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-body leading-[22px]">
               Create or link {form.name.trim()} to this college?
               Existing canonical companies will be reused where identity matches.
               This creates an auditable college relationship.

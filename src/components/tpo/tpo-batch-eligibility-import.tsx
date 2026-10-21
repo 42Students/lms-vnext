@@ -93,7 +93,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   finally{actionInFlight.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
-  <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between"><h2 className="font-semibold">Import eligibility</h2>
+  <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between"><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Import eligibility</h2>
   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={busy} onClick={()=>setImportOpen(true)}>Import eligibility decisions</Button></div>
   <Drawer open={importOpen} onOpenChange={setImportOpen} title="Import eligibility decisions"
     dismissible={!busy}
@@ -103,15 +103,15 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       {busy?"Working…":preview?"Confirm matched decisions":"Preview import"}
     </Button>}><div className="min-w-0 space-y-3">
   <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">CSV format and matching rules</summary>
-    <p className="max-w-[70ch] break-words text-sm leading-6 text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
+    <p className="max-w-[70ch] break-words text-sm text-muted-foreground leading-[22px]">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   </details>
-  <p aria-label="Eligibility import steps" className="text-xs text-muted-foreground">Choose CSV or paste rows → Preview matched and unusable rows → Skip or resolve unmatched rows → Confirm matched decisions.</p>
+  <p aria-label="Eligibility import steps" className="text-xs text-muted-foreground leading-[20px]">Choose CSV or paste rows → Preview matched and unusable rows → Skip or resolve unmatched rows → Confirm matched decisions.</p>
   <div className="space-y-2">
    <FileUpload ref={fileInput} className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose or drop eligibility CSV" maxBytes={1_500_000}
       accept=".csv,text/csv" disabled={busy} onFiles={files=>void chooseFile(files?.[0]??null)}/>
-   {chosenName?<p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
+   {chosenName?<p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground leading-[20px]">Selected: {chosenName}</p>:null}
    <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Template and Excel instructions</summary>
-   <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
+   <p className="text-xs text-muted-foreground leading-[20px]">For Excel files, use Save As → CSV (UTF-8) before import.</p>
    <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download a template</a></details>
   </div>
   <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Paste CSV contents</summary><label className="block text-[13px] print:hidden">CSV contents
@@ -119,8 +119,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");setAcknowledged(false);setSkippedByUser([]);setChosenName("");}} disabled={busy} maxLength={1500000}/>
   </label></details>
   {preview?<div className="space-y-2">
-   <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
-   {unresolved>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
+   <p role="status" className="text-sm font-semibold leading-[22px]">{preview.ready} matched; {preview.skipped} cannot use.</p>
+   {unresolved>0?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-warning-text leading-[22px]">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
    <div className="print:hidden"><Tabs ariaLabel="Import preview filters" renderPanel={false} controlledOnly
     value={previewTab} onValueChange={next=>{setPreviewTab(next as "ALL"|"MATCHED"|"UNUSABLE");setPreviewPage(1);}}
     items={[{value:"ALL",label:"All",count:preview.preview.length},
