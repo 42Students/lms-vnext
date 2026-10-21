@@ -8,8 +8,11 @@ import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from 
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 export const runtime="nodejs";
 function successResponse(request:Request,scope:"placement-cell"|null){
- const wantsJson=(request.headers.get("accept")??"").toLowerCase().includes("application/json");
- if(wantsJson)return NextResponse.json({status:"UNSUBSCRIBED"},{
+ // Legacy inline confirm pages can request JSON and keep their current URL.
+ // Existing native-form integrations retain the confirmed-page 303 fallback.
+ const wantsJson=(request.headers.get("accept")??"").toLowerCase().includes("application/json") ||
+  (request.headers.get("prefer")??"").toLowerCase().includes("return=representation");
+ if(wantsJson)return NextResponse.json({status:"UNSUBSCRIBED",inPlace:true,scope},{
   status:200,headers:{"Cache-Control":"no-store"},
  });
  const url=new URL("/campaign-unsubscribe/confirmed",request.url);
