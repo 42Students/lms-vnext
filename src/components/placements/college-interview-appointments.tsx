@@ -74,6 +74,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  };
  const savingLock=useRef(false);
  const [editing,setEditing]=useState<Appointment|null>(null);
+ const [clonedFrom,setClonedFrom]=useState<string|null>(null);
  const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(rounds[0]?.id??"");
  const [applicationId,setApplicationId]=useState(candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
@@ -95,6 +96,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [feedbackRating,setFeedbackRating]=useState(3);
  const [feedbackRecommendation,setFeedbackRecommendation]=useState<"SELECT"|"HOLD"|"REJECT">("HOLD");
  const [feedbackComments,setFeedbackComments]=useState("");
+ const [feedbackDirty,setFeedbackDirty]=useState(false);
+ const [confirmFeedbackDiscard,setConfirmFeedbackDiscard]=useState(false);
+ const feedbackSavingLock=useRef(false);
  const [feedbackExisting,setFeedbackExisting]=useState<{
   rating:number;recommendation:string;comments:string;createdAt:string
  }|null>(null);
@@ -110,6 +114,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   if(busy||feedbackBusy)return;
   setFeedbackFor(row);setFeedbackRating(3);setFeedbackRecommendation("HOLD");
   setFeedbackComments("");setFeedbackExisting(null);setFeedbackError("");
+  setFeedbackDirty(false);setConfirmFeedbackDiscard(false);
   setFeedbackBusy(true);
   try{
    const response=await apiFetch<{feedback:typeof feedbackExisting}>(feedbackUrl(row.id),{cache:"no-store"});
@@ -120,7 +125,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   }finally{setFeedbackBusy(false);}
  }
  async function submitFeedback(){
-  if(!feedbackFor||feedbackBusy||feedbackComments.trim().length<3||feedbackExisting)return;
+  if(!feedbackFor||feedbackBusy||feedbackSavingLock.current||feedbackComments.trim().length<3||
+    feedbackComments.length>(feedbackRecommendation==="REJECT"?500:2000)||feedbackExisting)return;
+  feedbackSavingLock.current=true;
   setFeedbackBusy(true);setFeedbackError("");
   try{
    await apiFetch(feedbackUrl(feedbackFor.id),{
@@ -129,10 +136,15 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      rating:feedbackRating,recommendation:feedbackRecommendation,comments:feedbackComments.trim()}),
    });
    showToast({tone:"success",title:"Feedback submitted successfully"});
-   setFeedbackFor(null);router.refresh();onCommitted?.();
+   setFeedbackDirty(false);setFeedbackFor(null);router.refresh();onCommitted?.();
   }catch(error){
    setFeedbackError(error instanceof Error?error.message:"Feedback could not be saved.");
-  }finally{setFeedbackBusy(false);}
+  }finally{setFeedbackBusy(false);feedbackSavingLock.current=false;}
+ }
+ function closeFeedback(){
+  if(feedbackBusy){showToast({tone:"info",title:"Wait for feedback submission to finish."});return;}
+  if(feedbackDirty&&!feedbackExisting){setConfirmFeedbackDiscard(true);return;}
+  setFeedbackFor(null);
  }
  const quoteCsv=(value:string)=>{
   // Prevent spreadsheet programs interpreting candidate-provided values as formulae.
@@ -150,6 +162,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   ].map(quoteCsv).join(",")),
  ].join("\r\n");
  function open(row?:Appointment){
+  setClonedFrom(null);
   setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
   setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
   const prefill=row?toLocal(row.scheduledAt):"";
@@ -164,6 +177,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   setRoundDescription(row?.roundDescription??rounds.find(r=>r.id===(row?.roundId??rounds[0]?.id))?.name??"");
   setDirty(false);setConfirmDiscard(false);
   setError("");setSuccess("");setFieldErrors({});setShow(true);
+ }
+ function cloneCancelled(row:Appointment){
+  open(row);
+  // Reuse the old details as a new audited scheduling request, never send
+  // an EDIT mutation against a cancelled appointment/version.
+  setEditing(null);
+  setClonedFrom(row.id);
+  setReason("");
  }
  function closeSetup(){
   if(busy){showToast({tone:"info",title:"Wait for interview submission to finish."});return;}
@@ -270,7 +291,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>open()}>Schedule interview</Button>
    </div>
   </div>
-  {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
+  {!available.length?<Banner tone="info">No pending or scheduled interview round is available. Set up a round before scheduling interviews.</Banner>:null}
+  {!candidates.length?<Banner tone="info">No eligible candidate is available in this drive. Open Applications to review candidate screening and shortlisting before scheduling.</Banner>:null}
   <div className="grid min-w-0 gap-3 min-[768px]:hidden" aria-label="Candidate interview cards">
    {visibleAppointments.map(row=>{
     const person=applicant(row.applicationId);
@@ -301,6 +323,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        aria-label={"Download calendar file for "+eventTitle(row)}
        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">↓ Download .ics</a>:null}
       {row.status==="SCHEDULED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>open(row)}>Edit</Button>:null}
+      {row.status==="CANCELLED"&&rounds.some(round=>round.id===row.roundId&&
+        ["SCHEDULED","PENDING"].includes(round.status))?
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>cloneCancelled(row)}>Run it again (copy)</Button>:null}
+      {row.status==="SCHEDULED"?<>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>decide(row,"COMPLETED")}>Completed</Button>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>decide(row,"NO_SHOW")}>No Show</Button>
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>decide(row,"CANCEL")}>Cancel</Button>
+      </>:null}
       {row.status==="COMPLETED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
      </div>
     </article>;
@@ -357,6 +387,11 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       </svg>Download .ics</a>:null}
      {row.status==="COMPLETED"?<Button type="button" variant="secondary"
       disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
+     {row.status==="CANCELLED"&&rounds.some(round=>round.id===row.roundId&&
+        ["SCHEDULED","PENDING"].includes(round.status))?
+       <Button type="button" variant="secondary" disabled={busy} onClick={()=>cloneCancelled(row)}>
+        Run it again (copy)
+       </Button>:null}
      {row.status==="SCHEDULED"?<>
       <Button type="button" disabled={busy} variant="secondary" onClick={()=>open(row)}
        >Edit</Button>
@@ -379,30 +414,38 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!validFiveMinuteSlot||!roundId||!applicationId||!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])||roundDescription.trim().length<10||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
-     {busy?"Saving…":editing?.status==="RESCHEDULE_REQUESTED"?"Apply new slot":editing?"Save changes":"Schedule and notify"}</Button>
+     {busy?"Saving…":editing?.status==="RESCHEDULE_REQUESTED"?"Apply new slot":editing?"Save changes":"Schedule Interview"}</Button>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
+    {clonedFrom?<Banner tone="info" role="status">
+      Reusing a cancelled interview. Choose a new date and time before scheduling; the cancelled record will not be changed.
+    </Banner>:null}
+    {appointments.filter(row=>row.applicationId===applicationId&&row.id!==editing?.id&&row.status!=="CANCELLED").length>0?
+      <Banner tone="info" role="status">This candidate has another interview in this drive. Check the time, room and interviewer before scheduling another.</Banner>:null}
     {editing?.status==="RESCHEDULE_REQUESTED"?<Banner tone="warning" role="status">
       <strong>Reschedule requested.</strong> Review the candidate’s request before applying a new slot.
       {editing.outcomeNote?<p className="mt-2 whitespace-pre-wrap">{editing.outcomeNote}</p>:null}
     </Banner>:null}
-    {editing?<div className="rounded-[8px] border border-border bg-[#fafafa] p-3 text-sm"
-      aria-label="Editing interview for selected candidate">
+    {currentCandidate?<div className="rounded-[8px] border border-border bg-[#fafafa] p-3 text-sm"
+      aria-label="Interview candidate details">
       <strong className="block">{currentCandidate?.name?.trim()||"Candidate"}</strong>
-      <span className="block text-xs text-muted-foreground">{currentRound?.name||"Interview round"} · Job {jobId.slice(0,8)}</span>
+      <span className="block text-xs text-muted-foreground">
+       {currentRound?.name||"Interview round"} · {jobTitle??"Drive "+jobId.slice(0,8)}
+       {companyName?" · "+companyName:""}
+      </span>
     </div>:null}
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={Boolean(editing)}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={busy||Boolean(editing)}
      onChange={e=>{setRoundId(e.target.value);setDirty(true);}} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </Select></label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={Boolean(editing)}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={busy||Boolean(editing)}
      onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
-    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+    <div className="grid min-w-0 gap-3">
      <label className="grid gap-[6px] text-[13px] font-semibold">Interview Type
-      <Select value={interviewType} onChange={event=>{
+      <Select value={interviewType} disabled={busy} onChange={event=>{
        setInterviewType(event.target.value as typeof interviewType);setDirty(true);
       }} className="w-full">
        <option value="SCREENING">Screening</option><option value="TECHNICAL">Technical</option>
@@ -410,15 +453,26 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        <option value="FINAL">Final</option>
       </Select>
      </label>
-     <label className="grid gap-[6px] text-[13px] font-semibold sm:col-span-2">
+     <label className="grid gap-[6px] text-[13px] font-semibold">
       What this round is about <span className="text-xs text-muted-foreground">({roundDescription.length}/500)</span>
-      <Textarea rows={3} minLength={10} maxLength={500} value={roundDescription}
+      <Textarea rows={3} minLength={10} maxLength={500} disabled={busy} value={roundDescription}
        placeholder="Explain this interview round and how candidates should prepare"
        onChange={event=>{setRoundDescription(event.target.value);setDirty(true);}}
        className="w-full"/>
       {fieldErrors.roundDescription?<span role="alert" className="text-error">{fieldErrors.roundDescription}</span>:null}
      </label>
     </div>
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+      Interviewer(s) <span className="text-xs font-normal text-muted-foreground">Use the same spelling as existing interviews to avoid double-booking.</span>
+     <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255} disabled={busy}
+      placeholder="e.g. Jane Doe, Ravi Kumar" autoComplete="off"
+      onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/>
+     <datalist id={"interviewer-suggestions-"+jobId}>
+      {interviewerNames.filter(name=>name.toLowerCase().includes(interviewer.toLowerCase())).slice(0,30).map(name=>
+        <option key={name} value={name}/>)}
+     </datalist>
+     {nearInterviewer?<span role="status" className="text-xs text-warning">Existing name uses “{nearInterviewer}”. Select the existing spelling.</span>:null}
+     </label>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-1">
      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Date (IST)
@@ -437,32 +491,21 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         {INTERVIEW_DURATIONS.map(value=><option key={value} value={value}>{value} minutes</option>)}
       </Select></label>
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} disabled={busy} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setVenue("");setMeetingUrl("");setFieldErrors({});setDirty(true);}}
      className="w-full">
      <option value="ON_CAMPUS">Offline</option><option value="VIRTUAL">Online</option></Select></label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">{mode==="VIRTUAL"?"Meeting Link":"Venue Address"}
-     <Input value={mode==="VIRTUAL"?meetingUrl:venue} maxLength={500}
+     <Input value={mode==="VIRTUAL"?meetingUrl:venue} maxLength={500} disabled={busy}
       placeholder={mode==="VIRTUAL"?"https://meet.example.com/...":"Enter interview venue address"}
       onChange={e=>{mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value);setDirty(true);}}
       className="w-full"/>
      {fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]?<span role="alert" className="text-xs text-error">{fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]}</span>:null}
      </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
-      Interviewer(s) <span className="text-xs font-normal text-muted-foreground">Use the same spelling as existing interviews to avoid double-booking.</span>
-     <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255}
-      placeholder="Start typing an interviewer’s name" autoComplete="off"
-      onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/>
-     <datalist id={"interviewer-suggestions-"+jobId}>
-      {interviewerNames.filter(name=>name.toLowerCase().includes(interviewer.toLowerCase())).slice(0,30).map(name=>
-        <option key={name} value={name}/>)}
-     </datalist>
-     {nearInterviewer?<span role="status" className="text-xs text-warning">Existing name uses “{nearInterviewer}”. Select the existing spelling.</span>:null}
-     </label>
     <p className="text-xs text-muted-foreground">Times shown in Asia/Kolkata (IST). The server checks other drives and interviewer conflicts before accepting a slot.</p>
     {previewConflicts.length>0?<Banner tone="warning" role="alert">
       Possible scheduling conflict with {previewConflicts.length} interview{previewConflicts.length===1?"":"s"} in this drive, including a 15-minute buffer. Check the candidate, room and interviewer. The server also checks other drives before saving.
     </Banner>:null}
-    {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason}
+    {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason} disabled={busy}
      onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></label>:null}
     {error?<Banner tone="error" action={<Button type="button" size="sm"
       variant="secondary" onClick={()=>setError("")}>Dismiss</Button>}>
@@ -470,20 +513,23 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     </Banner>:null}
 
   </Dialog>
-  <Dialog open={feedbackFor!==null} onOpenChange={next=>{if(!next){
-   if(feedbackBusy)showToast({tone:"info",title:"Wait for feedback submission to finish."});
-   else setFeedbackFor(null);
-  }}} title="Interview feedback" description="Staff-only review. Rating and recommendation do not update selection results."
+  <Dialog open={feedbackFor!==null} onOpenChange={next=>{if(!next)closeFeedback();}} title="Interview feedback" description="Staff-only review. Rating and recommendation do not update selection results."
    dismissible={true}
    footer={<>
     {!feedbackExisting?<Button type="button" disabled={feedbackBusy||
-     feedbackError.startsWith("Unable to load")||feedbackComments.trim().length<3}
+     feedbackError.startsWith("Unable to load")||feedbackComments.trim().length<3||
+     feedbackComments.length>(feedbackRecommendation==="REJECT"?500:2000)}
      onClick={()=>void submitFeedback()}>{feedbackBusy?"Submitting…":"Submit feedback"}</Button>:null}
-    <Button type="button" variant="secondary" onClick={()=>{
-     if(feedbackBusy){showToast({tone:"info",title:"Wait for feedback submission to finish."});return;}
-     setFeedbackFor(null);
-    }}>Close</Button>
+    <Button type="button" variant="secondary" disabled={feedbackBusy} onClick={closeFeedback}>
+      {feedbackExisting?"Close":"Cancel"}
+    </Button>
    </>}>
+   {feedbackFor?<div className="rounded-[6px] border border-[#e8e8e8] bg-[#f6f8fa] px-[14px] py-[10px] text-sm">
+     <strong>{applicant(feedbackFor.applicationId)?.name??"Candidate"}</strong>
+     {jobTitle?<span className="text-muted-foreground"> · {jobTitle}</span>:null}
+     <span className="text-muted-foreground"> · {(feedbackFor.interviewType??"Interview").charAt(0)+
+      (feedbackFor.interviewType??"Interview").slice(1).toLowerCase()} round</span>
+    </div>:null}
    {feedbackBusy?<p role="status">Loading interview feedback…</p>:null}
    {feedbackExisting?<div className="space-y-2 text-sm">
     <p className="font-semibold">Feedback already submitted</p>
@@ -493,27 +539,44 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <p className="text-xs text-muted-foreground">Recorded on {display(feedbackExisting.createdAt)}</p>
    </div>:!feedbackBusy?<>
     <label className="grid gap-2 text-[13px] font-semibold">Rating (1–5)
-     <Select value={String(feedbackRating)} onChange={event=>setFeedbackRating(Number(event.target.value))}>
+     <Select value={String(feedbackRating)} disabled={feedbackBusy}
+      onChange={event=>{setFeedbackRating(Number(event.target.value));setFeedbackDirty(true);}}>
       {[1,2,3,4,5].map(value=><option key={value} value={value}>{value} / 5</option>)}
      </Select>
     </label>
     <label className="mt-3 grid gap-2 text-[13px] font-semibold">Recommendation
-     <Select value={feedbackRecommendation} onChange={event=>
-      setFeedbackRecommendation(event.target.value as typeof feedbackRecommendation)}>
+     <Select value={feedbackRecommendation} disabled={feedbackBusy} onChange={event=>{
+      setFeedbackRecommendation(event.target.value as typeof feedbackRecommendation);
+      setFeedbackDirty(true);
+     }}>
       <option value="SELECT">Recommend selecting</option>
       <option value="HOLD">Hold for review</option>
       <option value="REJECT">Recommend not selecting</option>
      </Select>
     </label>
-    <label className="mt-3 grid gap-2 text-[13px] font-semibold">Feedback comments
-     <Textarea value={feedbackComments} rows={4} maxLength={5000}
-      onChange={event=>setFeedbackComments(event.target.value)}/>
+    <label className="mt-3 grid gap-2 text-[13px] font-semibold">
+      Comments <span className="text-xs font-normal text-muted-foreground">
+        ({feedbackComments.length}/{feedbackRecommendation==="REJECT"?500:2000})
+      </span>
+     <Textarea value={feedbackComments} rows={4}
+      maxLength={feedbackRecommendation==="REJECT"?500:2000}
+      disabled={feedbackBusy} placeholder="Feedback notes (observations, strengths, areas for improvement, etc.)"
+      onChange={event=>{setFeedbackComments(event.target.value);setFeedbackDirty(true);}}/>
+     <span className="text-xs font-normal text-muted-foreground">
+       Staff-only feedback; these notes do not change placement selection results or notify the learner.
+       {feedbackRecommendation==="REJECT"?" Please keep rejection remarks within 500 characters.":""}
+     </span>
     </label>
    </>:null}
    {feedbackError?<Banner tone="error" action={<Button type="button" size="sm"
     variant="secondary" onClick={()=>feedbackFor&&void openFeedback(feedbackFor)}>
     Retry</Button>}>{feedbackError}</Banner>:null}
   </Dialog>
+  <ConfirmDialog open={confirmFeedbackDiscard} onOpenChange={setConfirmFeedbackDiscard}
+   title="Discard unsaved feedback?"
+   description="You have unsaved interview feedback. Discard these changes?"
+   confirmLabel="Discard" cancelLabel="Keep editing" confirmVariant="danger"
+   onConfirm={()=>{setConfirmFeedbackDiscard(false);setFeedbackDirty(false);setFeedbackFor(null);}}/>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
    title="Discard interview setup?"
    description="There are unsaved interview changes."
