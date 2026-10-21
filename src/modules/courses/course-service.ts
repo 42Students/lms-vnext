@@ -384,7 +384,7 @@ export async function createCourse(
           officialCode:input.officialCode??null,
           cardColor:input.cardColor??null,
           takeaways:input.takeaways??null,
-          orderedTakeaways:input.takeaways?.split(/\\r?\\n/)
+          orderedTakeaways:input.takeaways?.split(/\r?\n/)
            .map(value=>value.trim()).filter(Boolean)??null,
           introductionHeading:input.introductionHeading??"In this Course",
           enabled:input.enabled??true,

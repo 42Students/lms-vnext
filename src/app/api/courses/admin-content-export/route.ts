@@ -10,7 +10,7 @@ export const dynamic="force-dynamic";
 
 function csvCell(value:unknown):string{
  const string=value==null?"":String(value);
- return '"'+(/^[\\s]*[=+@-]/.test(string)?"'"+string:string).replaceAll('"','""')+'"';
+ return '"'+(/^[\s]*[=+@-]/.test(string)?"'"+string:string).replaceAll('"','""')+'"';
 }
 export async function GET(request:Request){
  try{
@@ -49,7 +49,7 @@ export async function GET(request:Request){
    row.status==="ARCHIVED"?"no":"yes",
    row.visibleToStudents?"yes":"no",
   ].map(csvCell).join(","));
-  return new Response("\\uFEFF"+lines.join("\\r\\n")+"\\r\\n",{
+  return new Response("\uFEFF"+lines.join("\r\n")+"\r\n",{
    status:200,headers:{
     "Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="lesson-content.csv"',
