@@ -35,3 +35,34 @@ export function validateDateRange(start: string, end: string): string | null {
     return "The end date must be on or after the start date. Please adjust the dates.";
   return null;
 }
+
+/** Classroom attendance schedule only: preserve the legacy per-field date wording.
+ * Other features should continue using the generic validateDateRange contract.
+ */
+export type ClassScheduleDateError = {
+  field: "startDate" | "endDate" | "range";
+  message: string;
+};
+function classScheduleIsoDay(value: string): number | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const timestamp = Date.parse(value + "T00:00:00.000Z");
+  if (!Number.isFinite(timestamp)) return null;
+  return new Date(timestamp).toISOString().slice(0, 10) === value ? timestamp : null;
+}
+function safeDateInput(value: string): string {
+  return value.length <= 32 && /^[0-9T:+.\-]*$/.test(value) ? value : "";
+}
+export function validateClassScheduleDateRange(startDate: string, endDate: string): ClassScheduleDateError | null {
+  const start = classScheduleIsoDay(startDate);
+  if (start === null) return {
+    field: "startDate", message: "Invalid date 'startDate': " + safeDateInput(startDate),
+  };
+  const end = classScheduleIsoDay(endDate);
+  if (end === null) return {
+    field: "endDate", message: "Invalid date 'endDate': " + safeDateInput(endDate),
+  };
+  if (start > end) return {
+    field: "range", message: "startDate must be before or equal to endDate",
+  };
+  return null;
+}

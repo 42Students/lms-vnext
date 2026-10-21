@@ -87,5 +87,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-4_ai-grading.md.md` (new; 8 findings; best P3)
 - [x] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-4_api-ai-grading-grade-booklet.md.md` (new; 7 findings; best P3)
 - [x] `docs/audit/gap-fix-work/packets/lane-7/NEW_docs_audit_gap2_lane-4_api-ai-grading-health.md.md` (new; 4 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/packets/lane-7/src_lib_friendly-error.ts.md` (edit src/lib/friendly-error.ts; 3 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/packets/lane-7/src_lib_safe-format.ts.md` (edit src/lib/safe-format.ts; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-7/src_lib_friendly-error.ts.md` (edit src/lib/friendly-error.ts; 3 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-7/src_lib_safe-format.ts.md` (edit src/lib/safe-format.ts; 1 findings; best P3)
