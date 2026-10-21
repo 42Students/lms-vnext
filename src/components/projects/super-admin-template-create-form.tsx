@@ -114,7 +114,7 @@ export function SuperAdminTemplateCreateForm(){
   if(!values.title.trim()){setError("Title is required");return;}
   if(values.title.trim().length>200){setError("Title must be 200 characters or fewer");return;}
   if(!values.slug.trim()){setError("Template slug is required");return;}
-  if(values.slug.length>64){setError("Slug must be 64 characters or fewer");return;}
+  if(values.slug.length>80){setError("Slug must be 80 characters or fewer");return;}
   if(!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(values.slug)){
    setError("Use lowercase letters, numbers, and hyphens only (e.g. project-template).");return;
   }
@@ -149,7 +149,7 @@ export function SuperAdminTemplateCreateForm(){
      value={values.title} onChange={event=>edit("title",event.target.value)}/>
    </label>
    <label className={label}>Slug
-    <Input className={field} required maxLength={64} disabled={saving}
+    <Input className={field} required maxLength={80} disabled={saving}
      value={values.slug} onChange={event=>edit("slug",event.target.value.toLowerCase())}/>
     <span className="mt-1 block text-xs font-normal text-body">
      Use lowercase letters, numbers, and hyphens only (e.g. project-template).

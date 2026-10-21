@@ -159,7 +159,7 @@ export function CreateProjectTemplateControl() {
             </span>
             <Input
               required
-              maxLength={64}
+              maxLength={80}
               pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={slug}
               onChange={(event) =>

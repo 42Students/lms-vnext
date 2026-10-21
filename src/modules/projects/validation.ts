@@ -17,6 +17,9 @@ const projectKeySchema = z
   .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
 
 const titleSchema = z.string().trim().min(1).max(200);
+const templateSlugSchema=z.string().trim().min(1,"Template slug is required")
+ .max(80,"Slug must be 80 characters or fewer")
+ .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/,"Use lowercase letters, numbers, and hyphens only");
 const descriptionSchema = z
   .string()
   .trim()
@@ -250,7 +253,7 @@ export const projectTemplateVersionSchema = z.number().int().min(1);
 
 export const createProjectTemplateInputSchema = z
   .object({
-    slug: projectKeySchema,
+    slug: templateSlugSchema,
     title: titleSchema,
     summary: z.string().trim().min(1).max(2000).optional(),
     blueprint: projectTemplateBlueprintSchema,
@@ -312,7 +315,7 @@ export type ReviseProjectTemplateInput = z.infer<
 
 export const duplicateProjectTemplateInputSchema = z
   .object({
-    slug: projectKeySchema.optional(),
+    slug: templateSlugSchema.optional(),
     title: titleSchema.optional(),
     summary: z
       .string()
