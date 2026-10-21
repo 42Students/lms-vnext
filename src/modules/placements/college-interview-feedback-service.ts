@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,sql} from "drizzle-orm";
+import {and,desc,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,placementJobs} from "@/db/schema";
@@ -36,11 +36,11 @@ async function requireScope(context:RequestContext,rawJobId:unknown,rawSlotId:un
 export async function getCollegeInterviewFeedback(context:RequestContext,rawJobId:unknown,rawSlotId:unknown){
  const {slotId}=await requireScope(context,rawJobId,rawSlotId);
  const [row]=await getDb().select({metadata:activityEvents.metadata,
-  createdAt:activityEvents.createdAt,actorId:activityEvents.actorUserId})
+  createdAt:activityEvents.occurredAt,actorId:activityEvents.actorUserId})
   .from(activityEvents).where(and(eq(activityEvents.subjectId,slotId),
    eq(activityEvents.subjectType,"placement_round_candidate_slot"),
    eq(activityEvents.eventType,"PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK_SUBMITTED")))
-  .orderBy(desc(activityEvents.createdAt)).limit(1);
+  .orderBy(desc(activityEvents.occurredAt)).limit(1);
  if(!row)return {feedback:null};
  const item=row.metadata;
  return {feedback:{rating:Number(item.rating),recommendation:String(item.recommendation),
