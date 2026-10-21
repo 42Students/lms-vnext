@@ -57,7 +57,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
           action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
+            className="inline-flex min-h-11 items-center text-sm font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
             Clear filters
           </Link>} />
       </div>
