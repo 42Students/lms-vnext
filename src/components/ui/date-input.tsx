@@ -306,7 +306,7 @@ export function DateInput({
                 </div> : null}
             {mode === "time"
               ? <div className="grid grid-cols-2 gap-2" role="group" aria-label="Hours and minutes">
-                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold leading-[22px] text-[var(--lms-body-text)]">Hour</p><div aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold leading-[22px] text-[var(--lms-body-text)]">Hour</p><div role="group" aria-label="Hour" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 24 }, (_, hour) => {
                       const available = Array.from({ length: 60 }, (_, minute) => timeAllowed(hour, minute)).some(Boolean);
                       return <Button key={hour} data-picker-hour={hour} variant="ghost" type="button" size="sm" disabled={!available}
@@ -317,7 +317,7 @@ export function DateInput({
                       </Button>;
                     })}
                   </div></div>
-                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold leading-[22px] text-[var(--lms-body-text)]">Minute</p><div aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  <div className="min-w-0"><p className="mb-2 text-center text-[13px] font-semibold leading-[22px] text-[var(--lms-body-text)]">Minute</p><div role="group" aria-label="Minute" className="max-h-56 overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                     {Array.from({ length: 60 }, (_, minute) => (
                       <Button key={minute} data-picker-minute={minute} variant="ghost" type="button" size="sm"
                         disabled={!timeAllowed(draftHour, minute)}

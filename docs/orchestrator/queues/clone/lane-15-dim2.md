@@ -285,19 +285,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [x] `src/components/tpo/tpo-student-saved-views.tsx`
 - [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
-- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/ui/date-input.tsx`
+- [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/ui/date-input.tsx`
 - [x] `src/components/ui/date-range-picker.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/file-upload.tsx`
 - [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
 - [ ] `src/components/ui/tabs.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
 - [ ] `src/components/verification/TpoVerificationSwitch.tsx`
 - [ ] `src/components/verification/VerificationReviewDrawer.tsx`
 - [ ] `src/components/verification/VerificationWorkspace.tsx`
