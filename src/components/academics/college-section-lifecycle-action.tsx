@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
 import { classLifecyclePrompt } from "@/modules/academics/college-section-lifecycle-model";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 export function CollegeSectionLifecycleAction({ row }: {
   row: { id: string; name: string; status: "ACTIVE" | "ARCHIVED"; updatedAt: string };
