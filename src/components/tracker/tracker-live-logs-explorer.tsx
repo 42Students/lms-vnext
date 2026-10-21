@@ -1,6 +1,7 @@
 "use client";
 import { EmptyState } from "@/components/ui/empty-state";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { Alert } from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -46,6 +47,25 @@ export function trackerLogCsv(rows:readonly Entry[]):string{
   ...rows.map(row=>[row.time,row.event,row.path,row.component??"",row.requestId??"",row.message]
    .map(cell).join(","))].join("\n");
 }
+
+/** Explicitly bounded privacy-redacted NDJSON with the terminal _meta record.
+ * This is a browser-export of loaded pages, NOT the legacy 31-day complete
+ * server stream. A remaining page token MUST be reported as truncated. */
+export function trackerLogNdjson(
+ rows:readonly Entry[],
+ metadata:{environment:string;since:string;until:string;truncated:boolean},
+):string{
+ return [
+  ...rows.map(row=>JSON.stringify({
+   timestamp:row.time,event:row.event,message:row.message,
+   route:row.path,reference:row.requestId,component:row.component,
+  })),
+  JSON.stringify({_meta:{environment:metadata.environment,
+   since:metadata.since,until:metadata.until,count:rows.length,
+   truncated:metadata.truncated,source:"REDACTED_CLIENT_PAGES"}}),
+ ].join("\n")+"\n";
+}
+
 export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
   const [windowMinutes,setWindowMinutes]=useState("60");
   const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("WARNING");
@@ -151,16 +171,29 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     try{await navigator.clipboard.writeText(text);setNotice("Copied.");}
     catch{setNotice("Copy is unavailable. Select the text manually.");}
   }
-  function download(rows:Entry[],format:"csv"|"markdown"){
-    const contents=format==="markdown"?trackerLogMarkdown(rows):trackerLogCsv(rows);
-    const blob=new Blob([contents],{type:format==="csv"?"text/csv;charset=utf-8":"text/markdown;charset=utf-8"});
+  function download(rows:Entry[],format:"csv"|"markdown"|"ndjson",truncated:boolean){
+    const end=new Date();
+    const start=new Date(end.getTime()-Number(windowMinutes)*60_000);
+    const rawEnvironment=new URLSearchParams(window.location.search).get("environment")??"PRODUCTION";
+    const environment=(["PRODUCTION","DEVELOPMENT","UAT"] as const)
+      .find(value=>value===rawEnvironment)??"PRODUCTION";
+    const contents=format==="markdown"?trackerLogMarkdown(rows):
+      format==="ndjson"?trackerLogNdjson(rows,{
+        environment,since:start.toISOString(),until:end.toISOString(),truncated,
+      }):trackerLogCsv(rows);
+    const mime=format==="csv"?"text/csv;charset=utf-8":
+      format==="ndjson"?"application/x-ndjson;charset=utf-8":"text/markdown;charset=utf-8";
+    const blob=new Blob([contents],{type:mime});
     const href=URL.createObjectURL(blob);
     const anchor=document.createElement("a");anchor.href=href;
-    anchor.download=format==="csv"?"tracker-logs.csv":"tracker-logs-for-claude.md";
+    anchor.download=format==="csv"?"tracker-logs.csv":
+      format==="ndjson"?"tracker-logs-"+environment.toLowerCase()+".ndjson":
+      "tracker-logs-for-claude.md";
     anchor.click();URL.revokeObjectURL(href);
-    setNotice("Downloaded "+rows.length+" log entries.");
+    setNotice("Downloaded "+rows.length+" log entries."+
+      (truncated?" Export is incomplete. Narrow the time range for more.":""));
   }
-  async function downloadRange(format:"csv"|"markdown"){
+  async function downloadRange(format:"csv"|"markdown"|"ndjson"){
     if(exporting||pending)return;
     setExporting(true);setNotice("Preparing export…");
     try{
@@ -175,8 +208,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         if(!cursor)break;
       }
       if(!rows.length){setNotice("No matching log entries to download.");return;}
-      download(rows,format);
-      if(cursor)setNotice("Downloaded the first "+rows.length+" entries. Narrow the time range to export more.");
+      download(rows,format,Boolean(cursor));
     }catch(error){setNotice(error instanceof FriendlyFetchError?error.message:"Could not prepare logs. Try again.");}
     finally{setExporting(false);}
   }
@@ -249,13 +281,16 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
         {exporting?"Exporting…":"Download logs"}
       </Button>
+      <Button variant="secondary" type="button" onClick={()=>void downloadRange("ndjson")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
+        Download NDJSON (bounded)
+      </Button>
       <Button variant="secondary" type="button" onClick={()=>setReportOpen(true)} disabled={!items.length} className="min-h-11 w-full sm:w-auto md:min-h-9">
         Report for Claude
       </Button>
      </div>
     </Disclosure>
-    {stale?<InlineNotice tone="warning" message="Showing previously loaded results. Refresh or retry for the latest logs."/>:null}
-    {rateLimited?<InlineNotice tone="warning" message="Rate limit reached. Automatic refresh is paused."/>:null}
+    {stale?<Alert tone="warning">Showing previously loaded results. Refresh or retry for the latest logs.</Alert>:null}
+    {rateLimited?<Alert tone="warning">Rate limit reached. Automatic refresh is paused.</Alert>:null}
     {notice?<InlineNotice tone={/could not|unavailable|failed|expired|permission|too many/i.test(notice)?"error":"info"} message={notice}/>:null}
     {stale?<Button type="button" variant="secondary" onClick={()=>void load()} disabled={pending}>
       Retry
