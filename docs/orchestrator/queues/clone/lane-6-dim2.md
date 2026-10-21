@@ -315,14 +315,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/projects/project-workspace.tsx`
 - [x] `src/components/projects/super-admin-template-college-bulk.tsx`
 - [x] `src/components/public/error-page-view.tsx`
-- [ ] `src/components/public/graceful-screen.tsx`
-- [ ] `src/components/public/public-page-loading.tsx`
-- [ ] `src/components/shell/app-shell.tsx`
-- [ ] `src/components/shell/learner-faculty-mobile-footer.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/shell/mobile-navigation.tsx`
-- [ ] `src/components/shell/sidebar-nav.tsx`
-- [ ] `src/components/shell/topbar/command-search.tsx`
+- [x] `src/components/public/graceful-screen.tsx`
+- [x] `src/components/public/public-page-loading.tsx`
+- [x] `src/components/shell/app-shell.tsx`
+- [x] `src/components/shell/learner-faculty-mobile-footer.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/shell/mobile-navigation.tsx`
+- [x] `src/components/shell/sidebar-nav.tsx`
+- [x] `src/components/shell/topbar/command-search.tsx`
 - [ ] `src/components/shell/topbar/legacy-topbar.tsx`
 - [ ] `src/components/shell/topbar/tpo-quick-create.tsx`
 - [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
