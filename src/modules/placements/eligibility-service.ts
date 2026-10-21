@@ -1332,11 +1332,11 @@ async function evaluatePlacementEligibilityInternal(
     // Unknown qualification is MISSING, not a silent pass.
     if(evidence?.hasPostgraduateQualification===false){
       // No check for people who do not hold a postgraduate qualification.
-    }else if(evidence?.hasPostgraduateQualification===true||
-      evidence?.postgraduatePctBasisPoints!==null&&
-      evidence?.postgraduatePctBasisPoints!==undefined){
+    }else if(evidence?.hasPostgraduateQualification===true){
+      // A legacy PG percentage without verified qualification does not
+      // establish that the qualification exists. Unknown stays MISSING.
       numericCheck(checks,"Postgraduate percentage",
-        evidence?.postgraduatePctBasisPoints??null,
+        evidence.postgraduatePctBasisPoints,
         policy.minPostgraduatePctBasisPoints,"MIN",100);
     }else checks.push({
       criterion:"Postgraduate qualification",
