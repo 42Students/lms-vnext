@@ -184,10 +184,15 @@ export const staffNotificationDraftSchema = z.object({
   classId: z.string().uuid().optional(),
   courseId: z.string().uuid().optional(),
   courseSlug: z.string().trim().min(1).max(64).optional(),
-  assessmentUrl: z.string().trim().url()
+  assessmentUrl: z.string().trim()
+    .max(2048, "Assessment URL must use http or https")
     .refine((value) => {
-      const protocol = new URL(value).protocol;
-      return protocol === "http:" || protocol === "https:";
+      try {
+        const url = new URL(value);
+        return url.protocol === "http:" || url.protocol === "https:";
+      } catch {
+        return false;
+      }
     }, "Assessment URL must use http or https")
     .optional(),
   scheduledAt: z.string().trim().min(1).max(40)
