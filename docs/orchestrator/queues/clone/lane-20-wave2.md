@@ -16,7 +16,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_tpo_messages_page.tsx.md` (edit src/app/(authenticated)/tpo/messages/page.tsx; 31 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_college_page.tsx.md` (edit src/app/(authenticated)/college/page.tsx; 30 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_college_batch-promotion_page.tsx.md` (edit src/app/(authenticated)/college/batch-promotion/page.tsx; 27 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_hr_company_page.tsx.md` (edit src/app/(authenticated)/hr/company/page.tsx; 23 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_hr_company_page.tsx.md` (edit src/app/(authenticated)/hr/company/page.tsx; 23 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_projects_project-admin-readiness-page.tsx.md` (edit src/components/projects/project-admin-readiness-page.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_college_placements_jobs_jobId_applications_page.tsx.md` (edit src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_teacher_calendar_page.tsx.md` (edit src/app/(authenticated)/teacher/calendar/page.tsx; 18 findings; best P2)
