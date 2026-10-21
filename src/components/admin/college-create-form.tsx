@@ -21,10 +21,12 @@ export function CollegeCreateForm({
   organizations,
   advanceToSetup = false,
   preferredOrganizationId,
+  onCreated,
 }: {
   organizations: readonly OrganizationOption[];
   advanceToSetup?: boolean;
   preferredOrganizationId?: string;
+  onCreated?: (collegeId: string) => void;
 }) {
   const router = useRouter();
   const initialOrganizationId=preferredOrganizationId??organizations[0]?.id??"";
@@ -45,11 +47,24 @@ export function CollegeCreateForm({
   const setPostalCode=(value:string)=>setDraft(current=>({...current,postalCode:value}));
   const setCountry=(value:string)=>setDraft(current=>({...current,country:value}));
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<
+    "organizationId" | "name" | "code", string
+  >>>({});
   const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Creating..."});
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setSuccess("");
+    const errors: typeof fieldErrors = {};
+    if (!organizationId) errors.organizationId = "Please select organization";
+    if (!name.trim()) errors.name = "Please enter college name";
+    if (!code.trim()) errors.code = "Please enter unique ID";
+    else if (!/^[a-z0-9-]{3,63}$/.test(code.trim()))
+      errors.code = "Unique ID must be 3-63 chars, lowercase letters/numbers/hyphen only.";
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) return;
 
     void guardedRun(async () => {
       try {
@@ -59,8 +74,10 @@ export function CollegeCreateForm({
             addressLine2,landmark,postalCode,country}),
         });
         clearDraft();
+        const request=tenantCreationScopeRequest(payload);
+        if (request) onCreated?.(request.collegeId);
+        setSuccess("College created");
         if(advanceToSetup){
-          const request=tenantCreationScopeRequest(payload);
           if(!request){
             setError("College created, but the setup handoff was unavailable. Select it from the scope switcher.");
             router.refresh();return;
@@ -82,7 +99,7 @@ export function CollegeCreateForm({
       }catch(cause){
         setError(cause instanceof FriendlyFetchError && cause.status===409
           ? "uniqueId '"+code.trim().toLowerCase()+"' is already used by another college"
-          :cause instanceof Error?cause.message:
+          :cause instanceof Error?"Failed to create college: "+cause.message:
           "Could not create college. Please try again.");
       }
     });
@@ -91,6 +108,7 @@ export function CollegeCreateForm({
   return (
     <form
       onSubmit={submit}
+      noValidate
       aria-busy={pending}
       className="grid min-w-0 gap-3 border-t border-border pt-4 min-[992px]:grid-cols-[1fr_1fr_12rem_auto] min-[992px]:items-end print:hidden"
     >
@@ -107,6 +125,8 @@ export function CollegeCreateForm({
           value={organizationId}
           onChange={(event) => setOrganizationId(event.target.value)}
           required
+          aria-invalid={Boolean(fieldErrors.organizationId)}
+          aria-describedby={fieldErrors.organizationId ? "college-organization-error" : undefined}
         >
           {organizations.map((organization) => (
             <option key={organization.id} value={organization.id}>
@@ -114,6 +134,7 @@ export function CollegeCreateForm({
             </option>
           ))}
         </Select>
+        {fieldErrors.organizationId ? <p id="college-organization-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.organizationId}</p> : null}
       </div>
       <div>
         <label
@@ -130,7 +151,10 @@ export function CollegeCreateForm({
           required
           maxLength={255}
           placeholder="e.g., Engineering College"
+          aria-invalid={Boolean(fieldErrors.name)}
+          aria-describedby={fieldErrors.name ? "college-name-error" : undefined}
         />
+        {fieldErrors.name ? <p id="college-name-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.name}</p> : null}
       </div>
       <div>
         <label
@@ -141,7 +165,8 @@ export function CollegeCreateForm({
         </label>
         <Input
           className="min-h-11 md:min-h-9" id="college-code"
-          aria-describedby="college-code-help"
+          aria-describedby={fieldErrors.code ? "college-code-help college-code-error" : "college-code-help"}
+          aria-invalid={Boolean(fieldErrors.code)}
           autoCapitalize="none"
           spellCheck={false}
           disabled={pending}
@@ -151,6 +176,7 @@ export function CollegeCreateForm({
           placeholder="e.g., nsrit or eng-college"
           title="Unique ID must be 3-63 chars, lowercase letters/numbers/hyphen only."
         />
+        {fieldErrors.code ? <p id="college-code-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.code}</p> : null}
       </div>
       <div className="space-y-3 min-[992px]:col-span-4">
        <Disclosure title="Address details (optional)" className="border-b border-border pb-4">
@@ -172,16 +198,12 @@ export function CollegeCreateForm({
         type="submit"
         className="min-h-11 w-full md:min-h-9 md:w-auto"
         loading={pending}
-        disabled={
-          pending ||
-          !organizationId ||
-          !name.trim() ||
-          !code.trim()
-        }
+        disabled={pending}
       >
         {pending ? "Creating…" : "Create College"}
       </Button>
       {restored?<Alert tone="info" className="min-[992px]:col-span-4">Draft restored</Alert>:null}
+      {success ? <Alert tone="success" role="status" className="min-[992px]:col-span-4">{success}</Alert> : null}
       {error ? (
         <Alert tone="error" className="min-[992px]:col-span-4">
           {error}
