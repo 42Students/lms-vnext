@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
  projectId:string;currentMembershipId:string|null;
  task:{id:string;status:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null};
@@ -15,6 +17,8 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
  const mine=Boolean(currentMembershipId&&task.assigneeMembershipId===currentMembershipId);
  const canStart=mine&&(task.status==="TODO"||task.status==="BLOCKED");
  const canBlock=mine&&(task.status==="TODO"||task.status==="IN_PROGRESS");
+ const discard=useProjectEditorDiscardGuard(canBlock,note!==(task.blockerReason??""),
+   pending,()=>setNote(task.blockerReason??""));
  async function change(status:"IN_PROGRESS"|"BLOCKED"){
   if(pending)return;
   if(status==="BLOCKED"&&note.trim().length<3){setError("Describe what is blocking this task");return;}
@@ -74,5 +78,10 @@ export function LearnerTaskStatusActions({projectId,task,currentMembershipId}:{
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   <p className="text-xs text-muted-foreground">Submit for review in the project workspace. Only your mentor can complete a task.</p>
+  <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
+   title="Discard unsaved blocker note?"
+   description="The task blocker note has not been submitted."
+   confirmLabel="Discard note" pending={pending}
+   onConfirm={discard.confirmDiscard}/>
  </section>;
 }

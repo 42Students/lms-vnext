@@ -4,6 +4,8 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {projectMutation} from "./project-api";
 import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
  type ProjectTaskCommentKind,projectTaskActivityLabel} from "@/modules/projects/task-comment-kind-staged";
@@ -19,6 +21,9 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
  const [lastPosted,setLastPosted]=useState<{taskId:string;updatedAt:string}|null>(null);
+ const discard=useProjectEditorDiscardGuard(open,Boolean(body.trim()),busy,()=>{
+   setBody("");setOpen(false);setError(null);
+ });
  const currentToken=lastPosted?.taskId===taskId&&Date.parse(lastPosted.updatedAt)>Date.parse(updatedAt)
    ? lastPosted.updatedAt : updatedAt;
  const url="/api/projects/"+encodeURIComponent(projectId)+"/tasks/"+encodeURIComponent(taskId)+"/comments";
@@ -46,7 +51,8 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   finally{setBusy(false);}
  }
  return <div className="mt-[var(--lms-space-2)] min-w-0 space-y-[var(--lms-space-3)]">
-   <Button size="sm" variant="secondary" onClick={()=>open?setOpen(false):void show()}>
+   <Button size="sm" variant="secondary"
+    onClick={()=>open?discard.requestClose():void show()}>
      Comments
    </Button>
    {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
@@ -101,5 +107,10 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      {canPost?<Button className="w-full md:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}
    {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+   <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
+    title="Discard unsaved comment?"
+    description="The task comment you typed has not been posted."
+    confirmLabel="Discard comment" pending={busy}
+    onConfirm={discard.confirmDiscard}/>
  </div>;
 }

@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { learnerBoardTaskHref, type LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-board-task-detail-model";
 
 export function LearnerBoardTaskDetailDialog({
-  projectId, filters, task, sprintTitle, currentMembershipId, assigneeName, commentCount=0, submissionUrl=null,
+  projectId, filters, task, sprintTitle, currentMembershipId, projectStatus, assigneeName, commentCount=0, submissionUrl=null,
   activityEvents=[],
 }: {
   projectId:string;
@@ -27,6 +27,7 @@ export function LearnerBoardTaskDetailDialog({
     carriedFromSprintId?:string|null;
   };
   currentMembershipId:string|null;
+  projectStatus:string;
   sprintTitle:string|null;
   assigneeName:string|null;
   commentCount?:number;
@@ -91,7 +92,7 @@ export function LearnerBoardTaskDetailDialog({
       <h3 className="mt-5 text-sm font-semibold">Comments</h3>
       <ProjectTaskComments projectId={projectId} taskId={task.id}
         updatedAt={task.updatedAt.toISOString()}
-        canPost={task.assigneeMembershipId === currentMembershipId && Boolean(currentMembershipId)}/>
+        canPost={projectStatus==="ACTIVE"&&Boolean(currentMembershipId)}/>
       <LearnerTaskStatusActions projectId={projectId} task={task} currentMembershipId={currentMembershipId} />
       <section className="mt-[var(--lms-space-5)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]" aria-label="Task Activity">
         <details className="min-w-0">
