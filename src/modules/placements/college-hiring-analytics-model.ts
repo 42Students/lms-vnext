@@ -37,7 +37,10 @@ export function collegeHiringAnalyticsQuery(raw: Record<string,string|string[]|u
   }
   return collegeHiringAnalyticsSchema.safeParse(input);
 }
-export function collegeHiringAnalyticsHref(input:Record<string,string|undefined>){
+export function collegeHiringAnalyticsHref(input:Partial<Record<
+  "seasonId" | "jobId" | "departmentId" | "programId" | "cohortId" | "from" | "to",
+  string | undefined
+>>){
   const params=new URLSearchParams();
   for(const key of ["seasonId","jobId","departmentId","programId","cohortId","from","to"] as const){
     if(input[key])params.set(key,input[key]!);
