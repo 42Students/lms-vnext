@@ -148,6 +148,12 @@ type NewLead = {
   followupDate: string;
   followupNote: string;
 };
+function followupInstant(when:string):Date|null{
+ if(!when)return null;
+ const instant=new Date(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(when)?
+  when+":00+05:30":when+"T09:00:00+05:30");
+ return Number.isFinite(instant.getTime())?instant:null;
+}
 const EMPTY: NewLead = {
   name: "", email: "", phone: "", companyName: "",
   designation: "", source: "", followupDate: "", followupNote: "",
@@ -256,6 +262,11 @@ export function RecruiterLeadsWorkspace({
   const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
   const [driveFilter,setDriveFilter]=useState(initialFilters.drives??"ALL");
   const [placedFilter,setPlacedFilter]=useState("ALL");
+  const sourceOptions=useMemo(()=>{
+    const known=new Map<string,string>(SOURCE_CHOICES.map(([key,label])=>[key,label]));
+    for(const row of rows)if(row.source&&!known.has(row.source))known.set(row.source,sourceLabel(row.source));
+    return [...known.entries()];
+  },[rows]);
   const [designationFilter,setDesignationFilter]=useState(initialFilters.designation??"");
   const [reachFilter,setReachFilter]=useState(initialFilters.reach??"ALL");
   const [nextFilter,setNextFilter]=useState(initialFilters.nextFollowup??"ALL");
@@ -619,9 +630,13 @@ export function RecruiterLeadsWorkspace({
     event.preventDefault();
     if(checking||saving)return;
     const sequence=++contactCheckSeq.current;
-    if (!form.name.trim() || !(form.email.trim() || form.phone.trim())) {
-      setSaveError("Enter a name and at least one contact method.");
-      return;
+    if(!form.name.trim()){setSaveError("Name is required");createNameRef.current?.focus();return;}
+    if(!(form.email.trim()||form.phone.trim())){setSaveError("Enter at least one contact method.");return;}
+    if(form.email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())){
+      setSaveError("Enter a valid email");return;
+    }
+    if(form.phone.trim()&&!/^\+?[\d() .-]{7,30}$/.test(form.phone.trim())){
+      setSaveError("Enter a phone number");return;
     }
     if (form.companyName.trim().length < 2) {
       setSaveError("Company is required.");
@@ -652,8 +667,9 @@ export function RecruiterLeadsWorkspace({
       return;
     }finally{if(sequence===contactCheckSeq.current)setChecking(false);}
     if(sequence!==contactCheckSeq.current)return;
-    if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
-      setSaveError("Choose a future follow-up date (IST).");return;
+    if(form.followupDate&&(!followupInstant(form.followupDate)||
+     followupInstant(form.followupDate)!.getTime()<=Date.now())){
+      setSaveError("Choose a future follow-up time (IST).");return;
     }
     if(!reviewingCreate){setReviewingCreate(true);return;}
     if(sequence!==contactCheckSeq.current)return;
@@ -674,7 +690,7 @@ export function RecruiterLeadsWorkspace({
             ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
             ...(form.designation.trim() ? { designation: form.designation.trim() } : {}),
             ...(form.source ? { source: form.source } : {}),
-            ...(form.followupDate ? {followup:{dueAt:new Date(form.followupDate+"T09:00:00+05:30").toISOString(),note:form.followupNote.trim()}} : {}),
+            ...(form.followupDate ? {followup:{dueAt:followupInstant(form.followupDate)!.toISOString(),note:form.followupNote.trim()}} : {}),
           },
         }),
       });
@@ -1163,10 +1179,16 @@ export function RecruiterLeadsWorkspace({
           <form ref={createDialogRef} onSubmit={e=>void create(e)}
             className="min-w-0 space-y-4">
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name *<Input ref={createNameRef} className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
+              placeholder="Ravi Kumar" autoComplete="name"
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
+              placeholder="HR Manager" autoComplete="organization-title"
+              value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Email<Input className={inputStyle + " mt-1.5 min-w-0"} type="email" maxLength={150}
+              placeholder="ravi@acme.com" autoComplete="email"
               value={form.email} onChange={e => field("email", e.target.value)} /></label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Phone<Input className={inputStyle + " mt-1.5 min-w-0"} type="tel" maxLength={30}
+              placeholder="98xxxxxx01" inputMode="tel" autoComplete="tel"
               value={form.phone} onChange={e => field("phone", e.target.value)} /></label>
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
@@ -1183,19 +1205,17 @@ export function RecruiterLeadsWorkspace({
                 Choose a company you&apos;ve worked with, or type a new company name.
               </span>
             </label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
-              value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did you find them?
               <Select className={inputStyle + " mt-1.5 min-w-0"} value={form.source}
                 onChange={e => field("source", e.target.value)}>
-                <option value="">Added by hand</option>
-                {SOURCE_CHOICES.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
+                <option value="">Alumni, referral, LinkedIn… (optional)</option>
+                {sourceOptions.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
               </Select>
             </label>
             <details className="border-t border-border pt-3" open={Boolean(form.followupDate)}>
               <summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">First follow-up (optional, IST)</summary>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First follow-up (optional, IST)
-              <Input type="date" className={inputStyle+" mt-1.5 min-w-0"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
+              <Input type="datetime-local" step={60} className={inputStyle+" mt-1.5 min-w-0"} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
             </label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Follow-up note (optional)
@@ -1209,7 +1229,7 @@ export function RecruiterLeadsWorkspace({
               <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
                 This saves a new college contact and records an auditable creation event.
               </p>
-              {form.followupDate?<p>First follow-up: {form.followupDate} (IST)</p>:null}
+              {form.followupDate?<p>First follow-up: {form.followupDate.replace("T"," ")} (IST)</p>:null}
               <Button variant="secondary" type="button" className="mt-2 text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewingCreate(false)}>
                 Edit details
               </Button>
