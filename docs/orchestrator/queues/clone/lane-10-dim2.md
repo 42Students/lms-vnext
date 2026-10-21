@@ -53,16 +53,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/admin/placements/job-settings/[jobId]/error.tsx`
 - [x] `src/app/(authenticated)/admin/placements/job-settings/error.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/[offerId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/joining/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/[offerId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/offers/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/screenings/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/seasons/error.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/[offerId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/joining/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/[offerId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/offers/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/screenings/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/[seasonId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/seasons/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/shortlisted/error.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`
