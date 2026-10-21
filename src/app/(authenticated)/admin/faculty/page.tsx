@@ -53,7 +53,8 @@ export default async function SuperAdminFacultyPage({searchParams}:{
          {peopleFilters?<PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY" departments={peopleFilters.departments}/>:<Alert tone="warning">Department choices are unavailable; retry options before registering faculty.</Alert>}
         </div>
         <div className="min-w-0">
-         <SuperAdminFacultyBulkImport collegeId={context.adminScope.collegeId}/>
+         <SuperAdminFacultyBulkImport collegeId={context.adminScope.collegeId}
+           departments={peopleFilters?.departments??[]}/>
         </div>
        </div>
       </details>
