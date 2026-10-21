@@ -29,7 +29,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-academic-directory.tsx.md` (edit src/components/academics/college-academic-directory.tsx; 37 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_skills_catalog-service.ts.md` (edit src/modules/skills/catalog-service.ts; 31 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-structure-directory.tsx.md` (edit src/components/academics/college-structure-directory.tsx; 29 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_academics-actions.tsx.md` (edit src/components/academics/academics-actions.tsx; 28 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_academics-actions.tsx.md` (edit src/components/academics/academics-actions.tsx; 28 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_college-batch-promotion-service.ts.md` (edit src/modules/academics/college-batch-promotion-service.ts; 26 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_program-service.ts.md` (edit src/modules/academics/program-service.ts; 25 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-section-management.tsx.md` (edit src/components/academics/college-section-management.tsx; 25 findings; best P2)
