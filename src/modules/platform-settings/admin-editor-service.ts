@@ -16,9 +16,28 @@ const entry=z.strictObject({key:z.string().min(1).max(120),value:z.string().max(
 const input=z.strictObject({scopeType:z.enum(["GLOBAL","COLLEGE"]),collegeId:z.uuid().optional(),
  confirmedHighImpact:z.boolean().default(false),changes:z.array(entry).min(1).max(31)});
 export class TenantSettingEditorError extends Error{
- constructor(readonly code:"SETTINGS_STORAGE_PENDING"|"SETTING_SCOPE_DENIED"|"SETTING_STALE"|"INVALID_SETTING"){
+ constructor(readonly code:"SETTINGS_STORAGE_PENDING"|"SETTING_SCOPE_DENIED"|"SETTING_STALE"|"INVALID_SETTING"|"EMPTY_BODY"|"CORE_COURSES_PROTECTED"){
   super(code);this.name="TenantSettingEditorError";
  }
+}
+/** No runtime hierarchy is inferred from this GLOBAL/COLLEGE override table. */
+export const LEGACY_TENANT_SCOPES_READ_ONLY=["ORGANIZATION","DEPARTMENT","PROGRAM","BATCH","CLASS","LEARNER"] as const;
+export function tenantSettingActivationMessage(key:string):string {
+  if(PLACEMENT_POLICY_FIELDS.some(field=>field.key===key))
+    return "Placement policy reader connected; verify each consuming workflow.";
+  if(LEGACY_TENANT_SETTING_MAP.get(key)?.dangerous)
+    return "Deployment review required; saving does not reconfigure live authentication or SMS.";
+  return "Stored setting only; runtime activation has not been verified.";
+}
+export function legacySettingRangeMessage(key:string,value:string):string|null{
+  const spec=LEGACY_TENANT_SETTING_MAP.get(key);
+  if(!spec||value.trim()===""||(spec.type!=="int"&&spec.type!=="decimal"))return null;
+  const numeric=Number(value.trim());
+  if(!Number.isFinite(numeric)||(spec.type==="int"&&!Number.isSafeInteger(numeric))||
+    ("min" in spec&&spec.min!==undefined&&numeric<spec.min)||
+    ("max" in spec&&spec.max!==undefined&&numeric>spec.max))
+    return "Must be between "+("min" in spec?spec.min:0)+" and "+("max" in spec?spec.max:0);
+  return null;
 }
 function canonical(spec:typeof LEGACY_TENANT_SETTING_SPECS[number],raw:string){
  const trimmed=raw.trim();
@@ -29,7 +48,7 @@ function canonical(spec:typeof LEGACY_TENANT_SETTING_SPECS[number],raw:string){
     ("min" in spec&&spec.min!==undefined&&n<spec.min)||
     ("max" in spec&&spec.max!==undefined&&n>spec.max))
    throw new TenantSettingEditorError("INVALID_SETTING");
-  return String(n);
+  return spec.type==="decimal"?trimmed:String(n);
  }
  if(trimmed.length>4096)throw new TenantSettingEditorError("INVALID_SETTING");
  if(spec.key==="cookieSameSite"&&!["Strict","Lax","None"].includes(trimmed))
@@ -69,17 +88,24 @@ async function scope(ctx:RequestContext,scopeType:"GLOBAL"|"COLLEGE",rawCollegeI
 export async function listAdminTenantSettings(ctx:RequestContext,kind:"GLOBAL"|"COLLEGE",collegeId?:string){
  const selected=await scope(ctx,kind,collegeId);
  const present=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.platform_setting_overrides') is not null as ready`);
- if(!present.rows[0]?.ready)return {ready:false,scope:kind,scopeId:selected.scopeId,entries:[]};
+ if(!present.rows[0]?.ready)return {ready:false,scope:kind,scopeId:selected.scopeId,entries:[],
+  reason:"SETTINGS_STORAGE_PENDING" as const,unsupportedScopes:LEGACY_TENANT_SCOPES_READ_ONLY};
  const rows=await getDb().select({key:platformSettingOverrides.key,value:platformSettingOverrides.value,
   version:platformSettingOverrides.version}).from(platformSettingOverrides)
   .where(and(eq(platformSettingOverrides.scopeType,kind),eq(platformSettingOverrides.scopeId,selected.scopeId)));
- return {ready:true,scope:kind,scopeId:selected.scopeId,entries:rows.map(row=>({
+ return {ready:true,scope:kind,scopeId:selected.scopeId,
+  unsupportedScopes:LEGACY_TENANT_SCOPES_READ_ONLY,entries:rows.map(row=>({
   ...row,value:/secret|token|password|credential|api[._-]?key|private[._-]?key/i.test(row.key)?"[redacted]":row.value,
+  activationMessage:tenantSettingActivationMessage(row.key),
  }))};
 }
 /** Each key is committed and audited independently so unrelated, valid edits
  * survive stale versions or invalid entries. No credentials are accepted. */
 export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
+ if(raw===null||raw===undefined||typeof raw!=="object"||Array.isArray(raw)||
+  !("changes" in raw)||!Array.isArray(raw.changes)||raw.changes.length===0)
+  throw new TenantSettingEditorError("EMPTY_BODY");
+
  const parsed=input.parse(raw);
  const target=await scope(ctx,parsed.scopeType,parsed.collegeId);
  const seen=new Set<string>();
@@ -89,10 +115,13 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
  for(const change of parsed.changes){
   try{
    const spec=LEGACY_TENANT_SETTING_MAP.get(change.key);
+   if(!spec&&/^(?:module[._-])?courses(?:[._-]|$)/i.test(change.key))
+    throw new TenantSettingEditorError("CORE_COURSES_PROTECTED");
    if(!spec||spec.scope!==parsed.scopeType||seen.has(change.key))
     throw new TenantSettingEditorError("INVALID_SETTING");
    seen.add(change.key);
    if(spec.dangerous&&!parsed.confirmedHighImpact)throw new TenantSettingEditorError("INVALID_SETTING");
+   if(legacySettingRangeMessage(spec.key,change.value))throw new TenantSettingEditorError("INVALID_SETTING");
    const value=canonical(spec,change.value);
    const placementPolicy=parsed.scopeType==="GLOBAL"?PLACEMENT_POLICY_FIELDS.find(field=>field.key===spec.key):undefined;
    if(placementPolicy&&value!==null&&!placementPolicyValidate(placementPolicy.key,Number(value)))
@@ -147,11 +176,20 @@ export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
     return version;
    });
    updates.push({key:spec.key,status:value===null?"DELETED":"SAVED",
-    message:value===null?"Restored source default":"Override saved (activation depends on consumer)",version:outcome});
-  }catch(error){updates.push({key:change.key,status:"FAILED",message:error instanceof TenantSettingEditorError?
-    error.code:"Could not save this setting"});}
+    message:value===null?"Restored source default. "+tenantSettingActivationMessage(spec.key):
+     "Override saved. "+tenantSettingActivationMessage(spec.key),version:outcome});
+  }catch(error){
+   const message=error instanceof TenantSettingEditorError&&error.code==="CORE_COURSES_PROTECTED"
+    ?"Courses is a core module and cannot be toggled":
+    legacySettingRangeMessage(change.key,change.value)??
+    (error instanceof TenantSettingEditorError?error.code:"Could not save this setting");
+   updates.push({key:change.key,status:"FAILED",message});
+  }
  }
- return {results:updates,saved:updates.filter(item=>item.status!=="FAILED").length,failed:updates.filter(item=>item.status==="FAILED").length};
+ return {results:updates,saved:updates.filter(item=>item.status!=="FAILED").length,
+  failed:updates.filter(item=>item.status==="FAILED").length,
+  commitMode:"PER_KEY_PARTIAL" as const,atomicSupported:false,
+  note:"Each key commits independently; failed keys do not roll back saved keys."};
 }
 
 
@@ -215,4 +253,21 @@ export async function removeUnlistedTenantSetting(ctx:RequestContext,raw:unknown
   });
   return {key:input.key,status:"DELETED" as const};
  });
+}
+
+/** Explicit single-key read status: absent override != unavailable storage. */
+export async function getAdminTenantSettingState(
+ context:RequestContext,kind:"GLOBAL"|"COLLEGE",key:string,collegeId?:string,
+):Promise<{state:"UNAVAILABLE"|"UNSET"|"OVERRIDDEN";value?:string;version?:number;activationMessage?:string}> {
+ const selected=await scope(context,kind,collegeId);
+ const present=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.platform_setting_overrides') is not null as ready`);
+ if(!present.rows[0]?.ready)return {state:"UNAVAILABLE"};
+ const [entry]=await getDb().select({value:platformSettingOverrides.value,version:platformSettingOverrides.version})
+  .from(platformSettingOverrides).where(and(
+   eq(platformSettingOverrides.scopeType,kind),eq(platformSettingOverrides.scopeId,selected.scopeId),
+   eq(platformSettingOverrides.key,key))).limit(1);
+ if(!entry)return {state:"UNSET",activationMessage:tenantSettingActivationMessage(key)};
+ return {state:"OVERRIDDEN",version:entry.version,
+   value:/(?:secret|token|password|credential)/i.test(key)?"[redacted]":entry.value,
+   activationMessage:tenantSettingActivationMessage(key)};
 }
