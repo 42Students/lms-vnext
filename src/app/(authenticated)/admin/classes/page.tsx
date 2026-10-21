@@ -38,7 +38,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} academicSetupHref="/admin/academics" />
       <section aria-label="Filter managed classes" className="border-b border-border pb-4">
-        <form method="get" action="/admin/classes" role="search" aria-label="Class filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+        <form method="get" action="/admin/classes" role="search" aria-label="Class filters" className="grid min-w-0 items-end gap-[8px] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 md:min-h-9">

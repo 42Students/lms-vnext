@@ -46,7 +46,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
         ["ALL","All batches"],["ACTIVE","Active batches"],["INACTIVE","Show inactive"],["COMPLETED","Show completed"],
       ] as const).map(([value,label])=>({value,label,href:pageUrl({...data.query,status:value,page:1})}))}/>
       <section aria-label="Filter managed batches" className="border-b border-border pb-4">
-        <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+        <form action="/admin/batches" method="get" role="search" aria-label="Batch filters" className="grid min-w-0 items-end gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
