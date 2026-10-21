@@ -20,8 +20,8 @@ export const LEGACY_COURSE_API_CROSSWALK = {
  "POST /create": "POST /api/courses",
  "PUT /update/{id}": "PATCH /api/courses/{courseId} (expectedUpdatedAt required)",
  "DELETE /delete/{id}": "DELETE /api/courses/{courseId} (soft archive)",
- "GET /deleted": "GET /api/courses?collegeId={uuid}&includeArchived=true",
- "POST /restore": "UNSUPPORTED: no vetted archived-course restore endpoint",
+ "GET /deleted": "GET /api/courses?collegeId={uuid}&onlyArchived=true (courses.manage required)",
+ "POST /restore": "POST /api/courses/{courseId}/restore (authorized archived-course restore)",
 } as const;
 
 
@@ -33,8 +33,10 @@ export async function GET(request: Request) {
       context,
       url.searchParams.get("collegeId") ?? "",
       url.searchParams.get("departmentId"),
-      url.searchParams.get("includeArchived") ===
-        "true",
+      url.searchParams.get("includeArchived") === "true" ||
+        url.searchParams.get("onlyArchived") === "true",
+      undefined,
+      url.searchParams.get("onlyArchived") === "true",
     );
 
     const rawPage=url.searchParams.get("page");

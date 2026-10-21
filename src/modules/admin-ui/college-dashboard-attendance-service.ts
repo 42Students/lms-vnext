@@ -85,6 +85,20 @@ export async function getCollegeDashboardAttendance(context: RequestContext, now
       .limit(8),
   ]);
   return {
+    // The old Attention Board combines several independently derived
+    // categories. We only queried attendance: absent values must remain
+    // unknown rather than being fabricated as zero.
+    attention: {
+      attendancePending: pendingCounts[0]?.total ?? 0,
+      attendanceRisk: null as number | null,
+      gradingPending: null as number | null,
+      unstaffed: null as number | null,
+      timetableGaps: null as number | null,
+      dueSoon: null as number | null,
+      unavailableCategories: [
+        "attendanceRisk", "gradingPending", "unstaffed", "timetableGaps", "dueSoon",
+      ] as const,
+    },
     today: {
       scheduled: todayTotals[0]?.scheduled ?? 0,
       held: todayTotals[0]?.held ?? 0,
