@@ -34,6 +34,9 @@ import {CollegeProjectStudentRosterDialog} from "./college-project-student-roste
 import {ProjectResourceList} from "./project-resource-list";
 import { ProjectRosterTable } from "./project-roster-table";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
+import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
+import { projectTaskPlanToken } from "@/modules/projects/project-task-plan-token";
+import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -1011,6 +1014,28 @@ export function ProjectWorkspace({
               {release.title} · {label(release.status)}
             </a>)}
           </nav>:null}
+        {mode === "ADMIN" && !readOnly && show("tasks") ? (
+          <ProjectTaskPlanEditor projectId={workspace.project.id}
+            tasksToken={projectTaskPlanToken(workspace.tasks)}
+            sprints={workspace.sprints.map(sprint => ({
+              id: sprint.id, title: sprint.title, status: sprint.status,
+              releaseStatus: workspace.releases.find(release => release.id === sprint.releaseId)?.status ?? "SHIPPED",
+            }))}
+            tasks={workspace.tasks.filter(task => !task.deletedAt).map(task => ({
+              id: task.id,
+              key: task.legacyTaskKey || task.templateKey,
+              title: task.title,
+              priority: task.priority as ProjectTaskPlanRow["priority"],
+              sprintId: task.sprintId,
+              estimatePoints: task.estimatePoints,
+              taskType: task.taskType as ProjectTaskPlanRow["taskType"],
+              dueLabel: task.dueLabel,
+              description: task.description,
+              acceptanceCriteria: task.acceptanceCriteria,
+              approach: task.approach,
+              status: task.status,
+            }))} />
+        ) : null}
         {mode === "ADMIN" && backlogTasks.length > 0 ? (
           <section aria-label="Product backlog" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
             <div>
