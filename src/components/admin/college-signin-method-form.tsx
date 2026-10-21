@@ -52,7 +52,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
     }
   });
  }
- return <section aria-label="College sign-in methods" className="min-w-0 space-y-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+ return <section aria-label="College sign-in methods" className="min-w-0 max-w-3xl space-y-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Sign-in method</h2>
   {!ready?<Alert tone="warning">Sign-in method storage is unavailable; changes are disabled.</Alert>:null}
   <fieldset disabled={!ready||saving} className="grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] print:hidden">
@@ -68,7 +68,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
    className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" loading={saving}>
    {saving?"Saving…":"Save sign-in settings"}
   </Button>
-  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} confirmDisabled={!ready||selection===savedMethod} onConfirm={()=>void save()}>
+  <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!saving)setConfirmOpen(next);}} title="Change allowed sign-in methods for this college?" description="Current sessions stay signed in." confirmLabel="Save sign-in settings" pending={saving} confirmDisabled={!ready||selection===savedMethod} onConfirm={()=>void save()}>
     {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
   </ConfirmDialog>
   {message?<Alert tone={messageTone}>{message}</Alert>:null}

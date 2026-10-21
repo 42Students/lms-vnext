@@ -117,3 +117,29 @@
 ## Verify2 surface 12 — `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
 - Regressions fixed: 0. Reviewed query parser/strict membership UUID, selected college access trace model/service shapes, resolved winner and scope-chain DataTable, CopyFindingForClaude, FilterBar, StatusBadge/Disclosure, pagination and authorization, parent Admin layout, trace loading/error/not-found and prior lane-19 page verification; no JSX/import/route/copy regression.
 - Extra alignment fixes: 2 related source changes — root and invalid-filter page rhythm 16px on phone/24px on tablet, also mirrored in route loading; previously mobile always used 24px. No behavior, field name or copy change. Files: `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`, `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`, queue, proof. Source review only, no CI/browser.
+
+## Verify2 surface 13 — `src/components/admin/college-branding-form.tsx`
+- Regressions fixed: 0. Read CollegeBrandingForm, FormFields/Color tokens, brandStyleVariables, logo URL sanitizer, Card/Disclosure/Toast, both College Branding and Super Admin College Look-and-feel consumers, CollegeLogoUploader, route loading/error and prior polish-lane-5/8 evidence. Colors, versioned update, permissions/read-only, server issues, upload preview and form props preserved.
+- Extra alignment fixes: 2 label-gutter classes made consistent with 6px sampled legacy form scale for color and secondary details; otherwise preview-first phone/side-panel desktop ordering retained. Files: branding form, queue and proof; source only, no CI.
+
+## Verify2 surface 14 — `src/components/admin/super-admin-college-company-actions.tsx`
+- Regressions fixed: 1. Protected relationship archive/restore ConfirmDialog's onOpenChange during pending request; shared dialog dismiss protection now has explicit state-owner guard. Also cleared stale error when re-entering its confirmation. Reviewed create form and archived/trusted/drive-count paths, guard/apiFetch, Super Admin company relationship consumers and lane-5 polish; original payloads, permissions, labels and confirmations untouched.
+- Extra clutter/alignment fixes: 0; company creation and relationship actions remain behind a compact disclosure with 44px phone buttons and hairline separators. Files: relationship actions, queue, proof; no CI.
+
+
+## Verify2 surface 15 — `src/components/courses/college-assignment-create.tsx`
+- Regressions fixed: 0. Read CollegeAssignmentCreate, shared FacultyAssignmentMethodPicker/ConfirmDialog/Disclosure/fields and guarded draft POST, the College/ Super Admin assignment page consumers with route loading/error, sequence/IST deadline, publish separation, dirty discard and keep-open states. Compared docs/audit/ux/polish-lane-3.md and prior verification-lane-18 assignment evidence. All props, text, CTA behavior and IDs retained.
+- Extra clutter/alignment: verified, no change; essential Title/Points first, optional controls behind disclosure, mobile 44px form actions with Save/Cancel clarity. Files: queue/proof only. No CI/runtime.
+
+## Verify2 surface 16 — `src/components/courses/resource-progress-control.tsx`
+- Regressions fixed: 1. Removed redundant parent role=alert wrapping shared Alert tone=error (already an alert), avoiding duplicated live announcements without losing error text or retry. Reviewed learner course workspace caller, content type, hydration gate, guarded PUT, progress API error and ConfirmDialog pending/complete badge against lane-3 proof.
+- Extra clutter/alignment: verified, no change; one completion status, single 44px phone primary action, shared focusable confirmation remain. Files: `src/components/courses/resource-progress-control.tsx`, queue/proof; static-only, no CI.
+
+
+## Verify2 surface 17 — `src/components/admin/college-signin-method-form.tsx`
+- Regressions fixed: 1. Sign-in ConfirmDialog's open-state owner now also refuses state toggles while the guarded PUT is pending, consistent with shared modal pending/dismissible contract. Reviewed four existing radio methods, storage-unavailable/invalid policy, optimistic version receipt, stale server result, success/error, route permissions and Admin college signin page/loading/error; matched lane-5 polish.
+- Extra layout fix: constrained component's own form surface to max-w-3xl (matching existing consumer wrapper and original polish) so it cannot expand if used elsewhere. Phone full-width Save and unchanged copy/ARIA/value remain intact. Files: sign-in form, queue/proof; no CI.
+
+## Verify2 surface 18 — `src/components/admin/tenant-domain-manager.tsx`
+- Regressions fixed: 2 guarded-mutation double-submit windows: createDomain now has a synchronous in-flight ref in addition to useTransition; verify/primary/delete runAction now has a synchronous in-flight ref in addition to pendingAction state. Both refs release in finally. Checked all domain list/empty/verified states, primary hostname exact confirmation, DNS instructions, shared Dropdown/Disclosure/ConfirmDialog, domain model and three route consumers (College domains, Admin domains, Admin college subdomain) including loading/error and parent layouts, compared lane-5 and lane-8 polish.
+- Extra clutter/alignment: verified, no change; TXT evidence is a collapsible detail, only Verify/Make primary immediate, Delete under More and phone actions remain full-width. All endpoints, IDs, button copy and version/tenant scope unaffected. Files: domain manager, queue, proof. Static source only; no CI.
