@@ -30,7 +30,7 @@ export default async function CompanySharePage({
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
    <p className="max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for the code sent separately with this company share link.</p>
-   {access==="invalid"?<p role="alert" className="text-sm text-error">
+   {access==="invalid"?<p role="alert" className="text-sm text-error leading-[1.6]">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
     <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
@@ -78,7 +78,7 @@ export default async function CompanySharePage({
    <p className="max-w-3xl break-words text-xs leading-5 text-muted-foreground">
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
-   {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
+   {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body leading-[1.6]">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:flex-wrap md:items-end">
@@ -89,7 +89,7 @@ export default async function CompanySharePage({
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply search</Button>
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
-  <p role="status" className="text-sm text-body">
+  <p role="status" className="text-sm text-body leading-[1.6]">
    {result.total.toLocaleString("en-IN")} shortlisted applicants · Page {result.page} of {result.totalPages}
   </p>
   <DataTable columns={tableColumns} rows={result.rows}
