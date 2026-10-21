@@ -39,7 +39,7 @@ Facets (all mandatory):
 - F23 Anything in vNext that does NOT exist in the legacy unit (EXTRA) and anything in legacy that vNext dropped on purpose (document the reason if known)
 
 One unit at a time: finish the unit file completely before opening the next. Tick [x] the unit here in the same push as its file. Push to chatgpt/chat-17-b with [chat-17] after every 2 units (git fetch and rebase right before). Units:
-- [ ] U001 (FE page) `docs/legacy-source/frontend/src/pages/teacher/courses/[courseId]/index.js`
+- [x] U001 (FE page) `docs/legacy-source/frontend/src/pages/teacher/courses/[courseId]/index.js`
 - [ ] U002 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/SemesterCourseMapping.js`
 - [ ] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/lesson-content.js`
 - [ ] U004 (FE page) `docs/legacy-source/frontend/src/pages/learn/projects/[projectId].js`
