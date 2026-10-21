@@ -6,6 +6,9 @@ const details=z.object({
   title:z.string().trim().max(160).default(""),
   description:z.string().trim().max(1000).nullable().default(null),
   location:z.string().trim().max(240).nullable().default(null),
+  // A selected hall reserves a real, college-scoped resource. Free-text
+  // location is display-only and never grants hall scheduling rights.
+  lectureHallId:z.string().uuid().nullable().optional(),
   startsAt:timestamp,endsAt:timestamp,
 }).strict();
 export const facultyAttendanceScheduleSchema=z.discriminatedUnion("action",[
@@ -27,12 +30,13 @@ export const facultyAttendanceScheduleParamsSchema=z.object({
 
 /** Canonical metadata/instant equality prevents needless versions and audits. */
 export function facultyScheduleFieldsChanged(current: {
-  title:string;description:string|null;location:string|null;startsAt:Date;endsAt:Date;
-}, next: {title:string;description:string|null;location:string|null;startsAt:string;endsAt:string}) {
+  title:string;description:string|null;location:string|null;lectureHallId?:string|null;startsAt:Date;endsAt:Date;
+}, next: {title:string;description:string|null;location:string|null;lectureHallId?:string|null;startsAt:string;endsAt:string}) {
   const optional = (value:string|null) => value?.trim() || null;
   return current.title.trim() !== next.title.trim() ||
     optional(current.description) !== optional(next.description) ||
     optional(current.location) !== optional(next.location) ||
+    (next.lectureHallId !== undefined && (current.lectureHallId ?? null) !== next.lectureHallId) ||
     current.startsAt.getTime() !== new Date(next.startsAt).getTime() ||
     current.endsAt.getTime() !== new Date(next.endsAt).getTime();
 }

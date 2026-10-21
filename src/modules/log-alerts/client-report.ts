@@ -15,10 +15,14 @@ export type LegacyClientErrorType = typeof legacyClientErrorTypes[number];
 export const browserErrorSchema = z.object({
   message: z.string().trim().min(1).max(300).optional(),
   kind: z.enum(["render", "stale_chunk"]).optional(),
-  type: z.enum(legacyClientErrorTypes).optional(),
+  // Legacy unknown enum strings fall back to JS_ERROR. Objects/numbers
+  // still fail validation; arbitrary categories never enter operator logs.
+  type: z.preprocess((raw) => typeof raw === "string"
+    ? normalizeLegacyClientErrorType(raw) : raw,
+    z.enum(legacyClientErrorTypes)).optional(),
   statusCode: z.number().int().min(100).max(599).optional(),
   buildVersion: z.string().regex(/^[a-zA-Z0-9_.-]{1,64}$/).optional(),
-  viewport: z.string().regex(/^\\d{2,5}x\\d{2,5}$/).optional(),
+  viewport: z.string().regex(/^\d{2,5}x\d{2,5}$/).optional(),
   endpoint: z.string().trim().max(255).optional(),
   name: z.string().trim().max(80).optional(),
   component: z.string().trim().max(80).optional(),
@@ -51,17 +55,46 @@ export function safeBrowserComponent(input: { component?: string; name?: string 
     name && candidates.has(name) ? name : "browser";
 }
 
-/** Per-pod protection; the ingress also needs a source IP limit for global enforcement. */
-export function acceptClientErrorRate(key: string, now: number, max = 10): boolean {
-  if (hits.size > 5000) hits.clear();
+/** Per-pod protection. Cloud Run replicas still require a shared ingress
+ * token bucket; client-side 60-second fingerprint dedupe is complementary.
+ * Keep oldest eviction bounded, never reset every actor's rate budget when
+ * one pod exceeds 5,000 identities (legacy's process-map clear-all flaw).
+ */
+export function acceptClientErrorRate(key: string, now: number, max = 20): boolean {
+  if (!Number.isFinite(now) || !Number.isInteger(max) || max < 1) return false;
+  if (!hits.has(key) && hits.size >= 5000) {
+    for (const [id, value] of hits) {
+      if (now - value.at >= 60_000) hits.delete(id);
+    }
+    if (hits.size >= 5000) {
+      const oldest = hits.keys().next().value;
+      if (oldest !== undefined) hits.delete(oldest);
+    }
+  }
   const item = hits.get(key);
   if (!item || now - item.at >= 60_000) {
+    hits.delete(key);
     hits.set(key, { count: 1, at: now });
     return true;
   }
   if (item.count >= max) return false;
   item.count++;
   return true;
+}
+
+/** The new safe report limit is 300 characters (legacy 1000): rejecting
+ * oversize payloads rather than silently truncating them protects log storage.
+ * Browser and component names are intentionally category-only, and raw
+ * 3000-character stacks are never collected. The deploy identity should be
+ * set from the trusted server environment, not a forged browser field.
+ */
+export const CLIENT_ERROR_SAFE_MESSAGE_MAX = 300;
+
+export function browserErrorOperatorCategory(input: {
+  type?: LegacyClientErrorType; kind?: "render" | "stale_chunk";
+}): string {
+  if (input.type) return input.type.replaceAll("_", " ");
+  return input.kind === "stale_chunk" ? "RESOURCE LOAD FAILURE" : "JS ERROR";
 }
 
 /** Upgrade adapter for the legacy 8-category reporter. Unrecognized types

@@ -49,7 +49,9 @@ function mapStorageError(error: unknown): never {
     }
     throw new StorageFileError("STORAGE_SIZE_INVALID");
   }
-  throw error;
+  if (error instanceof StorageFileError) throw error;
+  // Provider/client failures are not exposed verbatim to the caller.
+  throw new StorageFileError("STORAGE_PROVIDER_UNAVAILABLE");
 }
 
 function wrapStorageError<T>(run: () => T): T {
@@ -145,11 +147,11 @@ async function readHeadAndHash(
   let headLength = 0;
   let total = 0;
 
-  const stream = await getObjectStream(
+  const stream = await wrapStorageErrorAsync(() => getObjectStream(
     config,
     objectKey,
     hashWholeObject ? undefined : { start: 0, end: MAGIC_BYTES_WINDOW - 1 },
-  );
+  ));
   if (!stream) return null;
   const reader = stream.body.getReader();
   for (;;) {
@@ -158,8 +160,10 @@ async function readHeadAndHash(
     total += value.length;
     if (hashWholeObject) hash.update(value);
     if (headLength < MAGIC_BYTES_WINDOW) {
-      chunks.push(value);
-      headLength += value.length;
+      const remaining = MAGIC_BYTES_WINDOW - headLength;
+      const piece = value.slice(0, remaining);
+      chunks.push(piece);
+      headLength += piece.length;
     }
     if (!hashWholeObject && headLength >= MAGIC_BYTES_WINDOW) {
       await reader.cancel();
@@ -226,7 +230,7 @@ export async function verifyUploadedObject(
   options: { env?: NodeJS.ProcessEnv } = {},
 ): Promise<CompletionOutcome> {
   const config = wrapStorageError(() => getPrivateR2Config());
-  const head = await headObject(config, upload.objectKey);
+  const head = await wrapStorageErrorAsync(() => headObject(config, upload.objectKey));
   if (!head) return { outcome: "NOT_UPLOADED" };
 
   const tokenMatches =
@@ -365,9 +369,13 @@ export async function issueObjectReadUrl(
   if (!object.objectKey.startsWith(prefix) || object.objectKey.includes("..")) {
     throw new StorageFileError("STORAGE_NOT_FOUND");
   }
-  const ttl = Math.min(Math.max(Math.trunc(options.ttlSeconds), 60), options.maxTtlSeconds);
+  if (!Number.isSafeInteger(options.ttlSeconds) ||
+      !Number.isSafeInteger(options.maxTtlSeconds) || options.maxTtlSeconds < 60) {
+    throw new StorageFileError("STORAGE_FORBIDDEN");
+  }
+  const ttl = Math.min(Math.max(options.ttlSeconds, 60), options.maxTtlSeconds);
   const config = wrapStorageError(() => getPrivateR2Config());
-  const head = await headObject(config, object.objectKey);
+  const head = await wrapStorageErrorAsync(() => headObject(config, object.objectKey));
   if (
     !head ||
     String(head.lastModifiedMs) !== object.generation ||
@@ -379,12 +387,20 @@ export async function issueObjectReadUrl(
     throw new StorageFileError("STORAGE_FILE_NOT_READY");
   }
   const query: Record<string, string> = {};
-  if (options.disposition) {
+  const safeMime = normalizeContentType(object.contentType);
+  // HTML, SVG and other active types must never render in the origin of a
+  // signed file link; legacy stream mode only inlined safe documents/images.
+  const inlineSafe = safeMime === "application/pdf" ||
+    /^(image\/(?:png|jpeg|gif|webp))$/.test(safeMime);
+  const disposition = options.disposition === "inline" && !inlineSafe
+    ? "attachment" : options.disposition;
+  if (disposition) {
     query["response-content-disposition"] = contentDisposition(
-      options.disposition,
-      options.fileName ?? "download",
+      disposition, options.fileName ?? "download",
     );
   }
+  query["response-cache-control"] = "private, no-store, max-age=0";
+  query["response-content-type"] = safeMime;
   const url = presignUrl(config, {
     method: "GET",
     key: object.objectKey,
