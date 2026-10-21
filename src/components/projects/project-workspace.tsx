@@ -214,7 +214,7 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
   if (!readiness) return <section role="alert" className="border-y border-warning-border bg-warning-subtle p-4">
     <h2 className="font-semibold">Readiness snapshot is unavailable</h2>
     <p className="mt-1 text-sm">The workspace loaded, but its readiness calculation was not included. Retry before making a submission-readiness decision.</p>
-    <Link href={"?tab=readiness"} className="mt-2 inline-flex text-sm font-semibold text-link underline">Retry</Link>
+    <Link href={"?retry=1"} className="mt-2 inline-flex text-sm font-semibold text-link underline">Retry</Link>
   </section>;
   const ready = workspace.project.status !== "ARCHIVED" &&
     effectiveProjectSubmissionReady(readiness.execution.complete, readiness.readinessOverride.state);
@@ -474,7 +474,7 @@ export function ProjectWorkspace({
       ) : null}
 
       {mode === "ADMIN" && show("summary") ? <WorkspaceHealthSnapshot workspace={workspace} /> : null}
-      {mode === "ADMIN" && show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
+      {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
         project={workspace.project}/>:null}
       {show("summary") || (mode === "MENTOR" && show("overview")) ? (
@@ -1347,7 +1347,12 @@ export function ProjectWorkspace({
         ) : null}
         {workspace.finalDelivery.submissions.length ===
         0 ? (
-          <EmptyState title="Not submitted" description="No final delivery has been submitted." />
+          <div className="space-y-2">
+            <EmptyState title="Not submitted" description="No final delivery has been submitted." />
+            {mode === "ADMIN" ? <p className="text-sm text-body">
+              Task-level submissions can still be reviewed from the Tasks tab.
+            </p> : null}
+          </div>
         ) : (
           <div className="space-y-3">
             {workspace.finalDelivery.submissions.map(
@@ -1469,7 +1474,9 @@ export function ProjectWorkspace({
                           </p>
                         ) : null}
                       </div>
-                    ) : null}
+                    ) : mode === "ADMIN" ? <p className="mt-3 text-sm text-muted-foreground">
+                      No mentor feedback has been recorded yet.
+                    </p> : null}
 
                     {mode!=="LEARNER"?<Disclosure title="Submission history" className="mt-3 border-t border-[var(--lms-canvas-border)] pt-3">
                       <ul className="mt-2 space-y-2 text-xs text-body">
@@ -1782,7 +1789,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
+          {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?projectId=" + encodeURIComponent(workspace.project.id)}
             className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
           {mode === "ADMIN" ? (() => {
             const resourceEvents = workspace.activity.map(event => ({
