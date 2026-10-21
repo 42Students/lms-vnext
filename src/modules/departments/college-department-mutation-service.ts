@@ -21,7 +21,12 @@ export class CollegeDepartmentMutationError extends Error {
     "DEPARTMENT_NOT_FOUND" | "DEPARTMENT_NAME_CONFLICT" |
     "DEPARTMENT_HAS_DEPENDENCIES",
     public readonly dependencies?: {programs:number;courses:number;faculty:number}) {
-    super(code);
+    const messages={
+      DEPARTMENT_NOT_FOUND:"Department not found in the selected college.",
+      DEPARTMENT_NAME_CONFLICT:"A department with this name already exists.",
+      DEPARTMENT_HAS_DEPENDENCIES:"This department has linked programs, courses or faculty. Reassign them before archiving.",
+    } as const;
+    super(messages[code]);
     this.name = "CollegeDepartmentMutationError";
   }
 }
@@ -52,15 +57,22 @@ async function ensureUnique(tx: Tx, collegeId: string, name: string, exclude?: s
   const rows = await tx.select({ id: departments.id }).from(departments)
     .where(and(eq(departments.collegeId, collegeId),
       isNull(departments.archivedAt),
-      sql`lower(${departments.name}) = ${name.toLowerCase()}`));
+      sql`lower(${departments.name}) = ${name.toLocaleLowerCase("en-IN")}`));
   if (rows.some(row => row.id !== exclude))
     throw new CollegeDepartmentMutationError("DEPARTMENT_NAME_CONFLICT");
 }
 function mapConstraint(error: unknown): never {
   if (error instanceof CollegeDepartmentMutationError || error instanceof AuthorizationError)
     throw error;
-  if (error && typeof error === "object" && "code" in error && error.code === "23505")
-    throw new CollegeDepartmentMutationError("DEPARTMENT_NAME_CONFLICT");
+  let cause:unknown=error;
+  for(let n=0;n<6&&cause&&typeof cause==="object";n++){
+    const record=cause as {code?:unknown;cause?:unknown};
+    if(record.code==="23505")
+      throw new CollegeDepartmentMutationError("DEPARTMENT_NAME_CONFLICT");
+    if(record.code==="23503")
+      throw new CollegeDepartmentMutationError("DEPARTMENT_HAS_DEPENDENCIES");
+    cause=record.cause;
+  }
   throw error;
 }
 
@@ -121,7 +133,7 @@ export async function archiveCollegeDepartment(
   const id = collegeDepartmentIdSchema.parse(idRaw);
   collegeDepartmentArchiveSchema.parse(raw);
   const member = await own(context);
-  return getDb().transaction(async tx => {
+  try{return await getDb().transaction(async tx => {
     await liveCollege(tx, member.collegeId, member.organizationId);
     const current = await lockDepartment(tx, id, member.collegeId);
     // All historical programs/courses and profile references block archival;
@@ -148,10 +160,12 @@ export async function archiveCollegeDepartment(
       collegeId: member.collegeId, organizationId: member.organizationId,
       subjectType: "department", subjectId: archived.id,
       subjectLabel: archived.name, summary: "College department archived",
-      metadata: { action: "DEPARTMENT_ARCHIVE", previousName: current.name, usage,
-        retentionPolicy: "SOFT_ARCHIVE", hiddenFromActiveDirectories: true },
+      metadata: { action: "DEPARTMENT_ARCHIVE", legacyAction:"DEPARTMENT_DELETE",
+        previousName:current.name,usage,legacyDepartmentId:archived.legacyDepartmentId,
+        retentionPolicy:"SOFT_ARCHIVE",hiddenFromActiveDirectories:true,
+        version:"ACTING_COLLEGE_MEMBERSHIP_VNEXT"},
     });
     return {...archived,retentionPolicy:"SOFT_ARCHIVE" as const,
       hiddenFromActiveDirectories:true as const};
-  });
+  });}catch(error){return mapConstraint(error);}
 }

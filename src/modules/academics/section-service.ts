@@ -298,6 +298,25 @@ export async function listClassesByProgram(
   }));
 }
 
+/** Legacy name-exists applies normalization to all college-owned classes,
+ * not just the first 20 autocomplete results. */
+export async function collegeClassNameExists(
+  context:RequestContext,nameInput:unknown,programIdInput?:unknown,
+){
+  const name=z.string().trim().min(1).max(255).parse(nameInput);
+  const programId=programIdInput===undefined?undefined:z.uuid().parse(programIdInput);
+  const acting=await resolveActingCollege(context,"academics.read");
+  const [row]=await getDb().select({id:sections.id}).from(sections)
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(and(eq(departments.collegeId,acting.collegeId),
+      programId?eq(programs.id,programId):undefined,
+      sql<boolean>`lower(trim(${sections.name})) = ${name.toLocaleLowerCase("en-IN")}`))
+    .limit(1);
+  return {exists:Boolean(row)};
+}
+
 /** Popular classes are the same exact tenant-scoped directory search with
  * blank q and a deterministic usage-based top ten, not an unscoped cache. */
 export async function listPopularClasses(
@@ -311,8 +330,9 @@ export async function listPopularClasses(
  * validating the class is still active in the selected college.
  */
 export async function recordClassSearchSelection(
-  context:RequestContext,classIdInput:unknown,
+  context:RequestContext,classIdInput:unknown,idempotencyKeyInput:unknown,
 ){
+  const idempotencyKey=z.uuid().parse(idempotencyKeyInput);
   const id=z.uuid().parse(classIdInput);
   const acting=await resolveActingCollege(context,"academics.read");
   const [row]=await getDb().select({
@@ -324,15 +344,16 @@ export async function recordClassSearchSelection(
       eq(departments.collegeId,acting.collegeId)))
     .where(and(eq(sections.id,id),eq(sections.status,"ACTIVE"))).limit(1);
   if(!row)throw new AcademicsServiceError("SECTION_NOT_FOUND");
-  await getDb().insert(activityEvents).values({
+  const inserted=await getDb().insert(activityEvents).values({
     organizationId:acting.organizationId,collegeId:acting.collegeId,
     actorUserId:context.user.id,
     module:"ACADEMICS",eventType:"academics.class.selected",
     importance:"LOW",subjectType:"section",subjectId:row.id,
     subjectLabel:row.name,summary:"Class selected from search",
     metadata:{origin:"COLLEGE_CLASS_AUTOCOMPLETE"},
-  });
-  return {recorded:true as const};
+    dedupeKey:`academics:class-select:${context.user.id}:${idempotencyKey}`,
+  }).onConflictDoNothing().returning({id:activityEvents.id});
+  return {recorded:inserted.length>0,replayed:inserted.length===0};
 }
 
 export async function createSection(
