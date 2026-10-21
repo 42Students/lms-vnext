@@ -10,6 +10,27 @@ import type {
   ProvisionedPlatformIdentity,
 } from "./identity-provisioning";
 
+/** Exact legacy duplicate wording for authorized registration forms only.
+ * The generic IDENTITY_COLLISION API code deliberately does not disclose
+ * whether an email/phone belongs to an account on public signup endpoints. */
+export const LEGACY_REGISTRATION_COLLISION_COPY = {
+ username: "Username already exists. Please choose a different username.",
+ email: "Email already exists. Please use a different email address.",
+ phone: "Phone number already exists. Please use a different phone number.",
+} as const;
+export type IdentityCollisionField=keyof typeof LEGACY_REGISTRATION_COLLISION_COPY;
+export function registeredIdentityCollisionDetail(field:IdentityCollisionField,authorized:boolean){
+ return authorized?LEGACY_REGISTRATION_COLLISION_COPY[field]:
+  "An account with these details cannot be registered. Check the information or contact support.";
+}
+/** Equivalent to legacy wrapped success, without passwords, tokens, phones
+ * or other credentials. Caller decides navigation only after acknowledged
+ * provisioning and an actual authenticated session. */
+export function provisionedIdentityAcknowledgement(result:ProvisionedPlatformIdentity){
+ return {ok:true,message:"OK",userId:result.userId,
+  existed:result.existed,platformStatus:result.platformStatus};
+}
+
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
 

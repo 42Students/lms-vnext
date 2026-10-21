@@ -33,7 +33,11 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
     modules:student.modules.map(item=>({
      module:item.module,label:item.label,enabled:item.enabled,
      winnerLevel:item.winnerLevel,winnerLocked:item.winnerLocked,
-     explanation:item.explanation,
+     explanation:item.module==="placements"
+       ?"Module availability is a college-level setting; membership, section and cohort placement participation is decided only by placementParticipation."
+       :item.explanation,
+     ignoredBelowCollegeScopes:item.module==="placements"?["MEMBERSHIP","SECTION","COHORT"]:[],
+     participationAuthority:item.module==="placements"?"placementParticipation":null,
     })),
     rules:studentRuleCards(student.modules).filter(item=>item.module!=="placements").map(item=>({
      module:item.module,label:item.label,stored:item.stored,locked:item.locked,

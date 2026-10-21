@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta } from "@/components/marketing/marketing-layout";
-export const metadata: Metadata = {title:"42 LMS | Talent development",description:"Connected learning, projects and placements for universities and enterprises."};
+import { MarketingLayout, MarketingHero, MarketingFeatureGrid, MarketingCta, marketingPageMetadata } from "@/components/marketing/marketing-layout";
+export const metadata: Metadata = marketingPageMetadata("/", "42 LMS | Talent development", "Connected learning, projects and placements for universities and enterprises.");
 export default function HomeMarketingPage() {
  return <MarketingLayout>
-  <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({"@context":"https://schema.org","@type":"SoftwareApplication",name:"42 LMS",applicationCategory:"EducationalApplication",operatingSystem:"Web"})}} />
+  <script type="application/ld+json" dangerouslySetInnerHTML={{__html:JSON.stringify({"@context":"https://schema.org","@type":"SoftwareApplication","@id":"https://42lms.com/#software",name:"42 LMS",applicationCategory:"BusinessApplication",applicationSubCategory:"EducationalApplication",operatingSystem:"Web",url:"https://42lms.com/",description:"Connected learning, projects and placements for universities and enterprises.",publisher:{"@id":"https://42lms.com/#organization"},isAccessibleForFree:false}).replace(/</g,"\\u003c")}} />
   <MarketingHero eyebrow="Connected talent development" title="One connected platform for learning, projects and placements"
     description="Help students build skills, deliver projects, get mentored, and connect to employers. One experience for every role." />
   <MarketingFeatureGrid title="A connected campus and employer team" items={[
