@@ -108,13 +108,18 @@ function MeetingFields({
             {isRequest?"Preferred start time":"Start"}
           </span>
           <Input
-            type="datetime-local"
+            type="date"
             required
-            min={minStart}
-            value={startsAt}
-            onChange={(event) =>
-              onStartsAt(event.target.value)
-            }
+            min={minStart?.slice(0, 10)}
+            aria-label={isRequest ? "Preferred start date" : "Start date"}
+            value={startsAt.slice(0, 10)}
+            onChange={(event) => onStartsAt(event.target.value
+              ? event.target.value + "T" + (startsAt.slice(11) || "09:00") : "")}
+          />
+          <Input type="time" required step={300}
+            aria-label={isRequest ? "Preferred start time" : "Start time"}
+            value={startsAt.slice(11)} disabled={!startsAt.slice(0, 10)}
+            onChange={(event) => onStartsAt(startsAt.slice(0, 10) + "T" + event.target.value)}
           />
         </label>
         <label>
@@ -122,16 +127,21 @@ function MeetingFields({
             {isRequest?"Preferred end time":"End"}
           </span>
           <Input
-            type="datetime-local"
+            type="date"
             required
-            value={endsAt}
-            onChange={(event) =>
-              onEndsAt(event.target.value)
-            }
+            aria-label={isRequest ? "Preferred end date" : "End date"}
+            value={endsAt.slice(0, 10)}
+            onChange={(event) => onEndsAt(event.target.value
+              ? event.target.value + "T" + (endsAt.slice(11) || "10:00") : "")}
+          />
+          <Input type="time" required step={300}
+            aria-label={isRequest ? "Preferred end time" : "End time"}
+            value={endsAt.slice(11)} disabled={!endsAt.slice(0, 10)}
+            onChange={(event) => onEndsAt(endsAt.slice(0, 10) + "T" + event.target.value)}
           />
         </label>
       </div>
-      <p className="text-xs font-semibold text-body">Times are in Asia/Kolkata (IST).</p>
+      <p className="text-xs font-semibold text-body">Times are in Asia/Kolkata (IST). Choose times in five-minute increments.</p>
     </div>
   );
 }
@@ -499,7 +509,7 @@ export function ScheduleProjectMeetingControl({
           ? meeting.status === "REQUESTED"
             ? "Schedule request"
             : "Reschedule"
-          : "Schedule meeting"}
+          : "Add meeting"}
       </Button>
       <Dialog
         open={open}
@@ -509,7 +519,7 @@ export function ScheduleProjectMeetingControl({
             ? "Schedule Project meeting"
             : "New Project meeting"
         }
-        description="Drafts remain private and need a future meeting window. Scheduling requires an HTTP or HTTPS meeting link. Use the separate Complete or Cancel controls for final outcomes."
+        description="Add meeting details, then Save meeting plan. Drafts stay private. Scheduling accepts HTTP or HTTPS links; final outcomes use the separate Complete or Cancel actions."
       >
         <form
           noValidate
@@ -707,11 +717,11 @@ export function ScheduleProjectMeetingControl({
               type="submit"
               className="w-full sm:w-auto"
               loading={pending}
-              disabled={pending}
+              disabled={pending || (Boolean(meeting) && !dirty)}
             >
               {pending
                 ? "Saving…"
-                : "Schedule meeting"}
+                : "Save meeting plan"}
             </Button>
           </div>
         </form>
