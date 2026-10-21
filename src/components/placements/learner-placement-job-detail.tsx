@@ -5,7 +5,6 @@ import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
-import {LearnerApplicationResumeLink} from "./learner-application-resume-link";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   learnerJobDetailSummary,
@@ -121,27 +120,8 @@ export function LearnerPlacementJobDetail({
             </>
           }
         />
-
-        {item.job.recruiterDriveMode==="OFF_CAMPUS"||item.job.recruiterDriveMode==="CAMPUS_POOL" ? (
-          <aside role="status" aria-label="Drive location and travel"
-            className="mt-4 rounded-md border border-[var(--lms-info-border)] bg-[var(--lms-primary-subtle)] p-4">
-            <h2 className="font-semibold">
-              {item.job.recruiterDriveMode==="OFF_CAMPUS"?"Off-campus drive":"Campus pool drive"}
-            </h2>
-            {item.job.campusPool ? (
-              <dl className="mt-2 space-y-2 text-sm">
-                <div><dt className="inline font-semibold">Reporting college: </dt>
-                  <dd className="inline">{item.job.campusPool.hostCollege}</dd></div>
-                <div><dt className="inline font-semibold">Reporting time: </dt>
-                  <dd className="inline">{item.job.campusPool.reportingTime??"To be announced"}</dd></div>
-                {item.job.campusPool.travelNote?<div>
-                  <dt className="inline font-semibold">Travel note: </dt>
-                  <dd className="inline whitespace-pre-wrap">{item.job.campusPool.travelNote}</dd>
-                </div>:null}
-              </dl>
-            ):<p className="mt-2 text-sm">Check the drive schedule for reporting and travel instructions.</p>}
-          </aside>
-        ):null}
+        </div>
+        </div>
         <dl className="mt-4 grid min-w-0 gap-x-4 gap-y-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-3">
           <div><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where</dt>
             <dd className="mt-1 font-semibold text-foreground">{item.job.locations.length?item.job.locations.join(", "):"Not specified"}</dd></div>
@@ -182,9 +162,8 @@ export function LearnerPlacementJobDetail({
           <ul className="mt-3 space-y-2 text-sm">
             {applied.map(row=><li key={row.application!.id} className="break-words">
               <span className="font-semibold">{row.roleOption.title}</span>
-              <span className="block text-xs">Receipt: {row.application!.id}</span>
-              <LearnerApplicationResumeLink applicationId={row.application!.id} />
-              <span className="block text-xs">Recorded: {new Intl.DateTimeFormat("en-IN",{
+              <span className="block text-xs">Reference: APP-{row.application!.id}</span>
+              <span className="block text-xs">Submitted: {new Intl.DateTimeFormat("en-IN",{
                 timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
               }).format(new Date(row.application!.submittedAt))}</span>
             </li>)}
