@@ -75,7 +75,7 @@ export function CollegeDepartmentInsights({
     </section>
     <section aria-label="Department evidence results" className="min-w-0">
       <p className="border-b border-border py-3 text-sm text-muted-foreground">
-        {data.total} matching department{data.total === 1 ? "" : "s"}
+        {data.total.toLocaleString("en-IN")} matching department{data.total === 1 ? "" : "s"}
       </p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption={title}
