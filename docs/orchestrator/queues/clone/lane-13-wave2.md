@@ -62,7 +62,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_admin-user-directory-model.ts.md` (edit src/modules/people/admin-user-directory-model.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_attendance_admin-service.ts.md` (edit src/modules/attendance/admin-service.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_storage_r2-config.ts.md` (edit src/modules/storage/r2-config.ts; 5 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_storage_s3-client.ts.md` (edit src/modules/storage/s3-client.ts; 5 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_storage_s3-client.ts.md` (edit src/modules/storage/s3-client.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_people_faculty-profile-text-section.tsx.md` (edit src/components/people/faculty-profile-text-section.tsx; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_faculty-profile-self.staged.ts.md` (edit src/modules/people/faculty-profile-self.staged.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-read-receipts-service.ts.md` (edit src/modules/announcements/tpo-notice-read-receipts-service.ts; 5 findings; best P2)
