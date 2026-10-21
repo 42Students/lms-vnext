@@ -217,3 +217,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_pr-s2-04-task-fields-model.ts.md` | Exact blank message validation added; introduced separate strict system-only comment snapshot schema without admitting privileged types via human endpoint. DB persistence and trusted action integration remain. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-marking-window.ts.md` | Reviewed timing: vNext prohibits pre-start/out-of-correction attendance; retained deliberate server-safety policy, clarified divergence from legacy Ready to mark. Must reconcile UI + service together, no change to permissions. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-activity-filtered-list.tsx.md` | Resource-audit view renders resource/action/actor/when table in legacy order, restores distinct empty states and load-more fallback. Full resource audit first-load API error handling remains separate. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_hr-conversation-inbox-service.ts.md` | Scoped recruiter inbox unread thread query and counts now exclude EVENT, require kind MESSAGE; existing college/recruiter/job scoped predicates preserved. No CI.

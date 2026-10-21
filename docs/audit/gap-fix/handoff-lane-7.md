@@ -1012,3 +1012,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-12-017-019/-024/-025 | `src/modules/projects/task-comment-service.ts + status mutation action` | Wire projectTaskSystemCommentSchema only from trusted actions, persist immutable progress/status snapshots; human comments stay NOTE/PROGRESS_UPDATE/FLAG_FOR_MENTOR.
 - G2-15-009-053 | `src/modules/attendance/faculty-attendance-service.ts + Faculty attendance UI` | Decide explicit pre-start/historical correction policy; change UI and server together with audit, never UI-only enable.
+
+- G2-4-029-024/-025 | `src/components/projects/project-activity-filtered-list.tsx + project audit loader` | Expose distinguishable initial resource-audit fetch failure with exact 'Failed to load resource audit history.' and retry, not only load-more.
+- G2-13-004-068 | `src/modules/placements/hr-conversation-inbox-service.ts + TPO message legacy importer` | Migrate EVENT/MESSAGE read statuses and UUID thread mapping; unread now excludes EVENT.

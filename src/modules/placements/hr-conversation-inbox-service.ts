@@ -50,6 +50,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
    eq(placementTpoMessageThreads.collegeId,collegeId),
    eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
    eq(placementTpoMessages.senderType,"TPO"),
+   eq(placementTpoMessages.kind,"MESSAGE"),
    isNull(placementTpoMessages.readAt),
   )):[];
  const filtered=onlyUnreadRecruiterThreads(accessible,
@@ -67,6 +68,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
    .where(and(
     inArray(placementTpoMessages.threadId,visible.map(row=>row.id)),
     eq(placementTpoMessages.senderType,"TPO"),
+    eq(placementTpoMessages.kind,"MESSAGE"),
     isNull(placementTpoMessages.readAt),
    )).groupBy(placementTpoMessages.threadId):[];
  const byThread=new Map(counts.map(row=>[row.threadId,Number(row.unread)]));
