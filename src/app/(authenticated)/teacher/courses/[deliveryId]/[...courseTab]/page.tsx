@@ -40,7 +40,13 @@ export default async function FacultyCourseTabPage({
     if(filter!=="ALL")safe.set("filter",filter);
     if(lessonId)safe.set("lesson",lessonId);
     if(requestedContent)safe.set("content",requestedContent);
-    redirect(facultyCourseTabHref(deliveryId,"home")+(safe.size?"?"+safe.toString():""));
+    redirect(facultyCourseTabHref(deliveryId,requestedContent?"blueprint":"home")+
+      (safe.size?"?"+safe.toString():""));
+  }
+  if(requestedContent&&courseTab[0]==="home"){
+    const safe=new URLSearchParams({lesson:owningLesson!.id,content:requestedContent});
+    if(filter!=="ALL")safe.set("filter",filter);
+    redirect(facultyCourseTabHref(deliveryId,"blueprint")+"?"+safe.toString());
   }
   const [homeSignals, displayResult] = await Promise.all([
     getFacultyCourseHomeSignals(context, workspace),
