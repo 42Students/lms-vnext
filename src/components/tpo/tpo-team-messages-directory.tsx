@@ -12,7 +12,7 @@ import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
-import type {RequestContext} from "@/modules/identity/context";
+import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 
 const FILTERS = [
  ["following","Following"],["all","All"],["me","@ Me"],["asks","Asks"],
@@ -106,6 +106,10 @@ export async function TpoTeamMessagesDirectory({
         (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:bg-primary-subtle")}>
        {label}
       </Link>)}
+      {hasMembershipRole(context,"TPO")?<Link href="/tpo/requests"
+        className="inline-flex min-h-9 items-center rounded-full border border-border px-3 py-1 text-xs font-semibold text-body hover:bg-primary-subtle">
+        Students
+      </Link>:null}
      </nav>
      <p className="text-xs text-muted-foreground">{visible.length} of {displayedCount} {displayedCount===1?"conversation":"conversations"}{data.hasMore?" · More results available":""}</p>
     </div>

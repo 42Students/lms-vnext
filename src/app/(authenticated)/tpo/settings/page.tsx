@@ -18,6 +18,9 @@ export default async function TpoSettingsIndex({searchParams}:{
    <TpoSettingsNav active="rules"/>
    <section aria-label="Settings sections" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Placement Rules</h2>
+    <Link href="/tpo/settings/season" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+      Placement Season — current, create and edit
+    </Link>
     <p className="text-sm leading-6 text-body">Choose a settings section to review the policy, people, and visibility options for this college. Changes are saved within each section.</p>
     <Link href="/tpo/settings/rules"
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-white md:min-h-9">
