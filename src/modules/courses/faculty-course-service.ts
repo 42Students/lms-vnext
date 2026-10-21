@@ -223,6 +223,50 @@ export async function listFacultyCourseDeliveries(
     );
 }
 
+/** Observe the actor's own teaching grants without joining potentially
+ * foreign course data into diagnostic cards. Broken links stay unclickable. */
+export type FacultyCourseAssignmentDiagnostic={
+ teachingAssignmentId:string;
+ reason:"INCOMPLETE_ASSIGNMENT"|"MISSING_COURSE_NAME"|"DUPLICATE_ASSIGNMENT";
+};
+export async function listFacultyCourseAssignmentDiagnostics(
+ context:RequestContext,
+):Promise<FacultyCourseAssignmentDiagnostic[]>{
+ const membership=requireFacultyMembership(context);
+ const assigned=await listFacultyCourseDeliveries(context);
+ const rows=await getDb().select({
+  id:courseTeachingAssignments.id,deliveryId:courseTeachingAssignments.deliveryId,
+ }).from(courseTeachingAssignments)
+  .innerJoin(collegeMemberships,and(
+   eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+   eq(collegeMemberships.userId,context.user.id),
+   eq(collegeMemberships.collegeId,membership.collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),
+  ))
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+   eq(users.platformStatus,"ACTIVE")))
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"FACULTY"),
+  ))
+  .where(and(
+   eq(courseTeachingAssignments.membershipId,membership.id),
+   isNull(courseTeachingAssignments.endedAt),
+   lte(courseTeachingAssignments.startedAt,sql`now()`),
+  )).limit(1000);
+ const byId=new Map(assigned.map(item=>[item.teachingAssignmentId,item]));
+ const counts=new Map<string,number>();
+ for(const row of rows)counts.set(row.deliveryId,(counts.get(row.deliveryId)??0)+1);
+ return rows.flatMap((row):FacultyCourseAssignmentDiagnostic[]=>{
+  const valid=byId.get(row.id);
+  if(!valid)return [{teachingAssignmentId:row.id,reason:"INCOMPLETE_ASSIGNMENT"}];
+  if(!valid.courseName.trim())return [{teachingAssignmentId:row.id,reason:"MISSING_COURSE_NAME"}];
+  if((counts.get(row.deliveryId)??0)>1)
+   return [{teachingAssignmentId:row.id,reason:"DUPLICATE_ASSIGNMENT"}];
+  return [];
+ });
+}
+
 /** Safe compatibility resolver: never resolve an ambiguous or unauthorized
  * historical course/class link. Numeric legacy IDs need an explicit migration
  * crosswalk and are intentionally not guessed from current UUID rows. */

@@ -8,6 +8,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course-card-summary-service";
+import { listFacultyCourseAssignmentDiagnostics } from "@/modules/courses/faculty-course-service";
 
 export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -32,10 +33,12 @@ export default async function TeacherCoursesPage({searchParams}: {
     action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry courses</Link>}/>
   </div>;
   const list=listResult.value;
-  const [summaries,display]=await Promise.all([
+  const [summaries,display,diagnosticResult]=await Promise.all([
    listFacultyCourseCardSummaries(list.items),
    loadAuthorizedCourseDisplayContentsIfReady(list.items.map(course=>course.courseId))
     .catch(()=>new Map<string,{thumbnailUrl:string|null}>()),
+   listFacultyCourseAssignmentDiagnostics(context).then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const})),
   ]);
   const rows = list.items.flatMap((course) => {
     const workspace = summaries.get(course.deliveryId);
@@ -46,7 +49,8 @@ export default async function TeacherCoursesPage({searchParams}: {
       <PageHeader
         title="My Courses"
       />
-      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
+      <FacultyCourseList rows={rows} diagnostics={diagnosticResult.ok?diagnosticResult.value:[]}
+        diagnosticsUnavailable={!diagnosticResult.ok} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
     </div>
   );
 }

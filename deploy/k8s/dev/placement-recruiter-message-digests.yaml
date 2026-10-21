@@ -1,5 +1,8 @@
 # Dev-only recruiter unread digest scheduler. Same-origin and bearer
-# checks in the existing route are deliberately retained. Provision
+# checks in the existing route are deliberately retained. The worker enforces
+# the legacy 90-second initial grace. Five-minute wall-clock ticks differ
+# from Spring fixed delay; the actual CronJob still requires a dev rollout.
+# Provision
 # RECRUITER_MESSAGE_WORKER_SECRET (32+ bytes) in vnext-integrations.
 apiVersion: batch/v1
 kind: CronJob
