@@ -59,30 +59,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/projects/project-workspace-readiness.tsx`
 - [x] `src/components/tpo/tpo-job-types-editor.tsx`
 - [x] `src/components/ui/error-state.tsx`
-- [ ] `src/components/tpo/tpo-safe-csv-download.tsx`
-- [ ] `src/components/tpo/tpo-students-selection.tsx`
-- [ ] `src/components/tpo/tpo-team-message-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/ui/alert.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/admin/super-admin-legacy-group-tabs.tsx`
-- [ ] `src/components/courses/admin-offering-learning-page.tsx`
-- [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
-- [ ] `src/components/courses/learner-youtube-player.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/projects/mentor-project-tabs.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/components/tpo/tpo-safe-csv-download.tsx`
+- [x] `src/components/tpo/tpo-students-selection.tsx`
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/ui/alert.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/admin/super-admin-legacy-group-tabs.tsx`
+- [x] `src/components/courses/admin-offering-learning-page.tsx`
+- [x] `src/components/courses/faculty-course-tab-navigation.tsx`
+- [x] `src/components/courses/learner-youtube-player.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/projects/mentor-project-tabs.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [ ] `src/app/platform/page.tsx`
 - [ ] `src/components/admin/college-bulk-import.tsx`
 - [ ] `src/components/admin/tenant-domain-manager.tsx`
