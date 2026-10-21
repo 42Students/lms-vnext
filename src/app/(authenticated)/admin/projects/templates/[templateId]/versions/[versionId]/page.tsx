@@ -13,12 +13,19 @@ import { templateVersionComparisonParamsSchema } from "@/modules/projects/templa
 import { getSuperAdminTemplateVersionComparison } from "@/modules/projects/template-version-comparison-service";
 import {previewProjectTemplateRollbackImpact} from "@/modules/projects/template-rollback-service";
 
-export default async function TemplateVersionComparisonPage({ params }: {
+export default async function TemplateVersionComparisonPage({ params,searchParams }: {
   params: Promise<{ templateId: string; versionId: string }>;
+  searchParams: Promise<{from?:string;page?:string}>;
 }) {
   const context = await getCurrentRequestContext();
   const ids = templateVersionComparisonParamsSchema.safeParse(await params);
   if (!ids.success) notFound();
+  const navigation=await searchParams;
+  const historicPage=typeof navigation.page==="string"&&/^[1-9]\\d{0,5}$/.test(navigation.page)
+    ?Number(navigation.page):null;
+  const versionHistoryHref="/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+
+    "/versions"+(historicPage?"?page="+historicPage:"")+
+    "#version-"+encodeURIComponent(ids.data.versionId);
   if (!can(context,"project-template.read")) {
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Template version comparison"/>
@@ -38,14 +45,14 @@ export default async function TemplateVersionComparisonPage({ params }: {
         description={error instanceof SyntaxError || error instanceof TypeError
           ? "Version snapshot could not be read. Do not roll back without a verified diff."
           : "The version comparison could not be loaded. No private version content is shown and rollback is disabled."}
-        action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
+        action={<PageBackLink href={versionHistoryHref} label="Back to version history" />}/>
     </div>;
   }
   const canManage=can(context,"project-template.manage");
   const impact=canManage?await previewProjectTemplateRollbackImpact(context,detail.template.id)
     .catch(()=>null):null;
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />
+    <PageBackLink href={versionHistoryHref} label="Version history" />
     <PageHeader title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
     />
