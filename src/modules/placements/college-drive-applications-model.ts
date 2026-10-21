@@ -8,6 +8,8 @@ export const driveApplicationsQuerySchema = z.object({
   departmentId: z.string().uuid().optional(),
   programId: z.string().uuid().optional(),
   cohortId: z.string().uuid().optional(),
+  appliedFrom: z.iso.date().optional(),
+  appliedTo: z.iso.date().optional(),
   screening: z.enum(["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
@@ -18,7 +20,7 @@ export const DRIVE_APPLICATION_BULK_CAP = 3000;
 
 export function driveApplicationsParams(raw: Record<string,string|string[]|undefined>) {
   const input: Record<string,string> = {};
-  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","page"] as const) {
+  for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","appliedFrom","appliedTo","page"] as const) {
     const value = raw[key];
     // The legacy page tolerates malformed optional filters, but identifiers
     // must fail closed rather than silently broadening an academic scope.
@@ -39,7 +41,9 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
   }
   if (input.page && !/^[1-9]\\d{0,3}$/.test(input.page)) delete input.page;
   const result = driveApplicationsQuerySchema.safeParse(input);
-  return result.success ? result.data : null;
+  if(!result.success || (result.data.appliedFrom && result.data.appliedTo &&
+     result.data.appliedFrom>result.data.appliedTo)) return null;
+  return result.data;
 }
 export function driveApplicationsHref(jobId: string, query: DriveApplicationsQuery, exportCsv = false) {
   const params = new URLSearchParams();
@@ -50,6 +54,8 @@ export function driveApplicationsHref(jobId: string, query: DriveApplicationsQue
   if (query.departmentId) params.set("departmentId",query.departmentId);
   if (query.programId) params.set("programId",query.programId);
   if (query.cohortId) params.set("cohortId",query.cohortId);
+  if (query.appliedFrom) params.set("appliedFrom",query.appliedFrom);
+  if (query.appliedTo) params.set("appliedTo",query.appliedTo);
   if (query.screening !== "ALL") params.set("screening",query.screening);
   if (!exportCsv && query.page > 1) params.set("page",String(query.page));
   const suffix = exportCsv ? "/export" : "";

@@ -1,3 +1,4 @@
+import { CollegeDriveApplicationsExport } from "@/components/college/college-drive-applications-export";
 import Link from "next/link";
 import { z } from "zod";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -119,8 +120,8 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     </Alert> : null}
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
       <span>{data.total.toLocaleString("en-IN")} matching applications</span>
-      <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle min-[768px]:min-h-9 min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">↓ Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+      <CollegeDriveApplicationsExport href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
+        matching={data.total} cap={DRIVE_APPLICATION_EXPORT_CAP}/>
     </div>
     <Tabs ariaLabel="Application pipeline stages" renderPanel={false} value={query.stage}
       items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","REJECTED","OFFERED","HIRED","WITHDRAWN"] as const).map(stage=>({
