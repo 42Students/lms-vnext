@@ -1,6 +1,6 @@
 import "server-only";
 import {alias} from "drizzle-orm/pg-core";
-import {and,count,eq,gte,lt,lte,isNull,sql} from "drizzle-orm";
+import {and,asc,count,eq,gte,lt,lte,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges,sectionScheduleEvents,sections,cohorts,programs,departments,
  attendanceSessions,courseSectionDeliveries,courseOfferings,courses,courseTeachingAssignments,
@@ -8,7 +8,7 @@ import {colleges,sectionScheduleEvents,sections,cohorts,programs,departments,
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {z} from "zod";
-import {istDayBounds} from "./admin-today-attention-model";
+import {istDayBounds,formatSuperAdminAttentionWhen} from "./admin-today-attention-model";
 export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:string,now=new Date()){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
@@ -66,7 +66,21 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    .where(and(eq(departments.collegeId,id),eq(courseQuizzes.status,"PUBLISHED"),
     gte(courseQuizzes.dueAt,now),lte(courseQuizzes.dueAt,new Date(now.getTime()+7*86400000)))),
  ]);
- return {classesScheduled:classes[0]?.scheduled??0,classesEnded:classes[0]?.ended??0,
+ // Each displayed due date must come from a persisted quiz in this college.
+ const deadlines=await db.select({dueAt:courseQuizzes.dueAt}).from(courseQuizzes)
+  .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(eq(departments.collegeId,id),eq(courseQuizzes.status,"PUBLISHED"),
+   gte(courseQuizzes.dueAt,now),
+   lte(courseQuizzes.dueAt,new Date(now.getTime()+7*86400000))))
+  .orderBy(asc(courseQuizzes.dueAt)).limit(3);
+ return {quizDeadlineLabels:deadlines
+  .filter((item):item is {dueAt:Date}=>item.dueAt instanceof Date)
+  .map(item=>formatSuperAdminAttentionWhen(item.dueAt)),
+  classesScheduled:classes[0]?.scheduled??0,classesEnded:classes[0]?.ended??0,
   attendanceTaken:classes[0]?.marked??0,attendanceNotTaken:pendingAttendance[0]?.n??0,
   coursesWithoutTeacher:withoutTeacher[0]?.n??0,quizzesClosingThisWeek:closingQuizzes[0]?.n??0};
 }
