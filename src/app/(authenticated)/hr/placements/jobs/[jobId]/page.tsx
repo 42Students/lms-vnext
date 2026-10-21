@@ -87,7 +87,7 @@ export default async function HrPlacementJobPage({
   params: Promise<{ jobId: string }>;
   searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
     offerPage?:string; offerState?:string;
-    roundId?:string; outcome?:string; review?:string; returnTo?:string }>;
+    roundId?:string; outcome?:string; review?:string; returnTo?:string; applicantSearch?:string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -97,6 +97,8 @@ export default async function HrPlacementJobPage({
 
   const { jobId } = await params;
   const query = await searchParams;
+  const applicantSearch=typeof query.applicantSearch==="string"?
+    query.applicantSearch.trim().slice(0,100):"";
   const returnTo = safeDriveReturnTo(query.returnTo);
   const returnQuery = "&returnTo="+encodeURIComponent(returnTo);
   let hiring: Awaited<ReturnType<typeof getHrJobRead>>;
@@ -132,6 +134,14 @@ export default async function HrPlacementJobPage({
     throw error;
   }
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal, roundSlotCounts, stageCounts } = hiring;
+  // Search only fields the placement cell explicitly shared with this employer.
+  // The current server-authorized page is at most 25 rows; this is not an
+  // unscoped search over unshared candidates or other pages.
+  const needle=applicantSearch.toLocaleLowerCase("en");
+  const displayedApplicants=needle?
+    applicants.rows.filter(row=>[row.name,row.rollNumber,row.email]
+      .some(value=>typeof value==="string"&&value.toLocaleLowerCase("en").includes(needle))):
+    applicants.rows;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
@@ -525,15 +535,35 @@ export default async function HrPlacementJobPage({
             </Link>
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
+          {applicants.rows.length>8 ? <form method="get"
+            action={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)}
+            role="search" aria-label="Search shared applicants on this page"
+            className="flex min-w-0 flex-wrap items-end gap-2 border-b border-border pb-3">
+            <Input type="hidden" name="tab" value="applicants"/>
+            <Input type="hidden" name="stage" value={filters.stage}/>
+            <Input type="hidden" name="page" value={String(filters.page)}/>
+            <Input type="hidden" name="returnTo" value={returnTo}/>
+            <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
+              Search this page by name, roll no. or shared email
+              <Input type="search" name="applicantSearch"
+                defaultValue={applicantSearch} maxLength={100} placeholder="Search shared applicants"
+                className="min-h-11 w-full md:min-h-9"/>
+            </label>
+            <Button type="submit" variant="secondary">Search</Button>
+            {applicantSearch ? <Link
+              href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+returnQuery}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>:null}
+            <p className="w-full text-xs text-muted-foreground">Search checks the current authorized page of 25 or fewer applicants. Change pages to search more.</p>
+          </form>:null}
           <Tabs renderPanel={false} ariaLabel="Applicant stage" value={filters.stage}
             items={HR_RECRUITER_STAGES.map(({value:stage,label})=>({value:stage,label,count:stageCounts[stage],
               href:`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}))}/>
           <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
-          {applicants.rows.length ? <>
+          {displayedApplicants.length ? <>
             <div className="hidden min-w-0 md:block">
               <HrJobApplicantsGrid
                 scopeKey={context.user.id+":"+workspace.job.id+":"+filters.stage}
-                rows={applicants.rows.map(applicant=>({
+                rows={displayedApplicants.map(applicant=>({
                   id:applicant.id,
                   name:applicant.name||"Unnamed applicant",
                   role:String(applicant.role??""),
@@ -550,7 +580,7 @@ export default async function HrPlacementJobPage({
                 }))}/>
             </div>
             <div className="grid min-w-0 divide-y divide-border border-y border-border md:hidden">
-            {applicants.rows.map(applicant => (
+            {displayedApplicants.map(applicant => (
               <article key={applicant.id} className="min-w-0 py-4">
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
@@ -566,7 +596,14 @@ export default async function HrPlacementJobPage({
               </article>
             ))}
           </div>
-          </> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
+          </> : applicants.counts.all===0 ?
+            <div role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
+              <strong>Applicants have not been shared</strong>
+              <p className="mt-1">The placement cell has not shared applicants with your employer. Ask the placement cell to share eligible shortlisted applicants.</p>
+            </div> :
+            <p className="text-sm text-muted-foreground">{applicantSearch
+              ? "No shared applicants match this search on the current page."
+              : "No shared applicants match this stage."}</p>}
           {selectedApplicant ? (
             <RecruiterApplicantReviewDrawer
               title={focused ? "Focused review" : "Applicant review"}
@@ -792,7 +829,8 @@ export default async function HrPlacementJobPage({
              className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm">
               <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
               <p className="text-body">{round.status==="COMPLETED"?"Completed":
-                round.status==="SCHEDULED"?"Scheduled":"Not scheduled"}
+                round.status==="SCHEDULED"||round.scheduledAt||
+                (roundSlotCounts[round.id]?.confirmed??0)>0?"Scheduled":"Not scheduled"}
                 {round.createdByUserId===context.user.id?" · Added by you":""}</p>
               <p className="text-muted-foreground">{round.scheduledAt?
                 new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST":
