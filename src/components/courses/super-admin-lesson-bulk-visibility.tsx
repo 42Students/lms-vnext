@@ -28,7 +28,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   finally{setPending(false);}
  }
  return <details aria-label="Lesson bulk visibility" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Bulk lesson visibility</summary>
+  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Bulk lesson visibility</summary>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
    <span role="status" className="text-sm text-muted-foreground">{selected.length} of {lessons.length} lessons selected</span>
   <p className="text-sm text-body leading-[22px]">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
