@@ -146,3 +146,6 @@
 
 - Company identity/domain verification G2-9-034-093: define independent persisted verified domain evidence before syncing global company verification to domain flag; do NOT auto-mark domain owned just because a Super Admin marks company globally verified. Current service audits primaryDomain and domainProofNotInferred; schema/privileged verification reconciliation needs review.
 - Legacy project bulk mentor adapter G2-6-028-036: trusted admin client must resolve old integer mentorId to selected college's ACTIVE mentorMembershipId UUID, refuse ambiguous/out-of-tenant mappings, then POST new API; never cast old ID or bypass requirePermission.
+
+- Learner placement notification write adapter G2-4-015-020/025: for trusted old PUT, read current persisted booleans and call `mergeLegacyPlacementNotificationPatch`; then require confirmed and CAS expected baseline before using live narrow write service. Null master toggle MUST NOT reset another preference.
+- Faculty quiz/assignment report pages G2-3-007-024/G2-4-013-032: use `facultyAssessmentReportErrorCopy` to render exact "Report not found." without Retry for invalid/hidden route; for legitimate retriable load error preserve server-safe details and show Retry. Never show private details from 403.
