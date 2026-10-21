@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {useEffect,useRef,useState} from "react";
+import {Button} from "@/components/ui/button";
 
 const NAV=[
  {label:"Platform",href:"/platform"},
@@ -48,13 +49,13 @@ export function MarketingHeaderClient(){
     <Link href="/login" className={navLink}>Login</Link>
     <Link href="/request-demo" className={demoLink}>Request a Demo <span aria-hidden="true" className="ml-2">↗</span></Link>
    </div>
-   <button ref={button} type="button" aria-label="Toggle menu" aria-expanded={open} aria-controls="marketing-mobile-menu"
+   <Button ref={button} type="button" aria-label="Toggle menu" aria-expanded={open} aria-controls="marketing-mobile-menu"
     onClick={()=>setOpen(value=>!value)}
-    className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--lms-canvas-border)] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[992px]:hidden">
+    className="w-11 min-[992px]:hidden">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
      {open?<path d="M5 5l14 14M19 5L5 19"/>:<path d="M4 6h16M4 12h16M4 18h16"/>}
     </svg>
-   </button>
+   </Button>
    <div id="marketing-mobile-menu" hidden={!open} className="absolute inset-x-0 top-full z-40 border-b border-[var(--lms-canvas-border)] bg-white px-5 pb-5 pt-2 shadow-xl min-[992px]:!hidden">
     <div className="flex flex-col items-stretch gap-1">
      {NAV.map(item=><Link onClick={dismiss} key={item.href} href={item.href} className={navLink}>{item.label}</Link>)}
