@@ -54,6 +54,7 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
     and d.college_id=${collegeId}
    order by e.admitted_at desc,e.id desc limit 1)`.as("department_name"),
   job:placementJobs.title,roundName:placementJobRounds.name,
+  interviewerName:sql<string|null>`coalesce(nullif(trim(${interviews.legacyInterviewerName}),''),nullif(trim(${interviews.panel}),''))`.as("interviewer_name"),
   kind:placementJobRounds.kind,start:interviews.startsAt,
   duration:sql<number>`extract(epoch from(${interviews.endsAt}-${interviews.startsAt}))/60`.as("slot_minutes"),
   status:sql<string>`case when exists(select 1 from activity_events ae
@@ -104,38 +105,44 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  // Re-evaluate collisions against ALL active college bookings for the
  // displayed learners and time span, including records on other pages/jobs.
  // A completed or no-show appointment cannot block a new booking.
- const selectedIds=[...new Set(selected.map(row=>row.studentId))];
  const windowStart=selected.length?Math.min(...selected.map(r=>r.start.getTime())):0;
  const windowEnd=selected.length?Math.max(...selected.map(r=>r.start.getTime()+r.duration*60000)):0;
  const buffer=15*60_000;
- const active=(selectedIds.length?await db.select({
+ const active=selected.length?await db.select({
    id:interviews.id,studentId:placementApplications.membershipId,
+   interviewerName:sql<string|null>`coalesce(nullif(trim(${interviews.legacyInterviewerName}),''),nullif(trim(${interviews.panel}),''))`.as("interviewer_name"),
    start:interviews.startsAt,end:interviews.endsAt,
   }).from(interviews)
    .innerJoin(placementApplications,eq(placementApplications.id,interviews.applicationId))
    .innerJoin(placementJobs,and(eq(placementJobs.id,interviews.jobId),
     eq(placementJobs.collegeId,collegeId)))
    .where(and(eq(interviews.status,"BOOKED"),
-    inArray(placementApplications.membershipId,selectedIds),
     lt(interviews.startsAt,new Date(windowEnd+buffer)),
     gt(interviews.endsAt,new Date(windowStart-buffer)),
     sql`not exists(select 1 from activity_events ended
      where ended.subject_type='placement_round_candidate_slot'
      and ended.subject_id=${interviews.id}::text and ended.college_id=${collegeId}
-     and ended.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW'))`)):[]);
- const conflicting=new Set<string>();
+     and ended.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW'))`))
+   .limit(10001):[];
+ const conflicts=new Map<string,"CANDIDATE"|"INTERVIEWER"|"BOTH">();
+ const conflictsIncomplete=active.length>10000;
  for(const row of selected){
   if(row.status!=="SCHEDULED")continue;
   const start=row.start.getTime(),end=start+row.duration*60000;
-  if(active.some(other=>other.id!==row.id&&other.studentId===row.studentId&&
-   other.start.getTime()<end+buffer&&other.end.getTime()>start-buffer))
-   conflicting.add(row.id);
+  const overlaps=active.filter(other=>other.id!==row.id&&
+    other.start.getTime()<end+buffer&&other.end.getTime()>start-buffer);
+  const candidate=overlaps.some(other=>other.studentId===row.studentId);
+  const interviewer=Boolean(row.interviewerName&&overlaps.some(other=>
+    other.interviewerName?.toLocaleLowerCase()===row.interviewerName?.toLocaleLowerCase()));
+  if(candidate||interviewer)
+   conflicts.set(row.id,candidate&&interviewer?"BOTH":candidate?"CANDIDATE":"INTERVIEWER");
  }
  return {ready:true,filters,total,limited,pageCount:Math.max(1,Math.ceil(total/25)),
-  rows:selected.map(row=>({...row,conflict:conflicting.has(row.id)})),
+  rows:selected.map(row=>({...row,conflict:conflicts.has(row.id),conflictKind:conflicts.get(row.id)??null})),
   companies,departments:departmentChoices,
   summary:{scheduled:totals.scheduled,today:totals.today,
-   companies:totals.companies,conflicts:conflicting.size},
+   companies:totals.companies,conflicts:conflicts.size},
+  conflictsIncomplete,
   conflictScope:options.exportAll?"EXPORTED_ROWS":"CURRENT_PAGE",
  };
 }

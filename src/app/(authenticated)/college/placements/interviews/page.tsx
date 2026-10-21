@@ -44,10 +44,13 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   {key:"student",header:"Student",mobilePriority:"primary",cell:row=><strong className="break-words [overflow-wrap:anywhere]">{row.student}</strong>},
   {key:"drive",header:"Company / drive",cell:row=><span className="break-words [overflow-wrap:anywhere]">{row.company}<span className="block text-xs text-muted-foreground">{row.job}</span></span>},
   {key:"department",header:"Department",cell:row=>row.department??"—"},
+  {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",cell:row=>row.interviewerName??"—"},
   {key:"type",header:"Type",cell:row=>row.kind},
   {key:"start",header:"Scheduled time",cell:row=>formatter.format(row.start)+" IST"},
   {key:"venue",header:"Mode / venue",cell:row=><span>{row.mode}<span className="block">{row.venue??"—"}</span></span>},
-  {key:"status",header:"Status",cell:row=><span><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"error":"neutral"}>{row.status}</StatusBadge>{row.conflict?<span className="block text-body">Conflict: this student has overlapping interviews.</span>:null}</span>},
+  {key:"status",header:"Status",cell:row=><span><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"error":"neutral"}>{row.status}</StatusBadge>{row.conflictKind?<span className="block text-body">Conflict: {row.conflictKind==="BOTH"?
+    "candidate and interviewer have overlapping interviews":row.conflictKind==="CANDIDATE"?
+    "this student has overlapping interviews":"this interviewer has overlapping interviews"}.</span>:null}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><Disclosure title="Manage" className="min-w-0 md:min-w-44"><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
     <Link href={"/college/placements/jobs/"+encodeURIComponent(row.jobId)+"/applications"}
       className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View applications</Link>
@@ -56,7 +59,10 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  ];
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Interviews"
-   description="Interview appointments across drives in the selected college." actions={data.ready?<Disclosure title="Exports" className="w-full min-w-0 md:w-auto"><div className="flex min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center"><a href={build(1,"ics")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download .ics</a><a href={build(1,"csv")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export CSV</a></div></Disclosure>:undefined}/>
+   description="Interview appointments across drives in the selected college." actions={data.ready?<div className="flex flex-wrap gap-2">
+     <Link href={build(valid.data.page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Refresh</Link>
+     <Link href="/college/placements/calendar" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Calendar view</Link>
+     <Disclosure title="Exports" className="w-full min-w-0 md:w-auto"><div className="flex min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center"><a href={build(1,"ics")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download .ics</a><a href={build(1,"csv")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export CSV</a></div></Disclosure></div>:undefined}/>
   {!data.ready?<Banner tone="warning">
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
    </Banner>:<>
@@ -105,6 +111,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     
    </div>
    {data.limited?<Banner tone="warning">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</Banner>:null}
+   {data.conflictsIncomplete?<Banner tone="warning">More than 10,000 overlapping bookings exist in this period. Conflict flags may be incomplete; narrow the time range before scheduling.</Banner>:null}
    <section aria-label="College interview appointments">
     <DataTable caption="College interview appointments" columns={columns}
       rows={data.rows} getRowKey={row=>row.id}
