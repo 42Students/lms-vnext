@@ -21,7 +21,10 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
 }){
  const q=data.query;
  const [department,setDepartment]=useState(q.departmentId??"");
- const [program,setProgram]=useState(q.programId??"");
+ const [program,setProgram]=useState(
+   q.programId && (!q.departmentId || data.filters.programs.some(row=>
+     row.id===q.programId && row.departmentId===q.departmentId)) ? q.programId : ""
+ );
  const permittedPrograms=data.filters.programs.filter(row=>
    !department || row.departmentId===department);
  const raw=Object.fromEntries(Object.entries(q).filter(([,v])=>typeof v==="string")) as Record<string,string>;
@@ -90,12 +93,13 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
     value={data.averageHoursToShortlist==null?"No recorded transitions":
       data.averageHoursToShortlist.toFixed(1)+" hours"} />
     </section>
+    {data.totalApplications===0?<p role="status" className="text-sm text-body">No data for the selected filters</p>:null}
   </section>
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Hiring Funnel · observed progress</h2>
    {data.totalApplications===0?<div className="space-y-2">
     <p>No data for the selected filters</p>
-    <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
+    <Link href={collegeHiringAnalyticsHref({})}
      className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Clear filters</Link>
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className={reportStyles.chartRow}>
@@ -118,7 +122,12 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   </section>
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
-   <DataTable
+   {data.totalApplications>0 && data.companyRows.length===0 ? (
+     <div role="alert" className="flex flex-wrap items-center justify-between gap-2 border border-error/30 bg-error/5 px-3 py-2 text-sm">
+       <span>Could not load the company-wise hiring report. The headline metrics may still be available.</span>
+       <Link className="font-semibold text-primary-text underline" href={collegeHiringAnalyticsHref({...raw})}>Retry company report</Link>
+     </div>
+   ) : <DataTable
     caption="Company-wise Hiring Report"
     rows={data.companyRows}
     getRowKey={row=>row.jobId}
@@ -135,7 +144,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <p role="status" className="text-body">No companies match these filters — try widening the date range or clearing filters</p>
       <Link href={collegeHiringAnalyticsHref({})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>
     </div>}
-   />
+   />}
    {data.companyRows.length>0?
     <details aria-label="Company-wise report totals" className="min-w-0 border-t border-border pt-2">
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">All drives · Totals</summary>
