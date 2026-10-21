@@ -1,6 +1,7 @@
 import {
   and,
   asc,
+  desc,
   eq,
   ilike,
   inArray,
@@ -932,6 +933,103 @@ export async function listProjectMembers(
       asc(projectMembers.role),
       asc(users.displayName),
     );
+}
+
+
+/** Filter and page the scoped learner directory in SQL before loading per-card
+ * summaries. A stale membership/role never becomes a successful empty page. */
+export async function listMyLearnerProjectPage(
+ context:RequestContext,
+ query:{search?:string;status?:string;attention?:string;work?:string;sort?:string;page?:number;pageSize?:number},
+){
+ const membership=context.membership;
+ if(context.user.platformStatus!=="ACTIVE"||!membership||membership.status!=="ACTIVE")
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const db=getDb();
+ const [authorized]=await db.select({id:collegeMemberships.id}).from(collegeMemberships)
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(collegeMemberships.id,membership.id),
+   eq(collegeMemberships.userId,context.user.id),eq(collegeMemberships.collegeId,membership.collegeId),
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).limit(1);
+ if(!authorized)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const base=and(
+  eq(projectMembers.membershipId,membership.id),eq(projectMembers.role,"LEARNER"),
+  isNull(projectMembers.endedAt),eq(projectInstances.collegeId,membership.collegeId),
+  eq(collegeMemberships.collegeId,membership.collegeId),
+  eq(collegeMemberships.userId,context.user.id),eq(collegeMemberships.status,"ACTIVE"),
+  eq(users.platformStatus,"ACTIVE"),eq(membershipRoles.role,"LEARNER"),
+ );
+ const taskTotal=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id})`;
+ const taskDone=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.status='DONE')`;
+ const taskBlocked=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.status='BLOCKED')`;
+ const live=sql<boolean>`${projectInstances.status} not in ('COMPLETED','ARCHIVED')`;
+ const blocked=sql<boolean>`(${projectInstances.blocker} is not null and btrim(${projectInstances.blocker}) <> '' or ${taskBlocked} > 0)`;
+ const conditions=[];
+ if(query.search?.trim()){
+  const search=containsLikePattern(query.search.trim());
+  conditions.push(or(
+   ilike(projectInstances.title,search),ilike(projectInstances.slug,search),
+   ilike(projectInstances.summary,search),ilike(projectInstances.courseLabel,search),
+   sql<boolean>`exists(select 1 from project_members mentors
+    join college_memberships cm on cm.id=mentors.membership_id
+    join users mentor_users on mentor_users.id=cm.user_id
+    where mentors.project_id=${projectInstances.id} and mentors.ended_at is null
+    and mentors.role='MENTOR' and cm.college_id=${membership.collegeId}
+    and cm.status='ACTIVE' and mentor_users.platform_status='ACTIVE'
+    and mentor_users.display_name ilike ${search})`,
+  ));
+ }
+ if(query.status==="CURRENT")conditions.push(live);
+ else if(query.status==="IN_PROGRESS")conditions.push(and(eq(projectInstances.status,"ACTIVE"),sql`${taskDone} > 0`));
+ else if(query.status==="READY")conditions.push(eq(projectInstances.status,"COMPLETED"));
+ else if(query.status==="BLOCKED")conditions.push(and(live,blocked));
+ else if(query.status)conditions.push(eq(projectInstances.status,query.status));
+ if(query.attention==="LEARNER_ACTION")conditions.push(and(
+  sql`${projectInstances.status} <> 'ARCHIVED'`,
+  sql`(select ps.status from project_submissions ps where ps.project_id=${projectInstances.id} order by ps.version desc limit 1) in ('DRAFT','CHANGES_REQUESTED')`,
+ ));
+ else if(query.attention==="BLOCKED")conditions.push(and(live,blocked));
+ if(query.work==="BLOCKED")conditions.push(and(live,sql`${taskBlocked} > 0`));
+ if(query.work==="NO_TASKS")conditions.push(and(live,sql`${taskTotal} = 0`));
+ const filtered=and(base,...conditions);
+ // Reapply the same membership-and-role joins to all three SQL reads.
+ // Neither search input nor a direct page URL may expand the tenant scope.
+ const [assignedCount]=await db.select({count:sql<number>`count(*)::int`})
+  .from(projectMembers).innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+  .where(base);
+ const [filteredCount]=await db.select({count:sql<number>`count(*)::int`})
+  .from(projectMembers).innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+  .where(filtered);
+ const total=Number(filteredCount?.count??0);
+ const pageSize=query.pageSize===10||query.pageSize===50?query.pageSize:25;
+ const totalPages=Math.max(1,Math.ceil(total/pageSize));
+ const page=Math.min(Math.max(1,query.page??1),totalPages);
+ const order=query.sort==="TITLE"
+  ? [sql`case when ${projectInstances.status} = 'ARCHIVED' then 1 else 0 end`,asc(projectInstances.title),asc(projectInstances.id)]
+  :query.sort==="PROGRESS"
+   ? [sql`case when ${projectInstances.status} = 'ARCHIVED' then 1 else 0 end`,
+      sql`case when ${taskTotal}=0 then null else ${taskDone}::numeric / nullif(${taskTotal},0) end asc nulls last`,
+      desc(projectInstances.updatedAt),asc(projectInstances.id)]
+   : [sql`case when ${projectInstances.status} = 'ARCHIVED' then 1 else 0 end`,
+      desc(projectInstances.updatedAt),asc(projectInstances.id)];
+ const rows=await db.select({
+  memberId:projectMembers.id,memberRole:projectMembers.role,
+  isPrimaryMentor:projectMembers.isPrimary,project:projectInstances,
+ }).from(projectMembers)
+  .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+  .where(filtered).orderBy(...order).limit(pageSize).offset((page-1)*pageSize);
+ return {rows,total,assignedCount:Number(assignedCount?.count??0),page,pageSize,totalPages};
 }
 
 export async function listMyProjectInstances(

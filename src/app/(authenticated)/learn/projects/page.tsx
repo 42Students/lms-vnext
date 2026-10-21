@@ -14,15 +14,13 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyLearnerProjectAttention } from "@/modules/projects/learner-attention-service";
-import { listMyProjectInstances } from "@/modules/projects/member-service";
+import { listMyLearnerProjectPage } from "@/modules/projects/member-service";
 import { listMyLearnerProjectTeams } from "@/modules/projects/learner-project-team-service";
 import { listMyLearnerProjectProgress } from "@/modules/projects/learner-project-progress-service";
 import { listMyLearnerProjectDueStates } from "@/modules/projects/learner-project-due-service";
 import { learnerProjectListEmptyState } from "@/modules/projects/learner-project-list-empty-model";
 import { learnerProjectArchiveState } from "@/modules/projects/learner-project-archive-model";
-import { learnerProjectMatchesSearch } from "@/modules/projects/learner-project-search-model";
-import { learnerProjectHasBlockedTasks, learnerProjectHasNoTrackedTasks } from "@/modules/projects/learner-project-work-model";
-import { sortLearnerProjectRows } from "@/modules/projects/learner-project-sort-model";
+import { learnerProjectHasBlockedTasks } from "@/modules/projects/learner-project-work-model";
 
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -88,69 +86,22 @@ export default async function LearnerProjectsPage({
     pageSize: parsePageSize(one(params.pageSize)),
   };
 
-  const [allRows, attentionRows] = await Promise.all([
-    listMyProjectInstances(context),
-    listMyLearnerProjectAttention(context),
+  const directory = await listMyLearnerProjectPage(context,query);
+  const {rows,total,page,totalPages} = directory;
+  const attentionRows=await listMyLearnerProjectAttention(context);
+  const pageProjectIds=rows.map(row=>row.project.id);
+  const [teamSummaries,projectProgress,dueStates]=await Promise.all([
+    listMyLearnerProjectTeams(context,pageProjectIds),
+    listMyLearnerProjectProgress(context,pageProjectIds),
+    listMyLearnerProjectDueStates(context,pageProjectIds),
   ]);
-  const teamSummaries = await listMyLearnerProjectTeams(
-    context,
-    allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id),
+  const teamsByProject=new Map(teamSummaries.map(row=>[row.projectId,row]));
+  const progressByProject=new Map(projectProgress.map(row=>[row.projectId,row]));
+  const dueByProject=new Map(dueStates.map(row=>[row.projectId,row]));
+  const attentionByProject=new Map<string,"CHANGES_REQUESTED"|"DRAFT">(
+    attentionRows.map(item=>[item.projectId,item.kind]),
   );
-  const teamsByProject = new Map(teamSummaries.map(row => [row.projectId, row]));
-  const projectProgress = await listMyLearnerProjectProgress(
-    context,
-    allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id),
-  );
-  const progressByProject = new Map(projectProgress.map(row => [row.projectId, row]));
-  const dueStates = await listMyLearnerProjectDueStates(context, allRows.filter(row => row.memberRole === "LEARNER").map(row => row.project.id));
-  const dueByProject = new Map(dueStates.map(row => [row.projectId, row]));
-
-  const attentionByProject = new Map<
-    string,
-    "CHANGES_REQUESTED" | "DRAFT"
-  >(attentionRows.map((item) => [item.projectId, item.kind]));
-
-  const filtered = sortLearnerProjectRows(allRows
-    .filter((row) => row.memberRole === "LEARNER")
-    .filter((row) => learnerProjectMatchesSearch(
-      row.project, teamsByProject.get(row.project.id)?.mentorName ?? null, query.search,
-    ))
-    .filter((row) => {
-      if (!query.status) return true;
-      if (query.status === "CURRENT") {
-        return row.project.status !== "ARCHIVED" &&
-          row.project.status !== "COMPLETED";
-      }
-      if(query.status==="IN_PROGRESS")return row.project.status==="ACTIVE"&&
-        (progressByProject.get(row.project.id)?.completedTasks??0)>0;
-      if(query.status==="READY")return row.project.status==="COMPLETED";
-      if(query.status==="BLOCKED")return Boolean(row.project.blocker?.trim())||
-        learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id));
-      return row.project.status === query.status;
-    })
-    .filter((row) =>
-      query.attention !== "LEARNER_ACTION" ||
-      (row.project.status !== "ARCHIVED" && attentionByProject.has(row.project.id)),
-    )
-    .filter((row)=>query.attention!=="BLOCKED"||
-      (row.project.status!=="ARCHIVED"&&Boolean(row.project.blocker?.trim()))||
-      learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id)))
-    .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
-      row.project.status, progressByProject.get(row.project.id),
-    ))
-    .filter((row) => query.work !== "NO_TASKS" || learnerProjectHasNoTrackedTasks(
-      row.project.status, progressByProject.get(row.project.id),
-    ))
-    ,query.sort ?? "RECENT",progressByProject);
-
-  const total = filtered.length;
-  const emptyState = learnerProjectListEmptyState(
-    allRows.filter(row => row.memberRole === "LEARNER").length, total,
-  );
-  const size = query.pageSize ?? 25;
-  const totalPages = Math.max(1, Math.ceil(total / size));
-  const page = Math.min(query.page ?? 1, totalPages);
-  const rows = filtered.slice((page - 1) * size, page * size);
+  const emptyState=learnerProjectListEmptyState(directory.assignedCount,total);
 
   return (
     <div role="region" aria-label="Learner project directory" aria-live="polite" className="min-w-0 space-y-5">

@@ -17,7 +17,8 @@ export async function GET(request:Request){
   if(!parsed.success)return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
   const data=await getSuperAdminCompanyHiringReport(await getCurrentRequestContext(),parsed.data);
   const groups=hiringCompanyRollups(data.rows);
-  const rows:(string|number)[][]=[["Hiring Report Summary"]];
+  const rows:(string|number)[][]=[["Hiring Report Summary"],
+   ["Companies",groups.length],["Drives",data.rows.length]];
   const summaryKeys=[
    ["Total Applications","totalApplications"],
    ["Applied","applied"],
