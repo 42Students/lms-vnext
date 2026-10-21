@@ -53,7 +53,6 @@ export async function getCollegeStudentDetail(
     programName: programs.name,
     programCode: programs.code,
     departmentName: departments.name,
-    departmentCode: departments.code,
     cohortName: cohorts.name,
     cohortCode: cohorts.code,
   }).from(learnerProgramEnrollments)
