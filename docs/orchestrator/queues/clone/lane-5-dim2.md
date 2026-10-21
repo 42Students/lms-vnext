@@ -133,46 +133,46 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/after-college/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/job-types/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/app/globals.css`
+- [x] `src/app/(authenticated)/tpo/reports/ctc/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/after-college/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/blocked-dates/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/job-types/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/error.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/error.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/app/(authenticated)/tracker/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/app/globals.css`
 - [ ] `src/app/layout.tsx`
 - [ ] `src/components/academics/academics-actions.tsx`
 - [ ] `src/components/academics/academics-create-panel.tsx`
