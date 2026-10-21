@@ -58,9 +58,9 @@
   background: rgba(38,186,199,.08) !important;
 }
 .navArrow:focus-visible {
-  outline: 2px solid var(--lms-teal-deep) !important;
-  outline-offset: 2px !important;
-  color: var(--lms-teal-deep) !important;
+  outline: 2px solid var(--lms-primary-text) !important;
+  outline-offset: 3px !important;
+  color: var(--lms-primary-text) !important;
 }
 .today {
   min-height: 44px !important;
@@ -72,6 +72,14 @@
   border-color: var(--lms-primary-hover) !important;
   background: rgba(38,186,199,.08) !important;
   color: var(--lms-primary-hover) !important;
+}
+.today:focus-visible {
+  outline: 2px solid var(--lms-primary-text) !important;
+  outline-offset: 3px !important;
+}
+.navArrow:disabled, .today:disabled, .legendChip:disabled {
+  cursor: not-allowed !important;
+  opacity: 0.5;
 }
 .period {
   display: inline-flex;
@@ -117,8 +125,8 @@
   border-color: var(--lms-primary) !important;
 }
 .legendChip:focus-visible {
-  outline: 2px solid var(--lms-teal-deep) !important;
-  outline-offset: 2px !important;
+  outline: 2px solid var(--lms-primary-text) !important;
+  outline-offset: 3px !important;
 }
 .legendChip[aria-pressed="true"] {
   background: var(--lms-primary-subtle) !important;
@@ -196,7 +204,7 @@
 }
 .day:hover { background: var(--lms-primary-subtle) !important; }
 .day:focus-visible {
-  outline: 2px solid var(--lms-teal-deep) !important;
+  outline: 2px solid var(--lms-primary-text) !important;
   outline-offset: -2px !important;
 }
 .outsideDay { background: var(--lms-neutral-50) !important; }
@@ -275,8 +283,8 @@
 }
 .agendaEvent:focus-within,
 .mobileRow:focus-within {
-  outline: 2px solid var(--lms-teal-deep);
-  outline-offset: 2px;
+  outline: 2px solid var(--lms-primary-text);
+  outline-offset: 3px;
 }
 .agendaEvent[data-kind="ASSESSMENT"],
 .mobileRow[data-kind="ASSESSMENT"] { border-left-color: #1d4ed8; }
