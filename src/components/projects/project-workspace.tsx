@@ -422,9 +422,10 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
     <PageHeader
             title={workspace.project.title?.trim()||"Workspace"}
             description={mode==="MENTOR"
-              ? [workspace.project.courseLabel??"Course not linked",
-                 "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
-                   ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
+              ? [workspace.project.courseLabel?.trim()||null,
+                 workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
+                 workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
+                .filter(Boolean).join(" · ")||"Project workspace"
               : (workspace.project.summary ?? undefined)}
             actions={
               <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
@@ -624,10 +625,18 @@ export function ProjectWorkspace({
           className="border-y border-border bg-[var(--lms-neutral-50)] px-4 py-3"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":workspace.project.status==="COMPLETED"?"Completed project · read only":"Read-only project access"}
+            {archived?"Archived workspace":
+              workspace.project.status==="COMPLETED"?"Completed project · read only":
+              "Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
-            {archived && mode==="MENTOR"?"This workspace is archived. You can read everything here, but tasks, resources, meetings and the submission can no longer be changed.":workspace.project.status==="COMPLETED"?"This project is complete. Existing work and meetings remain available to read; editing is disabled.":"Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
+            {archived&&mode==="MENTOR"?
+              "This workspace is archived. You can review historical tasks, resources, meetings and submissions, but cannot change them.":
+              workspace.project.status==="COMPLETED"?
+                "This project is complete. Existing work and meetings remain available to read; editing is disabled.":
+                mode==="MENTOR"?
+                  "Your Project Mentor membership is read-only. Ask the College Admin to restore editing access or assign a writable Mentor role.":
+                  "Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
           </p>
         </section>
       ) : null}
@@ -1190,7 +1199,7 @@ export function ProjectWorkspace({
           }
           const submitted=[...latest.values()].filter(item=>item.status==="SUBMITTED").length;
           const done=liveTasks.filter(task=>task.status==="DONE").length;
-          const active=liveTasks.filter(task=>task.status==="IN_PROGRESS").length;
+          const active=liveTasks.filter(task=>["IN_PROGRESS","IN_REVIEW"].includes(task.status)).length;
           return <div className="space-y-4">
             <section aria-label="Task plan metrics" className="space-y-2">
              <h3 className="text-base font-semibold text-foreground">Task plan</h3>
@@ -1955,11 +1964,14 @@ export function ProjectWorkspace({
           </div>:null}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
+              {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
+                Team cadence</p>:null}
               <h2 className="m-0 text-lg font-semibold text-foreground">
-                Meetings
+                {mode==="ADMIN"?"Meeting plan":"Meetings"}
               </h2>
               <p className="mt-1 text-sm text-body">
-                {mode==="LEARNER"?"Upcoming meetings and recent history.":"Requested, scheduled and completed Project conversations."}
+                {mode==="LEARNER"?"Upcoming meetings and recent history.":
+                  "Keep project conversations attached to the work they move forward."}
               </p>
             </div>
             {!readOnly && mode === "LEARNER" ? (
@@ -2005,6 +2017,9 @@ export function ProjectWorkspace({
                 id: task.id, title: task.title, sprintId: task.sprintId,
               }))} />
           ) : null}
+          {mode==="ADMIN"?<p className="border-b border-border pb-3 text-xs text-body">
+            Calendar sync and follow-up state remain system-managed.
+          </p>:null}
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
