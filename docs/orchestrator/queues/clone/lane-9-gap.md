@@ -65,8 +65,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/departments.js`
 - [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminResources.js`
 - [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditHub.js`
-- [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditLogs.js`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js`
+- [x] U027 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditLogs.js`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Batches.js`
 - [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeBranding.js`
 - [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSubdomain.js`
