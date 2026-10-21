@@ -89,7 +89,7 @@ export function PublicRecruiterJoinForm({
   const college = preview.kind === "READY" ? preview.collegeName : "";
   const company = preview.kind === "READY" ? preview.companyDomain ?? "" : "";
   const companyLabel = preview.kind === "READY"
-    ? preview.companyName?.trim() || preview.companyDomain || "your company" : "your company";
+    ? preview.companyName?.trim() || "your company" : "your company";
 
   async function sendCode() {
     if(submittingRef.current)return;
@@ -158,9 +158,12 @@ export function PublicRecruiterJoinForm({
         const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
         showError(knownJoinError(code)?joinErrorMessage(code):publicJoinErrorCopy("JOIN",response.status,String(code??"COULD_NOT_JOIN"),scope,company),joinFieldForCode(code));return;
       }
-      const result=await response.json() as {outcome:"JOINED"|"ALREADY_JOINED";signInEmail:string};
-      setAlreadyJoined(result.outcome==="ALREADY_JOINED");
-      setSignInEmail(result.signInEmail);
+      const result=await response.json() as {
+        outcome?:"JOINED"|"ALREADY_JOINED";status?:"JOINED"|"ALREADY_JOINED";
+        signInEmail?:string;email?:string;
+      };
+      setAlreadyJoined((result.outcome??result.status)==="ALREADY_JOINED");
+      setSignInEmail(result.signInEmail||result.email||email);
       setJoined(true);
     } catch {
       showError(joinErrorMessage(null));
@@ -171,8 +174,8 @@ export function PublicRecruiterJoinForm({
   }
 
   return (
-    <main className={`${authStyles.page} !bg-[#f5f7f9] mx-auto flex min-h-dvh w-full max-w-[440px] min-w-0 flex-col justify-center px-4 pb-8 pt-20 min-[768px]:py-12`}>
-      <Card as="section" className="w-full rounded-[8px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-sm sm:p-5">
+    <main className={`${authStyles.page} !bg-[#f5f7f9] mx-auto flex min-h-dvh w-full min-w-0 items-center justify-center px-4 py-4`}>
+      <Card as="section" className="w-full max-w-[440px] rounded-[8px] border border-[var(--lms-canvas-border)] bg-white p-4 shadow-sm sm:p-5">
         {preview.kind !== "READY" ? (
           <>
             <div className="mb-4 flex justify-center" aria-hidden="true">
@@ -180,7 +183,7 @@ export function PublicRecruiterJoinForm({
             </div>
             <PageHeader title="This link is no longer valid" />
             <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one. Already joined? Sign in with your work email.</p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -194,7 +197,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               {"Sign in with your work email, "+signInEmail+", on the college's placement address. We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
         ) : (
           <>
@@ -208,7 +211,7 @@ export function PublicRecruiterJoinForm({
             }}>
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Work email
-                <Input ref={emailRef} type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
+                <Input ref={emailRef} type="email" required autoComplete="email" value={email} readOnly={Boolean(sentTo)}
                   aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"join-email-error":undefined}
                   onChange={event => {setEmail(event.target.value);clearField("email");}} maxLength={254}
                   className="w-full min-w-0" />
@@ -259,7 +262,7 @@ export function PublicRecruiterJoinForm({
                 </label>
               ) : null}
               {!sentTo ? (
-                <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Send me a code</Button>
+                <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9">Send me a code</Button>
               ) : (
                 <>
                   <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
@@ -271,9 +274,9 @@ export function PublicRecruiterJoinForm({
                     {fieldErrors.code?<span id="join-code-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.code}</span>:null}
                     <span className="text-xs font-normal text-muted-foreground">This proves the email is yours.</span>
                   </label>
-                  <div className="flex flex-wrap gap-3">
-                    <Button type="submit" loading={pending} className="w-full min-[768px]:w-auto">Join {college} placements</Button>
-                    <button type="button" disabled={pending} onClick={()=>void sendCode()} className="min-h-11 px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover disabled:opacity-50 md:min-h-9">Send a new code</button>
+                  <div className="flex min-w-0 flex-col items-stretch gap-2">
+                    <Button type="submit" loading={pending} className="w-full">Join {college} placements</Button>
+                    <button type="button" disabled={pending} onClick={()=>void sendCode()} className="min-h-11 w-full px-2 text-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover disabled:opacity-50 md:min-h-9">Send a new code</button>
                   </div>
                 </>
               )}

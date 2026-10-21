@@ -7,6 +7,15 @@ import { updateMembershipLifecycleWithRuntime } from "@/modules/people/runtime";
 
 export const runtime = "nodejs";
 
+/** Legacy /api/v1/admin/users/{userType}/{userId}/suspend and /reactivate
+ * contracts are RETIRED rather than silently redirected: their numeric
+ * account IDs and account-wide semantics cannot identify the selected college
+ * membership. Integrators must resolve a scoped UUID membership and issue
+ * PATCH /api/people/{membershipId}/lifecycle with a same-origin request.
+ * Neither a numeric legacy ID nor a role label can authorize this mutation.
+ */
+export const LEGACY_ACCOUNT_LIFECYCLE_CONTRACT="RETIRED_ACCOUNT_WIDE_API" as const;
+
 type RouteContext = {
   params: Promise<{
     membershipId: string;
@@ -55,6 +64,7 @@ export async function PATCH(
       // must not interpret SUSPENDED here as a platform-wide user ban.
       scope: "COLLEGE_MEMBERSHIP",
       accountStatusUnchanged: true,
+      legacyAccountLifecycleContract:LEGACY_ACCOUNT_LIFECYCLE_CONTRACT,
       status: person.membership.status,
       suspendedAt: person.membership.suspendedAt,
       suspensionReason: person.membership.suspensionReason,

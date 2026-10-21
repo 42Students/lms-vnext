@@ -74,7 +74,12 @@ export async function updateOwnLearnerProfileDocument(context:RequestContext,raw
       eventType:ACTIVITY_EVENT_TYPES.IDENTITY_LEARNER_PROFILE_SECTION_UPDATED,
       collegeId:member.collegeId,organizationId:member.organizationId,
       subjectType:"learner_profile",subjectId:member.id,summary:"Learner updated own profile details",
-      metadata:{section:"document",changedFields:fields},
+      // No-op/cancel never reaches an activity mutation because fields.length
+      // is zero and returned above. A full-document save uses document CAS;
+      // preferences-only saves use their independent persisted baseline.
+      metadata:{section:"document",changedFields:fields,
+        mutationKind:"document" in input?"FULL_DOCUMENT":"JOB_PREFERENCES_PATCH",
+        actorMembershipId:member.id,scope:"COLLEGE_MEMBERSHIP"},
     });
     return {...saved,profileDocument:learnerProfileDocumentSchema.parse(saved.profileDocument)};
   });

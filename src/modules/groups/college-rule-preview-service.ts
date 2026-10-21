@@ -18,6 +18,15 @@ import {
 
 type Reader = Pick<ReturnType<typeof getDb>, "select">;
 
+/** Old GET without a configured rule returned no content (204).
+ * The vNext page renders this explicit state for screen readers instead of
+ * presenting a generic failure. No eligibility query is executed.
+ */
+export const COLLEGE_RULE_NOT_CONFIGURED_STATE={
+ title:"No rule configured",
+ message:"This group has no automatic membership rule. Preview only; no learners were evaluated or changed.",
+} as const;
+
 export class CollegeRulePreviewError extends Error {
   constructor(public readonly code:
     "GROUP_NOT_FOUND" | "RULE_NOT_CONFIGURED" | "RULE_CRITERIA_UNSUPPORTED" |

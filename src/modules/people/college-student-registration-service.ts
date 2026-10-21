@@ -8,6 +8,8 @@ import { requirePermission } from "@/modules/permissions/policy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
 import { AcademicsServiceError } from "@/modules/academics/errors";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { placeImportedLearnerInSection } from "./college-student-import-placement";
 import { learnerProfileDocumentSchema } from "./profile-validation";
 import { onboardPersonWithRuntime, upsertLearnerProfileWithRuntime } from "./runtime";
@@ -111,6 +113,18 @@ export async function registerCollegeStudent(context: RequestContext, raw: unkno
       await tx.update(learnerProfiles).set({
         profileDocument: doc, updatedAt: new Date(),
       }).where(eq(learnerProfiles.membershipId, person.membership.id));
+      // Unlike legacy AdminAuditLog's numeric learner ID, every registration
+      // stage links back to the same tenant-scoped membership UUID. Commit the
+      // personal-details audit alongside the personal-details write.
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.IDENTITY_LEARNER_PROFILE_SECTION_UPDATED,
+        collegeId:member.collegeId,organizationId:member.organizationId,
+        subjectType:"learner_profile",subjectId:person.membership.id,
+        summary:"College Admin registered learner personal details",
+        metadata:{membershipId:person.membership.id,enrollmentId,
+          changedFields:["rollNumber","personalDetails","address"],
+          source:"college-student-registration"},
+      });
     });
   } catch {
     failures.push("Student personal details need updating in the profile.");
@@ -119,8 +133,16 @@ export async function registerCollegeStudent(context: RequestContext, raw: unkno
     try { await placeImportedLearnerInSection(context,enrollmentId,input.sectionId); }
     catch { failures.push("Class placement failed; place the student from the directory."); }
   }
+  // Identity creation (IDENTITY_PERSON_ONBOARDED), program enrollment
+  // (ACADEMICS_LEARNER_ENROLLED), optional class placement
+  // (ACADEMICS_CLASS_UPDATED), and the profile event above form the audit
+  // trail. New accounts use OTP at login; registration does not send an SMS
+  // or mail blast. Identity and academic writers can succeed independently.
   return {
     membershipId: person.membership.id, enrollmentId,
+    auditReferences:{membershipId:person.membership.id,enrollmentId,
+      sectionId:input.sectionId??null},
+    externalNotificationsQueued:false as const,
     status: failures.length ? "PARTIAL" as const : "REGISTERED" as const,
     failures,
   };

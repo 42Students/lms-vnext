@@ -23,6 +23,9 @@ export type CollegeBrandingView = CollegeBrandingInput & {
  * /api/colleges/:id/branding/logo endpoint. Legacy sign-in loginMethods does
  * NOT belong in presentation branding: college_signin_policies is the
  * separately versioned, audited source of truth with EMAIL_AND_PHONE default.
+ * The four original EMAIL_PHONE/PHONE_EMAIL/EMAIL_ONLY/PHONE_ONLY options
+ * are projected by effectivePublicCollegeSignInPolicy after the host is
+ * verified, while OTP route authorization continues to use that policy.
  * Existing colleges require no historical ID or R2 object-key migration.
  * An absent field in this vNext editor is intentional NULL/clear, not a
  * legacy partial-update; expectedVersion protects concurrent form saves. */

@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Drawer } from "@/components/ui/drawer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { LoadingState } from "@/components/ui/loading-state";
@@ -59,6 +60,9 @@ export function SuperAdminHrDetailDrawer({
   const [renderNow] = useState(() => Date.now());
   const [validUntil,setValidUntil] = useState("");
   const [expiryError,setExpiryError] = useState("");
+  const [lifecycleConfirm,setLifecycleConfirm]=useState<"ARCHIVED"|"ACTIVE"|null>(null);
+  const [lifecyclePending,setLifecyclePending]=useState(false);
+  const [lifecycleError,setLifecycleError]=useState("");
   const [
     selectedRelationshipId,
     setSelectedRelationshipId,
@@ -82,6 +86,33 @@ export function SuperAdminHrDetailDrawer({
       )
     : [];
 
+  /** The old Delete action is a reversible recruiter-profile archive here.
+   * Never delete the globally shared user or their historical college grants. */
+  async function changeLifecycle(){
+    if(!account||!account.accountManageable||!lifecycleConfirm||lifecyclePending)return;
+    const intended=lifecycleConfirm, target=account.userId;
+    setLifecyclePending(true);setLifecycleError("");
+    try{
+      const response=await fetch("/api/admin/hr/"+encodeURIComponent(target),{
+        method:"PATCH",headers:{"content-type":"application/json"},cache:"no-store",
+        body:JSON.stringify(intended==="ARCHIVED"?
+          {status:"ARCHIVED",suspensionReason:"Removed from recruiter accounts by Super Admin"}:
+          {status:"ACTIVE"}),
+      });
+      const body:unknown=await response.json().catch(()=>null);
+      if(!response.ok)throw new Error(
+        body&&typeof body==="object"&&"error" in body?
+        String((body as {error:unknown}).error):"REQUEST_FAILED");
+      if(!body||typeof body!=="object"||!("account" in body)||
+         !body.account||typeof body.account!=="object"||
+         !("status" in body.account)||body.account.status!==intended)
+        throw new Error("Saved status was not acknowledged; reload to verify.");
+      setLifecycleConfirm(null);
+      onReload();
+    }catch(cause){
+      setLifecycleError(cause instanceof Error?cause.message:"Could not change recruiter access.");
+    }finally{setLifecyclePending(false);}
+  }
   async function grant() {
     if (!selectedRelationshipId || pending) {
       return;
@@ -106,9 +137,9 @@ export function SuperAdminHrDetailDrawer({
     <Drawer
       open
       className="md:!w-[min(640px,100vw)]"
-      dismissible={!pending}
+      dismissible={!pending&&!lifecyclePending}
       onOpenChange={(open) => {
-        if (!open && !pending) {
+        if (!open && !pending&&!lifecyclePending) {
           onClose();
         }
       }}
@@ -123,7 +154,7 @@ export function SuperAdminHrDetailDrawer({
           {account ? (
             <Button className="min-h-11 md:min-h-9"
               variant="secondary"
-              disabled={pending||!account.accountManageable}
+              disabled={pending||lifecyclePending||!account.accountManageable}
               onClick={() => onEdit(account)}
             >
               Edit account
@@ -131,7 +162,7 @@ export function SuperAdminHrDetailDrawer({
           ) : null}
           <Button className="min-h-11 md:min-h-9"
             variant="secondary"
-            disabled={pending}
+            disabled={pending||lifecyclePending}
             onClick={onClose}
           >
             Close
@@ -166,6 +197,9 @@ export function SuperAdminHrDetailDrawer({
             <Button type="button" variant="link" size="sm" onClick={onReloadOptions}>Retry college options</Button>
           </p>:null}
           {actionError?<ErrorState title="Action failed" description={actionError}/>:null}
+          {lifecycleError?<p role="alert" className="border-l-2 border-error px-3 py-2 text-sm text-error">{lifecycleError}
+           <Button type="button" variant="link" size="sm" onClick={onReload}>Recheck account</Button>
+          </p>:null}
           <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
@@ -390,8 +424,41 @@ export function SuperAdminHrDetailDrawer({
               Terminate all sessions
             </Button>
           </section>
-
-
+          <section className="min-w-0 space-y-3 border-b border-border pb-5" aria-label="Recruiter account lifecycle">
+            <h3 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h3>
+            <p className="text-sm leading-5 text-body">
+              Removing a recruiter suspends the recruiter profile and signs out active sessions.
+              The canonical user, audit history and college grants are retained; this is not
+              a permanent deletion of a shared identity. An archived account can be restored here.
+              Re-entering the same mobile on the new-account form does not automatically restore it.
+            </p>
+            {account.status==="ACTIVE"?<Button type="button" variant="danger"
+              disabled={pending||lifecyclePending||!account.accountManageable}
+              onClick={()=>{setLifecycleError("");setLifecycleConfirm("ARCHIVED");}}>
+              Delete recruiter account…
+            </Button>:account.status==="ARCHIVED"?<Button type="button" variant="secondary"
+              disabled={pending||lifecyclePending||!account.accountManageable}
+              onClick={()=>{setLifecycleError("");setLifecycleConfirm("ACTIVE");}}>
+              Restore recruiter account…
+            </Button>:<p className="text-xs text-muted-foreground">
+              This platform account is disabled; use the platform identity owner for reinstatement.
+            </p>}
+            {!account.accountManageable?<p role="status" className="text-xs text-warning">
+              The account has active grants beyond the selected administrative scope.
+              Choose a permitted scope before changing account-wide access.
+            </p>:null}
+          </section>
+          <ConfirmDialog open={lifecycleConfirm!==null}
+            onOpenChange={next=>{if(!next&&!lifecyclePending)setLifecycleConfirm(null);}}
+            title={(lifecycleConfirm==="ARCHIVED"?"Delete ":"Restore ")+hrDisplayName(account)+"?"}
+            description={lifecycleConfirm==="ARCHIVED"?
+              "This removes recruiter sign-in access, revokes current sessions and retains the account for audited restoration.":
+              "This restores the archived recruiter profile; current college grant validity and verification rules still apply."}
+            confirmLabel={lifecycleConfirm==="ARCHIVED"?"Delete account":"Restore account"}
+            confirmVariant={lifecycleConfirm==="ARCHIVED"?"danger":"primary"}
+            pending={lifecyclePending}
+            confirmDisabled={pending||!account.accountManageable}
+            onConfirm={()=>{void changeLifecycle();}}/>
         </div>
       )}
     </Drawer>

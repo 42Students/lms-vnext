@@ -10,7 +10,6 @@ const legacySections:Record<string,LearnerProfileSection>={
  "extra-curricular":"extracurriculars",
  "qualification-details":"education",
  "personalDetails":"personal-details",
- "job-preferences":"metadata",
 };
 /** Normalize older self-service profile links without broadening learner access. */
 export function learnerProfileResolveSection(raw:unknown):LearnerProfileSection|null{

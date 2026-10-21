@@ -98,8 +98,12 @@ export function CollegeGroupDetailWrites({
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
       <div className="flex flex-wrap gap-2">
+       <a href={"/college/groups/"+encodeURIComponent(groupId)+"/rule-preview"}
+         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+         Preview rule
+       </a>
        <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!initialRule}
-        onClick={()=>submit({},"Apply this eligibility rule to eligible learners now? Review the preview before applying.","APPLY")}>
+        onClick={()=>submit({},"Apply this eligibility rule to eligible learners now? Confirm you reviewed the read-only eligibility preview.","APPLY")}>
         Apply rule
        </Button>
        <Button variant="secondary" type="button" disabled={busy||!initialRule}

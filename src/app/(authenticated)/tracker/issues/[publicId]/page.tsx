@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {TrackerIssueCopyActions} from "@/components/tracker/tracker-issue-copy-actions";
 import {TrackerReporterIssueDetail} from "@/components/tracker/tracker-reporter-issue-detail";
+import {TrackerScreenshotGallery} from "@/components/tracker/tracker-screenshot-gallery";
 import {Alert} from "@/components/ui/alert";
 import {TrackerIssueLogsPanel} from "@/components/tracker/tracker-issue-logs-panel";
 import { notFound, redirect } from "next/navigation";
@@ -163,17 +164,9 @@ export default async function TrackerIssueDetailPage({
           {detail.attachmentsUnavailable?<Alert tone="warning">Screenshots could not be loaded right now. The report remains available.
             {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="text-link underline">Retry screenshots</Link>
           </Alert>:null}
-          {detail.attachments.length?<div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {detail.attachments.map((attachment,index)=><div key={attachment.id}
-              className="flex min-w-0 flex-col justify-between gap-3 rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
-              <div className="min-h-24 rounded bg-muted p-3">
-                <p className="break-words font-semibold">{attachment.originalFilename||`Screenshot ${index+1}`}</p>
-                <span className="mt-2 block text-xs text-muted-foreground">Preview unavailable</span>
-              </div>
-              <p className="text-xs text-muted-foreground">{attachment.contentType} · {
-                Math.ceil(attachment.sizeBytes/1024)} KiB · {when(attachment.createdAt)}</p>
-            </div>)}
-          </div>:null}
+          {detail.attachments.length?
+            <TrackerScreenshotGallery publicId={issue.publicId} screenshots={detail.attachments}/>:
+            !detail.attachmentsUnavailable?<p className="mt-3 text-xs text-muted-foreground">No screenshots attached.</p>:null}
           {issue.evidenceLink?<div className="mt-3 text-sm">
             {/^https:\/\/[^\s]+$/i.test(issue.evidenceLink)?
               <ThirdPartyLink href={issue.evidenceLink} label="Open linked evidence ↗"/>:
@@ -184,7 +177,7 @@ export default async function TrackerIssueDetailPage({
               </span>}
           </div>:null}
           <p className="mt-3 text-xs text-muted-foreground">
-            Private screenshots have no public URL. Preview stays unavailable until an authorized signed-image route is provided.
+            Image previews use a short-lived private grant after checking your tracker permissions.
           </p>
         </section>:null}
       <section aria-label="Issue details" className="rounded-[var(--lms-control-radius)] border border-border p-4">

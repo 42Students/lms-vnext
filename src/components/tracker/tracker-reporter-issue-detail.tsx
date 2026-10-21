@@ -6,6 +6,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {TrackerScreenshotGallery} from "@/components/tracker/tracker-screenshot-gallery";
 import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
 import {
   getMyTrackerReport,listMyTrackerReportHistory,listMyTrackerReportScreenshots,
@@ -83,13 +84,7 @@ export async function TrackerReporterIssueDetail({
     {screenshotsResult.status==="fulfilled" && screenshots.length>0 ?
       <section aria-label="Your issue screenshots" className="space-y-2">
         <h2 className="font-semibold">Screenshots</h2>
-        <ul className="divide-y divide-[var(--lms-canvas-border)]">
-          {screenshots.map(file=><li key={file.id} className="py-2 text-sm">
-            <span className="break-words font-semibold">{file.originalFilename}</span>
-            <span className="ml-2 text-xs text-muted-foreground">{file.contentType} · {Math.ceil(file.sizeBytes/1024)} KiB</span>
-          </li>)}
-        </ul>
-        <p className="text-xs text-muted-foreground">Private storage keys and unsigned file URLs are never displayed.</p>
+        <TrackerScreenshotGallery publicId={report.publicId} screenshots={screenshots}/>
       </section>:null}
     <p className="text-xs text-muted-foreground">This is your own report's read-only status history. Engineering notes and other reporters' issues remain private.</p>
   </article>;

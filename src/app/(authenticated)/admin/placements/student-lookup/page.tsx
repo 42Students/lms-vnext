@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { AdminPlacementStudentSearch } from "@/components/placements/admin-placement-student-search";
-import { lookupCollegeStudentPlacement } from "@/modules/placements/college-placement-student-lookup-service";
+import { lookupCollegeStudentPlacement, getCollegeStudentPlacementDetails } from "@/modules/placements/college-placement-student-lookup-service";
 import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-admin-placement-student-search-model";
 
 function humanStage(raw: string | null, offer: string | null, joining: string | null) {
@@ -67,6 +67,14 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.student)
     ? params.student : null;
   const selectedStudent = choices.find(person => person.membershipId === requestedStudent) ?? null;
+  const selectedDetail = selectedStudent
+    ? await getCollegeStudentPlacementDetails(ctx,{membershipId:selectedStudent.membershipId})
+        .then(value=>({ok:true as const,value}))
+        .catch(()=>({ok:false as const,value:null}))
+    : null;
+  const selectedProfile = selectedDetail?.value?.student.profile;
+  const fullApplicationRows = selectedDetail?.value?.applications??[];
+  const byApplicationId = new Map(fullApplicationRows.map(row=>[row.applicationId,row]));
   const studentLabel = selectedStudent
     ? selectedStudent.name?.trim() || selectedStudent.email || `Student #${selectedStudent.membershipId}`
     : "";
@@ -113,20 +121,27 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
       <p className="text-xs text-muted-foreground">{selectedStudent.roll ?? "No roll number"}
         {selectedStudent.email ? ` · ${selectedStudent.email}` : ""}
       </p>
+      {selectedDetail&&!selectedDetail.ok?<p role="alert" className="text-sm text-error">The private learner profile and upcoming interviews could not be loaded. Search results below may be incomplete. Refresh to retry.</p>:null}
       <div className="space-y-1" aria-label="Learner profile sections">
         <details className="border-b border-border py-2">
           <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Resume</summary>
-          <p className="pt-2 text-xs text-muted-foreground">Resume details are managed in the learner’s profile. Only authorized, signed document links should be displayed here.</p>
+          <p className="pt-2 text-xs text-muted-foreground">{selectedProfile?.resumeAvailable
+            ? "A verified resume is stored in the learner’s private profile. Open the authorized student directory to review it; no public download URL is exposed."
+            : "No verified resume available. Upload and verification are managed in the learner’s profile."}</p>
           <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
         </details>
         <details className="border-b border-border py-2">
           <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Skills</summary>
-          <p className="pt-2 text-xs text-muted-foreground">Review or change skill entries from the authorized learner profile.</p>
+          {selectedProfile?.skills.length ? <ul className="list-disc space-y-1 pl-5 pt-2 text-sm text-body">
+            {selectedProfile.skills.map((skill,index)=><li key={index}>{skill}</li>)}
+          </ul> : <p className="pt-2 text-xs text-muted-foreground">No skills recorded in the authorized learner profile.</p>}
           <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
         </details>
         <details className="border-b border-border py-2">
           <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Job Preferences</summary>
-          <p className="pt-2 text-xs text-muted-foreground">Placement preferences are managed with the learner’s profile.</p>
+          {selectedProfile?.jobPreferences.length ? <ul className="list-disc space-y-1 pl-5 pt-2 text-sm text-body">
+            {selectedProfile.jobPreferences.map((preference,index)=><li key={index}>{preference}</li>)}
+          </ul> : <p className="pt-2 text-xs text-muted-foreground">No job preferences recorded in the authorized learner profile.</p>}
           <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
         </details>
       </div>
@@ -141,7 +156,8 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
         ? <EmptyState title="No applications yet" description="No applications yet — this student hasn't applied to any job posting." />
         : <ul className="min-w-0 divide-y divide-border border-y border-border">
           {selectedStudent.applications.map((row, index) => {
-            const { status, label } = humanStage(row.applicationStatus, row.offerStatus, row.joining);
+            const detailed=byApplicationId.get(row.applicationId);
+            const { status, label } = humanStage(row.legacyStage??row.applicationStatus, row.offerStatus, row.joining);
             return <li key={row.jobId + ":" + index} className="min-w-0 space-y-1.5 py-3">
               <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
                 <strong className="break-words text-[var(--lms-heading)]">{row.job?.trim() || "Job"}</strong>
@@ -158,6 +174,13 @@ export default async function SuperAdminPlacementStudentLookup({ searchParams }:
                   row.joining === "JOINED" ? " · Joined" :
                   row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
               </p>
+              {detailed?.rejectionReason ? <p className="text-xs text-error">Rejection reason: {detailed.rejectionReason}</p> : null}
+              {detailed?.nextInterview ? <p className="text-xs text-body">
+                Next interview: {detailed.nextInterview.roundName} · {new Intl.DateTimeFormat("en-IN",{
+                  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+                }).format(new Date(detailed.nextInterview.startsAt))} IST
+                {detailed.nextInterview.room?" · "+detailed.nextInterview.room:""}
+              </p> : null}
             </li>;
           })}
         </ul>}
