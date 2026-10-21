@@ -38,12 +38,13 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,
+  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,openCreateCourse=false,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
   allowOfferingLifecycle?: boolean;
   duplicateCourseId?:string;
+  openCreateCourse?:boolean;
   courseBasePath?:string;
   catalogueQuery?:CollegeCourseCatalogueQuery;
   catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
@@ -456,7 +457,9 @@ export function AdminCourseOverview({
         />
       </div>
 
-      <Disclosure title="Create Course and offering" defaultOpen={Boolean(duplicateCourseId)}
+      <div className={courseBasePath.startsWith("/admin/")?"grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"space-y-[var(--lms-space-4)]"}>
+      <div id="create-course" className="min-w-0">
+      <Disclosure title="Create New Course" defaultOpen={openCreateCourse||Boolean(duplicateCourseId)||courseBasePath.startsWith("/admin/")}
         className="min-w-0 border-y border-[var(--lms-canvas-border)]"
         contentClassName="min-w-0 pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
       <AdminCourseCreatePanel
@@ -474,6 +477,7 @@ export function AdminCourseOverview({
         facultyTruncated={workspace.facultyTruncated}
       />
       </Disclosure>
+      </div>
 
       <section className="min-w-0 space-y-[var(--lms-space-3)]">
         <div>
@@ -502,7 +506,7 @@ export function AdminCourseOverview({
             {courseBasePath.startsWith("/admin/") ? <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Per page
               <Select name="pageSize" defaultValue={catalogueQuery.pageSize ?? "25"} className="min-h-11 md:min-h-9">
-                <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+                <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
               </Select>
             </label> : null}
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:col-span-2">
@@ -540,6 +544,7 @@ export function AdminCourseOverview({
             label="Course catalogue pages" showBoundaryLinks={false}/>
          </div>:null}
       </section>
+      </div>
 
       <Disclosure title="Course Offerings" className="min-w-0 border-t border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <div>
