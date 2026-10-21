@@ -811,7 +811,7 @@ export default async function HrPlacementJobPage({
             </li>)}
           </ul>
           {roundSchedule.length?<div className="grid gap-3 md:grid-cols-2">
-            {roundSchedule.map(round=><article key={round.id} className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-4">
+            {roundSchedule.map(round=><article key={round.id} className="rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] min-[768px]:p-[var(--lms-canvas-padding)] shadow-none">
               <h4 className="font-semibold text-[var(--lms-heading)]">{round.sequence}. {round.name}</h4>
               <p className="mt-1 text-sm text-body">{formatRoundTime(round.startsAt)} IST</p>
               <p className="text-xs text-muted-foreground">{round.endsAt?"Ends "+formatRoundTime(round.endsAt)+" IST":"Duration not recorded"}</p>
