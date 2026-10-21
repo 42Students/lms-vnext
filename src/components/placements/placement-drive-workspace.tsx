@@ -4,6 +4,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
 import { Alert } from "@/components/ui/alert";
@@ -66,38 +68,42 @@ export async function PlacementDriveWorkspace({
   overview?: ReactNode;
   applicationsHref?: string;
 }) {
-  const [
-    driveDay,
-    evaluation,
-    screening,
-    job,
-    eligibilityPolicy,
-    offerCandidates,
-    roleOptions,
-    placementRequests,
-  ] = await Promise.all([
-    getPlacementDriveDay(context, jobId),
-    getPlacementEvaluationConfig(context, jobId),
-    listPlacementScreeningQueue(context, jobId),
-    getPlacementJob(context, jobId),
-    getJobEligibilityPolicy(context, jobId),
-    listPlacementOfferCandidates(
-      context,
-      jobId,
-    ),
-    listPlacementRoleOptions(
-      context,
-      jobId,
-    ),
-    listPlacementJobRequests(
-      context,
-      jobId,
-    ),
-  ]);
-
-  const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId):[];
-  const isTpo = hasMembershipRole(context,"TPO");
+  // The drive identity is required; panel counts, staff tooling and previews
+  // are independent reads and must not turn an unavailable section into "0".
+  const job=await getPlacementJob(context,jobId);
+  const optional=await Promise.allSettled([
+    getPlacementDriveDay(context,jobId),
+    getPlacementEvaluationConfig(context,jobId),
+    listPlacementScreeningQueue(context,jobId),
+    getJobEligibilityPolicy(context,jobId),
+    listPlacementOfferCandidates(context,jobId),
+    listPlacementRoleOptions(context,jobId),
+    listPlacementJobRequests(context,jobId),
+  ] as const);
+  for(const result of optional){
+   if(result.status==="rejected"&&result.reason instanceof AuthorizationError)
+    throw result.reason;
+  }
+  const [dayRead,evaluationRead,screeningRead,policyRead,offersRead,rolesRead,requestsRead]=optional;
+  const driveDay=dayRead.status==="fulfilled"?dayRead.value:null;
+  const evaluation=evaluationRead.status==="fulfilled"?evaluationRead.value:null;
+  const screening=screeningRead.status==="fulfilled"?screeningRead.value:null;
+  const eligibilityPolicy=policyRead.status==="fulfilled"?policyRead.value:null;
+  const offerCandidates=offersRead.status==="fulfilled"?offersRead.value:null;
+  const roleOptions=rolesRead.status==="fulfilled"?rolesRead.value:null;
+  const placementRequests=requestsRead.status==="fulfilled"?requestsRead.value:null;
+  const isTpo=hasMembershipRole(context,"TPO");
   const isSuperAdminDrive=applicationsHref?.startsWith("/admin/placements/jobs/")??false;
+  const driveHref=(isTpo?"/tpo/placements/jobs/":isSuperAdminDrive?
+   "/admin/placements/jobs/":"/college/placements/jobs/")+encodeURIComponent(jobId);
+  if(!driveDay)return <div className="min-w-0 space-y-4">
+   <PageHeader title={job.title} description="The placement drive is available, but the current schedule could not be loaded."/>
+   <ErrorState title="Couldn't refresh this drive"
+    description="Showing the last drive data we loaded is unavailable in this request. Retry to load the current schedule; no empty state or zero count has been inferred."
+    action={<Link href={driveHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+  </div>;
+
+  const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId).catch(()=>null):[];
   const expiredPublished=job.status==="PUBLISHED"&&job.applicationDeadline!==null&&
     job.applicationDeadline.getTime()<Date.now();
   // Read optional panels concurrently. Their failure must not misrepresent
@@ -117,34 +123,29 @@ export async function PlacementDriveWorkspace({
   const scheduleWarnings=isTpo?projectTpoDriveScheduleWarnings(
    collisionAssessment,driveDay.rounds.map(round=>round.id)):undefined;
 
-  const programs =
-    job.status === "DRAFT"
-      ? await listPrograms(
-          context,
-          job.collegeId,
-        )
-      : [];
+  const programs=job.status==="DRAFT"?
+    await listPrograms(context,job.collegeId).catch(()=>null):[];
 
-  const cohortGroups =
-    job.status === "DRAFT"
-      ? await Promise.all(
-          programs.map(async (program) => ({
-            program,
-            cohorts: await listCohorts(
-              context,
-              program.id,
-            ),
-          })),
-        )
-      : [];
+  const cohortGroups=programs&&job.status==="DRAFT"?
+    await Promise.all(programs.map(async program=>({
+     program,cohorts:await listCohorts(context,program.id),
+    }))).catch(()=>null):[];
 
-  const sectionGroups=job.status==="DRAFT"?await Promise.all(
+  const sectionGroups=job.status==="DRAFT"&&cohortGroups?await Promise.all(
     cohortGroups.flatMap(({program,cohorts})=>cohorts
       .filter(cohort=>cohort.status!=="ARCHIVED")
       .map(async cohort=>({program,cohort,
-       sections:await listSections(context,cohort.id)})))):[];
+       sections:await listSections(context,cohort.id)})))).catch(()=>null):[];
+  const draftReady=job.status==="DRAFT"&&jobTypes!==null&&eligibilityPolicy!==null&&
+    programs!==null&&cohortGroups!==null&&sectionGroups!==null;
+  const failedSections=[
+   ...(!evaluation?["Evaluation"]:[]),...(!screening?["Screening"]:[]),
+   ...(!eligibilityPolicy?["Eligibility"]:[]),...(!offerCandidates?["Offers"]:[]),
+   ...(!roleOptions?["Role options"]:[]),...(!placementRequests?["Requests"]:[]),
+   ...(job.status==="DRAFT"&&!draftReady?["Draft editor options"]:[]),
+  ];
 
-  const controlData: PlacementDriveControlData = {
+  const controlData: PlacementDriveControlData|null = evaluation&&screening?{
     jobId,
     jobStatus: driveDay.job.status,
     evaluation: {
@@ -238,7 +239,7 @@ export async function PlacementDriveWorkspace({
         }),
       ),
     })),
-  };
+  }:null;
 
   const headerFacts = projectTpoDriveHeader({
     status:job.status,applicationMode:job.applicationMode,workMode:job.workMode,
@@ -249,21 +250,22 @@ export async function PlacementDriveWorkspace({
     isDream:job.isDream,stipendPerMonthInr:job.stipendPerMonthInr,
   });
 
-  const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
+  const journey=isTpo?await getTpoDriveJourney(context,jobId).catch(()=>null):null;
   const pendingSelections=isTpo&&job.status==="PUBLISHED"
-    ? await countUnreleasedTpoSelections(context,jobId) : 0;
+    ? await countUnreleasedTpoSelections(context,jobId).catch(()=>null) : 0;
   const reminderPreview=isTpo&&job.status==="PUBLISHED"
     ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
     : null;
 
-  const nextStep = isTpo && lifecycleReadiness
+  const nextStep = isTpo&&lifecycleReadiness&&journey&&shortlist&&placementRequests&&
+    pendingSelections!==null&&evaluation&&screening&&offerCandidates&&roleOptions
     ? projectTpoDriveNextStep({
         jobId,
         status: job.status,
         publishAllowed: lifecycleReadiness.publish.allowed,
         closeAllowed: lifecycleReadiness.close.allowed,
-        shortlistCount: shortlist?.total ?? null,
-        applicantCount: journey?.stages.find(stage => stage.name === "Applied")?.count ?? 0,
+        shortlistCount: shortlist.total,
+        applicantCount: journey.stages.find(stage => stage.name === "Applied")?.count ?? 0,
         recordedOutside: job.recordedOutside,
         deadlinePassed: Boolean(job.applicationDeadline && job.applicationDeadline.getTime() <= Date.now()),
         pendingSelections,
@@ -405,6 +407,11 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {failedSections.length?<Alert tone="warning">
+       Couldn't refresh this drive. Unable to load: {failedSections.join(", ")}.
+       Other verified sections remain available; unavailable counts are not zero.
+       <Link href={driveHref} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+      </Alert>:null}
       {nextStep ? (
         <section aria-label="Next step" className="border-b border-border pb-4">
           <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Next step</h2>
@@ -426,6 +433,15 @@ export async function PlacementDriveWorkspace({
           ) : null}
         </section>
       ) : null}
+      <nav aria-label="Drive sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
+       {([
+        ["Overview",driveHref],["Applicants",applicationsHref??driveHref+"/applications"],
+        ["Rounds",isTpo?driveHref+"/candidate-schedule":driveHref+"/schedule"],
+        ["Offers",isTpo?driveHref+"/offers":driveHref+"/applications"],
+        ["Requests","#drive-request-actions"],["Settings",isSuperAdminDrive?driveHref+"/settings":"#draft-drive-editor"],
+       ] as const).map(([label,href])=><Link key={label} href={href}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link hover:bg-primary-subtle md:min-h-9">{label}</Link>)}
+      </nav>
       {isTpo?<TpoDriveRefreshControl/>:null}
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
@@ -511,9 +527,9 @@ export async function PlacementDriveWorkspace({
             {driveDay.rounds.map(round => {
               const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
               const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
-              const rescheduleRequests=placementRequests.filter(row=>
+              const rescheduleRequests=placementRequests?.filter(row=>
                 row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
-                row.request.roundId===round.id).length;
+                row.request.roundId===round.id).length??null;
               return (
                 <article key={round.id} className="min-w-0 py-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -532,8 +548,8 @@ export async function PlacementDriveWorkspace({
                     </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
                     <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
-                    <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
-                      {rescheduleRequests>0?<Link href="#drive-request-actions"
+                    <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests===null?"Unable to load":rescheduleRequests}
+                      {rescheduleRequests!==null&&rescheduleRequests>0?<Link href="#drive-request-actions"
                         className="ml-2 font-semibold text-[var(--lms-link-text)] underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Review pending →</Link>:null}
                     </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
@@ -599,8 +615,8 @@ export async function PlacementDriveWorkspace({
           </div>
         </section>
       ) : null}
-      {job.status === "DRAFT" ? (
-        <PlacementDraftEditForm
+      {job.status === "DRAFT"&&draftReady&&programs&&cohortGroups&&sectionGroups&&eligibilityPolicy&&jobTypes ? (
+        <div id="draft-drive-editor"><PlacementDraftEditForm
           jobTypes={jobTypes}
           academicOptions={{
             programs: programs.map(
@@ -698,9 +714,12 @@ export async function PlacementDriveWorkspace({
                   | "REQUIRE_COMPLETE",
             },
           }}
-        />
-      ) : null}
-      <PlacementRoleOptions
+        /></div>
+      ) : job.status==="DRAFT"?<Alert tone="warning">
+       Draft fields or academic eligibility options couldn't be refreshed. Editing and publishing are unavailable until they reload.
+       <Link href={driveHref} className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Alert>:null}
+      {roleOptions?<PlacementRoleOptions
         jobId={jobId}
         jobStatus={job.status}
         roles={roleOptions.map((role) => ({
@@ -718,13 +737,13 @@ export async function PlacementDriveWorkspace({
           isPrimary: role.isPrimary,
           status: role.status,
         }))}
-      />
+      />:<Alert tone="warning">Role options could not be loaded. Retry before editing or using bulk actions.</Alert>}
       {isTpo&&job.status==="PUBLISHED"&&!bulkCandidates?
        <Alert tone="warning">
         Could not load: Bulk applicants. Other drive sections are still available.
         Refresh the drive to retry this section.
        </Alert>:null}
-      {bulkCandidates ? (
+      {bulkCandidates&&roleOptions ? (
         <PlacementBulkAddApplicants
           jobId={jobId}
           initial={bulkCandidates}
@@ -742,7 +761,7 @@ export async function PlacementDriveWorkspace({
           : "Remind eligible registered students who have not applied. Once per day, and only before the deadline."}</p>
         <TpoRemindNonApplicants jobId={jobId}/>
       </section>:null}
-      <section id="drive-request-actions" className="min-w-0"> 
+      {placementRequests?<section id="drive-request-actions" className="min-w-0">
       <PlacementRequestQueue
         requests={placementRequests.map(
           (row) => ({
@@ -788,10 +807,12 @@ export async function PlacementDriveWorkspace({
           }),
         )}
       />
-      </section>
-      {lifecycleReadiness ? (
+      </section>:<Alert tone="warning">Requests could not be refreshed; pending count and decisions are unavailable.</Alert>}
+      {isTpo&&lifecycleReadiness ? (
         <TpoDriveLifecycleControls readiness={lifecycleReadiness} initialPublish={openPublish} />
-      ) : (
+      ) : isTpo?<Alert tone="warning">
+       Publication/closure checks could not be refreshed. Publishing and closing are blocked until readiness is confirmed.
+      </Alert>:(
         <PlacementJobLifecycleControls
           jobId={jobId}
           status={driveDay.job.status as
@@ -806,12 +827,12 @@ export async function PlacementDriveWorkspace({
       </details>
       {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
       <section id="drive-round-actions" className="min-w-0">
-      <PlacementDriveControls
+      {controlData?<PlacementDriveControls
         data={controlData}
         scheduleWarnings={scheduleWarnings}
-      />
+      />:<Alert tone="warning">Evaluation or screening data could not be loaded. Editing rounds and candidate screening is unavailable.</Alert>}
       </section>
-      <div className="min-w-0"><PlacementOfferControls
+      {offerCandidates?<div className="min-w-0"><PlacementOfferControls
         jobId={jobId}
         isTpo={hasMembershipRole(context, "TPO")}
         jobTitle={job.title}
@@ -865,7 +886,7 @@ export async function PlacementDriveWorkspace({
               : null,
           }),
         )}
-      /></div>
+      /></div>:<Alert tone="warning">Offers could not be refreshed. Offer statuses and issuance actions are unavailable.</Alert>}
     </div>
   );
 }

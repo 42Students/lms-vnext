@@ -2,6 +2,10 @@ import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive
 import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
 import {SuperAdminDriveArchive} from "@/components/placements/super-admin-drive-archive";
 import {SuperAdminPublishedDriveEdit} from "@/components/placements/super-admin-published-drive-edit";
+import {PlacementDraftEditForm} from "@/components/placements/placement-draft-edit-form";
+import {listPrograms} from "@/modules/academics/program-service";
+import {listCohorts} from "@/modules/academics/cohort-service";
+import {listSections} from "@/modules/academics/section-service";
 import Link from "next/link";
 import {SuperAdminDriveStatusControl} from "@/components/admin/super-admin-drive-status-control";
 import {Banner} from "@/components/ui/banner";
@@ -45,13 +49,25 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>}/>
   </div>;
  }
- const [policyRead,typesRead]=job.status==="PUBLISHED"?await Promise.allSettled([
+ const [policyRead,typesRead]=["PUBLISHED","DRAFT"].includes(job.status)?await Promise.allSettled([
   getJobEligibilityPolicy(context,jobId),
   listPlacementJobTypeChoices(context,job.collegeId),
  ]):[null,null];
  const publishedPolicy=policyRead?.status==="fulfilled"?policyRead.value:null;
  const publishedJobTypes=typesRead?.status==="fulfilled"?typesRead.value:[];
  const publishedEditReady=publishedPolicy?.updatedAt!=null&&typesRead?.status==="fulfilled";
+ const draftPrograms=job.status==="DRAFT"?await listPrograms(context,job.collegeId).catch(()=>null):[];
+ const draftCohorts=job.status==="DRAFT"&&draftPrograms?
+  await Promise.all(draftPrograms.map(async program=>({
+   program,cohorts:await listCohorts(context,program.id),
+  }))).catch(()=>null):[];
+ const draftSections=job.status==="DRAFT"&&draftCohorts?
+  await Promise.all(draftCohorts.flatMap(({program,cohorts})=>cohorts
+   .filter(cohort=>cohort.status!=="ARCHIVED")
+   .map(async cohort=>({program,cohort,sections:await listSections(context,cohort.id)}))))
+   .catch(()=>null):[];
+ const draftReady=job.status==="DRAFT"&&publishedPolicy!==null&&typesRead?.status==="fulfilled"&&
+  draftPrograms!==null&&draftCohorts!==null&&draftSections!==null;
  return <div className="min-w-0 space-y-4 md:space-y-6">
     
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
@@ -63,10 +79,55 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
   </section>
   <section aria-label="Edit drive" className="min-w-0 space-y-3">
    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit drive</h2>
-   {job.status==="DRAFT"?<Banner tone="info">
-    Full draft form and learner eligibility controls are available from the drive overview. Keep them together so a partially saved policy is never mistaken for one atomic update.
-    {" "}<Link href={base} className="font-semibold underline">Edit draft details →</Link>
-   </Banner>:null}
+   {job.status==="DRAFT"&&draftReady&&publishedPolicy&&
+    draftPrograms&&draftCohorts&&draftSections&&typesRead?.status==="fulfilled"?
+    <section id="draft-drive-editor" aria-label="Full draft editor" className="min-w-0 space-y-3">
+     <p className="text-sm text-body">Save draft changes before publishing. Eligibility rules and job details are persisted separately; a failed policy update is surfaced and must be corrected before publishing.</p>
+     <PlacementDraftEditForm
+      jobTypes={typesRead.value}
+      academicOptions={{
+       programs:draftPrograms.map(program=>({
+        id:program.id,name:program.name,code:program.code,departmentName:program.departmentName,
+       })),
+       cohorts:draftCohorts.flatMap(({program,cohorts})=>cohorts
+        .filter(cohort=>cohort.status!=="ARCHIVED")
+        .map(cohort=>({id:cohort.id,name:cohort.name,code:cohort.code,programId:program.id,
+         programName:program.name,status:cohort.status}))),
+       sections:draftSections.flatMap(({program,cohort,sections})=>sections
+        .map(section=>({id:section.id,name:section.name,code:section.code,
+         cohortId:cohort.id,cohortName:cohort.name,programId:program.id}))),
+      }}
+      value={{
+       job:{
+        id:job.id,title:job.title,description:job.description,
+        employmentType:job.employmentType,jobTypeLabel:job.jobTypeLabel,
+        workMode:job.workMode,locations:job.locations,openings:job.openings,
+        minimumAnnualCtcInr:job.minimumAnnualCtcInr,
+        maximumAnnualCtcInr:job.maximumAnnualCtcInr,applicationMode:job.applicationMode,
+        externalApplicationUrl:job.externalApplicationUrl,
+        applicationDeadline:job.applicationDeadline?.toISOString()??null,
+        legacyPostingDetails:job.legacyPostingDetails,
+       },
+       policy:{
+        allowedProgramIds:publishedPolicy.allowedProgramIds,
+        allowedCohortIds:publishedPolicy.allowedCohortIds,
+        allowedSectionIds:publishedPolicy.allowedSectionIds,
+        minCgpa:publishedPolicy.minCgpa,maxActiveBacklogs:publishedPolicy.maxActiveBacklogs,
+        maxPastBacklogs:publishedPolicy.maxPastBacklogs,
+        minTenthPercentage:publishedPolicy.minTenthPercentage,
+        minTwelfthPercentage:publishedPolicy.minTwelfthPercentage,
+        minDiplomaPercentage:publishedPolicy.minDiplomaPercentage,
+        minUndergraduatePercentage:publishedPolicy.minUndergraduatePercentage,
+        maxGapYears:publishedPolicy.maxGapYears,
+        allowedPassingYears:publishedPolicy.allowedPassingYears,
+        missingEvidencePolicy:publishedPolicy.missingEvidencePolicy,
+       },
+      }}/>
+    </section>:job.status==="DRAFT"?<ErrorState
+     title="Draft editor is unavailable"
+     description="One or more academic or eligibility options could not be verified. The form is disabled to prevent a partial edit."
+     action={<Link href={base+"/settings"} className="font-semibold text-link underline">Retry settings</Link>}
+    />:null}
    {job.status==="PUBLISHED"?
     <SuperAdminPublishedDriveEdit
      sourceReady={publishedEditReady}
