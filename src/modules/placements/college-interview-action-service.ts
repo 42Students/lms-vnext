@@ -10,6 +10,17 @@ import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
 
+/** Legacy Interview row crosswalk (no production data migration in vNext):
+ * legacy job/application/learner integer keys -> scoped UUID placementJobs,
+ * placementApplications and the resolved college membership;
+ * legacy interview type -> INTERVIEW placementJobRounds kind;
+ * status/date/mode/notes/version -> versioned placementCollegeInterviews;
+ * individual candidate time slot -> placementRoundCandidateSlots when used;
+ * legacy learner notifications -> same-transaction activityEvents plus
+ * inAppNotifications with learner-scoped /learn/my-placements/interviews URL.
+ * Unlike legacy, appointment and round result/attendance facts are distinct:
+ * never synthesize an applied result or restore an arbitrary external link.
+ */
 async function jobScope(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
