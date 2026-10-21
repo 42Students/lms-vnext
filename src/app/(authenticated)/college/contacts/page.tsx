@@ -22,6 +22,7 @@ import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
 import {contactRecordLinks} from "@/modules/people/college-contacts-links";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {CollegeContactsLiveSearch} from "./college-contacts-live-search";
 type RawSearch=Record<string,string|string[]|undefined>;
 const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -108,11 +109,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      </span>
      <label className="min-w-[180px] flex-1 text-[var(--lms-font-sm)] font-semibold">
       <span className="sr-only">Search contacts</span>
-      <span className="relative block">
-       <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg>
-       <Input type="search" name="q" form="college-contacts-filters" maxLength={100}
-        defaultValue={filter.q} placeholder="Search contacts..." className="min-h-11 w-full min-w-0 pl-9 md:min-h-9"/>
-      </span>
+      <CollegeContactsLiveSearch value={filter.q}/>
      </label>
      {filter.q?<Link href={collegeContactsHref({...filter,q:"",page:1})} className="inline-flex min-h-9 items-center font-semibold text-link underline">Clear search</Link>:null}
     </div>}>
