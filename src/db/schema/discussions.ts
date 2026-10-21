@@ -35,6 +35,8 @@ export const courseDiscussionMessages = pgTable(
       length: 24,
     }).notNull(),
     messageText: text("message_text").notNull(),
+    /** Trusted sender name at send time, never client submitted. */
+    senderNameSnapshot: varchar("sender_name_snapshot", { length: 160 }),
     pinned: boolean("pinned")
       .notNull()
       .default(false),
@@ -53,6 +55,7 @@ export const courseDiscussionMessages = pgTable(
     })
       .notNull()
       .defaultNow(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
   (table) => [
     index(
@@ -68,6 +71,10 @@ export const courseDiscussionMessages = pgTable(
     check(
       "course_discussion_messages_text_ck",
       sql`length(trim(${table.messageText})) between 1 and 4000`,
+    ),
+    check(
+      "course_discussion_messages_deleted_after_create_ck",
+      sql`${table.deletedAt} is null or ${table.deletedAt} >= ${table.createdAt}`,
     ),
     check(
       "course_discussion_messages_pin_ck",

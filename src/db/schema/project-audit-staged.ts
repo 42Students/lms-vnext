@@ -27,22 +27,28 @@ export const projectMeetingAuditHistoryStaged = pgTable("project_meeting_history
   actorName:varchar("actor_name",{length:160}),
   beforeJson:json("before_json"),
   afterJson:json("after_json"),
-  changedFields:json("changed_fields"),
+  /** Legacy changedFields may contain a JSON array. */
+  changedFields:jsonb("changed_fields").$type<unknown>(),
   notes:text("notes"),
   createdAt:time(),
+  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+  deletedAt:timestamp("deleted_at",{withTimezone:true}),
 },t=>[
   foreignKey({name:"project_meeting_history_project_fk",
     columns:[t.projectId,t.meetingId],
     foreignColumns:[projectMeetings.projectId,projectMeetings.id]}).onDelete("restrict"),
   index("project_meeting_history_project_time_idx").on(t.projectId,t.createdAt),
   index("project_meeting_history_meeting_idx").on(t.meetingId,t.createdAt),
+  check("project_meeting_history_updated_after_created_ck",sql`${t.updatedAt} >= ${t.createdAt}`),
+  check("project_meeting_history_deleted_after_created_ck",sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
   check("project_meeting_history_action_nonempty_ck",sql`length(trim(${t.actionType})) > 0`),
 ]);
 
 export const projectResourceAuditHistoryStaged=pgTable("project_resource_audit",{
   id:uuid("id").defaultRandom().primaryKey(),
   projectId:uuid("project_id").notNull().references(()=>projectInstances.id,{onDelete:"restrict"}),
-  resourceId:uuid("project_resource_id").references(()=>projectResources.id,{onDelete:"restrict"}),
+  /** Retain source resource ID even after resource deletion. */
+  resourceId:uuid("project_resource_id"),
   resourceKey:varchar("resource_key",{length:120}).notNull(),
   actionType:varchar("action_type",{length:40}).notNull(),
   actorUserId:uuid("actor_user_id").references(()=>users.id,{onDelete:"restrict"}),
@@ -51,14 +57,16 @@ export const projectResourceAuditHistoryStaged=pgTable("project_resource_audit",
   resourceOrder:integer("resource_order"),
   beforeJson:json("before_json"),
   afterJson:json("after_json"),
-  changedFields:json("changed_fields"),
+  changedFields:jsonb("changed_fields").$type<unknown>(),
   createdAt:time(),
+  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+  deletedAt:timestamp("deleted_at",{withTimezone:true}),
 },t=>[
-  foreignKey({name:"project_resource_audit_project_fk",
-    columns:[t.projectId,t.resourceId],
-    foreignColumns:[projectResources.projectId,projectResources.id]}).onDelete("restrict"),
+  // History references project only: resource key can outlive resource deletion.
   index("project_resource_audit_project_time_idx").on(t.projectId,t.createdAt),
   index("project_resource_audit_resource_idx").on(t.resourceId,t.createdAt),
+  check("project_resource_audit_updated_after_created_ck",sql`${t.updatedAt} >= ${t.createdAt}`),
+  check("project_resource_audit_deleted_after_created_ck",sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
   check("project_resource_audit_action_nonempty_ck",sql`length(trim(${t.actionType})) > 0`),
 ]);
 
@@ -73,8 +81,9 @@ export const projectDeliveryEventsStaged=pgTable("project_delivery_events",{
   actorType:varchar("actor_type",{length:20}),
   notes:text("notes"),
   attachmentUrl:text("attachment_url"),
+  attachmentObjectPath:text("attachment_object_path"),
   feedback:text("feedback"),
-  revisionCount:integer("revision_count"),
+  revisionCount:integer("revision_count").notNull().default(0),
   createdAt:time(),
 },t=>[
   foreignKey({name:"project_delivery_events_project_fk",
