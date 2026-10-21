@@ -38,8 +38,11 @@ export const learnerProjectActivityFilterSchema = z.object({
   to: z.iso.date().optional(),
   beforeTime: z.iso.datetime().optional(),
   beforeId: z.string().uuid().optional(),
-  sourceTab:z.string().trim().max(80).optional(),
-  search:z.string().trim().max(100).optional(),
+  // Old /activity/feed supported bounded page/size and exact event type.
+  // New cursor clients continue to default to page 1 / 100 events.
+  eventType:z.string().trim().regex(/^projects\.[a-z0-9_.-]+$/i).max(120).optional(),
+  page:z.coerce.number().int().min(1).max(1000).default(1),
+  size:z.coerce.number().int().min(1).max(100).default(100),
 }).strict().refine(value => Boolean(value.beforeTime) === Boolean(value.beforeId), {
   message: "Activity cursor requires both timestamp and event ID", path: ["beforeId"],
 }).refine(value => !value.from || !value.to || value.from <= value.to, {
@@ -48,15 +51,16 @@ export const learnerProjectActivityFilterSchema = z.object({
 export type LearnerProjectActivityFilters = z.infer<typeof learnerProjectActivityFilterSchema>;
 
 export function parseLearnerProjectActivityFilters(input: {
-  category?: unknown; from?: unknown; to?: unknown; beforeTime?: unknown; beforeId?: unknown;
-  sourceTab?:unknown;search?:unknown;
+  category?:unknown;from?:unknown;to?:unknown;beforeTime?:unknown;beforeId?:unknown;
+  eventType?:unknown;page?:unknown;size?:unknown;
 }) {
   return learnerProjectActivityFilterSchema.safeParse({
     category: input.category === "" ? undefined : input.category,
     from: input.from === "" ? undefined : input.from,
     to: input.to === "" ? undefined : input.to,
-    beforeTime: input.beforeTime, beforeId: input.beforeId,
-    sourceTab:input.sourceTab,search:input.search,
+    beforeTime: input.beforeTime,beforeId:input.beforeId,
+    eventType:input.eventType||undefined,page:input.page||undefined,
+    size:input.size||undefined,
   });
 }
 
