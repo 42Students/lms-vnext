@@ -33,16 +33,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/admin/people/unassigned/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/analytics/page.tsx`
 - [x] `src/app/(authenticated)/admin/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/retention/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
-- [ ] `src/app/(authenticated)/admin/programs/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/retention/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/shortlisted/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/student-lookup/page.tsx`
+- [x] `src/app/(authenticated)/admin/programs/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/at-risk/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/audit/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/readiness/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/reassign-mentor/page.tsx`

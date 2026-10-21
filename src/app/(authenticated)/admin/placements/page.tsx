@@ -35,7 +35,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
     return (
       <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
         <PageHeader
-          title="Placement Drives"
+          title="Drives"
           description="Placement administration requires a college safety scope."
           actions={<Link href="/admin/placements/drives" className={secondaryActionClass}>
             Open All drives table →
@@ -59,7 +59,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        title="Placement Drives"
+        title="Drives"
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
         actions={<Link
             href="/admin/placements/new"
