@@ -84,16 +84,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
 - [x] `src/app/enterprises/page.tsx`
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/learner-rich-response-editor.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/courses/learner-rich-response-editor.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [ ] `src/components/projects/college-project-mentor-dialog.tsx`
 - [ ] `src/components/projects/mentor-task-create.tsx`
 - [ ] `src/components/shell/admin-scope-switcher.tsx`
