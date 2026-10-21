@@ -74,15 +74,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/courses/faculty-course-tab-navigation.tsx`
 - [x] `src/components/courses/learner-youtube-player.tsx`
 - [x] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/projects/mentor-project-tabs.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/projects/mentor-project-tabs.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [ ] `src/app/platform/page.tsx`
 - [ ] `src/components/admin/college-bulk-import.tsx`
 - [ ] `src/components/admin/tenant-domain-manager.tsx`
