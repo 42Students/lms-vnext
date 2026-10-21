@@ -20,7 +20,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_college-drive-attention-cards.tsx.md` (edit src/components/placements/college-drive-attention-cards.tsx; 10 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-recruiter-grant-write-model.ts.md` (edit src/modules/placements/tpo-recruiter-grant-write-model.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_hr-interview-slot-service.ts.md` (edit src/modules/placements/hr-interview-slot-service.ts; 9 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-journey-service.ts.md` (edit src/modules/placements/learner-journey-service.ts; 9 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-journey-service.ts.md` (edit src/modules/placements/learner-journey-service.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_report-model.ts.md` (edit src/modules/placements/report-model.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-schedule-reschedule.tsx.md` (edit src/components/placements/learner-schedule-reschedule.tsx; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-drive-read-service.ts.md` (edit src/modules/placements/college-drive-read-service.ts; 9 findings; best P1)
