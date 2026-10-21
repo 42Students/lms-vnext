@@ -2,6 +2,8 @@
 import { Button } from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Dialog} from "@/components/ui/dialog";
+import {useToast} from "@/components/ui/toast";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {roundApplyPreviewCsv,roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
@@ -17,17 +19,20 @@ function downloadRoundCsv(csv:string,name:string){
  URL.revokeObjectURL(url);
 }
 export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:string}){
- const router=useRouter();const [preview,setPreview]=useState<Preview|null>(null);
+ const router=useRouter();const {showToast}=useToast();const [preview,setPreview]=useState<Preview|null>(null);
  const [report,setReport]=useState<ApplyReport|null>(null);const [busy,setBusy]=useState(false);
- const [error,setError]=useState("");
+ const [error,setError]=useState("");const [showSkipped,setShowSkipped]=useState(false);
  const url="/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(roundId)+"/apply-all";
  async function load(){
   setBusy(true);setError("");setReport(null);
   try{const res=await fetch(url,{credentials:"same-origin",cache:"no-store"});
    const value=await res.json() as Preview&{error?:string};
-   if(!res.ok)throw Error("Could not load round preview");
+   if(!res.ok)throw Error("Could not load the pending results. Retry before applying them.");
    setPreview(value);
-  }catch(e){setError(e instanceof Error?e.message:"Could not preview results");}finally{setBusy(false);}
+  }catch{
+   setPreview(null);
+   setError("Could not load the pending results. Retry before applying them.");
+  }finally{setBusy(false);}
  }
  async function apply(){
   if(!preview||!preview.ready||!preview.staged||busy)return;
@@ -36,7 +41,13 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    body:JSON.stringify({confirmed:true,expectedPreviewToken:preview.previewToken})});
    const value=await res.json() as ApplyReport&{error?:string};
    if(!res.ok)throw Error("Results could not be applied");
-   setReport(value);setPreview(null);router.refresh();
+   setReport(value);setPreview(null);
+   if(value.skipped>0)setShowSkipped(true);
+   else showToast({tone:"success",title:"Results applied and students notified"});
+   if(value.unchanged>0)showToast({tone:"info",
+    title:value.unchanged+" student"+(value.unchanged===1?"":"s")+" kept their stage",
+    description:"Already applied results do not change a student\u0027s current stage."});
+   router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Results could not be applied");}finally{setBusy(false);}
  }
  return <section className="space-y-3 border-b border-border pb-6">
@@ -87,6 +98,21 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
    ).catch(()=>setError("Copy failed. Use Export results (CSV)."));}}>Copy results</Button>
   </div>:null}
-  {error?<InlineNotice tone="error" message={error+" Refresh the preview before retrying."}/>:null}
+  <Dialog open={showSkipped} onOpenChange={setShowSkipped} role="alertdialog"
+   title={(report?.applied??0)+" result"+(report?.applied===1?"":"s")+" applied, "+
+    (report?.skipped??0)+" result"+(report?.skipped===1?"":"s")+" not"}
+   description="Some results could not be applied. They remain pending for review."
+   footer={<Button type="button" onClick={()=>setShowSkipped(false)}>OK</Button>}>
+   <ul className="space-y-2 text-sm">
+    {report?.results.filter(row=>row.status==="skipped").map(row=><li key={row.resultId}>
+     <strong>{row.student}</strong>: {row.reason||"Result was not applied. Refresh this round and try again."}
+    </li>)}
+   </ul>
+  </Dialog>
+  {error?<div className="space-y-2">
+   <InlineNotice tone="error" message={error==="Could not load the pending results. Retry before applying them."?error:error+" Refresh the preview before retrying."}/>
+   {error==="Could not load the pending results. Retry before applying them."?
+    <Button type="button" variant="secondary" disabled={busy} onClick={()=>void load()}>Retry loading pending results</Button>:null}
+  </div>:null}
  </section>;
 }

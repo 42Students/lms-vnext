@@ -24,8 +24,14 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
   }:{
    action,slotId:form.get("slotId"),expectedVersion:form.get("expectedVersion"),
   };
-  await writeHrInterviewSlot(await getCurrentRequestContext(),jobId,input);
-  return NextResponse.redirect(new URL("/recruiter/drives/"+jobId+"/interview-slots",request.url),303);
+  const result=await writeHrInterviewSlot(await getCurrentRequestContext(),jobId,input);
+  // One slot is proposed per form submission (not a batch), so there are no per-row failures.
+  const added=action==="CREATE"?1:0;
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({...result,added});
+  const next=new URL("/recruiter/drives/"+jobId+"/interview-slots",request.url);
+  if(added)next.searchParams.set("added",String(added));
+  return NextResponse.redirect(next,303);
  }catch(error){
   if(error instanceof PlacementsServiceError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_SLOT"},{status:400});
