@@ -266,6 +266,7 @@ export async function listSectionScheduleEvents(
       startsAt: sectionScheduleEvents.startsAt,
       endsAt: sectionScheduleEvents.endsAt,
       location: sectionScheduleEvents.location,
+      lectureHallId: sectionScheduleEvents.lectureHallId,
       status: sectionScheduleEvents.status,
       createdAt: sectionScheduleEvents.createdAt,
       updatedAt: sectionScheduleEvents.updatedAt,
@@ -326,6 +327,7 @@ export async function createSectionScheduleEvent(
     createSectionScheduleEventInputSchema.parse(
       rawInput,
     );
+  const lectureHallId = requestedHallId(rawInput);
   const section = await loadSectionScope(
     input.sectionId,
   );
@@ -367,6 +369,13 @@ export async function createSectionScheduleEvent(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    await assertScheduleResources(tx, {
+      collegeId: section.collegeId,
+      sectionId: input.sectionId,
+      facultyMembershipId: input.facultyMembershipId ?? null,
+      lectureHallId: lectureHallId ?? null,
+      startsAt, endsAt,
+    });
     const [created] = await tx
       .insert(sectionScheduleEvents)
       .values({
@@ -378,6 +387,7 @@ export async function createSectionScheduleEvent(
         startsAt,
         endsAt,
         location: input.location ?? null,
+        lectureHallId: lectureHallId ?? null,
       })
       .returning();
 
@@ -405,6 +415,7 @@ export async function updateSectionScheduleEvent(
     updateSectionScheduleEventInputSchema.parse(
       rawInput,
     );
+  const requestedRoom = requestedHallId(rawInput);
   const scope =
     await loadScheduleEventScope(eventId);
 
@@ -445,22 +456,35 @@ export async function updateSectionScheduleEvent(
       : Promise.resolve(),
   ]);
 
-  const startsAt = input.startsAt
-    ? new Date(input.startsAt)
-    : scope.startsAt;
-  const endsAt = input.endsAt
-    ? new Date(input.endsAt)
-    : scope.endsAt;
-
-  eventWindowInsidePeriod(
-    startsAt,
-    endsAt,
-    period,
-  );
-
   const db = getDb();
 
   return db.transaction(async (tx) => {
+    // Lock the event before deriving unchanged resource fields, preventing a
+    // concurrent edit from silently reverting faculty/time/room changes.
+    const [current] = await tx.select({
+      startsAt: sectionScheduleEvents.startsAt,
+      endsAt: sectionScheduleEvents.endsAt,
+      facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
+      lectureHallId: sectionScheduleEvents.lectureHallId,
+      status: sectionScheduleEvents.status,
+    }).from(sectionScheduleEvents)
+      .where(eq(sectionScheduleEvents.id, eventId))
+      .for("update").limit(1);
+    if (!current || current.status !== "SCHEDULED") {
+      throw new AcademicsServiceError("SCHEDULE_EVENT_NOT_FOUND");
+    }
+    const startsAt = input.startsAt ? new Date(input.startsAt) : current.startsAt;
+    const endsAt = input.endsAt ? new Date(input.endsAt) : current.endsAt;
+    eventWindowInsidePeriod(startsAt, endsAt, period);
+    await assertScheduleResources(tx, {
+      collegeId: scope.collegeId,
+      sectionId: scope.sectionId,
+      facultyMembershipId: input.facultyMembershipId === undefined
+        ? current.facultyMembershipId : input.facultyMembershipId,
+      lectureHallId: requestedRoom === undefined
+        ? current.lectureHallId : requestedRoom,
+      startsAt, endsAt, exceptEventId: eventId,
+    });
     const [updated] = await tx
       .update(sectionScheduleEvents)
       .set({
@@ -485,6 +509,9 @@ export async function updateSectionScheduleEvent(
           : {}),
         ...(input.location !== undefined
           ? { location: input.location }
+          : {}),
+        ...(requestedRoom !== undefined
+          ? { lectureHallId: requestedRoom }
           : {}),
         updatedAt: new Date(),
       })
