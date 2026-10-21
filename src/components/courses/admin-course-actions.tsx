@@ -71,10 +71,11 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,duplicateHref,activeOfferingCount=0,allowMetadata=false,
+  course,duplicateHref,activeOfferingCount=0,linkedLessonCount=0,allowMetadata=false,
 }: {
   duplicateHref?:string;
   activeOfferingCount?:number;
+  linkedLessonCount?:number;
   allowMetadata?:boolean;
   course: {
     id: string;
@@ -301,15 +302,17 @@ export function CourseActions({
         title={"Archive " + course.name + "?"}
         description={activeOfferingCount>0
           ?"A Course with active Offerings cannot be archived. "+activeOfferingCount+" active Course Offering(s) must be archived first. Historical records remain preserved."
-          :"Archiving retains course history. Existing linked lessons, including in closed Offerings, block archiving until their dependencies are resolved."}
+          :linkedLessonCount>0
+           ?"This Course still has "+linkedLessonCount+" linked lesson(s). Remove or move these lesson dependencies before archiving. Uploaded files remain preserved."
+           :"Archiving retains course history. Existing linked lessons, including in closed Offerings, block archiving until their dependencies are resolved."}
         confirmLabel="Archive Course"
         pending={pending}
-        confirmDisabled={activeOfferingCount>0}
+        confirmDisabled={activeOfferingCount>0||linkedLessonCount>0}
         onConfirm={archive}
       />
       {archiveFailure?<div className="mt-2 space-y-2" role="alert">
         <Alert tone="error">Course was not deleted. {archiveFailure}</Alert>
-        <Button type="button" variant="secondary" size="sm" disabled={pending||activeOfferingCount>0}
+        <Button type="button" variant="secondary" size="sm" disabled={pending||activeOfferingCount>0||linkedLessonCount>0}
           onClick={archive}>Retry archive</Button>
       </div>:null}
     </>
