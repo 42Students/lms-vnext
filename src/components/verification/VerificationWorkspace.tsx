@@ -39,7 +39,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
  ),sort,preserveServerOrder),[rows,tab,kind,query,sort,preserveServerOrder]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
-  {hideHeader ? null : legacyTpoCopy ? <p className="text-sm text-body">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p> :
+  {hideHeader ? null : legacyTpoCopy ? <p className="text-sm text-body leading-[22px]">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p> :
    <PageHeader title="Profile verification" description={legacyCollegeCopy
      ? collegeVerificationLegacyCopy.subtitle
      : "Review learner education and identity submissions. Submitted updates to verified details remain in Waiting until decided."} />}
@@ -59,11 +59,11 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    }))}
   />
   <div className="flex flex-wrap gap-2">
-   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learners
+   {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
     <Input aria-label="Search learners" className="mt-1 w-full"
      value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
    </label>}
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Kind
+   <label className="text-sm">Kind
     <Select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
      className="mt-1 w-full">
      <option value="ALL">All</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
@@ -78,32 +78,32 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
       ? <><p className="font-semibold">{tab==="WAITING"
           ? (legacyTpoCopy?"Nobody is waiting":collegeVerificationLegacyCopy.emptyWaiting)
           : (legacyTpoCopy?"Nothing here yet":collegeVerificationLegacyCopy.emptyDecided)}</p>
-         <p className="mt-1 text-sm text-muted-foreground">{legacyTpoCopy?"Students appear here when they send their education or identity.":collegeVerificationLegacyCopy.emptyDescription}</p></>
+         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{legacyTpoCopy?"Students appear here when they send their education or identity.":collegeVerificationLegacyCopy.emptyDescription}</p></>
       : <p>No matching verification requests on this page.</p>}
     </div>:
    <ul className="min-w-0 divide-y divide-border border-y border-border">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 py-4">
-     <h2 className="break-words font-medium">{row.learnerName}</h2>
-     {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
+     <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.learnerName}</h2>
+     {row.rollNumber?<p className="text-xs text-muted-foreground leading-[20px]">Roll no.: {row.rollNumber}</p>:null}
      <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
-     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Open Student profile</Link>}
-     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">View masked contact</Link>}
+     {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
+     {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
      {onSelectionChange&&(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
       <label className="mt-2 flex items-center gap-2 text-sm">
        <Checkbox disabled={selectionDisabled} aria-label={"Select "+row.learnerName+" "+row.section}
         checked={selectedKeys?.has(verificationSelectionKey(row))??false}
         onChange={e=>{if(!selectionDisabled)onSelectionChange(row,e.target.checked);}}/>Select for bulk review
       </label>}
-     <p className="text-sm text-muted-foreground">{row.section==="EDUCATION"?"Education":"Identity"} · {row.batchName??"No batch"} · {row.branchName??"No branch"}</p>
-     {row.section==="EDUCATION"&&row.marksheets?<p className="mt-2 text-xs" aria-label="Marksheet completeness">
+     <p className="text-sm text-muted-foreground leading-[22px]">{row.section==="EDUCATION"?"Education":"Identity"} · {row.batchName??"No batch"} · {row.branchName??"No branch"}</p>
+     {row.section==="EDUCATION"&&row.marksheets?<p className="mt-2 text-xs leading-[20px]" aria-label="Marksheet completeness">
       Marksheets: {row.marksheets.missing===0&&row.marksheets.expected>0
        ?"All "+row.marksheets.uploaded+" uploaded"
        :row.marksheets.missing+" of "+row.marksheets.expected+" missing"}
      </p>:null}
-     {row.decidedAt?<p className="mt-2 text-xs">Decided by {row.decidedByName??"Placement team"} on {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.decidedAt)}</p>:null}
-     {row.status==="SENT_BACK"&&row.decisionNote?<p className="mt-1 text-sm">Reason sent back: {row.decisionNote}</p>:null}
-     <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
-     {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
+     {row.decidedAt?<p className="mt-2 text-xs leading-[20px]">Decided by {row.decidedByName??"Placement team"} on {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.decidedAt)}</p>:null}
+     {row.status==="SENT_BACK"&&row.decisionNote?<p className="mt-1 text-sm leading-[22px]">Reason sent back: {row.decisionNote}</p>:null}
+     <p className="mt-2 text-xs leading-[20px]">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
+     {row.attention.length>0&&<p className="mt-2 break-words text-sm leading-[22px]" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
      <Button variant="secondary" type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
       className="mt-3 min-h-[var(--lms-control-height)] ">{verificationQueueCardPresentation(row.status).action}</Button>
     </li>)}
