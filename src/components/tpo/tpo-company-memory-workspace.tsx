@@ -247,7 +247,7 @@ export function TpoCompanyMemoryWorkspace({
         </p>
       ) : null}
 
-      <div aria-label="Company numbers" className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:grid-cols-3 xl:grid-cols-5">
+      <div aria-label="Company numbers" className="grid min-w-0 grid-cols-1 gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface md:grid-cols-3 xl:grid-cols-5">
         {[
           ["Contacts", company.people.length + " · " + activeContacts + " active"],
           ["Drives that ran", String(company.drivesRan)],
