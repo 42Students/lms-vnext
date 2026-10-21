@@ -80,7 +80,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
     Create New Lesson
    </Button>
   </div>
-  {!options.length?<p className="text-sm text-muted-foreground">
+  {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">
    Create an active Course Offering first. Lessons belong to a Course and Batch.
   </p>:null}
   {open&&chosen?<div className="grid gap-3">
@@ -93,7 +93,7 @@ export function CollegeLessonCreateControl({options}:{options:Offering[]}){
      </option>)}
     </Select>
    </label>
-   <p className="text-xs text-muted-foreground">
+   <p className="text-xs text-muted-foreground leading-5">
     {chosen.pathId||pathOverrides[chosen.offeringId]?
      "The Lesson will be added to this Course Offering’s active Learning Path.":
      "An active Learning Path will be created for this Course Offering before the Lesson."}

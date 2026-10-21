@@ -113,8 +113,8 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
       className="mt-[var(--lms-space-3)] min-w-0 w-full max-w-[920px] space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
       {loading && <p role="status">Loading eligible courses and groups…</p>}
       {data && <>
-        <h3 className="text-sm font-semibold text-foreground">Courses in this elective slot</h3>
-        {data.offerings.length === 0 && <p className="text-sm text-muted-foreground">
+        <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Courses in this elective slot</h3>
+        {data.offerings.length === 0 && <p className="text-sm text-muted-foreground leading-[22px]">
           No courses added yet.</p>}
         {data.offerings.map(offering => <div key={offering.offeringId}
           className="flex min-w-0 flex-col items-start gap-2 border-b border-border py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
@@ -154,7 +154,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
               value={capacity} onChange={event => setCapacity(event.target.value)}
               className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9" />
           </label>
-          {selectable.length === 0 && <p role="status" className="mt-2 text-sm">
+          {selectable.length === 0 && <p role="status" className="mt-2 text-sm leading-[22px]">
             Create an active elective course delivery for this program before adding an offering.</p>}
           <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
             <Button variant="primary" type="button" loading={busy} disabled={busy || loading || !deliveryId || selectable.length === 0}
@@ -167,8 +167,8 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           </div>
         </div>
       </>}
-      {error && <p role="alert" className="text-sm text-error">{error}</p>}
-      {message && <p role="status" className="text-sm">{message}</p>}
+      {error && <p role="alert" className="text-sm text-error leading-[22px]">{error}</p>}
+      {message && <p role="status" className="text-sm leading-[22px]">{message}</p>}
     </section>}
   </div>;
 }

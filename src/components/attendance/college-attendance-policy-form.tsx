@@ -92,10 +92,10 @@ export function CollegeAttendancePolicyForm({
       className="min-w-0 max-w-[920px] space-y-[var(--lms-space-4)] [overflow-wrap:anywhere]"
     >
       <div className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-        <h2 className="m-0 text-lg font-semibold text-foreground">
+        <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
           College attendance policy
         </h2>
-        <p className="mt-2 max-w-[65ch] text-sm leading-6 text-body">
+        <p className="mt-2 max-w-[65ch] text-sm leading-[22px] text-body">
           These values are stored for this college.
           The eligibility threshold highlights low
           attendance, while the correction window

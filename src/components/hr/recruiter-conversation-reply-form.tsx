@@ -91,7 +91,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   }finally{submitPendingRef.current=false;setSending(false);}
  }
  return <form ref={formRef} onSubmit={submit} className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
-  <h2 className="text-lg font-semibold leading-7 text-foreground">Reply to placement cell</h2>
+  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Reply to placement cell</h2>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
@@ -99,7 +99,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
     className="min-h-32 w-full"
     placeholder="Write a message to the placement cell"/>
   </label>
-  <p className="text-xs text-muted-foreground">
+  <p className="text-xs text-muted-foreground leading-5">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}

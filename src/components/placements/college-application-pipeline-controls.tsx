@@ -150,9 +150,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    </div>}>
     <p className="text-base font-semibold">{action==="REINSTATE"?"Reinstate this application?":
       target==="REJECTED"?"Reject selected applications":"Move applications to "+target}</p>
-    <p className="text-sm text-body">{selectedCount} application(s) chosen. Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change.
+    <p className="text-sm text-body leading-[22px]">{selectedCount} application(s) chosen. Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change.
       Students are notified in-app of successful actions. Changes that violate screening rules are reported as skipped.</p>
-    {selected.length>5?<p id="pipeline-selected-scroll-cue" className="text-xs text-muted-foreground">More selected learners below ↓</p>:null}
+    {selected.length>5?<p id="pipeline-selected-scroll-cue" className="text-xs text-muted-foreground leading-5">More selected learners below ↓</p>:null}
    <ul tabIndex={0} role="region" aria-label="Selected applications" aria-describedby={selected.length>5?"pipeline-selected-scroll-cue":undefined}
     className="max-h-28 overflow-y-auto overscroll-contain pb-4 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">{selected.slice(0,8).map(id=>
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
@@ -164,9 +164,9 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
      <Checkbox checked={email} onChange={e=>setEmail(e.target.checked)}/>
      Also notify candidates by email (currently unavailable)
     </label>
-    {email?<p role="alert" className="text-sm text-error">Email delivery is not registered for College Admin stage moves. Uncheck email to use in-app notifications.</p>:null}
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    {outcome&&outcome.results.length>5?<p id="pipeline-outcome-scroll-cue" className="text-xs text-muted-foreground">More outcomes below ↓</p>:null}
+    {email?<p role="alert" className="text-sm text-error leading-[22px]">Email delivery is not registered for College Admin stage moves. Uncheck email to use in-app notifications.</p>:null}
+    {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+    {outcome&&outcome.results.length>5?<p id="pipeline-outcome-scroll-cue" className="text-xs text-muted-foreground leading-5">More outcomes below ↓</p>:null}
     {outcome?<div role="status" tabIndex={0} aria-label="Bulk application outcomes" aria-describedby={outcome.results.length>5?"pipeline-outcome-scroll-cue":undefined}
      className="max-h-36 overflow-y-auto overscroll-contain rounded border border-border p-3 pb-5 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">
      <p className="font-semibold">{outcome.moved} updated, {outcome.skipped} skipped.</p>

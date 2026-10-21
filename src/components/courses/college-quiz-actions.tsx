@@ -112,7 +112,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
      disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
      Shuffle answer options per learner</label>
    </div>:null}
-   {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground">
+   {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground leading-5">
     Quiz deadlines cannot be changed after learner attempts or after the quiz closes.
     Other immutable quiz fields stay unchanged.
    </p>:null}

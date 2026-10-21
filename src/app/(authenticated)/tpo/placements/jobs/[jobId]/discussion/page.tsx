@@ -18,7 +18,7 @@ export default async function TpoDriveDiscussion({params}:{
  return <div className="min-w-0 space-y-4">
   <PageHeader title={data.job.title+" · Discussion"}
     description="Conversations with recruiters attached to this drive. Private team notes are not shared with recruiters."
-    actions={<Link href={root} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 w-full md:w-auto">← Back to drive</Link>}/>
+    actions={<Link href={root} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Back to drive</Link>}/>
   {!data.available?<Alert tone="warning">
     Recruiter conversation records are unavailable right now. Other drive work is still available. Try again later.
    </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
