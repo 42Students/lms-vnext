@@ -34,7 +34,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_db_schema_academic-terms.ts.md` (edit src/db/schema/academic-terms.ts; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_components_projects_project-task-comments.tsx.md` (edit src/components/projects/project-task-comments.tsx; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_NEW_docs_audit_gap2_lane-6_job-preferences.md.md` (new; 12 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_db_schema_placement-company-identities.ts.md` (edit src/db/schema/placement-company-identities.ts; 11 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_db_schema_placement-company-identities.ts.md` (edit src/db/schema/placement-company-identities.ts; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_components_ui_graceful-page-loading.tsx.md` (edit src/components/ui/graceful-page-loading.tsx; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_modules_auth_request-tenant.ts.md` (edit src/modules/auth/request-tenant.ts; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-14/W2_src_components_tpo_tpo-team-forms.tsx.md` (edit src/components/tpo/tpo-team-forms.tsx; 9 findings; best P2)
