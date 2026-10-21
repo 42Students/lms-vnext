@@ -169,3 +169,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u012-college-admin-workspace-readiness.md.md` | Removed shipped-release gate from executionComplete; release count/shipped remains visible informational. Nested readiness shape retained with new model; explicit legacy flat DTO adapter/migration still needed. No CI.
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_recruiter-company-reports-service.ts.md` | Aligned offer funnel to legacy RELEASED→ISSUED, ACCEPTED, DECLINED by excluding EXPIRED from offered totals. Company-granted relationship portfolio remains intentional access scope; creator-only legacy report requires owner decision/field mapping. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_settings_public-page_page.tsx.md` | Clarified cohort-level threshold and per-stat k-anonymity separately in public settings. Publication guard/model retained; no CI.
+- `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_learner-education-picker-model.ts.md` | Learner education UI now permits current/future end year while currently pursuing, warns on past date, and accepts trailing % for validation; optional grades still stricter for job screening and server-side schema needs corresponding parity. No CI.

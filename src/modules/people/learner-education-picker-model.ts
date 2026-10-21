@@ -41,8 +41,8 @@ export function learnerEducationValidationProblem(input:{
  const examYear=String(input.examDetails?.passingYear??"").trim();
  if(examYear && (!/^\d{4}$/.test(examYear)||Number(examYear)<1900||Number(examYear)>2100))
   return {field:"examDetails.passingYear",message:"Enter a valid four-digit exam year (1900–2100)"};
- if(input.isCurrentlyPursuing && input.endYear?.trim())
-  return {field:"endYear",message:"End year must be empty when currently pursuing"};
+ if(input.isCurrentlyPursuing&&input.endYear?.trim()&&Number(input.endYear)<new Date().getUTCFullYear())
+  return {field:"endYear",message:"A currently pursued qualification cannot end in the past"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
  for(const [field,year] of [["startYear",start],["endYear",end]] as const){
   if(year && (!/^\d{4}$/.test(year)||Number(year)<1900||Number(year)>2100))
@@ -51,7 +51,7 @@ export function learnerEducationValidationProblem(input:{
 
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
   return {field:"endYear",message:"End year cannot be before start year"};
- const grade=input.gradeObtained?.trim()??"";
+ const grade=input.gradeObtained?.trim().replace(/%$/, "").trim()??"";
  if(!grade)return null;
  if(input.gradingType!=="CGPA"&&input.gradingType!=="Percentage")return null;
  const num=Number(grade);
