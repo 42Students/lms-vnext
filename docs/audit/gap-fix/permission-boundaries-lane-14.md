@@ -1,0 +1,7 @@
+# Authorization safety map — lane 14
+
+The active college x role membership remains the authorization principal, and the shared user may also hold a recruiter profile. Current can()/requirePermission() signatures are unchanged. Policy now denies learner access when a service passes another learnerMembershipId or passes a concrete courseDeliveryId without an explicit trusted audience check; callers must **supply those fields**. It does not automatically resolve class/program/delivery enrollments from the database.
+
+placements.tpo.team.manage is an opt-in narrow permission that a FACULTY active role may obtain only when trusted tpoTeamAdministrator is true and college matches. It must be populated from an active placement_tpo_team_members TPO_ADMIN grant on the selected membership, never user input. Generic placements.manage still requires TPO or COLLEGE_ADMIN; no faculty elevation there.
+
+A recruiter grant must match college, company relationship, and any supplied organization scope; it remains separate from native learner/faculty roles. Permission taxonomy cannot itself inspect HTTP paths. A request-boundary recruiter fence and canonical URL rejection (encoded slash/double slash/path traversal), explicit auth-route exceptions, full API handler inventory, learner enrollment query guards and authenticated SA acting-college write audit remain required. No broad role bypass was introduced. No runtime code or CI executed.
