@@ -202,3 +202,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_task-comment-service.ts.md` | Captured task status and updated timestamp at comment time in immutable activity event metadata. Observer posting policy retained until persisted membership mapping is reviewed; historical author comment row still current user join. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-student-detail-service.ts.md` | Student detail now fetches active section enrollments for ALL active program enrollments, not only first, preserving tenant joins. Cohort/semester history still requires explicit term mapping. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_settings_recruiters_page.tsx.md` | Recruiter settings now visibly distinguishes duration default 6 months from not-yet-migrated approval/AFTER_REVIEW policy, without claiming enforcement. Combined editor/schema migration still pending. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_recruiter-profile-service.ts.md` | Self profile service supports optional selected-college grant filtering; global self mode preserved. Profile caller must supply selected scope and audit current company/verification eligibility. No CI.

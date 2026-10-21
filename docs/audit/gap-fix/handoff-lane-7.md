@@ -997,3 +997,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-12-017-021/-062 | `src/modules/projects/task-comment-service.ts + comment schema` | Confirm eligible active non-assignee learner versus observer read-only permissions and persist immutable author/task snapshots on comment rows; activity metadata snapshot added.
 - G2-5-019-014 | `src/modules/people/college-student-detail-service.ts` | Add active term/semester mapping and historical class/cohort projection once academic period ownership verified.
+
+- G2-11-024-009/-051 | `src/modules/placements/tpo-communication-settings-service.ts + schema` | Migrate approval-required, AFTER_REVIEW applicant visibility and trusted domains as audited editable fields, not just duration.
+- G2-10-025-055/-095 / G2-14-016-035 | `src/app/(authenticated)/hr/profile/page.tsx` | Pass verified selectedCollegeId into recruiter profile service and document contact/login mapping; enforce current grant capability matrix.
