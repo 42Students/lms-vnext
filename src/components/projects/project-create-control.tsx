@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
+import { ProjectCollegeLearnerPicker } from "./project-college-learner-picker";
 
 export type AssignedProjectTemplateChoice = {
   templateId: string;
@@ -53,6 +54,8 @@ export function CreateProjectControl({
   const [mentorQuery, setMentorQuery] = useState("");
   const [mentorsError, setMentorsError] = useState<string | null>(null);
   const [classes,setClasses]=useState<{id:string;name:string;code:string}[]>([]);
+  const [showClassSelector,setShowClassSelector]=useState(false);
+  const [classQuery,setClassQuery]=useState("");
   const [classesError,setClassesError]=useState(false);
   const [classesRetry,setClassesRetry]=useState(0);
   const [sectionId,setSectionId]=useState("");
@@ -84,7 +87,7 @@ export function CreateProjectControl({
     setPhase("Planning");setProgressPercent(0);
     setDueLabel("");setBlocker("");setNextAction("");
     setMentorMembershipId("");
-    setMentorQuery("");setRosterSearch("");
+    setMentorQuery("");setRosterSearch("");setClassQuery("");setShowClassSelector(false);
     setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
     setLoadedRosterSectionId(null);setRosterError(false);setClassesError(false);
     setMentorsError(null);
@@ -133,14 +136,24 @@ export function CreateProjectControl({
   }, [open, collegeId, mentorQuery, mentorMembershipId]);
 
   useEffect(()=>{
-    if(!open)return;
+    if(!open||!showClassSelector)return;
     const ctl=new AbortController();
-    void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId),{signal:ctl.signal})
-     .then(r=>r.ok?r.json():Promise.reject(Error("Classes unavailable")))
-     .then((v:{classes:typeof classes})=>{if(!ctl.signal.aborted){setClasses(v.classes);setClassesError(false);}})
-     .catch(()=>{if(!ctl.signal.aborted){setClasses([]);setClassesError(true);}});
-    return ()=>ctl.abort();
-  },[open,collegeId,classesRetry]);
+    const timer=window.setTimeout(()=>{
+      void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId)+
+        "&q="+encodeURIComponent(classQuery.trim())+"&limit=100",
+        {signal:ctl.signal,cache:"no-store"})
+        .then(r=>r.ok?r.json():Promise.reject(Error("Classes unavailable")))
+        .then((v:{classes:typeof classes})=>{if(!ctl.signal.aborted){
+          setClasses(old=>{
+            const chosen=old.find(row=>row.id===sectionId);
+            return chosen&&!v.classes.some(row=>row.id===chosen.id)?[chosen,...v.classes]:v.classes;
+          });
+          setClassesError(false);
+        }})
+        .catch(()=>{if(!ctl.signal.aborted)setClassesError(true);});
+    },400);
+    return ()=>{window.clearTimeout(timer);ctl.abort();};
+  },[open,showClassSelector,collegeId,classQuery,classesRetry,sectionId]);
   const rosterActive=Boolean(open&&sectionId);
   const [prevRosterActive,setPrevRosterActive]=useState(rosterActive);
   if(prevRosterActive!==rosterActive){
@@ -252,7 +265,7 @@ export function CreateProjectControl({
   }
 
   const dirty = Boolean(templateId || title || slug || summary || mentorMembershipId ||
-    sectionId || learnerMembershipIds.length || initialStatus !== "PLANNED" ||
+    sectionId || learnerMembershipIds.length || showClassSelector || initialStatus !== "PLANNED" ||
     phase !== "Planning" || progressPercent !== 0 || dueLabel || blocker || nextAction);
   const discard = useProjectEditorDiscardGuard(open, dirty, pending, () => {
     setOpen(false);
@@ -407,14 +420,29 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Class
-            <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
+          <div className="min-w-0 space-y-2 md:col-span-2">
+            <Button type="button" variant="secondary" size="sm" disabled={pending}
+              onClick={()=>{setShowClassSelector(v=>!v);setSectionId("");
+                setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);}}>
+              {showClassSelector?"Remove class link":"Link to a class (optional)"}
+            </Button>
+            <p className="text-xs text-body">
+              Select college learners without including the entire class. Link a class only
+              to restrict the picker to an enrolled roster.
+            </p>
+          </div>
+          {showClassSelector?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+            <Input type="search" value={classQuery} maxLength={120}
+              placeholder="Search class name or code" aria-label="Search classes"
+              onChange={event=>setClassQuery(event.target.value)}/>
+            <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);
+              setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
-              <option value="">No class</option>
+              <option value="">Choose class</option>
               {classes.map(item=><option key={item.id} value={item.id}>{item.name} · {item.code}</option>)}
             </Select>
-          </label>
-          {classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
+          </label>:null}
+          {showClassSelector&&classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
             <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
               className="w-full">
@@ -452,6 +480,8 @@ export function CreateProjectControl({
             </div>
           </section>:null}
 
+          {!sectionId?<ProjectCollegeLearnerPicker collegeId={collegeId}
+            selectedIds={learnerMembershipIds} onChange={setLearnerMembershipIds}/>:null}
           {mentorsError ? (
             <p role="alert" className="m-0 text-xs font-semibold text-warning md:col-span-2">
               {mentorsError} You can create the planned workspace and assign a Mentor from Team later.
