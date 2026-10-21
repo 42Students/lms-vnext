@@ -66,7 +66,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ResourceFileController.java`
 - [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCollegeJoinController.java`
 - [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/InterviewController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/new.js`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/new.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/versions.js`
 - [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Jobs.js`
 - [ ] U031 (Cross-cutting area) `cross/08: Audit log, activity log, bug tracker, analytics events`
