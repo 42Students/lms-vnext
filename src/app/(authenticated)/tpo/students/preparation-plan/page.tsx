@@ -23,12 +23,12 @@ export default async function TpoPreparationCoursePlan(){
     <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Back to learners needing support</Link>
     <Link href="/tpo/settings/prep-readiness" className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Open existing preparation settings editor</Link>
    </div>}/>
-  <p className="text-sm text-body">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
+  <p className="text-sm text-body leading-[22px]">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>
-    <p role="status" className="text-sm leading-[1.6]">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
+    <p role="status" className="text-sm leading-[22px]">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
     {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{plan.courses.map(course=><li key={course.id} className="flex min-w-0 flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-      <h2 className="min-w-0 break-words font-semibold">{course.name}</h2><p className="shrink-0 text-xs text-muted-foreground">{course.code}</p>
+      <h2 className="min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{course.name}</h2><p className="shrink-0 text-xs text-muted-foreground leading-[20px]">{course.code}</p>
     </li>)}</ul>}
   </>}
   </div>;

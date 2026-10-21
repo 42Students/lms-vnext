@@ -29,7 +29,7 @@ export default async function CompanySharePage({
  if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:py-12`}>
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
-   <p className="max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for the code sent separately with this company share link.</p>
+   <p className="max-w-prose break-words text-sm text-body leading-[22px]">Ask the placement cell for the code sent separately with this company share link.</p>
    {access==="invalid"?<p role="alert" className="text-sm text-error leading-[22px]">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
@@ -40,7 +40,7 @@ export default async function CompanySharePage({
     </label>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open shared applicants</Button>
    </form>
-   <p className="max-w-prose break-words text-xs leading-5 text-muted-foreground">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
+   <p className="max-w-prose break-words text-xs text-muted-foreground leading-[20px]">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
   </section>
  </main>;
  if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
@@ -68,14 +68,14 @@ export default async function CompanySharePage({
    <p className="text-sm text-muted-foreground leading-[22px]">42Students · Company applicant share</p>
    <PageHeader title={"Shared with "+result.companyName} />
    <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-base font-medium leading-6 text-foreground">{result.title}</p>
-   <p className="max-w-3xl break-words text-sm leading-6 text-body">
+   <p className="max-w-3xl break-words text-sm text-body leading-[22px]">
     Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
     {" "}for {result.companyName}. Please do not forward this page.
    </p>
-   <p className="max-w-3xl break-words text-sm leading-6 text-body">
+   <p className="max-w-3xl break-words text-sm text-body leading-[22px]">
     The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
    </p>
-   <p className="max-w-3xl break-words text-xs leading-5 text-muted-foreground">
+   <p className="max-w-3xl break-words text-xs text-muted-foreground leading-[20px]">
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
    {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body leading-[22px]">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}

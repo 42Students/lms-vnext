@@ -463,7 +463,7 @@ export function SectionOperations({
           <p className="m-0 font-semibold text-foreground">
             {row.title}
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
             {[
               row.courseName
                 ? `${row.courseName}${row.courseCode ? ` · ${row.courseCode}` : ""}`
@@ -531,7 +531,7 @@ export function SectionOperations({
     <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <section aria-label="Section summary" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">
             Program
           </p>
           <p className="mt-2 font-semibold text-foreground">
@@ -539,7 +539,7 @@ export function SectionOperations({
           </p>
         </div>
         <div>
-          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">
             Cohort
           </p>
           <p className="mt-2 font-semibold text-foreground">
@@ -547,7 +547,7 @@ export function SectionOperations({
           </p>
         </div>
         <div>
-          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">
             Period
           </p>
           <p className="mt-2 font-semibold text-foreground">
@@ -555,7 +555,7 @@ export function SectionOperations({
           </p>
         </div>
         <div>
-          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="m-0 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">
             Capacity
           </p>
           <p className="mt-2 font-semibold tabular-nums text-[var(--lms-body-text)]">
@@ -566,10 +566,10 @@ export function SectionOperations({
 
       <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
+          <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
             Learner progression
           </h2>
-          <p className="mt-1 text-sm text-body">
+          <p className="mt-1 text-sm text-body leading-[22px]">
             Admit learners to the Program, then place or move them into this Section. History is retained automatically.
           </p>
         </div>
@@ -720,10 +720,10 @@ export function SectionOperations({
 
       <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
+          <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
             Faculty responsibilities
           </h2>
-          <p className="mt-1 text-sm text-body">
+          <p className="mt-1 text-sm text-body leading-[22px]">
             Section-level Advisor/Coordinator roles only. Course teaching assignments belong to Courses.
           </p>
         </div>
@@ -802,10 +802,10 @@ export function SectionOperations({
 
       <section className="min-w-0 space-y-[var(--lms-space-4)]">
         <div>
-          <h2 id="section-schedule" className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
+          <h2 id="section-schedule" className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
             Section schedule
           </h2>
-          <p className="mt-1 text-sm text-body">
+          <p className="mt-1 text-sm text-body leading-[22px]">
             Section calendar for {section.startDate} → {section.endDate}. Link teaching sessions to a Course delivery so learner and Faculty calendars can filter and deep-link safely.
           </p>
         </div>

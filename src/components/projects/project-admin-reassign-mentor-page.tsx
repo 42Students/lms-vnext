@@ -83,7 +83,7 @@ export async function ProjectAdminReassignMentorPage({
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm leading-[22px]">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm leading-[22px]">{row.atRisk} at risk</p>
@@ -100,7 +100,7 @@ export async function ProjectAdminReassignMentorPage({
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
         {query.fromMentorId?<Input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
         <Input type="hidden" name="pageSize" value={query.pageSize}/>
-        <label className="grid flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Search eligible mentors by name or email (across the college)
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
             placeholder="Enter mentor name or email" className="w-full"/>
@@ -114,7 +114,7 @@ export async function ProjectAdminReassignMentorPage({
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
           Filter by current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
             className="w-full">

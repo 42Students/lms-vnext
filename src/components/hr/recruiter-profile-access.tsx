@@ -51,8 +51,8 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
 
   return (
     <section aria-label="College Access" className="min-w-0 border-t border-border pt-4">
-      {hideHeading ? null : <h2 className="text-base font-semibold text-foreground">College Access</h2>}
-      <p className="mt-1 max-w-3xl text-sm leading-6 text-muted-foreground">
+      {hideHeading ? null : <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">College Access</h2>}
+      <p className="mt-1 max-w-3xl text-sm text-muted-foreground leading-[22px]">
         Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (

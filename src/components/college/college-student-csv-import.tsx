@@ -59,14 +59,14 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
 
   return <div className="min-w-0 max-w-4xl space-y-6">
     <section className="border-t border-border pt-4">
-      <h2 className="text-lg font-semibold text-foreground">Upload or paste CSV</h2>
-      <p className="mt-2 text-sm text-body">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Upload or paste CSV</h2>
+      <p className="mt-2 text-sm text-body leading-[22px]">
         Maximum 500 learner rows and 1 MB. Use the exact header order below.
         Choose a program and batch from the selectors; you do not need to copy their IDs into legacy CSV rows.
         Indian 10-digit mobile numbers are normalized to +91 for the legacy template.
         The dry run checks format, college ownership, duplicate rows and existing account conflicts. All rows must validate before import.
       </p>
-      <p className="mt-2 break-all font-mono text-xs text-muted-foreground">{TEMPLATE}</p>
+      <p className="mt-2 break-all font-mono text-xs text-muted-foreground leading-[20px]">{TEMPLATE}</p>
       <a download="student-import-template.csv"
         href={"data:text/csv;charset=utf-8,"+encodeURIComponent(TEMPLATE+"\n")}
         className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
@@ -126,7 +126,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
 
     {report ? <section aria-label="CSV validation and result report"
       className="min-w-0 space-y-4 border-t border-border pt-4">
-      <h2 className="text-lg font-semibold text-foreground">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
         {report.preview ? "Dry-run report" : "Import result"}
       </h2>
       <Alert tone="info">{report.valid} structurally valid; {report.invalid} invalid.

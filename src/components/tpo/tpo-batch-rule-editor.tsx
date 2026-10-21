@@ -84,7 +84,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
  const number=(key:"maxHeldOffers"|"upliftPct"|"minResponseHours",label:string,min:number,max:number,suffix:string)=>
   <div key={key} className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-[var(--lms-canvas-border)] py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
    <div><strong className="text-sm">{label}</strong>
-    <p className="text-xs text-body">College: {college[key]} {suffix}</p>
+    <p className="text-xs text-body leading-[20px]">College: {college[key]} {suffix}</p>
    </div>
    <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
     <Input className="min-h-11 w-full min-w-0 md:w-24 md:min-h-9" type="number" min={min} max={max} step={1} disabled={busy||readOnly}
@@ -97,14 +97,14 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
    </div>
   </div>;
  return <section aria-label="Batch placement rules" className="min-w-0 space-y-[var(--lms-space-4)] border-y border-border py-[var(--lms-space-4)]">
-  <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">Batch placement rules</h2>
-  <p role="status" className="break-words text-sm text-body">{Object.keys(draft).length?batchName+" has its own rules":batchName+" follows the college rules"}</p>
-  <p className="text-sm text-body">Change a rule only for this batch; everything you leave alone stays the college&apos;s. An internship offer never counts as placed.</p>
+  <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Batch placement rules</h2>
+  <p role="status" className="break-words text-sm text-body leading-[22px]">{Object.keys(draft).length?batchName+" has its own rules":batchName+" follows the college rules"}</p>
+  <p className="text-sm text-body leading-[22px]">Change a rule only for this batch; everything you leave alone stays the college&apos;s. An internship offer never counts as placed.</p>
   {error?<InlineNotice tone="error" message={"Batch rules were not saved. "+error}/>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   <div className="grid min-w-0 items-end gap-3 border-t border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
    <div><strong className="text-sm">Counts as placed when</strong>
-    <p className="text-xs text-body">College: {college.countsAsPlacedAt==="OFFER_ACCEPTED"?"the offer is accepted":"the offer is released"}</p>
+    <p className="text-xs text-body leading-[20px]">College: {college.countsAsPlacedAt==="OFFER_ACCEPTED"?"the offer is accepted":"the offer is released"}</p>
    </div>
    <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap md:items-center">
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" aria-label="Counts as placed when" disabled={busy||readOnly}
@@ -122,7 +122,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
   {number("maxHeldOffers","Offers a student can hold",1,5,"offers")}
   {number("upliftPct","Once placed, can apply again for at least",0,200,"% more CTC")}
   {number("minResponseHours","Time to respond to an offer",12,168,"hours")}
-  {readOnly?<p role="status" className="text-sm">Finished batches cannot change placement rules.</p>:null}
+  {readOnly?<p role="status" className="text-sm leading-[22px]">Finished batches cannot change placement rules.</p>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-4 sm:flex-row sm:flex-wrap sm:justify-end [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
    <Button type="button" disabled={readOnly||busy||!changed}
     onClick={()=>void save(draft)} >

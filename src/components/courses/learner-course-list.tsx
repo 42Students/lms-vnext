@@ -362,7 +362,7 @@ export function LearnerCourseList({
                 <article key={row.course.deliveryId} aria-disabled="true"
                   className="rounded-xl border border-warning bg-surface p-4 sm:p-5">
                   <StatusBadge tone="warning">Unavailable</StatusBadge>
-                  <h2 className="mt-3 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{row.unavailableLabel}</h2>
+                  <h2 className="mt-3 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.unavailableLabel}</h2>
                   <p className="mt-2 text-sm text-body leading-[22px]">{row.course.courseName || "Course name unavailable"}</p>
                   <p className="mt-3 text-sm text-muted-foreground leading-[22px]">This course cannot be opened right now. Other courses remain available.</p>
                 </article>
@@ -370,7 +370,7 @@ export function LearnerCourseList({
               return (
                 <Fragment key={row.course.deliveryId}>
                   {startsElectiveGroup ? (
-                    <h2 className="col-span-full mb-1 mt-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+                    <h2 className="col-span-full mb-1 mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                       Electives
                     </h2>
                   ) : null}
@@ -397,10 +397,10 @@ export function LearnerCourseList({
                     </div>
 
                     <div className="flex flex-1 flex-col p-5">
-                      <h2 className="m-0 line-clamp-2 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+                      <h2 className="m-0 line-clamp-2 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                         {row.course.courseName}
                       </h2>
-                      <p className="mt-2 line-clamp-2 break-words text-sm leading-5 text-body">
+                      <p className="mt-2 line-clamp-2 break-words text-sm text-body leading-[22px]">
                         {row.course.courseDescription ??
                           "No course description provided."}
                       </p>
