@@ -175,8 +175,19 @@ export function LearnerPlacementOffers({
           }),
         },
       );
+      const payload=await response.json().catch(()=>null) as {
+        offer?:{id?:unknown;status?:unknown};error?:unknown;code?:unknown;
+      }|null;
       if (!response.ok) {
-        throw new Error(learnerOfferActionErrorMessage(response.status));
+        const code=typeof payload?.code==="string"?payload.code:
+          typeof payload?.error==="string"?payload.error:null;
+        throw new Error(learnerOfferActionErrorMessage(response.status,code));
+      }
+      // Never announce an irreversible response until the canonical offer row
+      // confirms that the requested transition was recorded.
+      const expected=action==="ACCEPT"?"ACCEPTED":"DECLINED";
+      if(payload?.offer?.id!==offerId || payload.offer.status!==expected){
+        throw new Error("The response could not be verified. Refresh your offers before trying again.");
       }
 
       showToast({
@@ -198,7 +209,7 @@ export function LearnerPlacementOffers({
       showToast({
         tone: "error",
         title:
-          "Could not update offer",
+          action==="ACCEPT"?"Could not accept":"Could not decline",
         description:
           error instanceof Error
             ? error.message
@@ -314,7 +325,7 @@ export function LearnerPlacementOffers({
                         : "neutral"
                   }
                 >
-                  {humanize(item.status)}
+                  {item.status==="ISSUED" && learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? "Waiting for your reply" : humanize(item.status)}
                 </StatusBadge>
                 {item.joining ? (
                   <StatusBadge
@@ -339,10 +350,10 @@ export function LearnerPlacementOffers({
             </div>
 
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 break-words text-sm text-body">
-              {item.letterHref ? (
-                <a href={item.letterHref} rel="noopener noreferrer"
+              {item.letterHref && !learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? (
+                <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
                   className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline">
-                  View offer letter
+                  Offer letter
                 </a>
               ) : null}
               {item.countsAsPlaced===false ? (
@@ -426,8 +437,10 @@ export function LearnerPlacementOffers({
                 Contact your placement cell for clarification.
               </p>
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="SOON" ? (
-              <p role="status" className="mt-4 text-sm font-semibold text-warning">
-                Response due within 48 hours. Review the offer terms before confirming.
+              <p role="status" className={"mt-4 text-sm font-semibold "+(item.expiresAt && Date.parse(item.expiresAt)-Date.parse(snapshotNowIso)<=86400000?"text-error":"text-warning")}>
+                {item.expiresAt && Date.parse(item.expiresAt)-Date.parse(snapshotNowIso)<=86400000
+                  ? "Response due within 24 hours. Review the offer terms before confirming."
+                  : "Response due within 48 hours. Review the offer terms before confirming."}
               </p>
             ) : null}
 
@@ -447,14 +460,16 @@ export function LearnerPlacementOffers({
                 </Button>
                 <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
                   size="sm"
-                  variant="secondary"
+                  variant="danger"
                   disabled={
                     pendingId !== null
                   }
                   onClick={() => { setDeclineReason(""); setDeclineOffer(item); }}
                 >
-                  Decline offer
+                  Decline
                 </Button>
+                {item.letterHref ? <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-primary-text sm:w-auto md:min-h-9">Offer letter</a> : null}
                 {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="sm" variant="secondary" disabled={pendingId!==null}
                     onClick={()=>{
@@ -538,14 +553,14 @@ export function LearnerPlacementOffers({
         open={declineOffer !== null}
         onOpenChange={(open) => { if (!open && pendingId === null) setDeclineOffer(null); }}
         title={declineOffer?"Decline "+declineOffer.companyName+"\u0027s offer?":"Decline offer?"}
-        description="Declining is recorded as an official response and cannot be undone from the Learner workspace."
+        description="This cannot be undone. The placement cell receives a record of your response; company notification depends on the recruitment workflow."
         footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
-            Keep offer pending
+            Cancel
           </Button>
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pendingId !== null || declineReason.length > 2000}
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="danger" disabled={pendingId !== null || declineReason.length > 2000}
             onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
-            {pendingId !== null ? "Saving…" : "Decline offer"}
+            {pendingId !== null ? "Saving…" : "Decline"}
           </Button>
         </div>}
       >
@@ -573,7 +588,7 @@ export function LearnerPlacementOffers({
         footer={
           <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null}
-              onClick={dismissAccept}>Keep offer pending</Button>
+              onClick={dismissAccept}>Cancel</Button>
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
               {pendingId !== null ? "Saving…" : "Yes, accept"}
@@ -603,6 +618,9 @@ export function LearnerPlacementOffers({
                 {rows.length?<ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>:
                 <p className="text-xs text-muted-foreground">None</p>}
               </div>)}
+              {!acceptImpact.withdrawn.length&&!acceptImpact.declined.length&&!acceptImpact.stayed.length?
+                <p className="text-sm font-medium">Nothing else changes.</p>:null}
+              <p className="text-xs text-muted-foreground">Withdrawn applications leave the active placement process. Other offers declined cannot be accepted; applications under You stay in remain active under your college rules.</p>
               {acceptImpact.blockedByAnotherAcceptedOffer?<p role="alert" className="font-semibold text-error">
                 Another accepted offer is already recorded. You cannot accept this offer until the placement cell resolves the conflict.
               </p>:null}
