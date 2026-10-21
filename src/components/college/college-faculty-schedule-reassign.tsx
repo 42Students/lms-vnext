@@ -36,10 +36,11 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
   finally{inFlightRef.current=false;setBusy(false);}
  }
  async function submit(){
-  if(!selected||busy||inFlightRef.current||truncated||receipt)return;
+  if(!selected||busy||inFlightRef.current||truncated||(receipt&&receipt.skipped===0))return;
   inFlightRef.current=true;
   let confirmed=false;
-  try{confirmed=await ask("Reassign upcoming class schedules for "+name+"? Sessions with clashes are skipped.");}
+  try{confirmed=await ask(receipt?"Retry the "+receipt.skipped+" skipped class schedule(s) for "+name+"? Existing moves stay unchanged.":
+   "Reassign upcoming class schedules for "+name+"? Sessions with clashes are skipped.");}
   catch{inFlightRef.current=false;return;}
   if(!confirmed){inFlightRef.current=false;return;}
   setBusy(true);setError("");
@@ -61,14 +62,15 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
    footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:items-center md:justify-end">
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setOpen(false)}
       className="min-h-11 w-full md:min-h-9 md:w-auto">Close</Button>
-     <Button variant="primary" type="button" disabled={busy||!loaded||!selected||!upcoming||truncated||Boolean(receipt)}
+     <Button variant="primary" type="button" disabled={busy||!loaded||!selected||!upcoming||truncated||Boolean(receipt&&receipt.skipped===0)}
       onClick={()=>void submit()} className="min-h-11 w-full md:min-h-9 md:w-auto"
-      loading={busy&&loaded}>{busy&&loaded?"Reassigning…":"Reassign class schedules"}</Button>
+      loading={busy&&loaded}>{busy&&loaded?"Reassigning…":receipt?"Retry skipped sessions":"Reassign class schedules"}</Button>
    </div>}>
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       {!loaded&&busy?<LoadingState label="Reassign class schedules" />:null}
       {receipt?<Alert tone="success" className="space-y-[var(--lms-space-2)]">
         <p className="font-semibold">Reassigned {receipt.reassigned} of {receipt.total} upcoming session(s).</p>
+        <p className="text-xs">Review the per-session results below. Retry checks only sessions still assigned to the original faculty.</p>
         {receipt.skipped?<details className="min-w-0">
           <summary className="min-h-11 cursor-pointer py-2.5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">{receipt.skipped} skipped.</summary>
           <ul className="space-y-[var(--lms-space-2)] pl-[var(--lms-space-4)] text-sm">

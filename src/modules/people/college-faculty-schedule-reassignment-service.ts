@@ -26,9 +26,11 @@ export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId
    collegeId:m.collegeId,organizationId:m.organizationId,
   });
  const [sourceFaculty]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
     eq(membershipRoles.role,"FACULTY")))
-  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,m.collegeId))).limit(1);
+  .where(and(eq(collegeMemberships.id,id),eq(collegeMemberships.collegeId,m.collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))).limit(1);
  if(!sourceFaculty)throw Error("Faculty not found in this college.");
  const people=await tx.select({id:collegeMemberships.id,name:users.displayName})
  .from(collegeMemberships)
@@ -81,7 +83,7 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
    // college_memberships record permits disabling a replacement account or
    // removing its FACULTY role during this reassignment transaction.
    .for("share");
-  if(!principals.some(p=>p.id===old)||
+  if(!principals.some(p=>p.id===old&&p.status==="ACTIVE"&&p.userStatus==="ACTIVE")||
      !principals.some(p=>p.id===input.replacementMembershipId&&p.status==="ACTIVE"&&p.userStatus==="ACTIVE"))
     throw Error("Source or replacement faculty not available in this college.");
   await assertPersistedPlatformPermission(tx,ctx,"academics.manage",{
