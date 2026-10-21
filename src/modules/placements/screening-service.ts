@@ -45,6 +45,27 @@ export const PLACEMENT_SCREENING_PROVENANCE = {
   scoreAvailable: false,
   missingScoreLabel: "Not scored",
   completionLabel: "Human review decision",
+  // Legacy AUTOMATED_V1 numeric score was not migrated; never fabricate it.
+  automaticScoringEnabled: false,
+  automatedStatus: "NOT_RUN",
+  overallScore: null,
+  skillsScore: null,
+  educationScore: null,
+  screenedAt: null,
+  rankingPolicy: "SUBMISSION_TIME",
+  rescreenPolicy: "MANAGER_REPAIR_ONLY",
+} as const;
+
+/** The legacy single status is split across persisted vNext facts. A
+ * manual screening decision never invents a round, offer, or joining. */
+export const PLACEMENT_SCREENING_LEGACY_STAGE_SOURCES = {
+  APPLIED: "SUBMITTED_APPLICATION",
+  SHORTLISTED: "HUMAN_SCREENING",
+  ASSESSMENT: "APPLICATION_TEST_ROUND",
+  INTERVIEW: "APPLICATION_INTERVIEW_ROUND",
+  OFFERED: "PERSISTED_OFFER",
+  REJECTED: "HUMAN_SCREENING_OR_PIPELINE",
+  HIRED: "VERIFIED_JOINING",
 } as const;
 
 async function loadScreeningDetails(
@@ -159,6 +180,8 @@ function learnerScreeningView(
     updatedAt: row.screening.updatedAt,
     screeningMode: PLACEMENT_SCREENING_PROVENANCE.mode,
     screeningVersion: PLACEMENT_SCREENING_PROVENANCE.version,
+    automatedScreeningStatus: "NOT_RUN" as const,
+    automatedScreeningScore: null,
   };
 }
 
@@ -265,6 +288,12 @@ export async function getPlacementScreening(
     screeningMode: PLACEMENT_SCREENING_PROVENANCE.mode,
     screeningVersion: PLACEMENT_SCREENING_PROVENANCE.version,
     screeningProvenance: PLACEMENT_SCREENING_PROVENANCE,
+    legacyScreeningVersion: row.job.legacyScreeningVersion ?? 1,
+    legacyStageSources: PLACEMENT_SCREENING_LEGACY_STAGE_SOURCES,
+    automatedScreening: {
+      status: "NOT_RUN" as const, overallScore: null, skillsScore: null,
+      educationScore: null, screenedAt: null, failureReason: null,
+    },
     history:
       await loadScreeningHistory(applicationId),
   };
@@ -326,6 +355,10 @@ export async function decidePlacementScreening(
     );
   }
 
+  // The database limits this field to 500 even though the generic DTO
+  // also serves other surfaces with a 1000-character limit.
+  if ((input.candidateMessage?.length ?? 0) > 500)
+    throw new Error("Candidate message must be at most 500 characters");
   const from =
     current.screening.status as ScreeningStatus;
   if (expectedUpdatedAt !== undefined &&
@@ -459,6 +492,14 @@ export async function decidePlacementScreening(
           toStatus: input.decision,
           membershipId:
             current.candidate.membershipId,
+          legacyDisposition: input.decision === "HOLD" ? "UNDER_REVIEW" : input.decision,
+          rejectionReason: input.decision === "REJECTED"
+            ? input.internalReason ?? input.candidateMessage ?? null : null,
+          assessmentUrl: current.job.legacyPostingDetails?.assessmentUrl ?? null,
+          candidateNotificationPolicy: input.decision === "HOLD"
+            ? "INTERNAL_ONLY" : "VISIBLE_ON_APPLICANT_STATUS",
+          automatedScore: null,
+          screeningVersion: PLACEMENT_SCREENING_PROVENANCE.version,
         },
         groupKey:
           `placement-job:${current.job.id}:screening`,
@@ -467,7 +508,10 @@ export async function decidePlacementScreening(
       },
     );
 
-    return updated;
+    return { ...updated,
+      successMessage: "Application status updated successfully",
+      automatedScreeningStatus: "NOT_RUN" as const,
+    };
   });
 }
 
