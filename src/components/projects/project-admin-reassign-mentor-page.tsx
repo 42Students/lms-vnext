@@ -58,10 +58,10 @@ export async function ProjectAdminReassignMentorPage({
     return <div className="min-w-0 space-y-[16px]">
       <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
-      <ErrorState title="Mentor reassignment unavailable"
+      <ErrorState title={projectsRead.status==="rejected"?"Failed to load project workspaces":mentorsRead.status==="rejected"?"Mentor options could not be loaded":"Mentor workload could not be loaded"}
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
         action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Retry loading mentor reassignment</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">{mentorsRead.status==="rejected"?"Retry mentors":"Retry loading mentor reassignment"}</Link>}/>
     </div>;
   const projects=projectsRead.value;
   const mentors=mentorsRead.value;

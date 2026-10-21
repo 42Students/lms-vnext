@@ -22,10 +22,10 @@ export const ANNOUNCEMENT_LIMITS = {
 const instant = z.iso.datetime({ offset: true }).transform((v) => new Date(v));
 
 export const announcementCreateSchema = z.object({
-  receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES),
-  receiverId: z.string().uuid(),
-  title: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.titleCharacters),
-  message: z.string().trim().min(1).max(ANNOUNCEMENT_LIMITS.messageCharacters),
+  receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES,{error:"Receiver type is required"}),
+  receiverId: z.string({error:"Receiver value is required"}).uuid({message:"Receiver value is required"}),
+  title: z.string({error:"Title is required"}).trim().min(1,{message:"Title is required"}).max(ANNOUNCEMENT_LIMITS.titleCharacters,{message:"Title must not exceed 255 characters"}),
+  message: z.string({error:"Message is required"}).trim().min(1,{message:"Message is required"}).max(ANNOUNCEMENT_LIMITS.messageCharacters,{message:"Message must not exceed 10000 characters"}),
   scheduledAt: instant.nullable().optional(),
   expiresAt: instant.nullable().optional(),
   isPinned: z.boolean().default(false),
@@ -63,7 +63,7 @@ const booleanQuery = z.union([
 ]);
 
 export const announcementAdminListSchema = z.object({
-  q: z.string().trim().min(1).max(120).optional(),
+  q: z.string().trim().max(120).transform(v=>v||undefined).optional(),
   receiverType: z.enum(ANNOUNCEMENT_RECEIVER_TYPES).optional(),
   visibility: z.enum(["LIVE","SCHEDULED","EXPIRED","DELETED"]).optional(),
   pinned: z.enum(["PINNED","UNPINNED"]).optional(),

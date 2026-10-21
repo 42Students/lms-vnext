@@ -20,6 +20,9 @@ export async function POST(request: Request) {
     6,
   );
   if (!guarded.ok) return guarded.response;
+  // The shared guard intentionally rejects malformed IDs before any challenge lookup.
+  // Retry-After for TOO_SOON comes from loginErrorResponse/LoginError and is
+  // computed by the challenge store; do not fabricate a fixed countdown here.
 
   try {
     const result = await sendEmailFallbackWithRuntime({
