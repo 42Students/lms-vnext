@@ -1373,3 +1373,170 @@ export async function deleteStaffNotification(
     };
   });
 }
+
+
+/**
+ * Editing always checks permission on BOTH the persisted audience and its
+ * proposed replacement. Scheduled recipients can be replaced before release;
+ * already sent notices can only update their contents, not their audience.
+ */
+export async function updateStaffNotification(
+  context: RequestContext,
+  eventIdInput: unknown,
+  rawDraft: unknown,
+): Promise<StaffNoticeOperationResult> {
+  const id = z.string().uuid().parse(eventIdInput);
+  const original = await requireStaffNotificationMutation(context, id);
+  const { draft, audience } = await requireStaffNotificationAudience(context, rawDraft);
+  const scheduledAt = parseStaffNotificationSchedule(draft.scheduledAt);
+  const safeAssessmentUrl = draft.assessmentUrl
+    ? safeExternalAssessmentUrl(draft.assessmentUrl) : null;
+  if (draft.assessmentUrl && !safeAssessmentUrl) {
+    throw new Error("Assessment URL must use http or https");
+  }
+  const htmlContent = sanitizeStaffNotificationHtml(draft.htmlContent);
+  const body = notificationPreviewFromHtml(htmlContent);
+  // Resolve new recipients before locking the event; re-check their college
+  // grants again inside the transaction before replacing pending receipts.
+  const { userIds } = await resolveStaffNotificationRecipients(context, rawDraft);
+  const sameAudience = original.collegeId === audience.collegeId &&
+    original.organizationId === audience.organizationId &&
+    original.classId === audience.classId &&
+    original.courseId === audience.courseId;
+  return getDb().transaction(async (tx) => {
+    const [event] = await tx.select({
+      actorUserId: activityEvents.actorUserId,
+      organizationId: activityEvents.organizationId,
+      collegeId: activityEvents.collegeId,
+      metadata: activityEvents.metadata,
+    }).from(activityEvents).where(eq(activityEvents.id, id)).for("update").limit(1);
+    if (!event || event.metadata.deletedAt != null ||
+        event.collegeId !== original.collegeId ||
+        event.organizationId !== original.organizationId ||
+        (event.actorUserId !== context.user.id &&
+         !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
+      throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+    }
+    const status = event.metadata.deliveryStatus;
+    if (status !== "SCHEDULED" && status !== "SENT") {
+      throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+    }
+    if (status === "SENT" && !sameAudience) {
+      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    }
+    if (status === "SCHEDULED" && (!scheduledAt || scheduledAt.getTime() <= Date.now())) {
+      throw new Error("scheduledAt must be a future date");
+    }
+    if (status === "SENT" && scheduledAt) {
+      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    }
+    if (status === "SCHEDULED") {
+      await assertScopedNotificationRecipients(tx, audience, userIds);
+    }
+    await tx.update(activityEvents).set({
+      organizationId: audience.organizationId,
+      collegeId: audience.collegeId,
+      subjectLabel: draft.title,
+      summary: draft.title,
+      metadata: {
+        ...event.metadata,
+        classId: audience.classId,
+        courseId: audience.courseId,
+        title: draft.title,
+        htmlContent,
+        assessmentUrl: safeAssessmentUrl,
+        scheduledAt: status === "SCHEDULED" ? scheduledAt?.toISOString() : event.metadata.scheduledAt,
+        updatedAt: new Date().toISOString(),
+      },
+    }).where(eq(activityEvents.id, id));
+    if (status === "SCHEDULED") {
+      await tx.update(inAppNotifications).set({ deletedAt: new Date() })
+        .where(eq(inAppNotifications.eventId, id));
+      if (userIds.length > 0) {
+        await tx.insert(inAppNotifications).values(userIds.map((userId) => ({
+          userId, eventId: id, title: draft.title, body,
+          scheduledAt, deliveredAt: null, deliveryStatus: "SCHEDULED",
+          legacyAssessmentUrl: safeAssessmentUrl,
+          legacyCreatedByUserId: context.user.id,
+        }))).onConflictDoUpdate({
+          target: [inAppNotifications.userId, inAppNotifications.eventId],
+          set: {
+            title: draft.title, body, scheduledAt, deliveredAt: null,
+            deletedAt: null, deliveryStatus: "SCHEDULED",
+            legacyAssessmentUrl: safeAssessmentUrl,
+          },
+        });
+      }
+    } else {
+      await tx.update(inAppNotifications).set({
+        title: draft.title, body, legacyAssessmentUrl: safeAssessmentUrl,
+      }).where(and(eq(inAppNotifications.eventId, id), isNull(inAppNotifications.deletedAt)));
+    }
+    return {
+      id,
+      deliveryStatus: status,
+      delivered: 0,
+      scheduled: status === "SCHEDULED" ? userIds.length : 0,
+      deleted: 0,
+    };
+  });
+}
+
+/**
+ * Trusted internal due-release entry point. The event row serializes multiple
+ * workers; recipients remain invisible until the transaction commits both
+ * the SENT event state and the delivered receipts.
+ * An unresolved membership change aborts the whole release (fail-closed).
+ */
+export async function releaseScheduledStaffNotification(
+  eventIdInput: unknown,
+  asOf: Date = new Date(),
+): Promise<{ delivered: number; alreadyReleased: boolean }> {
+  const id = z.string().uuid().parse(eventIdInput);
+  const now = z.date().parse(asOf);
+  return getDb().transaction(async (tx) => {
+    const [event] = await tx.select({
+      subjectType: activityEvents.subjectType,
+      metadata: activityEvents.metadata,
+      collegeId: activityEvents.collegeId,
+      organizationId: activityEvents.organizationId,
+    }).from(activityEvents).where(eq(activityEvents.id, id)).for("update").limit(1);
+    if (!event || event.subjectType !== "NOTIFICATION" ||
+        event.metadata.deletedAt != null) {
+      throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+    }
+    if (event.metadata.deliveryStatus !== "SCHEDULED") {
+      return { delivered: 0, alreadyReleased: true };
+    }
+    const dueValue = event.metadata.scheduledAt;
+    const due = typeof dueValue === "string" ? new Date(dueValue) : null;
+    if (!due || Number.isNaN(due.getTime()) || due.getTime() > now.getTime()) {
+      return { delivered: 0, alreadyReleased: false };
+    }
+    const recipients = await tx.select({ userId: inAppNotifications.userId })
+      .from(inAppNotifications)
+      .where(and(
+        eq(inAppNotifications.eventId, id),
+        eq(inAppNotifications.deliveryStatus, "SCHEDULED"),
+        isNull(inAppNotifications.deletedAt),
+      ));
+    await assertScopedNotificationRecipients(
+      tx, event, recipients.map((row) => row.userId),
+    );
+    const rows = await tx.update(inAppNotifications).set({
+      deliveryStatus: "SENT", deliveredAt: now,
+    }).where(and(
+      eq(inAppNotifications.eventId, id),
+      eq(inAppNotifications.deliveryStatus, "SCHEDULED"),
+      isNull(inAppNotifications.deletedAt),
+    )).returning({ id: inAppNotifications.id });
+    await tx.update(activityEvents).set({
+      metadata: {
+        ...event.metadata,
+        deliveryStatus: "SENT",
+        deliveredAt: now.toISOString(),
+      },
+    }).where(eq(activityEvents.id, id));
+    return { delivered: rows.length, alreadyReleased: false };
+  });
+}
