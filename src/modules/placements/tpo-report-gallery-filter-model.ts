@@ -19,12 +19,11 @@ export function countVisibleTpoReportCards(groups:readonly {cards:readonly unkno
  return groups.reduce((total,group)=>total+group.cards.length,0);
 }
 
-/** Stable title sorting changes only presentation, never available report authorization. */
+/** The old LMS report directory has a deliberate order within each group.
+ * The array order is authored by the directory owner, not alphabetized. The
+ * legacy public export remains for old callers but must not shuffle cards. */
 export function alphabetizeTpoReportGallery<T extends {heading:string;cards:readonly {title:string;path:string}[]}>(
  groups:readonly T[],
 ){
- return groups.map(group=>({
-  ...group,
-  cards:[...group.cards].sort((a,b)=>a.title.localeCompare(b.title)||a.path.localeCompare(b.path)),
- }));
+ return groups.map(group=>({...group,cards:[...group.cards]}));
 }
