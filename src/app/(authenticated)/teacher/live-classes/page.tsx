@@ -55,7 +55,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      </option>)}
     </Select></label>
    <Button type="submit" className="w-full lg:w-auto">Filter</Button>
-   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
+   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">Clear</Link>
   </form>
   <p className="text-sm leading-[22px] text-body" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
@@ -73,7 +73,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
-     className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open course</Link>
+     className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 text-sm text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open course</Link>
    </li>)}</ul>}
   {data.totalPages > 1 ? <Pagination label="Live-class pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>facultyLiveClassesHref({...data.query,page})}/> : null}
   <p className="max-w-prose text-xs leading-5 text-muted-foreground">

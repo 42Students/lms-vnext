@@ -40,7 +40,7 @@ export async function ProjectAdminReassignMentorPage({
     <ErrorState title="Invalid mentor reassignment filters"
       description="Check the mentor, workspace, search, status, page and rows filters, or clear them to continue."
       action={<Link href={basePath+"/reassign-mentor"}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>}/>
+        className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear filters</Link>}/>
   </div>;
   const {fromMentorId,projectId:initialProjectId,mentorSearch,...filters}=parsed.data;
   const query:ProjectAdminCollectionQuery={...filters,fromMentorId};
@@ -61,7 +61,7 @@ export async function ProjectAdminReassignMentorPage({
       <ErrorState title="Mentor reassignment unavailable"
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
         action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry loading mentor reassignment</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Retry loading mentor reassignment</Link>}/>
     </div>;
   const projects=projectsRead.value;
   const mentors=mentorsRead.value;
@@ -83,7 +83,7 @@ export async function ProjectAdminReassignMentorPage({
             const filter = row.mentorMembershipId ?? "UNASSIGNED";
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
@@ -106,7 +106,7 @@ export async function ProjectAdminReassignMentorPage({
             placeholder="Enter mentor name or email" className="w-full"/>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
-        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear mentor search</Link>:null}
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-[650] text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:underline">Clear mentor search</Link>:null}
         <p className="min-w-0 text-xs text-muted-foreground md:col-span-full">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <div className="min-w-0"><ProjectAdminFilters query={query} /></div>

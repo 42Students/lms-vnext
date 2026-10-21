@@ -30,7 +30,7 @@ export default async function MentorReviewsPage({
   }));
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title="Delivery review queue" description="Invalid review filters" />
-    <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear filters</Link>
+    <Link href="/mentor/reviews" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link md:min-h-[var(--lms-control-height)]">Clear filters</Link>
   </section>;
   const data = await getMentorReviewQueue(context, parsed.data);
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -108,7 +108,7 @@ export default async function MentorReviewsPage({
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Projects</Link>} />
         : <div className="grid">{data.items.map(item =>
-          <Link key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <Link key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
             <p className="mt-2 text-xs text-muted-foreground leading-5">Submitted: {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
