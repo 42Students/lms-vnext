@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, inArray } from "drizzle-orm";
+import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementJobRounds, placementJobs } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -42,11 +42,13 @@ export async function listCollegeDriveInterviews(
   )).as("college_drive_interview_rounds");
   const [totals,items] = await Promise.all([
     db.select({total:count()}).from(source),
-    db.select().from(source).orderBy(asc(source.sequence),asc(source.id))
+    db.select().from(source).orderBy(sql`${source.scheduledAt} asc nulls last`,asc(source.sequence),asc(source.id))
       .limit(DRIVE_INTERVIEW_PAGE_SIZE).offset((query.page-1)*DRIVE_INTERVIEW_PAGE_SIZE),
   ]);
   const total=totals[0]?.total ?? 0;
   return { job, query, items, total,
-    individualSlotsAvailable: false as const,
+    // Registered candidate slots (0116) are loaded independently by the
+    // appointment panel; no per-learner bookings are invented from round rows.
+    individualSlotsAvailable: true as const,
     totalPages: Math.max(1,Math.ceil(total/DRIVE_INTERVIEW_PAGE_SIZE)) };
 }
