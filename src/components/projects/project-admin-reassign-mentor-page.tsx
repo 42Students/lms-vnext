@@ -62,13 +62,14 @@ export async function ProjectAdminReassignMentorPage({
       action={<Link href={basePath+"/reassign-mentor"}
         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Clear filters</Link>}/>
   </div>;
-  const {fromMentorId,projectId:initialProjectId,mentorSearch,...filters}=parsed.data;
+  const {fromMentorId,projectId:initialProjectId,mentorSearch,mentorPage,...filters}=parsed.data;
   const query:ProjectAdminCollectionQuery={...filters,fromMentorId};
   // The roster, eligible mentors and workload must all be verified before
   // presenting mutation controls. A failed dependency is not an empty list.
   const [projectsRead,mentorsRead,workloadRead]=await Promise.allSettled([
     listCollegeReassignmentWorkspaces(context,collegeId,query),
-    listProjectMentorCandidates(context,collegeId,{q:mentorSearch,limit:100}),
+    listProjectMentorCandidates(context,collegeId,{q:mentorSearch,limit:100,
+      offset:(mentorPage-1)*100}),
     listCollegeProjectMentorWorkload(context,collegeId),
   ]);
   if(projectsRead.status==="rejected"||
@@ -154,7 +155,18 @@ export async function ProjectAdminReassignMentorPage({
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
         {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-[650] text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:underline">Clear mentor search</Link>:null}
-        <p className="min-w-0 text-xs text-muted-foreground md:col-span-full leading-[20px]">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground md:col-span-full">
+          <span>Mentors · page {mentorPage} · {mentors.length} result{mentors.length===1?"":"s"} on this page</span>
+          <nav className="flex flex-wrap gap-3" aria-label="Eligible mentor pages">
+            {mentorPage>1?<Link className="font-semibold text-link underline"
+              href={projectAdminReassignMentorHref(basePath,{...parsed.data,mentorPage:mentorPage-1})}>
+                Previous mentors</Link>:null}
+            {mentors.length===100&&mentorPage<1000?<Link
+              className="font-semibold text-link underline"
+              href={projectAdminReassignMentorHref(basePath,{...parsed.data,mentorPage:mentorPage+1})}>
+                Next mentors</Link>:null}
+          </nav>
+        </div>
       </form>
       <div className="min-w-0"><ProjectAdminFilters query={query} /></div>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
