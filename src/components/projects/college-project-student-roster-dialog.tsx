@@ -115,7 +115,9 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learners
-      <Input value={search} onChange={event=>setSearch(event.target.value)} maxLength={120} placeholder="Name or email"/>
+      <Input value={search} onChange={event=>setSearch(event.target.value)}
+       onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void find();}}}
+       maxLength={120} placeholder="Search by student name"/>
      </label>
      <Button type="button" variant="secondary" className="w-full sm:w-auto" loading={searching} disabled={searching||busy||!loaded} onClick={()=>void find()}>
       {searching?"Searching…":"Search"}
@@ -130,7 +132,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
         setSelected(replacing?[...initial]:[]);
         setError("");
        }}/>
-      Replace existing learners
+      Replace existing learners (unchecked appends instead)
      </label>
      <p className="text-xs text-muted-foreground" role="status">
       {mode==="ADD"?"Adding to "+initial.length+" existing students. No current learner will be removed.":
@@ -172,6 +174,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     "Remove: "+removalSummary+". These learners lose active access, but their previous project work is retained.":
     mode==="REPLACE"?"Keep the selected learners as the complete workspace roster.":
     "Add "+selected.length+" student(s) to the existing "+initial.length+" workspace learners without removing anyone."}
-   confirmLabel={mode==="REPLACE"?"Replace roster":"Add students"} pending={busy} onConfirm={()=>void save()}/>
+   confirmLabel={mode==="REPLACE"?"Replace roster":"Add students"}
+   confirmVariant={mode==="REPLACE"&&removeCount>0?"danger":"primary"} pending={busy} onConfirm={()=>void save()}/>
  </>;
 }
