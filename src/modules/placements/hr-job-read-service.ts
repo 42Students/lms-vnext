@@ -26,7 +26,10 @@ import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicant
  * POST /drives/:id/resumes -> authorized recruiter-resume export route
  * POST /rounds/:id/results -> round-results service
  * GET/POST /rounds/:id/slots -> round-candidate-slots service
- * POST /drives/:id/selections -> recruiter-selection service
+ * POST /drives/:id/selections -> recruiter-selection-list-write-service
+ *   (/api/placements/recruiter/drives/[jobId]/selections); staged selection
+ *   proposals commit atomically with per-applicant items and an audit event;
+ *   the placement cell must independently verify them before issuing offers.
  * GET /messages/threads, /pulse, /threads/:id, POST /messages
  *     -> recruiter-conversation inbox/read/reply/open services
  *
@@ -36,7 +39,8 @@ import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicant
 export const HR_DRIVE_ACTIONS={
  DRIVE:"recruiter-workspace",ROUNDS:"recruiter-workspace",
  APPLICANTS:"hr-job-read",PIPELINE:"hr-job-read",RESULTS:"round-results",
- SLOTS:"round-candidate-slots",SELECTIONS:"drive-selection",OFFERS:"hr-job-read",
+ SLOTS:"round-candidate-slots",SELECTIONS:"drive-selection",
+ SELECTIONS_WRITE:"recruiter-selection-list-write-service",OFFERS:"hr-job-read",
  NOTES:"applicant-notes",COMPANY:"recruiter-company",TEAM:"recruiter-team",
  REPORTS:"recruiter-reports",TODAY:"recruiter-today",CALENDAR:"recruiter-calendar",
  MESSAGES:"recruiter-conversations",ZIP:"authorized-recruiter-resume-export",
