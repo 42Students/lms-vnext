@@ -129,6 +129,12 @@ export async function listPlacementCompanies(
       isTrusted: placementCompanyRelationships.isTrusted,
       ownerMembershipId:
         placementCompanyRelationships.ownerMembershipId,
+      // These CRM fields live on the authorized COLLEGE relationship, never
+      // on the global employer record or cross-college directory.
+      internalNotes: placementCompanyRelationships.internalNotes,
+      contactPersonName: placementCompanyRelationships.contactPersonName,
+      contactEmail: placementCompanyRelationships.contactEmail,
+      contactPhone: placementCompanyRelationships.contactPhone,
       createdAt: placementCompanyRelationships.createdAt,
       updatedAt: placementCompanyRelationships.updatedAt,
     })
@@ -246,94 +252,42 @@ export async function createPlacementCompany(
   const db = getDb();
 
   return db.transaction(async (tx) => {
-    const identityFilter = input.primaryDomain
-      ? or(
-          ilike(placementCompanies.name, input.name),
-          ilike(
-            placementCompanies.primaryDomain,
-            input.primaryDomain,
-          ),
-        )
-      : ilike(placementCompanies.name, input.name);
-
-    const matches = await tx
-      .select()
-      .from(placementCompanies)
-      .where(identityFilter)
-      .limit(2);
-
-    const distinctIds = new Set(
-      matches.map((company) => company.id),
-    );
-    if (distinctIds.size > 1) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_COMPANY_IDENTITY_CONFLICT",
-      );
+    // Display names are not globally unique. Two colleges can work with
+    // different companies sharing a name, but the same canonical domain
+    // must not create parallel global identities under concurrent requests.
+    const domain = (input.primaryDomain ??
+      new URL(input.websiteUrl!).hostname.replace(/^www\./i,""))
+      .toLocaleLowerCase("en-US");
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${domain},0))`);
+    const [canonical] = await tx.select().from(placementCompanies)
+      .where(ilike(placementCompanies.primaryDomain,domain))
+      .for("update").limit(1);
+    if (canonical && (canonical.status !== "ACTIVE" ||
+        canonical.name.trim().toLocaleLowerCase("en-US") !==
+          input.name.trim().toLocaleLowerCase("en-US"))) {
+      // A name mismatch could be an unapproved alias or domain hijack.
+      // Do not mutate a globally shared canonical record as a side effect.
+      throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
     }
-
-    let company = matches[0] ?? null;
-    if (
-      company &&
-      input.primaryDomain &&
-      company.primaryDomain &&
-      company.primaryDomain.toLowerCase() !==
-        input.primaryDomain
-    ) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_COMPANY_IDENTITY_CONFLICT",
-      );
-    }
-
-    if (!company) {
-      const [created] = await tx
-        .insert(placementCompanies)
-        .values({
-          name: input.name,
-          websiteUrl: input.websiteUrl ?? null,
-          primaryDomain: input.primaryDomain ?? null,
-          createdByUserId: context.user.id,
-        })
-        .onConflictDoNothing()
-        .returning();
-
-      company = created ?? null;
-
-      if (!company) {
-        const [concurrent] = await tx
-          .select()
-          .from(placementCompanies)
-          .where(identityFilter)
-          .limit(1);
-        company = concurrent ?? null;
+    let company=canonical??null;
+    if(!company){
+      const [created]=await tx.insert(placementCompanies).values({
+        name:input.name,websiteUrl:input.websiteUrl??null,
+        primaryDomain:domain,createdByUserId:context.user.id,
+      }).onConflictDoNothing().returning();
+      company=created??null;
+      if(!company){
+        const [concurrent]=await tx.select().from(placementCompanies)
+          .where(ilike(placementCompanies.primaryDomain,domain)).limit(1);
+        if(!concurrent||concurrent.status!=="ACTIVE"||
+          concurrent.name.trim().toLocaleLowerCase("en-US")!==
+            input.name.trim().toLocaleLowerCase("en-US"))
+          throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
+        company=concurrent;
       }
-    } else if (
-      (!company.primaryDomain && input.primaryDomain) ||
-      (!company.websiteUrl && input.websiteUrl)
-    ) {
-      const [enriched] = await tx
-        .update(placementCompanies)
-        .set({
-          primaryDomain:
-            company.primaryDomain ??
-            input.primaryDomain ??
-            null,
-          websiteUrl:
-            company.websiteUrl ??
-            input.websiteUrl ??
-            null,
-          updatedAt: new Date(),
-        })
-        .where(eq(placementCompanies.id, company.id))
-        .returning();
-      company = enriched ?? company;
     }
-
-    if (!company) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_COMPANY_IDENTITY_CONFLICT",
-      );
-    }
-
+    // Never "enrich" the shared company name, URL, logo or ownership through
+    // linking a college relationship. Canonical edits need a verified owner.
     const now = new Date();
     const [relationship] = await tx
       .insert(placementCompanyRelationships)
@@ -402,26 +356,33 @@ export async function updatePlacementCompanyRelationship(
     );
   }
 
-  const [updated] = await getDb()
-    .update(placementCompanyRelationships)
-    .set({
-      ...(input.isTrusted === undefined
-        ? {}
-        : { isTrusted: input.isTrusted }),
-      ...(input.ownerMembershipId === undefined
-        ? {}
-        : { ownerMembershipId: input.ownerMembershipId }),
-      updatedAt: new Date(),
-    })
-    .where(
-      eq(
-        placementCompanyRelationships.id,
-        relationshipId,
-      ),
-    )
-    .returning();
-
-  return { company: current.company, relationship: updated };
+  return getDb().transaction(async tx=>{
+    const [locked]=await tx.select().from(placementCompanyRelationships)
+      .where(and(eq(placementCompanyRelationships.id,relationshipId),
+        eq(placementCompanyRelationships.collegeId,current.relationship.collegeId)))
+      .for("update").limit(1);
+    if(!locked||locked.status!=="ACTIVE")
+      throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+    const [updated]=await tx.update(placementCompanyRelationships).set({
+      ...(input.isTrusted===undefined?{}:{isTrusted:input.isTrusted}),
+      ...(input.ownerMembershipId===undefined?{}:{ownerMembershipId:input.ownerMembershipId}),
+      updatedAt:new Date(),
+    }).where(and(eq(placementCompanyRelationships.id,relationshipId),
+      eq(placementCompanyRelationships.collegeId,current.relationship.collegeId),
+      eq(placementCompanyRelationships.status,"ACTIVE"))).returning();
+    if(!updated)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
+      collegeId:current.relationship.collegeId,
+      subjectType:"placement_company_relationship",subjectId:updated.id,
+      subjectLabel:current.company.name,summary:"College employer relationship updated",
+      metadata:{companyId:current.company.id,relationshipId:updated.id,
+        action:"UPDATE",before:{isTrusted:locked.isTrusted,ownerMembershipId:locked.ownerMembershipId},
+        after:{isTrusted:updated.isTrusted,ownerMembershipId:updated.ownerMembershipId}},
+      groupKey:"placement-companies:"+current.relationship.collegeId,
+    });
+    return {company:current.company,relationship:updated};
+  });
 }
 
 export async function archivePlacementCompanyRelationship(
@@ -439,47 +400,36 @@ export async function archivePlacementCompanyRelationship(
     current.relationship.collegeId,
   );
 
-  if (current.relationship.status === "ARCHIVED") {
-    return current;
-  }
-
-  const [dependentJob] = await getDb()
-    .select({ id: placementJobs.id })
-    .from(placementJobs)
-    .where(
-      and(
-        eq(
-          placementJobs.companyRelationshipId,
-          relationshipId,
-        ),
-        isNull(placementJobs.archivedAt),
-      ),
-    )
-    .limit(1);
-
-  if (dependentJob) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_COMPANY_RELATIONSHIP_HAS_JOBS",
-    );
-  }
-
-  const now = new Date();
-  const [relationship] = await getDb()
-    .update(placementCompanyRelationships)
-    .set({
-      status: "ARCHIVED",
-      archivedAt: now,
-      updatedAt: now,
-    })
-    .where(
-      eq(
-        placementCompanyRelationships.id,
-        relationshipId,
-      ),
-    )
-    .returning();
-
-  return { company: current.company, relationship };
+  return getDb().transaction(async tx=>{
+    // Job creation locks the same relationship FOR SHARE before inserting a
+    // draft. This exclusive lock prevents an archive/apply race.
+    const [locked]=await tx.select().from(placementCompanyRelationships)
+      .where(and(eq(placementCompanyRelationships.id,relationshipId),
+        eq(placementCompanyRelationships.collegeId,current.relationship.collegeId)))
+      .for("update").limit(1);
+    if(!locked)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+    if(locked.status==="ARCHIVED")return {company:current.company,relationship:locked};
+    const [dependentJob]=await tx.select({id:placementJobs.id}).from(placementJobs)
+      .where(and(eq(placementJobs.companyRelationshipId,relationshipId),
+        isNull(placementJobs.archivedAt))).limit(1);
+    if(dependentJob)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_HAS_JOBS");
+    const now=new Date();
+    const [relationship]=await tx.update(placementCompanyRelationships)
+      .set({status:"ARCHIVED",archivedAt:now,updatedAt:now})
+      .where(and(eq(placementCompanyRelationships.id,relationshipId),
+        eq(placementCompanyRelationships.collegeId,current.relationship.collegeId),
+        eq(placementCompanyRelationships.status,"ACTIVE"))).returning();
+    if(!relationship)throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
+      collegeId:current.relationship.collegeId,
+      subjectType:"placement_company_relationship",subjectId:relationship.id,
+      subjectLabel:current.company.name,summary:"College employer relationship archived",
+      metadata:{companyId:current.company.id,relationshipId:relationship.id,action:"ARCHIVE"},
+      groupKey:"placement-companies:"+current.relationship.collegeId,
+    });
+    return {company:current.company,relationship};
+  });
 }
 
 /** COL-placements-15: recovery revives only the selected college's archived
