@@ -213,20 +213,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/college/college-faculty-schedule-reassign.tsx`
 - [x] `src/components/college/college-person-audit-modal.tsx`
 - [x] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-offering-section-preview.tsx`
-- [ ] `src/components/courses/admin-offering-teachers-panel.tsx`
-- [ ] `src/components/courses/assignment-file-open-control.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/assignment-submission-links.tsx`
-- [ ] `src/components/courses/college-content-authoring-control.tsx`
-- [ ] `src/components/courses/college-lesson-drag-order.tsx`
-- [ ] `src/components/courses/college-quiz-attempts.tsx`
-- [ ] `src/components/courses/course-display-read-only.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-offering-section-preview.tsx`
+- [x] `src/components/courses/admin-offering-teachers-panel.tsx`
+- [x] `src/components/courses/assignment-file-open-control.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/assignment-submission-links.tsx`
+- [x] `src/components/courses/college-content-authoring-control.tsx`
+- [x] `src/components/courses/college-lesson-drag-order.tsx`
+- [x] `src/components/courses/college-quiz-attempts.tsx`
+- [x] `src/components/courses/course-display-read-only.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
 - [ ] `src/components/courses/faculty-assignment-review.tsx`
 - [ ] `src/components/courses/faculty-contacts-table.tsx`
 - [ ] `src/components/courses/faculty-content-order-editor.tsx`
