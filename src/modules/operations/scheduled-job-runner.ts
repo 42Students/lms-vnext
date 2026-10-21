@@ -279,7 +279,7 @@ export function resolveScheduledContentDueAt(
   if (canonicalDueAt instanceof Date &&
       Number.isFinite(canonicalDueAt.getTime())) return canonicalDueAt;
   if (!legacyDueAt ||
-      !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?(?:Z|[+-]\\d{2}:\\d{2})$/.test(legacyDueAt)) return null;
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(legacyDueAt)) return null;
   const parsed = new Date(legacyDueAt);
   return Number.isFinite(parsed.getTime()) ? parsed : null;
 }

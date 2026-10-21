@@ -19,8 +19,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
 
 /**
  * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
@@ -64,18 +62,7 @@ export default async function CollegeDriveShortlistedPage({
       })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>} />
   </div>;
 
-  const result = await Promise.all([
-    getCollegeApplicationPipeline(context, jobId, query),
-    listCollegeDriveApplicationFilters(context),
-  ]).catch(() => null);
-  if (!result) return <div className="min-w-0 space-y-4">
-    <PageHeader title="Shortlisted" />
-    <ErrorState title="Could not load applications"
-      description="The requested applications are temporarily unavailable. No changes were made."
-      action={<Link href={href({ ...query, page: 1 })}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} />
-  </div>;
-  const [data, filters] = result;
+  const data = await getCollegeApplicationPipeline(context, jobId, query);
   if (query.page > data.totalPages) redirect(href({ ...query, page: data.totalPages }));
   const stages = ["ASSESSMENT", "INTERVIEW", "OFFERED", "HIRED", "SHORTLISTED", "WAITLISTED", "REJECTED", "APPLIED"] as const;
   const stageName = (value: string) => value.charAt(0) + value.slice(1).toLowerCase();
@@ -90,19 +77,16 @@ export default async function CollegeDriveShortlistedPage({
     { key: "email", header: "Email", cell: row => row.email ?? "Not provided" },
     { key: "college", header: "College", cell: row => row.collegeName },
     { key: "source", header: "Source", cell: row => row.source },
-    { key: "status", header: "Current Status", cell: row => <StatusBadge tone="neutral">{row.stage}</StatusBadge> },
+    { key: "status", header: "Current Status", cell: row => row.stage },
     { key: "date", header: "Applied Date", cell: row => date.format(new Date(row.submittedAt)) },
     { key: "actions", header: "Actions", cell: () => "View only" },
   ];
 
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Shortlisted" description={data.drive.title}
-      actions={<div className="flex flex-wrap gap-3">
-        <Link href={"/college/placements/jobs/" + encodeURIComponent(jobId) + "/overview"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Drive overview</Link>
-        <Link href={driveApplicationsHref(jobId, {
+      actions={<Link href={driveApplicationsHref(jobId, {
         ...query, stage: "ALL", screening: "ALL", status: "ALL", page: 1,
-      })} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9">All applications</Link></div>} />
+      })} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9">All applications</Link>} />
     <Tabs ariaLabel="Shortlisted pipeline stages" renderPanel={false} value={query.stage}
       items={stages.map(stage => ({
         value: stage,
@@ -111,7 +95,7 @@ export default async function CollegeDriveShortlistedPage({
         href: href({ ...query, stage, page: 1 }),
       }))} />
     <form method="get" role="search" aria-label="Shortlisted application filters"
-      className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto] lg:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))_auto_auto]">
+      className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto]">
       <input type="hidden" name="stage" value={query.stage} />
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Name, email, roll or role
@@ -125,30 +109,9 @@ export default async function CollegeDriveShortlistedPage({
           <option value="EXTERNAL">External</option>
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        Department
-        <Select name="departmentId" defaultValue={query.departmentId ?? ""}>
-          <option value="">All departments</option>
-          {filters.departments.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
-        </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        Program
-        <Select name="programId" defaultValue={query.programId ?? ""}>
-          <option value="">All programs</option>
-          {filters.programs.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
-        </Select>
-      </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-        Batch
-        <Select name="cohortId" defaultValue={query.cohortId ?? ""}>
-          <option value="">All batches</option>
-          {filters.cohorts.map(option => <option key={option.id} value={option.id}>{option.name}</option>)}
-        </Select>
-      </label>
-      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
-      {query.q || query.source !== "ALL" || query.departmentId || query.programId || query.cohortId
-        ? <Link href={href({ ...query, q: "", source: "ALL", departmentId: undefined, programId: undefined, cohortId: undefined, page: 1 })}
+      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filters</Button>
+      {query.q || query.source !== "ALL"
+        ? <Link href={href({ ...query, q: "", source: "ALL", page: 1 })}
             className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
         : null}
     </form>
@@ -176,11 +139,11 @@ export default async function CollegeDriveShortlistedPage({
         getRowKey={row => row.id} />
     </section> : null}
     {!data.items.length ? <EmptyState
-      title={query.q || query.source !== "ALL" || query.departmentId || query.programId || query.cohortId ? "No applications match these filters." : "No applications yet"}
-      description={query.q || query.source !== "ALL" || query.departmentId || query.programId || query.cohortId
+      title={query.q || query.source !== "ALL" ? "No applications match these filters." : "No applications yet"}
+      description={query.q || query.source !== "ALL"
         ? "Try clearing search and source filters."
         : "There are no applications in this pipeline stage yet."}
-      action={<Link href={href({ ...query, q: "", source: "ALL", departmentId: undefined, programId: undefined, cohortId: undefined, page: 1 })}
+      action={<Link href={href({ ...query, q: "", source: "ALL", page: 1 })}
         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>} /> : null}
     <nav aria-label="Shortlisted pages" className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
       <span>Page {query.page} of {data.totalPages}</span>
