@@ -34,11 +34,25 @@ export function CollegeDirectoryInstantFilters({formId}: {formId:string}) {
         timer=setTimeout(submit,350);
       }
     };
+    // FilterBar's search control is visually outside the form and linked
+    // through the native form attribute. It participates in FormData, but its
+    // DOM events do not bubble into the form element.
+    const externalFields=[...document.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+      '[form="'+formId+'"]',
+    )].filter(field=>!form.contains(field));
     form.addEventListener("change",onChange);
     form.addEventListener("input",onInput);
+    for(const field of externalFields){
+      field.addEventListener("change",onChange);
+      field.addEventListener("input",onInput);
+    }
     return ()=>{
       form.removeEventListener("change",onChange);
       form.removeEventListener("input",onInput);
+      for(const field of externalFields){
+        field.removeEventListener("change",onChange);
+        field.removeEventListener("input",onInput);
+      }
       if(timer)clearTimeout(timer);
     };
   },[formId,router]);

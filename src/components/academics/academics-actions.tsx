@@ -18,6 +18,8 @@ import { useToast } from "@/components/ui/toast";
 import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
+let programArchiveInFlight = false;
+
 class AcademicMutationResponseError extends Error {
   constructor(code: string, readonly fieldErrors: Readonly<Record<string, string>>) {
     super(code);
@@ -130,8 +132,16 @@ export function ProgramActions({
   departments?: readonly {id:string;name:string}[];
   contents?: { semesters: number; batches: number; classes: number } | null;
 }) {
-  const programHasLinkedRecords = Boolean(contents &&
-    (contents.semesters > 0 || contents.batches > 0 || contents.classes > 0));
+  const blockingRecords = contents ?
+    ([
+      contents.semesters > 0 ? `${contents.semesters} semester${contents.semesters===1?"":"s"}` : null,
+      contents.batches > 0 ? `${contents.batches} batch${contents.batches===1?"":"es"}` : null,
+      contents.classes > 0 ? `${contents.classes} class${contents.classes===1?"":"es"}` : null,
+    ].filter(Boolean)) : [];
+  const programHasLinkedRecords = blockingRecords.length > 0;
+  const archiveBlockerText = blockingRecords.length
+    ? "Remove linked " + blockingRecords.join(", ") + " before archiving."
+    : "Archive this program while retaining historical records.";
   const [editOpen, setEditOpen] =
     useState(false);
   const [archiveOpen, setArchiveOpen] =
@@ -170,7 +180,7 @@ export function ProgramActions({
       return;
     }
     if (pending) return;
-    if (departmentId !== (program.departmentId ?? "") || hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
+    if (departmentId !== (program.departmentId ?? "") || hasUnsavedCollegeProgramEdit(program, { name:name.trim(), code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
       setDiscardOpen(true);
     } else {
       setEditOpen(false);
@@ -181,20 +191,32 @@ export function ProgramActions({
     <>
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button size={compactActions ? "sm" : "md"} variant="secondary"
-          onClick={openEdit} disabled={pending}>Edit</Button>
+          aria-label={"Edit program " + program.name}
+          onClick={openEdit} disabled={pending}>
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" fill="none">
+            <path d="M4 16l3.5-.7L16 6.8 13.2 4 4.7 12.5 4 16Z"
+              stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+            <path d="m12 5.2 2.8 2.8" stroke="currentColor" strokeWidth="1.6" />
+          </svg> Edit
+        </Button>
         <Button size={compactActions ? "sm" : "md"} variant="danger"
           disabled={pending || programHasLinkedRecords}
-          title={programHasLinkedRecords
-            ? "Remove linked semesters, batches and classes before archiving."
-            : "Archive this program while retaining historical records."}
-          onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Archive</Button>
+          aria-label={"Delete program " + program.name}
+          title={archiveBlockerText}
+          onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" fill="none">
+            <path d="M3 6h14M8 6V4h4v2m3 0-.8 11H5.8L5 6m3 3v5m4-5v5"
+              stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg> Delete
+        </Button>
       </div>
 
       <Dialog
         open={editOpen}
         onOpenChange={requestEditOpenChange}
-        title="Edit program"
+        title={`Edit “${program.name}”`}
         description="You can change the department before any semesters, batches or learners are linked."
+        className="!max-w-[520px]" dismissible={!pending}
         footer={
           <AcademicDialogFooter>
             <Button
@@ -241,62 +263,50 @@ export function ProgramActions({
                 )
               }
             >
-              {pending ? "Saving…" : "Save"}
+              {pending ? "Saving…" : "Save Changes"}
             </Button>
           </AcademicDialogFooter>
         }
       >
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          {editError ? <div role="alert" className="flex items-start justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm md:col-span-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+          {editError ? <div role="alert" className="flex items-start justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
             <p><strong>Program was not updated</strong>: {editError}</p>
-            <Button type="button" variant="secondary" onClick={() => setEditError("")}>Dismiss</Button>
+            <Button type="button" variant="secondary" disabled={pending}
+              onClick={() => setEditError("")}>Dismiss</Button>
           </div> : null}
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
-            Program name
-            <Input
-              value={name} aria-invalid={Boolean(editFieldErrors.name)}
-              onChange={(event) => { setName(event.target.value); setEditFieldErrors(current => ({...current, name:""})); }}
-              maxLength={255}
-            />
-            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Code
-            <Input
-              value={code} aria-invalid={Boolean(editFieldErrors.code)}
-              onChange={(event) => { setCode(event.target.value); setEditFieldErrors(current => ({...current,code:""})); }}
-              maxLength={64}
-            />
-            {editFieldErrors.code ? <span role="alert" className="text-xs text-error">{editFieldErrors.code}</span> : null}
-          </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            {displayDurationYears?"Duration (years)":"Duration terms"}
-            <Input
-              type="number"
-              min={1}
-              max={displayDurationYears?10:24}
-              step={1}
-              value={durationTerms} aria-invalid={Boolean(editFieldErrors.durationTerms)}
-              onChange={(event) => { setDurationTerms(event.target.value);
-                setEditFieldErrors(current => ({...current,durationTerms:""})); }}
-            />
-            {editFieldErrors.durationTerms ? <span role="alert" className="text-xs text-error">{editFieldErrors.durationTerms}</span> : null}
-          </label>
-          {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-            <Select value={departmentId} aria-invalid={Boolean(editFieldErrors.departmentId)}
-              onChange={event=>{setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
+          {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Department
+            <Select value={departmentId} disabled={pending || programHasLinkedRecords}
+              title={programHasLinkedRecords?"Department is fixed after semesters, batches or classes are linked.":undefined}
+              aria-invalid={Boolean(editFieldErrors.departmentId)}
+              onChange={event => {setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
             {editFieldErrors.departmentId ? <span role="alert" className="text-xs text-error">{editFieldErrors.departmentId}</span> : null}
           </label> : null}
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Program Name
+            <Input value={name} maxLength={255} disabled={pending}
+              aria-invalid={Boolean(editFieldErrors.name)}
+              onChange={event=>{setName(event.target.value);setEditFieldErrors(current=>({...current,name:""}));}}/>
+            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
+          </label>
+          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            {displayDurationYears?"Duration (Years)":"Duration (Terms)"}
+            <Input type="number" min={1} max={displayDurationYears?10:24} step={1}
+              disabled={pending} value={durationTerms} aria-invalid={Boolean(editFieldErrors.durationTerms)}
+              onChange={event=>{setDurationTerms(event.target.value);
+                setEditFieldErrors(current=>({...current,durationTerms:""}));}}/>
+            {editFieldErrors.durationTerms ? <span role="alert" className="text-xs text-error">{editFieldErrors.durationTerms}</span> : null}
+          </label>
         </div>
       </Dialog>
 
       <ConfirmDialog
         open={discardOpen}
         onOpenChange={setDiscardOpen}
-        title="Discard program changes?"
-        description="You have unsaved program edits. Discarding them will not modify the program."
+        title="Discard changes to this program?"
+        description={`Unsaved changes to “${program.name}” will be lost.`}
         confirmLabel="Discard changes"
         pending={pending}
         onConfirm={() => {
@@ -306,29 +316,32 @@ export function ProgramActions({
       />
 
       {archiveError ? <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
-        <p><strong>Program was not archived</strong>: {archiveError}</p>
+        <p><strong>Program was not deleted</strong>: {archiveError}</p>
         <div className="flex gap-2">
           <Button variant="secondary" type="button" disabled={pending}
-            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Retry archive</Button>
+            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Retry delete</Button>
           <Button variant="ghost" type="button" onClick={() => setArchiveError("")}>Dismiss</Button>
         </div>
       </div> : null}
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
-        title={`Archive ${program.name}?`}
-        description="Archive removes the program from active directories. Any linked semester, cohort (including archived cohorts), or learner enrollment blocks archival. Confirm only if all dependencies have been cleared."
-        confirmLabel="Archive program"
+        title={`Delete “${program.name}”?`}
+        description="It has no semesters, batches or classes. Delete it? In this workspace, Delete safely archives this record and preserves historical records."
+        confirmLabel="Delete"
         pending={pending}
         onConfirm={() =>
           run(
-            () =>
-              mutate(
-                `/api/academics/programs/${program.id}`,
-                "DELETE",
-                { confirm: true },
-              ),
-            `Archived program “${program.name}”.`,
+            async () => {
+              if (programArchiveInFlight) throw new Error("Another program deletion is still in progress.");
+              programArchiveInFlight = true;
+              try {
+                return await mutate(`/api/academics/programs/${program.id}`, "DELETE", {confirm:true});
+              } finally {
+                programArchiveInFlight = false;
+              }
+            },
+            `Program “${program.name}” was archived.`,
             () => { setArchiveError(""); setArchiveOpen(false); },
             (error) => { setArchiveOpen(false); setArchiveError(academicSetupErrorMessage(error, "Program was not archived")); },
           )
