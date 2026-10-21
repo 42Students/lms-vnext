@@ -43,8 +43,12 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
     const current=learnerProfileDocumentSchema.shape[input.section].parse(document[input.section]??[]);
     if(input.expectedItems!==undefined){
       const before=input.expectedItems;
-      if(isLearnerProfileSectionStale(current,before))
+      if(isLearnerProfileSectionStale(current,before)) {
+        // A list row can have moved or been removed after the editor opened.
+        // Never apply a stale index to a different item; the client receives
+        // a stable code whose friendly copy tells it to reload first.
         throw new PeopleServiceError("LEARNER_PROFILE_SECTION_STALE");
+      }
     }
     if(!isLearnerProfileSectionStale(current,input.items))
       return {section:input.section,items:current};

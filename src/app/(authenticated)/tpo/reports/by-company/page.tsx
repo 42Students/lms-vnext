@@ -71,6 +71,11 @@ export default async function TpoByCompanyReportPage({
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <ReportCsvLink workspace={workspace} kind="by-company" />
           <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
+            jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})+"&all=1"}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
+            Export all {view.total} filtered companies CSV
+          </a>
+          <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,
             jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page:view.page})}
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
             Export visible companies CSV
@@ -100,7 +105,7 @@ export default async function TpoByCompanyReportPage({
       </form>
 
       <ReportMetrics metrics={workspace.report.metrics} />
-      <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope; the visible-companies CSV matches this search, order and page.</p>
+      <p className="text-sm text-body">Showing {view.total===0?0:(view.page-1)*view.pageSize+1}–{Math.min(view.total,view.page*view.pageSize)} of {view.total} matching companies. Report metrics and the standard CSV retain the selected full season/drive scope. Export all filtered companies for every matching row, or export only this visible page.</p>
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {view.total===0&&companyReportHasUserFilters(view.query)?<EmptyState title="No company records match these filters within the selected reporting scope." action={
         <Link href={companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined})}

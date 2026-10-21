@@ -28,9 +28,15 @@ export async function GET(request:Request){
    seasonId:params.get("seasonId")||undefined,jobId:params.get("jobId")||undefined,
   });
   const view=paginateCompanyReport(workspace.report.byCompany,parsed.data);
-  return new Response("\uFEFF"+tpoVisibleCompanyReportCsv(view.rows),{
+  const all=params.get("all");
+  if(all!==null&&all!=="1")return NextResponse.json({error:"INVALID_REPORT_FILTERS"},{status:400});
+  const rows=all==="1"
+   ? Array.from({length:view.totalPages},(_,i)=>paginateCompanyReport(
+       workspace.report.byCompany,{...parsed.data,page:i+1}).rows).flat()
+   : view.rows;
+  return new Response("\uFEFF"+tpoVisibleCompanyReportCsv(rows),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="' + gridExportFilename("tpo-company-report-visible-page", "csv") + '"',
+    "Content-Disposition":'attachment; filename="' + gridExportFilename(all==="1"?"tpo-company-report-filtered":"tpo-company-report-visible-page", "csv") + '"',
     "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}
