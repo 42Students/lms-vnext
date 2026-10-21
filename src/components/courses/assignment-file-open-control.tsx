@@ -136,6 +136,15 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
         return <li key={file.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 sm:flex-row sm:flex-wrap sm:items-center">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={descriptor.detail} className="self-start sm:self-auto"><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
+          {!descriptor.usable && (file.status==="UPLOADING" || file.status==="VERIFYING") ? (
+            <Button type="button" variant="secondary" size="sm"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
+              disabled={busyId!==null || loading}
+              aria-label={`Check verification status of ${file.originalName}`}
+              onClick={()=>{setError(null);setLoading(true);setRetryKey(key=>key+1);}}>
+              Refresh file status
+            </Button>
+          ) : null}
           {descriptor.usable && file.contentType === "application/pdf" &&
            file.sizeBytes <= 25 * 1024 * 1024 ?
             <Button type="button" variant="secondary" size="sm"
