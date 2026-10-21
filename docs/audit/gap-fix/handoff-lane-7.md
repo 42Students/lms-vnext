@@ -1018,3 +1018,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-5-027-002 / G2-7-036-038 | `src/modules/people/college-student-csv-service.ts + import run ledger` | Add exact bulk register/history and audited safe undo after identity/enrollment reconciliation, keep PREVIEW vs IMPORT contract.
 - G2-10-021-030/-053/-054/-103 | `src/modules/placements/super-admin-hr-service.ts + schema` | Plan global-without-college recruiter creation and legacy grant mapping without bypassing verified company relation, contact and expiry rules.
+
+- G2-16-027-046 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | Validate 12h maximum and no-past CREATE in server Zod/transaction; UI-only cap can be bypassed.
+- G2-14-009-015/-051 | `src/components/attendance/faculty-attendance-workspace.tsx` | Ensure Active days derives from marked/held sessions, not future scheduled, matching updated month sessionCount.
