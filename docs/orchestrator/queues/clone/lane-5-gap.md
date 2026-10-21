@@ -47,8 +47,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/attendance.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/calendar.js`
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/classes.js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js`
-- [ ] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js`
+- [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js`
 - [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/teacher/calendar.js`
 - [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/calendar.js`
 - [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/AdminJobService.java`
