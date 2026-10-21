@@ -56,12 +56,13 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  // the current search, page, area, severity, status and view selections.
  // The list predicate above remains fully scoped to the active filters.
  const where=and(...predicates);
+ const pageSize=query.size??INDEPENDENT_AUDIT_PAGE_SIZE;
  const db=getDb();
  const [total,items,facets]=await Promise.all([
   db.select({n:count()}).from(db10AuditFindings).where(where),
   db.select().from(db10AuditFindings).where(where)
    .orderBy(sql<number>`case ${db10AuditFindings.severity} when 'CRITICAL' then 0 when 'HIGH' then 1 when 'MEDIUM' then 2 when 'LOW' then 3 else 4 end`,desc(db10AuditFindings.foundAt),asc(db10AuditFindings.externalId))
-   .limit(INDEPENDENT_AUDIT_PAGE_SIZE).offset((query.page-1)*INDEPENDENT_AUDIT_PAGE_SIZE),
+   .limit(pageSize).offset((query.page-1)*pageSize),
   db.select({status:db10AuditFindings.status,severity:db10AuditFindings.severity,n:count()})
    .from(db10AuditFindings)
    .groupBy(db10AuditFindings.status,db10AuditFindings.severity),
@@ -76,7 +77,7 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  const criticalOpen=facets.reduce((sum,row)=>
    row.severity==="CRITICAL"&&(ACTIVE_FINDING_STATUSES as readonly string[]).includes(row.status)?sum+row.n:sum,0);
  return {total:total[0]?.n??0,items,page:query.page,statusCounts,severityOpenCounts,criticalOpen,
-  pages:Math.max(1,Math.ceil((total[0]?.n??0)/INDEPENDENT_AUDIT_PAGE_SIZE))};
+  pages:Math.max(1,Math.ceil((total[0]?.n??0)/pageSize))};
 }
 export async function getIndependentAuditFinding(context:RequestContext,rawId:string){
  requireIndependentFindingAccess(context);
@@ -140,6 +141,12 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
   await tx.insert(db10AuditFindingEvents).values({
    findingId:row.id,actorUserId:context.user.id,action:input.action,note,
    fromStatus:row.status,toStatus:patch.status??row.status,
+   fromValue:{status:row.status,severity:row.severity,assignee:row.assignee,
+    duplicateOf:row.duplicateOf,fixCommits:row.fixCommits},
+   toValue:{status:patch.status??row.status,severity:patch.severity??row.severity,
+    assignee:patch.assignee===undefined?row.assignee:patch.assignee,
+    duplicateOf:patch.duplicateOf===undefined?row.duplicateOf:patch.duplicateOf,
+    fixCommits:patch.fixCommits??row.fixCommits},
   });
   return {ok:true as const,version:saved.version};
  });
@@ -175,7 +182,7 @@ export async function readIndependentFindingSyncState(context:RequestContext){
   checkedAt:db10AuditFindingFiles.checkedAt,
  }).from(db10AuditFindingFiles)
   .where(and(eq(db10AuditFindingFiles.source,row.source),
-    inArray(db10AuditFindingFiles.result,["REFUSED","TAMPERED"])))
+    inArray(db10AuditFindingFiles.result,["REFUSED","TAMPERED","DELETED"])))
   .orderBy(desc(db10AuditFindingFiles.checkedAt)).limit(200);
  const latestByPath=new Map(flagged.map(item=>[item.path,item]));
  const refusedFiles=row.refusedFiles.slice(0,200).map(file=>{
@@ -184,6 +191,13 @@ export async function readIndependentFindingSyncState(context:RequestContext){
   return {path,reason:String(file.reason??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,400),
    result:latest?.result??"REFUSED",checkedAt:latest?.checkedAt??null};
  });
+ for(const item of flagged){
+  if(!refusedFiles.some(file=>file.path===item.path))refusedFiles.push({
+   path:item.path,reason:item.result==="DELETED"?"Source file was deleted":
+    item.result==="TAMPERED"?"Source file changed since its verified import":
+    "Importer refused this source file",result:item.result,checkedAt:item.checkedAt,
+  });
+ }
  return {source:row.source,lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,lastError:row.lastError,
-  importedCount:row.importedCount,refusedCount:row.refusedFiles.length,refusedFiles};
+  importedCount:row.importedCount,refusedCount:Math.max(row.refusedFiles.length,refusedFiles.length),refusedFiles};
 }

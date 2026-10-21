@@ -21,6 +21,8 @@ import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {independentAuditImporterReady} from "@/modules/bug-tracker/independent-audit-inbox-importer";
+import {IndependentFindingSyncAction} from "@/components/tracker/independent-finding-sync-action";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -79,10 +81,13 @@ export default async function IndependentFindingsPage({searchParams}:{
         timeZone:"Asia/Kolkata"}).format(sync.lastSyncedAt)+" IST" : "not recorded"}
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
-   <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
-   <Banner tone="warning">
-    Sync now is unavailable because an authenticated, credential-verified repository importer and durable job receipt have not been configured. No import is performed when this page loads.
-   </Banner>
+   <div className="flex flex-wrap items-center gap-3">
+    <IndependentFindingSyncAction ready={independentAuditImporterReady()}/>
+    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
+   </div>
+   {!independentAuditImporterReady()?<Banner tone="warning">
+    Sync now is unavailable until the credential-verified repository importer and durable file ledger have been configured. No import is performed when this page loads.
+   </Banner>:null}
    {syncResult.status==="rejected" ? <Banner tone="warning">
     Import history could not be refreshed. Findings remain available.
     {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
@@ -118,6 +123,10 @@ export default async function IndependentFindingsPage({searchParams}:{
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></label>
    <div className="flex min-w-0 items-center gap-3 max-[767px]:[&>button]:flex-1">
+    <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">Per page
+     <Select name="size" defaultValue={String(parsed.size??50)} aria-label="Findings per page" className="min-h-11 md:min-h-9">
+      {[25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
+     </Select></label>
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
    </div>
@@ -125,15 +134,15 @@ export default async function IndependentFindingsPage({searchParams}:{
     className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2 lg:col-span-3">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
     <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
-    <Input name="area" list="audit-finding-areas" defaultValue={parsed.area} maxLength={80}
-     placeholder="Choose an area (or comma separated)"/>
-    <datalist id="audit-finding-areas">{[
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area (multiple)
+    <Select name="area" multiple size={4} defaultValue={parsed.area.split(",").filter(Boolean)} aria-label="Filter findings by areas">
+     {[
       "login","course","lesson-content","quiz","assignment","attendance","classroom",
       "notifications","calendar","projects","placements-tpo","recruiter",
       "student-placements","college-admin","super-admin","groups-electives",
       "people-accounts","reports","tracker","mobile","platform","security","other",
-    ].map(area=><option key={area} value={area}/>)}</datalist></label>
+     ].map(area=><option key={area} value={area}>{area}</option>)}
+    </Select></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
     <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}

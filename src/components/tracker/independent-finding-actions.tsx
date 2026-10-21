@@ -13,7 +13,7 @@ import {FINDING_STATUSES,FINDING_SEVERITIES} from "@/modules/bug-tracker/indepen
 import {FINDING_COMMIT_REPOS} from "@/modules/bug-tracker/independent-finding-actions-model";
 import {canTransitionIndependentFinding,type IndependentFindingStatus} from "@/modules/bug-tracker/independent-finding-transition-model";
 type Action="STATUS"|"SEVERITY"|"ASSIGNEE"|"DUPLICATE"|"FIX_COMMIT"|"COMMENT";
-export function IndependentFindingActions({externalId,version,status,severity,currentAssignee,candidates=[]}:{externalId:string;version:number;status:string;severity:string;currentAssignee:string|null;candidates?:readonly {id:string;externalId:string;title:string}[]}){
+export function IndependentFindingActions({externalId,version,status,severity,currentAssignee,candidates=[],onUpdated}:{externalId:string;version:number;status:string;severity:string;currentAssignee:string|null;candidates?:readonly {id:string;externalId:string;title:string}[];onUpdated?:()=>void}){
  const router=useRouter(),lock=useRef(false);
  const [action,setAction]=useState<Action>("STATUS");
  const [nextStatus,setNextStatus]=useState(status);
@@ -60,6 +60,7 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
    });
    if(!result.ok||result.version<=version)throw new Error("The update could not be verified. Refresh and retry.");
    setConfirmOpen(false);
+   onUpdated?.();
    router.refresh();
   }catch(reason){
    if(reason instanceof FriendlyFetchError){
@@ -121,12 +122,12 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
    </label>:null}
   </div>
   <div className="flex min-w-0 flex-col gap-2 md:items-end">
-  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":action==="COMMENT"?"Add comment":action==="ASSIGNEE"?"Save":"Save details"}</Button>
+  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":action==="COMMENT"?"Add comment":action==="ASSIGNEE"?"Save":action==="STATUS"?"Set to status":"Save details"}</Button>
   {error&&!confirmOpen?<p role="alert" className="min-w-0 break-words [overflow-wrap:anywhere] text-sm text-error">{error}</p>:null}
   </div>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
     title="Save this finding update? An immutable audit event will be recorded."
-    confirmLabel={action==="COMMENT"?"Add comment":"Save details"} confirmVariant="primary" pending={pending}
+    confirmLabel={action==="COMMENT"?"Add comment":action==="STATUS"?"Set to status":"Save details"} confirmVariant="primary" pending={pending}
     onConfirm={()=>void submit(true)}>
     {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
