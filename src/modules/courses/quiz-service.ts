@@ -380,7 +380,7 @@ export async function getCourseQuiz(
 
 export async function createCourseQuiz(
   context: RequestContext,
-  rawInput: CreateCourseQuizInput,
+  rawInput: unknown,
 ) {
   const input =
     createCourseQuizInputSchema.parse(rawInput);
