@@ -79,7 +79,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   finally{setBusy(false);}
  }
  if(quiz.status==="ARCHIVED")return null;
- return <div className="mt-2 space-y-2">
+ return <div className="min-w-0 mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
    <Button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
     variant="secondary" size="sm" className="min-h-11 md:min-h-9">

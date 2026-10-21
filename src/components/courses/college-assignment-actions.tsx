@@ -70,7 +70,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not update assignment.");}
   finally{setBusy(false);}
  }
- return <div className="mt-2 space-y-2">
+ return <div className="min-w-0 mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
    {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     variant="secondary" className="min-h-11 md:min-h-9"

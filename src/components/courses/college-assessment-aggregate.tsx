@@ -51,7 +51,7 @@ function QuizListActions({item}:{item:CollegeAssessmentAggregateItem}){
  if(item.status==="ARCHIVED")return null;
  const actions=item.status==="DRAFT"?["PUBLISH"] as const:
   item.status==="PUBLISHED"?["CLOSE"] as const:[] as const;
- return <div className="space-y-2">
+ return <div className="min-w-0 space-y-2">
   <FacultyItemActions transitionUrl={"/api/courses/quizzes/"+encodeURIComponent(item.id)+"/transition"}
    actions={actions}/>
   {item.resultsReleaseReady?
