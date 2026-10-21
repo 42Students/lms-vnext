@@ -4,11 +4,12 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {courseAssignmentMaterials,courseAssignments} from "@/db/schema";
+import {courseAssignmentMaterials,courseAssignments,courseAssignmentResources} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireDeliveryContentMutation,requireLearningReadAccess} from "./learning-access";
 import {loadCourseAssignmentScope} from "./assignment-scope";
 import {CoursesServiceError} from "./errors";
+import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {facultyAssignmentMaterialLinkSchema,safeLearnerAssignmentMaterialLink} from "./learner-assignment-materials-model";
 
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
@@ -99,4 +100,76 @@ async function lockPublishedOrDraftAssignment(tx:Tx,assignmentId:string,delivery
   .where(and(eq(courseAssignments.id,assignmentId),eq(courseAssignments.deliveryId,deliveryId)))
   .for("update").limit(1);
  if(!row||row.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+}
+
+/** A historical assignment may contain both old instructor links and the
+ * new ordered resource builder. This projection discloses no object keys.
+ * Only enrolled learners in a published lesson can see the items. */
+export async function listOwnLearnerAssignmentResources(
+ context:RequestContext,assignmentIdRaw:string,deliveryIdRaw:string,
+){
+ const assignmentId=uuid.parse(assignmentIdRaw),deliveryId=uuid.parse(deliveryIdRaw);
+ const assignment=await loadCourseAssignmentScope(assignmentId);
+ if(assignment.deliveryId&&assignment.deliveryId!==deliveryId)
+  throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
+ const role=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
+ if(role==="LEARNER"&&(assignment.status!=="PUBLISHED"||
+    assignment.learningPathStatus!=="PUBLISHED"||!assignment.lessonVisibleToStudents))
+  throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+ const result=await getDb().execute(sql`
+   select to_regclass('public.course_assignment_resources') is not null as ready`);
+ if(result.rows[0]?.ready!==true)return {available:false,items:[] as Array<{
+   id:string;kind:string;title:string;body:string|null;href:string|null;position:number;
+  }>};
+ const rows=await getDb().select({
+  id:courseAssignmentResources.id,kind:courseAssignmentResources.kind,
+  title:courseAssignmentResources.title,body:courseAssignmentResources.body,
+  externalUrl:courseAssignmentResources.externalUrl,
+  position:courseAssignmentResources.position,
+ }).from(courseAssignmentResources)
+  .where(eq(courseAssignmentResources.assignmentId,assignmentId))
+  .orderBy(asc(courseAssignmentResources.position)).limit(30);
+ return {available:true,items:rows.map(row=>({
+  id:row.id,kind:row.kind,title:row.title,
+  body:row.kind==="INSTRUCTIONS"?row.body:null,
+  href:row.kind==="LINK"?safeLearnerAssignmentMaterialLink(row.externalUrl):null,
+  position:row.position,
+ }))};
+}
+
+/** File URLs are signed on demand, after fresh enrollment checks. Object
+ * owners are bound to the faculty account that originally uploaded them;
+ * callers cannot supply or override an object key or owner membership. */
+export async function createLearnerAssignmentResourceReadGrant(
+ context:RequestContext,assignmentIdRaw:string,deliveryIdRaw:string,
+ resourceIdRaw:string,
+){
+ const assignmentId=uuid.parse(assignmentIdRaw),deliveryId=uuid.parse(deliveryIdRaw);
+ const resourceId=uuid.parse(resourceIdRaw);
+ const assignment=await loadCourseAssignmentScope(assignmentId);
+ if(assignment.deliveryId&&assignment.deliveryId!==deliveryId)
+  throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
+ const role=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
+ if(role==="LEARNER"&&(assignment.status!=="PUBLISHED"||
+   assignment.learningPathStatus!=="PUBLISHED"||!assignment.lessonVisibleToStudents))
+  throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+ const [item]=await getDb().select({
+  kind:courseAssignmentResources.kind,
+  objectKey:courseAssignmentResources.privateObjectKey,
+ }).from(courseAssignmentResources).where(and(
+  eq(courseAssignmentResources.id,resourceId),
+  eq(courseAssignmentResources.assignmentId,assignmentId),
+ )).limit(1);
+ if(!item||!item.objectKey||(item.kind!=="FILE"&&item.kind!=="PDF"))
+  throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
+ const parts=item.objectKey.split("/");
+ if(parts.length!==5||parts[0]!=="private"||
+   parts[1]!==assignment.collegeId||parts[3]!=="course-resource"||
+   !uuid.safeParse(parts[2]).success||!uuid.safeParse(parts[4]).success)
+  throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
+ const grant=await createPrivateReadGrant({
+  collegeId:assignment.collegeId,ownerMembershipId:parts[2],
+  objectKey:item.objectKey,expiresInMs:5*60*1000,
+ });
+ return {readUrl:grant.readUrl,expiresAt:grant.expiresAt};
 }

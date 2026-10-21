@@ -11,7 +11,10 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
-import {listOwnLearnerAssignmentMaterialLinks} from "@/modules/courses/learner-assignment-materials-service";
+import {
+ listOwnLearnerAssignmentMaterialLinks,listOwnLearnerAssignmentResources,
+} from "@/modules/courses/learner-assignment-materials-service";
+import {LearnerAssignmentResourceOpenControl} from "@/components/courses/learner-assignment-resource-open-control";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
 import { findOwnLearnerAssignment } from "@/modules/courses/learner-assignment-detail-model";
 
@@ -45,7 +48,11 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
     assignmentId: path.assignmentId, deliveryId: resolution.deliveryId,
   });
   if (!item) notFound();
-  const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
+  const context=await getCurrentRequestContext();
+  const [materials,resources]=await Promise.all([
+    listOwnLearnerAssignmentMaterialLinks(context,item.id,item.deliveryId),
+    listOwnLearnerAssignmentResources(context,item.id,item.deliveryId),
+  ]);
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <Link href="/learn/allAssignments" className="inline-flex min-h-11 max-w-full items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← All Assignments</Link>
     <PageHeader title={item.title} />
@@ -64,7 +71,31 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       <p className="max-w-prose whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
       </p>
-      {!materials.available ? <Alert tone="warning" role="status">Assignment resources are temporarily unavailable. Your assignment and submission are unchanged.</Alert> : null}
+      {!materials.available&&!resources.available ?
+        <Alert tone="warning" role="status">Assignment resources are temporarily unavailable. Your assignment and submission are unchanged.</Alert> : null}
+      {resources.items.length>0?<ul className="min-w-0 divide-y divide-border" aria-label="Assignment instructions and files">
+        {resources.items.map(resource=><li key={resource.id} className="min-w-0 py-3 text-sm">
+          <strong className="block break-words text-foreground">{resource.title}</strong>
+          <span className="text-xs text-muted-foreground">
+            {resource.kind==="INSTRUCTIONS"?"Instructions":
+             resource.kind==="LINK"?"Link":
+             resource.kind==="PDF"?"PDF":"File"}
+          </span>
+          {resource.kind==="INSTRUCTIONS"&&resource.body?
+            <p className="mt-2 max-w-prose whitespace-pre-wrap break-words text-body">{resource.body}</p>:null}
+          {resource.kind==="LINK"&&resource.href?
+            <a href={resource.href} rel="noopener noreferrer"
+             className="mt-2 inline-flex min-h-11 max-w-full items-center break-all font-semibold text-primary-text underline md:min-h-9">
+              Open link
+            </a>:null}
+          {(resource.kind==="PDF"||resource.kind==="FILE")?
+            <div className="mt-2">
+              <LearnerAssignmentResourceOpenControl
+                deliveryId={item.deliveryId} assignmentId={item.id}
+                resourceId={resource.id} kind={resource.kind}/>
+            </div>:null}
+        </li>)}
+      </ul>:null}
       {materials.links.length>0 ? <ul className="min-w-0 divide-y divide-border" aria-label="Instructor resources">
         {materials.links.map(link=><li key={link.id} className="min-w-0 py-1 text-sm">
           <a href={link.href} rel="noopener noreferrer"

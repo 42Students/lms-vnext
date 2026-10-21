@@ -40,7 +40,8 @@ export async function commandFacultyAssignment(
       throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
   }
   const normalizedResources=("resources" in input&&input.resources!==undefined)
-    ?await attestFacultyAssignmentResources(context,delivery.collegeId,input.resources):undefined;
+    ?await attestFacultyAssignmentResources(context,delivery.collegeId,input.resources,
+      input.action==="EDIT"?input.assignmentId:undefined):undefined;
   try{
     return await getDb().transaction(async tx=>{
       const [liveDelivery]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
