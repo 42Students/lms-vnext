@@ -130,7 +130,7 @@ export default async function SuperAdminCompaniesPage({
     </form>
     {context.adminScope?.collegeId?
       <SuperAdminCollegeCompanyCreate collegeId={context.adminScope.collegeId}/>:null}
-    <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
+    <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid min-w-0 grid-cols-2 border-t border-border md:grid-cols-3">
       {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
         ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
