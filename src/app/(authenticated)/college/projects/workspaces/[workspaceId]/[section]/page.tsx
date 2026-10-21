@@ -5,7 +5,7 @@ export default async function LegacyCollegeWorkspaceSectionRedirect({
   params,searchParams,
 }: {
   params: Promise<{ workspaceId: string; section: string }>;
-  searchParams: Promise<{from?:string|string[];reason?:string|string[]}>;
+  searchParams: Promise<Record<string,string|string[]|undefined>>;
 }) {
   const {workspaceId,section}=await params;
   const query=await searchParams;
@@ -14,6 +14,12 @@ export default async function LegacyCollegeWorkspaceSectionRedirect({
   const suffix=new URLSearchParams();
   if(from&&from!=="workspaces")suffix.set("from",from);
   if(reason)suffix.set("reason",reason);
+  // Preserve bounded view context for existing bookmarked workspace aliases.
+  for(const name of ["q","filter","status","sort","page"] as const){
+    const value=query[name];
+    if(typeof value==="string"&&value.length<=120&&!/[\x00-\x1f]/.test(value))
+      suffix.set(name,value);
+  }
   const next="/college/projects/"+encodeURIComponent(workspaceId)+"/"+encodeURIComponent(section);
   redirect(next+(suffix.size?"?"+suffix.toString():""));
 }
