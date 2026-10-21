@@ -3,6 +3,7 @@
 import { useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 const sizes = [10, 25, 50, 100] as const;
 const preferenceKey = "lms.college.directory.pageSize";
@@ -48,11 +49,11 @@ export function CollegeDirectoryRefresh() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   return <span className="inline-flex items-center gap-2">
-    <button type="button" disabled={pending}
+    <Button variant="secondary" type="button" disabled={pending}
       onClick={() => startTransition(() => router.refresh())}
       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60">
       {pending ? "Refreshing…" : "Refresh"}
-    </button>
+    </Button>
     <span aria-live="polite" className="text-xs text-muted-foreground">
       {pending ? "Updating list; current rows remain visible." : ""}
     </span>
