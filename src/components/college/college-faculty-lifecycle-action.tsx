@@ -80,7 +80,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
       confirmDisabled={action==="DEACTIVATE"&&reason.trim().length<3}
       onConfirm={submit}>
       {action==="DEACTIVATE" || Boolean(error) ? <div className="space-y-3">
-        {action==="DEACTIVATE"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
+        {action==="DEACTIVATE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
           <Input id={reasonId} maxLength={500} minLength={3} required value={reason} disabled={busy}
             aria-describedby={`${reasonId}-hint`} aria-invalid={Boolean(error)}
             onChange={e=>{setReason(e.target.value);if(error)setError("");}} className="min-h-11 w-full md:min-h-9"/>
