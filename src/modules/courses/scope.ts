@@ -44,6 +44,8 @@ export async function loadCourseScope(
       collegeId: departments.collegeId,
       organizationId: colleges.organizationId,
       status: courses.status,
+      enabled: courses.enabled,
+      legacyAllowedForDisplay: courses.legacyAllowedForDisplay,
       name: courses.name,
       code: courses.code,
     })
