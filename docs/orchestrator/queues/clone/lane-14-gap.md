@@ -44,8 +44,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CourseProgress.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/courses/[courseId]/[...courseTab].js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/jobs/index.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/index.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/student-groups/[id].js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/index.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/student-groups/[id].js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/video.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx`
 - [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobApplicationSourceValidator.java`
