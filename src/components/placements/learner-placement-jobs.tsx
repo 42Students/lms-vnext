@@ -27,6 +27,7 @@ export type LearnerPlacementJobItem = {
     title: string;
     description: string;
     employmentType: string;
+    jobTypeLabel?: string | null;
     workMode: string;
     locations: string[];
     openings: number | null;
@@ -581,7 +582,7 @@ export function LearnerPlacementJobs({
                   Work
                 </p>
                 <p className="mt-1 break-words font-semibold text-body">
-                  {humanize(
+                  {item.job.jobTypeLabel?.trim() || humanize(
                     item.roleOption.employmentType,
                   )}{" "}
                   ·{" "}

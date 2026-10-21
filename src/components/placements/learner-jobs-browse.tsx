@@ -134,13 +134,13 @@ export function LearnerJobsBrowse({
         <div className="grid gap-3 md:grid-cols-2">
 
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Employment type
+            Job type
             <Select value={filters.employmentType}
               onChange={(event) => updateQuery({ type: event.target.value })}
               className={selectClass}>
               <option value="all">All types</option>
               {facets.types.map((type) => (
-                <option key={type} value={type}>{humanize(type)} ({employmentCounts.get(type)??0})</option>
+                <option key={type} value={type}>{type.includes("_")?humanize(type):type} ({employmentCounts.get(type)??0})</option>
               ))}
             </Select>
           </label>

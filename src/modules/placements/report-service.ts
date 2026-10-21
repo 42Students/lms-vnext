@@ -177,6 +177,7 @@ export async function getPlacementReportWorkspace(
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
       employmentType: placementJobs.employmentType,
+      jobTypeLabel:placementJobs.jobTypeLabel,
       countsAsPlaced: placementJobs.countsAsPlaced,
     })
     .from(placementJobs)

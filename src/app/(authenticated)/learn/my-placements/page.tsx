@@ -100,6 +100,7 @@ export default async function LearnerPlacementsPage({
         description: row.job.description,
         employmentType:
           row.job.employmentType,
+        jobTypeLabel:row.job.jobTypeLabel,
         workMode: row.job.workMode,
         locations: row.job.locations,
         openings: row.job.openings,

@@ -19,6 +19,7 @@ export type PlacementReportJob = {
   companyId: string;
   companyName: string;
   employmentType: string;
+  jobTypeLabel?: string|null;
   countsAsPlaced?: boolean;
 };
 
@@ -99,6 +100,7 @@ export type PlacementReportBranchRow = {
 
 export type PlacementReportDriveRow = {
   jobId: string;
+  jobTypeLabel?:string|null;
   title: string;
   companyName: string;
   employmentType: string;
@@ -454,6 +456,7 @@ export function summarizePlacementReports(
       title: job.title,
       companyName: job.companyName,
       employmentType: job.employmentType,
+      jobTypeLabel:job.jobTypeLabel,
       applicants: distinct(
         jobApplications.map((application) => application.membershipId),
       ).length,
