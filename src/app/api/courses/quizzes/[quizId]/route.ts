@@ -28,10 +28,15 @@ export async function GET(
       await getCurrentRequestContext();
     const { quizId } = await params;
     const url = new URL(request.url);
+    const answerFlags=url.searchParams.getAll("includeCorrectAnswers");
+    if(answerFlags.length>1||(answerFlags.length===1&&!["true","false"].includes(answerFlags[0]!)))
+      return NextResponse.json({error:"INVALID_REQUEST",message:"includeCorrectAnswers must be true or false."},
+        {status:400,headers:{"Cache-Control":"private, no-store"}});
     const quiz = await getCourseQuiz(
       context,
       quizId,
       url.searchParams.get("deliveryId"),
+      answerFlags[0]==="true",
     );
 
     // Unknown submission count must not unlock a destructive edit. Keep
