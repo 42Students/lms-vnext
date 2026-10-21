@@ -2,7 +2,7 @@ import { getDb } from "@/db/client";
 import { and, eq, ilike, isNull } from "drizzle-orm";
 import { legacyIdMap, projectTemplates } from "@/db/schema";
 import { ProjectsServiceError } from "./errors";
-import type { RequestContext } from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { listColleges } from "@/modules/colleges/service";
 import { getSuperAdminTemplateSubview } from "./template-subview-service";
@@ -55,5 +55,6 @@ export async function listSuperAdminTemplateCollegeAvailability(context: Request
     throw new TemplateCollegeReadError("ASSIGNMENTS");
   }
   // Both reads must succeed: never treat a failed assignment request as an empty list.
-  return { template: detail.template, ...projectTemplateCollegeAvailability(templateAvailabilityCollegesInScope(colleges, context.adminScope ?? null), detail.assignedColleges, query) };
+  return { template: detail.template, ...projectTemplateCollegeAvailability(templateAvailabilityCollegesInScope(
+    colleges,context.adminScope??null,isSuperAdmin(context)),detail.assignedColleges,query) };
 }

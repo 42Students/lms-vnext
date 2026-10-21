@@ -20,7 +20,8 @@ import {
   ACTIVITY_IMPORTANCE,
   ACTIVITY_EVENT_TYPES,
 } from "@/modules/activity/taxonomy";
-import { parseProjectAdminAuditQuery,legacyProjectAuditActions } from "@/modules/projects/admin-audit-query-model";
+import { parseProjectAdminAuditQuery,legacyProjectAuditActions,
+ projectLegacyAuditLink } from "@/modules/projects/admin-audit-query-model";
 import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
 import {z} from "zod";
 
@@ -135,7 +136,8 @@ export async function ProjectAdminAuditPage({
   // college scope. The activity service itself enforces platform permissions.
   const globalTemplateAudit = mayReadGlobalProjectAudit(context);
 
-  const filters = parseProjectAdminAuditQuery(searchParams);
+  const legacyLink=projectLegacyAuditLink(searchParams,new Date());
+  const filters = parseProjectAdminAuditQuery(legacyLink.params);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
   const allTime=!from&&!to;
   const pageLimit=allTime?25:200;
@@ -251,6 +253,14 @@ export async function ProjectAdminAuditPage({
       </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
 
+      {legacyLink.needsCursorReplay?<Banner tone="warning" role="status">
+        This old audit link requested page {legacyLink.legacyPage+1}.
+        Audit now uses a chronological cursor; the first matching events are shown.
+        Use Load older events to continue without skipping changes.
+      </Banner>:null}
+      {legacyLink.invalidLegacyLink?<Banner tone="warning" role="alert">
+        Some legacy audit link settings were invalid. Safe filters were retained.
+      </Banner>:null}
       {filters.ignoredInvalidFilters ? (
         <Banner tone="warning" role="alert">
           Some audit filters were invalid and have been ignored. Review the filters below and apply them again.
