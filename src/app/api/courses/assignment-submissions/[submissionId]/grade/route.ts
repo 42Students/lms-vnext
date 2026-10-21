@@ -30,7 +30,9 @@ export async function PATCH(
     const context =
       await getCurrentRequestContext();
     const { submissionId } = await params;
-    const body = await request.json();
+    // Grade, feedback and the optimistic version are submitted together.
+    // The old query-string-only updatePoints request is not replay-safe.
+    const body = gradeAssignmentSubmissionInputSchema.parse(await request.json());
     const submission =
       await gradeAssignmentSubmission(
         context,
@@ -38,7 +40,11 @@ export async function PATCH(
         body,
       );
 
-    return NextResponse.json({ submission });
+    // Clients update their grade row from this result and refresh their
+    // submissions list; never cache a grade mutation response.
+    return NextResponse.json({ submission }, {
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }
