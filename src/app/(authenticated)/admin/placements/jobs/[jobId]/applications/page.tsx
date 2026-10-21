@@ -31,7 +31,21 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId} = await params;
-  const query = driveApplicationsParams(await searchParams);
+  const rawQuery=await searchParams;
+  const query = driveApplicationsParams(rawQuery);
+  const resetHref="/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications";
+  const retryHref=resetHref+"?"+new URLSearchParams(
+   Object.entries(rawQuery).filter((entry):entry is [string,string]=>
+    typeof entry[1]==="string"&&!Array.isArray(entry[1]))
+  ).toString();
+  // Do not pass a malformed ID through the scoped service and mistake an
+  // input error for a missing or inaccessible college record.
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jobId))
+   return <div className="min-w-0 space-y-5">
+    <PageHeader title="Applications"/>
+    <ErrorState title="Invalid job ID" description="Choose a valid drive from your selected college."
+     action={<Link href="/admin/placements/drives" className="font-semibold text-primary-text underline">Back to drives</Link>}/>
+   </div>;
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" description="Review candidates in this drive and manage hiring stages."/>
     <ErrorState title="Invalid applicant filters"
@@ -39,15 +53,33 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
-  const [data,filters] = await Promise.all([
+  const [pipelineResult,filterResult]=await Promise.allSettled([
     getCollegeApplicationPipeline(context,jobId,query),
     listCollegeDriveApplicationFilters(context),
   ]);
+  if(pipelineResult.status==="rejected"){
+   // This is a server-rendered, scope-bound read: do not recycle data from a
+   // different selected college or imply that it is still current.
+   return <div className="min-w-0 space-y-5">
+    <PageHeader title="Applications"/>
+    <ErrorState title="Failed to load data"
+     description="Failed to load job and applications. Please try again. The selected college's application rows could not be verified."
+     action={<div className="flex flex-wrap gap-3">
+      <Link href={retryHref} className="font-semibold text-primary-text underline">Retry applications</Link>
+      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="font-semibold text-primary-text underline">Drive overview</Link>
+     </div>}/>
+   </div>;
+  }
+  const data=pipelineResult.value;
+  const filters=filterResult.status==="fulfilled"?filterResult.value:null;
   return <div className="min-w-0 space-y-4 md:space-y-6">
     
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Drive overview</Link>} />
+    {filters===null?<Banner tone="warning" action={<Link href={retryHref} className="font-semibold underline">Retry filter choices</Link>}>
+      Department, program and batch options could not be loaded. The current applications remain visible; academic filter choices are unavailable.
+    </Banner>:null}
     <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]" aria-label="Filter job applications">
       <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Name, email, roll or role
@@ -76,25 +108,25 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Department
         <Select name="departmentId" defaultValue={query.departmentId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All departments</option>
-          {query.departmentId&&!filters.departments.some(item=>item.id===query.departmentId)&&
+          {query.departmentId&&!(filters?.departments??[]).some(item=>item.id===query.departmentId)&&
             <option value={query.departmentId}>Selected department</option>}
-          {filters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+          {(filters?.departments??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
         <Select name="programId" defaultValue={query.programId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All programs</option>
-          {query.programId&&!filters.programs.some(item=>item.id===query.programId)&&
+          {query.programId&&!(filters?.programs??[]).some(item=>item.id===query.programId)&&
             <option value={query.programId}>Selected program</option>}
-          {filters.programs.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+          {(filters?.programs??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
         <Select name="cohortId" defaultValue={query.cohortId??""} className="min-h-11 w-full md:min-h-9">
           <option value="">All batches</option>
-          {query.cohortId&&!filters.cohorts.some(item=>item.id===query.cohortId)&&
+          {query.cohortId&&!(filters?.cohorts??[]).some(item=>item.id===query.cohortId)&&
             <option value={query.cohortId}>Selected batch</option>}
-          {filters.cohorts.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+          {(filters?.cohorts??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
 
@@ -102,6 +134,11 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       </details>
       <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
     </form>
+    <nav className="flex min-w-0 flex-wrap items-center gap-3 text-sm" aria-label="Application views">
+      <Link href={resetHref} className="font-semibold text-primary-text underline">All applications</Link>
+      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/shortlisted"}
+       className="font-semibold text-primary-text underline">Manage Shortlisted · Assessment</Link>
+    </nav>
     <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}
       items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
        value:stage,label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
