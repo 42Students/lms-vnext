@@ -240,13 +240,19 @@ export function PlacementDraftEditForm({
       setFormError("Must be a valid http or https URL");return;
     }
     const rawAssessmentDeadline=String(data.get("assessmentDeadline")??"");
-    const assessmentDeadline=rawAssessmentDeadline?
-      rawAssessmentDeadline===toLocalInput(originalLegacy?.assessmentDeadline??null)?
-      originalLegacy?.assessmentDeadline??null:driveDeadlineIstToIso(rawAssessmentDeadline):null;
     const rawApplicationDeadline=String(data.get("applicationDeadline")??"");
-    const applicationDeadline=rawApplicationDeadline?
-      rawApplicationDeadline===toLocalInput(value.job.applicationDeadline)?
-      value.job.applicationDeadline:driveDeadlineIstToIso(rawApplicationDeadline):null;
+    let assessmentDeadline:string|null=null,applicationDeadline:string|null=null;
+    try{
+      assessmentDeadline=rawAssessmentDeadline?
+        rawAssessmentDeadline===toLocalInput(originalLegacy?.assessmentDeadline??null)?
+        originalLegacy?.assessmentDeadline??null:driveDeadlineIstToIso(rawAssessmentDeadline):null;
+      applicationDeadline=rawApplicationDeadline?
+        rawApplicationDeadline===toLocalInput(value.job.applicationDeadline)?
+        value.job.applicationDeadline:driveDeadlineIstToIso(rawApplicationDeadline):null;
+    }catch(problem){
+      setFormError(problem instanceof Error?problem.message:"Enter valid dates in IST.");
+      return;
+    }
     if(assessmentDeadline){
       if(assessmentDeadline!==originalLegacy?.assessmentDeadline&&
          Date.parse(assessmentDeadline)<=Date.now()){
@@ -281,7 +287,9 @@ export function PlacementDraftEditForm({
       if(label.toLowerCase()==="application deadline"){
         setFormError("Application deadline is reserved and cannot be an important date label.");return;
       }
-      const parsed=dateValue.length===16?driveDeadlineIstToIso(dateValue):dateValue;
+      let parsed:string;
+      try{parsed=dateValue.length===16?driveDeadlineIstToIso(dateValue):dateValue;}
+      catch{setFormError("Enter each date as Label | YYYY-MM-DDTHH:MM.");return;}
       if(!Number.isFinite(Date.parse(parsed))){
         setFormError("Enter each date as Label | YYYY-MM-DDTHH:MM.");return;
       }
@@ -291,6 +299,8 @@ export function PlacementDraftEditForm({
     if(new Set(importantDates.map(d=>d.label.toLowerCase())).size!==importantDates.length){
       setFormError("Important date labels must be unique.");return;
     }
+    // Audience visibility remains bound to authorized college memberships;
+    // applicationMode only decides which application channel is used.
     const legacyPostingDetails={
       ...originalLegacy,
       responsibilities:String(data.get("responsibilities")??"").trim(),
@@ -454,8 +464,7 @@ export function PlacementDraftEditForm({
       showToast({
         tone: "success",
         title: "Job saved as draft",
-        description:
-          "Job details and eligibility rules were saved.",
+        description:"Job saved as draft",
       });
       clearDirty();setFormError("");
       router.refresh();
@@ -523,7 +532,10 @@ export function PlacementDraftEditForm({
                  value.job.employmentType==="CONTRACT"?"Contract":"Full-time")}
             >
               {availableJobTypes
-                .map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
+                .map(type=><option key={type.label} value={type.label}>
+                  {type.label}{"countsAsPlaced" in type?
+                    ((type as {countsAsPlaced?:boolean}).countsAsPlaced?" · Counts as placed":" · Not counted as placed"):""}
+                </option>)}
               {value.job.jobTypeLabel&&!availableJobTypes.some(type=>type.label===value.job.jobTypeLabel)?
                 <option value={value.job.jobTypeLabel}>{value.job.jobTypeLabel} (historic)</option>:null}
             </Select>
@@ -621,6 +633,7 @@ export function PlacementDraftEditForm({
               <option value="EXTERNAL_ONLY">Employer form only</option>
             </Select>
           </label>
+          <p className="text-xs text-muted-foreground sm:col-span-2">Audience visibility stays within the selected college and authorized memberships. It is independent of Application mode (LMS form, employer form, or both).</p>
           <label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employer application URL
@@ -711,7 +724,9 @@ export function PlacementDraftEditForm({
            <label className="grid gap-1 text-[13px] font-semibold">Department
             <Select className={inputClass} value={selectedDepartment} onChange={event=>{
              setSelectedDepartment(event.target.value);setProgramFilter("");setCohortFilter("");
-             setSelectedProgramIds([]);setSelectedCohortIds([]);setSelectedSectionIds([]);markDirty();
+             setSelectedProgramIds(event.target.value?
+              academicOptions.programs.filter(p=>p.departmentName===event.target.value).map(p=>p.id):[]);
+             setSelectedCohortIds([]);setSelectedSectionIds([]);markDirty();
             }}>
              <option value="">All departments</option>
              {departments.map(name=><option key={name} value={name}>{name}</option>)}
@@ -720,6 +735,9 @@ export function PlacementDraftEditForm({
            <label className="grid gap-1 text-[13px] font-semibold">Program
             <Select className={inputClass} value={programFilter} onChange={event=>{
              setProgramFilter(event.target.value);setCohortFilter("");
+             setSelectedProgramIds(event.target.value?[event.target.value]:
+              selectedDepartment?academicOptions.programs.filter(p=>
+                p.departmentName===selectedDepartment).map(p=>p.id):[]);
              setSelectedCohortIds([]);setSelectedSectionIds([]);markDirty();
             }}>
              <option value="">All programs</option>
@@ -728,7 +746,9 @@ export function PlacementDraftEditForm({
            </label>
            <label className="grid gap-1 text-[13px] font-semibold">Batch
             <Select className={inputClass} value={cohortFilter} onChange={event=>{
-             setCohortFilter(event.target.value);setSelectedSectionIds([]);markDirty();
+             setCohortFilter(event.target.value);
+             setSelectedCohortIds(event.target.value?[event.target.value]:[]);
+             setSelectedSectionIds([]);markDirty();
             }}>
              <option value="">All batches</option>
              {visibleCohorts.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
@@ -756,13 +776,10 @@ export function PlacementDraftEditForm({
                           checked={selectedProgramIds.includes(
                             program.id,
                           )}
-                          onChange={() =>
-                            toggleId(
-                              program.id,
-                              selectedProgramIds,
-                              setSelectedProgramIds,
-                            )
-                          }
+                          onChange={() =>{
+                            toggleId(program.id,selectedProgramIds,setSelectedProgramIds);
+                            markDirty();
+                          }}
                         />
                         <span>
                           <span className="font-semibold text-foreground">
@@ -803,13 +820,10 @@ export function PlacementDraftEditForm({
                           checked={selectedCohortIds.includes(
                             cohort.id,
                           )}
-                          onChange={() =>
-                            toggleId(
-                              cohort.id,
-                              selectedCohortIds,
-                              setSelectedCohortIds,
-                            )
-                          }
+                          onChange={() =>{
+                            toggleId(cohort.id,selectedCohortIds,setSelectedCohortIds);
+                            markDirty();
+                          }}
                         />
                         <span>
                           <span className="font-semibold text-foreground">
