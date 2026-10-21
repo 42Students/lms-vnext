@@ -55,7 +55,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  return <div className="min-w-0 space-y-4"><PageHeader title={result.batch.name+" — Students"} description="Eligibility, registration and student evidence."/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
  <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
-  className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
+  className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class (on this page)
    <Select name="classId" defaultValue={view.data.classId??""}
     className="block min-h-11 md:min-h-9 w-full mt-[6px]">
