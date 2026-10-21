@@ -902,7 +902,7 @@ export function PlacementJobCreateForm({
               </label>
               <label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                Employer
+                Company Name
               </span>
               <Select
                 className={inputClass}
@@ -954,7 +954,7 @@ export function PlacementJobCreateForm({
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
               <label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                  Company name
+                  Company Name
                 </span>
                 <Input
                   className={inputClass}
@@ -1011,7 +1011,7 @@ export function PlacementJobCreateForm({
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            Opportunity
+            The drive
           </h2>
           <p className="mt-1 text-sm text-body">
             Create the learner-facing job opportunity and application window.
@@ -1020,7 +1020,7 @@ export function PlacementJobCreateForm({
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Job title
+              Job Title
             </span>
             <Input
               className={inputClass}
@@ -1030,12 +1030,12 @@ export function PlacementJobCreateForm({
               required
               minLength={3}
               maxLength={100}
-              placeholder="Software Development Engineer"
+              placeholder="e.g., Software Engineer"
             />
           </label>
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Description
+              Job Description
             </span>
             <Textarea
               className={textareaClass}
@@ -1046,7 +1046,7 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Employment type
+              Job Type
             </span>
             <Select
               className={inputClass}
@@ -1081,7 +1081,7 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Locations
+              Location
             </span>
             <Input
               className={inputClass}
@@ -1102,6 +1102,8 @@ export function PlacementJobCreateForm({
               step={1}
             />
           </label>
+          <h3 className="sm:col-span-2 mt-2 border-t border-border pt-4 text-base font-semibold text-foreground">Pay packages</h3>
+          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">The default pay package is shown to students. Salary amounts are in LPA unless labelled otherwise.</p>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
@@ -1112,7 +1114,7 @@ export function PlacementJobCreateForm({
               type="number"
               min={0}
               max={1000}
-              step="0.1"
+              step="0.5"
             />
           </label>
           <label>
@@ -1125,15 +1127,15 @@ export function PlacementJobCreateForm({
               type="number"
               min={0}
               max={1000}
-              step="0.1"
+              step="0.5"
             />
           </label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Fixed CTC (LPA)
-          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Variable CTC (LPA)
-          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Stipend per month (INR)
           </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
@@ -1260,18 +1262,44 @@ export function PlacementJobCreateForm({
             <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
           </label>
           <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
-            <Textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
+            <Textarea name="responsibilities" rows={6} maxLength={15000} className={textareaClass} placeholder="Responsibilities, duties and expectations"/>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment URL
-            <Input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
+            <Input name="assessmentUrl" type="url" maxLength={2048} className={inputClass} placeholder="https://..."
+              onChange={event=>setAssessmentUrlLength(event.target.value.length)}/>
+            <span className="text-xs font-normal text-muted-foreground">{assessmentUrlLength}/2048 characters · HTTP or HTTPS</span>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
           </label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-            Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
-            <Textarea name="importantDates" rows={3} className={inputClass}/>
-          </label>
+          <fieldset className="grid gap-3 sm:col-span-2">
+            <legend className="text-sm font-semibold text-foreground">Important dates</legend>
+            <p className="text-xs text-muted-foreground">Add up to 20 dates. The Application deadline field above is reserved.</p>
+            {importantDateRows.map(row=>(
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
+                  <Input aria-label="Important date label" maxLength={100} placeholder="e.g. Screening round, Technical round"
+                    value={row.label} onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Date (IST)
+                  <Input aria-label="Important date" type="date" value={row.date}
+                    onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,date:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <Button type="button" variant="secondary" disabled={importantDateRows.length<=1}
+                  title={importantDateRows.length<=1?"At least one row required":"Remove important date"}
+                  aria-label="Remove important date"
+                  onClick={()=>{setImportantDateRows(current=>current.filter(item=>item.id!==row.id));markDirty();}}
+                  className="min-h-11 text-danger md:min-h-9">Remove</Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" disabled={importantDateRows.length>=20}
+              onClick={()=>{setImportantDateRows(current=>[...current,{id:nextRowId.current++,label:"",date:""}]);markDirty();}}
+              className="min-h-11 border-dashed md:min-h-9">
+              Add date{importantDateRows.length>=20?" (max 20)":""}
+            </Button>
+          </fieldset>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred degree
             <Input name="preferredDegree" maxLength={160} className={inputClass}/>
           </label>
@@ -1287,10 +1315,32 @@ export function PlacementJobCreateForm({
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred city
             <Input name="preferredCity" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-            Custom eligibility rules (up to 20; one Label | Value per line; informational)
-            <Textarea name="customEligibilityRules" rows={3} className={inputClass}/>
-          </label>
+          <fieldset className="grid gap-3 sm:col-span-2">
+            <legend className="text-sm font-semibold text-foreground">Custom eligibility rules</legend>
+            <p className="text-xs text-muted-foreground">Add your own rules (e.g. Work permit, Experience). Displayed to students, informational only. Max 20.</p>
+            {customRuleRows.map(row=>(
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule label
+                  <Input aria-label="Rule label" maxLength={160} placeholder="Label (e.g. Work permit)"
+                    value={row.label} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule value
+                  <Input aria-label="Rule value" maxLength={200} placeholder="Value (e.g. Required)"
+                    value={row.value} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,value:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <Button type="button" variant="secondary" disabled={customRuleRows.length<=1}
+                  title={customRuleRows.length<=1?"At least one row required":"Remove custom rule"}
+                  aria-label="Remove custom rule"
+                  onClick={()=>{setCustomRuleRows(current=>current.filter(item=>item.id!==row.id));markDirty();}}
+                  className="min-h-11 text-danger md:min-h-9">Remove</Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" disabled={customRuleRows.length>=20}
+              onClick={()=>{setCustomRuleRows(current=>[...current,{id:nextRowId.current++,label:"",value:""}]);markDirty();}}
+              className="min-h-11 border-dashed md:min-h-9">Add custom rule{customRuleRows.length>=20?" (max 20)":""}</Button>
+          </fieldset>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </details>
@@ -1521,7 +1571,7 @@ export function PlacementJobCreateForm({
       </section>
 
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <h2 className="font-semibold text-foreground">Interview rounds</h2>
+        <h2 className="font-semibold text-foreground">Rounds</h2>
         <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
           Round template
           <Select name="roundPreset" value={roundPreset}
@@ -1532,10 +1582,46 @@ export function PlacementJobCreateForm({
               <option key={key} value={key}>{preset.label}</option>)}
           </Select>
         </label>
-        <p role="status" className="mt-3 text-sm font-semibold text-body">{plannedTpoRoundRows(roundPreset).length} rounds planned</p>
-        <ol className="mt-2 list-decimal space-y-1 pl-6 text-sm text-body">
-          {plannedTpoRoundRows(roundPreset).map(round=><li key={round.sequence}>{round.name} · {round.kind}</li>)}
-        </ol>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Round presets">
+          {Object.entries(TPO_DRIVE_ROUND_PRESETS).filter(([key])=>key!=="NONE").map(([key,preset])=>(
+            <Button key={key} variant="secondary" type="button"
+              onClick={()=>{setRoundPreset(key as TpoRoundPresetKey);setRoundRows([]);markDirty();}}>
+              {preset.label}
+            </Button>
+          ))}
+        </div>
+        <p role="status" className="mt-3 text-sm font-semibold text-body">
+          {roundRows.length||plannedTpoRoundRows(roundPreset).length} rounds planned
+        </p>
+        <div className="mt-2 space-y-2">
+          {(roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}))).map((round,index)=>(
+            <div key={round.id} className="grid items-center gap-2 rounded-lg border border-border p-2 sm:grid-cols-[150px_minmax(0,1fr)_auto]">
+              <Select aria-label={"Round "+(index+1)+" kind"} value={round.kind}
+                onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,kind:event.target.value}:item));markDirty();
+                }}>
+                {["TALK","TEST","GD","INTERVIEW","HR","OTHER"].map(kind=><option key={kind} value={kind}>{kind}</option>)}
+              </Select>
+              <Input aria-label={"Round "+(index+1)+" name"} value={round.name} maxLength={160}
+                placeholder="Round name" onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,name:event.target.value}:item));markDirty();
+                }}/>
+              <Button type="button" variant="secondary" aria-label="Remove this round" title="Remove this round"
+                onClick={()=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
+                  setRoundRows(rows.filter(item=>item.id!==round.id));setRoundPreset("NONE");markDirty();
+                }}>Remove</Button>
+            </div>
+          ))}
+        </div>
+        <Button variant="secondary" type="button" className="mt-3 min-h-11 border-dashed md:min-h-9"
+          disabled={roundRows.length>=20}
+          onClick={()=>{
+            const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
+            setRoundRows([...rows,{id:nextRowId.current++,kind:"INTERVIEW",name:""}]);markDirty();
+          }}>Add round</Button>
         <p className="mt-2 text-xs text-muted-foreground">
           The selected round template creates pending rounds with the draft. Review each round's
           name, kind and mode in the saved drive before sending any candidate invitations.
