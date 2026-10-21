@@ -1,4 +1,13 @@
+"use client";
 import Link from "next/link";
+import {useMemo,useRef,useState} from "react";
+import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { Disclosure } from "@/components/ui/disclosure";
 import { TpoRoundCheckIn } from "./tpo-round-check-in";
 import { DataTable } from "@/components/ui/data-table";
@@ -21,6 +30,21 @@ import {tpoDriveDayRoundLinks} from "@/modules/placements/tpo-drive-day-navigati
 type RoundData = Awaited<
   ReturnType<typeof getTpoRoundDriveDay>
 >;
+
+type RoundRow=RoundData["rows"][number];
+function resolveGateRoll(rows:readonly RoundRow[],input:string):
+ {kind:"MATCH";student:RoundRow}|{kind:"AMBIGUOUS";students:RoundRow[]}|{kind:"NONE"} {
+  const value=input.trim().toLocaleLowerCase("en-IN");
+  if(!value)return {kind:"NONE"};
+  const normalize=(row:RoundRow)=>(row.rollNumber??"").trim().toLocaleLowerCase("en-IN");
+  const exact=rows.filter(row=>normalize(row)===value);
+  if(exact.length===1)return {kind:"MATCH",student:exact[0]!};
+  if(exact.length>1)return {kind:"AMBIGUOUS",students:exact.slice(0,5)};
+  if(value.length<3)return {kind:"NONE"};
+  const partial=rows.filter(row=>normalize(row).startsWith(value)||normalize(row).endsWith(value));
+  return partial.length===1?{kind:"MATCH",student:partial[0]!}:
+   partial.length>1?{kind:"AMBIGUOUS",students:partial.slice(0,5)}:{kind:"NONE"};
+}
 
 function formatScheduledAt(
   value: Date | null,
@@ -67,6 +91,111 @@ export function TpoRoundDriveDayReadOnly({
   data: RoundData;
 }) {
   const destinations=tpoDriveDayRoundLinks(data.job.id,data.round.id);
+  const router=useRouter();
+  const locked=["CANCELLED","COMPLETED"].includes(data.round.status);
+  const [gateInput,setGateInput]=useState("");
+  const [rosterSearch,setRosterSearch]=useState("");
+  const [gateError,setGateError]=useState("");
+  const [gateSuccess,setGateSuccess]=useState("");
+  const [gateCandidates,setGateCandidates]=useState<RoundRow[]>([]);
+  const [gateTarget,setGateTarget]=useState<RoundRow|null>(null);
+  const [gateBusy,setGateBusy]=useState(false);
+  const inFlight=useRef(false);
+  const [pasteOpen,setPasteOpen]=useState(false);
+  const [pasteText,setPasteText]=useState("");
+  const [pasteBusy,setPasteBusy]=useState(false);
+  const [pasteFeedback,setPasteFeedback]=useState("");
+  const [pasteFailure,setPasteFailure]=useState("");
+  const shownRows=useMemo(()=>{
+    const q=rosterSearch.trim().toLocaleLowerCase("en-IN");
+    return q?data.rows.filter(row=>
+      row.displayName.toLocaleLowerCase("en-IN").includes(q)||
+      (row.rollNumber??"").toLocaleLowerCase("en-IN").includes(q)):data.rows;
+  },[data.rows,rosterSearch]);
+  function prepareGate(){
+    if(locked||inFlight.current)return;
+    setGateError("");setGateSuccess("");setGateCandidates([]);
+    const text=gateInput.trim();
+    if(!text){setGateError("Enter a roll number.");return;}
+    const match=resolveGateRoll(data.rows,text);
+    if(match.kind==="NONE"){
+      setGateError("No student with roll number "+text+" is on this roster.");return;
+    }
+    if(match.kind==="AMBIGUOUS"){
+      setGateCandidates(match.students);
+      setGateError("Type more of the roll number.");return;
+    }
+    if(match.student.attendance==="PRESENT"){
+      setGateSuccess(match.student.displayName+" is already present.");return;
+    }
+    if(!["WAITING","ABSENT"].includes(match.student.attendance)){
+      setGateError("This student cannot be marked present from "+match.student.attendance+".");return;
+    }
+    setGateTarget(match.student);
+  }
+  async function markPresent(student:RoundRow):Promise<boolean>{
+    if(locked||inFlight.current)return false;
+    inFlight.current=true;setGateBusy(true);
+    try{
+      const response=await fetch(
+        "/api/placements/tpo/drive-day/"+encodeURIComponent(data.round.id)+"/check-in",{
+          method:"POST",credentials:"same-origin",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({confirmed:true,applicationId:student.applicationId,
+            expectedAttendance:student.attendance,status:"PRESENT"}),
+        },
+      );
+      if(!response.ok)throw Error("Attendance has changed or could not be saved. Refresh the round before retrying.");
+      router.refresh();return true;
+    }catch(error){
+      setGateError(error instanceof Error?error.message:"Check-in failed.");
+      return false;
+    }finally{setGateBusy(false);inFlight.current=false;}
+  }
+  const pasteTokens=pasteText.split(/[\\n,;]+/).map(value=>value.trim()).filter(Boolean);
+  const pastePreview=useMemo(()=>{
+    const matched:RoundRow[]=[];
+    const unresolved:string[]=[];
+    const used=new Set<string>();
+    for(const token of pasteTokens.slice(0,50)){
+      const outcome=resolveGateRoll(data.rows,token);
+      if(outcome.kind==="MATCH"&&!used.has(outcome.student.applicationId)){
+        matched.push(outcome.student);used.add(outcome.student.applicationId);
+      }else if(outcome.kind!=="MATCH"){unresolved.push(token);}
+    }
+    return {matched,unresolved,tooMany:pasteTokens.length>50};
+  },[data.rows,pasteText]);
+  async function markPasted(){
+    if(locked||pasteBusy||inFlight.current||pastePreview.tooMany||pastePreview.matched.length===0)return;
+    setPasteBusy(true);inFlight.current=true;setPasteFailure("");setPasteFeedback("");
+    let done=0,already=0;
+    const failed=[...pastePreview.unresolved];
+    try{
+      for(const student of pastePreview.matched){
+        if(student.attendance==="PRESENT"){already++;continue;}
+        if(!["WAITING","ABSENT"].includes(student.attendance)){
+          failed.push(student.rollNumber??student.displayName);continue;
+        }
+        try{
+          const response=await fetch(
+            "/api/placements/tpo/drive-day/"+encodeURIComponent(data.round.id)+"/check-in",{
+              method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+              body:JSON.stringify({confirmed:true,applicationId:student.applicationId,
+                expectedAttendance:student.attendance,status:"PRESENT"}),
+            },
+          );
+          if(!response.ok)throw Error("Attendance changed");
+          done++;
+        }catch{failed.push(student.rollNumber??student.displayName);}
+      }
+      setPasteText(failed.join("\n"));
+      setPasteFeedback(done+" marked present"+(already>0?"; "+already+" already present":"")+".");
+      if(failed.length>0)setPasteFailure(
+        failed.length+" roll number(s) were unmatched, ambiguous or could not be saved. Review the remaining lines.");
+      router.refresh();
+      if(failed.length===0)setPasteOpen(false);
+    }finally{inFlight.current=false;setPasteBusy(false);}
+  }
   const summary = [
     ["On roster", data.counts.total],
     ["Waiting", data.counts.waiting],
