@@ -11,16 +11,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/company-share/[token]/not-found.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/company/[companyId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/app/company-share/[token]/not-found.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
 - [ ] `src/components/placements/tpo-request-decision-control.tsx`
 - [ ] `src/components/placements/tpo-settings-nav.tsx`
 - [ ] `src/components/projects/learner-board-task-index.tsx`
