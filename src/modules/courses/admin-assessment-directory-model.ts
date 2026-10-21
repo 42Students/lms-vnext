@@ -4,7 +4,7 @@ export const adminAssessmentQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "CLOSED", "ARCHIVED"]).default("ALL"),
   courseCode:z.preprocess(value=>value===""?undefined:value,z.string().trim().min(1).max(64).optional()),
-  deliveryId:z.string().uuid().optional(),
+  deliveryId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
   scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   results:z.enum(["ALL","PUBLISHED","HIDDEN"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
