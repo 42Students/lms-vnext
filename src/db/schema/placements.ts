@@ -559,6 +559,8 @@ export const placementJobs = pgTable(
     }>(),
     employmentType: varchar("employment_type", { length: 24 })
       .notNull(),
+    /** College job-type label retained on drives, including hidden/renamed historic types. */
+    jobTypeLabel: varchar("job_type_label", { length: 40 }),
     /** NULL explicitly means no audited placed answer yet; never infer from employment type. */
     countsAsPlaced: boolean("counts_as_placed"),
     workMode: varchar("work_mode", { length: 24 }).notNull(),
@@ -625,6 +627,10 @@ export const placementJobs = pgTable(
     index("placement_jobs_college_status_idx").on(
       table.collegeId,
       table.status,
+    ),
+    index("placement_jobs_college_job_type_idx").on(
+      table.collegeId,
+      sql`lower(${table.jobTypeLabel})`,
     ),
     index("placement_jobs_season_status_idx").on(
       table.seasonId,
