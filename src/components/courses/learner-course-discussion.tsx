@@ -41,6 +41,37 @@ type DiscussionMessage = {
   isMine: boolean;
 };
 
+// Eight deterministic pastel tints, matching the legacy Classroom palette.
+const AVATAR_TINTS=[
+  {bg:"#e0f2f1",fg:"#0f766e"}, {bg:"#ede9fe",fg:"#5b21b6"},
+  {bg:"#fef3c7",fg:"#92400e"}, {bg:"#e0e7ff",fg:"#3730a3"},
+  {bg:"#fce7f3",fg:"#9d174d"}, {bg:"#dcfce7",fg:"#166534"},
+  {bg:"#ffe4e6",fg:"#9f1239"}, {bg:"#e0f2fe",fg:"#075985"},
+] as const;
+function avatarTint(senderId:string,senderName:string){
+  const source=senderId||senderName;
+  const hash=[...source].reduce((value,char)=>((value*31+char.charCodeAt(0))>>>0),0);
+  return AVATAR_TINTS[hash%AVATAR_TINTS.length]!;
+}
+function initials(name:string){
+  return name.split(/\s+/).filter(Boolean).slice(0,2)
+    .map(part=>part.charAt(0).toUpperCase()).join("")||"U";
+}
+function DiscussionPinIcon({filled=false}:{filled?:boolean}){
+ return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
+  fill={filled?"currentColor":"none"} stroke="currentColor" strokeWidth="1.8"
+  strokeLinecap="round" strokeLinejoin="round">
+  <path d="M16 3l5 5-3 1.5v4L14 17l-4-4H6L4.5 10 8 7h4z"/>
+  <path d="M10 14L3 21"/>
+ </svg>;
+}
+function DiscussionDeleteIcon(){
+ return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
+  fill="none" stroke="currentColor" strokeWidth="1.8"
+  strokeLinecap="round" strokeLinejoin="round">
+  <path d="M4 7h16M10 4h4M6 7l1 13h10l1-13M10 11v5m4-5v5"/>
+ </svg>;
+}
 function formatTime(value: string, asOfMs: number) {
   return learnerDiscussionRelativeTimeLabel(value, asOfMs);
 }
@@ -70,6 +101,7 @@ export function LearnerCourseDiscussion({
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [refreshDismissed,setRefreshDismissed] = useState(false);
   const [draft, setDraft] = useState("");
   const router = useRouter();
   const [leaveHref,setLeaveHref]=useState<string|null>(null);
@@ -131,6 +163,8 @@ export function LearnerCourseDiscussion({
   const forceBottomOnNextLoad = useRef(false);
   const historyPrepend = useRef(false);
   const locallyDeletedIds = useRef(new Set<string>());
+  const changeCursor=useRef<{since:string;afterId?:string}|null>(null);
+  const refreshPollCount=useRef(0);
 
   const load = useCallback(async (silent = false) => {
     const refreshId = ++latestRefreshId.current;
@@ -148,7 +182,14 @@ export function LearnerCourseDiscussion({
       setMessages((previous) => loadedOnce.current
         ? reconcileLatestDiscussionPage(previous, incoming, received.length)
         : incoming);
-      if (!loadedOnce.current) setOlderCursor(payload.nextCursor ?? null);
+      if (!loadedOnce.current) {
+        setOlderCursor(payload.nextCursor ?? null);
+        const newest=[...incoming,...(payload.highlightedPinned?[payload.highlightedPinned]:[])]
+          .map(message=>Date.parse(message.updatedAt))
+          .filter((time):time is number=>Number.isFinite(time))
+          .reduce((max,time)=>Math.max(max,time),Date.now()-30000);
+        changeCursor.current={since:new Date(newest).toISOString()};
+      }
       setHighlightedPinned(
         payload.highlightedPinned?.id && !locallyDeletedIds.current.has(payload.highlightedPinned.id)
           ? payload.highlightedPinned
@@ -158,11 +199,13 @@ export function LearnerCourseDiscussion({
       // Refresh relative timestamps only when a feed response arrives, not during render.
       setTimeReference(Date.now());
       setLoadError(false);
+      setRefreshDismissed(false);
       loadedOnce.current = true;
     } catch {
       if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) {
         setCanPost(false);
         setLoadError(true);
+        setRefreshDismissed(false);
       }
     } finally {
       if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) setLoading(false);
@@ -204,19 +247,51 @@ export function LearnerCourseDiscussion({
     }
   }, [deliveryId, olderCursor]);
 
+  // Compare the legacy 15-second conditional update cursor rather than
+  // retransferring the whole 60-message page for every idle tick.
+  const pollChanges=useCallback(async()=>{
+    if(!loadedOnce.current||!changeCursor.current)return;
+    if(++refreshPollCount.current%4===0){await load(true);return;}
+    try{
+      const params=new URLSearchParams(changeCursor.current);
+      const response=await fetch(
+        "/api/courses/deliveries/"+encodeURIComponent(deliveryId)+
+          "/discussions/changes?"+params,{cache:"no-store"});
+      if(!response.ok)throw new Error("discussion_changes_failed");
+      const result=await response.json() as {
+        changes?:Array<{id:string;deleted:boolean;updatedAtExact:string}>;
+        nextCursor?:{since:string;afterId:string}|null;
+      };
+      const changes=result.changes??[];
+      const newest=changes.at(-1);
+      if(newest)changeCursor.current={
+        since:newest.updatedAtExact,afterId:newest.id,
+      };
+      if(changes.some(change=>change.deleted)){
+        const deleted=new Set(changes.filter(change=>change.deleted).map(change=>change.id));
+        deleted.forEach(id=>locallyDeletedIds.current.add(id));
+        setMessages(previous=>previous.filter(message=>!deleted.has(message.id)));
+        setHighlightedPinned(previous=>previous&&deleted.has(previous.id)?null:previous);
+      }
+      if(changes.length||result.nextCursor)await load(true);
+    }catch{
+      await load(true);
+    }
+  },[deliveryId,load]);
+
   useEffect(() => {
     // Defer initial fetch to avoid synchronous cascading state updates.
     const first = window.setTimeout(() => void load(), 0);
     const interval = window.setInterval(() => {
       if (document.visibilityState === "visible") {
-        void load(true);
+        void pollChanges();
       }
     }, Math.max(5000,Math.min(120000,pollIntervalMs)));
     return () => {
       window.clearTimeout(first);
       window.clearInterval(interval);
     };
-  }, [load,pollIntervalMs]);
+  }, [load,pollChanges,pollIntervalMs]);
 
   const pinnedMessages = useMemo(
     () => messages.filter((item) => item.pinned),
@@ -408,46 +483,31 @@ export function LearnerCourseDiscussion({
       {operationToast?<div role="alert" className="fixed bottom-5 left-1/2 z-50 w-[min(92vw,28rem)] -translate-x-1/2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-error shadow-lg">
         {operationToast}
       </div>:null}
-      <div>
-        <h2 className="sr-only">Discussions</h2>
-        <p className="m-0 text-sm text-body">
-          {moderate
-            ? "Guide the class conversation, answer questions, pin important context, and moderate messages."
-            : "Keep course conversations in one place and follow along easily."}
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">Students can post questions here anytime.</p>
-      </div>
+      <h2 className="sr-only">Discussions</h2>
+      {!moderate?<p className="m-0 text-sm text-body">
+        Keep course conversations in one place and follow along easily.
+      </p>:null}
 
-      {loadError && messages.length > 0 && loadedOnce.current ? (
-        <Alert tone="warning" role="alert" className="flex-row flex-wrap items-center gap-3">
-          <div className="flex-1 text-sm text-warning-text">
-            <p className="font-semibold">Could not refresh the discussion.</p>
-            <p>Showing the last messages we loaded.</p>
-          </div>
-          <Button type="button" size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => void load(true)}>
-            Retry
-          </Button>
-        </Alert>
-      ) : null}
+
 
       {pinned ? (
-        <section className="min-w-0 border-l-2 border-primary bg-primary-subtle/50 px-3 py-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-              Pinned by {pinned.senderName??"Unknown"} · 1 of {pinnedMessages.length||1}
-            </p>
+        <section className="flex min-w-0 items-start gap-3 rounded-[var(--lms-control-radius)] border border-[#d8e7ea] bg-[#eff8fa] px-3 py-3">
+          <span className="mt-0.5 shrink-0 text-[#1a95a1]"><DiscussionPinIcon filled /></span>
+          <div className="min-w-0 flex-1">
+          <p className="break-words text-sm font-semibold text-foreground">{pinned.messageText}</p>
+          <small title={learnerDiscussionTimeLabel(pinned.createdAt)}
+            className="mt-1 block text-xs text-muted-foreground">
+            Pinned by {pinned.senderName??"User"}{pinnedMessages.length>1
+              ?" · 1 of "+pinnedMessages.length:""}
+          </small>
           </div>
-          <p className="mt-2 break-words text-sm font-semibold text-foreground">
-            {pinned.messageText}
-          </p>
-          <p title={learnerDiscussionTimeLabel(pinned.createdAt)} className="mt-1 text-xs text-muted-foreground">
-            {pinned.senderName} · {formatTime(pinned.createdAt, timeReference)}
-          </p>
-          {moderate && canPost ? (
-            <Button type="button" disabled={pinningId!==null}
+          {moderate ? (
+            <Button type="button" size="sm" variant="ghost"
+              title="Unpin this message" aria-label="Unpin this message"
+              disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              variant="secondary" className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9">
-              {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
+              className="min-h-9 min-w-9 p-2 text-[#1a95a1]">
+              <DiscussionPinIcon />
             </Button>
           ) : null}
         </section>
@@ -474,21 +534,28 @@ export function LearnerCourseDiscussion({
           if(destination)router.push(destination);
         }}/>
       {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
-      <section className="relative min-w-0 overflow-hidden border-y border-border bg-surface">
+      <section className="relative min-w-0 overflow-hidden border border-[#e5e9f0] bg-white">
+        {loadError && messages.length > 0 && loadedOnce.current && !refreshDismissed ? (
+          <div role="alert" className="flex flex-wrap items-center gap-3 border-b border-[#f2e3b9] bg-[#fffbea] px-3 py-2 text-sm">
+            <div className="min-w-0 flex-1">
+              <strong>Discussion refresh failed</strong>
+              <p>Showing the last messages we loaded.</p>
+            </div>
+            <Button type="button" size="sm" variant="secondary" onClick={()=>void load(true)}>Retry</Button>
+            <Button type="button" size="sm" variant="ghost" title="Dismiss refresh warning"
+              aria-label="Dismiss refresh warning" onClick={()=>setRefreshDismissed(true)}>×</Button>
+          </div>
+        ) : null}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
           role="region" aria-label="Course discussion messages" tabIndex={0}
-          className="max-h-[56dvh] min-h-56 overflow-y-auto overscroll-contain px-1 py-3 sm:px-3 md:max-h-[34rem] md:min-h-80 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 md:max-h-[31rem] md:min-h-80 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           {loading ? (
-            <div className="space-y-4" aria-busy="true">
-              {[1, 2, 3].map((item) => (
-                <div key={item} className="motion-safe:animate-pulse border-b border-border px-2 py-3">
-                  <div className="h-3 w-32 rounded bg-muted" />
-                  <div className="mt-3 h-4 w-4/5 rounded bg-muted" />
-                </div>
-              ))}
+            <div className="flex min-h-64 items-center justify-center" aria-busy="true"
+              aria-label="Loading discussion messages" role="status">
+              <span aria-hidden="true" className="size-7 motion-safe:animate-spin rounded-full border-2 border-[#e5e9f0] border-t-[#0a7c88]"/>
             </div>
           ) : loadError && messages.length === 0 ? (
             <div className="flex min-h-64 flex-col items-center justify-center text-center">
@@ -506,7 +573,7 @@ export function LearnerCourseDiscussion({
             moderate && canPost ? (
               <div className="flex min-h-64 flex-col items-center justify-center gap-4 p-4 text-center">
                 <h3 className="text-base font-semibold text-foreground">Start the conversation</h3>
-                <p className="text-sm text-body">Welcome your class or share the week&apos;s focus.</p>
+                <p className="text-sm text-body">Learners are far more likely to post once someone else has. Try a welcome note or this week's focus.</p>
                 <div className="grid w-full min-w-0 gap-2 sm:flex sm:flex-wrap sm:justify-center">
                   <Button type="button" size="sm" variant="secondary" className="min-h-11 md:min-h-9"
                     onClick={()=>{
@@ -555,57 +622,56 @@ export function LearnerCourseDiscussion({
                 ) : (
                   <article
                     key={row.key}
-                    className={
-                      row.item.isMine
-                        ? `ml-auto max-w-[94%] break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle ${row.grouped ? "px-3 py-2" : "p-3"}`
-                        : `max-w-[94%] break-words rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle ${row.grouped ? "px-3 py-2" : "p-3"}`
-                    }
+                    className={`flex max-w-full min-w-0 items-start gap-3 break-words
+                      ${row.grouped ? "pt-1" : "pt-3"}
+                      ${row.item.isMine ? "bg-[#f7fbfb]" : "bg-white"}`}
                   >
-                    {!row.grouped ? (
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span aria-hidden="true" title={row.item.senderRole}
-                          className={"inline-flex size-8 shrink-0 items-center justify-center rounded-[50%] text-xs font-bold "+
-                            (row.item.senderRole==="FACULTY"?"bg-primary-subtle text-primary-text":
-                              row.item.isMine?"bg-success-subtle text-success":"bg-muted text-foreground")}>
-                          {(row.item.isMine?"You":row.item.senderName).trim().charAt(0).toUpperCase()||"?"}
-                        </span>
+                    {row.grouped?<span aria-hidden="true" className="w-8 shrink-0"/>:
+                      <span aria-hidden="true" title={row.item.senderRole}
+                        className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                        style={avatarTint(row.item.senderMembershipId,row.item.senderName)}>
+                        {initials(row.item.senderName)}
+                      </span>}
+                    <div className="min-w-0 flex-1">
+                      {!row.grouped?<div className="flex flex-wrap items-center gap-2">
                         <strong className="text-sm text-foreground">
                           {row.item.isMine ? "You" : row.item.senderName}
                         </strong>
-                        {row.item.senderRole === "FACULTY" ? (
-                          <StatusBadge tone="info">Faculty</StatusBadge>
-                        ) : null}
-                        <span title={learnerDiscussionTimeLabel(row.item.createdAt)} className="text-xs text-muted-foreground">
-                          {formatTime(row.item.createdAt, timeReference)}
-                        </span>
-                        {row.item.pinned ? (
-                          <StatusBadge tone="info">Pinned</StatusBadge>
-                        ) : null}
-                      </div>
-                    ) : null}
-                    <p className={`${row.grouped ? "mt-0" : "mt-2"} whitespace-pre-wrap text-sm leading-6 text-body`}>
-                      {row.item.messageText}
-                    </p>
-                    {canPost ? (
-                      <div className="mt-2 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+                        {row.item.senderRole==="FACULTY"?<StatusBadge tone="info">Faculty</StatusBadge>:null}
+                        <time dateTime={row.item.createdAt}
+                          title={learnerDiscussionTimeLabel(row.item.createdAt)}
+                          className="text-xs text-muted-foreground">
+                          {formatTime(row.item.createdAt,timeReference)}
+                        </time>
+                        {row.item.pinned?<StatusBadge tone="info">Pinned</StatusBadge>:null}
+                      </div>:null}
+                      <p className="mt-1 whitespace-pre-wrap text-sm leading-6 text-body">
+                        {row.item.messageText}
+                      </p>
+                    </div>
+                    {(canPost || moderate) ? (
+                      <div className="flex shrink-0 items-center gap-1">
                         {canPost ? <Button type="button" variant="ghost"
                           className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
                           onClick={() => {
                             setReplyTo({id:row.item.id,text:row.item.messageText.slice(0,100),updatedAt:row.item.updatedAt});
                             focusComposer();
                           }}>Reply</Button> : null}
-                        {canPost && moderate ? <Button type="button" variant="ghost"
+                        {moderate ? <Button type="button" variant="ghost" size="sm"
+                          aria-label={row.item.pinned?"Unpin this message":"Pin this message"}
+                          title={row.item.pinned?"Unpin this message":"Pin this message"}
                           disabled={pinningId!==null}
                           onClick={()=>void togglePin(row.item.id)}
-                          className="min-h-11 !text-[var(--lms-primary-text)] hover:underline md:min-h-9">
-                          {pinningId===row.item.id?"Saving…":row.item.pinned?"Unpin":"Pin"}
+                          className="min-h-9 min-w-9 p-2 !text-[#1a95a1]">
+                          <DiscussionPinIcon filled={row.item.pinned}/>
                         </Button> : null}
-                        {canPost && (moderate || row.item.isMine) ? <Button
-                          type="button" variant="ghost"
+                        {(moderate || row.item.isMine) ? <Button
+                          type="button" variant="ghost" size="sm"
+                          aria-label="Delete this message" title="Delete this message"
                           disabled={deletingId===row.item.id}
                           onClick={()=>{setModerationError(null);setDeleteTarget(row.item.id);}}
-                          className="min-h-11 !text-[var(--lms-error)] hover:underline md:min-h-9">
-                          {deletingId===row.item.id?"Deleting…":"Delete"}
+                          className="min-h-9 min-w-9 p-2 !text-[var(--lms-error)]">
+                          <DiscussionDeleteIcon/>
                         </Button> : null}
                       </div>
                     ) : null}
@@ -639,9 +705,9 @@ export function LearnerCourseDiscussion({
 
         {canPost ? (
         <form onSubmit={submit} className="min-w-0 border-t border-border px-1 py-3 sm:px-3 md:py-4">
-          <p className="mb-3 text-xs leading-5 text-muted-foreground">
+          <p className="mb-2 text-xs leading-5 text-muted-foreground">
             {moderate
-              ? "Post an announcement, answer a learner, or add class context."
+              ? "Students can post questions here anytime — you'll see them appear in real time."
               : "Have a doubt about anything in this course? Feel free to ask here."}
           </p>
           {replyTo ? <div className="mb-3 flex min-w-0 flex-col gap-2 border-l-2 border-border bg-surface-subtle p-3 sm:flex-row sm:items-center sm:justify-between">
@@ -660,22 +726,21 @@ export function LearnerCourseDiscussion({
               if (shouldSendLearnerDiscussionOnEnter({
                 key:event.key,shiftKey:event.shiftKey,
                 isComposing:event.nativeEvent.isComposing,
-                coarsePointer:window.matchMedia("(pointer: coarse)").matches,
+                coarsePointer:false,
               })) {
                 event.preventDefault();
                 void submit();
               }
             }}
-            rows={3}
+            rows={2}
             maxLength={LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             placeholder="Write a message..."
             className="mt-1.5 w-full"
           />
           <div className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">
-              <span className="md:hidden">Tap Send to post · Enter adds a new line</span>
-              <span className="hidden md:inline">Enter to send · Shift+Enter for a new line</span>
-              {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
+              Enter to send · Shift+Enter for a new line
+              {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
             <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Sending…" : "Send"}
