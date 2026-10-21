@@ -124,13 +124,14 @@ export async function listSectionFacultyAssignments(
  */
 export async function listFacultyCourseAssociations(
   context:RequestContext,raw:{
-    facultyMembershipId?:string;courseId?:string;includeEnded?:boolean;
+    facultyMembershipId?:string;courseId?:string;classId?:string;includeEnded?:boolean;
     limit?:number;offset?:number;
   }={},
 ) {
   const input=z.strictObject({
     facultyMembershipId:z.uuid().optional(),
     courseId:z.uuid().optional(),
+    classId:z.uuid().optional(),
     includeEnded:z.boolean().default(false),
     limit:z.number().int().min(1).max(200).default(50),
     offset:z.number().int().min(0).max(100000).default(0),
@@ -148,6 +149,7 @@ export async function listFacultyCourseAssociations(
     eq(collegeMemberships.collegeId,acting.collegeId),
     input.facultyMembershipId?eq(courseTeachingAssignments.membershipId,input.facultyMembershipId):undefined,
     input.courseId?eq(courses.id,input.courseId):undefined,
+    input.classId?eq(sections.id,input.classId):undefined,
     input.includeEnded?undefined:isNull(courseTeachingAssignments.endedAt),
   );
   const db=getDb();
