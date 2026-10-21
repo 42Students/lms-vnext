@@ -19,7 +19,7 @@ import {Button} from "@/components/ui/button";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
-  searchParams: Promise<{status?:string|string[];role?:string|string[]}>;
+  searchParams: Promise<{status?:string|string[];role?:string|string[];page?:string|string[];pageSize?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const { membershipId } = await params;
@@ -46,9 +46,11 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     redirect("/college/faculty/"+encodeURIComponent(match.membershipId));
   }
   const query=await searchParams;
+  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
   let data: Awaited<ReturnType<typeof getCollegeFacultyDetail>>;
   try {
-    data = await getCollegeFacultyDetail(context, membershipId, {status:query.status ?? "ALL",role:query.role ?? "ALL"});
+    data = await getCollegeFacultyDetail(context, membershipId, {status:first(query.status)??"ALL",role:first(query.role)??"ALL",
+      page:first(query.page)??1,pageSize:first(query.pageSize)??25});
   } catch (error) {
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
@@ -78,7 +80,10 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <p className="mt-3 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
-        {" "}{data.counts.distinctOfferings} distinct course offerings
+        {" "}{data.counts.distinctOfferings} distinct course offerings ·
+        {" "}{data.counts.distinctCourses} courses ·
+        {" "}{data.counts.distinctClasses} classes ·
+        {" "}{data.counts.distinctPrograms} programs
       </p>
       <p className="mt-2 max-w-2xl text-xs text-muted-foreground">College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure.</p>
       <details className="mt-4 min-w-0 border-y border-border py-2" open={data.filter.status!=="ALL"||data.filter.role!=="ALL"}>
@@ -104,7 +109,13 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="TA">Teaching Assistant</option>
           </Select>
         </label>
-          <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto">Filter</Button>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Rows per page
+            <Select name="pageSize" defaultValue={String(data.pagination.pageSize)}>
+              {[10,25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
+            </Select>
+          </label>
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 min-[992px]:w-auto">Filter</Button>
         </form>
       </details>
       <div className="mt-4 min-w-0">
@@ -121,10 +132,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             empty={<EmptyState title="No teaching assignments" description="No college-scoped teaching assignments recorded."/>}
             columns={[
               { key: "course", header: "Course", mobilePriority: "primary",
-                cell: item => <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-                  className="font-semibold text-link hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] underline-offset-4">
-                  {item.courseName} ({item.courseCode})
-                </Link> },
+                cell: item => item.offeringId&&!item.metadataIncomplete
+                  ? <Link href={`/college/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+                      className="font-semibold text-link hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] underline-offset-4">
+                      {item.courseName}{item.courseCode?" ("+item.courseCode+")":""}
+                    </Link>
+                  : <span className="font-medium text-muted-foreground" title="Historical assignment has incomplete course metadata">
+                      {item.courseName} (historical assignment; metadata unavailable)
+                    </span> },
               { key: "class", header: "Class / cohort", mobilePriority: "secondary",
                 cell: item => item.sectionName + " · " + item.cohortName + " · " + item.periodName },
               { key: "role", header: "Role", mobilePriority: "secondary", cell: item => item.role },
@@ -132,9 +147,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             ]}
           />}
       </div>
-      {data.truncated ? <p className="mt-3 text-sm text-muted-foreground">
-        Showing the first 100 matching assignment rows; summary totals include all assignment states.
-      </p> : null}
+      <nav aria-label="Teaching assignment pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+        <span>{data.pagination.total===0?0:(data.pagination.page-1)*data.pagination.pageSize+1}–{Math.min(data.pagination.total,data.pagination.page*data.pagination.pageSize)} of {data.pagination.total} assignments</span>
+        <span className="flex items-center gap-3">
+          {data.pagination.page>1?<Link className="font-semibold text-link underline" href={`?status=${encodeURIComponent(data.filter.status)}&role=${encodeURIComponent(data.filter.role)}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page-1}`}>Previous</Link>:null}
+          Page {data.pagination.page} of {data.pagination.totalPages}
+          {data.pagination.page<data.pagination.totalPages?<Link className="font-semibold text-link underline" href={`?status=${encodeURIComponent(data.filter.status)}&role=${encodeURIComponent(data.filter.role)}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page+1}`}>Next</Link>:null}
+        </span>
+      </nav>
       <p className="mt-3 text-xs text-muted-foreground">
         Assignment history includes ended deliveries. Hours, session duration and schedule conflicts are not inferred.
       </p>
