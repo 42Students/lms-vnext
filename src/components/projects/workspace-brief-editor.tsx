@@ -36,7 +36,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt,requireDeliver
  const [stale,setStale]=useState(false);
  const source=fromBrief(initial);
  const dirty=JSON.stringify(draft)!==JSON.stringify(source);
- const update=<K extends keyof Draft>(name:K,value:Draft[K])=>{
+ const update=<K extends keyof Draft,>(name:K,value:Draft[K])=>{
   setDraft(current=>({...current,[name]:value}));
  };
  function discard(){setDraft(fromBrief(initial));setOpen(false);setError("");setStale(false);}
