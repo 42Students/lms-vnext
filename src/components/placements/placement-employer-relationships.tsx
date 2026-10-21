@@ -295,7 +295,7 @@ export function PlacementEmployerRelationships({
                     </Select>
                   </label>
 
-                  <label className="flex items-center gap-2 text-sm font-semibold text-body">
+                  <label className="flex items-center gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                     <Checkbox
                       disabled={busy||item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED"}
                       checked={draft.isTrusted}

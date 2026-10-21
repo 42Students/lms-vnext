@@ -322,7 +322,7 @@ function JobActions({
           }
         >
           <label htmlFor={`withdraw-reason-${roleOption.id}`}
-            className="block text-sm font-semibold text-foreground">
+            className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
             Reason for withdrawal
           </label>
           <Textarea

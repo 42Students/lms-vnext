@@ -48,7 +48,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
         {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-          <label className="flex items-center gap-2">Stale after
+          <label className="flex items-center gap-[6px]">Stale after
             <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
               {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
             </Select></label>
