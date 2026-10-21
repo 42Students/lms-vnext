@@ -116,7 +116,7 @@ export default async function SuperAdminTenantSetup({
     <div className="min-w-0 border-b border-border pb-4">
      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Organizations</h2>
-      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
+      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {organizations.slice(0,20).map(o=><li key={o.id} className="break-words [overflow-wrap:anywhere] border-b border-border py-2">{o.name}</li>)}
@@ -126,7 +126,7 @@ export default async function SuperAdminTenantSetup({
     <div className="border-b border-border pb-4">
      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Colleges</h2>
-      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
+      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
      </div>
      <ul className="mt-3 space-y-2 text-sm text-body">
       {list?.items.map(item=><li key={item.id} className="break-words border-b border-border py-2">
@@ -160,7 +160,7 @@ export default async function SuperAdminTenantSetup({
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Launch checklist</h2>
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
+     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
     </div>
     <ol className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
