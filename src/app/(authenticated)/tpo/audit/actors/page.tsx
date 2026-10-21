@@ -165,7 +165,7 @@ export default async function TpoActorAuditPage({
           {key:"entity",header:"Entity ID",mobileLabel:"Entity ID",mobilePriority:"action",
            cell:(row)=>tpoAuditEntityHref(row.entityType,row.entityId)?
             <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!}
-             className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+             className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
              Open {row.entityType.replaceAll("_"," ")} →
             </Link>:
             <span title="No safe direct page is registered for this entity type">{row.entityId}</span>},
