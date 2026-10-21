@@ -1,0 +1,49 @@
+# Notice for lane 11 (read and apply FIRST)
+
+The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+
+- src_app_api_colleges_collegeId_branding_route.ts.md
+- src_components_admin_department-directory.tsx.md
+- src_app_api_lecture-halls_error-response.ts.md
+- src_components_shell_learner-faculty-mobile-footer.tsx.md
+- src_components_shell_mobile-navigation.tsx.md
+- src_components_shell_page-titles.ts.md
+- src_modules_tenant-domains_validation.ts.md
+- src_app_authenticated_teacher_allQuizzes_error.tsx.md
+- src_app_authenticated_teacher_courses_deliveryId_layout.tsx.md
+- src_app_authenticated_teacher_courses_deliveryId_error.tsx.md
+- src_app_authenticated_learn_my-placements_interviews_error.tsx.md
+- src_app_authenticated_learn_my-placements_offers_page.tsx.md
+- src_components_admin_college-dashboard-section-failure.tsx.md
+- src_app_api_admin_colleges_collegeId_signin_route.ts.md
+- src_app_authenticated_admin_layout.tsx.md
+- src_components_admin_admin-revoke-sessions.tsx.md
+- src_app_authenticated_admin_people_page.tsx.md
+- src_app_api_profile-verification_self_route.ts.md
+- src_components_shell_admin-scope-switcher.tsx.md
+- src_app_authenticated_learn_allQuizzes_page.tsx.md
+- src_components_admin_super-admin-batch-graduate-action.tsx.md
+- src_components_admin_college-dashboard-cards.tsx.md
+- src_app_api_admin_faculty-assignment_batch_route.ts.md
+- src_app_api_admin_inbound-mail_status_route.ts.md
+- src_components_admin_super-admin-company-verification.tsx.md
+- src_app_authenticated_admin_people_directory_error.tsx.md
+- src_components_admin_organization-create-form.tsx.md
+- src_components_admin_college-at-glance-panel.tsx.md
+- src_app_authenticated_teacher_courses_deliveryId_...courseTab_error.tsx.md
+- src_components_admin_department-create-form.tsx.md
+- src_components_admin_organization-actions.tsx.md
+- src_components_admin_super-admin-company-identities.tsx.md
+- src_modules_colleges_admin-signin-policy-service.ts.md
+- src_modules_colleges_signin-methods-model.ts.md
+- src_modules_colleges_admin-directory-query-model.ts.md
+- src_app_authenticated_teacher_contacts_page.tsx.md
+- src_app_authenticated_teacher_calendar_loading.tsx.md
+- src_app_authenticated_teacher_courses_deliveryId_gradebook_page.tsx.md
+- src_app_authenticated_learn_courses_deliveryId_progress_page.tsx.md
+- src_app_api_admin_faculty_bulk-import_route.ts.md
+- src_components_admin_admin-scoped-live-search.tsx.md
+- src_app_api_admin_lessons_bulk-status_route.ts.md
+- src_app_api_admin_placements_applications_export_route.ts.md
+- src_app_api_admin_features_collegeId_trace_route.ts.md
+- src_observability_logger.ts.md
