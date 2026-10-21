@@ -1,5 +1,6 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {listPopularCollegeFaculty,searchCollegeFacultySuggestions}
  from "@/modules/courses/college-faculty-picker-service";
@@ -14,7 +15,7 @@ export const dynamic="force-dynamic";
 export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
-  const collegeId=context.membership?.collegeId??context.adminScope?.collegeId;
+  const collegeId=isSuperAdmin(context)?context.adminScope?.collegeId:context.membership?.collegeId;
   if(!collegeId)return NextResponse.json({error:"COLLEGE_SCOPE_REQUIRED"},{status:403});
   const params=new URL(request.url).searchParams;
   const mode=params.get("mode")??"search";
