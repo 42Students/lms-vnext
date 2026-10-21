@@ -203,16 +203,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/admin/learner-module-access-drawer.tsx`
 - [x] `src/components/admin/people-pagination.tsx`
 - [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/admin/super-admin-interview-operations.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/announcements/announcement-feed.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/college/college-person-audit-modal.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/admin/super-admin-interview-operations.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/announcements/announcement-feed.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/college/college-person-audit-modal.tsx`
 - [ ] `src/components/college/college-role-directory-workspace.tsx`
 - [ ] `src/components/college/college-student-import-history.tsx`
 - [ ] `src/components/courses/admin-assessment-read-directory.tsx`
