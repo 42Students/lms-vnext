@@ -1164,6 +1164,38 @@ export const placementEligibilityOverrides = pgTable(
  * Offer letters and score provenance are joined from offers and screening,
  * never from a fabricated application score. Imported legacy_deleted rows
  * must not be silently resurrected as active applications. */
+/** Lossless importer plan for the old single job_application row. New
+ * application state, mutable stage, offer lifecycle, and score evidence are
+ * separate authorities; never treat a mutable stage label as consent or an
+ * application status. The original numeric key is only provenance. */
+export const LEGACY_APPLICATION_SOURCE_CROSSWALK={
+ id:"placementApplications.legacyApplicationId",
+ learnerId:"placementApplications.membershipId (verified college UUID mapping)",
+ jobId:"placementApplications.jobId (verified same-college job)",
+ organizationId:"placementJobs.collegeId -> colleges.organizationId",
+ appliedAt:"placementApplications.firstAppliedAt",
+ updatedAt:"placementApplications.updatedAt",
+ isDeleted:"placementApplications.legacyWasDeleted",
+ version:"placementApplications.version",
+ status:"placementApplicationLegacyStatusHistory.newStatus + placementCollegeApplicationStages.stage",
+ notes:"private staff activity history",
+ score:"placementApplicationScreenings / assessment evidence",
+ offer:"placementOffers + placementOfferStatusHistory",
+ currentRound:"placementApplications.currentRoundId",
+} as const;
+export function legacyApplicationStateProjection(sourceStatus:string){
+ const stageByStatus:Readonly<Record<string,string>>={
+  APPLIED:"APPLIED",SHORTLISTED:"SHORTLISTED",ASSESSMENT:"ASSESSMENT",
+  INTERVIEW:"INTERVIEW",WAITLISTED:"WAITLISTED",OFFERED:"OFFERED",
+  HIRED:"HIRED",REJECTED:"REJECTED",
+ };
+ if(sourceStatus==="WITHDRAWN")
+  return {applicationStatus:"WITHDRAWN" as const,stage:"WITHDRAWN"};
+ const stage=stageByStatus[sourceStatus];
+ if(!stage)throw new Error("Unsupported source application status");
+ return {applicationStatus:"SUBMITTED" as const,stage};
+}
+
 export const placementApplications = pgTable(
   "placement_applications",
   {
