@@ -1,9 +1,9 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
- placementApplicationScreenings,placementApplicationScreeningHistory,
+ placementApplicationPrivateArtifacts,placementApplicationScreenings,placementApplicationScreeningHistory,
  placementJoiningOutcomes,placementJobs,placementOffers,users} from "@/db/schema";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
@@ -220,6 +220,24 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       movedByUserId:context.user.id,
      }).returning({id:placementCollegeApplicationStages.id});
     if(!saved)throw Error("Application stage changed. Reload the pipeline and try again.");
+    // The link and stage must commit or fail together. No private URL is
+    // exposed in activity metadata, and no change is made for skipped rows.
+    if(next==="ASSESSMENT"&&input.action==="MOVE"&&input.assessmentUrl){
+     await tx.insert(placementApplicationPrivateArtifacts).values({
+      applicationId,assessmentUrl:input.assessmentUrl,
+      updatedByUserId:context.user.id,updatedAt:new Date(),
+     }).onConflictDoUpdate({
+      target:placementApplicationPrivateArtifacts.applicationId,
+      set:{assessmentUrl:input.assessmentUrl,updatedByUserId:context.user.id,updatedAt:new Date()},
+     });
+     if(input.saveAssessmentUrlToJob){
+      await tx.update(placementJobs).set({
+       legacyPostingDetails:sql`jsonb_set(coalesce(${placementJobs.legacyPostingDetails}, '{}'::jsonb),
+        '{assessmentUrl}', to_jsonb(${input.assessmentUrl}::text), true)`,
+       updatedAt:new Date(),
+      }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)));
+     }
+    }
     await tx.insert(placementCollegeApplicationStageHistory).values({
      stageId:saved.id,fromStage:from,toStage:next,reason:input.reason,
      actorUserId:context.user.id,
@@ -235,7 +253,9 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       input.action==="REINSTATE"?"College Admin reinstated application to "+readableStage:
       "College Admin moved application to "+readableStage,
      metadata:{jobId,from,to:next,reason:input.reason,
-      exceptionalCorrection:input.action==="CORRECT"},
+      exceptionalCorrection:input.action==="CORRECT",
+      assessmentLinkAttached:next==="ASSESSMENT"&&Boolean(input.assessmentUrl),
+      assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob)},
     }).returning({id:activityEvents.id});
     await tx.insert(inAppNotifications).values({
      userId:application.userId,eventId:audit.id,
