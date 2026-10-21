@@ -39,7 +39,7 @@ function UIKitTestSurface() {
   const [inlineSaved, setInlineSaved] = useState(false);
   const { showToast } = useToast();
 
-  return <main className="mx-auto w-full max-w-5xl min-w-0 space-y-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 min-[768px]:p-[var(--lms-canvas-padding)] [&>section]:min-w-0 [&>section]:space-y-3 [&>section]:border-b [&>section]:border-[var(--lms-canvas-border)] [&>section]:pb-5 max-sm:[&_button]:min-h-11 max-sm:[&_button]:w-full">
+  return <main className="mx-auto w-full max-w-5xl min-w-0 space-y-6 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 min-[768px]:p-[var(--lms-canvas-padding)] [&>section]:min-w-0 [&>section]:space-y-3 [&>section]:border-b [&>section]:border-[var(--lms-canvas-border)] [&>section]:pb-4 max-sm:[&_button]:min-h-11 max-sm:[&_button]:w-full">
     <PageHeader title="Chat-17 UI kit interaction harness" />
 
     <section aria-label="Modal fixture">
