@@ -304,3 +304,134 @@ Boundary decision: Teaching assignments are part of Courses/Academics and schema
 - G2-7-016-029 | `src/components/projects/project-workspace.tsx` | Bring back reversible edit notice
 
 Project tasks are already implemented inside the shared Projects workspace, normalized service and schema. A new College Admin bulk-plan API, legacy taskToken/migration and permission changes cannot be safely added outside the Projects owner in lane-7. No false equivalence between single-row mentor task edit and legacy atomic task-plan save. **23/23 handed off, not fixed.**
+
+## Tenant readiness gate — lane-7 wave-1 handoff (2026-10-21)
+
+- G2-19-029-016 | `src/modules/colleges/readiness-model.ts` | Define explicit mapping between domain-login verdict and broad tenant-data verdict; do not equate legacy warnings with UNKNOWN data
+- G2-19-029-017 | `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | Preserve exact old headline only for verified legacy domain-login indicator; retain vNext caution for actual live tests to avoid false assurance
+- G2-19-029-018 | `src/modules/colleges/readiness-model.ts + readiness page` | Render nonblocking advisory warnings independently; unknown required evidence must still prevent full readiness, not be mixed into advisory list
+- G2-19-029-019 | `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | Never say `login will not work` when only an academic/placement record is missing; label `Login blocked` only on domain gate
+- G2-19-029-020 | `src/modules/colleges/readiness-service.ts` | Preserve all distinct domain diagnostics (none, no primary, multiple primary, verification policy) in a detailed domain-check adapter
+- G2-19-029-022 | `src/modules/colleges/readiness-model.ts` | Keep academic setup warnings separate from domain login verdict; owner must decide stricter full-handover gate semantics
+- G2-19-029-024 | `src/modules/colleges/readiness-service.ts + domain verification policy` | Respect deployed domain-verification policy and own-subdomain trust; clarify when a verified primary is required vs advisory
+- G2-19-029-029 | `src/modules/colleges/readiness-model.ts` | Add runtime schema validation at external/adapter boundary for array/codes; fail closed rather than render READY from malformed data
+- G2-19-029-035 | `src/modules/colleges/readiness-service.ts + typed readiness DTO` | Provide dual domain-login/advisory and full setup readiness DTOs or explicit contract mapping, never claim semantic equivalence for unlike outputs
+- G2-19-029-036 | `src/modules/colleges/readiness-service.ts` | Add typed domain-specific counts and requireVerifiedDomains flag to compact checklist; enforce consistency with login resolution policy
+- G2-19-029-037 | `src/modules/colleges/readiness-service.ts` | Query active host count, primary count and verified count, distinguish multiple-primary and missing host states before deciding domain readiness
+- G2-19-029-039 | `src/modules/colleges/readiness-service.ts` | Surface short legacy academic-warning rule in domain readiness and preserve rich counts on separate operational checklist
+- G2-19-029-042 | `src/modules/colleges/readiness-model.ts` | Separate `domainLoginReady` and `tenantSetupComplete`; prevent label `login blocked` for failed TPO/program requirements
+- G2-19-029-043 | `src/modules/colleges/readiness-model.ts + verification policy` | Encode strict-domain-policy input and optional branding explicitly; add fixture matrices strict vs lenient
+- G2-19-029-044 | `src/modules/colleges/readiness-model.ts` | Keep legitimate advisory warnings separate from unknown required evidence, while ensuring unknown NEVER produces a ready verdict
+- G2-19-029-061 | `src/modules/colleges/readiness-service.ts` | Pass actual deployment verification policy into readiness evaluation; avoid hard-coded assumption about verification requirement
+- G2-19-029-062 | `src/modules/colleges/readiness-model.ts + compatibility DTO` | Publish explicit legacy→vNext domain DTO crosswalk, including requirement policy and coded warnings; keep both views separately typed
+- G2-19-029-063 | `src/modules/colleges/readiness-service.ts + migration mapping` | Document integer→UUID migration contract and domain/branding field crosswalk; preserve no migration assumptions for currently empty vNext
+- G2-19-029-065 | `src/modules/colleges/readiness-remediation-links.ts + readiness page` | Restore advisory partition and `Fix in Branding`; keep new academic data completeness as separate criterion
+
+The existing ten-check operational tenant-readiness gate is not a verified domain-login diagnostic. Do not relabel failed academic data as broken login or treat unknown mandatory evidence as advisory. College readiness model/service and domain policy belong to the Colleges/tenant owner; **19/19 handed off, not fixed**.
+
+## College recurring schedule — lane-7 wave-1 handoff (2026-10-21)
+
+- G2-2-011-009 | `src/modules/academics/college-recurring-preview-model.ts` | Align recurrence cap semantics; 93 calendar-day max can reject valid ≤200-occurrence semester series.
+- G2-2-011-015 | `src/modules/academics/college-recurring-preview-model.ts` | Enforce 200 occurrences and academic term instead of arbitrary 93 days if owner demands legacy parity.
+- G2-2-011-026 | `src/modules/academics/college-recurring-execute-service.ts` | Make per-date creation independently resilient to DB constraint failure; one failed row must not roll back successful dates.
+- G2-2-011-027 | `src/modules/academics/college-recurring-execute-service.ts` | Audit equivalent max-duration and multi-course schedule clash rules beyond simple overlap.
+- G2-2-011-029 | `src/modules/academics/college-recurring-execute-service.ts` | Use savepoints or chunked per-occurrence transaction to retain partial success.
+- G2-2-011-030 | `src/modules/academics/college-recurring-execute-service.ts` | Support selected-college Super Admin route under central requirePermission for recurring create.
+- G2-2-011-035 | `src/modules/academics/college-recurring-execute-service.ts` | Guarantee per-date independent persistence or document stronger all-or-none behavior.
+- G2-2-011-052 | `src/components/academics/college-recurring-preview.tsx` | Record workflow restrictions as major parity gap; restore valid semester recurrence.
+- G2-2-011-053 | `src/modules/academics/college-recurring-execute-service.ts` | Add per-date fault isolation while preserving conflict preview.
+- G2-2-011-020 | `src/modules/academics/college-recurring-preview-model.ts` | Match occurrence-cap error and count actual matching days.
+- G2-2-011-021 | `src/modules/academics/college-recurring-preview-service.ts` | Surface exact no-match error before preview/commit.
+- G2-2-011-016 | `src/components/academics/college-recurring-preview.tsx` | Map field-specific legacy errors into inline helper copy.
+- G2-2-011-017 | `src/modules/academics/college-recurring-preview-model.ts` | Restore exact date format help/error.
+- G2-2-011-018 | `src/modules/academics/college-recurring-preview-model.ts + form` | Use one exact legacy message across UI and API.
+- G2-2-011-019 | `src/modules/academics/college-recurring-preview-model.ts` | Normalize legacy string weekdays and provide specific invalid day error.
+- G2-2-011-022 | `src/components/academics/college-recurring-preview.tsx` | Display both requested and created counts.
+- G2-2-011-023 | `src/components/academics/college-recurring-preview.tsx` | Use human-readable per-date conflict reasons and separate unexpected failures.
+
+The Academics preview/execute workflow is an intentional vNext design with a 93-day limit, specific college-scoped authorization and transactional persistence. Per-date partial saves, 200-session recurrence and SA selected-college mutation require coordinated Academics owner decision. **17/17 handed off, not fixed**.
+
+## Project workspace resource audit — wave-1 handoff (2026-10-21)
+
+- G2-7-007-002 | `src/components/projects/project-workspace.tsx` | Generate `/college/projects/audit?subjectId=<uuid>&range=all` (or supported params) for College Admin; test route and role.
+- G2-7-007-005 | `src/components/projects/project-activity-filtered-list.tsx` | Recreate Resource activity Card with counters and 4-column data table.
+- G2-7-007-014 | `src/components/projects/project-activity-filtered-list.tsx` | Restore exact four-column semantic audit table.
+- G2-7-007-015 | `src/components/projects/project-activity-filtered-list.tsx` | Page resource history at 10, and show exact result range and total.
+- G2-7-007-021 | `src/components/projects/admin-project-section-page.tsx` | Fetch workspace summary and resource audit independently; show partial warning with usable audit history.
+- G2-7-007-022 | `src/components/projects/project-activity-filtered-list.tsx` | Add isolated audit initial-fetch error and exact retry action.
+- G2-7-007-026 | `src/modules/projects/workspace-view-service.ts` | Split dedicated resource-audit read from workspace summary; avoid failing audit on unrelated services.
+- G2-7-007-027 | `src/modules/projects/activity-service.ts` | Define dedicated resource-audit projection/endpoint retaining original resource fields/actions; keep typed event taxonomy migration.
+- G2-7-007-032 | `src/modules/projects/project-resource-audit-model.ts` | Default resource-audit view to resource events only; prevent generic activity leakage.
+- G2-7-007-034 | `src/modules/projects/activity-service.ts` | Expose before/after diff and changed fields through authorized resource audit projection.
+- G2-7-007-038 | `src/modules/projects/workspace-view-service.ts` | Separate partial errors from audit read and unrelated workspace services.
+- G2-7-007-049 | `src/modules/projects/activity-service.ts` | Push resource filter/search into paged DB query before limiting; include total.
+- G2-7-007-051 | `src/components/projects/project-workspace.tsx` | Use supported audit query parser keys and correct panel-specific root.
+- G2-7-007-053 | `src/db/schema/project-audit-staged.ts + SQL migration` | Promote audited migration and writer/reader or provide equivalent immutable event metadata with legacy fields and indexes.
+- G2-7-007-054 | `src/modules/projects/activity-service.ts` | Build typed audit adapter with actionType, resourceKey, actor role, changedFields, before/after, timestamp.
+- G2-7-007-057 | `src/modules/projects/workspace-view-service.ts` | Prioritize resilient isolated resource-history read with independent Retry.
+- G2-7-007-024 | `src/components/projects/project-activity-filtered-list.tsx` | Match error alert with Retry; keep nonmutation toast-free.
+
+Existing resource history is filtered over generic activity events and has no complete typed resource-diff ledger. Projects/schema owns its route, UI, projection and migration. Do not claim a resource audit is a lossless legacy audit until the DB-backed projection exists. **17/17 handed off, not fixed**.
+
+## Faculty OTP verification — wave-1 handoff (2026-10-21)
+
+- G2-18-019-002 | `src/modules/auth/login-service.ts` | Validate faculty membership/tenant before session and correct faculty redirect; never allow membership confusion
+- G2-18-019-006 | `src/db/schema/identity-auth-attempts.ts + migration contract` | Document faculty_id → user/membership UUID identity crosswalk; do not load old faculty IDs as UUIDs
+- G2-18-019-007 | `src/modules/auth/login-repository.ts` | Preserve phone normalization and account resolution; do not duplicate raw phone in auth-attempt rows
+- G2-18-019-008 | `src/db/schema/identity-auth-attempts.ts` | Treat keyed MAC as required security improvement; explicitly mark raw OTP intentionally dropped, never restore plaintext storage
+- G2-18-019-009 | `src/modules/auth/login-repository.ts` | Retain shared max-five attempt budget for all channels; record legacy field semantics and no migration needed for spent OTPs
+- G2-18-019-010 | `src/modules/auth/login-service.ts + src/components/auth/login-form.tsx` | Do not clone arbitrary string lockout; provide exact temporary block/retry time in Faculty UI backed by durable send/verify budget
+- G2-18-019-011 | `src/modules/auth/login-repository.ts` | Define verifiedAt/usedAt audit relationship; old boolean must not authorize new session
+- G2-18-019-012 | `src/modules/auth/login-service.ts` | Enforce clock-based five-minute expiry, never accept stale row simply because integer expired flag was not toggled
+- G2-18-019-014 | `src/modules/auth/login-repository.ts` | Migrate caller to attemptId; clear old challenge on new start and ensure stale OTP cannot authenticate
+- G2-18-019-017 | `src/modules/auth/login-service.ts` | Keep POST body and attemptId contract; don't add insecure GET verification endpoint
+- G2-18-019-025 | `src/modules/auth/login-service.ts` | Check delivery failure cannot leave a usable challenge or imply success; document record retention and phone costs
+- G2-18-019-031 | `src/modules/auth/config.ts` | Do not port any special-phone/global code; preserve isolated dev-only QA identities, disallow prod test OTP
+- G2-18-019-036 | `src/modules/auth/login-service.ts` | Verify SMS provider template/recipient, delivery retries and fallback recipients align required login reliability
+- G2-18-019-044 | `src/modules/auth/login-service.ts + Exotel provider integration` | Verify Exotel/actual provider credentials/templates and observed failure paths without leaking OTPs; audit provider integration separately
+- G2-18-019-046 | `src/db/schema/identity-auth-attempts.ts` | Document legacy row-to-user mapping; deliberate separate-table retirement means no 1:1 PK migration required for expired OTP rows
+- G2-18-019-047 | `src/db/schema/identity-auth-attempts.ts` | Maintain field-by-field disposition in schema ledger, protect raw OTP and phone, never expose hashed MAC via API
+
+Security non-regression requirements: do not reintroduce raw OTP, phone numbers in challenge rows, GET-query verification, static production bypass codes, or replay. The vNext user+membership UUID challenge with MAC, attempt caps and consumption remains the canonical contract. Auth and DB owners must verify provider, membership, error and retention details. **16/16 handed off, not fixed**.
+
+## Important job dates calendar DTO — lane-7 handoff (2026-10-21)
+
+- G2-18-021-003 | `src/modules/placements/placement-calendar-service.ts` | Include all configured important date events with type and label, not just deadline+scheduled rounds
+- G2-18-021-004 | `src/modules/placements/placement-calendar-service.ts` | Project informational dates even when no corresponding round exists, de-dupe when scheduled event matches
+- G2-18-021-006 | `src/modules/placements/placement-calendar-model.ts` | Add optional raw importantDateType and label to model; color/classify by type first
+- G2-18-021-007 | `src/modules/placements/placement-calendar-model.ts` | Crosswalk all seven fields; preserve label/type separately from generated display title
+- G2-18-021-009 | `src/db/schema/placements.ts` | Store type/dateType in legacyPostingDetails metadata or normalized date rows
+- G2-18-021-011 | `src/modules/placements/placement-calendar-service.ts` | Support stable per-item IDs including index/typed key so multiple dates do not collapse
+- G2-18-021-012 | `src/components/placements/placement-job-create-form.tsx` | Add type input/preservation to authoring + roundtrip; do not invent type from text
+- G2-18-021-017 | `src/modules/placements/placement-calendar-service.ts` | Distinguish no dates from unsupported source; add explicit metadata projection rather than empty-success
+- G2-18-021-021 | `src/modules/placements/learner-career-calendar-model.ts` | Merge targeted-visible un-applied job dates AND past applied-job dates in learner calendar
+- G2-18-021-025 | `src/modules/placements/learner-career-calendar-model.ts` | Verify public-targeted jobs with future dates included despite no application; preserve applied after deadline
+- G2-18-021-027 | `src/modules/placements/placement-calendar-model.ts` | Preserve and prioritize raw type over label heuristics at all consumers
+- G2-18-021-038 | `src/modules/placements/learner-career-calendar-model.ts` | Union visible and applied job rows once and project each important date only once
+- G2-18-021-039 | `src/modules/placements/learner-career-calendar-model.ts` | Define UTC storage→IST day mapping; test +05:30 boundary and naive date strings
+- G2-18-021-044 | `src/db/schema/placements.ts` | Schema add optional `type`, `dateType` and preserve during write and read; include existing legacy payloads
+- G2-18-021-046 | `src/modules/placements/placement-calendar-model.ts` | Write explicit typed job-date projection contract + fixture for primary/fallback classification agreement
+- G2-18-021-015 | `src/modules/placements/placement-calendar-service.ts` | Map original range errors and inclusive day bounds to vNext query warnings
+
+Placement calendar and recruitment job JSON are owned by Placements/schema lanes. Preserve raw `type`/`dateType` in migrations rather than inferring from label. Do not merge targeted-visible and applied events without tenant-scope guard. **16/16 handed off, not fixed**.
+
+## TPO recruiter leads — lane-7 handoff (2026-10-21)
+
+- G2-11-020-010 | `src/components/tpo/recruiter-leads-workspace.tsx + recruiter grant-read service` | Count only active nonexpired access grants from access service; match link /tpo/settings?tab=recruiters.
+- G2-11-020-012 | `src/components/tpo/recruiter-leads-workspace.tsx` | Derive exact LEAD/INVITED/JOINED statuses and status label/badge.
+- G2-11-020-025 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match exact status buckets, keep unsubscribed as separate opt-in extra filter.
+- G2-11-020-028 | `src/components/tpo/recruiter-leads-workspace.tsx` | Restore the four allowed drop outcomes and locked hints, with confirmation.
+- G2-11-020-037 | `src/components/tpo/recruiter-leads-workspace.tsx` | Support optional time selection; preserve selected wall time and timezone.
+- G2-11-020-046 | `src/components/tpo/recruiter-leads-workspace.tsx + invite API` | Provide email invite/resend flow and consent-safe fallback, retain one-time link optional.
+- G2-11-020-050 | `src/modules/placements/recruiter-lead-service.ts` | Scope owner editor choices to authorized staff from team membership, not lead-only values.
+- G2-11-020-052 | `src/components/tpo/recruiter-leads-workspace.tsx` | Preserve stage policy plus all legacy permitted manual actions, lock others.
+- G2-11-020-054 | `src/modules/placements/recruiter-invite-service.ts` | Add mail-template availability check and approved send action, maintain opt-out.
+- G2-11-020-059 | `src/components/tpo/recruiter-leads-workspace.tsx + messaging templates` | Cross-check campaign and invitation delivery templates/recipients; restore send paths when mail on.
+- G2-11-020-064 | `src/components/tpo/recruiter-leads-workspace.tsx` | Protect unsaved draft on browser tab close and route navigation.
+- G2-11-020-038 | `src/components/tpo/recruiter-leads-workspace.tsx` | Provide field-level exact error next to contact fields.
+- G2-11-020-039 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match punctuation and explain intentional min2 if kept.
+- G2-11-020-040 | `src/components/tpo/recruiter-leads-workspace.tsx` | Restore dialog copy and Open existing record action.
+- G2-11-020-041 | `src/components/tpo/recruiter-leads-workspace.tsx` | Distinguish with-followup success wording.
+- G2-11-020-043 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match literal feedback or document persistent replacement.
+
+TPO recruiter lead UI and messaging/notification flows are shared TPO ownership. Resuming invite emails without verified template, opt-out and rate-limit rules is unsafe. Retain vNext consent and grant scopes pending implementation. **16/16 handed off, not fixed**.
