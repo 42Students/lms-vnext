@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { CoursesServiceError } from "@/modules/courses/errors";
 import {changeCourseTeachingAssignmentRoleInputSchema} from "@/modules/courses/validation";
 import {
   endCourseTeachingAssignment,
@@ -34,8 +35,17 @@ export async function DELETE(
         assignmentId,
       );
 
-    return NextResponse.json({ assignment });
+    return NextResponse.json({
+      assignment,
+      message: "Association deactivated successfully.",
+    });
   } catch (error) {
+    // Legacy deactivation returned an empty 404 for a missing/already
+    // ended association. Keep other access failures in the normal API envelope.
+    if (error instanceof CoursesServiceError &&
+        error.code === "TEACHING_ASSIGNMENT_NOT_FOUND") {
+      return new Response(null, { status: 404 });
+    }
     return apiErrorResponse(error);
   }
 }
