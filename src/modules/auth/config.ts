@@ -79,11 +79,18 @@ export function readAuthConfig(
 export function getPlatformHosts(
   env: Record<string, string | undefined> = process.env,
 ): ReadonlySet<string> {
+  // Explicit PLATFORM_HOSTS must include the production apex and every
+  // platform-owned alias; verified college subdomains remain tenant domains.
+  // Development fixtures use AUTH_TEST_OTP (six digits) with allowlisted
+  // AUTH_TEST_PHONES and AUTH_TEST_EMAILS only; legacy APP_TEST_OTP_*/
+  // E2E_TEST_OTP_* values are not accepted and must not leak into production.
+  // Retired two-minute cross-host handoffs must restart at first-party login;
+  // the five-day device cookie is NOT an extension of a consumed handoff.
   // Host is client-controlled, so production never treats localhost as the
   // platform unless PLATFORM_HOSTS says so explicitly.
   return list(
     env.PLATFORM_HOSTS ??
-      (env.NODE_ENV === "production" ? "" : "localhost,127.0.0.1"),
+      (env.NODE_ENV === "production" ? "" : "localhost,127.0.0.1,[::1]"),
   );
 }
 

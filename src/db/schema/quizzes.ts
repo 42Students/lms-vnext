@@ -47,6 +47,9 @@ export const courseQuizzes = pgTable(
     legacyDeletedAt: timestamp("legacy_deleted_at",{withTimezone:true}),
     legacyQuizVersion: integer("legacy_quiz_version"),
     legacyResultsReleased: boolean("legacy_results_released"),
+    /** Preserve totals beyond the vNext scoring bound without changing live points. */
+    legacyTotalPoints: bigint("legacy_total_points",{mode:"bigint"}),
+    legacyDueAtLocal: varchar("legacy_due_at_local",{length:64}),
     title: text("title").notNull(),
     description: text("description"),
     dueAt: timestamp("due_at", {

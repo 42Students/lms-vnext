@@ -36,6 +36,9 @@ export const collegeBranding = pgTable(
     legacyCollegeId: integer("legacy_college_id"),
     legacyLoginMethods: varchar("legacy_login_methods", { length: 32 }),
     legacyWasDeleted: boolean("legacy_was_deleted"),
+    /** Historical logo path is quarantined until imported into verified storage. */
+    legacyLogoSourceUrl: text("legacy_logo_source_url"),
+    legacyBrandingArchivedAt: timestamp("legacy_branding_archived_at",{withTimezone:true}),
     logoUrl: text("logo_url"),
     faviconUrl: text("favicon_url"),
     loginBackgroundUrl: text("login_background_url"),
@@ -78,3 +81,17 @@ export const collegeBranding = pgTable(
     ),
   ],
 );
+
+/** Imported branding must resolve the historical college under its owning org. */
+export function normalizeLegacyCollegeBranding(input: {
+  legacyCollegeId: number; legacyBrandingId: number | null;
+  isDeleted: boolean | null; logoUrl: string | null;
+}, mappedColleges: ReadonlyMap<number,string>) {
+  const collegeId = mappedColleges.get(input.legacyCollegeId);
+  if (!collegeId) return null;
+  // Source URLs cannot be served from this schema without trusted upload/signing.
+  return {collegeId,legacyCollegeId:input.legacyCollegeId,
+    legacyBrandingId:input.legacyBrandingId,legacyWasDeleted:input.isDeleted,
+    legacyLogoSourceUrl:input.logoUrl,logoUrl:null,
+    legacyBrandingArchivedAt: input.isDeleted === true ? new Date(0) : null};
+}

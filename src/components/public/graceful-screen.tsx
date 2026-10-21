@@ -29,8 +29,8 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
       </header>
       <div className={styles.center}>
         <section className={styles.card} aria-labelledby="public-screen-title">
-          <div aria-hidden="true" className={styles.icon}>!</div>
-          <PageHeader id="public-screen-title" title={title} />
+          {title !== "Page not found" && title !== "Server Error" ? <div aria-hidden="true" className={styles.icon}>!</div> : null}
+          <PageHeader id="public-screen-title" title={title} errorCode={title === "Page not found" ? 404 : title === "Server Error" ? 500 : undefined} />
           <p className={styles.message}>{message}</p>
           {reference ? (
             <div className={styles.reference}>

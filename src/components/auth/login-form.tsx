@@ -213,7 +213,8 @@ export function LoginForm({
     if(safeRetry !== null)setCooldown(Math.max(cooldown,safeRetry));
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
-      setCooldown(0);
+      // A verification lockout must never clear a server-provided retry window.
+      setCooldown(safeRetry ?? 0);
       setCode("");
       setSecondCode("");
       saveLoginAttempt(null);
@@ -546,6 +547,7 @@ export function LoginForm({
             </label>
           ) : null}
 
+          <p className="text-xs text-muted-foreground">Codes are valid for five minutes. You have up to five verification attempts; email resend limit is five.</p>
           <Button
             type="submit"
             className="min-h-11 w-full md:min-h-9"

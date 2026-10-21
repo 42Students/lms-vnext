@@ -217,6 +217,8 @@ export interface LoginRepository {
     };
   }): Promise<boolean>;
   loadAttempt(id: string): Promise<AttemptRecord | null>;
+  /** Cancel a definitely rejected initial send, retaining rate-limit history. */
+  invalidateUndeliveredAttempt?(id:string):Promise<void>;
   /**
    * Replaces the email code when at least EMAIL_RESEND_GAP_SECONDS passed
    * since the previous one. Returns false when refused (too soon/expired).
@@ -409,19 +411,28 @@ export async function startLogin(
 
   if (sms && phoneContact && !sms.isTest) {
     let accepted=false;
-    try {accepted=await deps.sms.sendOtp(phoneContact,sms.code);}
-    catch {/* Do not leak gateway errors or phone numbers. */}
-    if(!accepted)throw new LoginError("OTP_DELIVERY_FAILED");
+    let confirmedRejection=false;
+    try {accepted=await deps.sms.sendOtp(phoneContact,sms.code);confirmedRejection=!accepted;}
+    catch {/* Gateway may have sent; do not allow immediate retries. */}
+    if(!accepted){
+      if(confirmedRejection)await deps.repository.invalidateUndeliveredAttempt?.(attemptId);
+      throw new LoginError("OTP_DELIVERY_FAILED");
+    }
   }
   if (mail && emailContact && !mail.isTest) {
     let accepted=false;
+    let confirmedRejection=false;
     try{
       accepted=await deps.email.sendOtpEmail({
         toEmail:emailContact,displayName:user.displayName??"there",
         code:mail.code,phoneE164:user.phoneE164,
       });
+      confirmedRejection=!accepted;
     }catch{/* Gateway may have accepted the send; enforce normal cooldown. */}
-    if(!accepted)throw new LoginError("OTP_DELIVERY_FAILED");
+    if(!accepted){
+      if(confirmedRejection)await deps.repository.invalidateUndeliveredAttempt?.(attemptId);
+      throw new LoginError("OTP_DELIVERY_FAILED");
+    }
   }
 
   return {
