@@ -161,7 +161,7 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     purpose:z.enum(["otp","job.update","notification","attendance.absence","attendance.correction"]).optional(),
     outcome:z.enum(["PROVIDER_ACCEPTED","FAILED"]).optional(),
     page:z.number().int().min(1).max(100000).default(1),
-    size:z.number().int().min(1).max(100).default(25),
+    size:z.number().int().min(1).max(200).default(50),
   }).parse(raw);
   const suffix=normalizeSmsSupportSuffix(query.suffix);
   const predicate = sql.join([
@@ -178,10 +178,10 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     select count(*)::int as total from sms_delivery_attempts where ${predicate}`)).rows;
   const offset=(query.page-1)*query.size;
   const records=await getDb().execute(sql<{
-    id:string;purpose:string;provider:string;recipientSuffix:string|null;
+    id:string;purpose:string;provider:string;recipientSuffix:string|null;collegeId:string|null;
     outcome:string;providerMessageId:string|null;safeFailureCode:string|null;createdAt:Date;
   }>`
-    select id,purpose,provider,recipient_suffix as "recipientSuffix",
+    select id,purpose,provider,recipient_suffix as "recipientSuffix",college_id as "collegeId",
       outcome,provider_message_id as "providerMessageId",
       safe_failure_code as "safeFailureCode",created_at as "createdAt"
     from sms_delivery_attempts where ${predicate}
