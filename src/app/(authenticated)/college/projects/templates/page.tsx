@@ -28,7 +28,7 @@ export default async function CollegeProjectTemplatesPage({
     .then(value=>({ok:true as const,value}))
     .catch(()=>({ok:false as const}));
   if(!templateRead.ok) return <div className="min-w-0 space-y-6">
-    <PageHeader title="Project templates"
+    <PageHeader title="Templates"
       description="Published project templates assigned to this college."/>
     <ErrorState title="Project templates unavailable"
       description="The assigned template catalogue could not be loaded. Your filters were not changed."
@@ -72,7 +72,7 @@ export default async function CollegeProjectTemplatesPage({
         active="templates"
       />
       <PageHeader
-        title="Project templates"
+        title="Templates"
         description="Published project templates assigned to this college."
       />
       <form action="/college/projects/templates" method="get" role="search" aria-label="Project template search"
