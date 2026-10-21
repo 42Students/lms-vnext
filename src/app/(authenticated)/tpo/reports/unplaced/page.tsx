@@ -50,15 +50,19 @@ export default async function TpoUnplacedReportPage({
 
   const query = await searchParams;
   if(tpoReportHasAmbiguousFilters(query))return <TpoReportInvalidFilters path="/tpo/reports/unplaced"/>;
+  try {
   const workspace = await getPlacementReportDetails(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
     jobId: first(query.jobId) || undefined,
   });
 
-  const batches=await listTpoBatches(context);
+  // A broken batch-options fetch must not hide the already-authorized
+  // report. If a batch was selected, fail the dependent filter closed.
+  const batches=await listTpoBatches(context).catch(()=>null);
+  const batchesUnavailable=batches===null;
   const batchId=first(query.batchId)||undefined,branchId=first(query.branchId)||undefined;
-  const permittedBatch=!batchId||batches.batches.some(batch=>batch.id===batchId);
+  const permittedBatch=!batchId||Boolean(batches?.batches.some(batch=>batch.id===batchId));
   const intelligence=permittedBatch?await getTpoStudentsIntelligence(context,{
     collegeId:context.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
     page:1,pageSize:100,
@@ -72,6 +76,17 @@ export default async function TpoUnplacedReportPage({
   const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
   const academic=await getTpoUnplacedAcademicEvidence(context,context.membership.collegeId,unplaced.map(item=>item.membershipId));
+  // Legacy Ready/Unplaced requires all facts together: a registration in
+  // Placements, a resume, a recorded CGPA, 10th percentage, and no accepted
+  // placement offer. Unknown evidence never becomes a synthetic pass.
+  const readyUnplaced=unplaced.filter(learner=>{
+   const row=rowsById.get(learner.membershipId);
+   return row?.registeredForPlacements===true &&
+    row.profileFacts?.resume===true &&
+    row.cgpa!==null&&row.cgpa!==undefined &&
+    row.tenthPct!==null&&row.tenthPct!==undefined &&
+    !row.placed;
+  });
   const branches=[...new Map((intelligence?.branches??[]).map(row=>[row.branchId,row.branchName]))];
   const exportParams=new URLSearchParams({
    ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
@@ -94,7 +109,7 @@ export default async function TpoUnplacedReportPage({
        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="batchId" defaultValue={batchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
          <option value="">All current batches</option>
-         {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
+         {(batches?.batches??[]).map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
         </Select></label>
        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Branch
         <Select name="branchId" defaultValue={branchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
@@ -103,10 +118,18 @@ export default async function TpoUnplacedReportPage({
        <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">Filter</Button>
       </form>
       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-11 items-center text-sm text-link underline lms-inline-link min-[768px]:min-h-[var(--lms-control-height)]">Clear batch and branch</Link>:null}
-      {!permittedBatch?<Alert tone="error">The selected batch does not belong to this college.</Alert>:null}
+      {batchesUnavailable?<Alert tone="warning">
+        Could not load batches. The report remains available without batch-specific filtering.
+        <Link href="/tpo/reports/unplaced" className="ml-2 text-link underline">Retry batches</Link>
+      </Alert>:null}
+      {!permittedBatch?<Alert tone="error">{batchesUnavailable
+       ?"Selected batch could not be verified; no batch-specific student records were loaded."
+       :"The selected batch does not belong to this college."}</Alert>:null}
       {!permittedBranch?<Alert tone="error">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-link underline lms-inline-link">Clear filters</Link></Alert>:null}
       <SummaryStrip label="Unplaced learner report summary" steps={[
         {label:"Unplaced in selected scope",value:reportNumber(unplaced.length)},
+        {label:"Ready, unplaced",value:reportNumber(readyUnplaced.length),
+         note:"Registered in placements; resume uploaded, CGPA and 10th marks recorded; no accepted offer. Unverified or missing facts are excluded."},
         {label:"Current placement-pool registrations",
           value:reportNumber(workspace.report.metrics.registered),
           note:"See Placement Summary for the overall registered denominator."},
@@ -132,7 +155,9 @@ export default async function TpoUnplacedReportPage({
           learner.departmentName,
           formatUnplacedPercentage(academic.get(learner.membershipId)?.lowestRecordedPercent??null),
           formatUnplacedPercentage(academic.get(learner.membershipId)?.undergraduatePercent??null),
-          academic.get(learner.membershipId)?.verification??"Not recorded","Not confirmed",
+          academic.get(learner.membershipId)?.verification??"Not recorded",
+          row?.profileFacts?.resume===true?"Uploaded":
+           row?.profileFacts?.resume===false?"Missing":"Not confirmed",
           lastApplications.get(learner.membershipId)?.applications??0,
           lastApplications.get(learner.membershipId)?.stillInDrive?"Yes":"No",
           lastApplications.get(learner.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Not recorded"];
@@ -143,7 +168,7 @@ export default async function TpoUnplacedReportPage({
       <Disclosure title="Report filters and information" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
         <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
-      <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
+      <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks use authorized college evidence. Resume Uploaded/Missing reflects the learner profile record; Not confirmed means no authoritative resume status is available.</p>
 
 
         <ReportScopeNote note={workspace.detailScopeNote} />
@@ -151,4 +176,15 @@ export default async function TpoUnplacedReportPage({
       <ReportNavigation workspace={workspace} compactNavigation />
     </div>
   );
+  }catch{
+   return <div className="min-w-0 space-y-4">
+    <PageHeader eyebrow="TPO · Reports" title="Unplaced students"
+      description="Review the current college-scoped unplaced report."/>
+    <Alert tone="error">
+     <strong>Could not load the report</strong>
+     <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>
+     <Link href="/tpo/reports/unplaced" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline">Retry</Link>
+    </Alert>
+   </div>;
+  }
 }
