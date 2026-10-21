@@ -123,45 +123,45 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-course-overview.tsx`
-- [ ] `src/components/courses/admin-learning-structure-actions.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-acceptance/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
 - [ ] `src/components/courses/learner-course-overview.tsx`
 - [ ] `src/components/courses/learner-course-workspace.tsx`
 - [ ] `src/components/courses/super-admin-content-directory-page.tsx`
