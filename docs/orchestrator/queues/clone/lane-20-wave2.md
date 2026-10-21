@@ -87,7 +87,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-batch-priority-sort-model.ts.md` (edit src/modules/placements/tpo-batch-priority-sort-model.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_api_courses_quizzes_quizId_route.ts.md` (edit src/app/api/courses/quizzes/[quizId]/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-team-internal-reply-service.ts.md` (edit src/modules/placements/tpo-team-internal-reply-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-round-drive-day-service.ts.md` (edit src/modules/placements/tpo-round-drive-day-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-round-drive-day-service.ts.md` (edit src/modules/placements/tpo-round-drive-day-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-applicant-pipeline-model.ts.md` (edit src/modules/placements/tpo-applicant-pipeline-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_learner-historical-drive-service.ts.md` (edit src/modules/placements/learner-historical-drive-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_bug-tracker_issues-query-model.ts.md` (edit src/modules/bug-tracker/issues-query-model.ts; 1 findings; best P2)
