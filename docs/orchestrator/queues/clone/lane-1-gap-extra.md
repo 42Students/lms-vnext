@@ -14,7 +14,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L14-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminFeatureController.java`
 - [x] L15-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/IndustryCompany.java`
 - [x] L15-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/semesters.js`
-- [ ] L17-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/QuizController.java`
+- [x] L17-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/QuizController.java`
 - [ ] L18-U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/_Class.java`
 - [ ] L18-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTrackerLogsAccessController.java`
 - [ ] L19-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/ApplyToJobRequest.java`
