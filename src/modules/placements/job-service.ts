@@ -1,5 +1,6 @@
-import { and, asc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import { getDb } from "@/db/client";
 import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
 import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
@@ -85,16 +86,26 @@ async function loadJob(jobId: string) {
   return job;
 }
 
+export type PlacementJobListOptions={
+ page?:number;pageSize?:number;
+ status?:"ALL"|"DRAFT"|"PUBLISHED"|"CLOSED"|"CANCELLED"|"ARCHIVED";
+ sort?:"TITLE_ASC"|"POSTED_DESC";
+};
 export async function listPlacementJobs(
   context: RequestContext,
   collegeIdInput: string,
+  options?:PlacementJobListOptions,
 ) {
   const collegeId = createPlacementJobInputSchema.shape.collegeId.parse(
     collegeIdInput,
   );
   await requirePlacementManageScope(context, collegeId);
 
-  return getDb()
+  const page=Number.isSafeInteger(options?.page)&&options!.page!>0?
+   Math.min(10000,options!.page!):1;
+  const pageSize=Number.isSafeInteger(options?.pageSize)&&options!.pageSize!>0?
+   Math.min(100,options!.pageSize!):20;
+  const query=getDb()
     .select({
       job: placementJobs,
       company: placementCompanies,
@@ -129,10 +140,36 @@ export async function listPlacementJobs(
     .where(
       and(
         eq(placementJobs.collegeId, collegeId),
-        isNull(placementJobs.archivedAt),
+        options?.status==="ARCHIVED"?eq(placementJobs.status,"ARCHIVED"):isNull(placementJobs.archivedAt),
+        options?.status&&options.status!=="ALL"?
+         eq(placementJobs.status,options.status):undefined,
       ),
-    )
-    .orderBy(asc(placementJobs.title));
+    );
+  if(!options)return query.orderBy(asc(placementJobs.title));
+  const ordered=options.sort==="TITLE_ASC"?
+   query.orderBy(asc(placementJobs.title),asc(placementJobs.id)):
+   query.orderBy(desc(placementJobs.publishedAt),asc(placementJobs.id));
+  return ordered.limit(pageSize).offset((page-1)*pageSize);
+}
+/** Preserve old list callers; explicit pages are opt-in and always scoped
+ * to the college permission before any count or search.
+ */
+export async function listPlacementJobsPage(
+ context:RequestContext,collegeIdInput:string,options:PlacementJobListOptions={},
+){
+ const collegeId=createPlacementJobInputSchema.shape.collegeId.parse(collegeIdInput);
+ const page=Number.isSafeInteger(options.page)&&options.page!>0?Math.min(10000,options.page!):1;
+ const pageSize=Number.isSafeInteger(options.pageSize)&&options.pageSize!>0?Math.min(100,options.pageSize!):20;
+ const scoped={...options,page,pageSize};
+ const items=await listPlacementJobs(context,collegeId,scoped);
+ const [total]=await getDb().select({count:sql<number>`count(*)::int`}).from(placementJobs)
+  .where(and(
+   eq(placementJobs.collegeId,collegeId),
+   options.status==="ARCHIVED"?eq(placementJobs.status,"ARCHIVED"):isNull(placementJobs.archivedAt),
+   options.status&&options.status!=="ALL"?eq(placementJobs.status,options.status):undefined,
+  ));
+ return {items,page,pageSize,totalCount:Number(total?.count??0),
+  hasMore:page*pageSize<Number(total?.count??0)};
 }
 
 export async function getPlacementJob(
@@ -147,6 +184,32 @@ export async function getPlacementJob(
     job.collegeId,
   );
   return job;
+}
+
+/** Read-only impact preview for destructive actions. Callers must obtain
+ * user confirmation; this does not change write authorization or status.
+ */
+export async function getPlacementJobStopImpact(context:RequestContext,jobIdInput:string){
+ const job=await getPlacementJob(context,jobIdInput);
+ const db=getDb();
+ const [[applications],[heldOffers],[bookedSlots],[rounds]]=await Promise.all([
+  db.select({count:sql<number>`count(*)::int`}).from(placementApplications)
+   .where(eq(placementApplications.jobId,job.id)),
+  db.select({count:sql<number>`count(*)::int`}).from(placementOffers)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .where(and(eq(placementApplications.jobId,job.id),
+    inArray(placementOffers.status,["ISSUED","ACCEPTED"]))),
+  db.select({count:sql<number>`count(*)::int`}).from(placementRoundCandidateSlots)
+   .where(and(eq(placementRoundCandidateSlots.jobId,job.id),
+    eq(placementRoundCandidateSlots.status,"BOOKED"))),
+  db.select({count:sql<number>`count(*)::int`}).from(placementJobRounds)
+   .where(and(eq(placementJobRounds.jobId,job.id),ne(placementJobRounds.status,"CANCELLED"))),
+ ]);
+ return {jobId:job.id,status:job.status,
+  applications:Number(applications?.count??0),
+  activeOffers:Number(heldOffers?.count??0),
+  bookedInterviews:Number(bookedSlots?.count??0),
+  scheduledRounds:Number(rounds?.count??0)};
 }
 
 export async function createPlacementJob(
