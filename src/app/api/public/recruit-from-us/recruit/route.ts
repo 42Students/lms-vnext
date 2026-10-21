@@ -23,7 +23,9 @@ export async function POST(request:Request){
  }catch(error){
   if(error instanceof PublicEnquiryError)return NextResponse.json({
    error:error.code==="NOT_READY"?"RECRUITER_ENQUIRIES_UNAVAILABLE":
-    error.code==="LIMIT"?"TOO_MANY_TRIES":"COULD_NOT_SEND_ENQUIRY",
+    error.code==="LIMIT"?"TOO_MANY_TRIES":
+    error.code==="NAME_REQUIRED"?"NAME_REQUIRED":"COULD_NOT_SEND_ENQUIRY",
+   ...(error.code==="NAME_REQUIRED"?{message:"Enter your name"}:{}),
   },{status:error.code==="NOT_READY"?503:error.code==="LIMIT"?429:400,
    headers:{"Cache-Control":"no-store"}});
   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},

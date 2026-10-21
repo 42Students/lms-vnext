@@ -29,8 +29,11 @@ export const publicRecruitEnquirySchema=z.strictObject({
 });
 export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,verifiedIp:string|null){
  const parsed=publicRecruitEnquirySchema.safeParse(raw);
- if(!parsed.success||!z.string().uuid().safeParse(collegeId).success)
+ if(!parsed.success||!z.string().uuid().safeParse(collegeId).success){
+  if(!parsed.success&&parsed.error.issues.some(issue=>issue.path[0]==="name"))
+   throw new PublicEnquiryError("NAME_REQUIRED");
   throw new PublicEnquiryError("INVALID");
+ }
  if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED"||!await publicEnquiryTablesReady())
   throw new PublicEnquiryError("NOT_READY");
  const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
