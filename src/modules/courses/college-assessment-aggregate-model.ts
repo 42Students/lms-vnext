@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const COLLEGE_ASSESSMENT_PAGE_SIZE = 25;
+export const COLLEGE_ASSESSMENT_PAGE_SIZE = 20;
 export const collegeAssessmentKindSchema = z.enum(["ASSIGNMENT", "QUIZ"]);
 export type CollegeAssessmentKind = z.infer<typeof collegeAssessmentKindSchema>;
 
