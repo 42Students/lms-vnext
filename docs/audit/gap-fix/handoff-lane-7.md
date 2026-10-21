@@ -99,3 +99,36 @@ The old controller maps to existing course-assignment creation, validation, stor
 - G2-2-006-026 | `src/components/courses/college-assignment-create.tsx` | Align precise validation messages per field.
 - G2-2-006-028 | `src/components/courses/college-assignment-create.tsx` | Preserve legacy success semantics or explicitly migrate to staged-publish UX.
 - G2-2-006-029 | `src/components/courses/college-assignment-create.tsx` | Restore exact legacy toast variants if clone requirement includes operations feedback.
+
+## Packets U018 Deleted workspaces, parts 1–2 (Projects ownership)
+
+Source checked: current `/college/projects` page provides active/archived list; existing `instance-restore-service.ts` accepts `ARCHIVED` and requires primary mentor; neither exposes legacy deleted/partial-recovery semantics. Do not merge deleted with archived or promise recovered content. Existing Projects files and DB schema are outside lane-7-owned paths; all actionable packet findings handed off, not fixed.
+
+- G2-7-018-005 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Create standalone deleted list anatomy rather than showing active list
+- G2-7-018-006 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Build page Card and conditionally render states
+- G2-7-018-008 | `src/components/projects/project-admin-workspace-list.tsx` | Recreate 3 columns and Undo icon/button
+- G2-7-018-009 | `src/components/projects/project-archive-control.tsx` | Offer per-deleted-row restore with content-preservation warning
+- G2-7-018-012 | `src/modules/projects/admin-insights-service.ts` | Implement deleted page projection and true total count from soft-deleted records
+- G2-7-018-015 | `src/modules/projects/instance-restore-service.ts` | Reproduce mentorless restore as recoverable BLOCKED instead of hard failure, or flag deliberate stronger policy
+- G2-7-018-016 | `src/db/schema/projects.ts` | Track legacy recoverability and warn when old edits not recoverable
+- G2-7-018-021 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Implement post-restore page correction to prevent false empty page
+- G2-7-018-027 | `src/components/projects/project-archive-control.tsx` | Condition restore confirmation on actual recoverable snapshot ability
+- G2-7-018-029 | `src/components/projects/project-archive-control.tsx` | Preserve mentorless warning and restoration outcome handling
+- G2-7-018-033 | `src/components/projects/project-archive-control.tsx` | Provide partial legacy recovery warning and preserve user choice
+- G2-7-018-036 | `src/app/api/projects/[projectId]/restore/route.ts` | Differentiate soft-delete restore from archive restore, supply correct concurrency token
+- G2-7-018-038 | `src/modules/projects/instance-restore-service.ts` | Restore soft-deleted child records where applicable; migration/recoverability indicator
+- G2-7-018-041 | `src/db/schema/projects.ts` | Represent separate soft deletion from archived status or explicitly merge with migration semantics
+- G2-7-018-042 | `src/modules/projects/instance-restore-service.ts` | Implement content-preserving vs legacy partial recovery behavior
+- G2-7-018-043 | `src/modules/projects/instance-restore-service.ts` | Support mentorless blocked restore or mark policy change and give recovery path
+- G2-7-018-060 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Implement efficient tenant-indexed deleted count and list
+- G2-7-018-064 | `src/modules/projects/instance-restore-service.ts` | Decide mentorless recovery state transition explicitly
+- G2-7-018-066 | `src/db/schema/projects.ts` | Add explicit deleted state and recoverable-content marker or proven migration plan
+- G2-7-018-067 | `src/db/schema/projects.ts` | Map legacy identifiers, mentor and recoverable snapshot into deleted DTO
+- G2-7-018-068 | `src/modules/projects/instance-restore-service.ts` | Separate archived lifecycle and soft-deleted restore semantics in schema/service
+- G2-7-018-069 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Do not silently substitute Archived workspaces for Deleted workspaces
+- G2-7-018-070 | `src/modules/projects/instance-restore-service.ts` | Document intentional stronger guard if owner chooses it; provide manual recovery pathway
+- G2-7-018-025 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Use exact deleted-list failure wording and separate retry
+- G2-7-018-026 | `src/components/projects/project-archive-control.tsx` | Retain fallback string and detailed project error modal or actionable 409
+- G2-7-018-028 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Match title/description in shell
+- G2-7-018-030 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Use exact error banner and retry control
+- G2-7-018-031 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Prevent false No deleted workspaces empty state after fetch failure
