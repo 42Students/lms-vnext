@@ -43,16 +43,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/page.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/features/page.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lessons/page.tsx`
-- [ ] `src/app/(authenticated)/admin/module-access/page.tsx`
-- [ ] `src/app/(authenticated)/admin/not-found.tsx`
+- [x] `src/app/(authenticated)/admin/features/loading.tsx`
+- [x] `src/app/(authenticated)/admin/features/page.tsx`
+- [x] `src/app/(authenticated)/admin/hr/loading.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/admin/lessons/page.tsx`
+- [x] `src/app/(authenticated)/admin/module-access/page.tsx`
+- [x] `src/app/(authenticated)/admin/not-found.tsx`
 - [ ] `src/app/(authenticated)/admin/organizations/page.tsx`
 - [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
 - [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
