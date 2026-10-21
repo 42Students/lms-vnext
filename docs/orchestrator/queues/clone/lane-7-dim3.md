@@ -65,15 +65,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
 - [x] `src/components/ui/alert.tsx`
 - [x] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/admin/super-admin-legacy-group-tabs.tsx`
-- [ ] `src/components/courses/admin-offering-learning-page.tsx`
-- [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
-- [ ] `src/components/courses/learner-youtube-player.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/admin/super-admin-legacy-group-tabs.tsx`
+- [x] `src/components/courses/admin-offering-learning-page.tsx`
+- [x] `src/components/courses/faculty-course-tab-navigation.tsx`
+- [x] `src/components/courses/learner-youtube-player.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/learner-placements-dashboard.tsx`
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
 - [ ] `src/components/projects/mentor-project-tabs.tsx`
