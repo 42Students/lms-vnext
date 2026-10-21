@@ -201,7 +201,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
   </div>
   {error?<Alert tone="error" role="alert">{error}</Alert>:null}
-  <ConfirmDialog open={leaveHref!==null}
+  <ConfirmDialog open={dirty&&leaveHref!==null}
    onOpenChange={open=>{if(!open)setLeaveHref(null);}}
    title="Discard unsaved tenant settings?"
    description="You have unsaved tenant settings or an unfinished add draft. Leave without saving? This does not apply the pending values."
