@@ -8,8 +8,6 @@ import { useRouter } from "next/navigation";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { useToast } from "@/components/ui/toast";
 import {Dialog} from "@/components/ui/dialog";
-import { Dropdown } from "@/components/ui/dropdown";
-import { Menu, MenuItem } from "@/components/ui/menu";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   createCollegeSemesterSchema,
@@ -28,6 +26,7 @@ type SemesterRow = {
   isActive: boolean;
   updatedAt: Date;
   mappedCourses: number;
+  legacyStructureStatus?: "ACTIVE" | "INACTIVE" | "COMPLETED" | null;
 };
 
 async function mutate(method: "POST" | "PATCH" | "DELETE", url: string, body: unknown) {
@@ -108,6 +107,8 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         setCreateError(message);
         if (Object.values(semesterFieldErrors(error)).every(value => !value))
           showToast({ tone: "error", title: message });
+      } finally {
+        deleteInFlight.current = false;
       }
     });
   }
@@ -139,6 +140,18 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
               onChange={e => { setTermNumber(e.target.value); setCreateErrors(current => ({ ...current, number: undefined })); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
+          <div className="grid grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Program
+              <Input value={row.programName} readOnly disabled
+                title="Program cannot change after creation" aria-label="Program (cannot change)" />
+            </label>
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Semester Number
+              <Input value={row.termNumber} readOnly disabled
+                title="Semester number cannot change after creation" aria-label="Semester Number (cannot change)" />
+            </label>
+          </div>
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
             <Input ref={createNameRef} required maxLength={255} value={name} aria-invalid={Boolean(createErrors.name)} aria-describedby={createErrors.name ? "semester-name-error" : undefined}
@@ -175,6 +188,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [deleteError, setDeleteError] = useState("");
+  const deleteInFlight = useRef(false);
   const editNameRef = useRef<HTMLInputElement>(null);
   const [editFieldErrors, setEditFieldErrors] = useState<SemesterFieldErrors>({});
   const [editError, setEditError] = useState("");
@@ -236,7 +250,8 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   }
 
   function remove() {
-    if(pending)return;
+    if(pending || deleteInFlight.current)return;
+    deleteInFlight.current = true;
     setNotice("");
     setDeleteError("");
     startTransition(async () => {
@@ -258,21 +273,31 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     <div className="min-w-0 space-y-[var(--lms-space-2)]">
       {!editing && !confirming ? (
         <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
-          <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setEditError(""); setEditFieldErrors({}); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
-            >
-            Edit
+          <Button variant="ghost" size="icon-sm" type="button" disabled={pending}
+            title="Edit" aria-label={"Edit semester " + row.name}
+            onClick={() => { setNotice(""); setEditError(""); setEditFieldErrors({});
+              setName(row.name);setIsActive(row.isActive);setEditing(true); }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 20l4.8-1.1L20 7.7 16.3 4 5.1 15.2 4 20Z"
+                stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round" />
+              <path d="m14.7 5.7 3.7 3.7" stroke="currentColor" strokeWidth="1.8" />
+            </svg>
           </Button>
-          <Dropdown trigger="More" label="Semester actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-            <Menu className="w-full min-w-0">
-              <MenuItem disabled={pending} onClick={() => { setNotice(""); setConfirming(true); }}>Delete</MenuItem>
-            </Menu>
-          </Dropdown>
+          <Button variant="ghost" size="icon-sm" type="button" disabled={pending}
+            title="Delete" aria-label={"Delete semester " + row.name}
+            onClick={() => { setNotice(""); setConfirming(true); }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M9 7V4h6v3m3 0-1 13H7L6 7m4 4v6m4-6v6"
+                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Button>
         </div>
       ) : null}
       {editing ? (
         <Dialog open={editing} onOpenChange={next=>{if(!next)closeEditor();}}
           title={SEMESTER_COPY.editTitle}
-          description={SEMESTER_COPY.promotionNote}>
+          description={SEMESTER_COPY.promotionNote}
+          className="!max-w-[520px]" dismissible={!pending}>
         <form noValidate onSubmit={save} className="grid min-w-0 gap-[var(--lms-space-4)]">
           {editError ? <div role="alert" className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
             <p><strong>{SEMESTER_COPY.updateFailed}</strong>: {editError}</p>
@@ -287,11 +312,19 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
             {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
           </label>
-          <p className="text-xs text-body leading-5">Credits come from mapped courses and cannot be edited here.</p>
+          <div className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <label htmlFor={"semester-credits-" + row.id}>Total Credits</label>
+            <Input id={"semester-credits-" + row.id} value={row.totalCredits ?? "Calculated from course mappings"}
+              readOnly disabled aria-label="Total Credits (calculated from mapped courses)"
+              title="Credits are calculated from the courses mapped to this semester" />
+            <p className="text-xs font-normal text-body">Credits come from mapped courses and cannot be edited here.</p>
+          </div>
           <div className="flex flex-wrap items-center gap-2 text-xs text-body">
             <Switch label={SEMESTER_COPY.statusLabel} checked={isActive}
-              disabled={pending} onChange={e => setIsActive(e.target.checked)} />
-            <span role="status">{isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}</span>
+              disabled={pending || row.legacyStructureStatus === "COMPLETED"}
+              onChange={e => setIsActive(e.target.checked)} />
+            <span role="status">{row.legacyStructureStatus === "COMPLETED" ? "Completed" :
+              isActive ? SEMESTER_COPY.statusActive : SEMESTER_COPY.statusInactive}</span>
           </div>
           <div className="flex flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button variant="secondary" type="button" disabled={pending} onClick={closeEditor}>
@@ -307,11 +340,11 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
       <ConfirmDialog open={confirming} onOpenChange={setConfirming}
         title={SEMESTER_COPY.deleteTitle}
         description={SEMESTER_COPY.deleteBlocked}
-        confirmLabel="Confirm delete" confirmVariant="danger" pending={pending}
+        confirmLabel="Yes" cancelLabel="No" confirmVariant="danger" pending={pending}
         confirmDisabled={row.mappedCourses>0} onConfirm={remove}/>
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard semester changes?"
-        description="Unsaved semester name and status changes will be lost."
+        description="Your unsaved semester edits will be lost."
         confirmLabel="Discard changes" confirmVariant="danger" pending={pending} onConfirm={discardEditor}/>
       {deleteError ? <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
         <p><strong>{SEMESTER_COPY.deleteFailed}</strong>: {deleteError}</p>
