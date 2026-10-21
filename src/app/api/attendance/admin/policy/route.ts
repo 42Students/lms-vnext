@@ -6,6 +6,7 @@ import {
   getCollegeAttendancePolicy,
   updateCollegeAttendancePolicy,
   updateCollegeAttendancePolicyField,
+  resetCollegeAttendancePolicyOverride,
 } from "@/modules/attendance/policy-service";
 
 export const runtime = "nodejs";
@@ -58,5 +59,18 @@ export async function PATCH(request:Request){
   try{
     const context=await getCurrentRequestContext();
     return NextResponse.json(await updateCollegeAttendancePolicyField(context,await request.json()));
+  }catch(error){return apiErrorResponse(error);}
+}
+
+/** Deleting the policy row restores the effective default for BOTH fields.
+ * A per-field Save intentionally keeps an explicit college override.
+ */
+export async function DELETE(request:Request){
+  if(!isSameOriginRequest(request))
+    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+  try{
+    const context=await getCurrentRequestContext();
+    return NextResponse.json(await resetCollegeAttendancePolicyOverride(
+      context,await request.json()));
   }catch(error){return apiErrorResponse(error);}
 }
