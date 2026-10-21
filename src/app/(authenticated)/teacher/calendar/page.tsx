@@ -28,7 +28,7 @@ export default async function FacultyCalendarPage({
     month:raw.month??currentIstMonth(new Date()),
     deliveryId:raw.deliveryId||undefined,
   }:{invalid:true});
-  if(!input.success)return <section className="space-y-3">
+  if(!input.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid month or Section filter"} />
     <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       Clear filters
@@ -102,7 +102,7 @@ export default async function FacultyCalendarPage({
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
                 className={monthStyles.dayEvent}>
-                <p role="alert" className="text-xs font-semibold text-foreground leading-5">{event.title}</p>
+                <p className="text-xs font-semibold text-foreground leading-5">{event.title}</p>
                 <p className="text-xs text-body leading-5">
                   {new Intl.DateTimeFormat("en-IN",{
                     timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
