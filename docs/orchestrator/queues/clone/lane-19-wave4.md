@@ -29,7 +29,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_super-admin-template-plan-editor.tsx.md` (edit src/components/projects/super-admin-template-plan-editor.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-workspace.tsx.md` (edit src/components/projects/project-workspace.tsx; 13 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_activity_learner-notification-category.ts.md` (edit src/modules/activity/learner-notification-category.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_college-section-mutation-service.ts.md` (edit src/modules/academics/college-section-mutation-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_college-section-mutation-service.ts.md` (edit src/modules/academics/college-section-mutation-service.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_learner-closing-drives-service.ts.md` (edit src/modules/placements/learner-closing-drives-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_tpo-drive-lifecycle-model.ts.md` (edit src/modules/placements/tpo-drive-lifecycle-model.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_scoped-membership-lifecycle-actions.tsx.md` (edit src/components/admin/scoped-membership-lifecycle-actions.tsx; 1 findings; best P1)
