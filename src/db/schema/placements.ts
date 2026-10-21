@@ -1074,6 +1074,10 @@ export const placementApplications = pgTable(
     index(
       "placement_applications_job_membership_idx",
     ).on(table.jobId, table.membershipId),
+    /** Organization queries join jobs by college; index submissions within a job. */
+    index("placement_applications_job_submitted_idx").on(
+      table.jobId, table.submittedAt,
+    ),
     index("placement_applications_job_status_idx").on(
       table.jobId,
       table.status,
@@ -1600,7 +1604,12 @@ export const placementOffers = pgTable(
       .references(() => placementApplications.id, {
         onDelete: "restrict",
       }),
+    /** Offer issuance ordinal per application, not optimistic row revision. */
     version: integer("version").notNull(),
+    rowVersion: integer("row_version").notNull().default(1),
+    /** Source-compatible nullable role title and lossless pre-rounded CTC. */
+    legacyRoleOptionName: text("legacy_role_option_name"),
+    legacyCtcLpa: numeric("legacy_ctc_lpa"),
     kind: varchar("kind", { length: 8 }).notNull().default("OFFER"),
     status: varchar("status", { length: 24 })
       .notNull()
@@ -1638,6 +1647,12 @@ export const placementOffers = pgTable(
       .references(() => users.id, {
         onDelete: "restrict",
       }),
+    /** TPO/RECRUITER creator differs from verification and actual release. */
+    createdByType: varchar("created_by_type", { length: 24 }),
+    verifiedByUserId: uuid("verified_by_user_id").references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    releasedAt: timestamp("released_at", { withTimezone: true }),
     issuedAt: timestamp("issued_at", {
       withTimezone: true,
     })
@@ -1682,6 +1697,11 @@ export const placementOffers = pgTable(
     check(
       "placement_offers_version_ck",
       sql`${table.version} > 0`,
+    ),
+    check("placement_offers_row_version_ck", sql`${table.rowVersion} > 0`),
+    check(
+      "placement_offers_created_by_type_ck",
+      sql`${table.createdByType} is null or ${table.createdByType} in ('TPO', 'RECRUITER')`,
     ),
     check(
       "placement_offers_status_ck",
