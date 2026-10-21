@@ -86,26 +86,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/loading.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/error.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/loading.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/loading.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/error.tsx`
+- [x] `src/app/(authenticated)/mentor/review-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/error.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/error.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/page.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`

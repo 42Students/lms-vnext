@@ -9,9 +9,9 @@ export default function FacultyClassScheduleError({ reset }: {
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="min-w-0 space-y-4">
+    <section className="min-w-0 space-y-4">
       <PageHeader title={"Unable to load Class Schedule"} />
-      <p className="mt-2 text-sm text-body">
+      <p role="alert" className="mt-2 text-sm text-body">
         This Faculty page could not load. Retry to recheck current access.
       </p>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
