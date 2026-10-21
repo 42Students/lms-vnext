@@ -71,6 +71,10 @@ export function ProjectRosterTable({ projectId, rows }: {
     }] : []),
   ];
   return <section aria-label="Team members" className="min-w-0 space-y-3">
+    <div>
+      <h3 className="text-base font-semibold text-[var(--lms-heading)]">Team roster ({rows.length})</h3>
+      <p className="mt-1 text-sm text-body">Search, filter and compare task activity</p>
+    </div>
     <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
       <div className="min-w-0 flex-1 sm:max-w-80">
         <label htmlFor="project-roster-search" className="mb-1 block text-xs font-semibold text-body">
