@@ -1,5 +1,10 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import {and,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {collegeMemberships,facultyProfiles,membershipRoles} from "@/db/schema";
+import {hasMembershipRole} from "@/modules/identity/context";
+import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -18,6 +23,28 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
 }) {
   const context = await getCurrentRequestContext();
   const { membershipId } = await params;
+  // Old faculty identifiers are integers. Resolve them only inside the
+  // authenticated college and only for a real faculty membership. Personal
+  // teacher profiles remain /teacher/profile and always derive self identity.
+  if(/^\\d+$/.test(membershipId)){
+    const owner=context.membership;
+    if(!owner||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+      throw new AuthorizationError("people.manage");
+    requirePermission(context,"people.manage",{
+      collegeId:owner.collegeId,organizationId:owner.organizationId,
+    });
+    const legacyId=Number(membershipId);
+    if(!Number.isSafeInteger(legacyId)||legacyId<=0)notFound();
+    const [match]=await getDb().select({membershipId:collegeMemberships.id})
+      .from(facultyProfiles)
+      .innerJoin(collegeMemberships,eq(collegeMemberships.id,facultyProfiles.membershipId))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"FACULTY")))
+      .where(and(eq(facultyProfiles.legacyFacultyId,legacyId),
+        eq(collegeMemberships.collegeId,owner.collegeId))).limit(1);
+    if(!match)notFound();
+    redirect("/college/faculty/"+encodeURIComponent(match.membershipId));
+  }
   const query=await searchParams;
   let data: Awaited<ReturnType<typeof getCollegeFacultyDetail>>;
   try {
