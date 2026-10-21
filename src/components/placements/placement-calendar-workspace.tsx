@@ -9,6 +9,7 @@ import calendarStyles from "./legacy-calendar-theme.module.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import {CalendarCompanySelect} from "./calendar-company-select";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -935,14 +936,11 @@ export async function PlacementCalendarWorkspace({
 
           <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Company
-            <Input
-              type="search"
-              list="tpo-calendar-company-choices"
-              name="company"
-              maxLength={150}
-              defaultValue={state.company}
-              placeholder="Filter by company"
-              className="w-full"
+            <CalendarCompanySelect
+              href={calendarHref(basePath,audience,state,{company:""})}
+              selected={state.company}
+              companies={[...new Set(countSourceEvents.map(event=>event.companyName).filter(
+                (name):name is string=>Boolean(name)))].sort((a,b)=>a.localeCompare(b,"en-IN"))}
             />
           </label>
 
@@ -957,10 +955,9 @@ export async function PlacementCalendarWorkspace({
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
        className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
    </div></details>:null}
-   {isTpo?<datalist id="tpo-calendar-company-choices">
-           {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
-             .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
-          </datalist>:null}
+   {isTpo&&countSourceEvents.length>200?<p className="text-xs text-muted-foreground sm:col-span-2">
+     Company choices reflect this visible period; the source may have additional matches outside it.
+    </p>:null}
           {isTpo ? (
             <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Event type
