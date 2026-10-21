@@ -1,6 +1,7 @@
 import "server-only";
 
 import { eq, or, sql } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { PeopleServiceError } from "./errors";
@@ -9,6 +10,29 @@ import type {
   PersistResolvedIdentityInput,
   ProvisionedPlatformIdentity,
 } from "./identity-provisioning";
+
+/** Legacy /api/v1/users/register and /users/register username/password
+ * creation is retired. Only identity-provider verified UID and contacts
+ * may enter this repository; never accept, log or persist an old password.
+ * This schema validates a read-only migration preview, NOT a signup route. */
+export const LEGACY_USER_DTO_FIELD_LIMITS={
+ username:255,password:255,email:255,phone:20,name:255,businessTitle:255,
+} as const;
+export const legacyRegistrationProfilePreviewSchema=z.strictObject({
+ userName:z.string().trim().min(1).max(LEGACY_USER_DTO_FIELD_LIMITS.username),
+ email:z.email().max(LEGACY_USER_DTO_FIELD_LIMITS.email).nullable().optional(),
+ phone:z.string().trim().max(LEGACY_USER_DTO_FIELD_LIMITS.phone).nullable().optional(),
+ name:z.string().trim().max(LEGACY_USER_DTO_FIELD_LIMITS.name).nullable().optional(),
+ businessTitle:z.string().trim().max(LEGACY_USER_DTO_FIELD_LIMITS.businessTitle).nullable().optional(),
+});
+export const legacyRegistrationMigration={
+ oldEndpoints:["/api/v1/users/register","/users/register"],
+ credentialFlow:"Retired: use verified identity/OTP, never a legacy password",
+ uidSource:"Verified identity-provider UID; username is not a login credential",
+ phone:"Optional, verified E.164 contact; legacy phone limit was 20 characters",
+ displayName:"Identity displayName; name and businessTitle remain profile metadata",
+ collisions:"Public reply is nonenumerating; admin-only forms may show field details",
+} as const;
 
 /** Exact legacy duplicate wording for authorized registration forms only.
  * The generic IDENTITY_COLLISION API code deliberately does not disclose
