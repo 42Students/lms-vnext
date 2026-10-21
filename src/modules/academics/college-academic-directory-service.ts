@@ -60,6 +60,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(programTerms.id, "sem_id"),
+    legacySemesterId: aliasedColumn(programTerms.legacySemesterId, "sem_legacy_id"),
     updatedAt: sql<Date>`${programTerms.updatedAt}`.mapWith(programTerms.updatedAt).as("term_updated_at"),
     name: aliasedColumn(programTerms.name, "sem_name"),
     termNumber: aliasedColumn(programTerms.termNumber, "sem_term_number"),
@@ -100,7 +101,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       ) : undefined,
     )).as("college_semester_directory");
 
-  const [totalRows, rawItems, programChoices] = await Promise.all([
+  const [totalRead,itemsRead,programsRead] = await Promise.allSettled([
     db.select({ total: count() }).from(source),
     db.select().from(source)
       .orderBy(asc(source.programName), asc(source.termNumber), asc(source.id))
@@ -108,6 +109,10 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       .offset((query.page - 1) * query.pageSize),
     availablePrograms(collegeId),
   ]);
+  if(totalRead.status==="rejected"||itemsRead.status==="rejected")
+    throw new Error("SEMESTERS_UNAVAILABLE");
+  if(programsRead.status==="rejected")throw new Error("PROGRAMS_UNAVAILABLE");
+  const totalRows=totalRead.value,rawItems=itemsRead.value,programChoices=programsRead.value;
   const ids = rawItems.map((item) => item.id);
   const courseCounts = ids.length
     ? await db.select({

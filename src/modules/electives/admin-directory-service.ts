@@ -13,12 +13,26 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
   if (!isSuperAdmin(context)) throw new AuthorizationError("academics.read");
   const collegeId = context.adminScope?.collegeId ?? null;
   if (!collegeId) return { state: "CHOOSE_COLLEGE" as const, query,
-    ...summarizeAdminElectives([]), truncated: false, programs: [] as {id:string;name:string}[] };
+    ...summarizeAdminElectives([]), truncated: false, totalPages:1, programs: [] as {id:string;name:string}[] };
   requirePermission(context, "academics.read", {
     organizationId: context.adminScope?.organizationId,
     collegeId,
   });
   const pattern = query.q ? "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%" : null;
+  const where=and(
+    eq(electiveSlots.collegeId,collegeId),
+    isNull(electiveSlots.deletedAt),
+    query.status==="ALL"?undefined:eq(electiveSlots.status,query.status),
+    query.programId?eq(electiveSlots.programId,query.programId):undefined,
+    query.semesterNumber!==undefined?eq(electiveSlots.semesterNumber,query.semesterNumber):undefined,
+    pattern?or(ilike(electiveSlots.name,pattern),ilike(programs.name,pattern),
+      ilike(electiveSlots.description,pattern)):undefined,
+  );
+  const [matchCount]=await getDb().select({total:count()}).from(electiveSlots)
+    .innerJoin(programs,eq(programs.id,electiveSlots.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .where(where);
   const rows = await getDb().select({
     id: electiveSlots.id,
     name: electiveSlots.name,
@@ -28,8 +42,8 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
     programName: programs.name,
     semesterNumber: electiveSlots.semesterNumber,
     academicYear: electiveSlots.academicYear,
-    academicPeriodId: electiveSlots.academicPeriodId,
-    hasEnrollmentHistory: sql<boolean>`exists (
+    academicPeriodId:electiveSlots.academicPeriodId,
+    hasEnrollmentHistory:sql<boolean>`exists (
       select 1 from elective_offerings eo where eo.slot_id = ${electiveSlots.id}
       and (exists (select 1 from lms_group_members gm where gm.group_id=eo.group_id)
         or exists (select 1 from lms_group_member_events ev where ev.group_id=eo.group_id))
@@ -42,17 +56,10 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
     .innerJoin(programs, eq(programs.id, electiveSlots.programId))
     .innerJoin(departments, and(eq(departments.id, programs.departmentId),
       eq(departments.collegeId, collegeId)))
-    .where(and(
-      eq(electiveSlots.collegeId, collegeId),
-      isNull(electiveSlots.deletedAt),
-      query.status === "ALL" ? undefined : eq(electiveSlots.status, query.status),
-      query.programId ? eq(electiveSlots.programId, query.programId) : undefined,
-      query.semesterNumber !== undefined ? eq(electiveSlots.semesterNumber, query.semesterNumber) : undefined,
-      pattern ? or(ilike(electiveSlots.name, pattern), ilike(programs.name, pattern)) : undefined,
-    ))
+    .where(where)
     .orderBy(asc(programs.name), asc(electiveSlots.semesterNumber), asc(electiveSlots.name), asc(electiveSlots.id))
-    .limit(201);
-  const shown = rows.slice(0, 200);
+    .limit(query.pageSize).offset((query.page-1)*query.pageSize);
+  const shown=rows;
   const ids = shown.map(row => row.id);
   const [programChoices, offeringCounts, studentCounts] = await Promise.all([
     getDb().select({id:programs.id,name:programs.name}).from(programs)
@@ -78,5 +85,7 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
   return { state: "READY" as const, query, programs:programChoices,
     ...summarizeAdminElectives(shown.map(row=>({...row,
       offerings:offerings.get(row.id)??0,students:students.get(row.id)??0}))),
-    truncated: rows.length > 200 };
+    total:matchCount?.total??0,
+    totalPages:Math.max(1,Math.ceil((matchCount?.total??0)/query.pageSize)),
+    truncated:false };
 }
