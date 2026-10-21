@@ -113,7 +113,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
         disabled={pending||!allowed.length||allowed.every(row=>selected.includes(row.id))}
         onClick={()=>{
          setSelected(current=>[...new Set([...current,...allowed.map(row=>row.id)])]);
-         setSavedSelection(current=>[...new Map([...current,...allowed].map(row=>[row.id,row])).values()]);
+         setSavedSelection(current=>[...new Map([...current,...allowed].map(row=>[row.id,row] as const)).values()]);
         }}>
         Select all on page
        </Button>

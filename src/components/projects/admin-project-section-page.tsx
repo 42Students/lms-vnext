@@ -1,5 +1,8 @@
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {ProjectsServiceError} from "@/modules/projects/errors";
+import Link from "next/link";
 import {
   PROJECT_WORKSPACE_SECTIONS,
   ProjectWorkspace,
@@ -36,18 +39,32 @@ export async function AdminProjectSectionPage({
   }
 
   const context = await getCurrentRequestContext();
-  // A soft-deleted workspace may be inspected and recovered from Summary only.
-  // Every other section and all ordinary manage mutations remain inaccessible.
-  await requireProjectManageAccess(
-    context,
-    projectId,
-    { includeDeleted: section === "summary" },
-  );
-  const workspace =
-    await getProjectWorkspaceView(
-      context,
-      projectId,
-    );
+  if(section==="delivery"&&!isSuperAdmin(context)&&!context.membership?.collegeId){
+    return <section className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" role="alert">
+      <h2 className="font-semibold">Admin not assigned to a college</h2>
+      <p>You must be assigned to a college to view project workspaces.</p>
+      <Link href={basePath} className="text-link underline">Projects</Link>
+    </section>;
+  }
+  // Read failures never disclose a foreign-college workspace; only in-scope
+  // misses and unexpected load errors get the legacy recoverable inline state.
+  let workspace: Awaited<ReturnType<typeof getProjectWorkspaceView>>;
+  try {
+    await requireProjectManageAccess(context,projectId,{
+      includeDeleted:section==="summary",
+    });
+    workspace=await getProjectWorkspaceView(context,projectId);
+  } catch(error) {
+    if(section!=="delivery"||error instanceof ProjectsServiceError&&
+      error.code!=="PROJECT_NOT_FOUND")throw error;
+    const missing=error instanceof ProjectsServiceError&&error.code==="PROJECT_NOT_FOUND";
+    return <section role="alert" className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
+      <h2 className="font-semibold">{missing?"Workspace not found":"Workspace could not be loaded"}</h2>
+      {!missing?<p>Could not load workspace delivery. No changes were made.</p>:null}
+      <Link href={basePath+"/"+encodeURIComponent(projectId)+"/delivery"}
+        className="inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link>
+    </section>;
+  }
 
   const safeFrom = from === "at-risk" || from === "submissions" ? from : "workspaces";
   const backHref = safeFrom === "workspaces" ? basePath : basePath + "/" + safeFrom;

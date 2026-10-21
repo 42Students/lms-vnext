@@ -15,5 +15,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-event-copy.ts.md` (edit src/modules/placements/learner-placement-event-copy.ts; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_app_campaign-unsubscribe_token_page.tsx.md` (edit src/app/campaign-unsubscribe/[token]/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_modules_module-access_admin-student-rule-write.ts.md` (edit src/modules/module-access/admin-student-rule-write.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_modules_profile-verification_service.ts.md` (edit src/modules/profile-verification/service.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u008-college-admin-workspace-delivery.md.md` (new; 7 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_modules_profile-verification_service.ts.md` (edit src/modules/profile-verification/service.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u008-college-admin-workspace-delivery.md.md` (new; 7 findings; best P1)
