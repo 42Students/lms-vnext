@@ -83,7 +83,12 @@ function LearnerSyllabusItem({
       {props.locked?"Content locked":completed?"Completed":props.kind}
      </StatusBadge>
     </div>
-    <p className="mt-1 text-xs text-muted-foreground">{props.caption??props.kind}{props.dueText?" · Due "+props.dueText:""}</p>
+    <p className="mt-1 flex min-w-0 flex-wrap items-center gap-2 text-xs text-muted-foreground">
+     {props.kind==="Quiz"?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h7M9 12h7M9 16h4"/></svg>:
+      props.kind==="Assignment"?<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M7 3h10v18H7zM10 9h4m-4 4h4"/></svg>:
+      <ContentKindIcon kind={props.caption?.startsWith("YouTube")?"YOUTUBE":props.caption?.startsWith("Video")?"VIDEO":"RESOURCE"}/>}
+     {props.caption??props.kind}{props.dueText?" · Due "+props.dueText:""}
+    </p>
     {props.locked?<p role="status" className="mt-3 text-sm text-warning">Content locked. This item is not available yet.</p>:
      <div className="mt-4 min-w-0 border-t border-border pt-4">{props.children}</div>}
    </div>
@@ -1020,7 +1025,11 @@ export function LearnerCourseWorkspace({
                 </div>:<p role="status" className="mb-4 text-sm text-warning">
                   Lesson completion state could not be fully verified. Retry state before marking this lesson complete.
                 </p>}
-                <div className="mb-3 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                <div className="mb-3 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground" role="status">
+                  {focusLessonId===lesson.id?<><strong className="text-foreground">{visibleItems.length} item{visibleItems.length===1?"":"s"}</strong><span aria-hidden="true">|</span></>:null}
+                  {lesson.contents.filter(content=>content.type==="RESOURCE").length>0?
+                   <span>{lesson.contents.filter(content=>content.type==="RESOURCE").length} Resource{lesson.contents.filter(content=>content.type==="RESOURCE").length===1?"":"s"}</span>:null}
+                  {lesson.quizzes.length>0?<span>{lesson.quizzes.length} Quiz{lesson.quizzes.length===1?"":"zes"}</span>:null}
                   {contentCounts.lectures > 0 ? (
                     <span>{contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}</span>
                   ) : null}
@@ -1054,7 +1063,7 @@ export function LearnerCourseWorkspace({
                       activeFilter==="resources"?"No resources in this lesson.":
                       activeFilter==="assessments"?"No assessments in this lesson.":
                       activeFilter==="live-sessions"?"No live sessions in this lesson.":
-                      activeFilter==="all"?"No content in this lesson yet.":"No lesson content yet"}
+                      activeFilter==="all"?"No lesson content yet":"No lesson content yet"}
                   </div>
                 ) : (
                   <div className="space-y-3">
