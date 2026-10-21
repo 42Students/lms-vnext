@@ -30,7 +30,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_semester-mutation-service.ts.md` (edit src/modules/academics/semester-mutation-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_super-admin-template-create-model.ts.md` (edit src/modules/projects/super-admin-template-create-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_courses_faculty-course-navigation.ts.md` (edit src/modules/courses/faculty-course-navigation.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_app_authenticated_college_placements_jobs_jobId_shortlisted_page.tsx.md` (edit src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_app_authenticated_college_placements_jobs_jobId_shortlisted_page.tsx.md` (edit src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_projects_page.tsx.md` (edit src/app/(authenticated)/admin/projects/page.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_public-unsubscribe-preview-service.ts.md` (edit src/modules/placements/public-unsubscribe-preview-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_college-dashboard-cards-service.ts.md` (edit src/modules/admin-ui/college-dashboard-cards-service.ts; 2 findings; best P2)
