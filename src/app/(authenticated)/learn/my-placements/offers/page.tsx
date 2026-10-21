@@ -145,6 +145,8 @@ export default async function LearnerOffersPage({
             applicationId: row.offer.applicationId,
             companyName: row.company.name,
             jobTitle: row.job.title,
+            jobId: row.job.id,
+            jobType: row.job.employmentType,
             roleTitle: row.offer.roleTitle,
             kind: row.offer.kind === "LOI" ? "LOI" as const : "OFFER" as const,
             status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN",

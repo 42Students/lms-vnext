@@ -25,6 +25,7 @@ export type CareerCalendarEvent = {
   dayKey: string;
   rescheduled: boolean;
   eventType?:"ROUND"|"APPLICATION_DEADLINE"|"EXAM_BLOCK"|"JOB_IMPORTANT_DATE";
+  jobId?:string|null;
   mode?:string|null;venue?:string|null;meetingUrl?:string|null;
   durationMinutes?:number|null;booked?:boolean;learnerConfirmedAt?:string|null;
   note?:string|null;
@@ -35,6 +36,7 @@ export type CareerCalendarEvent = {
 export type CareerCalendarSupplement={
  key:string;kind:"APPLICATION_DEADLINE"|"EXAM_BLOCK"|"JOB_IMPORTANT_DATE";day:string;title:string;
  companyName?:string;roleTitle?:string;visible?:boolean;applied?:boolean;
+ jobId?:string|null;
  note?:string|null;
 };
 
@@ -65,6 +67,7 @@ export function legacyJobImportantDatesToSupplements(
   return [{key:job.jobId+":"+index+":"+record.at,
    kind:legacyJobImportantDateEventType,day:careerDayKey(new Date(entry.at)),
    title:record.label,companyName:job.companyName,roleTitle:job.roleTitle,
+   jobId:job.jobId,
    visible:true,note:record.type}];
  });
 }
@@ -159,7 +162,7 @@ export function careerCalendarEvents(
       title:item.kind==="EXAM_BLOCK"?"No drives run on it · "+item.title:item.title,
       companyName:item.companyName??"College calendar",roleTitle:item.roleTitle??"",
       kind:"OTHER" as const,start,dayKey:item.day,rescheduled:false,
-      eventType:item.kind,note:item.note??null}];
+      eventType:item.kind,note:item.note??null,jobId:item.jobId??null}];
   });
   return [...base,...extras].sort((a,b)=>a.start.getTime()-b.start.getTime()||a.key.localeCompare(b.key));
 }

@@ -28,7 +28,7 @@ export async function loadLearnerCareerCalendarSupplements(
     const day = careerDayKey(deadline);
     if (day > through) continue;
     supplements.push({
-      key: job.id, kind: "APPLICATION_DEADLINE", day,
+      key: job.id, jobId:job.id, kind: "APPLICATION_DEADLINE", day,
       title: "Apply by " + day,
       companyName: row.company.name,
       roleTitle: job.title,

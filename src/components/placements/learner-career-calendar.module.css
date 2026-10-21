@@ -207,6 +207,10 @@
   outline: 2px solid var(--lms-primary-text) !important;
   outline-offset: -2px !important;
 }
+.scheduleGrid { min-width: 630px !important; }
+@media (min-width: 768px) { .scheduleGrid { min-width: 0 !important; } }
+.blockedDay { background: rgba(180,35,24,0.15) !important; }
+.blockedDay:hover { background: rgba(180,35,24,0.22) !important; }
 .outsideDay { background: var(--lms-neutral-50) !important; }
 .outsideDay:hover { background: var(--lms-primary-subtle) !important; }
 .todayDay {
