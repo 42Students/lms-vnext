@@ -36,13 +36,13 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
   });
  }
  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-  <h2 className="font-semibold">Delete drive</h2>
-  <p className="text-sm text-body">Delete archives the drive and preserves its history.
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Delete drive</h2>
+  <p className="text-sm text-body leading-[22px]">Delete archives the drive and preserves its history.
    Learners are notified; scheduled interviews and unaccepted offers are cancelled.</p>
   {!preview?<Button type="button" variant="secondary" disabled={pending} onClick={()=>void inspect()}>
    Preview delete impact</Button>:
    <form onSubmit={e=>void confirm(e)} className="space-y-3">
-    <p className="text-sm font-semibold">Delete {title}?</p>
+    <p className="text-sm font-semibold leading-[22px]">Delete {title}?</p>
     <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] text-sm">
      {([["Active applications",preview.impact.activeApplications],
        ["Affected learners",preview.impact.affectedLearners],
@@ -61,6 +61,6 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
      {pending?"Deleting…":"Confirm delete (archive)"}</Button>
     <Button type="button" variant="secondary" className="mt-[var(--lms-space-2)] w-full sm:mt-0 sm:ml-[var(--lms-space-2)] sm:w-auto" disabled={pending} onClick={()=>setPreview(null)}>Cancel</Button>
    </form>}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
  </section>;
 }
