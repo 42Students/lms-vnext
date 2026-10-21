@@ -6,6 +6,7 @@ import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {Input} from "@/components/ui/input";
+import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -58,11 +59,17 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   </Dialog>
  </div>;
 }
-export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,recipientAwayLabel,items,serverNowMs,highlightAskId}:{
- threadId:string;actorId:string;recipientId:string;recipientName:string;recipientAwayLabel:string|null;items:Ask[];serverNowMs:number;highlightAskId?:string;
+export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,recipientAwayLabel,eligibleAssignees,items,serverNowMs,highlightAskId}:{
+ threadId:string;actorId:string;recipientId:string;recipientName:string;recipientAwayLabel:string|null;
+ eligibleAssignees?:readonly {membershipId:string;displayName:string;awayLabel:string|null}[];
+ items:Ask[];serverNowMs:number;highlightAskId?:string;
 }){
  const router=useRouter(),pending=useRef(false),key=useRef<string|null>(null);
  const [title,setTitle]=useState(""),[due,setDue]=useState("");
+ const [assigneeId,setAssigneeId]=useState(recipientId);
+ const chosenAssignee=eligibleAssignees?.find(member=>member.membershipId===assigneeId);
+ const assigneeName=chosenAssignee?.displayName??recipientName;
+ const assigneeAway=chosenAssignee?.awayLabel??(assigneeId===recipientId?recipientAwayLabel:null);
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  useEffect(()=>{
   if(!highlightAskId)return;
@@ -77,13 +84,30 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
   pending.current=true;setBusy(true);setError("");
   if(!key.current)key.current=crypto.randomUUID();
   try{
-   await apiFetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/asks",{
+   let askThreadId=threadId;
+   // A private thread must never expose its contents to a new teammate.
+   // Start a separately authorized direct conversation for that assignee.
+   if(assigneeId!==recipientId){
+    const threadForm=new FormData();
+    threadForm.set("recipientMembershipId",assigneeId);
+    threadForm.set("topic",("Ask: "+title.trim()).slice(0,200));
+    threadForm.set("idempotencyKey",key.current);
+    const createdThread=await apiFetch<{id:string}>("/api/placements/tpo/team/threads",{
+     method:"POST",credentials:"same-origin",timeoutMs:12000,
+     headers:{Accept:"application/json"},body:threadForm,
+    });
+    if(!createdThread?.id)throw new Error("TEAM_THREAD_CREATE_FAILED");
+    askThreadId=createdThread.id;
+   }
+   const createdAsk=await apiFetch<{id:string}>("/api/placements/tpo/team/threads/"+encodeURIComponent(askThreadId)+"/asks",{
     method:"POST",credentials:"same-origin",timeoutMs:12000,
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({assigneeMembershipId:recipientId,requestKey:key.current,
+    body:JSON.stringify({assigneeMembershipId:assigneeId,requestKey:key.current,
      title:title.trim(),dueAt:dueAt?.toISOString()??null}),
    });
-   key.current=null;setTitle("");setDue("");router.refresh();
+   key.current=null;setTitle("");setDue("");
+   if(askThreadId!==threadId)router.push("/tpo/team/"+askThreadId+(createdAsk?.id?"?ask="+createdAsk.id:""));
+   router.refresh();
   }catch{setError("Could not send the ask. Your draft is still here. Try again.");}
   finally{pending.current=false;setBusy(false);}
  }
@@ -92,8 +116,15 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
   <p className="text-xs text-muted-foreground">Ask one teammate to do something, with an optional due date.</p>
   <Disclosure title="New ask" defaultOpen={items.length===0} className="border-t border-border" contentClassName="px-2 pb-3">
   <form onSubmit={event=>void create(event)} className="grid min-w-0 gap-3">
-   <p className="break-words text-sm">Ask {recipientName}</p>
-   {recipientAwayLabel?<Alert tone="warning">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</Alert>:null}
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ask a teammate
+    <Select value={assigneeId} disabled={busy} onChange={event=>{setAssigneeId(event.target.value);key.current=null;setError("");}}
+     className="min-h-11 w-full min-w-0 md:min-h-9">
+     {(eligibleAssignees?.length?eligibleAssignees:[{membershipId:recipientId,displayName:recipientName,awayLabel:recipientAwayLabel}]).map(member=>
+      <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
+    </Select>
+   </label>
+   {assigneeId!==recipientId?<p className="text-xs text-muted-foreground">This will open a separate private conversation with {assigneeName}, not share this conversation.</p>:null}
+   {assigneeAway?<Alert tone="warning">{assigneeName.split(" ")[0]} is away until {assigneeAway}.</Alert>:null}
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;setError("");}}
@@ -105,7 +136,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
    {error?<InlineNotice tone="error" message={error}/>:null}
-   <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy} disabled={busy||!title.trim()||!recipientId}
+   <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy} disabled={busy||!title.trim()||!assigneeId}
     >
     {busy?"Sending…":"Ask someone"}</Button>
   </form>
