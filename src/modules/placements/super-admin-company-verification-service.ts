@@ -18,6 +18,7 @@ export async function setSuperAdminGlobalCompanyVerification(context:RequestCont
   const [company]=await tx.select({
    id:placementCompanies.id,name:placementCompanies.name,
    status:placementCompanies.status,verifiedAt:placementCompanies.verifiedAt,
+   primaryDomain:placementCompanies.primaryDomain,
   }).from(placementCompanies).where(eq(placementCompanies.id,input.companyId)).for("update").limit(1);
   if(!company||company.status!=="ACTIVE")throw new Error("Company unavailable for verification.");
   if(Boolean(company.verifiedAt)===input.verified)
@@ -34,7 +35,9 @@ export async function setSuperAdminGlobalCompanyVerification(context:RequestCont
    collegeId:null,organizationId:null,
    subjectType:"placement_company",subjectId:company.id,subjectLabel:company.name,
    summary:input.verified?"Company verified by 42":"Company global verification removed",
-   metadata:{previousVerified:Boolean(company.verifiedAt),verified:input.verified},
+   metadata:{previousVerified:Boolean(company.verifiedAt),verified:input.verified,
+    primaryDomain:company.primaryDomain,
+    domainProofNotInferred:true},
   });
   return {companyId:company.id,verified:input.verified,changed:true};
  });

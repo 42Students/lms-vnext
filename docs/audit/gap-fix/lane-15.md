@@ -296,3 +296,6 @@
 
 - work2 #27 `faculty-content-edit-model.ts` | G2-12-008-022: exported exact historical YouTube deletion success/failure copy and 2-second toast duration; component must show only on verified API result, handed off.
 - work2 #28 `mobile-navigation.tsx` | G2-3-033-029: matched concise Open/Close menu accessible labels, disabled duplicate opening while native Drawer handles focus/Back/Escape/route close. Blocked link navigation feedback belongs shared SidebarNav handler; handed off rather than falsely claim success.
+
+- work2 #29 `super-admin-company-verification-service.ts` | G2-9-034-093: global verification audit now snapshots canonical primaryDomain and explicitly records that independent domain ownership is NOT inferred from company flag. Domain-proof consistency cannot be auto-propagated without separate verified domain evidence; handoff for approved schema/service migration.
+- work2 #30 `api/projects/reassign-mentor/route.ts` | G2-6-028-036: rejects obsolete numeric mentorId body with 400 MENTOR_MEMBERSHIP_ID_REQUIRED, retains membership-scoped bulk reassignment authority and roleLabel. Legacy tenant-checked ID crosswalk handed to adapter owner.

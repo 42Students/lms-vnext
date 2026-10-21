@@ -143,3 +143,6 @@
 
 - Faculty YouTube deletion component G2-12-008-022: consume `FACULTY_YOUTUBE_DELETE_FEEDBACK` in delete mutation handler after confirmed server success/failure, show accessible toast for durationMs=2000.
 - Shared `src/components/shell/sidebar-nav.tsx` G2-3-033-029: render blocked navigation feedback when route click fails/permission denies; mobile Drawer currently closes on link click and uses native focus recovery. Don't claim page opened until pathname changes; guard repeated pending link clicks.
+
+- Company identity/domain verification G2-9-034-093: define independent persisted verified domain evidence before syncing global company verification to domain flag; do NOT auto-mark domain owned just because a Super Admin marks company globally verified. Current service audits primaryDomain and domainProofNotInferred; schema/privileged verification reconciliation needs review.
+- Legacy project bulk mentor adapter G2-6-028-036: trusted admin client must resolve old integer mentorId to selected college's ACTIVE mentorMembershipId UUID, refuse ambiguous/out-of-tenant mappings, then POST new API; never cast old ID or bypass requirePermission.
