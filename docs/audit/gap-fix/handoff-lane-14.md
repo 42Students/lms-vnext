@@ -135,3 +135,6 @@
 
 - Legacy Faculty importer / private profile storage owner | G2-1-003-044/-076 | If migration is later explicitly approved, implement tenant-safe Faculty source ID/arrays/orphan mapping and 15-section JSONB round-trip per docs/audit/gap-fix/faculty-profile-source-contract-lane-14.md. Existing 0067 migration cannot be edited and is not a live data import.
 - `src/modules/storage/*` and legacy upload receipt adapter | G2-10-027-085/-086 | Use 0241 alias rows only to resolve old receipt/file keys after tenant/member/asset-kind verification and privileged CLEAN receipt validation; never send raw R2 URLs, object keys or untrusted owner type to clients. Legacy aliases do not independently authorize signed downloads.
+
+- `src/modules/auth/*` session lifecycle and Exotel SMS/OTP owner | G2-18-031-077/-082 | Ensure disabled platform account revokes all sessions while single-college suspension gates just that membership; credential-change invalidate-all and SMS provider/OTP timing must be transactional, independently revalidated per role switch. No shared user should inherit a suspended college role.
+- Hall importer and service owner | G2-19-018-062/-063 | Review unregistered 0228 instead of altering historical 0052; map old ordinal and dept=0, source deleted status/tenant, reconcile archived-name restore conflict with vNext active-name uniqueness.
