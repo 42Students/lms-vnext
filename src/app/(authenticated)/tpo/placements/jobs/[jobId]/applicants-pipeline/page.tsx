@@ -60,7 +60,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     </div>)}
   </section>
   <form action={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} method="get"
-   className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+   className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]" aria-label="Filter applicants pipeline">
    {columns&&<input type="hidden" name="columns" value={columns}/>}
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
     <Select name="stage" defaultValue={data.stage} className="block min-h-11 w-full min-[768px]:min-h-9">

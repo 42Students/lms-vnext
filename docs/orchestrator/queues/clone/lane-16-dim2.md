@@ -139,25 +139,25 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/teacher/results/error.tsx`
 - [x] `src/app/(authenticated)/teacher/results/page.tsx`
 - [x] `src/app/(authenticated)/tpo/announcements/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx`
