@@ -18,7 +18,7 @@ export default async function LearnerSupportHistory({searchParams}:{
   const supportFilterNavClass =
     "min-w-0 max-w-[calc(100vw_-_var(--lms-space-7))] flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
   return <div className="min-w-0 space-y-6">
-    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Placement Cell</Link>
+    <Link href="/learn/my-placements/placement" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-9">← Placement Cell</Link>
     <PageHeader title="My support requests"
       description="Your application withdrawal, round rescheduling and offer-extension requests from your college placement team." />
     <section className="border-b border-border pb-6">
@@ -71,11 +71,11 @@ export default async function LearnerSupportHistory({searchParams}:{
     </ol>}
     <nav aria-label="Request history pages" className="flex flex-wrap gap-3">
       {data.hasPrevious?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page-1})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
         ← Newer requests
       </Link>:null}
       {data.hasMore?<Link href={learnerSupportHistoryHref({status:data.status,type:data.type,page:data.page+1})}
-        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
         Older requests →
       </Link>:null}
     </nav>

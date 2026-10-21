@@ -23,7 +23,7 @@ export default async function FacultyResponseFollowUpsPage({
   const parsed = parseFacultyFollowUpSearchParams(raw);
   if (!parsed.success) return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid follow-up filters"} />
-    <Link href="/teacher/response-followups" className="text-primary-text underline inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <Link href="/teacher/response-followups" className="text-[var(--lms-link-text)] underline inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -33,7 +33,7 @@ export default async function FacultyResponseFollowUpsPage({
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
         Results overview
       </Link>} />
     <form action="/teacher/response-followups" method="get"
@@ -80,19 +80,19 @@ export default async function FacultyResponseFollowUpsPage({
         Filter
       </Button>
       <Link href="/teacher/response-followups"
-        className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>
+        className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear</Link>
     </form>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]">
         {data.total.toLocaleString("en-IN")} matching past-due published assessment{data.total === 1 ? "" : "s"}
       </p>
       <Link href={facultyFollowUpCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 py-2 text-sm font-[650] text-[var(--lms-link-text)] sm:w-auto md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)] hover:underline">
         Export this page counts (no learner details)
       </Link>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear follow-up filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/response-followups" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear follow-up filters</Link> : null}</div>
     : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
       <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
         className="min-w-0 space-y-3 bg-transparent py-4 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary">
@@ -118,7 +118,7 @@ export default async function FacultyResponseFollowUpsPage({
           </p> : null}
         </Disclosure>}
         <Link href={item.reportHref}
-          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline sm:w-auto md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Open authorized Section report →
         </Link>
       </article>)}</div>}
