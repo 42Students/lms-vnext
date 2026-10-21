@@ -15,7 +15,8 @@ import {CollegeServiceError} from "@/modules/colleges/service";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {verificationQueueFilters} from "@/modules/verification/queue-filters";
-import {requireSuperAdminVerificationCollege} from "@/modules/verification/super-admin-scope";
+import {requireSuperAdminVerificationCollege,VerificationAccessCheckError} from "@/modules/verification/super-admin-scope";
+import {AuthorizationError} from "@/modules/permissions/policy";
 
 export const dynamic="force-dynamic";
 export default async function AdminCollegeVerification({
@@ -30,7 +31,19 @@ export default async function AdminCollegeVerification({
  try{
   await requireSuperAdminVerificationCollege(context,collegeId);
   college=await getSuperAdminTenantLifecycleDetail(context,collegeId);
- }catch(e){if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();throw e;}
+ }catch(e){
+  if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();
+  if(e instanceof AuthorizationError)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+   <PageHeader title="Verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+   <ErrorState title="Verification access denied" description="Your current account and college scope do not permit reviewing this verification queue."/>
+  </div>;
+  if(e instanceof VerificationAccessCheckError)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
+   <PageHeader title="Verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+   <ErrorState title="Could not check your verification access" description="The access check could not be completed. No verification records were opened."
+    action={<Link href={`/admin/colleges/${encodeURIComponent(collegeId)}/verification?retry=1`} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+  </div>;
+  throw e;
+ }
  const base=`/admin/colleges/${encodeURIComponent(college.id)}/verification`;
  const raw=await searchParams;
  const invalidPaging=["page","pageSize"].some(key=>{
@@ -50,13 +63,17 @@ export default async function AdminCollegeVerification({
  let data:Awaited<ReturnType<typeof listCollegeVerificationQueue>>;
  try{data=await listCollegeVerificationQueue(context,parsed.data,college.id);}
  catch(e){
-  if(!(e instanceof VerificationUnavailableError)&&!(e instanceof VerificationQueueLimitError))throw e;
+  if(e instanceof AuthorizationError)throw e;
+  const safeParams=new URLSearchParams();
+  for(const [key,value] of Object.entries(raw)){if(typeof value==="string")safeParams.set(key,value);}
+  safeParams.set("retry",String(Date.now()));
+  const retryHref=base+"?"+safeParams.toString();
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
-   <ErrorState title="Verification queue unavailable"
+   <ErrorState title={e instanceof VerificationUnavailableError||e instanceof VerificationQueueLimitError?"Verification queue unavailable":"Could not load the queue"}
     description={e instanceof VerificationUnavailableError?
      "Verification storage is not yet available. No queue decisions can be made.":
-     "The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing."}
-    action={<Link className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={base}>Retry</Link>}/>
+     e instanceof VerificationQueueLimitError?"The verification queue exceeds its safe scan cap. Narrow server-side filters before reviewing.":"Could not load the queue. Retry without losing your selected filters."}
+    action={<Link className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={retryHref}>Retry</Link>}/>
   </div>;
  }
  const [policy]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
