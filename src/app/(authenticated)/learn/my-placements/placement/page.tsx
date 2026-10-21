@@ -125,7 +125,10 @@ export default async function LearnerPlacementCellPage({
           offerId:row.request.offerId,status:row.request.status,
           requestType:row.request.requestType,
         }))}
-        snapshotNowIso={new Date().toISOString()} offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(),
+        snapshotNowIso={new Date().toISOString()} offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr,
+          companyLogoUrl:row.company.logoPublicUrl,
+          legacyCtcLpa:row.offer.legacyCtcLpa,
+          respondedAt:row.offer.respondedAt?.toISOString()??null, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(),
         acceptanceChannel:row.offer.acceptanceChannel,
         acceptedDisputableUntil:row.offer.acceptedDisputableUntil?.toISOString()??null, joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />}
       <section id="rules" className="scroll-mt-24 min-w-0 space-y-2 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
