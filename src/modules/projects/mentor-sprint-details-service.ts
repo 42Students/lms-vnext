@@ -28,6 +28,13 @@ export async function updateMentorSprintDetails(
   if (!can(context,"projects.read",{
     collegeId:scope.collegeId,organizationId:scope.organizationId,
   })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  // Legacy workspaces used a numeric sprint.version counter. In vNext that
+  // counter is not copied into the normalized project_sprints schema:
+  // expectedUpdatedAt is the concurrency revision returned by the current
+  // workspace view. Always compare it against the locked database timestamp,
+  // never parse the old integer as an epoch or accept an unversioned update.
+  // A mismatch is a rejected stale edit (no mutation/activity event); callers
+  // should reload, show the current sprint, and ask the editor to reapply.
   const expected = new Date(input.expectedUpdatedAt);
   const db = getDb();
   return db.transaction(async tx => {
@@ -52,12 +59,16 @@ export async function updateMentorSprintDetails(
     const [release] = await tx.select({status:projectReleases.status})
       .from(projectReleases)
       .where(and(eq(projectReleases.id,sprint.releaseId),
-        eq(projectReleases.projectId,scope.project.id)))
+        eq(projectReleases.projectId,scope.project.id),isNull(projectReleases.deletedAt)))
       .limit(1);
     if (!release || release.status==="SHIPPED") {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     if (sprint.updatedAt.getTime()!==expected.getTime()) {
+      // The locked row is newer than the client's edit. With both numeric
+      // legacy and timestamp-backed vNext imports, never issue a silent
+      // last-write-wins update. This error is intentionally exposed as the
+      // existing stable sprint-invalid-state API code.
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     if(sprint.status==="ACTIVE"&&
