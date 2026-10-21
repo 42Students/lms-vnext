@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Radio } from "@/components/ui/radio";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
+import { useToast } from "@/components/ui/toast";
 
 export type EditableJobType = {
   id: string | null;
@@ -32,6 +33,7 @@ const fromProps = (items: readonly EditableJobType[]): Row[] =>
 /** Legacy Settings > Job types: one ordered, staged five-column table and one atomic save. */
 export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJobType[] }) {
   const router = useRouter();
+  const {showToast} = useToast();
   const serial = useRef(0);
   const [rows, setRows] = useState<Row[]>(() => fromProps(types));
   const [saved, setSaved] = useState<Row[]>(() => fromProps(types));
@@ -151,9 +153,12 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
       }
       setSaved(rows.map(row => ({ ...row, label: normalize(row.label) })));
       setMessage("Job types saved");
+      showToast({tone:"success",title:"Job types saved"});
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "Could not save job types");
+      const detail=caught instanceof Error ? caught.message : "Could not save job types";
+      setError(detail);
+      showToast({tone:"error",title:"Job types were not saved",description:detail});
     } finally {
       setBusy(false);
     }
