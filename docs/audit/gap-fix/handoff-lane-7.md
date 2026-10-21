@@ -1021,3 +1021,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-16-027-046 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | Validate 12h maximum and no-past CREATE in server Zod/transaction; UI-only cap can be bypassed.
 - G2-14-009-015/-051 | `src/components/attendance/faculty-attendance-workspace.tsx` | Ensure Active days derives from marked/held sessions, not future scheduled, matching updated month sessionCount.
+
+- G2-2-030-010/-028 | `src/modules/placements/tpo-configuration-read-service.ts + other choices providers` | Compose genuine authorized 12-key catalogue from owning modules; do not return fabricated empty choices.
+- G2-17-026-010 / G2-18-004-014 | `src/app/(authenticated)/learn/notifications/page.tsx + learner notification source` | Map courseSlug over courseId with authorized enrollment and translate safe known CTA types; legacy tab alias already present.

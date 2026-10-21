@@ -226,3 +226,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-schedule-editor-model.ts.md` | Create editor now rejects past start and preserves 12h max/IST with separate reschedule path; server direct-POST 12h enforcement remains a required mutation-model fix. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_faculty-learner-attendance-detail.ts.md` | Month sessionCount counts only MARKED sessions rather than future scheduled, leaving upcomingSessions explicit and historical marks unknown rather than present. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-read-service.ts.md` | Verified college-scoped job type readers already provide per-type nonarchived drive counts and built-in fallbacks; added explicit 12-key legacy compatibility inventory. Other 10 key sources and a composed response need owner integrations. No CI.
+- `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_learner-notification-inbox-model.ts.md` | Verified learner notifications page already validates and canonical-redirects legacy tab aliases; exported safe category parser. CourseSlug/class-scoped filters and target-specific CTAs need authorized service/UI mapping. No CI.
