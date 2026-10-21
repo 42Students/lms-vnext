@@ -75,7 +75,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_recruiter-college-branch-service.ts.md` (edit src/modules/placements/recruiter-college-branch-service.ts; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-recruiter-lead-policy.ts.md` (edit src/modules/placements/tpo-recruiter-lead-policy.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_api_placements_journey_me_route.ts.md` (edit src/app/api/placements/journey/me/route.ts; 3 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_api_placements_recruiter_notifications_drawer_route.ts.md` (edit src/app/api/placements/recruiter/notifications/drawer/route.ts; 3 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_api_placements_recruiter_notifications_drawer_route.ts.md` (edit src/app/api/placements/recruiter/notifications/drawer/route.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-calendar-kind-chips.ts.md` (edit src/modules/placements/tpo-calendar-kind-chips.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-20_job-application-status-history-service-impl.md.md` (new; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_learner-round-search-query-model.ts.md` (edit src/modules/placements/learner-round-search-query-model.ts; 2 findings; best P2)
