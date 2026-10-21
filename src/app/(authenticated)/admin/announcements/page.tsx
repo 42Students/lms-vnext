@@ -13,6 +13,9 @@ import {
   type AnnouncementTarget,
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
 import {getSuperAdminBroadcastReceiptCounts} from "@/modules/announcements/super-admin-broadcast-receipts-service";
 import {listSuperAdminBroadcastColleges} from "@/modules/announcements/super-admin-college-broadcast-service";
@@ -63,7 +66,7 @@ export default async function AnnouncementsPage({
   }
 
   const includeDeleted = params.deleted === "1";
-  const [page, targetGroups, broadcastColleges] = await Promise.all([
+  const [pageResult,targetsResult,broadcastResult] = await Promise.all([
     listAnnouncementsForAdmin(context, {
       includeDeleted,
       q: params.q,
@@ -74,10 +77,36 @@ export default async function AnnouncementsPage({
       beforeCreatedAt: params.beforeCreatedAt,
       beforeId: params.beforeId,
       limit: 50,
-    }),
-    listAnnouncementTargetOptions(context),
-    listSuperAdminBroadcastColleges(context),
+    }).then(value=>({ok:true as const,value}))
+      .catch(error=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {ok:false as const,value:null};
+      }),
+    listAnnouncementTargetOptions(context)
+      .then(value=>({ok:true as const,value}))
+      .catch(error=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {ok:false as const,value:null};
+      }),
+    listSuperAdminBroadcastColleges(context)
+      .then(value=>({ok:true as const,value}))
+      .catch(error=>{
+        if(error instanceof AuthorizationError)throw error;
+        return {ok:false as const,value:[]};
+      }),
   ]);
+  if(!pageResult.ok||!pageResult.value)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Announcements" description="Review and publish college notices."/>
+    <ErrorState title="Announcements could not be loaded"
+      description="The authorized notice list is temporarily unavailable. No published notice was changed."
+      action={<Link href="/admin/announcements"
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+        Retry announcements
+      </Link>}/>
+  </div>;
+  const page=pageResult.value;
+  const targetGroups=targetsResult.value;
+  const broadcastColleges=broadcastResult.value;
 
   const targets: AnnouncementTarget[] = targetGroups
     ? [
@@ -109,7 +138,14 @@ export default async function AnnouncementsPage({
     visibilityState: announcementVisibilityAt(item, now),
   }));
 
-  const receipts=await getSuperAdminBroadcastReceiptCounts(context,page.items.filter(x=>x.senderType==="SUPER_ADMIN"&&x.receiverType==="COLLEGE").map(x=>x.id));
+  const receiptResult=await getSuperAdminBroadcastReceiptCounts(context,
+    page.items.filter(x=>x.senderType==="SUPER_ADMIN"&&x.receiverType==="COLLEGE").map(x=>x.id))
+    .then(value=>({ok:true as const,value}))
+    .catch(error=>{
+      if(error instanceof AuthorizationError)throw error;
+      return {ok:false as const,value:new Map<string,{delivered:number;read:number;cellRead:number}>()};
+    });
+  const receipts=receiptResult.value;
   const next = page.nextCursor
     ? "/admin/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
@@ -177,10 +213,23 @@ export default async function AnnouncementsPage({
         <Button type="submit" className="w-full min-[768px]:w-auto">Search</Button>
         <Link href="/admin/announcements" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 min-[768px]:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
       </form>
+      {!targetsResult.ok?<Banner tone="warning" role="status"
+        action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry targets</Link>}>
+        Announcement audience options could not be loaded. Existing notices remain visible;
+        select-audience publishing options are temporarily unavailable.
+      </Banner>:null}
+      {!broadcastResult.ok?<Banner tone="warning" role="status"
+        action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry colleges</Link>}>
+        Broadcast colleges could not be loaded. No broadcast audience was assumed or published.
+      </Banner>:null}
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
+      {!receiptResult.ok?<Banner tone="warning" role="status"
+        action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry read receipts</Link>}>
+        Placement-cell read counts are temporarily unavailable. Do not infer unread or zero reach.
+      </Banner>:null}
       {receipts.size?<section aria-label="Placement-cell read receipts" className="min-w-0 space-y-3 border-t border-border pt-6">
        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Placement-cell read receipts</h2>
-       <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read.</p>
+       <p className="text-sm text-muted-foreground">Durable first-read receipts for each selected college notice. Each notice is addressed to one placement cell; notification delivery is shown separately, and only an explicit acknowledgement counts as a placement-cell read. A 1-of-1 cell receipt is not the total reach of a multi-college broadcast.</p>
        <ul className="min-w-0 space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
         const receipt=receipts.get(row.id)!;
         return <li key={row.id} className="border-b border-border py-3 text-sm">
@@ -190,6 +239,13 @@ export default async function AnnouncementsPage({
         </li>;
        })}</ul>
       </section>:null}
+      <Banner tone="info" role="status">
+        Broadcast notices are stored as separate college records. This view does not yet
+        combine them by broadcast group or calculate distinct colleges reached; the individual
+        placement-cell receipts above must not be treated as an all-colleges delivery total.
+        Scheduled-delivery retry, cancel and the cross-type recycle bin require separate,
+        audited operator services and are not available through this announcements list.
+      </Banner>
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent
         emptyMessage={announcementHistoryEmptyMessage({
           hasFilters:Boolean(params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted),
