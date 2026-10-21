@@ -145,6 +145,14 @@ export function parseSuperAdminHrPageParams(raw:Record<string,string|string[]|un
  * Never replace the canonical displayName or assume contact mail equals
  * the platform sign-in credential.
  */
+/** Join legacy split-name fields without dropping multiple family-name tokens.
+ * A freeform legacy employer name cannot bypass the canonical verified
+ * relationship/new-company validation in createSuperAdminHrInputSchema.
+ */
+export function recruiterLegacyDisplayName(firstName:string,lastName:string):string{
+ return [firstName.trim(),lastName.trim()].filter(Boolean).join(" ").replace(/\\s+/g," ");
+}
+
 export function recruiterLegacyNameParts(displayName:string){
  const clean=displayName.trim().replace(/\s+/g," ");
  const index=clean.indexOf(" ");
