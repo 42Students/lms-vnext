@@ -31,6 +31,22 @@ export function selectFacultyAssignmentSubmissions<T extends {
   ).slice().sort((a,b)=>b.submittedAt.getTime()-a.submittedAt.getTime() || (a.id??"").localeCompare(b.id??""));
 }
 
+/** SQL pagination contract for large, scoped assignment-submission reports.
+ * The service must filter under the faculty's delivery/assignment permission,
+ * run a matching COUNT query, then apply LIMIT/OFFSET before materializing
+ * submission/profile rows. Legacy unpaged max=50, explicit max=100; the vNext
+ * review UI uses 20 to keep a stable panel layout. */
+export const FACULTY_SUBMISSION_SQL_PAGE_SIZE=20;
+export const FACULTY_SUBMISSION_LEGACY_UNPAGED_MAX=50;
+export const FACULTY_SUBMISSION_LEGACY_EXPLICIT_MAX=100;
+export function facultySubmissionSqlPageWindow(requested:number,total:number){
+ if(!Number.isSafeInteger(total)||total<0)throw new Error("Invalid submission count");
+ const totalPages=Math.max(1,Math.ceil(total/FACULTY_SUBMISSION_SQL_PAGE_SIZE));
+ const page=Math.min(Math.max(1,Math.trunc(Number.isFinite(requested)?requested:1)),totalPages);
+ return {page,total,totalPages,limit:FACULTY_SUBMISSION_SQL_PAGE_SIZE,
+  offset:(page-1)*FACULTY_SUBMISSION_SQL_PAGE_SIZE};
+}
+
 export function facultySubmissionListPage<T>(rows:readonly T[],requested:number) {
   const total=rows.length,pageSize=20;
   const totalPages=Math.max(1,Math.ceil(total/pageSize));

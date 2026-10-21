@@ -25,7 +25,7 @@ export function OfflineBanner() {
   if (!offline || pathname === "/offline") return null;
   return (
     <div role="alert" className="sticky top-0 z-50 min-w-0 break-words border-b border-warning bg-warning-subtle px-4 py-2.5 text-left text-sm font-medium leading-5 text-foreground sm:text-center">
-      You appear to be offline. Check your connection and try again.
+      You're offline. Reconnect to the internet, then try again. Your current screen has not been cleared.
     </div>
   );
 }
