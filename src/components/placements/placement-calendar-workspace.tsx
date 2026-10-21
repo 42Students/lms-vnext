@@ -695,6 +695,36 @@ export async function PlacementCalendarWorkspace({
         }
         actions={
           <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div
+            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles.tpoViewSwitch:"")}
+            role="group"
+            aria-label="Calendar view"
+          >
+            {VIEWS.map((view) => (
+              <Link
+                key={view}
+                href={calendarHref(
+                  basePath,
+                  audience,
+                  state,
+                  { view },
+                )}
+                aria-current={
+                  state.view === view
+                    ? "page"
+                    : undefined
+                }
+                className={
+                  state.view === view
+                    ? "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold capitalize text-[var(--lms-on-primary)] md:min-h-9 md:px-4"
+                    : "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-center text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:px-4"
+                }
+              >
+                {view}
+              </Link>
+            ))}
+          </div>
+
             {audience === "COLLEGE_ADMIN" ? (
               <Link href="/college/placements/interviews"
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)] md:min-h-9">
@@ -849,35 +879,6 @@ export async function PlacementCalendarWorkspace({
                  "Item count unavailable"}
               </span>
             </p>
-          </div>
-          <div
-            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles.tpoViewSwitch:"")}
-            role="group"
-            aria-label="Calendar view"
-          >
-            {VIEWS.map((view) => (
-              <Link
-                key={view}
-                href={calendarHref(
-                  basePath,
-                  audience,
-                  state,
-                  { view },
-                )}
-                aria-current={
-                  state.view === view
-                    ? "page"
-                    : undefined
-                }
-                className={
-                  state.view === view
-                    ? "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold capitalize text-[var(--lms-on-primary)] md:min-h-9 md:px-4"
-                    : "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-center text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:px-4"
-                }
-              >
-                {view}
-              </Link>
-            ))}
           </div>
         </div>
 
