@@ -17,6 +17,40 @@ import {z} from "zod";
 import {recruiterDriveApprovalPolicy,recruiterAutoApprovalExplanation} from "./recruiter-drive-autoapproval-policy";
 import {createRecruiterApprovedDraftJob,RecruiterDraftApprovalError} from "./recruiter-approved-draft-job-service";
 
+/** Resolve a historic recruiter Job bookmark without guessing which new
+ * request it represents. The legacy integer ID is only a search key; the
+ * selected active college and recruiter relationship remain mandatory.
+ * Old Job records are NOT automatically approved/re-submitted as requests.
+ */
+export async function resolveOwnRecruiterLegacyJobLink(
+  context:RequestContext,raw:unknown,
+) {
+  const input=z.strictObject({
+    collegeId:z.string().uuid(),
+    legacyJobId:z.number().int().positive(),
+  }).parse(raw);
+  const grant=requireOwnGrant(context,input.collegeId);
+  const [job]=await getDb().select({
+    jobId:placementJobs.id,
+    collegeId:placementJobs.collegeId,
+  }).from(placementJobs).where(and(
+    eq(placementJobs.legacyJobId,input.legacyJobId),
+    eq(placementJobs.collegeId,input.collegeId),
+    eq(placementJobs.companyRelationshipId,grant.companyRelationshipId),
+  )).limit(1);
+  if(!job)throw new RecruiterDriveRequestError("NOT_FOUND");
+  const [request]=await getDb().select({
+    requestId:placementRecruiterDriveRequests.id,
+    status:placementRecruiterDriveRequests.status,
+  }).from(placementRecruiterDriveRequests).where(and(
+    eq(placementRecruiterDriveRequests.collegeId,input.collegeId),
+    eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
+    eq(placementRecruiterDriveRequests.sourceJobId,job.jobId),
+  )).orderBy(desc(placementRecruiterDriveRequests.createdAt)).limit(1);
+  return {jobId:job.jobId,requestId:request?.requestId??null,
+    requestStatus:request?.status??null};
+}
+
 /** Each vNext request is intentionally scoped to one college, rather than
  * creating jobs for several colleges from one legacy drive-group request.
  * Preserve a stable single-college group receipt for historical UIs without

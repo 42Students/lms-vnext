@@ -406,17 +406,17 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <Disclosure title="Policy notes" className="mt-4" contentClassName="pt-2 pb-3">
       <p className="text-xs leading-5 text-muted-foreground">
-        The college matrix and this hierarchy are read-only.
-        A lower-level configured override is not necessarily
-        effective: a locked ancestor can take precedence.
-        Individual learner evaluation also requires current
-        enrollment, role and participation checks.
-        Membership IDs are shortened in the display;
-        no contact details are loaded. Missing academic
-        nodes without stored overrides are not enumerated.
-        Editing, bulk changes, override drawers and
-        exact legacy in-page access-trace interactions
-        remain outside this partial implementation.
+        Every department, program, batch and class on the selected academic
+        hierarchy page appears, including scopes without stored overrides.
+        Choose that scope in the editor above, recheck its latest rule, then
+        apply Projects or Electives On, Off or Inherit. A locked ancestor takes
+        precedence and disables descendant edits. Placements is controlled at
+        college scope or above; learner eligibility is decided separately.
+        The hierarchy loads up to 500 scopes per page, with more scopes on the
+        following hierarchy pages. Individual learner decisions require current
+        membership, enrollment, role and participation checks in the access
+        trace; contact fields are not loaded. Bulk learner changes stay on the
+        Students page, where each write has its own permission and audit checks.
       </p>
       </Disclosure>
     </div>

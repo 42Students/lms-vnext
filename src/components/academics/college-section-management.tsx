@@ -237,6 +237,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   const [editFieldErrors,setEditFieldErrors]=useState<Record<string,string>>({});
   const [discardConfirm, setDiscardConfirm] = useState(false);
   const [deleteConfirm,setDeleteConfirm]=useState(false);
+  const [deleteError,setDeleteError]=useState("");
   const [scheduleOpen,setScheduleOpen]=useState(false);
   const [scheduleDiscardConfirm,setScheduleDiscardConfirm]=useState(false);
   const [scheduleLoading,setScheduleLoading]=useState(false);
@@ -313,6 +314,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   async function deleteClass(){
     if(pending||!row.canDelete||!row.updatedAt)return;
     setDeleteConfirm(false);
+    setDeleteError("");
     const updatedAt=new Date(row.updatedAt).toISOString();
     startTransition(async()=>{
       try{
@@ -324,7 +326,8 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         router.refresh();
       }catch(error){
         const message=academicSetupErrorMessage(error,"Could not delete class.");
-        setNotice(message);
+        setDeleteError(message);
+        setNotice("");
         showToast({tone:"error",title:"Class not deleted",description:message});
       }
     });
@@ -392,6 +395,13 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         "Cannot delete a class with learners, faculty, schedules or deliveries"}
       onClick={()=>setDeleteConfirm(true)} aria-label={"Delete class "+row.name}>Delete</Button>
     </div>
+    {deleteError ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-[var(--lms-error)] px-3 py-2 text-xs text-body">
+      <span>Could not delete class “{row.name}”: {deleteError}</span>
+      <Button type="button" variant="secondary" disabled={pending}
+        onClick={()=>{setDeleteError("");setDeleteConfirm(true);}}>Retry delete</Button>
+      <Button type="button" variant="secondary" disabled={pending}
+        onClick={()=>router.refresh()}>Reload list</Button>
+    </div> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
       title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={false}>
       <form ref={editFormRef} noValidate onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">

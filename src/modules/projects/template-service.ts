@@ -7,6 +7,8 @@ import {
   isNull,
   isNotNull,
   inArray,
+  ilike,
+  or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -198,8 +200,6 @@ export async function getAssignedProjectTemplateDetail(
 ) {
   const collegeId =
     collegeIdSchema.parse(collegeIdInput);
-  const templateId =
-    projectTemplateIdSchema.parse(templateIdInput);
   const college =
     await loadProjectCollegeScope(collegeId);
 
@@ -211,6 +211,33 @@ export async function getAssignedProjectTemplateDetail(
       collegeId: college.id,
     },
   );
+
+  // Numeric bookmarks resolve only through this college's active published
+  // assignment. The global mapping by itself never grants tenant access.
+  const uuid=projectTemplateIdSchema.safeParse(templateIdInput);
+  let templateId:string;
+  if(uuid.success)templateId=uuid.data;
+  else {
+    if(!/^[1-9][0-9]{0,9}$/.test(templateIdInput))
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
+    const matches=await getDb().select({id:projectTemplates.id})
+      .from(legacyIdMap)
+      .innerJoin(projectTemplates,eq(projectTemplates.id,legacyIdMap.newId))
+      .innerJoin(projectTemplateCollegeAssignments,
+        eq(projectTemplateCollegeAssignments.templateId,projectTemplates.id))
+      .where(and(
+        eq(legacyIdMap.legacyId,templateIdInput),
+        inArray(legacyIdMap.legacyEntityType,["project_template","template"]),
+        inArray(legacyIdMap.newEntityType,["project_template","template"]),
+        sql`(${legacyIdMap.collegeId} is null or ${legacyIdMap.collegeId} = ${collegeId})`,
+        eq(projectTemplateCollegeAssignments.collegeId,collegeId),
+        isNull(projectTemplateCollegeAssignments.revokedAt),
+        eq(projectTemplates.status,"PUBLISHED"),
+      )).limit(2);
+    if(matches.length!==1)
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
+    templateId=matches[0]!.id;
+  }
 
   const [row] = await getDb()
     .select({
@@ -1012,6 +1039,7 @@ export async function replaceProjectTemplateCollegeAssignments(
 export async function listAssignedProjectTemplates(
   context: RequestContext,
   collegeIdInput: string,
+  searchInput = "",
 ) {
   const collegeId =
     collegeIdSchema.parse(collegeIdInput);
@@ -1022,6 +1050,8 @@ export async function listAssignedProjectTemplates(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
+  const q=searchInput.trim().slice(0,120).replace(/[%_]/g,"");
+  const needle="%"+q+"%";
 
   return getDb()
     .select({
@@ -1069,6 +1099,8 @@ export async function listAssignedProjectTemplates(
           projectTemplateCollegeAssignments.revokedAt,
         ),
         eq(projectTemplates.status, "PUBLISHED"),
+        q ? or(ilike(projectTemplateVersions.title,needle),
+          ilike(projectTemplates.slug,needle)) : undefined,
       ),
     )
     .orderBy(asc(projectTemplateVersions.title));

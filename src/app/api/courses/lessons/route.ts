@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -27,7 +28,18 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const view = url.searchParams.get("view");
     if (view === "search") {
+      const rawQuery=url.searchParams.get("query")??"";
+      const rawLimit=url.searchParams.get("limit")??"15";
       const courseId = url.searchParams.get("courseId") ?? undefined;
+      const valid=z.strictObject({
+        query:z.string().trim().max(100),
+        limit:z.coerce.number().int().min(1).max(200),
+        courseId:z.string().uuid().optional(),
+      }).safeParse({query:rawQuery,limit:rawLimit,...(courseId?{courseId}:{})});
+      if(!valid.success)return NextResponse.json({
+        error:"INVALID_LESSON_SEARCH_FILTERS",
+        message:"Use a query of at most 100 characters, a limit from 1 to 200, and a scoped course UUID (not a legacy numeric ID).",
+      },{status:400,headers:noStore});
       if (!courseId && !isSuperAdmin(context)) {
         return NextResponse.json({
           error: "COURSE_ID_REQUIRED",
@@ -35,8 +47,8 @@ export async function GET(request: Request) {
         }, { status: 403, headers: noStore });
       }
       const result = await searchCollegeLessons(context, {
-        query: url.searchParams.get("query") ?? "",
-        limit: url.searchParams.get("limit") ?? "15",
+        query: valid.data.query,
+        limit: valid.data.limit,
         ...(courseId ? { courseId } : {}),
       });
       return NextResponse.json({
@@ -65,7 +77,12 @@ export async function GET(request: Request) {
         "true",
     );
 
-    return NextResponse.json({ lessons }, { headers: noStore });
+    // Keep the modern "lessons" array stable. Legacy consumers that expect
+    // Response(status,message,data) may use the same authenticated scoped
+    // endpoint without another unprotected /api/v1 namespace.
+    return NextResponse.json({
+      lessons,status:"success",message:"Lessons retrieved",data:lessons,
+    }, { headers: noStore });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -99,14 +116,27 @@ export async function POST(request: Request) {
       }, { status: 410, headers: noStore });
     }
     const context = await getCurrentRequestContext();
-    const body = await request.json();
-    const lesson = await createCourseLesson(
-      context,
-      body,
-    );
+    const body:unknown=await request.json();
+    if(!body||typeof body!=="object"||Array.isArray(body))
+      return NextResponse.json({error:"INVALID_LESSON_REQUEST"},{
+        status:400,headers:noStore,
+      });
+    const raw=body as Record<string,unknown>;
+    // Legacy lesson_name and sequence=0 semantics are mapped, but the
+    // learning path must always resolve to the caller's authorized offering.
+    // Course slugs/legacy numeric IDs alone are not trusted parent IDs.
+    if(!raw.learningPathId&&(raw.course_id||raw.courseId||raw.slug))
+      return NextResponse.json({
+        error:"LEARNING_PATH_REQUIRED",
+        message:"Select an authorized course offering and its learningPathId. Legacy numeric course IDs and slugs cannot identify a tenant on their own.",
+      },{status:400,headers:noStore});
+    const {lesson_name:legacyLessonName,...modern}=raw;
+    const mapped=(legacyLessonName!==undefined && modern.name===undefined)
+      ?{...modern,name:legacyLessonName}:modern;
+    const lesson = await createCourseLesson(context,mapped);
 
     return NextResponse.json(
-      { lesson },
+      { lesson,status:"success",message:"Lesson created",data:lesson },
       { status: 201, headers: noStore },
     );
   } catch (error) {

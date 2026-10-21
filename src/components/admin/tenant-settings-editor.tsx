@@ -47,7 +47,23 @@ function normalizedSettingValue(spec:LegacyTenantSettingSpec,value:string):strin
  }
  return trimmed;
 }
+const tenantSettingKeyHelp:Record<string,string>={
+ baseDomain:"Primary DNS zone for tenant subdomains. Match verified deployments; changes require DNS and tenant resolution cutover.",
+ globalHost:"Canonical global LMS host. Updating the stored value does not change load-balancer routing or TLS certificates.",
+ cookieDomain:"Shared login cookie domain. Wrong settings can sign out users or expose cookies to unintended subdomains.",
+ cookieSameSite:"Browser cookie cross-site policy: Strict, Lax, or None. None requires Secure cookies and deployment review.",
+ "policy.superadmin.ipAllowlist":"Privileged network allowlist. Verify gateway policy and an independent recovery path before activation.",
+ "attendance.eligibilityThresholdPercent":"Minimum attendance percentage for exam eligibility in this college. Check live attendance consumers before treating this override as active.",
+ "attendance.correctionWindowHours":"How long after class an authorized faculty member may correct attendance. This is a college-specific policy.",
+ "schedule.pastBookingGraceMinutes":"Grace period for booking a session with a past start time. Requires scheduling-service verification.",
+ "ops.bulkStatusMax":"Upper bound for one bulk status-change request. Saving an override does not update an unconnected worker.",
+ "ops.progressBulkIdsMax":"Upper bound on course-progress batch IDs to prevent unbounded requests.",
+ "ops.identityMaxJsonSize":"Maximum identity payload size in bytes. Enforce on the authoritative server reader.",
+ "ops.announcementMaxPageSize":"Maximum announcement listing page size; cannot bypass server validation.",
+};
 function runtimeHint(spec:LegacyTenantSettingSpec):string{
+ const keyHelp=tenantSettingKeyHelp[spec.key];
+ if(keyHelp)return keyHelp;
  if(spec.key.startsWith("sms.")){
   return "Exotel sender/provider setup and India's registered DLT template must match the approved text and variable order exactly. Use approved {#var#} placeholders or the registered provider mapping; do not paste credentials here. A stored override is not proof of SMS delivery.";
  }
@@ -186,7 +202,13 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="error">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.dangerous||spec.key.startsWith("otp.")?<StatusBadge tone="warning">Stored · runtime activation unverified</StatusBadge>:null}
-     <span id={"tenant-help-"+spec.key} className="text-xs font-normal leading-5 text-body">{spec.help??runtimeHint(spec)}</span>
+     <span id={"tenant-help-"+spec.key} title={spec.help??runtimeHint(spec)} className="text-xs font-normal leading-5 text-body">
+       {spec.help??runtimeHint(spec)}
+       <span className="mt-1 block text-muted-foreground">
+        Source default: {spec.placeholder??"Defined by the running service (not exposed by this inventory)"}.
+        Blank removes the stored override.
+       </span>
+      </span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
       placeholder={spec.placeholder??"Use source default"}
       aria-label={spec.label+" for "+(scopeType==="GLOBAL"?"global settings":"selected college")}

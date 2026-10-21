@@ -58,13 +58,13 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
     const entry=rows[index];
     const name=(entry.firstName+" "+entry.lastName).trim();
     if (seen.has(entry.phoneE164)) {
-      results.push({row:index+1,name,status:"SKIPPED",message:"Duplicate mobile in this file"});
+      results.push({row:index+2,name,status:"SKIPPED",message:"Duplicate mobile in this file"});
       continue;
     }
     seen.add(entry.phoneE164);
     const normalizedEmail = entry.email?.toLowerCase();
     if (normalizedEmail && seenEmails.has(normalizedEmail)) {
-      results.push({row:index+1,name,status:"SKIPPED",message:"Duplicate email in this file"});
+      results.push({row:index+2,name,status:"SKIPPED",message:"Duplicate email in this file"});
       continue;
     }
     if (normalizedEmail) seenEmails.add(normalizedEmail);
@@ -82,15 +82,15 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
           employmentType:entry.facultyType==="MENTOR"?"Mentor":"Lecturer",
           academicTitle:null,
         });
-        results.push({row:index+1,name,status:"CREATED",
+        results.push({row:index+2,name,status:"CREATED",
           message:"Faculty registered with department and faculty type."});
       } catch {
-        results.push({row:index+1,name,status:"PARTIAL",
+        results.push({row:index+2,name,status:"PARTIAL",
           message:"Account created, but department or faculty type could not be saved. Review this faculty membership before retrying; do not create the same mobile again."});
       }
     } catch(error) {
       const code=error && typeof error === "object" && "code" in error ? String(error.code) : "";
-      results.push({row:index+1,name,status:"FAILED",
+      results.push({row:index+2,name,status:"FAILED",
         message:code==="IDENTITY_COLLISION"?"Email or mobile already registered; verify this faculty record before retrying":
           "Could not onboard this record. Check the identity and college permissions."});
     }

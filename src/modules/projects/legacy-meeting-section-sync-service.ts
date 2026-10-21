@@ -121,10 +121,21 @@ export async function synchronizeLegacyProjectMeetingSection(
     for (const row of input.meetings) {
       const old = existingByKey.get(row.meetingKey.toLocaleLowerCase("en"));
       const startsAt = new Date(row.startsAt), endsAt = new Date(row.endsAt);
+      const agenda = row.agenda === undefined ? old?.agenda ?? null : row.agenda;
+      const meetingUrl = row.meetingUrl === undefined ? old?.meetingUrl ?? null : row.meetingUrl;
+      // This compatibility write must respect the native DB meeting shape.
+      // Historical authors cannot be invented from the current signed-in admin.
+      // A migrated REQUESTED or scheduled row may be revived only when its
+      // original requester/organiser was already persisted by the importer.
+      if (row.status === "REQUESTED" && !old?.requestedByMembershipId)
+        throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+      if (["SCHEDULED", "RESCHEDULED", "COMPLETED"].includes(row.status) &&
+          (!old?.scheduledByUserId || !meetingUrl))
+        throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
       const payload = {
-        meetingKey: row.meetingKey, title: row.title, agenda: row.agenda ?? null,
+        meetingKey: row.meetingKey, title: row.title, agenda,
         startsAt, endsAt, timeZone: row.timeZone,
-        meetingType: row.meetingType, meetingUrl: row.meetingUrl ?? null,
+        meetingType: row.meetingType, meetingUrl,
         status: row.status, deletedAt: null, deletedByWorkspace: false,
       };
       if (!old) {

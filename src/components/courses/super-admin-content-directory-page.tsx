@@ -18,6 +18,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
  ADMIN_CONTENT_LABELS,adminContentHref,adminContentQuerySchema,
+ ADMIN_CONTENT_PAGE_OPTIONS,adminContentRange,
  effectiveCourseContentVisibleToStudents,type AdminContentKind,
 } from "@/modules/courses/super-admin-content-directory-model";
 import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
@@ -40,11 +41,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
 }) {
  const raw=await searchParams;
  const invalidKeys=Object.keys(raw).some(key=>
-  !["q","status","page","offeringId","lessonId","deliveryId","scope","lessonSearch","lessonPage"].includes(key));
+  !["q","status","page","pageSize","offeringId","lessonId","deliveryId","scope","lessonSearch","lessonPage"].includes(key));
  const duplicated=Object.values(raw).some(Array.isArray);
  const parsed=(invalidKeys||duplicated)
   ?adminContentQuerySchema.safeParse(null)
-  :adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,
+  :adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,
     offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
  const title=ADMIN_CONTENT_LABELS[kind];
  const lessonSearch=typeof raw.lessonSearch==="string"?raw.lessonSearch.trim():"";
@@ -144,6 +145,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <form method="get" className="mb-3 flex min-w-0 flex-wrap items-end gap-2" role="search">
     {Object.entries({
       q:data.query.q,status:data.query.status,page:String(data.query.page),
+      pageSize:String(data.query.pageSize),
       offeringId:data.query.offeringId??"",lessonId:data.query.lessonId??"",
       deliveryId:data.query.deliveryId??"",scope:data.query.scope,
     }).filter(([,value])=>Boolean(value)).map(([key,value])=>
@@ -194,6 +196,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       {statuses.map(status=><option key={status}>{status}</option>)}
      </Select>
     </label>
+    <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Rows per page
+      <Select name="pageSize" defaultValue={String(data.query.pageSize)} className="min-h-11 md:min-h-9">
+        {ADMIN_CONTENT_PAGE_OPTIONS.map(n=><option key={n} value={n}>{n}</option>)}
+      </Select>
+    </label>
     <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
    <details className="min-w-0" open>
@@ -227,7 +234,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   </form>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
    <p className="m-0 break-words text-sm text-muted-foreground">
-      {data.total===0?0:(data.query.page-1)*25+1}–{Math.min(data.total,data.query.page*25)}
+      {adminContentRange(data.total,data.query.page,data.query.pageSize).start}–{adminContentRange(data.total,data.query.page,data.query.pageSize).end}
       {" "}of {data.total} · Page {data.query.page} of {data.totalPages}
     </p>
    <div className="flex flex-wrap items-center gap-2" aria-label="Existing Content toolbar">

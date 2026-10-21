@@ -22,8 +22,9 @@ export class SavedJobsStorageUnavailableError extends Error {
 const savedJobId = z.string().uuid();
 
 /**
- * DB08 saved-job source stage only. No routes should call these functions
- * before placement_saved_jobs is added to the numbered Drizzle migration.
+ * Saved jobs are scoped by a persisted (college, membership, job) key.
+ * Imported numeric IDs remain read-only migration attributes, never direct
+ * authorization inputs or a license to browse other colleges' jobs.
  */
 async function requireVisiblePlacements(context: RequestContext) {
   const learner = await requireLearnerPlacementAccess(context);
@@ -78,7 +79,8 @@ export async function unsaveOwnPlacementJob(
       eq(placementSavedJobs.jobId, jobId),
     ))
     .returning({ id: placementSavedJobs.id });
-  return { removed: deleted.length > 0 };
+  return { removed: deleted.length > 0, saved:false as const,
+    message:"Job removed from saved" as const };
 }
 
 /** Never return another tenant's job data or unpublished/archived job info. */
@@ -92,6 +94,15 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       title: placementJobs.title,
       jobStatus: placementJobs.status,
       applicationDeadline: placementJobs.applicationDeadline,
+      employmentType: placementJobs.employmentType,
+      workMode: placementJobs.workMode,
+      locations: placementJobs.locations,
+      openings: placementJobs.openings,
+      minimumAnnualCtcInr: placementJobs.minimumAnnualCtcInr,
+      maximumAnnualCtcInr: placementJobs.maximumAnnualCtcInr,
+      // These are only college-scoped, historically bookmarked job facts.
+      // Never return internal eligibility policies, unpublished descriptions,
+      // company contacts or candidate fields through a saved-bookmark read.
     })
     .from(placementSavedJobs)
     .innerJoin(placementJobs, eq(placementJobs.id, placementSavedJobs.jobId))
@@ -100,13 +111,23 @@ export async function listOwnPlacementSavedJobs(context: RequestContext) {
       eq(placementSavedJobs.membershipId, learner.id),
       eq(placementJobs.collegeId, learner.collegeId),
     ))
-    .orderBy(desc(placementSavedJobs.savedAt));
+    .orderBy(desc(placementSavedJobs.savedAt),desc(placementSavedJobs.id));
   // A saved-row is evidence of a learner's previous access in THIS college.
   // Closed, cancelled and archived jobs remain historical saved items, even
   // after their deadline passes. Still enforce today's eligibility/visibility
   // for any live published job; an old bookmark must not bypass a new policy.
-  const feed = await listLearnerPlacementJobs(context);
-  const visibleIds = new Set(feed.map((entry) => entry.job.id));
-  return rows.filter((row) =>
-    row.jobStatus !== "PUBLISHED" || visibleIds.has(row.jobId));
+  // Preserve complete, ordered bookmark history (the client paginates
+  // displayed cards), but do NOT load the entire college jobs feed for every
+  // saved-jobs read. An explicit ID set is still checked against the active
+  // learner, cohort, company grant and current publishing rules by the
+  // canonical listLearnerPlacementJobs service. Its batch limit is 100.
+  const publishedJobIds=[...new Set(rows.filter(row=>row.jobStatus==="PUBLISHED")
+    .map(row=>row.jobId))];
+  const visibleIds=new Set<string>();
+  for(let i=0;i<publishedJobIds.length;i+=100){
+    const scoped=await listLearnerPlacementJobs(context,new Date(),undefined,
+      publishedJobIds.slice(i,i+100));
+    for(const entry of scoped)visibleIds.add(entry.job.id);
+  }
+  return rows.filter(row=>row.jobStatus!=="PUBLISHED" || visibleIds.has(row.jobId));
 }

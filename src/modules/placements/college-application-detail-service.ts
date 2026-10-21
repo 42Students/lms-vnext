@@ -9,7 +9,8 @@ import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
  placementApplicationScreenings,placementApplicationScreeningHistory,
  placementApplicationStatusHistory,placementJobRoleOptions,placementJobs,
- placementJobRounds,placementOffers,placementRoundResults,users} from "@/db/schema";
+ placementJobRounds,placementOffers,placementRoundResults,
+ placementApplicationPrivateArtifacts,users} from "@/db/schema";
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
@@ -128,7 +129,7 @@ export async function getCollegeApplicationDetail(
  ctx:RequestContext,job:unknown,id:unknown,rawHistoryPage:unknown=0,
 ){
  const historyPage=z.coerce.number().int().min(0).max(100000).parse(rawHistoryPage);
- const {application,jobId}=await scoped(ctx,job,id);
+ const {application,jobId,collegeId}=await scoped(ctx,job,id);
  const learnerPortfolio=await getCollegeLearnerPlacementSummary(ctx,application.membershipId);
  const db=getDb();
  const [screening,history,stage,notes,rounds,offers]=await Promise.all([
@@ -179,6 +180,16 @@ export async function getCollegeApplicationDetail(
    isNull(placementRoundResults.supersededAt),
   ));
  const assessmentScore=recordedScore?.scorePercent??null;
+ const [privateAssessment,jobAssessment]=await Promise.all([
+  db.select({assessmentUrl:placementApplicationPrivateArtifacts.assessmentUrl})
+   .from(placementApplicationPrivateArtifacts)
+   .where(eq(placementApplicationPrivateArtifacts.applicationId,application.id)).limit(1),
+  db.select({posting:placementJobs.legacyPostingDetails}).from(placementJobs)
+   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)))
+   .limit(1),
+ ]);
+ const jobAssessmentLink=jobAssessment[0]?.posting?.assessmentUrl??null;
+ const assessmentLink=privateAssessment[0]?.assessmentUrl??jobAssessmentLink;
  const [receiptRecord]=await db.select({snapshot:profileVerifications.submittedSnapshot})
    .from(profileVerifications).where(and(
     eq(profileVerifications.learnerMembershipId,application.membershipId),
@@ -236,7 +247,7 @@ export async function getCollegeApplicationDetail(
   internalNotes:latestNote?.body??null,
   internalNoteVersion:latestNote?.id??null,
   offerLetterUrl:offers.at(-1)?.offerLetterUrl??null,
-  rounds,offers,
+  rounds,offers,assessmentLink,jobAssessmentLink,
   scoring:{available:assessmentScore!==null,scorePercent:assessmentScore,
    partial:false,
    reason:assessmentScore!==null

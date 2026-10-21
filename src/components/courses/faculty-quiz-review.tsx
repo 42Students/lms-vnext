@@ -4,7 +4,7 @@ import { Alert } from "@/components/ui/alert";
 import {useEffect,useRef,useState} from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Drawer } from "@/components/ui/drawer";
+import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
@@ -40,6 +40,7 @@ type Attempt = {
   submittedAt: string;
   learnerDisplayName: string | null;
   learnerEmail: string | null;
+  learnerRollNumber?:string|null;
   answers: AttemptAnswer[];
 };
 
@@ -59,11 +60,22 @@ function formatDateTime(value: string) {
 function learnerLabel(attempt: Attempt) {
   return (
     attempt.learnerDisplayName?.trim() ||
+    attempt.learnerRollNumber?.trim() ||
     attempt.learnerEmail?.trim() ||
     `Learner ${attempt.membershipId.slice(0, 8)}`
   );
 }
 
+const AVATAR_TONES=[
+ "bg-[#e5f3ff] text-[#1766a3]","bg-[#fef0e0] text-[#995114]",
+ "bg-[#ebfaed] text-[#187c36]","bg-[#f6e8fb] text-[#7e399f]",
+ "bg-[#fff0f1] text-[#a53e57]","bg-[#e4f3f1] text-[#186b67]",
+] as const;
+function scoreTone(attempt:Attempt):"success"|"warning"|"error"{
+ if(attempt.maxScore<=0)return "warning";
+ const ratio=attempt.score/attempt.maxScore;
+ return ratio>=.8?"success":ratio>=.5?"warning":"error";
+}
 export function FacultyQuizReview({
   quizId,
   quizTitle,
@@ -103,6 +115,7 @@ export function FacultyQuizReview({
   const [open, setOpen] = useState(false);
   const [attempts, setAttempts] =
     useState<Attempt[] | null>(null);
+  const [nextPage,setNextPage]=useState<number|null>(null);
   const [loading, setLoading] =
     useState(false);
   const [savingResults, setSavingResults] =
@@ -129,7 +142,7 @@ export function FacultyQuizReview({
     return null;
   }
 
-  async function load() {
+  async function load(page=1) {
     activeController.current?.abort();
     const controller=new AbortController();
     activeController.current=controller;
@@ -137,7 +150,7 @@ export function FacultyQuizReview({
     setOpen(true);
     setError(null);
     setLoading(true);
-    setAttempts(null);
+    if(page===1){setAttempts(null);setNextPage(null);}
 
     try {
       const response = await fetch(
@@ -145,7 +158,7 @@ export function FacultyQuizReview({
           quizId,
         )}&deliveryId=${encodeURIComponent(
           deliveryId,
-        )}`,
+        )}&page=${page}`,
         {signal:controller.signal,cache:"no-store"},
       );
 
@@ -159,14 +172,18 @@ export function FacultyQuizReview({
 
       const payload =
         (await response.json()) as {
-          attempts: Attempt[];
+          attempts: Attempt[];nextPage:number|null;hasMore:boolean;
         };
       if(!Array.isArray(payload.attempts)){
         setError("Unexpected submissions response. Please retry.");
         return;
       }
-      if(thisRequest===requests.current&&!controller.signal.aborted)
-        setAttempts(payload.attempts);
+      if(thisRequest===requests.current&&!controller.signal.aborted){
+        setAttempts(existing=>page===1?payload.attempts:
+          [...(existing??[]),...payload.attempts]);
+        setNextPage(payload.hasMore&&Number.isInteger(payload.nextPage)?
+          payload.nextPage:null);
+      }
     } catch {
       if(controller.signal.aborted||thisRequest!==requests.current)return;
       setError(
@@ -230,18 +247,19 @@ export function FacultyQuizReview({
       {notice?<Alert tone={savingResults?"info":"success"} className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
       <div className="mt-3 flex min-w-0 items-center gap-2">
         <Button size="md" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
-          variant="secondary" onClick={load}>Submissions</Button>
+          variant="secondary" onClick={()=>void load()}>Submissions</Button>
         {status === "CLOSED" && !deliveryOwned ? (
           <span className="text-xs text-muted-foreground">
             Shared-Offering result publication remains admin-owned.
           </span>
         ) : null}
       </div>
-      <Drawer
+      <Dialog
         open={open}
-        onOpenChange={setOpen}
-        title={quizTitle??"Submissions"}
-        description="Review immutable Section-scoped attempts and choose whether released results are visible to learners."
+        onOpenChange={value=>{setOpen(value);if(!value)activeController.current?.abort();}}
+        title={quizTitle?`${quizTitle} — Submissions`:"Submissions"}
+        className="!max-w-[720px]"
+        description="Review submissions for the selected class. Each saved attempt is an immutable learner snapshot."
       >
       <div className="min-w-0 space-y-4">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:items-start sm:justify-between">
@@ -278,16 +296,19 @@ export function FacultyQuizReview({
             >
               {savingResults
                 ? "Saving…"
-                : "Withhold results"}
+                : "Released · Withhold"}
             </Button>
           ) : null}
+          {status==="PUBLISHED"&&!deadlineReached&&!resultsPublished?
+           <Button type="button" variant="secondary" disabled title="Results can be released after the quiz deadline or closure."
+             className="min-h-11 md:min-h-9">Release after deadline</Button>:null}
           <Button
             size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
             disabled={loading}
             loading={loading}
-            onClick={load}
+            onClick={()=>void load()}
           >
             Refresh
           </Button>
@@ -309,16 +330,21 @@ export function FacultyQuizReview({
       {!loading && attempts &&
       attempts.length > 0 ? (
         <div className="mt-3 min-w-0 divide-y divide-border">
-          {attempts.map((attempt) => (
+          {attempts.map((attempt,index) => (
             <section
               key={attempt.id}
               className="min-w-0 py-[var(--lms-space-4)]"
             >
               <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
-                <div className="min-w-0">
-                  <h4 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
-                    {learnerLabel(attempt)}
-                  </h4>
+                <div className="flex min-w-0 items-start gap-3">
+                  <span aria-hidden="true" className={"flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-semibold "+AVATAR_TONES[index%AVATAR_TONES.length]}>
+                    {learnerLabel(attempt).slice(0,1).toUpperCase()}
+                  </span>
+                  <div className="min-w-0">
+                    <h4 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+                      {learnerLabel(attempt)}
+                    </h4>
+                    {attempt.learnerRollNumber?<p className="mt-1 text-xs text-muted-foreground">Roll: {attempt.learnerRollNumber}</p>:null}
                   {attempt.learnerEmail ? (
                     <p className="mt-1 text-xs text-muted-foreground leading-5">
                       {attempt.learnerEmail}
@@ -331,8 +357,9 @@ export function FacultyQuizReview({
                       attempt.submittedAt,
                     )}
                   </p>
+                  </div>
                 </div>
-                <StatusBadge tone="info">
+                <StatusBadge tone={scoreTone(attempt)}>
                   {attempt.score}/
                   {attempt.maxScore}
                 </StatusBadge>
@@ -415,8 +442,11 @@ export function FacultyQuizReview({
           ))}
         </div>
       ) : null}
+      {nextPage!==null&&!loading?
+        <Button type="button" variant="secondary" onClick={()=>void load(nextPage)}
+          className="min-h-11 w-full md:min-h-9">Load more submissions</Button>:null}
       </div>
-      </Drawer>
+      </Dialog>
       <ConfirmDialog
         open={confirmPublished !== null}
         onOpenChange={nextOpen => { if (!nextOpen && !savingResults) setConfirmPublished(null); }}

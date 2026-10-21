@@ -1,9 +1,9 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
- placementApplicationScreenings,placementApplicationScreeningHistory,
+ placementApplicationPrivateArtifacts,placementApplicationScreenings,placementApplicationScreeningHistory,
  placementJoiningOutcomes,placementJobs,placementOffers,users} from "@/db/schema";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
@@ -69,12 +69,12 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
    const stage=await getDb().transaction(async tx=>{
     const [job]=await tx.select({id:placementJobs.id,status:placementJobs.status})
      .from(placementJobs).where(and(eq(placementJobs.id,jobId),
-      eq(placementJobs.collegeId,collegeId))).for("share").limit(1);
+      eq(placementJobs.collegeId,collegeId))).for(input.saveAssessmentUrlToJob?"update":"share").limit(1);
     if(!job||["CLOSED","ARCHIVED","CANCELLED"].includes(job.status))
      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     const [application]=await tx.select({
      id:placementApplications.id,status:placementApplications.status,
-     userId:collegeMemberships.userId,
+     source:placementApplications.channel,userId:collegeMemberships.userId,
     }).from(placementApplications)
      .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
      .where(and(eq(placementApplications.id,applicationId),
@@ -82,6 +82,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      .for("update",{of:placementApplications}).limit(1);
     if(!application||application.status!=="SUBMITTED")
      throw new PlacementsServiceError("PLACEMENT_SCREENING_APPLICATION_INACTIVE");
+    if(application.source==="EXTERNAL"&&input.assessmentUrl)
+     throw Error("External applicant assessment links are read-only in the college workspace.");
     const [old]=await tx.select().from(placementCollegeApplicationStages)
      .where(and(eq(placementCollegeApplicationStages.jobId,jobId),
       eq(placementCollegeApplicationStages.applicationId,applicationId))).for("update").limit(1);
@@ -220,6 +222,24 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       movedByUserId:context.user.id,
      }).returning({id:placementCollegeApplicationStages.id});
     if(!saved)throw Error("Application stage changed. Reload the pipeline and try again.");
+    // The link and stage must commit or fail together. No private URL is
+    // exposed in activity metadata, and no change is made for skipped rows.
+    if(next==="ASSESSMENT"&&input.action==="MOVE"&&input.assessmentUrl){
+     await tx.insert(placementApplicationPrivateArtifacts).values({
+      applicationId,assessmentUrl:input.assessmentUrl,
+      updatedByUserId:context.user.id,updatedAt:new Date(),
+     }).onConflictDoUpdate({
+      target:placementApplicationPrivateArtifacts.applicationId,
+      set:{assessmentUrl:input.assessmentUrl,updatedByUserId:context.user.id,updatedAt:new Date()},
+     });
+     if(input.saveAssessmentUrlToJob){
+      await tx.update(placementJobs).set({
+       legacyPostingDetails:sql`jsonb_set(coalesce(${placementJobs.legacyPostingDetails}, '{}'::jsonb),
+        '{assessmentUrl}', to_jsonb(${input.assessmentUrl}::text), true)`,
+       updatedAt:new Date(),
+      }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)));
+     }
+    }
     await tx.insert(placementCollegeApplicationStageHistory).values({
      stageId:saved.id,fromStage:from,toStage:next,reason:input.reason,
      actorUserId:context.user.id,
@@ -235,7 +255,9 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       input.action==="REINSTATE"?"College Admin reinstated application to "+readableStage:
       "College Admin moved application to "+readableStage,
      metadata:{jobId,from,to:next,reason:input.reason,
-      exceptionalCorrection:input.action==="CORRECT"},
+      exceptionalCorrection:input.action==="CORRECT",
+      assessmentLinkAttached:next==="ASSESSMENT"&&Boolean(input.assessmentUrl),
+      assessmentLinkSavedToJob:next==="ASSESSMENT"&&Boolean(input.saveAssessmentUrlToJob)},
     }).returning({id:activityEvents.id});
     await tx.insert(inAppNotifications).values({
      userId:application.userId,eventId:audit.id,

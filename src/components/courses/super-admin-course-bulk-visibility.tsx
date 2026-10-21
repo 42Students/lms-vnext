@@ -1,6 +1,6 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
-import {useRouter} from "next/navigation";
+import {useRouter,useSearchParams} from "next/navigation";
 import {Alert} from "@/components/ui/alert";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
@@ -19,6 +19,12 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
  courses:readonly Course[];collegeId:string;maxSelection?:number;
 }){
  const router=useRouter(),pendingRef=useRef(false);
+ const params=useSearchParams();
+ // Changing search/filter scope invalidates persisted selection, but paging
+ // within the same query retains the selected UUIDs for cross-page bulk work.
+ const filterKey=JSON.stringify([...params.entries()]
+  .filter(([key])=>!["page","pageSize","limit","size"].includes(key))
+  .sort(([a],[b])=>a.localeCompare(b)));
  const [selected,setSelected]=useState<string[]>([]);
  const [ready,setReady]=useState(false);
  const [pending,setPending]=useState(false);
@@ -32,16 +38,19 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
  useEffect(()=>{
   try{
    const value=JSON.parse(window.sessionStorage.getItem(storageKey)??"[]") as unknown;
-   setSelected(Array.isArray(value)?[...new Set(value.filter(
+   const saved=value&&typeof value==="object"&&!Array.isArray(value)
+    ?value as {filterKey?:unknown;ids?:unknown}:null;
+   const ids=saved?.filterKey===filterKey&&Array.isArray(saved.ids)?saved.ids:[];
+   setSelected([...new Set(ids.filter(
     (id):id is string=>typeof id==="string"&&/^[0-9a-f-]{36}$/i.test(id)
-   ))].slice(0,safeLimit):[]);
+   ))].slice(0,safeLimit));
   }catch{setSelected([]);}
   setReady(true);
- },[storageKey,safeLimit]);
+ },[storageKey,safeLimit,filterKey]);
  function changeSelection(next:string[]){
   const valid=[...new Set(next)].slice(0,safeLimit);
   setSelected(valid);setError(null);
-  try{window.sessionStorage.setItem(storageKey,JSON.stringify(valid));}
+  try{window.sessionStorage.setItem(storageKey,JSON.stringify({filterKey,ids:valid}));}
   catch{setError("Selections may not be kept when changing pages on this device.");}
  }
  const currentIds=new Set(courses.map(row=>row.id));
@@ -159,8 +168,11 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
     {report.unchanged} unchanged; {report.failures.length} failure(s).
     {report.changedCourses} course visibility flag(s) changed; no records were archived.</p>
    {report.failures.length?<ul className="mt-2 list-disc pl-4 text-xs">
-    {report.failures.slice(0,20).map((failure,index)=>
-     <li key={failure.id+":"+index}>{failure.reason}</li>)}
+    {report.failures.slice(0,5).map((failure,index)=>
+     <li key={failure.id+":"+index}>
+      {courses.find(course=>course.id===failure.id)?.name??"Selected course"}: {failure.reason}
+     </li>)}
+    {report.failures.length>5?<li>Plus {report.failures.length-5} more failed courses; retry only those not applied.</li>:null}
    </ul>:null}
    {report.failedCourseIds.length?<Button type="button" variant="secondary"
      disabled={pending||lastAction===null}

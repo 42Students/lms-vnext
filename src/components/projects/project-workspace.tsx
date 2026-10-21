@@ -42,6 +42,7 @@ import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
 import { ProjectSprintRowList } from "./project-sprint-row-list";
 import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
+import {ProjectAdminTaskAdd} from "./project-admin-task-add";
 import { projectTaskPlanToken } from "@/modules/projects/project-task-plan-token";
 import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
@@ -448,6 +449,8 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                 .filter(Boolean).join(" · ")||"Project workspace"
               : mode==="ADMIN"&&section==="sprints"?
                 "Plan sprint outcomes, release alignment and delivery cadence for this workspace.":
+                mode==="ADMIN"&&section==="tasks"?
+                "Shape the work breakdown and review learner submission activity for this workspace.":
                 mode==="ADMIN"&&section==="resources"?
                 "Curate the references, files and access guidance this workspace team needs.":
                 mode==="ADMIN"&&section==="readiness"?
@@ -1193,7 +1196,7 @@ export function ProjectWorkspace({
           </Link> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
             {activeSection==="tasks"?
-              "Break the work into clear tasks and review learner submissions below.":
+              "Keep each task small enough to own, link it to the right sprint, and make “done” explicit. Workflow state and learner submissions stay read-only here.":
               "Delivery cadence · Plan work in clear, release-bound increments."}
           </p>:null}
           {mode==="ADMIN"&&show("sprints")?<section aria-label="Sprint plan summary"
@@ -1252,9 +1255,9 @@ export function ProjectWorkspace({
             </p>:null}
           {mode==="ADMIN"&&show("tasks")&&!workspace.releasesLoadError&&workspace.sprints.length===0?
             <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-y border-info-border bg-info-subtle px-3 py-3 text-sm">
-              <span>No sprints are available yet. Create a sprint to organize the task plan.</span>
+              <span>No sprints are available yet. You can still draft tasks, but add sprints before assigning tasks to a delivery cycle.</span>
               <Link href={(sectionBaseHref??backHref)+"/sprints"} className="font-semibold text-link underline">
-                Open Sprint plan
+                Sprints
               </Link>
             </div>:null}
         </div>
@@ -1294,8 +1297,14 @@ export function ProjectWorkspace({
           const active=liveTasks.filter(task=>["IN_PROGRESS","IN_REVIEW"].includes(task.status)).length;
           return <div className="space-y-4">
             <section aria-label="Task plan metrics" className="space-y-2">
-             <h3 className="text-base font-semibold text-foreground">Task plan</h3>
-             <p className="text-sm text-body">Only this workspace’s task plan is updated when you save.</p>
+             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Work breakdown</p>
+             <h3 className="text-base font-semibold text-foreground">
+               Turn sprint goals into clear, reviewable work
+             </h3>
+             <p className="text-sm text-body">
+               Keep each task small enough to own, link it to the right sprint,
+               and make “done” explicit. Workflow state and learner submissions stay read-only here.
+             </p>
              <dl className="grid grid-cols-2 border-y border-border sm:grid-cols-4">
               {([
                ["Tasks",liveTasks.length],["In progress",active],
@@ -1306,28 +1315,18 @@ export function ProjectWorkspace({
               </div>)}
              </dl>
             </section>
-            <ProjectTaskSubmissionOverview
-              metrics={[
-                {label:"Total submissions",value:String(activeSubmissions.length)},
-                {label:"Submitted",value:String(submitted)},
-                {label:"Approved",value:String(activeSubmissions.filter(item=>item.status==="APPROVED").length)},
-                {label:"Changes requested",value:String(activeSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
-              ]}
-              rows={activeSubmissions.map(item=>({
-                id:item.id,
-                taskTitle:workspace.tasks.find(task=>task.id===item.taskId)?.title??"Recorded task",
-                submitter:workspace.members.find(member=>
-                  member.membershipId===item.submittedByMembershipId)?.displayName??"Learner",
-                version:item.version,status:item.status,
-                submittedAt:item.submittedAt.toISOString(),
-                reviewedAt:item.reviewedAt?.toISOString()??null,
-                submissionUrl:safeHttpHref(item.submissionUrl),
-              })).sort((a,b)=>b.submittedAt.localeCompare(a.submittedAt))}
-            />
-          </div>;
-        })():null}
-        {mode === "ADMIN" && !readOnly && show("tasks") ? (
-          <ProjectTaskPlanEditor projectId={workspace.project.id}
+            {!readOnly ? <>
+              <ProjectAdminTaskAdd key={projectTaskPlanToken(workspace.tasks)+"-new"}
+                projectId={workspace.project.id}
+                tasksToken={projectTaskPlanToken(workspace.tasks)}
+                estimationUnit={workspace.project.estimationUnit}
+                sprints={workspace.sprints.map(sprint=>({
+                  id:sprint.id,title:sprint.title,status:sprint.status,
+                  releaseStatus:workspace.releases.find(release=>
+                    release.id===sprint.releaseId)?.status??"SHIPPED",
+                }))}/>
+              <ProjectTaskPlanEditor key={projectTaskPlanToken(workspace.tasks)}
+            projectId={workspace.project.id}
             tasksToken={projectTaskPlanToken(workspace.tasks)}
             sprints={workspace.sprints.map(sprint => ({
               id: sprint.id, title: sprint.title, status: sprint.status,
@@ -1347,7 +1346,30 @@ export function ProjectWorkspace({
               approach: task.approach,
               status: task.status,
             }))} />
-        ) : null}
+              <p className="text-xs text-body">
+                Assignee, status and submission state are not changed here.
+              </p>
+            </> : null}
+            <ProjectTaskSubmissionOverview
+              metrics={[
+                {label:"Total submissions",value:String(activeSubmissions.length)},
+                {label:"Submitted",value:String(submitted)},
+                {label:"Approved",value:String(activeSubmissions.filter(item=>item.status==="APPROVED").length)},
+                {label:"Changes requested",value:String(activeSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
+              ]}
+              rows={activeSubmissions.map(item=>({
+                id:item.id,
+                taskTitle:workspace.tasks.find(task=>task.id===item.taskId)?.title??"Recorded task",
+                submitter:workspace.members.find(member=>
+                  member.membershipId===item.submittedByMembershipId)?.displayName??"—",
+                version:item.version,status:item.status,
+                submittedAt:item.submittedAt.toISOString(),
+                reviewedAt:item.reviewedAt?.toISOString()??null,
+                submissionUrl:safeHttpHref(item.submissionUrl),
+              })).sort((a,b)=>b.submittedAt.localeCompare(a.submittedAt))}
+            />
+          </div>;
+        })():null}
         {mode === "ADMIN" && backlogTasks.length > 0 ? (
           <section aria-label="Product backlog" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
             <div>

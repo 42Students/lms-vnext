@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -48,7 +48,13 @@ export function CollegeDirectoryPageSize({ current }: { current: number }) {
 export function CollegeDirectoryRefresh() {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
-  return <span className="inline-flex items-center gap-2">
+  const [stale,setStale]=useState(false);
+  useEffect(()=>{
+    if(!pending){setStale(false);return;}
+    const timer=window.setTimeout(()=>setStale(true),8000);
+    return ()=>window.clearTimeout(timer);
+  },[pending]);
+  return <span className="inline-flex flex-wrap items-center gap-2">
     <Button variant="secondary" type="button" disabled={pending}
       onClick={() => startTransition(() => router.refresh())}
       className="min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-60">
@@ -56,6 +62,12 @@ export function CollegeDirectoryRefresh() {
     </Button>
     <span aria-live="polite" className="text-xs text-muted-foreground">
       {pending ? "Updating list; current rows remain visible." : ""}
+      {stale ? <span role="alert" className="inline-flex flex-wrap items-center gap-2">
+        The class list has not refreshed yet; previous rows remain visible.
+        <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()}>
+          Retry list
+        </Button>
+      </span> : null}
     </span>
   </span>;
 }

@@ -60,13 +60,15 @@ export function learnerApplicationStage(item: LearnerApplicationBrowseItem): str
 }
 
 export function learnerApplicationIsComplete(item: LearnerApplicationBrowseItem) {
+  // Legacy "In progress" is drive live OR released offer, regardless of
+  // application stage. Finished is the complement of that predicate.
+  if(item.live===true||item.offerStatus==="RELEASED")return false;
+  if(item.live===false)return true;
+  // Without a verified live flag, retain the issued-offer state until
+  // the result is confirmed rather than guessing from the job title.
+  if(item.offerStatus==="ISSUED")return false;
   const stage=learnerApplicationStage(item);
   if(stage==="WITHDRAWN"||stage==="HIRED")return true;
-  // Old LMS treats a released offer as in progress even after the drive ends.
-  if(item.offerStatus==="RELEASED"||item.offerStatus==="ISSUED")return false;
-  // Honor the verified drive-live fact when present; otherwise retain
-  // vNext's safe terminal-stage fallback instead of guessing from a title.
-  if(typeof item.live==="boolean")return !item.live;
   if(item.jobStatus==="PUBLISHED")return false;
   if(item.jobStatus==="CLOSED"||item.jobStatus==="ARCHIVED"||item.jobStatus==="CANCELLED")return true;
   return stage==="REJECTED";

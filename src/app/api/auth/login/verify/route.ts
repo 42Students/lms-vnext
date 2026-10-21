@@ -103,6 +103,9 @@ export async function POST(request: Request) {
       // Return next-step hints, never the legacy auth token pair.
       // Discover roles and colleges only over the authenticated cookie.
       membershipSelectionRequired: !autoMembershipId,
+      // System Super Admin may have no college membership; its platform
+      // dashboard must remain reachable without a college account chooser.
+      systemWorkspaceAvailable: verified.isSuperAdmin,
       // Migration hint for old clients that formerly received memberships,
       // host policy flags and bearer tokens in the verify response.
       // Clients must use the new cookie-scoped endpoints after verification.

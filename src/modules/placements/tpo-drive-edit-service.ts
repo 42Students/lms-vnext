@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,sql,inArray,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobRoleOptions,placementJobs,placementSeasons,placementJobEligibilityPolicies,placementApplications,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments} from "@/db/schema";
+import {placementJobRoleOptions,placementJobs,placementSeasons,placementJobEligibilityPolicies,placementApplications,placementRecruiterDriveRequests,collegeMemberships,users,inAppNotifications,activityEvents,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {placementJobIdSchema} from "./validation";
@@ -16,6 +16,7 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   jobTypeLabel:placementJobs.jobTypeLabel,employmentType:placementJobs.employmentType,
   workMode:placementJobs.workMode,recruiterDriveMode:placementJobs.recruiterDriveMode,
   companyRelationshipId:placementJobs.companyRelationshipId,
+  legacyCreatorRole:placementJobs.legacyCreatorRole,
   legacyPostingDetails:placementJobs.legacyPostingDetails,
   locations:placementJobs.locations,openings:placementJobs.openings,
   minimumAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
@@ -25,6 +26,17 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ // An approved recruiter request belongs to its actual submitting recruiter,
+ // even when the TPO was the user who authored the resulting draft. Company
+ // membership alone is not proof of recruiter ownership.
+ const [recruiterRequest]=await getDb().select({id:placementRecruiterDriveRequests.id})
+  .from(placementRecruiterDriveRequests).where(and(
+   eq(placementRecruiterDriveRequests.approvedJobId,jobId),
+   eq(placementRecruiterDriveRequests.collegeId,collegeId),
+   eq(placementRecruiterDriveRequests.companyRelationshipId,job.companyRelationshipId),
+  )).limit(1);
+ const recruiterOwned=Boolean(recruiterRequest)||
+  job.legacyCreatorRole?.toUpperCase()==="RECRUITER";
  const [season]=await getDb().select({status:placementSeasons.status}).from(placementSeasons)
  .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
  const [policy]=await getDb().select({
@@ -69,7 +81,10 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(eq(placementApplications.jobId,jobId),eq(placementApplications.status,"SUBMITTED"),
    eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
- return {...job,updatedAt:job.updatedAt.toISOString(),
+ return {...job,recruiterOwned,
+  recruiterOwnershipSource:recruiterRequest?"APPROVED_RECRUITER_REQUEST":
+   recruiterOwned?"LEGACY_RECRUITER_ORIGIN":"TPO_MANAGED",
+  updatedAt:job.updatedAt.toISOString(),
   applicationDeadline:job.applicationDeadline?.toISOString()??null,
   minCgpaHundredths:policy?.minCgpaHundredths??null,
   verifiedMarksOnly:policy?.requireVerifiedEvidence??false,
