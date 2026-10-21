@@ -65,7 +65,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     if(existing.metadata.bodyHash!==bodyHash||
      Boolean(existing.metadata.markDecision)!==Boolean(input.markDecision)||typeof saved!=="string")
      throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
-    return {id:saved,threadId:thread.id};
+    return {id:saved,threadId:thread.id,notified:1};
    }
   }
   const [message]=await tx.insert(placementTpoInternalMessages).values({
@@ -104,6 +104,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    body:input.body.slice(0,120)+(input.body.length>120?"…":""),
    actionHref:"/tpo/team/"+thread.id+"?m="+message.id,
   });
-  return {id:message.id,threadId:thread.id};
+  // A private thread has exactly one other active participant; Everyone counts its recipients separately.
+  return {id:message.id,threadId:thread.id,notified:1};
  });
 }
