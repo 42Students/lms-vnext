@@ -95,7 +95,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
       <option value="POINTS">Points</option><option value="HOURS">Hours</option><option value="TASKS">Tasks</option>
     </Select></label>
    </div>
-   {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-sm font-semibold">
+   {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
     <Textarea className={style+" min-h-24"} maxLength={4000} value={form[k]}
      onChange={e=>change(k,e.target.value)}/>

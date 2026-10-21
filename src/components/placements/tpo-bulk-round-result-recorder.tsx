@@ -156,7 +156,7 @@ export function TpoBulkRoundResultRecorder({
             <legend className="text-sm font-semibold text-foreground">
               Select learners ({selected.length} / 25)
             </legend>
-            <label className="block text-sm font-semibold text-body">Find unmarked learner
+            <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Find unmarked learner
               <Input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
                placeholder="Search name, roll or application ID"
                className="mt-1 block min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground"/>
@@ -193,7 +193,7 @@ export function TpoBulkRoundResultRecorder({
             </div>
             {visible.length===0?<p role="status" className="py-3 text-sm text-muted-foreground">No unmarked learners match this search.</p>:null}
           </fieldset>
-          <label className="block text-sm font-semibold text-foreground print:hidden">
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-foreground print:hidden leading-4">
             Staged outcome
             <Select
               value={outcome}
@@ -222,7 +222,7 @@ export function TpoBulkRoundResultRecorder({
           </fieldset>
           </details>
           {(outcome !== "PASS" || failUnselected) ? (
-            <label className="block text-sm font-semibold text-foreground print:hidden">
+            <label className="block text-[length:var(--lms-font-sm)] font-semibold text-foreground print:hidden leading-4">
               Learner-facing message (required)
               <Textarea
                 value={message}
@@ -234,7 +234,7 @@ export function TpoBulkRoundResultRecorder({
               />
             </label>
           ) : null}
-          {outcome==="HOLD"?<label className="block text-sm font-semibold text-foreground print:hidden">
+          {outcome==="HOLD"?<label className="block text-[length:var(--lms-font-sm)] font-semibold text-foreground print:hidden leading-4">
             First waitlist rank (in checkbox selection order)
             <Input type="number" min={1} max={100000} value={firstWaitlistRank}
               onChange={e=>setFirstWaitlistRank(Number(e.target.value))}

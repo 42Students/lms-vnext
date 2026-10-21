@@ -879,7 +879,7 @@ export function LearnerProfileWorkspace(props: {
             <label className="text-xs font-semibold text-body">PAN number<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.identity.panNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, panNumber: event.target.value } })} /></label>
           </fieldset>
 
-          <label className="block text-xs font-semibold text-body">Hobbies · comma-separated<Textarea className="mt-1.5" value={detailsDraft.hobbies.join(", ")} onChange={(event) => setDetailsDraft({ ...detailsDraft, hobbies: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Hobbies · comma-separated<Textarea className="mt-1.5" value={detailsDraft.hobbies.join(", ")} onChange={(event) => setDetailsDraft({ ...detailsDraft, hobbies: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
         </div>
       </Dialog>
 

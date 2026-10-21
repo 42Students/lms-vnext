@@ -195,7 +195,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
   {target==="STUDENTS"?<Disclosure title="Select by roll number" className="min-w-0 border-t border-border print:hidden" contentClassName="space-y-2 px-2 pb-3">
-   <label className="grid gap-1 text-sm font-semibold text-body">Paste roll numbers (comma, whitespace or line separated)
+   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Paste roll numbers (comma, whitespace or line separated)
      <Textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" />
    </label>
