@@ -16,7 +16,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_src_app_authenticated_admin_placements_jobs_jobId_applications_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_NEW_docs_audit_gap2_lane-13_l18-u026-new-program-controller.md.md` (new; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_NEW_docs_audit_gap2_lane-7_u018-college-admin-deleted-workspaces.md.md` (new; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_src_modules_projects_workspace-brief-service.ts.md` (edit src/modules/projects/workspace-brief-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_src_modules_projects_workspace-brief-service.ts.md` (edit src/modules/projects/workspace-brief-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_src_app_authenticated_learn_my-placements_calendar_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/calendar/page.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_src_app_authenticated_teacher_profile_contacts_page.tsx.md` (edit src/app/(authenticated)/teacher/profile/contacts/page.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-16/W3_NEW_docs_audit_gap2_lane-6_l11-u023-tpo-requests.md.md` (new; 1 findings; best P1)
