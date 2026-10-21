@@ -13,14 +13,14 @@ export function LearnerPrepAssignmentCards(){
   finally{if(active)setLoading(false);}
  });return ()=>{active=false;};},[]);
  return <section aria-label="Assigned preparation" className="space-y-3 border-b border-border pb-5">
-  <h2 className="font-semibold">Assigned preparation</h2>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {loading?<p role="status" className="text-sm text-body">Loading assigned preparation…</p>:
-   !items.length&&!error?<p className="text-sm">No preparation courses assigned yet.</p>:
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Assigned preparation</h2>
+  {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+  {loading?<p role="status" className="text-sm text-body leading-[22px]">Loading assigned preparation…</p>:
+   !items.length&&!error?<p className="text-sm leading-[22px]">No preparation courses assigned yet.</p>:
    !items.length?null:
    <ul className="divide-y divide-border">{items.map(item=><li key={item.id} className="min-w-0 py-3 first:pt-0 last:pb-0 md:py-4">
     <h3 className="break-words font-semibold">{item.title} · {item.courseCode}</h3>
-    <p className="text-sm">Due {new Date(item.dueAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</p>
+    <p className="text-sm leading-[22px]">Due {new Date(item.dueAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</p>
     <Link href="/learn/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open My Courses</Link>
    </li>)}</ul>}
  </section>;
