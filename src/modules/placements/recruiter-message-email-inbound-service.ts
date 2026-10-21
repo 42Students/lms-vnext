@@ -11,16 +11,18 @@ import {verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply} from "./r
 const inboundSchema=z.strictObject({
  from:z.email().max(320).transform(x=>x.trim().toLowerCase()),
  to:z.email().max(320).transform(x=>x.trim().toLowerCase()),
- text:z.string().max(20000).optional(),
- html:z.string().max(20000).optional(),
+ text:z.string().max(200000).optional(),
+ html:z.string().max(200000).optional(),
  subject:z.string().max(512).optional(),
  headerFrom:z.string().max(320).optional(),
  auth:z.string().max(2000).optional(),
  providerMessageId:z.string().trim().max(255).optional(),
+ attachments:z.array(z.strictObject({filename:z.string().max(255).optional(),
+  contentType:z.string().max(128).optional()})).max(40).optional(),
 });
 export type RecruiterInboundOutcome=
  "POSTED"|"STORED"|"DUPLICATE"|"NO_THREAD"|"WRONG_SENDER"|
- "NOT_VERIFIED"|"EMPTY"|"ACCESS_ENDED";
+ "NOT_VERIFIED"|"EMPTY"|"ACCESS_ENDED"|"FAILED";
 export type RecruiterEmailInboundResult={
  accepted:boolean;replayed:boolean;outcome?:RecruiterInboundOutcome;
  /** Storage is temporarily missing; a verified upstream worker must retry. */
@@ -67,8 +69,11 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  rawBody:string,signature:string,env:Record<string,string|undefined>=process.env,
 ):Promise<RecruiterEmailInboundResult>{
  // Enforce the same byte bound for non-HTTP callers before HMAC and JSON work.
- if(Buffer.byteLength(rawBody,"utf8")>20_000)
-  return {accepted:false,replayed:false};
+ // The gateway currently caps HTTP requests at 20 kB. Once its verified
+ // provider adapter allows larger payloads, this service can retain up to
+ // 200,000 characters for restricted operator triage.
+ if(Buffer.byteLength(rawBody,"utf8")>300_000)
+  return {accepted:false,replayed:false,outcome:"FAILED"};
  const secret=env.RECRUITER_MESSAGE_INBOUND_HMAC_SECRET??"";
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true"||
     !verifyRecruiterMailBridgeSignature(secret,rawBody,signature))
@@ -78,8 +83,10 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const parsed=inboundSchema.safeParse(json);
  if(!parsed.success)return {accepted:false,replayed:false};
  const input=parsed.data,domain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").toLowerCase();
- const fullText=plainMailText(input.text,input.html);
- const replyBody=extractRecruiterEmailReply(fullText);
+ const fullText=plainMailText(input.text,input.html).slice(0,200000);
+ // Legacy stores up to 200k in the restricted inbox but only a 4k reply in
+ // a conversation; slice by JS UTF-16 code units to match imported records.
+ const replyBody=extractRecruiterEmailReply(fullText).slice(0,4000);
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
  const isReply=Boolean(match&&match[2]===domain);
  const tokenHash=isReply&&match?createHash("sha256").update(match[1]).digest("hex"):null;
@@ -91,8 +98,12 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  `).then(result=>result.rows);
  if(!ready?.ok)return {accepted:false,replayed:false,retryable:true};
  return db.transaction(async tx=>{
-  const sourceMessageId=input.providerMessageId?.trim()||
-   "signed-body:"+createHash("sha256").update(rawBody,"utf8").digest("hex");
+  // RFC Message-ID is not globally unique across redirected aliases. Scope
+  // the idempotency key by the normalized envelope recipient, not by a
+  // globally shared recruiter account or a raw token written to logs.
+  const sourceMessageId=input.providerMessageId?.trim()
+   ?"provider:"+createHash("sha256").update(input.to+"\u0000"+input.providerMessageId.trim()).digest("hex")
+   :"signed-body:"+createHash("sha256").update(rawBody,"utf8").digest("hex");
   const [received]=await tx.insert(inboundMailMessages).values({
    id:randomUUID(),sourceMessageId,
    fromAddress:input.from,toAddress:input.to,
@@ -124,8 +135,14 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    return {accepted:true,replayed:false,outcome};
   };
 
+  // rdev-/20-hex aliases from the old worker are intentionally accepted to
+  // the private Inbox as unmatched, but cannot authorize a conversation post
+  // without a new 32-hex token persisted to the signed mail-state table.
   if(!isReply)return auditResult("STORED");
   if(!replyBody)return auditResult("EMPTY");
+  // Provider attachments are never opened or rendered as executable content.
+  // Operators may see supplied filenames through the trusted worker's own
+  // reporting, but no attachment bytes are stored in conversation messages.
   const declaredFrom=(/^.*<([^<>]+)>\s*$/.exec(input.headerFrom??"")?.[1]||
    input.headerFrom||input.from).trim().toLowerCase();
   if(declaredFrom!==input.from)

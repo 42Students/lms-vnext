@@ -220,9 +220,13 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
    .where(eq(placementDriveChangeRequests.jobId,job.id)),
  ]);
  const requests=all.slice(0,100);
- const messages=requests.length?await getDb().select().from(placementDriveChangeRequestMessages)
+ // Fetch the most recent bounded messages, not an unbounded full-history payload.
+ // Older replies remain addressable through getDriveChangeRequestMessages below.
+ const messagePage=requests.length?await getDb().select().from(placementDriveChangeRequestMessages)
   .where(inArray(placementDriveChangeRequestMessages.requestId,requests.map(r=>r.id)))
-  .orderBy(asc(placementDriveChangeRequestMessages.sentAt)):[];
+  .orderBy(desc(placementDriveChangeRequestMessages.sentAt),
+   desc(placementDriveChangeRequestMessages.id)).limit(2001):[];
+ const messages=messagePage.slice(0,2000).reverse();
  const authors=requests.length?await getDb().select({id:users.id,name:users.displayName})
   .from(users).where(inArray(users.id,[...new Set(requests.map(r=>r.createdByUserId))])):[];
  const names=new Map(authors.map(r=>[r.id,r.name]));
@@ -234,6 +238,8 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
  const last=requests.at(-1);
  return {job,party,storageReady,pendingMessage:null,totalCount:Number(total[0]?.count??0),
   hasMore:all.length>100,nextCursor:all.length>100&&last?last.createdAt.toISOString()+"|"+last.id:null,
+  messagesTruncated:messagePage.length>2000,
+  messageHistory:"Recent messages shown. Load older replies by request when needed.",
   requests:requests.map(r=>({
    ...r,createdAt:r.createdAt.toISOString(),updatedAt:r.updatedAt.toISOString(),
    decidedAt:r.decidedAt?.toISOString()??null,
@@ -248,6 +254,39 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
    messages:(grouped.get(r.id)??[]).map(m=>({...m,sentAt:m.sentAt.toISOString()})),
   }))};
 }
+/** Authorized request-specific message paging for complete conversation history. */
+export async function getDriveChangeRequestMessages(
+ context:RequestContext,rawJobId:unknown,rawRequestId:string,cursor?:string|null,
+){
+ const {job}=await scoped(context,rawJobId);
+ if(!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(rawRequestId))
+  throw new PlacementsServiceError("PLACEMENT_REQUEST_NOT_FOUND");
+ const [request]=await getDb().select({id:placementDriveChangeRequests.id})
+  .from(placementDriveChangeRequests).where(and(
+   eq(placementDriveChangeRequests.id,rawRequestId),
+   eq(placementDriveChangeRequests.jobId,job.id))).limit(1);
+ if(!request)throw new PlacementsServiceError("PLACEMENT_REQUEST_NOT_FOUND");
+ const parsed=cursor?cursor.split("|"):null;
+ const at=parsed?.[0]?new Date(parsed[0]):null;
+ const id=parsed?.[1];
+ if(cursor&&(!at||!Number.isFinite(at.getTime())||!id||
+    !/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id)))
+  throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+ const rows=await getDb().select().from(placementDriveChangeRequestMessages)
+  .where(and(eq(placementDriveChangeRequestMessages.requestId,request.id),
+   at&&id?or(lt(placementDriveChangeRequestMessages.sentAt,at),
+    and(eq(placementDriveChangeRequestMessages.sentAt,at),
+     lt(placementDriveChangeRequestMessages.id,id))):undefined))
+  .orderBy(desc(placementDriveChangeRequestMessages.sentAt),
+   desc(placementDriveChangeRequestMessages.id)).limit(101);
+ const visible=rows.slice(0,100);
+ const last=visible.at(-1);
+ return {requestId:request.id,messages:visible.reverse().map(row=>({
+   ...row,sentAt:row.sentAt.toISOString(),
+  })),hasMore:rows.length>100,
+  nextCursor:rows.length>100&&last?last.sentAt.toISOString()+"|"+last.id:null};
+}
+
 export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:unknown,raw:unknown){
  const {job,party}=await scoped(context,rawJobId);
  const input=driveChangeCommandSchema.parse(raw);
@@ -258,7 +297,7 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    .where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,job.collegeId)))
    .for("update").limit(1);
   if(!lockedJob)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
-  if(input.action!=="WITHDRAW"&&(lockedJob.status==="ARCHIVED"||lockedJob.status==="CANCELLED"))
+  if(input.action!=="WITHDRAW"&&["ARCHIVED","CANCELLED","CLOSED"].includes(lockedJob.status))
    throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
   if(input.action==="CREATE"){
    const target:Party=party==="TPO"?"COMPANY":"TPO";
@@ -314,7 +353,10 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    }).returning();
    await announce(tx,context,job,target,"PLACEMENTS_DRIVE_CHANGE_REQUEST_CREATED",created.id,
     "New "+input.field.toLowerCase()+" change request for "+job.title+".");
-   return {id:created.id,status:created.status};
+   const [open]=await tx.select({total:sql<number>`count(*)::int`}).from(placementDriveChangeRequests)
+    .where(and(eq(placementDriveChangeRequests.jobId,job.id),
+     eq(placementDriveChangeRequests.status,"OPEN")));
+   return {id:created.id,status:created.status,openCount:Number(open?.total??0)};
   }
   const [request]=await tx.select().from(placementDriveChangeRequests)
    .where(and(eq(placementDriveChangeRequests.id,input.requestId),
@@ -322,6 +364,8 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   if(!request)throw new PlacementsServiceError("PLACEMENT_REQUEST_NOT_FOUND");
   if(input.action==="COMMENT"){
    if(request.status==="WITHDRAWN")throw new Error("Withdrawn requests cannot receive messages.");
+   if(["ARCHIVED","CANCELLED","CLOSED"].includes(lockedJob.status))
+    throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
    const [message]=await tx.insert(placementDriveChangeRequestMessages).values({
     requestId:request.id,senderUserId:context.user.id,senderParty:party,body:input.body,
    }).returning({id:placementDriveChangeRequestMessages.id});
@@ -339,7 +383,9 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   if(input.action==="ANSWER"&&request.mode!=="ASK")
    throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   if(input.action==="WITHDRAW"){
-   if(request.proposerParty!==party||request.createdByUserId!==context.user.id)
+   // College team or verified company collaborators act for their institution,
+   // not exclusively for the original individual who submitted the request.
+   if(request.proposerParty!==party)
     throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   }else if(request.targetParty!==party)
    throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");

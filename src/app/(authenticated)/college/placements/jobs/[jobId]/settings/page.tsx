@@ -17,10 +17,12 @@ import {getPlacementJob} from "@/modules/placements/job-service";
 import {getJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import type {CollegeLegacyDriveStatus} from "@/modules/placements/college-legacy-drive-settings-model";
 import { Disclosure } from "@/components/ui/disclosure";
+import { CollegeDriveSettingsDirtyGuard } from "@/components/placements/college-drive-settings-dirty-guard";
 
 export default async function CollegeDriveSettingsPage({
-  params,
-}:{params:Promise<{jobId:string}>}) {
+  params,searchParams,
+}:{params:Promise<{jobId:string}>;
+ searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context=await getCurrentRequestContext();
   if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN")){
     return <div className="min-w-0 space-y-4">
@@ -33,6 +35,10 @@ export default async function CollegeDriveSettingsPage({
   }
   const {jobId}=await params;
   const base="/college/placements/jobs/"+encodeURIComponent(jobId);
+  const rawReturn=(await searchParams).returnTo;
+  const returnTo=typeof rawReturn==="string"&&
+    /^\/college\/placements\/drives(?:\?(?!\/)[^#]*)?$/.test(rawReturn)
+    ?rawReturn:"/college/placements/drives";
   const [overviewResult,jobResult]=await Promise.allSettled([
     getCollegeDriveOverview(context,jobId),
     getPlacementJob(context,jobId),
@@ -50,21 +56,39 @@ export default async function CollegeDriveSettingsPage({
     throw overviewResult.reason;
   const job=jobResult.value;
   const drive=overviewResult.status==="fulfilled"?overviewResult.value.drive:null;
-  const setup=job.status==="DRAFT"?await Promise.all([
+  // Independent failures must not conceal the last saved drive details.
+  // A draft remains non-editable until *all* required authoring choices load.
+  const setupResults=job.status==="DRAFT"?await Promise.allSettled([
     getJobEligibilityPolicy(context,jobId),
     listPrograms(context,job.collegeId),
     listPlacementJobTypeChoices(context,job.collegeId),
-  ]).catch(()=>null):null;
-  const cohortGroups=setup?await Promise.all(
-    setup[1].map(async program=>({program,cohorts:await listCohorts(context,program.id)})),
-  ).catch(()=>null):null;
-  const eligibilityPolicy=setup?.[0]??null;
-  const programs=setup?.[1]??[];
-  const jobTypes=setup?.[2]??[];
-  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  ]):null;
+  const eligibilityPolicy=setupResults?.[0]?.status==="fulfilled"?setupResults[0].value:null;
+  const programs=setupResults?.[1]?.status==="fulfilled"?setupResults[1].value:[];
+  const jobTypes=setupResults?.[2]?.status==="fulfilled"?setupResults[2].value:[];
+  const setupReady=Boolean(setupResults?.every(row=>row.status==="fulfilled"));
+  const cohortResults=setupReady?await Promise.allSettled(
+    programs.map(async program=>({program,cohorts:await listCohorts(context,program.id)})),
+  ):null;
+  const cohortGroups=cohortResults?.every(row=>row.status==="fulfilled")
+    ?cohortResults.map(row=>row.status==="fulfilled"?row.value:null).filter(
+       (row):row is {program:typeof programs[number];cohorts:Awaited<ReturnType<typeof listCohorts>>}=>row!==null)
+    :null;
+  const applicationCount=overviewResult.status==="fulfilled"
+    ?overviewResult.value.counts.applications:null;
+  return <CollegeDriveSettingsDirtyGuard className="min-w-0 space-y-[var(--lms-space-4)]">
+    <nav aria-label="Drive breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
+      <Link href={returnTo} className="inline-flex min-h-9 items-center font-semibold text-link underline">Drives</Link>
+      <span aria-hidden="true">/</span><span className="min-w-0 truncate">{drive?.companyName??drive?.title??job.title}</span>
+      <span aria-hidden="true">/</span><span aria-current="page">Settings</span>
+    </nav>
     <PageHeader title="Settings" description={drive?.title??job.title}
-      actions={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
-        href={base+"/overview"}>Overview</Link>}/>
+      actions={<div className="flex flex-wrap items-center gap-3">
+        <Link className="inline-flex min-h-9 items-center font-semibold text-link underline"
+         href={base+"/settings"}>Refresh</Link>
+        <Link className="inline-flex min-h-9 items-center font-semibold text-link underline"
+         href={base+"/overview"}>Overview</Link>
+      </div>}/>
     <Tabs ariaLabel="Drive sections" renderPanel={false} value="settings"
       items={[
         {value:"overview",label:"Overview",href:base+"/overview"},
@@ -72,6 +96,13 @@ export default async function CollegeDriveSettingsPage({
         {value:"schedule",label:"Schedule",href:base+"/interviews"},
         {value:"settings",label:"Settings",href:base+"/settings"},
       ]}/>
+    <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
+      <span className="font-semibold text-[var(--lms-heading)]">Applicant impact</span>
+      {typeof applicationCount==="number"?
+        <span>{applicationCount} total application{applicationCount===1?"":"s"}</span>:
+        <span role="status" className="text-warning-text">Applicant count unavailable; check before changing status.</span>}
+      <Link href={base+"/applications"} className="font-semibold text-link underline">View applications</Link>
+    </div>
     {!drive?<Alert tone="warning">
       Applicant impact could not be verified. Review the drive overview before any high-impact lifecycle action.
       <Link href={base+"/settings"} className="ml-2 font-semibold text-link underline">Retry</Link>
@@ -79,6 +110,12 @@ export default async function CollegeDriveSettingsPage({
     <section aria-label="Linked company" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
       <h2 className="text-[16px] font-semibold text-[var(--lms-heading)]">Company</h2>
       <p className="mt-1 text-sm text-body">{drive?.companyName??"Company association unavailable"}</p>
+      <p className="mt-2 text-xs text-muted-foreground">
+        Company names can be searched in the college-scoped directory. Verified relationships
+        cannot be silently replaced on a published drive.
+      </p>
+      <Link href="/college/placements/companies"
+        className="mt-2 inline-flex min-h-9 items-center font-semibold text-link underline">Search companies</Link>
       <p className="mt-1 text-xs text-muted-foreground">The company relationship is college-scoped.
         It cannot be replaced by free-text editing on this page; manage verified company relationships
         in the placement operations workspace before creating a replacement draft.</p>
@@ -127,9 +164,10 @@ export default async function CollegeDriveSettingsPage({
           ?"Drive changes were not saved. Required academic or policy options could not be verified; retry before editing."
           :"This drive is read-only. Only drafts in an active placement season are editable. Published-drive changes use the guarded lifecycle and deadline actions."}
       </Alert>}
-    <section aria-label="Legacy drive settings" className="min-w-0">
+    <section aria-label="Drive status" className="min-w-0">
+      <h2 className="mb-3 text-[16px] font-semibold text-[var(--lms-heading)]">Drive status</h2>
       <CollegeLegacyDriveSettings jobId={jobId} status={(drive?.status??job.status) as CollegeLegacyDriveStatus}/>
     </section>
-    {(drive?.status??job.status)!=="ARCHIVED"?<Disclosure title="Delete drive" className="min-w-0 border-b border-[var(--lms-canvas-border)]"><div className="min-w-0 pt-[var(--lms-space-2)]"><CollegeDriveArchiveAction jobId={jobId}/></div></Disclosure>:null}
-  </div>;
+    {(drive?.status??job.status)!=="ARCHIVED"?<Disclosure title="Danger zone · Delete drive" className="min-w-0 border-b border-[var(--lms-canvas-border)]"><div className="min-w-0 pt-[var(--lms-space-2)]"><CollegeDriveArchiveAction jobId={jobId}/></div></Disclosure>:null}
+  </CollegeDriveSettingsDirtyGuard>;
 }
