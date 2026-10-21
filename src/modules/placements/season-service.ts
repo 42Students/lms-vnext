@@ -22,6 +22,16 @@ import {
   type CreatePlacementSeasonInput,
 } from "./validation";
 
+/** Legacy season endpoints: GET /season → listPlacementSeasons,
+ * GET /current → current ACTIVE season in selected college,
+ * POST /season → createPlacementSeason. Open-registration is NOT the same as
+ * opening a season: it must use the registered batch-invitation lifecycle
+ * with its separate authorization/preview and cannot be inferred by status.
+ */
+export async function currentPlacementSeason(context:RequestContext,collegeId:string){
+ const seasons=await listPlacementSeasons(context,collegeId);
+ return seasons.find(season=>season.status==="ACTIVE")??null;
+}
 export async function listPlacementSeasons(
   context: RequestContext,
   collegeIdInput: string,

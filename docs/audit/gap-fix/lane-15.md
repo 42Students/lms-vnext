@@ -302,3 +302,6 @@
 
 - work2 #31 `learner-placement-notification-model.ts` | G2-4-015-020/025: added strict nullable legacy toggle adapter merging only explicitly non-null fields into live baseline; current confirmed CAS schema unchanged for safe writes. Endpoint integration handed off.
 - work2 #32 `faculty-assessment-route-boundary.ts` | G2-3-007-024/G2-4-013-032: distinct hidden/invalid report "Report not found." (no Retry) vs transient fetch "Couldn't load the report." with Retry, without revealing scoped resource existence. Render in report pages/error boundaries handed off.
+
+- work2 #33 `learn/my-placements/interviews/error.tsx` | G2-17-005-016: exact historical "We could not load your schedule" error copy with same Retry control and explicit failure-not-empty guidance retained.
+- work2 #34 `placements/season-service.ts` | G2-8-022-030: documented old season endpoint crosswalk and added scoped current ACTIVE season resolver. Legacy open-registration intentionally not conflated with season creation; requires batch-invitation route, handed off.

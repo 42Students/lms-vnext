@@ -149,3 +149,5 @@
 
 - Learner placement notification write adapter G2-4-015-020/025: for trusted old PUT, read current persisted booleans and call `mergeLegacyPlacementNotificationPatch`; then require confirmed and CAS expected baseline before using live narrow write service. Null master toggle MUST NOT reset another preference.
 - Faculty quiz/assignment report pages G2-3-007-024/G2-4-013-032: use `facultyAssessmentReportErrorCopy` to render exact "Report not found." without Retry for invalid/hidden route; for legitimate retriable load error preserve server-safe details and show Retry. Never show private details from 403.
+
+- Placement season API G2-8-022-030: if historic /current consumer required, expose `currentPlacementSeason` under persisted college scope; map legacy open-registration to authorized batch lifecycle invite with audit and preview, not generic season OPEN.
