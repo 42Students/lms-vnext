@@ -408,6 +408,10 @@ export function ScheduleProjectMeetingControl({
     event.preventDefault();
     setError(null);
 
+    if(meeting&&!dirty){
+      showToast({tone:"info",title:"No changes to save"});
+      return;
+    }
     const validationError = mentorMeetingScheduleError({
       title,
       startsAt,
@@ -417,7 +421,13 @@ export function ScheduleProjectMeetingControl({
       nowMs: Date.now(),
     });
     if (validationError) {
-      setError(validationError);
+      // The schedule editor is one row of the legacy repeatable editor.
+      // Keep its row index in validation instead of a generic dialog error.
+      setError("Item 1 required fields: "+validationError);
+      return;
+    }
+    if(meetingType==="RETRO"&&!facilitation.notes.trim()&&!facilitation.wentWell.trim()&&!facilitation.improve.trim()){
+      setError("Item 1 required fields: Add retrospective notes or reflections.");
       return;
     }
 
@@ -468,9 +478,7 @@ export function ScheduleProjectMeetingControl({
       setOpen(false);
       showToast({
         tone: "success",
-        title: meeting
-          ? "Meeting updated."
-          : meetingStatus==="DRAFT"?"Meeting draft saved.":"Meeting added.",
+        title: meeting ? "Meetings updated" : meetingStatus==="DRAFT"?"Meeting draft saved.":"Meeting added.",
       });
       router.refresh();
     } catch {
@@ -640,13 +648,13 @@ export function ScheduleProjectMeetingControl({
               </Select>
             </label>
           </div>
-          <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
-            <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Meeting notes and follow-up</summary>
+          <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
+            <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Meeting notes, retrospective and follow-ups</summary>
             <fieldset className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             {([
-              ["notes","Notes"],["actionItems","Action items"],
-              ["wentWell","What went well?"],["improve","What didn't go well?"],
-              ["nextTime","Actions for next sprint"],["followUpNotes","Follow-up notes"],
+              ["notes","Notes"],["actionItems","Follow-up actions"],
+              ["wentWell","Retrospective: What went well?"],["improve","Retrospective: What didn't go well?"],
+              ["nextTime","Retrospective: Actions for next sprint"],["followUpNotes","Follow-up notes"],
             ] as const).filter(([field])=>meetingType==="RETRO" ||
               !["wentWell","improve","nextTime"].includes(field)).map(([field,label])=>
               <label key={field} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
