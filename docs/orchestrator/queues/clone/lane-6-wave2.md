@@ -43,7 +43,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_learner-job-service.ts.md` (edit src/modules/placements/learner-job-service.ts; 23 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_admin-company-directory-service.ts.md` (edit src/modules/placements/admin-company-directory-service.ts; 22 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_college_projects_page.tsx.md` (edit src/app/(authenticated)/college/projects/page.tsx; 19 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_NEW_docs_audit_gap2_lane-15_u008-syllabus-detail.md.md` (new; 17 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_NEW_docs_audit_gap2_lane-15_u008-syllabus-detail.md.md` (new; 17 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_college_placements_jobs_jobId_interviews_page.tsx.md` (edit src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_company-service.ts.md` (edit src/modules/placements/company-service.ts; 13 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_tpo-drive-change-request-service.ts.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 13 findings; best P2)
