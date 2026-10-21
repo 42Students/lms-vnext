@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 type StartResult = { attemptId: string; maskedContact: string; expiresInSeconds: number };
 export function LearnerRollNumberLogin() {
@@ -50,23 +52,23 @@ export function LearnerRollNumberLogin() {
     </p>
     {!attempt ? <form className="space-y-3" onSubmit={start}>
       <label htmlFor="roll-login-roll" className="block text-sm font-semibold">Roll number</label>
-      <input id="roll-login-roll" required maxLength={128} value={rollNumber}
+      <Input id="roll-login-roll" required maxLength={128} value={rollNumber}
         autoComplete="username" onChange={event => setRollNumber(event.target.value)}
-        className="w-full rounded border border-border bg-surface px-3 py-2" />
-      <button type="submit" disabled={busy}
-        className="min-h-9 w-full rounded bg-[var(--lms-primary)] px-4 font-semibold text-white disabled:opacity-50">
+        className="w-full" />
+      <Button type="submit" disabled={busy}
+        className="w-full">
         {busy ? "Requesting…" : "Send OTP"}
-      </button>
+      </Button>
     </form> : <form className="space-y-3" onSubmit={verify}>
       <p className="text-sm" role="status">Code sent to {attempt.maskedContact}</p>
       <label htmlFor="roll-login-code" className="block text-sm font-semibold">Verification code</label>
-      <input id="roll-login-code" inputMode="numeric" autoComplete="one-time-code" required
+      <Input id="roll-login-code" inputMode="numeric" autoComplete="one-time-code" required
         minLength={4} maxLength={8} pattern="[0-9]{4,8}" value={code}
         onChange={event => setCode(event.target.value)}
-        className="w-full rounded border border-border bg-surface px-3 py-2" />
-      <button type="submit" disabled={busy} className="min-h-9 w-full rounded bg-[var(--lms-primary)] px-4 font-semibold text-white disabled:opacity-50">
+        className="w-full" />
+      <Button type="submit" disabled={busy} className="w-full">
         {busy ? "Verifying…" : "Verify and sign in"}
-      </button>
+      </Button>
       <button type="button" disabled={busy}
         className="block text-sm text-primary-text underline"
         onClick={() => { setAttempt(null); setCode(""); setMessage(""); }}>
