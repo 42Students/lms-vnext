@@ -49,10 +49,10 @@ export default async function FacultyAssignmentSubmissionsPage({
       actions={<Link href={"/teacher/report/assignment/"+
         encodeURIComponent(report.assignment.id)+"?deliveryId="+
         encodeURIComponent(report.assignment.deliveryId)}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
         Full Section report
       </Link>} />
-    <form method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+    <form method="get" className="grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_auto_auto] md:items-end">
       <Input type="hidden" name="deliveryId" value={query.deliveryId}/>
       {query.filter!=="ALL"?<Input type="hidden" name="filter" value={query.filter}/>:null}
       {query.order!=="NEWEST"?<Input type="hidden" name="order" value={query.order}/>:null}
@@ -62,9 +62,9 @@ export default async function FacultyAssignmentSubmissionsPage({
         <Input type="search" name="q" defaultValue={query.q} maxLength={120} placeholder="Learner name"
           className="min-h-11 md:min-h-[var(--lms-control-height)] w-full"/>
       </label>
-      <Button type="submit" variant="primary" className="w-full sm:w-auto">Search</Button>
+      <Button type="submit" variant="primary" className="w-full md:w-auto">Search</Button>
       <Link href={facultySubmissionListHref({...query,q:"",page:1})}
-        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear search</Link>
+        className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text md:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Clear search</Link>
     </form>
     <Tabs ariaLabel="Submission grading filters" value={query.filter} renderPanel={false}
       items={(["ALL","GRADED","UNGRADED","LATE"] as const).map(filter=>({
@@ -81,12 +81,12 @@ export default async function FacultyAssignmentSubmissionsPage({
       items={[{value:"NEWEST",label:"Newest first",href:facultySubmissionListHref({...query,order:"NEWEST",page:1})},
        {value:"OLDEST",label:"Oldest first",href:facultySubmissionListHref({...query,order:"OLDEST",page:1})}]}/>
     </Disclosure>
-    <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-center md:justify-between">
       <p className="text-sm text-body leading-[22px]">
         {data.total.toLocaleString("en-IN")} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
-        <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
+        <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline md:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">
           Export {query.filter==="ALL"?"all":query.filter.toLowerCase()} CSV
         </Link>
         <p className="max-w-prose text-xs leading-5 text-muted-foreground">{facultySubmissionCsvScopeNote(query)}</p>
