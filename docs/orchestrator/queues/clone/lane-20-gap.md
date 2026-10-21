@@ -45,8 +45,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/enterprises.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/home.js`
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/index.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/privacy-policy.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/universities.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/privacy-policy.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/universities.js`
 - [ ] U009 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/R2StorageUtils.java`
 - [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterMessageEmailService.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/JobApplicationStatusHistoryServiceImpl.java`
