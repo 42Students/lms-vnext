@@ -53,10 +53,13 @@ const phoneValue = z
   .trim()
   .max(32)
   .refine(
-    (value) =>
-      value === "" ||
-      /^[+]?\d[\d\s-]{7,20}$/.test(value),
-    "Use a valid phone number",
+    (value) => {
+      if (value === "") return true;
+      if (!/^[+]?\d[\d\s-]*$/.test(value)) return false;
+      const digitCount = value.replace(/\D/g, "").length;
+      return digitCount >= 10 && digitCount <= 15;
+    },
+    "Phone number must be 10-15 digits",
   )
   .default("");
 
@@ -68,7 +71,7 @@ const emailValue = z
     (value) =>
       value === "" ||
       z.string().email().safeParse(value).success,
-    "Use a valid email",
+    "Enter a valid email address",
   )
   .default("");
 
@@ -143,6 +146,17 @@ const addressSchema = z
       )
       .default(""),
     permanentAddress: textValue(1000),
+    permanentCity: textValue(160),
+    permanentState: textValue(160),
+    permanentPincode: z
+      .string()
+      .trim()
+      .max(16)
+      .refine(
+        (value) => value === "" || /^[A-Za-z0-9 -]{3,16}$/.test(value),
+        "Use a valid postal code",
+      )
+      .default(""),
   })
   .strict()
   .default({
@@ -151,6 +165,9 @@ const addressSchema = z
     state: "",
     pincode: "",
     permanentAddress: "",
+    permanentCity: "",
+    permanentState: "",
+    permanentPincode: "",
   });
 
 const personalDetailsSchema = z
@@ -277,6 +294,9 @@ const educationSchema = z
     specialization: textValue(200),
     institution: textValue(300),
     isCurrentlyPursuing: z.boolean().default(false),
+    // Legacy application qualification marks one primary/recent education.
+    // Generic optional profile education may have none.
+    isRecentEducation: z.boolean().default(false),
     startYear: z
       .string()
       .trim()
@@ -311,9 +331,15 @@ const educationSchema = z
   })
   .strict();
 export const learnerProfileEducationWriteSchema=z.array(educationSchema).max(30).superRefine((items,ctx)=>{
+ let recentCount=0;
  for(const [index,entry] of items.entries()){
   const problem=learnerEducationValidationProblem(entry);
   if(problem)ctx.addIssue({code:"custom",path:[index,problem.field],message:problem.message});
+  if(entry.isRecentEducation){
+   recentCount++;
+   if(recentCount>1)ctx.addIssue({code:"custom",path:[index,"isRecentEducation"],
+    message:"Select only one recent education"});
+  }
  }
 });
 
@@ -512,9 +538,16 @@ export const learnerProfileDocumentSchema = z
       specificRolePreference:z.string().trim().max(200).default(""),
       workShiftPreference:z.enum(["","DAY","NIGHT","ROTATIONAL","FLEXIBLE"]).default(""),
       preferredEmploymentCity:z.string().trim().max(120).default(""),
+      // Retain the six legacy DTO properties without replacing the current
+      // vNext multi-role preference list. Only explicit user opt-out is false.
+      rolePreference:z.string().trim().max(200).default(""),
+      examSlotPreference:z.enum(["","Morning","Afternoon","Evening"]).default(""),
+      jobNotificationsEnabled:z.boolean().default(true),
+      papInterest:z.enum(["","Yes","No","Need more info"]).default(""),
     }).strict().default({
       rolePreferences:[],specificRolePreference:"",workShiftPreference:"",
-      preferredEmploymentCity:"",
+      preferredEmploymentCity:"",rolePreference:"",examSlotPreference:"",
+      jobNotificationsEnabled:true,papInterest:"",
     }),
     metadata: z
       .array(metadataEntrySchema)
