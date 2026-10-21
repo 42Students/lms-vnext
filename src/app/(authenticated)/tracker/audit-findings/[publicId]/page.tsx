@@ -4,7 +4,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
-import {getIndependentAuditFinding,listIndependentAuditFindingEvents,listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {getIndependentAuditFinding,listIndependentAuditFindingEvents} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {listSimilarIndependentFindings} from "@/modules/bug-tracker/independent-finding-similar-service";
 import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
 import {IndependentFindingCopyAction} from "@/components/tracker/independent-finding-copy-action";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
@@ -19,7 +20,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
  const context=await getCurrentRequestContext();
  const [events,candidates]=await Promise.all([
   listIndependentAuditFindingEvents(context,finding.id),
-  listIndependentAuditFindings(context,{q:"",view:"ALL",statuses:[],severities:[],kinds:[],area:"",page:1}),
+  listSimilarIndependentFindings(context,{id:finding.id,area:finding.area,title:finding.title}),
  ]);
  const details=[
   ["Summary",finding.summary],["Steps",finding.steps],["Expected",finding.expected],
@@ -35,7 +36,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    <h2 className="font-semibold text-[var(--lms-heading)]">{label}</h2><p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px] text-body">{value??"Not given"}</p>
   </section>)}
   <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity} currentAssignee={finding.assignee}
-   candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
+   candidates={candidates.map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More finding details</summary>
     <div className="min-w-0 space-y-4 pt-3">
@@ -54,7 +55,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Related tools</summary>
     <div className="flex min-w-0 flex-wrap items-center gap-4 pt-3">
-  <Link href={"/tracker/audit-findings?q="+encodeURIComponent(finding.title.slice(0,100))}
+  <Link href={"/tracker/audit-findings?area="+encodeURIComponent(finding.area)+"&q="+encodeURIComponent(finding.title.slice(0,100))}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Looks similar</Link>
   <IndependentFindingCopyAction finding={{
    id:finding.externalId,title:finding.title,summary:finding.summary,steps:finding.steps,

@@ -18,6 +18,9 @@ import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
+import {IndependentFindingsSyncControl} from "@/components/tracker/independent-findings-sync-control";
+import {independentAuditImporterReady} from "@/modules/bug-tracker/independent-audit-inbox-importer";
+import {independentAuditGithubConfigured} from "@/modules/bug-tracker/independent-audit-github-client";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
@@ -53,14 +56,21 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(findingsResult.status==="rejected"){
   if(findingsResult.reason instanceof AuthorizationError)throw findingsResult.reason;
   return <div className="min-w-0 space-y-4">{header}
-   <Banner tone="error">Audit findings could not be loaded. The last verified data has not been modified.</Banner>
-   <ErrorState title="Audit findings could not be loaded"
+   <Banner tone="error">Couldn&apos;t load findings. The last verified data has not been modified.</Banner>
+   <ErrorState title="Couldn\u0027t load findings."
     description="Retry the same authorized search and filter set. No synchronization was attempted."
     action={<Link href={independentFindingHref(parsed)} className="font-semibold text-link underline underline-offset-4">Retry audit findings</Link>} />
   </div>;
  }
  const data=findingsResult.value;
  const sync=syncResult.status==="fulfilled"?syncResult.value:null;
+ const importerReady=independentAuditImporterReady()&&independentAuditGithubConfigured();
+ // Persisted importer errors are untrusted: redact obvious credentials and
+ // request tokens, and truncate. Do not print raw sync/provider payloads.
+ const lastImportError=sync?.lastError
+  ?.replace(/(bearer|token|password|api[_-]?key)\s*[:=]\s*\S+/gi,"[redacted]")
+  .replace(/https?:\/\/[^\s]+/gi,"[redacted URL]")
+  .replace(/[\x00-\x1f\x7f]/g," ").slice(0,320)??null;
 
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
   {key:"path",header:"File",mobilePriority:"primary",cell:item=>
@@ -81,20 +91,22 @@ export default async function IndependentFindingsPage({searchParams}:{
         timeZone:"Asia/Kolkata"}).format(sync.lastSyncedAt)+" IST" : "not recorded"}
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
-   <div className="flex flex-wrap items-center gap-3">
-    <IndependentFindingSyncAction ready={independentAuditImporterReady()}/>
-    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
-   </div>
-   {!independentAuditImporterReady()?<Banner tone="warning">
-    Sync now is unavailable until the credential-verified repository importer and durable file ledger have been configured. No import is performed when this page loads.
+   <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
+   <IndependentFindingsSyncControl ready={importerReady}/>
+   {!importerReady?<Banner tone="warning">
+    Sync now requires verified repository credentials and a durable import ledger.
+    The shared legacy manager password no longer grants access.
    </Banner>:null}
    {syncResult.status==="rejected" ? <Banner tone="warning">
     Import history could not be refreshed. Findings remain available.
     {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
    </Banner> : null}
    {sync?.lastResult==="FAILED" ? <Banner tone="warning">
-    The last recorded repository import failed. {sync.lastError??"Check importer credentials and logs."} No sync was started here.
+    The last recorded repository import failed. {lastImportError??"Check importer credentials and logs."} No sync was started here.
    </Banner> : null}
+   {lastImportError&&sync?.lastResult!=="FAILED"?<Banner tone="warning">
+    Last import error: {lastImportError}
+   </Banner>:null}
    {sync?.lastResult==="PARTIAL" ? <Banner tone="warning">
     The last import was partial. Review the recorded refused files below; an import success count must not include refused files.
    </Banner> : null}
@@ -173,7 +185,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </p>
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
-   <p className="mt-1 text-xs text-muted-foreground">Manual sync is intentionally deferred pending a verified importer, repository credentials, same-origin Super Admin POST and durable job receipt. Viewing this page never triggers a sync.</p>
+   <p className="mt-1 text-xs text-muted-foreground">Sync is an explicit, authorized POST requiring an active unscoped Super Admin, same-origin access, repository credentials and a verified import ledger. Viewing this page never triggers a sync.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
