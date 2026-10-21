@@ -16,6 +16,15 @@ export default async function CollegeFacultyImportPage(){
     <PageHeader title="Import faculty"
       description="Validate and register faculty using the legacy CSV template."
       actions={<PageBackLink href="/college/faculty" label="Back to Faculty"/>}/>
-    <CollegeFacultyCsvImport/>
+    <div className="grid min-w-0 grid-cols-1 items-start gap-4 lg:grid-cols-2">
+      <section aria-label="Faculty registration" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        <CollegeFacultyCsvImport/>
+      </section>
+      <section aria-label="Registration guidance" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Before you register faculty</h2>
+        <p className="text-sm text-body">Use the CSV template to prepare faculty details. Validate the file before registering. The preview shows valid and invalid rows independently.</p>
+        <p className="text-sm text-body">Registrations create college-scoped faculty memberships. Correct failed rows and import again; successful rows are not rolled back.</p>
+      </section>
+    </div>
   </div>;
 }

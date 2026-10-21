@@ -6,7 +6,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, electiveOfferings, electiveSlots, learnerProfiles,
-  learnerProgramEnrollments, lmsGroups, sectionEnrollments, sections, users,
+  learnerProgramEnrollments, lmsGroupMembers, lmsGroups, sectionEnrollments, sections, users,
 } from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -86,7 +86,7 @@ export default async function CollegeElectiveAllocatePage({
   params, searchParams,
 }: {
   params: Promise<{ slotId: string }>;
-  searchParams: Promise<{ q?: string; section?: string; added?: string; failed?: string; reason?: string }>;
+  searchParams: Promise<{ q?: string; section?: string; added?: string; waitlisted?: string; skipped?: string; failed?: string; reason?: string }>;
 }) {
   const { slotId } = await params;
   const input = await searchParams;
@@ -188,23 +188,36 @@ export default async function CollegeElectiveAllocatePage({
       if (selected.length>100)
         redirect(base(slotId)+"?failed=1&reason=A%20maximum%20of%20100%20learners%20can%20be%20allocated%20at%20once.");
     }
-    let added = 0, failed = unmatched.length;
+    // Inspect existing group states before the mutation so re-joining a member
+    // cannot inflate the success count (the join kernel is idempotent).
+    const previous=selected.length?await getDb().select({
+      membershipId:lmsGroupMembers.membershipId,state:lmsGroupMembers.state,
+    }).from(lmsGroupMembers).where(and(
+      eq(lmsGroupMembers.groupId,groupId),
+      inArray(lmsGroupMembers.membershipId,selected),
+    )):[];
+    const already=new Set(previous.filter(item=>item.state==="ACTIVE"||item.state==="WAITLISTED").map(item=>item.membershipId));
+    let added = 0, waitlisted=0, skipped=0, failed = unmatched.length;
     let reason = unmatched.length
       ? "Unmatched roll numbers or IDs: "+unmatched.slice(0,5).join(", ")+
         (unmatched.length>5?" (and "+(unmatched.length-5)+" more).":".")
       : "";
     for (const membershipId of selected) {
+      if(already.has(membershipId)){skipped++;continue;}
       try {
         // Kernel serializes the slot, checks current section/program eligibility
         // and max-pick, and assigns ACTIVE or WAITLISTED under capacity policy.
-        await joinGroup(context, groupId, membershipId, "MANUAL");
-        added++;
+        const membership=await joinGroup(context, groupId, membershipId, "MANUAL");
+        if(membership.state==="ACTIVE")added++;
+        else if(membership.state==="WAITLISTED")waitlisted++;
+        else skipped++;
       } catch (error) {
         failed++;
         if (!reason) reason = "Some students could not be allocated. Review their eligibility and the available seats.";
       }
     }
-    redirect(base(slotId) + "?added=" + added + "&failed=" + failed +
+    redirect(base(slotId) + "?added=" + added + "&waitlisted=" + waitlisted +
+      "&skipped=" + skipped + "&failed=" + failed +
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
@@ -213,7 +226,9 @@ export default async function CollegeElectiveAllocatePage({
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to Electives</Link>} />
     {input.failed !== undefined && <Alert tone={Number(input.failed ?? 0)>0?"warning":"success"}>
-      Processed {input.added ?? "0"} learner(s); {input.failed ?? "0"} failed.
+      Added {input.added ?? "0"} learner(s); {input.waitlisted ?? "0"} waitlisted;
+      {" "}{input.skipped ?? "0"} already assigned/skipped; {input.failed ?? "0"} failed.
+      Seat capacity and timetable/choice eligibility are checked on each allocation.
       {input.reason ? " " + input.reason : ""}
     </Alert>}
     <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
