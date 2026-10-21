@@ -982,3 +982,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-12-026-007/-039 | `src/modules/projects/activity-service.ts` | Add exact eventType and page/size API aliases to bounded project activity service if legacy clients need them; category/IST date filtering now wired.
 - G2-12-020-017/-055 | `src/modules/placements/public-join/domain-model.ts + company-curation-domain-model.ts` | Replace partial manual suffixes with maintained reviewed PSL normalization across all company gates (new packages forbidden without owner approval).
+
+- G2-11-006-003 | `src/modules/placements/tpo-audit-service.ts` | Map legacy recruiter and student context IDs to authorized vNext URLs; grid adapts UUID drive links.
+- G2-2-034-040 | `src/lib/report-client-error.ts + upload clients` | Emit safe FILE_UPLOAD_FAILURE classification/code only; never raw filename/presigned URL.

@@ -22,6 +22,14 @@ function when(value:string){
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(new Date(instant))+" IST":"Not recorded";
 }
+/** Route known legacy drive URLs to their scoped vNext job detail.
+ * The destination rechecks college access and returns 404 when unauthorized.
+ */
+function scopedAuditHref(href:string):string{
+ if(!href.startsWith("/tpo/drives/"))return href;
+ const id=href.slice("/tpo/drives/".length);
+ return /^[a-f0-9-]{36}$/i.test(id)?"/tpo/placements/jobs/"+id:"/tpo/audit";
+}
 export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const [showAbout,setShowAbout]=useState(true),[showDetail,setShowDetail]=useState(true);
  const [who,setWho]=useState(""),[what,setWhat]=useState("");
@@ -83,7 +91,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
    mobilePrimaryKeys={["event","when","about"]}
    selection={{selected,onChange:setSelected,allIds:visible.map(row=>row.kind+":"+row.id)}}
    rowActions={row=>row.entityHref?
-    <Link href={row.entityHref}
+    <Link href={scopedAuditHref(row.entityHref)}
       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open item →</Link>:
     row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
       className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open job →</Link>:
