@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 export const learnerClosingSoonQuerySchema = z.literal("1");
+/** A seven-day IST calendar window, including the current day and its next
+ * seven local dates. India has a fixed UTC+05:30 offset (no DST).
+ * Retain the precise snapshot for already-closed deadlines. */
+export function closingSoonIstDayEndMs(snapshotNowMs:number):number{
+ const dayMs=86_400_000,istOffsetMs=330*60_000;
+ return Math.floor((snapshotNowMs+istOffsetMs)/dayMs)*dayMs-istOffsetMs+
+  8*dayMs-1;
+}
 export const learnerDriveAvailabilitySchema = z.enum(["all","open","not-open","closed"]);
 
 /** Learner placement browse facets apply to the authorized published-job rows.
@@ -133,7 +141,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
         ? Date.parse(row.job.applicationDeadline) : Number.NaN;
-      const weekEnd = snapshotNowMs + 7 * 24 * 60 * 60 * 1000;
+      const weekEnd = closingSoonIstDayEndMs(snapshotNowMs);
       if (!Number.isFinite(snapshotNowMs) || !Number.isFinite(deadline) ||
           deadline < snapshotNowMs || deadline > weekEnd || row.deadlinePassed) {
         return false;
