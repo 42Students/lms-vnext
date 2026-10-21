@@ -53,6 +53,48 @@ export default async function LearnerProfilePage({
         initialDocument={profile.profileDocument}
       />
 
+      <section aria-label="Private evidence receipts" className="min-w-0 border-b border-border pb-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold text-[var(--lms-heading)]">Private identity, marksheet and resume receipts</h2>
+          <Link href="/learn/profile/verification"
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+            Review receipts and verification →
+          </Link>
+        </div>
+        {verification ? (
+          <ul className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2">
+            {verification.evidence.map(item => (
+              <li key={item.purpose} className="min-w-0 border-b border-border py-3">
+                <p className="text-sm font-semibold text-foreground">
+                  {item.purpose==="AADHAAR"?"Aadhaar":item.purpose==="PAN"?"PAN":
+                    item.purpose==="MARKSHEET"?"Education marksheets":"Resume"}
+                </p>
+                <p className="mt-1 text-sm text-body">
+                  {item.recorded} active private receipt(s) · {item.cleanScanCount} clean scan(s)
+                  {item.pendingScanCount ? " · "+item.pendingScanCount+" scanning" : ""}
+                </p>
+              </li>
+            ))}
+          </ul>
+        ) : <Banner tone="warning" className="mt-2">
+          Private receipt status couldn't load. No saved document has been assumed.
+          <Link href="/learn/profile/verification"
+            className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry receipts</Link>
+        </Banner>}
+        <p className="mt-3 max-w-3xl text-xs leading-5 text-muted-foreground">
+          Only receipt counts and scan states appear here. Private Aadhaar/PAN numbers and
+          underlying identity files are not exposed through this profile summary.
+          A clean scan is not college verification or a default-resume selection.
+        </p>
+        <nav aria-label="Private profile details" className="mt-3 flex flex-wrap gap-4">
+          <Link href="/learn/profile?section=identity" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+            Review identity details →
+          </Link>
+          <Link href="/learn/profile?section=education" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+            Review education details →
+          </Link>
+        </nav>
+      </section>
       <section aria-label="Profile verification summary" className="min-w-0 border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-[var(--lms-heading)]">Profile verification</h2>
@@ -84,7 +126,7 @@ export default async function LearnerProfilePage({
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
         {!academicOutcome.available ? <Banner tone="info" className="mt-3">
-          <p>Your academic summary is temporarily unavailable. Your saved profile remains available below; no missing enrollment has been inferred.</p>
+          <p>Program couldn't load. Your saved profile remains available; no missing enrollment has been inferred.</p>
           <LearnerProfileAcademicRetry />
         </Banner> : academic?.enrollment ? (
           <dl className="mt-4 grid min-w-0 gap-3 text-sm min-[768px]:grid-cols-2 min-[1280px]:grid-cols-3">
