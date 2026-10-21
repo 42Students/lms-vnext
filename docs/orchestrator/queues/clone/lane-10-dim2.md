@@ -263,18 +263,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/components/placements/tpo-applicant-review-drawer.tsx`
 - [x] `src/components/placements/tpo-applicant-review-form.tsx`
 - [x] `src/components/placements/tpo-company-feedback-form.tsx`
-- [ ] `src/components/placements/tpo-company-interaction-form.tsx`
-- [ ] `src/components/placements/tpo-company-person-editor.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
-- [ ] `src/components/placements/tpo-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/profile/learner-verification-submit.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/mentor-delivery-lock-control.tsx`
-- [ ] `src/components/projects/project-activity-filtered-list.tsx`
+- [x] `src/components/placements/tpo-company-interaction-form.tsx`
+- [x] `src/components/placements/tpo-company-person-editor.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/placements/tpo-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/profile/learner-verification-submit.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx`
+- [x] `src/components/projects/project-activity-filtered-list.tsx`
 - [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
 - [ ] `src/components/projects/project-task-comments.tsx`
 - [ ] `src/components/projects/super-admin-template-overview-editor.tsx`
