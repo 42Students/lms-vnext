@@ -41,7 +41,7 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress}:{projec
  },[open,p.collegeId]);
  async function save(){
   if(!form.title.trim()||busy)return;
-  if(form.startDate&&form.endDate&&form.endDate<form.startDate){setError("End date must be after start date.");return;}
+  if(form.startDate&&form.endDate&&form.endDate<form.startDate){setError("End date must be on or after start date.");return;}
   if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");
   try {
