@@ -2,7 +2,6 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
-import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
@@ -28,9 +27,14 @@ export default async function SuperAdminLectureHallsPage({
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
   if (!collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader  title="Lecture Halls"
-      description="Lecture hall administration requires an exact college safety scope." />
-    <Alert tone="warning">Select a college to continue. Choose a college in the header to manage lecture halls.</Alert>
+    <PageHeader title="Lecture Halls" />
+    <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/admin/lecture-halls" items={[
+      {value:"/admin/academics",label:"Academic Setup",href:"/admin/academics"},
+      {value:"/admin/programs",label:"Programs",href:"/admin/programs"},
+      {value:"/admin/electives",label:"Electives",href:"/admin/electives"},
+      {value:"/admin/lecture-halls",label:"Lecture Halls",href:"/admin/lecture-halls"},
+    ]}/>
+    <Alert tone="warning" title="Select a college to continue">Choose a college in the header above to see its lecture halls.</Alert>
   </div>;
   requireSuperAdminSelectedCollege(context,"academics.manage");
 
@@ -84,8 +88,7 @@ export default async function SuperAdminLectureHallsPage({
   );
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader  title="Lecture Halls"
-      description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
+    <PageHeader title="Lecture Halls" />
     <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/admin/lecture-halls"
       items={[
        {value:"/admin/academics",label:"Academic Setup",href:"/admin/academics"},
@@ -93,10 +96,26 @@ export default async function SuperAdminLectureHallsPage({
        {value:"/admin/electives",label:"Electives",href:"/admin/electives"},
        {value:"/admin/lecture-halls",label:"Lecture Halls",href:"/admin/lecture-halls"},
       ]}/>
+    <section aria-label="Create and review lecture halls" className="min-w-0">
+      <LectureHallManager key={collegeId} collegeId={collegeId}
+        availabilityBase="/admin/lecture-halls"
+        halls={halls.items} departments={departments.map(d => ({ id: d.id, name: d.name }))}
+        emptyState={total > 0 ? {
+          title: "No halls on this page", description: "Go to an earlier page to see matching rooms.",
+        } : {
+          title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
+        }} />
+    </section>
+    <details className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-3 sm:p-4"
+      open={Boolean(query.q||query.status!=="ALL"||query.roomType!=="ALL"||query.departmentId||query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL"||query.pageSize!==10)||undefined}>
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">
+        Advanced filters and export of matching halls
+      </summary>
+      <p className="text-xs text-muted-foreground">Search by room name, type or description across the selected college. Export includes up to 1,000 matching rows; large results are marked as truncated.</p>
     <section aria-label="Lecture hall filters" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="min-w-0 space-y-[var(--lms-space-3)]">
         <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room name
+          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search halls
             <Input type="search" name="q" maxLength={100} defaultValue={query.q}
               placeholder="Search halls" className="min-h-11 w-full md:min-h-9" />
           </label>
@@ -149,7 +168,7 @@ export default async function SuperAdminLectureHallsPage({
       <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-2)]">
         <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-          <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export CSV</a>
+          <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export all matching CSV</a>
           <form action="/admin/lecture-halls" method="get" aria-label="Refresh Lecture Halls 2">
             {Object.entries(query).map(([name,value]) => value !== undefined && value !== ""
               ? <Input key={name} type="hidden" name={name} value={String(value)} /> : null)}
@@ -158,23 +177,17 @@ export default async function SuperAdminLectureHallsPage({
         </div>
       </div>
     </section>
+    </details>
     <section aria-label="Lecture hall results" className="min-w-0 space-y-[var(--lms-space-3)]">
       {departmentResult.status==="rejected"?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
         Departments could not be loaded. Rooms remain visible. Department filter choices are unavailable.{" "}
         <Link href={superAdminLectureHallHref(query)} className="font-semibold text-primary-text underline">Retry departments</Link>.
       </p>:null}
-      <p role="status" className="text-sm text-muted-foreground">{total} matching {total === 1 ? "hall" : "halls"} · Showing {first}–{last}</p>
-      <LectureHallManager key={collegeId} collegeId={collegeId}
-        availabilityBase="/admin/lecture-halls"
-        halls={halls.items} departments={departments.map(d => ({ id: d.id, name: d.name }))}
-        emptyState={total > 0 ? {
-          title: "No halls on this page", description: "Go to an earlier page to see matching rooms.",
-        } : {
-          title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
-        }} />
+      <p role="status" className="text-sm text-muted-foreground">Showing {first}–{last} of {total} {total===1?"hall":"halls"} · {query.pageSize} per page</p>
+
     </section>
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
-      <p className="text-sm text-muted-foreground">Page {query.page} of {pages} · {query.pageSize} per page</p>
+      <p className="text-sm text-muted-foreground">Page {query.page} of {pages} · Showing {first}–{last} of {total}</p>
       <Pagination label="Lecture hall pages" page={query.page} pageCount={pages}
         hrefForPage={page=>superAdminLectureHallHref({...query,page})}/>
     </div>
