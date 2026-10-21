@@ -304,3 +304,49 @@ Boundary decision: Teaching assignments are part of Courses/Academics and schema
 - G2-7-016-029 | `src/components/projects/project-workspace.tsx` | Bring back reversible edit notice
 
 Project tasks are already implemented inside the shared Projects workspace, normalized service and schema. A new College Admin bulk-plan API, legacy taskToken/migration and permission changes cannot be safely added outside the Projects owner in lane-7. No false equivalence between single-row mentor task edit and legacy atomic task-plan save. **23/23 handed off, not fixed.**
+
+## Tenant readiness gate — lane-7 wave-1 handoff (2026-10-21)
+
+- G2-19-029-016 | `src/modules/colleges/readiness-model.ts` | Define explicit mapping between domain-login verdict and broad tenant-data verdict; do not equate legacy warnings with UNKNOWN data
+- G2-19-029-017 | `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | Preserve exact old headline only for verified legacy domain-login indicator; retain vNext caution for actual live tests to avoid false assurance
+- G2-19-029-018 | `src/modules/colleges/readiness-model.ts + readiness page` | Render nonblocking advisory warnings independently; unknown required evidence must still prevent full readiness, not be mixed into advisory list
+- G2-19-029-019 | `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | Never say `login will not work` when only an academic/placement record is missing; label `Login blocked` only on domain gate
+- G2-19-029-020 | `src/modules/colleges/readiness-service.ts` | Preserve all distinct domain diagnostics (none, no primary, multiple primary, verification policy) in a detailed domain-check adapter
+- G2-19-029-022 | `src/modules/colleges/readiness-model.ts` | Keep academic setup warnings separate from domain login verdict; owner must decide stricter full-handover gate semantics
+- G2-19-029-024 | `src/modules/colleges/readiness-service.ts + domain verification policy` | Respect deployed domain-verification policy and own-subdomain trust; clarify when a verified primary is required vs advisory
+- G2-19-029-029 | `src/modules/colleges/readiness-model.ts` | Add runtime schema validation at external/adapter boundary for array/codes; fail closed rather than render READY from malformed data
+- G2-19-029-035 | `src/modules/colleges/readiness-service.ts + typed readiness DTO` | Provide dual domain-login/advisory and full setup readiness DTOs or explicit contract mapping, never claim semantic equivalence for unlike outputs
+- G2-19-029-036 | `src/modules/colleges/readiness-service.ts` | Add typed domain-specific counts and requireVerifiedDomains flag to compact checklist; enforce consistency with login resolution policy
+- G2-19-029-037 | `src/modules/colleges/readiness-service.ts` | Query active host count, primary count and verified count, distinguish multiple-primary and missing host states before deciding domain readiness
+- G2-19-029-039 | `src/modules/colleges/readiness-service.ts` | Surface short legacy academic-warning rule in domain readiness and preserve rich counts on separate operational checklist
+- G2-19-029-042 | `src/modules/colleges/readiness-model.ts` | Separate `domainLoginReady` and `tenantSetupComplete`; prevent label `login blocked` for failed TPO/program requirements
+- G2-19-029-043 | `src/modules/colleges/readiness-model.ts + verification policy` | Encode strict-domain-policy input and optional branding explicitly; add fixture matrices strict vs lenient
+- G2-19-029-044 | `src/modules/colleges/readiness-model.ts` | Keep legitimate advisory warnings separate from unknown required evidence, while ensuring unknown NEVER produces a ready verdict
+- G2-19-029-061 | `src/modules/colleges/readiness-service.ts` | Pass actual deployment verification policy into readiness evaluation; avoid hard-coded assumption about verification requirement
+- G2-19-029-062 | `src/modules/colleges/readiness-model.ts + compatibility DTO` | Publish explicit legacy→vNext domain DTO crosswalk, including requirement policy and coded warnings; keep both views separately typed
+- G2-19-029-063 | `src/modules/colleges/readiness-service.ts + migration mapping` | Document integer→UUID migration contract and domain/branding field crosswalk; preserve no migration assumptions for currently empty vNext
+- G2-19-029-065 | `src/modules/colleges/readiness-remediation-links.ts + readiness page` | Restore advisory partition and `Fix in Branding`; keep new academic data completeness as separate criterion
+
+The existing ten-check operational tenant-readiness gate is not a verified domain-login diagnostic. Do not relabel failed academic data as broken login or treat unknown mandatory evidence as advisory. College readiness model/service and domain policy belong to the Colleges/tenant owner; **19/19 handed off, not fixed**.
+
+## College recurring schedule — lane-7 wave-1 handoff (2026-10-21)
+
+- G2-2-011-009 | `src/modules/academics/college-recurring-preview-model.ts` | Align recurrence cap semantics; 93 calendar-day max can reject valid ≤200-occurrence semester series.
+- G2-2-011-015 | `src/modules/academics/college-recurring-preview-model.ts` | Enforce 200 occurrences and academic term instead of arbitrary 93 days if owner demands legacy parity.
+- G2-2-011-026 | `src/modules/academics/college-recurring-execute-service.ts` | Make per-date creation independently resilient to DB constraint failure; one failed row must not roll back successful dates.
+- G2-2-011-027 | `src/modules/academics/college-recurring-execute-service.ts` | Audit equivalent max-duration and multi-course schedule clash rules beyond simple overlap.
+- G2-2-011-029 | `src/modules/academics/college-recurring-execute-service.ts` | Use savepoints or chunked per-occurrence transaction to retain partial success.
+- G2-2-011-030 | `src/modules/academics/college-recurring-execute-service.ts` | Support selected-college Super Admin route under central requirePermission for recurring create.
+- G2-2-011-035 | `src/modules/academics/college-recurring-execute-service.ts` | Guarantee per-date independent persistence or document stronger all-or-none behavior.
+- G2-2-011-052 | `src/components/academics/college-recurring-preview.tsx` | Record workflow restrictions as major parity gap; restore valid semester recurrence.
+- G2-2-011-053 | `src/modules/academics/college-recurring-execute-service.ts` | Add per-date fault isolation while preserving conflict preview.
+- G2-2-011-020 | `src/modules/academics/college-recurring-preview-model.ts` | Match occurrence-cap error and count actual matching days.
+- G2-2-011-021 | `src/modules/academics/college-recurring-preview-service.ts` | Surface exact no-match error before preview/commit.
+- G2-2-011-016 | `src/components/academics/college-recurring-preview.tsx` | Map field-specific legacy errors into inline helper copy.
+- G2-2-011-017 | `src/modules/academics/college-recurring-preview-model.ts` | Restore exact date format help/error.
+- G2-2-011-018 | `src/modules/academics/college-recurring-preview-model.ts + form` | Use one exact legacy message across UI and API.
+- G2-2-011-019 | `src/modules/academics/college-recurring-preview-model.ts` | Normalize legacy string weekdays and provide specific invalid day error.
+- G2-2-011-022 | `src/components/academics/college-recurring-preview.tsx` | Display both requested and created counts.
+- G2-2-011-023 | `src/components/academics/college-recurring-preview.tsx` | Use human-readable per-date conflict reasons and separate unexpected failures.
+
+The Academics preview/execute workflow is an intentional vNext design with a 93-day limit, specific college-scoped authorization and transactional persistence. Per-date partial saves, 200-session recurrence and SA selected-college mutation require coordinated Academics owner decision. **17/17 handed off, not fixed**.
