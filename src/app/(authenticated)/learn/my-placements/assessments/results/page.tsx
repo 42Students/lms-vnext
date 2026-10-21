@@ -60,7 +60,7 @@ export default async function LearnerAssessmentResultsPage({
         description="Only placement-team-applied test outcomes from your own applications. A scheduled or submitted assessment is not a published result."
       />
       <Tabs ariaLabel="Filter published assessment results" renderPanel={false} value={view} items={views.map(option=>({value:option.id,label:option.label,count:results.counts[option.id],href:href(option.id)}))}/>
-      <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-3">
+      <form method="get" role="search" aria-label="Placement assessment results filters" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:items-end sm:gap-[8px]">
         {view!=="all" ? <Input type="hidden" name="view" value={view}/> : null}
         <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Search published results
