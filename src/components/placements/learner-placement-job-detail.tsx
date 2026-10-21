@@ -40,6 +40,14 @@ export function LearnerPlacementJobDetail({
   const availability=learnerJobAvailabilityBanner(items);
   const failed = items.filter((row) => row.eligibility.status === "INELIGIBLE");
   const requirements=learnerDriveEvidenceRequirements(items);
+  // A positive eligibility score is not an application authorization.
+  // Display the persisted apply denial before generic availability guidance.
+  const blockers=[...new Set(items.flatMap(role=>role.applicationBlockers??[]))];
+  const primaryDenial=blockers[0]??null;
+  const denialAction=blockers.some(reason=>/register for placements|registration does not include/i.test(reason))
+    ? "REGISTER" as const
+    : blockers.some(reason=>/eligib|rule/i.test(reason))
+      ? "RULES" as const : null;
 
   return (
     <div className="min-w-0 space-y-5" aria-label="Published placement drive">
@@ -105,7 +113,15 @@ export function LearnerPlacementJobDetail({
         <aside role="status" aria-label="Application availability"
           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
           <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{availability.title}</h2>
-          <p className="mt-2 text-sm text-body leading-[22px]">{availability.detail}</p>
+          {availability.kind!=="OPEN" && availability.kind!=="APPLIED" && primaryDenial
+            ? <p role="alert" className="mt-2 text-sm text-body leading-[22px]">{primaryDenial}</p>
+            : <p className="mt-2 text-sm text-body leading-[22px]">{availability.detail}</p>}
+          {availability.kind!=="OPEN" && denialAction ? (
+            <Link href={denialAction==="REGISTER"?"/learn/my-placements#registration":"/learn/my-placements/rules"}
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+              {denialAction==="REGISTER"?"Register for placements":"Review placement rules"} →
+            </Link>
+          ) : null}
           {availability.kind!=="OPEN" && availability.kind!=="APPLIED" ? (
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-body" aria-label="Application blockers">
               {[...new Set(items.flatMap(row=>row.applicationBlockers??[]))].map(reason=>
