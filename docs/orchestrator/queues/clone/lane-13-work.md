@@ -56,7 +56,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_faculty-profile-self.staged.ts.md` (edit src/modules/people/faculty-profile-self.staged.ts; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_app_api_auth_login_verify_route.ts.md` (edit src/app/api/auth/login/verify/route.ts; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-directory-person-editor-service.ts.md` (edit src/modules/people/college-directory-person-editor-service.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_components_groups_college-group-import-preview.tsx.md` (edit src/components/groups/college-group-import-preview.tsx; 6 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_components_groups_college-group-import-preview.tsx.md` (edit src/components/groups/college-group-import-preview.tsx; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_storage_file-lifecycle.ts.md` (edit src/modules/storage/file-lifecycle.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_parent-sms-service.ts.md` (edit src/modules/attendance/parent-sms-service.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_admin-service.ts.md` (edit src/modules/attendance/admin-service.ts; 4 findings; best P1)
