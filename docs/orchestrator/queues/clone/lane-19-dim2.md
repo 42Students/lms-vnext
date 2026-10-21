@@ -418,7 +418,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [ ] `src/components/courses/quiz-attempt-control.tsx`
 - [ ] `src/components/groups/college-group-detail-writes.tsx`
 - [x] `src/components/placements/college-application-detail-drawer.tsx`
-- [ ] `src/components/placements/college-drive-bulk-actions.tsx`
+- [x] `src/components/placements/college-drive-bulk-actions.tsx`
 - [ ] `src/components/placements/college-drive-pipeline-overview.tsx`
 - [ ] `src/components/placements/learner-own-drive-journey.tsx`
 - [ ] `src/components/placements/learner-placement-preferences.tsx`
