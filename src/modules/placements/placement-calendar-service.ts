@@ -5,11 +5,14 @@ import {
   gte,
   ilike,
   inArray,
+  isNotNull,
   isNull,
   lt,
   or,
 } from "drizzle-orm";
 import { z } from "zod";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
+import {sql} from "drizzle-orm";
 
 import { getDb } from "@/db/client";
 import {
@@ -124,13 +127,13 @@ export const placementCalendarQuerySchema = z
     if (
       input.roundKind &&
       input.kind &&
-      input.kind !== "ROUND"
+      input.kind !== "ROUND" && input.kind !== "INTERVIEW_SLOT"
     ) {
       ctx.addIssue({
         code: "custom",
         path: ["roundKind"],
         message:
-          "Round kind requires the ROUND event category",
+          "Round kind requires the ROUND or INTERVIEW_SLOT event category",
       });
     }
   });
@@ -504,6 +507,79 @@ export async function listPlacementCalendarEvents(
         : Promise.resolve([]),
     ]);
 
+  // Candidate appointments are distinct from the job-wide round schedule.
+  // Include historical imported interviews and cancelled/no-show/completed
+  // appointments; do not silently reduce the calendar to booked slots only.
+  const appointmentTime = sql<Date>`coalesce(${placementRoundCandidateSlots.legacyScheduledAt}, ${placementRoundCandidateSlots.startsAt})`;
+  const appointmentRows = (!input.kind || input.kind === "INTERVIEW_SLOT")
+    ? await db.select({
+        id: placementRoundCandidateSlots.id,
+        scheduledAt: appointmentTime,
+        endsAt: placementRoundCandidateSlots.endsAt,
+        status: placementRoundCandidateSlots.status,
+        interviewStatus: placementRoundCandidateSlots.legacyInterviewStatus,
+        outcome: placementRoundCandidateSlots.interviewOutcome,
+        legacyLocation: placementRoundCandidateSlots.legacyLocation,
+        room: placementRoundCandidateSlots.room,
+        interviewer: placementRoundCandidateSlots.legacyInterviewerName,
+        roundId: placementJobRounds.id,
+        roundName: placementJobRounds.name,
+        roundKind: placementJobRounds.kind,
+        timezone: placementJobRounds.timezone,
+        jobId: placementJobs.id,
+        jobTitle: placementJobs.title,
+        companyId: placementCompanies.id,
+        companyName: placementCompanies.name,
+      })
+      .from(placementRoundCandidateSlots)
+      .innerJoin(placementJobRounds, and(
+        eq(placementJobRounds.id, placementRoundCandidateSlots.roundId),
+        eq(placementJobRounds.jobId, placementRoundCandidateSlots.jobId),
+      ))
+      .innerJoin(placementJobs, eq(placementJobs.id, placementRoundCandidateSlots.jobId))
+      .innerJoin(placementCompanyRelationships, and(
+        eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId),
+        eq(placementCompanyRelationships.collegeId, college.id),
+      ))
+      .innerJoin(placementCompanies,
+        eq(placementCompanies.id, placementCompanyRelationships.companyId))
+      .where(and(
+        eq(placementJobs.collegeId, college.id),
+        or(
+          isNotNull(placementRoundCandidateSlots.applicationId),
+          isNotNull(placementRoundCandidateSlots.legacyInterviewId),
+        ),
+        gte(appointmentTime, startsAt),
+        lt(appointmentTime, endsBefore),
+        input.roundKind ? eq(placementJobRounds.kind, input.roundKind) : undefined,
+        input.companyId ? eq(placementCompanies.id, input.companyId) : undefined,
+        companyPattern ? ilike(placementCompanies.name, companyPattern) : undefined,
+      ))
+      .orderBy(asc(appointmentTime), asc(placementRoundCandidateSlots.id))
+    : [];
+
+  const appointments: PlacementCalendarEvent[] = appointmentRows.map(row => ({
+    id: `appointment:${row.id}`,
+    kind: "INTERVIEW_SLOT",
+    startsAt: row.scheduledAt,
+    endsAt: row.endsAt,
+    title: `Interview: ${row.roundName}`,
+    companyId: row.companyId,
+    companyName: row.companyName,
+    jobId: row.jobId,
+    jobTitle: row.jobTitle,
+    roundId: row.roundId,
+    roundKind: row.roundKind,
+    leadId: null,
+    followupId: null,
+    status: row.interviewStatus ?? row.outcome ??
+      (row.status === "BOOKED" ? "SCHEDULED" : row.status),
+    timezone: row.timezone,
+    venue: row.legacyLocation ?? row.room,
+    note: row.interviewer ? `Interviewer: ${row.interviewer}` : null,
+    completedAt: null,
+  }));
+
   const rounds: PlacementCalendarEvent[] =
     roundRows.flatMap(
       (row): PlacementCalendarEvent[] => {
@@ -595,6 +671,7 @@ export async function listPlacementCalendarEvents(
     );
 
   const events = sortPlacementCalendarEvents([
+    ...appointments,
     ...rounds,
     ...deadlines,
     ...followups,
