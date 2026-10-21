@@ -51,11 +51,11 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/applications.js`
 - [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/index.js`
 - [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/interviews.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/settings.js`
-- [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js`
-- [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/all.js`
-- [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/index.js`
-- [ ] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/lecture-halls.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/settings.js`
+- [x] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js`
+- [x] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/all.js`
+- [x] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/index.js`
+- [x] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/lecture-halls.js`
 - [ ] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/programs.js`
 - [ ] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/semesters.js`
 - [ ] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/verification.js`
