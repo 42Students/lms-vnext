@@ -63,7 +63,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         action={<Button type="submit" form="college-structure-directory-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-structure-directory-filters" method="get" action={path} className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
-          {classes
+          {data.kind === "CLASSES"
             ? <CollegeClassFilterSelectors programs={data.programs} cohorts={classOptions?.cohorts ?? []}
                 programId={data.query.programId ?? ""} cohortCode={data.query.cohortCode ?? ""}/>
             : <div className="contents">          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -117,25 +117,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 className="min-h-11 min-w-0 md:min-h-9"/>
             </label>
           ) : null}
-          {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Capacity configuration
-              <Select name="capacityState" defaultValue={data.query.capacityState}
-                className="min-h-11 min-w-0 md:min-h-9">
-                <option value="ALL">Any configuration</option>
-                <option value="CONFIGURED">Configured seats</option>
-                <option value="UNSET">Not configured</option>
-              </Select>
-            </label>
-          ) : null}
-          {data.kind === "CLASSES" ? (
-            <label className="hidden gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Batch code
-              <Input name="cohortCode" type="text" maxLength={64}
-                defaultValue={data.query.cohortCode ?? ""} placeholder="Exact batch code"
-                className="min-h-11 min-w-0 md:min-h-9" />
-            </label>
-          ) : null}
+
           {data.kind === "CLASSES" ? (
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Maximum configured capacity
