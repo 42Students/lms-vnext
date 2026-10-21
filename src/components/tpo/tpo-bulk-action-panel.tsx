@@ -273,6 +273,8 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   {target==="APPLICATIONS"?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-xs text-warning-text">
     Shortlist, Reject, Test and Interview stage moves are recorded separately for each applicant.
     Stage moves require a scheduled target round; they cannot be blindly undone after confirmation.
+    Student status notices or messages may be delivered immediately, including before the batch finishes.
+    There is no held-notice grace period for application actions, and Undo cannot recall a delivered notice.
     To correct a result, open the applicant and record a new reviewed decision.
    </p>:null}
   <section aria-label="Actions window" className="min-w-0 space-y-3 border-t border-border pt-4">
@@ -361,7 +363,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     busy={busy||guardedPending||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void runGuarded(confirm)}/>:null}
   {outcomes.length>0&&target==="APPLICATIONS"?
     <p role="status" className="text-xs text-muted-foreground">
-      Application decisions and messages are committed individually. Undo is unavailable for this batch; review each applicant to correct a decision.
+      Application decisions and messages are committed individually. Undo is unavailable for this batch; any notices already sent cannot be recalled. Review each applicant to correct a decision.
     </p>:null}
   {outcomes.length>0?<div className="min-w-0 space-y-2 border-b border-border py-3">
     <p role="status" className="text-sm font-semibold">
