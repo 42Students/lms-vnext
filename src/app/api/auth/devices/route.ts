@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {privateAuthResponse} from "@/modules/auth/private-response";
 import {
   listActiveSessions,
+  revokeAllOwnSessions,
   revokeOtherSessions,
 } from "@/modules/auth/session-service";
 
@@ -32,19 +33,26 @@ export async function GET() {
   }
 }
 
-/** "Sign out everywhere else": keeps only this device. */
+/** Own-session actions only; never infer a target person from caller JSON.
+ * Legacy staff-wide revocation is deliberately not exposed from a self-device
+ * route: cross-account revocation requires a separately authorized admin
+ * workflow and persisted permission check. scope=all revokes this device too.
+ */
 export async function DELETE(request: Request) {
   if (!isSameOriginRequest(request)) {
     return privateAuthResponse(NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 }));
   }
 
   try {
+    const scope = new URL(request.url).searchParams.get("scope") ?? "others";
+    if(scope!=="others"&&scope!=="all")
+      return privateAuthResponse(NextResponse.json({error:"INVALID_REQUEST"},{status:400}));
     const session = await getCurrentDeviceSession();
-    const revoked = await revokeOtherSessions(
-      session.userId,
-      session.sessionId,
-    );
-    return NextResponse.json({ ok: true, revoked }, { headers: { "Cache-Control": "private, no-store" } });
+    const revoked = scope==="all"
+      ? await revokeAllOwnSessions(session.userId)
+      : await revokeOtherSessions(session.userId,session.sessionId);
+    return privateAuthResponse(NextResponse.json({ ok: true, revoked,
+      currentSessionRevoked:scope==="all" }, { headers: { "Cache-Control": "private, no-store" } }));
   } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
   }

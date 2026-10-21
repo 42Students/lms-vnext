@@ -5,7 +5,7 @@ import {projectInstances} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
-import {updateWorkspaceBriefSchema} from "./workspace-brief-model";
+import {updateWorkspaceBriefSchema,publishedWorkspaceBriefError} from "./workspace-brief-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
@@ -24,9 +24,15 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
   // definitionOfDone. A strict edit of the five native fields must not
   // erase unrelated persisted JSON keys; a deliberate empty native field
   // still clears that native field. Only DB-sourced keys are carried.
+  if(project.status==="ACTIVE"){
+   const issue=publishedWorkspaceBriefError(input.brief);
+   if(issue)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
+  }
   const prior=project.authoredBrief;
   const original=prior&&typeof prior==="object"&&!Array.isArray(prior)
     ?prior as Record<string,unknown>:{};
+  // Preserve any historical 'definitionOfDone' key as unedited data, but
+  // the native completionConditions is authoritative once explicitly edited.
   const mergedBrief={...original,...input.brief};
   const [updated]=await tx.update(projectInstances).set({
     authoredBrief:mergedBrief,

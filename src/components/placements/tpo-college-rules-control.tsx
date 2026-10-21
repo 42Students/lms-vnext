@@ -48,9 +48,26 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       event.preventDefault();event.stopPropagation();
       setLeaveHref(link.href);
     };
+    // A history sentinel catches same-origin browser Back/Forward, which
+    // does not trigger beforeunload in the Next App Router.
+    const originHref=window.location.href;
+    const sentinel={lmsPlacementRulesDraft:true};
+    window.history.pushState(sentinel,"",originHref);
+    const onHistory=()=>{
+      if(allowUnload.current)return;
+      const requested=window.location.href;
+      window.history.pushState(sentinel,"",originHref);
+      if(requested!==originHref)setLeaveHref(requested);
+      else setLeaveHref(originHref);
+    };
     window.addEventListener("beforeunload",onUnload);
+    window.addEventListener("popstate",onHistory);
     document.addEventListener("click",onLink,true);
-    return ()=>{window.removeEventListener("beforeunload",onUnload);document.removeEventListener("click",onLink,true);};
+    return ()=>{
+      window.removeEventListener("beforeunload",onUnload);
+      window.removeEventListener("popstate",onHistory);
+      document.removeEventListener("click",onLink,true);
+    };
   },[dirty]);
   const [busy, setBusy] = useState(false);
   // A ref closes the gap before React renders disabled after a rapid double-click.
@@ -144,15 +161,17 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         onConfirm={() => void save()}/>
       <ConfirmDialog open={leaveHref !== null}
         onOpenChange={next => { if (!next) setLeaveHref(null); }}
-        title="Discard unsaved placement settings?"
+        title="Leave without saving"
         description="You have unsaved placement settings. Leave without saving them?"
-        confirmLabel="Leave without saving" confirmVariant="danger"
+        confirmLabel="Leave and discard" cancelLabel="Stay" confirmVariant="danger"
         onConfirm={()=>{
           if(!leaveHref)return;
           const href=new URL(leaveHref,window.location.href);
           setLeaveHref(null);
           allowUnload.current=true;
-          if(href.origin===window.location.origin)router.push(href.pathname+href.search+href.hash);
+          if(href.origin===window.location.origin&&href.href!==window.location.href)
+            router.push(href.pathname+href.search+href.hash);
+          else if(href.href===window.location.href)window.history.back();
           else window.location.assign(href.href);
         }}/>
     </section>

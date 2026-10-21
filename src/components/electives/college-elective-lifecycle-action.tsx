@@ -4,10 +4,13 @@ import {useRef,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {electiveLifecyclePrompt} from "@/modules/electives/college-elective-lifecycle-model";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {useToast} from "@/components/ui/toast";
 export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
   slotId:string;name:string;status:string;version:number;
 }){
   const router=useRouter();
+  const {showToast}=useToast();
+  const [success,setSuccess]=useState("");
   const [pending,start]=useTransition(),[error,setError]=useState("");
   const inFlightRef=useRef(false);
   const action=status==="ACTIVE"?"ARCHIVE":"RESTORE";
@@ -16,6 +19,7 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
     if(!window.confirm(electiveLifecyclePrompt(name,action)))return;
     inFlightRef.current=true;
     setError("");
+    setSuccess("");
     start(async()=>{
       try{
         const res=await fetch("/api/academics/elective-slots/"+encodeURIComponent(slotId)+"/lifecycle",{
@@ -26,6 +30,9 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
           const body=await res.json().catch(()=>({error:"ELECTIVE_LIFECYCLE_FAILED"})) as {error?:string};
           throw new Error(friendlyApiError({status:res.status,code:body.error}));
         }
+        const title=name+(action==="ARCHIVE"?" archived":" restored");
+        setSuccess(title);
+        showToast({tone:"success",title});
         router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not change slot");}
       finally{inFlightRef.current=false;}
@@ -36,6 +43,7 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
       className="text-primary-text">
       {pending?"Saving…":action==="ARCHIVE"?"Archive":"Restore"}
     </Button>
+    {success?<p role="status" className="text-xs text-success">{success}</p>:null}
     {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   </div>;
 }

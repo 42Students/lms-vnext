@@ -1,6 +1,7 @@
 import { z } from "zod";
 export const tpoRoundResultTableQuerySchema=z.object({
   jobId:z.string().uuid(),roundId:z.string().uuid(),
+  page:z.number().int().min(1).max(10000).default(1),
 }).strict();
 export type RoundResultEntry={
  applicationId:string;student:string|null;role:string;rollNumber?:string|null;

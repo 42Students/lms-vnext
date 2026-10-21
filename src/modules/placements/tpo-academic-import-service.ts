@@ -15,10 +15,33 @@ import { tpoAcademicPreviewRowSchema } from "./tpo-academic-preview-import-model
 import {evaluatePlacementEligibility} from "./eligibility-service";
 import {tpoAcademicImportNewlyIneligible} from "./tpo-academic-import-recheck-model";
 
+// Bulk CSVs retain the legacy two-field contract. An individual verified
+// correction can submit only the fields that changed; absent fields are never
+// zeroed or replaced by self-reported values.
+const correctionRowSchema=tpoAcademicPreviewRowSchema.partial({
+ cgpa:true,activeBacklogs:true,
+}).extend({
+ studentCode:z.string().uuid(),
+ pastBacklogs:z.number().int().min(0).max(100).optional(),
+ tenthPercentage:z.number().min(0).max(100).optional(),
+ twelfthPercentage:z.number().min(0).max(100).optional(),
+ diplomaPercentage:z.number().min(0).max(100).optional(),
+ undergraduatePercentage:z.number().min(0).max(100).optional(),
+ postgraduatePercentage:z.number().min(0).max(100).optional(),
+ gapYears:z.number().int().min(0).max(100).optional(),
+ isLateralEntry:z.boolean().optional(),
+ passingYear:z.number().int().min(1950).max(2200).optional(),
+}).refine(row=>Object.keys(row).some(key=>key!=="studentCode"),{
+ message:"Enter at least one academic field to verify.",
+});
 const schema = z.object({
-  rows: z.array(tpoAcademicPreviewRowSchema).min(1).max(200),
+  rows: z.array(correctionRowSchema).min(1).max(200),
+  mode:z.enum(["BULK","SINGLE"]).default("BULK"),
   skipUnmatched: z.boolean().default(false),
-}).strict();
+}).strict().superRefine((data,ctx)=>{
+ if(data.mode==="SINGLE"&&data.rows.length!==1)
+  ctx.addIssue({code:"custom",path:["rows"],message:"Choose exactly one learner to correct."});
+});
 type Input = z.infer<typeof schema>;
 
 async function scope(context: RequestContext) {
@@ -125,10 +148,27 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
        .for("update",{of:placementApplications});
       const oldStatuses=await Promise.all(applications.map(app=>
        evaluatePlacementEligibility(context,app.jobId,row.studentCode,tx).then(result=>result.status)));
+      // Omitted academic fields remain untouched in an existing verified
+      // record. This is important when a TPO corrects only one marks field.
+      // A single persisted VERIFIED source wins over SELF evidence during
+      // placement eligibility, and source provenance remains auditable.
       const evidence = {
-        cgpaHundredths: Math.round(row.cgpa * 100),
-        activeBacklogs: row.activeBacklogs,
+        ...(row.cgpa!==undefined?{cgpaHundredths:Math.round(row.cgpa*100)}:{}),
+        ...(row.activeBacklogs!==undefined?{activeBacklogs:row.activeBacklogs}:{}),
+        ...(row.pastBacklogs!==undefined?{pastBacklogs:row.pastBacklogs}:{}),
+        ...(row.tenthPercentage!==undefined?{tenthPctBasisPoints:Math.round(row.tenthPercentage*100)}:{}),
+        ...(row.twelfthPercentage!==undefined?{twelfthPctBasisPoints:Math.round(row.twelfthPercentage*100)}:{}),
+        ...(row.diplomaPercentage!==undefined?{diplomaPctBasisPoints:Math.round(row.diplomaPercentage*100)}:{}),
+        ...(row.undergraduatePercentage!==undefined?{undergraduatePctBasisPoints:Math.round(row.undergraduatePercentage*100)}:{}),
+        ...(row.postgraduatePercentage!==undefined?{postgraduatePctBasisPoints:Math.round(row.postgraduatePercentage*100)}:{}),
+        ...(row.gapYears!==undefined?{gapYears:row.gapYears}:{}),
+        ...(row.isLateralEntry!==undefined?{isLateralEntry:row.isLateralEntry}:{}),
+        ...(row.passingYear!==undefined?{passingYear:row.passingYear}:{}),
         source: "VERIFIED" as const,
+        // Direct correction is not an import batch, even if later reached
+        // from a single-row form. Imported rows have a traceable timestamp.
+        importedAt: input.mode==="SINGLE"?null:now,
+        sourceMetadata:{mode:input.mode,verifiedFields:Object.keys(row).filter(key=>key!=="studentCode")},
         verifiedAt: now,
         verifiedByUserId: context.user.id,
         updatedAt: now,
@@ -144,8 +184,9 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         actorUserId: context.user.id, actorMembershipId: context.membership!.id,
         module: "PLACEMENTS", eventType: "ACADEMIC_RECORD_IMPORTED",
         subjectType: "placement_candidate_academic_evidence", subjectId: row.studentCode,
-        summary: "Academic record imported",
-        metadata: { cgpa: row.cgpa, activeBacklogs: row.activeBacklogs },
+        summary: input.mode==="SINGLE"?"Academic record corrected":"Academic record imported",
+        metadata: {fields:Object.keys(row).filter(key=>key!=="studentCode"),
+         mode:input.mode,source:"VERIFIED"},
       });
       for(let index=0;index<applications.length;index++){
        const application=applications[index]!;
@@ -191,4 +232,20 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
     }
     return { updated, skipped: missing.length, unmatched: missing, newlyIneligible };
   });
+}
+
+// Single-learner manual correction uses the same scoped preview and commit
+// policy as the bulk import. The calling UI must preview then confirm before
+// invoking commit; the second read revalidates membership and permissions.
+export async function previewTpoSingleAcademicCorrection(
+ context:RequestContext,studentCode:string,
+ changes:Omit<z.infer<typeof correctionRowSchema>,"studentCode">,
+){
+ return previewTpoAcademicImport(context,{mode:"SINGLE",rows:[{studentCode,...changes}]});
+}
+export async function commitTpoSingleAcademicCorrection(
+ context:RequestContext,studentCode:string,
+ changes:Omit<z.infer<typeof correctionRowSchema>,"studentCode">,
+){
+ return commitTpoAcademicImport(context,{mode:"SINGLE",rows:[{studentCode,...changes}]});
 }

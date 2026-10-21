@@ -27,7 +27,8 @@ export async function confirmTpoBulkRoundResults(
   rawRoundId: unknown,
   rawInput: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership ||
+      !(hasMembershipRole(context, "TPO") || hasMembershipRole(context, "COLLEGE_ADMIN"))) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;
