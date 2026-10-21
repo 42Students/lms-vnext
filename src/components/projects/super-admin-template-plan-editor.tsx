@@ -211,7 +211,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
       </> : <>
         {!draft.sprints.length ? <p className="text-sm leading-[22px]">
           No sprints saved yet. A task can only be linked to a sprint that already exists on this template.{" "}
-          <Link className="font-semibold text-primary-text"
+          <Link className="font-semibold text-primary-text hover:underline focus-visible:underline"
             href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints first</Link>.
         </p> : null}
         {draft.tasks.map((task, index) => <fieldset key={index}
