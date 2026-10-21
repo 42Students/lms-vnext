@@ -79,8 +79,10 @@ export function LearnerCareerCalendar({
   function changeCalendar(patch:Partial<LearnerCalendarUrlState>){
     window.history.pushState(null,"",learnerCalendarHref({...state,...patch},surface));
     setSelectedKey(null);
+    setSelectedDayKey(null);
   }
   const [selectedKey,setSelectedKey]=useState<string|null>(null);
+  const [selectedDayKey,setSelectedDayKey]=useState<string|null>(null);
 
   const events = careerCalendarEvents(rounds);
   const filtered = filter === "ALL"
@@ -112,7 +114,17 @@ export function LearnerCareerCalendar({
   })();
 
   const selected=findOwnCareerCalendarEvent(filtered,selectedKey);
-  function showEventDetail(event:CareerCalendarEvent){setSelectedKey(event.key);}
+  const selectedDayEvents=selectedDayKey
+    ? events.filter((event)=>event.dayKey===selectedDayKey) : [];
+  const dayDrawerTitle=selectedDayKey
+    ? new Intl.DateTimeFormat("en-IN",{
+        timeZone:"UTC",weekday:"long",day:"numeric",month:"long",
+      }).format(new Date(selectedDayKey+"T12:00:00.000Z")).replace(",", "")
+    : "Day schedule";
+  function showEventDetail(event:CareerCalendarEvent){
+    setSelectedDayKey(null);
+    setSelectedKey(event.key);
+  }
 
   const mobileDays=view==="week"
     ? learnerCareerWeekDays(period.start,period.events)
@@ -239,7 +251,7 @@ export function LearnerCareerCalendar({
                   key={day}
                   aria-label={`${prettyDay(day)}: ${dayEvents.length} events`}
                   aria-current={day===todayAnchor?"date":undefined}
-                  onClick={() => { changeCalendar({date:day,view:"day"}); }}
+                  onClick={() => { setSelectedKey(null);setSelectedDayKey(day); }}
                   className={[styles.day,day===todayAnchor?styles.todayDay:"",outside?styles.outsideDay:""].filter(Boolean).join(" ")}
                 >
                   <span className={styles.dayNumber+" "+(isSunday?calendarStyles.calendarSunday:"")}>{day.slice(-2)}</span>
@@ -280,7 +292,13 @@ export function LearnerCareerCalendar({
             </p>
           ) : mobileDays.map(day=>(
             <div key={day.dayKey} className={styles.mobileDay}>
-              <h4 className="text-sm font-semibold text-foreground">{prettyDay(day.dayKey)}</h4>
+              <h4 className="text-sm font-semibold text-foreground">
+                <Button type="button" variant="link"
+                  className="min-h-11 text-sm font-semibold underline md:min-h-9"
+                  onClick={()=>{setSelectedKey(null);setSelectedDayKey(day.dayKey);}}>
+                  {prettyDay(day.dayKey)} · Day details
+                </Button>
+              </h4>
               {day.events.length===0?<p className="mt-2 text-sm text-body">No scheduled rounds on this day.</p>:null}
               <ul className={styles.mobileList}>
                 {day.events.map(event=>(
@@ -353,6 +371,37 @@ export function LearnerCareerCalendar({
           </article>
         ))}
       </section>
+      <Drawer open={selectedDayKey!==null}
+        onOpenChange={(open)=>{if(!open)setSelectedDayKey(null);}}
+        className="md:!w-[min(440px,100vw)]"
+        title={dayDrawerTitle}
+        description="Your full scheduled placement day in Indian Standard Time."
+        footer={<Button type="button" variant="secondary"
+          className="min-h-11 w-full sm:w-auto md:min-h-9"
+          onClick={()=>setSelectedDayKey(null)}>Close</Button>}>
+        {selectedDayEvents.length === 0
+          ? <p role="status" className="text-sm text-body">No scheduled placement rounds on this day.</p>
+          : <ol className="space-y-4" aria-label="All rounds on this day">
+              {selectedDayEvents.map((event)=>(
+                <li key={event.key}
+                  className="min-w-0 space-y-2 border-b border-border pb-4 text-sm">
+                  <h3 className="font-semibold text-foreground">{event.title}</h3>
+                  <p className="text-body">{event.companyName} · {event.roleTitle}</p>
+                  <p className="text-body">Scheduled (IST): {displayDate(event.start)}</p>
+                  <div className="flex flex-wrap gap-3">
+                    <Link href={learnerCareerCalendarEventTarget(event)}
+                      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                      Open exact round
+                    </Link>
+                    <Link href="/learn/my-placements/schedule?view=coming"
+                      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                      Check attendance or request reschedule
+                    </Link>
+                  </div>
+                </li>
+              ))}
+            </ol>}
+      </Drawer>
       <Drawer open={selected!==null} onOpenChange={(open)=>{if(!open)setSelectedKey(null);}}
         title={selected?.title??"Career event"}
         description={selected?selected.companyName+" · "+selected.roleTitle:undefined}
