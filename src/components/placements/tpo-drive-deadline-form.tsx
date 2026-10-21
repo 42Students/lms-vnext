@@ -64,10 +64,10 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
    {job.applicationDeadline?<p className="border-b border-border pb-3 text-sm font-semibold text-body">Current deadline: {
     new Date(job.applicationDeadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
    <div className="grid min-w-0 gap-4 sm:grid-cols-2 sm:items-start">
-    <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">New application deadline (IST)
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">New application deadline (IST)
      <Input required type="datetime-local" name="newDeadline" defaultValue={initial}
       className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
-    <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">Reason (immutable audit)
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason (immutable audit)
      <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
       className="min-h-24 w-full min-w-0"/></label>
    </div>

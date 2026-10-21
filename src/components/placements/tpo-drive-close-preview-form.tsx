@@ -63,7 +63,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
      <dt className="text-xs text-body">{label}</dt><dd className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{n}</dd>
     </div>)}
   </dl>
-  <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">Reason for closure (audited)
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for closure (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
     disabled={pending} value={reasonText} onChange={event=>{setReasonText(event.target.value);setError(null);}}
     className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/>

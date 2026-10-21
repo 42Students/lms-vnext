@@ -143,26 +143,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/placements/super-admin-drive-quick-search.tsx`
 - [x] `src/components/placements/super-admin-platform-placement-policy.tsx`
 - [x] `src/components/placements/tpo-applicant-review-form.tsx`
-- [ ] `src/components/placements/tpo-college-rules-control.tsx`
-- [ ] `src/components/placements/tpo-company-feedback-form.tsx`
-- [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx`
-- [ ] `src/components/placements/tpo-delete-draft-action.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-cancel-form.tsx`
-- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
-- [ ] `src/components/placements/tpo-drive-deadline-form.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
-- [ ] `src/components/placements/tpo-public-placement-content-editor.tsx`
-- [ ] `src/components/placements/tpo-remind-non-applicants.tsx`
-- [ ] `src/components/placements/tpo-report-saved-filters.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/placements/tpo-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-college-rules-control.tsx`
+- [x] `src/components/placements/tpo-company-feedback-form.tsx`
+- [x] `src/components/placements/tpo-company-lifecycle-editor.tsx`
+- [x] `src/components/placements/tpo-delete-draft-action.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-drive-cancel-form.tsx`
+- [x] `src/components/placements/tpo-drive-close-preview-form.tsx`
+- [x] `src/components/placements/tpo-drive-deadline-form.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`
+- [x] `src/components/placements/tpo-public-placement-content-editor.tsx`
+- [x] `src/components/placements/tpo-remind-non-applicants.tsx`
+- [x] `src/components/placements/tpo-report-saved-filters.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/placements/tpo-round-result-recorder.tsx`
 - [ ] `src/components/placements/tpo-round-results-import.tsx`
 - [ ] `src/components/placements/tpo-season-controls.tsx`
 - [ ] `src/components/placements/tpo-selection-import.tsx`
