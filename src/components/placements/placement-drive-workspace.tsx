@@ -461,7 +461,9 @@ export async function PlacementDriveWorkspace({
           applicants:screening?.length,rounds:driveDay.rounds.length,
           offers:offerCandidates?.filter(item=>item.offer?.status==="ISSUED"||
             item.offer?.status==="ACCEPTED").length,
-        }).map(tab=><Link key={tab.href} href={tab.href}
+        }).filter(tab=>tab.label!=="Drive day"||driveDay.rounds.some(round=>
+          round.mode===null||round.mode==="ON_CAMPUS"
+        )).map(tab=><Link key={tab.href} href={tab.href}
           className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle md:min-h-9">{tab.label}</Link>)}
       </nav>:null}
       {isTpo?<TpoDriveRefreshControl/>:null}
