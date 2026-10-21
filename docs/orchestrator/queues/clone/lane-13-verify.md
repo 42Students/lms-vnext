@@ -61,7 +61,7 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-13.md: surface | regre
 - [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
 - [x] `src/components/academics/college-term-mapping-manager.tsx`
 - [x] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
 - [ ] `src/components/tracker/audit-finding-status-action.tsx`
 - [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
 - [ ] `src/components/courses/resource-progress-control.tsx`
