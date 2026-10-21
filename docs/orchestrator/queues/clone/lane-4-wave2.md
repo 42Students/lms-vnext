@@ -13,8 +13,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-jobs-browse.tsx.part1of2.md` (edit src/components/placements/learner-jobs-browse.tsx; 40 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_learner-jobs-browse.tsx.part2of2.md` (edit src/components/placements/learner-jobs-browse.tsx; 20 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_placement-drive-workspace.tsx.part1of2.md` (edit src/components/placements/placement-drive-workspace.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_placement-drive-workspace.tsx.part2of2.md` (edit src/components/placements/placement-drive-workspace.tsx; 17 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_placement-drive-workspace.tsx.part1of2.md` (edit src/components/placements/placement-drive-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_placement-drive-workspace.tsx.part2of2.md` (edit src/components/placements/placement-drive-workspace.tsx; 17 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_college-interview-appointments.tsx.part1of2.md` (edit src/components/placements/college-interview-appointments.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_college-interview-appointments.tsx.part2of2.md` (edit src/components/placements/college-interview-appointments.tsx; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_components_placements_placement-calendar-workspace.tsx.md` (edit src/components/placements/placement-calendar-workspace.tsx; 40 findings; best P2)
