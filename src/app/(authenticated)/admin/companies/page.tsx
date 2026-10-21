@@ -197,7 +197,17 @@ export default async function SuperAdminCompaniesPage({
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
         </div>)}
     </div>
-    {data.rows.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+    {view==="GLOBAL"?<section aria-label="Global company catalogue" className="min-w-0 space-y-3">
+      {globalRows.length?<DataTable caption="42's company list" columns={globalColumns}
+       rows={globalRows} getRowKey={group=>group.row.companyId}/>:
+       <EmptyState title="No companies" description="No global company identities appear in this authorized relationship result page."/>}
+      <p className="text-xs text-muted-foreground">
+       Distinct companies are deduplicated within this 50-relationship page. Added by Colleges uses the scoped service count; Drives counts displayed only relationships returned on this page. These are not authoritative platform-wide drive totals, and companies with no relationships are not returned by the current API.
+      </p>
+      <p className="text-xs text-muted-foreground">
+       Verify, Edit, Domains and Other names use existing scoped curation controls. Company Merge requires a selected, authorized college and is available in the curated duplicate review below.
+      </p>
+    </section>:data.rows.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 bg-transparent py-[var(--lms-space-4)]">
         <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{row.name}</h2>
         {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
