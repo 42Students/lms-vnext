@@ -21,7 +21,7 @@ import { playbackGrantRefreshDelay, resumePositionForGrant } from "@/modules/cou
  */
 export function LearnerVideoPlayer({
   lessonId, contentId, storageKey, deliveryId, initialPositionSeconds,
-  authoredDurationSeconds, completed, readOnly = false, saveIntervalMs = 5000,
+  authoredDurationSeconds, completed, readOnly = false, saveIntervalMs = 15000,
 }: {
   lessonId: string; contentId: string; storageKey: string | null; deliveryId: string;
   initialPositionSeconds: number; authoredDurationSeconds: number;
@@ -135,14 +135,14 @@ export function LearnerVideoPlayer({
         );
         if (!response.ok) throw new Error(await storageApiError(response));
         const chosen = videoForContent(parseLearnerVideos(await response.json()), contentId, storageKey);
-        if (!chosen) throw new Error("Video is not available for this lesson.");
+        if (!chosen) throw new Error("Video not available");
         selectedId.current = chosen.id;
       }
       await loadGrant(selectedId.current, controller);
     } catch (failure) {
       if (!controller.signal.aborted) {
         setLoading(false);
-        setMediaError(failure instanceof Error ? failure.message : "Video could not be loaded");
+        setMediaError(failure instanceof Error ? failure.message : "Video not available");
       }
     }
   }, [lessonId, deliveryId, contentId, storageKey, loadGrant, clearTimer]);
@@ -178,7 +178,7 @@ export function LearnerVideoPlayer({
     const onError = () => {
       const id = selectedId.current;
       if (!id || failureRefreshRef.current >= 1) {
-        setMediaError("Video could not be loaded. Try again.");
+        setMediaError("Video not available");
         return;
       }
       failureRefreshRef.current += 1;
@@ -225,12 +225,12 @@ export function LearnerVideoPlayer({
       </Select>
     </label>
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-      <span role="status" aria-live="polite">{loading ? "Loading video…" : mediaError ? "Video could not be loaded" :
+      <span role="status" aria-live="polite">{loading ? "Loading video…" : mediaError ? "Video not available" :
         readOnly ? "Past semester · progress is read only" : isCompleted ? "Completed" : "Progress saves automatically"}</span>
       <span>Saved at {formatDuration(savedSeconds)} / {formatDuration(authoredDurationSeconds>0?authoredDurationSeconds:observedDuration)}</span>
     </div>
     {mediaError ? <div className="space-y-2">
-      <Alert tone="error">{mediaError}</Alert>
+      <Alert tone="error">Video not available. {mediaError!=="Video not available"?mediaError:""}</Alert>
       <Button type="button" variant="secondary" onClick={() => { failureRefreshRef.current = 0; void start(); }}
         className="min-h-11 md:min-h-9">
         Retry video

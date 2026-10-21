@@ -6,9 +6,17 @@ import {assignmentSubmissions,courseAssignments,courseLearningPaths,courseLesson
 
 type Delivery={deliveryId:string;offeringId:string;courseId:string;courseName:string;courseCode:string};
 /** One set of tenant-rostered, published assessment joins, no per-course workspace graph. */
-export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[],membershipId:string,nowMs:number){
+export async function listOwnLearnerAssessmentRows(
+ deliveries:readonly Delivery[],membershipId:string,nowMs:number,
+ page?:{page:number;pageSize:number},
+){
  const ids=deliveries.map(row=>row.deliveryId);
- if(ids.length===0)return {assignments:[],quizzes:[]};
+ if(ids.length===0)return {assignments:[],quizzes:[],totals:{assignments:0,quizzes:0}};
+ if(page&&(!Number.isInteger(page.page)||page.page<1||
+    !Number.isInteger(page.pageSize)||page.pageSize<1||page.pageSize>100))
+    throw new RangeError("Invalid learner assessment page");
+ const pageSize=page?.pageSize??2147483647;
+ const offset=page?(page.page-1)*pageSize:0;
  const db=getDb();
  const byDelivery=new Map(deliveries.map(row=>[row.deliveryId,row]));
  const baseConditions=[inArray(courseSectionDeliveries.id,ids),
@@ -24,6 +32,7 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    submissionUrl:assignmentSubmissions.submissionUrl,submittedAt:assignmentSubmissions.submittedAt,
    gradePublished:assignmentSubmissions.gradePublished,pointsAwarded:assignmentSubmissions.pointsAwarded,
    feedback:assignmentSubmissions.feedback,gradingStatus:assignmentSubmissions.gradingStatus,
+   totalRows:sql<number>`count(*) over()::integer`,
   }).from(courseSectionDeliveries)
    .innerJoin(courseLearningPaths,eq(courseLearningPaths.offeringId,courseSectionDeliveries.offeringId))
    .innerJoin(courseLessons,eq(courseLessons.learningPathId,courseLearningPaths.id))
@@ -34,13 +43,17 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    // assignment audience and delivery are authorized by the outer query.
    .leftJoin(assignmentSubmissions,and(eq(assignmentSubmissions.assignmentId,courseAssignments.id),
     eq(assignmentSubmissions.membershipId,membershipId)))
-   .where(and(...baseConditions,eq(courseAssignments.status,"PUBLISHED"))),
+   .where(and(...baseConditions,eq(courseAssignments.status,"PUBLISHED")))
+   .orderBy(sql`coalesce(${courseAssignments.dueAt},'infinity'::timestamptz)`,
+     courseAssignments.title,courseAssignments.id)
+   .limit(pageSize).offset(offset),
   db.select({
    deliveryId:courseSectionDeliveries.id,lessonId:courseLessons.id,lessonName:courseLessons.name,
    id:courseQuizzes.id,title:courseQuizzes.title,description:courseQuizzes.description,
    dueAt:courseQuizzes.dueAt,createdAt:courseQuizzes.createdAt,maxAttempts:courseQuizzes.maxAttempts,
    totalPoints:courseQuizzes.totalPoints,sequence:courseQuizzes.sequence,status:courseQuizzes.status,
    resultsPublished:courseQuizzes.resultsPublished,
+   totalRows:sql<number>`count(*) over()::integer`,
    attemptsUsed:sql<number>`(select count(*)::integer from quiz_attempts qa
     where qa.quiz_id = ${courseQuizzes.id} and qa.membership_id = ${membershipId}::uuid)`,
    firstSubmittedAt:sql<Date|null>`(select min(qa.submitted_at) from quiz_attempts qa
@@ -50,7 +63,10 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    .innerJoin(courseLessons,eq(courseLessons.learningPathId,courseLearningPaths.id))
    .innerJoin(courseQuizzes,and(eq(courseQuizzes.lessonId,courseLessons.id),
     or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,courseSectionDeliveries.id))))
-   .where(and(...baseConditions,inArray(courseQuizzes.status,["PUBLISHED","CLOSED"]))),
+   .where(and(...baseConditions,inArray(courseQuizzes.status,["PUBLISHED","CLOSED"])))
+   .orderBy(sql`coalesce(${courseQuizzes.dueAt},'infinity'::timestamptz)`,
+     courseQuizzes.title,courseQuizzes.id)
+   .limit(pageSize).offset(offset),
  ]);
  const assignments=assignmentRows.map(row=>{
   const delivery=byDelivery.get(row.deliveryId)!;
@@ -87,5 +103,8 @@ export async function listOwnLearnerAssessmentRows(deliveries:readonly Delivery[
    progress:{status,percentComplete:completedAt?100:0,completedAt},
   };
  });
- return {assignments,quizzes};
+ return {assignments,quizzes,totals:{
+  assignments:assignmentRows[0]?.totalRows??0,
+  quizzes:quizRows[0]?.totalRows??0,
+ }};
 }
