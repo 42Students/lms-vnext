@@ -14,7 +14,7 @@ export function PublicJoinPreviewRetry({scope,token}:{
    <p className="max-w-prose break-words text-sm leading-6 text-body">Check your connection and try again. Your invitation was not used.
     If the problem continues, ask the placement cell for help.</p>
    <Link href={root+encodeURIComponent(token)}
-    className="mt-4 inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-primary bg-primary px-5 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Retry</Link>
+    className="mt-4 inline-flex min-h-11 w-full items-center justify-center md:min-h-9 md:w-auto rounded-[var(--lms-control-radius)] border border-primary bg-primary px-5 text-sm font-semibold text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
   </Card>
  </main>;
 }
