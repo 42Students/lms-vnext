@@ -63,18 +63,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/tpo/tpo-team-decision-toggle.tsx`
 - [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/ui/toast.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx`
+- [x] `src/components/ui/toast.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx`
 - [x] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
 - [x] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/placements/applicant-notes-panel.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/applicant-notes-panel.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
 - [ ] `src/components/placements/tpo-general-requests-panel.tsx`
 - [ ] `src/components/projects/project-admin-submissions-page.tsx`
 - [ ] `src/components/shell/topbar/account-menu.tsx`

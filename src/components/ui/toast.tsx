@@ -222,7 +222,7 @@ export function ToastAction({ title, children, tone = "info" }: {
     className={cx("flex min-w-0 flex-col items-stretch gap-3 rounded-[var(--lms-canvas-radius)] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between border border-l-4 bg-surface px-4 py-3 text-foreground shadow-[var(--lms-toast-shadow)]", toneClasses[tone])}>
     <div className="flex min-w-0 items-center gap-3">
       <span aria-hidden="true" className={cx("h-2.5 w-2.5 shrink-0 rounded-full", dotClasses[tone])} />
-      <p className="min-w-0 break-words text-sm text-[var(--lms-body-text)]">{title}</p>
+      <p className="min-w-0 break-words text-sm text-[var(--lms-body-text)] leading-[22px]">{title}</p>
     </div>
     <div className="min-w-0 max-[639px]:w-full max-[639px]:[&>*]:w-full sm:shrink-0">{children}</div>
   </div>;

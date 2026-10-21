@@ -108,9 +108,9 @@ export function LearnerCareerRounds({
               : "min-w-0 border-l-2 border-transparent px-3 py-4 md:px-4"}>
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">{round.companyName}</p>
-                <h2 className="mt-1 break-words text-lg font-semibold text-foreground">{round.roleTitle}</h2>
-                <p className="mt-1 text-sm font-semibold text-body">Round {round.sequence} · {round.roundName}</p>
+                <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text leading-[20px]">{round.companyName}</p>
+                <h2 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{round.roleTitle}</h2>
+                <p className="mt-1 text-sm font-semibold text-body leading-[22px]">Round {round.sequence} · {round.roundName}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone="info">{schedule.mode === "VIRTUAL" ? "Virtual" : schedule.mode === "ON_CAMPUS" ? "On campus" : "Scheduled"}</StatusBadge>
@@ -132,7 +132,7 @@ export function LearnerCareerRounds({
               <p className="m-0"><span className="font-semibold text-foreground">When:</span> {formatWhen(schedule.scheduledAt)}</p>
               <p className="m-0"><span className="font-semibold text-foreground">Where:</span> {schedule.mode === "VIRTUAL" ? "Online" : schedule.venue || "Venue pending"}</p>
             </div>
-            {round.exception ? <p className="mt-3 text-xs font-semibold text-warning">This schedule includes your approved reschedule request.</p> : null}
+            {round.exception ? <p className="mt-3 text-xs font-semibold text-warning leading-[20px]">This schedule includes your approved reschedule request.</p> : null}
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2">
               {onSelect ? (
                 <Button
@@ -148,7 +148,7 @@ export function LearnerCareerRounds({
               <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(round.applicationId)} className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">View application</Link>
             </div>
             {kind === "ASSESSMENT" ? (
-              <p className="mt-3 text-sm text-body" role="note">
+              <p className="mt-3 text-sm text-body leading-[22px]" role="note">
                 {assessmentLink
                   ? "Complete and submit the assessment on the employer’s platform. Opening this link does not submit your work."
                   : "The employer assessment link is not available yet. Check your placement updates for instructions."}
