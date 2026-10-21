@@ -17,12 +17,13 @@ export async function GET(
     // This validates the ID and tenant/admin read scope before requesting logs.
     const issue=await getBugTrackerIssueForAdmin(context,publicId);
     const result=await readTrackerLiveLogs(context,{
-      windowMinutes:20,
+      windowMinutes:10,
       minimumSeverity:"WARNING",
       anchorAt:issue.report.createdAt.toISOString(),
       query:"",
     });
-    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+    return NextResponse.json({...result,anchorAt:issue.report.createdAt.toISOString()},
+      {headers:{"Cache-Control":"private, no-store"}});
   }catch{
     return NextResponse.json({message:"Nearby log entries could not be loaded."},{status:503});
   }

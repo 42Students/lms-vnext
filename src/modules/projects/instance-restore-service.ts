@@ -42,6 +42,9 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
         eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt),
         eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
         eq(users.platformStatus,"ACTIVE"))).limit(1);
+    // Legacy deletedByWorkspace identified members removed by workspace
+    // deletion. Archive restore preserves ended memberships and never
+    // silently re-grants access to inactive/removed learners or mentors.
     // Legacy allows restoring a mentorless deleted workspace as BLOCKED.
     // The vNext status constraint has no BLOCKED workspace state; restore to
     // PLANNED and persist an explicit blocker until an active mentor is assigned.
@@ -67,7 +70,8 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
       summary:"Project "+restored.title+" restored",
       metadata:{projectId:restored.id,previousStatus:"ARCHIVED",status:restored.status,
        mentorMissing:!mentor,manualMentorAssignmentRequired:!mentor,
-       restoreKind:"ARCHIVE_RESTORE",membershipsRecreated:false},
+       restoreKind:"ARCHIVE_RESTORE",membershipsRecreated:false,
+       previousMentorPresent:Boolean(mentor),needsMentorReview:!mentor},
       groupKey:"projects:instance:"+restored.id,
       dedupeKey:"projects:instance:"+restored.id+":restored:"+now.toISOString(),
     });

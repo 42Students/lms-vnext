@@ -11,6 +11,13 @@ import {
 
 export const runtime = "nodejs";
 
+/** Legacy session migration map:
+ * GET /sessions -> GET /api/auth/devices (current user only);
+ * DELETE /sessions/{jti} -> DELETE /api/auth/devices/[sessionId];
+ * POST /revoke-sessions -> DELETE /api/auth/devices?scope=all|others.
+ * Cross-user staff revocation requires separate persisted admin permissions.
+ * The new API deliberately withholds user IDs, raw JTI and IP addresses.
+ */
 /** The signed-in person's own live devices. Never anyone else's. */
 export async function GET() {
   try {
@@ -24,6 +31,8 @@ export async function GET() {
         userAgent: row.user_agent ?? null,
         createdAt: row.created_at,
         lastSeenAt: row.last_seen_at,
+        lastUsedAt: row.last_seen_at,
+        ipAddress: null, // privacy-preserving: never disclose raw IP
         expiresAt: row.expires_at,
         current: row.id === session.sessionId,
       })),
@@ -52,6 +61,8 @@ export async function DELETE(request: Request) {
       ? await revokeAllOwnSessions(session.userId)
       : await revokeOtherSessions(session.userId,session.sessionId);
     return privateAuthResponse(NextResponse.json({ ok: true, revoked,
+      revokedCount:revoked,scope,currentExcluded:scope==="others",
+      message:scope==="all"?"All sessions revoked":"Other sessions revoked",
       currentSessionRevoked:scope==="all" }, { headers: { "Cache-Control": "private, no-store" } }));
   } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
