@@ -172,7 +172,7 @@ export default async function MentorNotificationsPage({
               <Link key={alert.key} href={alert.href}
                 className="block min-h-11 min-w-0 py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{alert.title}</h3>
+                  <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
                     alert.kind === "REVIEW" || alert.kind === "REQUESTED" ? "warning" : "info"}>
                     {alert.kind === "MEETING_SOON" ? "Upcoming meeting" :

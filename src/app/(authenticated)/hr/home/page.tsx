@@ -60,7 +60,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
       return <article key={grant.id} className="space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{detail.collegeName}</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">{detail.collegeName}</h2>
         {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
         <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
@@ -152,7 +152,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry</Link>
     </Alert>:null}
     <section aria-label="Next recruiter actions" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
-      <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Next up</h2>
+      <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
       {actionQueue.length ? <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
         {actionQueue.map(task => <li key={task.key}>
@@ -199,7 +199,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </details>
     <section aria-label="This week" className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">This week</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">This week</h2>
         <Link href={"/hr/calendar?collegeId="+encodeURIComponent(selectedId)} className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full calendar</Link>
       </div>
       {weekEvents.length?<ul className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
@@ -217,7 +217,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </section>
     <section aria-label="Live recruiter hiring drives" className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Live hiring drives</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Live hiring drives</h2>
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
           className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">See all live drives</Link>
       </div>
@@ -272,7 +272,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section aria-label="Unread placement-cell conversations"
       className="border-b border-[var(--lms-canvas-border)] pb-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Replies to read</h2>
+        <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Replies to read</h2>
         <Link href={hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1})}
           className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View unread conversations</Link>
       </div>

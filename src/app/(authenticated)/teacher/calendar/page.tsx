@@ -123,7 +123,7 @@ export default async function FacultyCalendarPage({
       </p>
     </section>
     <section aria-label="Detailed class schedule" className="min-w-0 space-y-3 border-t border-border pt-5">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Detailed day/week schedule</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Detailed day/week schedule</h2>
       <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
         events={events} courseBasePath="/teacher/courses"
         initialView="week" />
