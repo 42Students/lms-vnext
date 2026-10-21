@@ -396,14 +396,12 @@ export async function SuperAdminTemplateSubviewPage({
                     <DetailField
                       label="Sprint"
                       value={
-                        sprintNames.get(
-                          task.sprintKey,
-                        ) ?? task.sprintKey
+                        task.sprintKey?sprintNames.get(task.sprintKey)??task.sprintKey:"Backlog"
                       }
                     />
                     <DetailField
                       label="Sprint key"
-                      value={task.sprintKey}
+                      value={task.sprintKey??"Backlog"}
                     />
                     <DetailField
                       label="Sequence"
