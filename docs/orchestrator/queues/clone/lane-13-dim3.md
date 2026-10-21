@@ -54,16 +54,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/placements/recruiter-result-controls.tsx`
 - [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
 - [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/project-activity-filtered-list.tsx`
-- [ ] `src/components/projects/project-list.tsx`
-- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tpo/tpo-prep-percentage-editor.tsx`
-- [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
-- [ ] `src/components/tpo/tpo-team-follow-controls.tsx`
-- [ ] `src/components/tracker/independent-finding-actions.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/ui/tooltip.tsx`
+- [x] `src/components/projects/project-activity-filtered-list.tsx`
+- [x] `src/components/projects/project-list.tsx`
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tpo/tpo-prep-percentage-editor.tsx`
+- [x] `src/components/tpo/tpo-students-assign-prep.tsx`
+- [x] `src/components/tpo/tpo-team-follow-controls.tsx`
+- [x] `src/components/tracker/independent-finding-actions.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/ui/tooltip.tsx`
 - [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
