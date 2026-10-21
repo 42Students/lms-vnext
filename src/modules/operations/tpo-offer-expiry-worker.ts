@@ -4,6 +4,7 @@ import { executeScheduledJobWithLease } from "./scheduled-job-runner";
 import { postgresScheduledJobLeaseStore } from "./postgres-scheduled-job-lease-store";
 import { TPO_SCHEDULED_JOBS } from "./tpo-scheduled-job-registry";
 import { sweepExpiredPlacementOffers } from "@/modules/placements/placement-offer-expiry-sweep-service";
+import {finalizeMaturedExternalTpoAcceptances} from "@/modules/placements/tpo-offer-lifecycle-service";
 
 const JOB_NAME = "tpo.expireOverdueOffers";
 const UUID_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -11,7 +12,8 @@ const UUID_FORMAT = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}
 export type TpoOfferExpiryTickResult =
   | { status: "DISABLED"; expired: 0 }
   | { status: "HELD"; expired: 0 }
-  | { status: "COMPLETED"; expired: number; batchLimitReached: boolean };
+  | { status: "COMPLETED"; expired: number; batchLimitReached: boolean;
+      matured: number; maturityFailed: number; maturityBatchLimitReached: boolean };
 
 /**
  * Called only by the internal POST scheduler route, never by page renders.
@@ -54,7 +56,25 @@ export async function runTpoOfferExpiryTick(): Promise<TpoOfferExpiryTickResult>
         }
         batchLimitReached = true;
       }
-      return { expired, batchLimitReached };
+      // Apply the independent 48-hour external-acceptance due selector
+      // after expiry. Each acceptance rechecks disputes and serializes
+      // membership/offer writes, preserving a retryable failure record.
+      let matured = 0;
+      let maturityFailed = 0;
+      let maturityBatchLimitReached = false;
+      for (let batch=0;batch<5;batch+=1) {
+        await fence.renew();
+        await fence.assertCurrent();
+        const result=await finalizeMaturedExternalTpoAcceptances(new Date(),40);
+        matured+=result.finalized;
+        maturityFailed+=result.failed;
+        if(result.examined<40 || result.finalized===0) {
+          maturityBatchLimitReached=false;
+          break;
+        }
+        maturityBatchLimitReached=true;
+      }
+      return { expired, batchLimitReached,matured,maturityFailed,maturityBatchLimitReached };
     },
   );
   if (!result.ran) return { status: "HELD", expired: 0 };

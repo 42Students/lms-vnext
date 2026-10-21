@@ -307,11 +307,11 @@ export async function recordTpoOfferLifecycle(
 
 
 /**
- * Invoked only by an authenticated system scheduler (every 30 minutes).
+ * Invoked only by the lease-protected internal offer-expiry scheduler (every 15 minutes).
  * This is not a user-facing mutation and must never be exposed by an
  * unprotected route. Mature offers are scanned in bounded batches; each
  * tenant/learner is locked and rechecked inside its own transaction.
- * Failed rows remain eligible for a later idempotent retry.
+ * Failed rows remain eligible for a later idempotent retry. The same scheduler\n * also runs ISSUED offer expiry (placement-offer-expiry-sweep-service),\n * so both legacy due selectors are applied, never just exposed as reports.
  */
 export async function finalizeMaturedExternalTpoAcceptances(
   now: Date = new Date(),
