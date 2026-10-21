@@ -24,7 +24,6 @@ export function SuperAdminFacultyAssignmentCreate({
 }: {deliveries:readonly Delivery[];faculty:readonly Faculty[];truncated?:boolean}) {
  const router=useRouter();
  const {showToast}=useToast();
- const [open,setOpen]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
  const [batchName,setBatchName]=useState("");
  const [sectionId,setSectionId]=useState("");
@@ -45,7 +44,10 @@ export function SuperAdminFacultyAssignmentCreate({
  const periodOptions=[...new Set(classDeliveries.map(item=>item.academicPeriodName))].sort();
  const scopedDeliveries=classDeliveries.filter(item=>item.academicPeriodName===periodName);
  const selected=scopedDeliveries.find(item=>item.id===deliveryId);
- const sameClass=selected?scopedDeliveries:[];
+ const sameClass=scopedDeliveries;
+ // Academic year is bound to the selected active delivery in vNext. An
+ // arbitrary historical year cannot be written independently of that delivery.
+ const academicYear=periodName.match(/(?:19|20)\d{2}\s*[-/]\s*(?:\d{2}|(?:19|20)\d{2})/)?.[0]??"";
  const visibleFaculty=faculty.filter(item=>item.displayName.toLowerCase().includes(facultyQuery.trim().toLowerCase()));
  const visibleCourses=sameClass.filter(item=>
    (item.courseCode+" "+item.courseName).toLowerCase().includes(courseQuery.trim().toLowerCase()));
@@ -69,8 +71,9 @@ export function SuperAdminFacultyAssignmentCreate({
      method:"POST",headers:{"content-type":"application/json"},
      body:JSON.stringify({deliveryIds,membershipId,role}),
     });
-    setOpen(false);setDeliveryId("");setOtherDeliveryIds([]);setMembershipId("");setRole("PRIMARY");
-    setBatchName("");setSectionId("");setPeriodName("");setFacultyQuery("");setCourseQuery("");
+    // Legacy bulk create retains the cohort, class, period, faculty and role
+    // for successive assignments. Only clear the chosen courses.
+    setDeliveryId("");setOtherDeliveryIds([]);setCourseQuery("");
     const success=deliveryIds.length===1
       ?"Created teaching assignment for this class."
       :"Created "+deliveryIds.length+" teaching assignments for this class.";
@@ -84,17 +87,13 @@ export function SuperAdminFacultyAssignmentCreate({
   });
  }
  const inputClass="min-h-11 w-full md:min-h-9";
- return <section aria-label="Create teaching assignment" className="space-y-3 print:hidden">
-   <Button variant="secondary" type="button" disabled={!available.length||!faculty.length||pending}
-    onClick={()=>setOpen(value=>!value)} aria-expanded={open}
-    className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
-    Create teaching assignment
-   </Button>
+ return <section aria-label="Create teaching assignment" className="min-w-0 space-y-3 print:hidden">
+   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Create teaching assignment</h2>
    {!available.length?<p role="status" className="text-sm text-body leading-[22px]">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
    {notice?<Alert tone="success">{notice}</Alert>:null}
-   {open?<form onSubmit={e=>void submit(e)} className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2">
+   <form onSubmit={e=>void submit(e)} className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2">
     <p className="md:col-span-2 text-sm text-body leading-[22px]">Select a course and class in the current college. Only active faculty can be assigned.</p>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
      <Select required className={inputClass} value={batchName}
@@ -115,6 +114,21 @@ export function SuperAdminFacultyAssignmentCreate({
        onChange={e=>{setPeriodName(e.target.value);setDeliveryId("");setOtherDeliveryIds([]);}}>
        <option value="">Select a semester</option>
        {periodOptions.map(name=><option key={name} value={name}>{name}</option>)}
+     </Select>
+    </label>
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
+     <Input readOnly value={academicYear} placeholder="YYYY-YY" className={inputClass}
+       title="Academic year is derived from the active semester and class delivery"/>
+     <span className="text-xs font-normal leading-5 text-muted-foreground">Year is tied to the selected active semester. Historical years require a matching course delivery.</span>
+    </label>
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
+     <Input type="search" value={facultyQuery} placeholder="Search faculty" aria-label="Search faculty"
+       onChange={e=>setFacultyQuery(e.target.value)}/>
+     <Select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
+      <option value="">Select faculty</option>
+      {visibleFaculty.map(item=><option key={item.membershipId} value={item.membershipId}>
+       {item.displayName}
+      </option>)}
      </Select>
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
@@ -141,16 +155,6 @@ export function SuperAdminFacultyAssignmentCreate({
         </label>)}
       </div>
     </fieldset>:null}
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
-     <Input type="search" value={facultyQuery} placeholder="Search faculty" aria-label="Search faculty"
-       onChange={e=>setFacultyQuery(e.target.value)}/>
-     <Select required className={inputClass} value={membershipId} onChange={e=>setMembershipId(e.target.value)}>
-      <option value="">Select faculty</option>
-      {visibleFaculty.map(item=><option key={item.membershipId} value={item.membershipId}>
-       {item.displayName}
-      </option>)}
-     </Select>
-    </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
      <Select className={inputClass} value={role} onChange={e=>setRole(e.target.value as CourseTeachingRole)}>
       {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
@@ -158,9 +162,10 @@ export function SuperAdminFacultyAssignmentCreate({
       </option>)}
      </Select>
     </label>
-    {truncated?<p role="status" className="text-xs text-muted-foreground leading-5">
-     Only the first 500 active faculty members are available here. Use the course workspace to find others.
-    </p>:null}
+    {truncated?<div role="status" className="space-y-2 text-xs text-muted-foreground leading-5 sm:col-span-2">
+     <p>Only the first 500 active faculty members are available here. Use the course workspace to find others.</p>
+     <Button type="button" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Retry options</Button>
+    </div>:null}
     {error?<Alert tone="error" className="md:col-span-2">{error}</Alert>:null}
     {error==="Select a batch"||error==="Select a class"||error==="Select a semester"||
       error==="Select one or more courses"||error==="Select faculty"?
@@ -168,13 +173,12 @@ export function SuperAdminFacultyAssignmentCreate({
         Check the {error.toLowerCase().replace("select ","")} field above.
       </p>:null}
     <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
-      <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 md:min-h-9">
-       {pending?"Assigning…":"Assign faculty"}
+      <Button variant="primary" type="submit" loading={pending} disabled={pending||!available.length||!faculty.length} className="min-h-11 md:min-h-9">
+       <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" className="mr-1 inline-block size-4" stroke="currentColor" strokeWidth="1.8"><path d="M8 2.5v11M2.5 8h11" strokeLinecap="round"/></svg>
+       {pending?"Creating…":"Create Assignment"}
       </Button>
-      <Button variant="secondary" type="button" disabled={pending} onClick={()=>setOpen(false)}
-       className="min-h-11 md:min-h-9">Cancel</Button>
     </div>
-   </form>:null}
+   </form>
  </section>;
 }
 
@@ -219,9 +223,9 @@ export function SuperAdminTeachingRoleEdit({
  }
  return <div className="min-w-0 space-y-2 print:hidden">
    <Button variant="secondary" size="md" type="button" className="min-h-11 md:min-h-9"
-     aria-expanded={open} disabled={pending}
+     aria-expanded={open} aria-label={"Edit faculty assignment "+assignmentId} disabled={pending}
      onClick={()=>{setRole(initialRole);setNotice("");setDiscardOpen(false);setOpen(true);}}>
-      Edit assignment
+      Edit
    </Button>
    <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}} title={`Edit assignment: #${assignmentId}`}
      description="Change the teaching role. Course, faculty and class changes require a new authorized assignment."
@@ -238,10 +242,11 @@ export function SuperAdminTeachingRoleEdit({
            {facultyAssignmentRoleLabel(value)}</option>)}
        </Select>
      </label>
+     <p className="mt-2 text-xs text-muted-foreground leading-5">Changing the active teaching role does not remove past grades, sessions or assignment history.</p>
      {notice?<Alert tone="error">{notice}</Alert>:null}
    </Dialog>
    <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
-     title="Discard assignment changes?" description="Your unsaved changes will be lost."
-     confirmLabel="Discard edits" onConfirm={finishClose}/>
+     title="Discard assignment changes?" description="Your unsaved changes to this assignment will be lost."
+     confirmLabel="Discard changes" confirmVariant="danger" onConfirm={finishClose}/>
  </div>;
 }
