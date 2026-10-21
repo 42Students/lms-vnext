@@ -1,16 +1,17 @@
 import "server-only";
 
 import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  academicPeriods, cohortProgressionState, cohorts, collegeMemberships,
+  academicPeriods, cohortProgressionState, cohorts, collegeMemberships, colleges,
   departments, learnerProgramEnrollments, membershipRoles, programs,
   programTermCourses, programTerms, sectionEnrollments, sections, users,
 } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
-  batchPromotionPlan, collegePromotionQuerySchema, promotionLearnerBlockers,
+  batchPromotionPlan, collegePromotionQuerySchema, formatPromotionAcademicYear, promotionLearnerBlockers,
   type PromotionBlocker,
 } from "./college-batch-promotion-model";
 
@@ -69,12 +70,18 @@ export async function listCollegePromotionOptions(
     )).orderBy(asc(programs.name));
   const cohortQuery = db.select({
     id: cohorts.id, name: cohorts.name, status: cohorts.status,
+    academicYear: cohorts.academicYear, startDate: cohorts.startDate, endDate: cohorts.endDate,
     programId: programs.id, programName: programs.name,
+    durationTerms: programs.durationTerms,
     currentTermNumber: cohortProgressionState.currentTermNumber,
     currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
     // Legacy currentStudents counted learners assigned to a primary class,
     // not every program enrollment or an elective group membership. Distinct
     // enrollment membership IDs prevent duplicates across section history.
+    activeClasses: sql<number>`(
+      select count(*)::integer from sections sec
+      where sec.cohort_id = ${cohorts.id} and sec.status = 'ACTIVE'
+    )`.as("promotion_primary_classes"),
     activeLearners: sql<number>`(
       select count(distinct lpe.membership_id)::integer
       from learner_program_enrollments lpe
@@ -108,10 +115,87 @@ export async function listCollegePromotionOptions(
     countQuery,
   ]);
   return {
-    programs: programChoices, cohorts: cohortChoices,
+    programs: programChoices,
+    cohorts: cohortChoices.map(cohort => ({
+      ...cohort,
+      // Legacy display defaults to semester one. The preview still requires
+      // a persisted progression row before allowing a mutation.
+      displayCurrentTermNumber: cohort.currentTermNumber ?? 1,
+      progressionReady: cohort.currentTermNumber !== null,
+      displayAcademicYear: cohort.academicYear ?? (
+        cohort.currentAcademicYearStart === null ? null :
+          formatPromotionAcademicYear(cohort.currentAcademicYearStart)
+      ),
+    })),
     totalCohorts: cohortCounts[0]?.total ?? 0,
     page, pageSize: paging ? pageSize : cohortChoices.length,
   };
+}
+
+
+/**
+ * Super Admin-only read directory, distinct from the college-scoped mutation
+ * preview. Filtering and pagination are applied in SQL; promotion actions
+ * still require an explicitly selected acting college and a verified cohort.
+ */
+export async function listSuperAdminBatchDirectory(
+  context: RequestContext,
+  raw: { organizationId?: string; collegeId?: string; page?: number; pageSize?: number },
+) {
+  if (!isSuperAdmin(context)) throw new AuthorizationError("academics.read");
+  const organizationId = raw.organizationId ? z.uuid().parse(raw.organizationId) : undefined;
+  const collegeId = raw.collegeId ? z.uuid().parse(raw.collegeId) : undefined;
+  requirePermission(context, "academics.read", { organizationId, collegeId });
+  const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
+  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 10) || 10));
+  const where = and(
+    organizationId ? eq(colleges.organizationId, organizationId) : undefined,
+    collegeId ? eq(colleges.id, collegeId) : undefined,
+  );
+  const db = getDb();
+  const scope = db.select({
+    id: cohorts.id, name: cohorts.name, status: cohorts.status,
+    academicYear: cohorts.academicYear, startDate: cohorts.startDate, endDate: cohorts.endDate,
+    programId: programs.id, programName: programs.name,
+    programCode: programs.code, durationTerms: programs.durationTerms,
+    collegeId: colleges.id, organizationId: colleges.organizationId,
+    currentTermNumber: cohortProgressionState.currentTermNumber,
+    currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
+    activeClasses: sql<number>`(
+      select count(*)::integer from sections sec
+      where sec.cohort_id = ${cohorts.id} and sec.status = 'ACTIVE'
+    )`.as("directory_active_classes"),
+    activeLearners: sql<number>`(
+      select count(distinct lpe.membership_id)::integer
+      from learner_program_enrollments lpe
+      inner join college_memberships cm on cm.id = lpe.membership_id
+      where lpe.cohort_id = ${cohorts.id}
+        and lpe.status = 'ACTIVE' and cm.status = 'ACTIVE'
+        and cm.college_id = ${colleges.id}
+    )`.as("directory_active_learners"),
+  }).from(cohorts)
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments, eq(departments.id, programs.departmentId))
+    .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+    .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
+    .where(where).orderBy(asc(colleges.id), asc(programs.name), asc(cohorts.name))
+    .limit(pageSize).offset((page - 1) * pageSize);
+  const totals = db.select({ total: count() }).from(cohorts)
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments, eq(departments.id, programs.departmentId))
+    .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+    .where(where);
+  const [rows, countRows] = await Promise.all([scope, totals]);
+  const total = countRows[0]?.total ?? 0;
+  return { rows: rows.map(row => ({
+    ...row,
+    displayCurrentTermNumber: row.currentTermNumber ?? 1,
+    progressionReady: row.currentTermNumber !== null,
+    displayAcademicYear: row.academicYear ?? (
+      row.currentAcademicYearStart === null ? null :
+        formatPromotionAcademicYear(row.currentAcademicYearStart)
+    ),
+  })), total, page, pageSize, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
 }
 
 /** No mutation, no enrollment changes, and no implied bulk promotion. */
@@ -132,6 +216,7 @@ export async function previewCollegeBatchPromotionInTransaction(
   if (!query.cohortId) throw new CollegePromotionPreviewError("BATCH_NOT_FOUND");
   const [batch] = await db.select({
     id: cohorts.id, name: cohorts.name, status: cohorts.status,
+    academicYear: cohorts.academicYear, startDate: cohorts.startDate, endDate: cohorts.endDate,
     programId: programs.id, programName: programs.name,
     durationTerms: programs.durationTerms,
     currentTermNumber: cohortProgressionState.currentTermNumber,

@@ -1,6 +1,7 @@
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   isNull,
@@ -210,6 +211,56 @@ export async function listPrograms(
   return rows.map(withLegacyProgramDuration);
 }
 
+
+/**
+ * SQL-paginated administration directory. The existing listPrograms read
+ * contract stays unchanged for callers which intentionally need all programs.
+ * Historical archives may be included only through this explicit option.
+ */
+export async function listProgramsPage(
+  context: RequestContext,
+  collegeIdInput: string,
+  raw: { departmentId?: string | null; page?: number; pageSize?: number; includeArchived?: boolean } = {},
+) {
+  const collegeId = collegeIdSchema.parse(collegeIdInput);
+  const college = await loadAcademicCollegeScope(collegeId);
+  requirePermission(context, "academics.read", {
+    organizationId: college.organizationId, collegeId,
+  });
+  const departmentId = raw.departmentId ? departmentIdSchema.parse(raw.departmentId) : null;
+  if (departmentId) {
+    const department = await loadAcademicDepartmentScope(departmentId);
+    if (department.collegeId !== collegeId)
+      throw new AcademicsServiceError("DEPARTMENT_NOT_FOUND");
+  }
+  const page = Math.max(1, Math.min(10000, Math.trunc(raw.page ?? 1) || 1));
+  const pageSize = Math.max(1, Math.min(100, Math.trunc(raw.pageSize ?? 25) || 25));
+  const conditions = and(
+    eq(departments.collegeId, collegeId),
+    departmentId ? eq(programs.departmentId, departmentId) : undefined,
+    raw.includeArchived ? undefined : isNull(departments.archivedAt),
+    raw.includeArchived ? undefined : eq(programs.status, "ACTIVE"),
+  );
+  const db = getDb();
+  const [rows, totals] = await Promise.all([
+    db.select({
+      id: programs.id, legacyProgramId: programs.legacyProgramId,
+      departmentId: programs.departmentId, departmentName: departments.name,
+      name: programs.name, code: programs.code,
+      durationTerms: programs.durationTerms, status: programs.status,
+      createdAt: programs.createdAt, updatedAt: programs.updatedAt,
+    }).from(programs).innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(conditions).orderBy(asc(departments.name), asc(programs.name), asc(programs.id))
+      .limit(pageSize).offset((page - 1) * pageSize),
+    db.select({total: count()}).from(programs)
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .where(conditions),
+  ]);
+  const total = totals[0]?.total ?? 0;
+  return { programs: rows.map(withLegacyProgramDuration), page, pageSize,
+    total, totalElements: total, totalPages: Math.max(1, Math.ceil(total / pageSize)) };
+}
+
 export async function createProgram(
   context: RequestContext,
   rawInput: CreateProgramInput,
@@ -368,6 +419,17 @@ export async function updateProgram(
         eq(programs.id, programId), eq(programs.status, "ACTIVE"),
       )).returning();
       if (!updated) throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_UPDATED,
+        collegeId: scope.collegeId,
+        organizationId: scope.organizationId,
+        subjectType: "program", subjectId: updated.id,
+        subjectLabel: updated.name, summary: "Program updated",
+        metadata: { departmentId: updated.departmentId,
+          durationTerms: updated.durationTerms, code: updated.code },
+        groupKey: `academics-program:${updated.id}`,
+        dedupeKey: `academics-program:${updated.id}:updated:${updated.updatedAt.getTime()}`,
+      });
       return withLegacyProgramDuration(updated);
     });
   } catch (error) {
