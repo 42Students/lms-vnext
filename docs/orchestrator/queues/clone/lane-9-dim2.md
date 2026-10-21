@@ -173,26 +173,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
 - [x] `src/components/placements/tpo-company-lifecycle-editor.tsx`
 - [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-public-placement-content-editor.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/placements/tpo-remind-non-applicants.tsx`
-- [ ] `src/components/placements/tpo-report-saved-filters.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
-- [ ] `src/components/placements/tpo-round-apply-control.tsx`
-- [ ] `src/components/placements/tpo-round-reorder.tsx`
-- [ ] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/placements/tpo-sequential-request-review.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/profile/learner-verification-withdraw.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-drive-edit-form.tsx`
+- [x] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/tpo-public-placement-content-editor.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/placements/tpo-remind-non-applicants.tsx`
+- [x] `src/components/placements/tpo-report-saved-filters.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-round-apply-control.tsx`
+- [x] `src/components/placements/tpo-round-reorder.tsx`
+- [x] `src/components/placements/tpo-season-controls.tsx`
+- [x] `src/components/placements/tpo-sequential-request-review.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/profile/learner-verification-withdraw.tsx`
 - [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
 - [ ] `src/components/projects/class-team-workspace-creator.tsx`
 - [ ] `src/components/projects/college-project-mentor-dialog.tsx`

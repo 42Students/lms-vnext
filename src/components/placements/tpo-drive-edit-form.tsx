@@ -126,7 +126,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   {error?<InlineNotice tone="error" message={error}/>:null}
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
    <Button variant="primary" type="submit" loading={pending} disabled={pending} className="min-h-11 w-full px-5 sm:w-auto md:min-h-9">{pending?"Saving…":"Save changes"}</Button>
-   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline sm:w-auto md:min-h-9"
+   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text underline sm:w-auto md:min-h-9"
     href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
   </div>
  </form>

@@ -536,7 +536,7 @@ export function LearnerProfileWorkspace(props: {
         {mobileQuickLinks.length ? <div className="mt-3 grid grid-cols-2 gap-2">
           {mobileQuickLinks.map(item=><Link key={item.section}
             href={"/learn/profile?section="+encodeURIComponent(item.section)}
-            className="flex min-h-11 md:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-semibold text-primary-text break-words">
+            className="flex min-h-11 md:min-h-9 min-w-0 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border px-2 py-2 text-center text-xs font-[650] text-primary-text break-words">
             {item.label}
           </Link>)}
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
@@ -582,7 +582,7 @@ export function LearnerProfileWorkspace(props: {
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
             Profile completion checklist
           </h2>
-          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">
+          <Link href="/learn/profile/completeness" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:underline">
             Review full checklist
           </Link>
           <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
@@ -610,7 +610,7 @@ export function LearnerProfileWorkspace(props: {
           <p role="status" className="mt-3 text-sm text-body">
             Suggested next section:{" "}
             <Link href={"/learn/profile?section="+encodeURIComponent(coverage.next.section)}
-              className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
+              className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">
               {coverage.next.label}
             </Link>. This does not establish identity verification or placement eligibility.
           </p>
