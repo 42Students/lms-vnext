@@ -10,6 +10,18 @@ import { validateLearnerProfileSectionEdit,isLearnerProfileSectionStale } from "
 import {learnerProfileDocumentSchema} from "./profile-validation";
 import { PeopleServiceError } from "./errors";
 
+/** Sort most recent qualifications for read parity without changing JSONB order. */
+export function sortLearnerEducationForView<T extends {id:string;
+ startYear?:string;endYear?:string;isCurrentlyPursuing?:boolean;isRecentEducation?:boolean;
+}>(items:readonly T[]):T[]{
+ return [...items].sort((a,b)=>
+  Number(Boolean(b.isCurrentlyPursuing))-Number(Boolean(a.isCurrentlyPursuing)) ||
+  Number(b.endYear||0)-Number(a.endYear||0) ||
+  Number(b.startYear||0)-Number(a.startYear||0) ||
+  Number(Boolean(b.isRecentEducation))-Number(Boolean(a.isRecentEducation)) ||
+  a.id.localeCompare(b.id));
+}
+
 export async function updateOwnLearnerProfileSection(context:RequestContext,rawInput:unknown) {
   const input=validateLearnerProfileSectionEdit(rawInput);
   const membership=context.membership;
@@ -41,17 +53,21 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
       .for("update").limit(1);
     const document=(locked?.document??{}) as Record<string,unknown>;
     const current=learnerProfileDocumentSchema.shape[input.section].parse(document[input.section]??[]);
+    // Staff correction is a separately permissioned workflow. This
+    // self-edit never accepts a client-supplied target membership.
+    const view=(items:typeof current)=>input.section==="education"?
+      sortLearnerEducationForView(items):items;
     if(input.expectedItems!==undefined){
       const before=input.expectedItems;
-      if(isLearnerProfileSectionStale(current,before)) {
+      if(isLearnerProfileSectionStale(view(current),view(before))) {
         // A list row can have moved or been removed after the editor opened.
         // Never apply a stale index to a different item; the client receives
         // a stable code whose friendly copy tells it to reload first.
         throw new PeopleServiceError("LEARNER_PROFILE_SECTION_STALE");
       }
     }
-    if(!isLearnerProfileSectionStale(current,input.items))
-      return {section:input.section,items:current};
+    if(!isLearnerProfileSectionStale(view(current),view(input.items)))
+      return {section:input.section,items:view(current)};
     const [saved]=await tx.update(learnerProfiles).set({
       profileDocument:sql`jsonb_set(
         ${learnerProfiles.profileDocument},
@@ -69,9 +85,11 @@ export async function updateOwnLearnerProfileSection(context:RequestContext,rawI
       subjectType:"learner_profile",
       subjectId:membership.id,
       summary:"Learner updated profile section",
-      metadata:{section:input.section,itemCount:input.items.length},
+      metadata:{section:input.section,itemCount:input.items.length,
+        previousItemCount:current.length,actorUserId:context.user.id,
+        subjectMembershipId:membership.id,itemIds:input.items.map(item=>item.id)},
     });
     const savedDocument=saved?.document ?? {};
-    return {section:input.section,items:savedDocument[input.section] ?? input.items};
+    return {section:input.section,items:view((savedDocument[input.section] ?? input.items) as typeof current)};
   });
 }

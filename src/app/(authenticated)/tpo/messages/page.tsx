@@ -69,7 +69,7 @@ export default async function TpoMessagesPage({
   const now = new Date();
   const tabs=(selected:"recruiters"|"team")=><nav role="tablist" aria-label="Messages" className="flex gap-2 border-b border-border pb-2">
     {(["recruiters","team"] as const).map(value=><Link role="tab" key={value}
-      aria-selected={selected===value} href={"/tpo/messages?tab="+value}
+      aria-selected={selected===value} id={"tpo-messages-tab-"+value} aria-controls={"tpo-messages-panel-"+value} href={"/tpo/messages?tab="+value}
       className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold md:min-h-9 "+
         (selected===value?"border-primary text-link":"border-transparent text-body hover:text-link")}>
       {value==="recruiters"?"Recruiters":"Team"}
@@ -83,9 +83,10 @@ export default async function TpoMessagesPage({
     <PageHeader title="Messages" description="Your placement team's own conversations: who does what, and what you decided. Recruiters and students never see these."/>
     {tabs("team")}
     {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
+    <section id="tpo-messages-panel-team" role="tabpanel" aria-labelledby="tpo-messages-tab-team">
     <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
-      selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}
-      page={/^\d{1,4}$/.test(first(raw.page)??"")?Number(first(raw.page)):1}/>
+      selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}/>
+    </section>
   </div>;
   if(selectedTab!=="recruiters")return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages"/>
@@ -213,7 +214,7 @@ export default async function TpoMessagesPage({
       {tabs("recruiters")}
       <TpoLiveRefresh intervalMs={4000}/>
       {recipientsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm">The recruiter directory could not refresh. Existing conversations remain available; starting a new conversation is temporarily unavailable. <Link href="/tpo/messages" className="font-semibold text-link underline">Retry</Link></p>:null}
-      <div role="tabpanel" aria-label="Recruiter conversations"
+      <div role="tabpanel" id="tpo-messages-panel-recruiters" aria-labelledby="tpo-messages-tab-recruiters" aria-label="Recruiter conversations"
         className="mt-4 grid min-w-0 overflow-hidden rounded-lg border border-border lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]">
         <aside aria-label="Recruiter inbox" className="min-w-0 border-b border-border lg:border-b-0 lg:border-r">
           <div className="space-y-3 border-b border-border p-3">
