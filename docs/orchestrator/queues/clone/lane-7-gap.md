@@ -73,5 +73,5 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U032 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/readiness/index.js`
 - [x] U033 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/colleges.js`
 - [x] U034 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/index.js`
-- [ ] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/overview.js`
+- [x] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/overview.js`
 - [ ] U036 (Cross-cutting area) `cross/07: Exports and imports: CSV/XLSX/PDF, column sets, bulk upload validation and error reports`
