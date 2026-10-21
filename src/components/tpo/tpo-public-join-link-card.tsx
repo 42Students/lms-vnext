@@ -19,6 +19,8 @@ export function TpoPublicJoinLinkCard({
 }) {
   const [status, setStatus] = useState(initial);
   const [freshUrl, setFreshUrl] = useState("");
+  const [postDirect,setPostDirect]=useState<boolean|null>(null);
+  const [postError,setPostError]=useState("");
   const [busy, setBusy] = useState(false);
   const actionInFlight=useRef(false);
   const [domainDraft,setDomainDraft]=useState("");
@@ -58,6 +60,7 @@ export function TpoPublicJoinLinkCard({
       setStatus(data.status);
       setFreshUrl(window.location.origin + data.path);
       setFeedback(action === "REPLACE" ? "New link made. The old link stopped working." : "Link made");
+      setPostDirect(null);
       setReplaceOpen(false);
     } catch(error) {
       setFeedback(error instanceof Error?error.message:"Couldn't make the link");
@@ -101,10 +104,10 @@ export function TpoPublicJoinLinkCard({
       const payload=await response.json() as {domain?:string;error?:string};
       if(!response.ok)throw new Error(payload.error==="DOMAIN_IN_USE"?
        "That domain belongs to another company.":payload.error==="ALREADY_SET"?
-       "A domain is already saved for this company.":"Couldn't add domain");
+       "A domain is already saved for this company.":"Couldn't add the domain");
       setStatus(prev=>({...prev,domain:payload.domain??prev.domain}));
       setFeedback("Domain added");
-    }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't add domain");}
+    }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't add the domain");}
     finally{actionInFlight.current=false;setBusy(false);}
   }
   async function toggleLink() {
@@ -125,6 +128,44 @@ export function TpoPublicJoinLinkCard({
     }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't save");}
     finally{actionInFlight.current=false;setBusy(false);}
   }
+  useEffect(()=>{
+    if(!status.ready||!status.link?.id){setPostDirect(null);return;}
+    const controller=new AbortController(),currentLinkId=status.link.id;
+    const query=new URLSearchParams({scope,...(isCompany&&companyId?{companyId}:{})});
+    void fetch("/api/placements/tpo/public-join-links/posting-policy?"+query.toString(),{
+      credentials:"same-origin",cache:"no-store",signal:controller.signal,
+    }).then(async response=>{
+      if(!response.ok)throw new Error("Couldn't load posting policy");
+      return response.json() as Promise<{linkId:string;postDirect:boolean}>;
+    }).then(result=>{
+      if(!controller.signal.aborted&&result.linkId===currentLinkId){
+        setPostDirect(result.postDirect);setPostError("");
+      }
+    }).catch(()=>{
+      if(!controller.signal.aborted){setPostDirect(null);setPostError("Couldn't load posting policy");}
+    });
+    return ()=>controller.abort();
+  },[scope,companyId,isCompany,status.ready,status.link?.id]);
+
+  async function togglePostDirect(){
+    if(!status.link?.id||postDirect===null||busy||actionInFlight.current)return;
+    actionInFlight.current=true;setBusy(true);setPostError("");
+    try{
+      const response=await fetch("/api/placements/tpo/public-join-links/posting-policy",{
+        method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({scope,...(isCompany?{companyId}:{}),
+          expectedLinkId:status.link.id,postDirect:!postDirect}),
+      });
+      const result=await response.json().catch(()=>null) as
+        {postDirect?:boolean;error?:string}|null;
+      if(!response.ok||typeof result?.postDirect!=="boolean")
+        throw new Error(result?.error==="STALE"?"The link changed. Refresh and try again.":"Couldn't save");
+      setPostDirect(result.postDirect);setFeedback("Saved");
+    }catch(reason){
+      setPostError(reason instanceof Error?reason.message:"Couldn't save");
+    }finally{actionInFlight.current=false;setBusy(false);}
+  }
+
   async function copyLink() {
     try {
       await navigator.clipboard.writeText(freshUrl);
@@ -175,9 +216,20 @@ export function TpoPublicJoinLinkCard({
             </p>
           ) : null}
           {status.link&&!freshUrl?<p className="mt-2 text-xs text-muted-foreground">
-            For safety the original link address cannot be recovered from a status lookup.
-            Choose New link to replace it and copy the new address. The old link will stop working.
+            This link was made before links could be shown again. It still works where you shared it.
+            Make a new link to copy it for invitations; the old one then stops working.
           </p>:null}
+          {!isCompany&&status.link?<div className="space-y-2 border-t border-border pt-3">
+            <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
+              <Checkbox checked={postDirect===true} disabled={busy||postDirect===null}
+                onChange={()=>void togglePostDirect()}/>
+              Anyone with a verified business email may post
+            </label>
+            <p className="text-sm text-body">{postDirect
+              ? "On: drive requests may arrive as drafts without your approval. You still publish them. Only while the link is on."
+              : "Off: their drive requests wait for your approval, like everyone else's."}</p>
+            {postError?<p role="alert" className="text-sm text-error">{postError} <Button type="button" variant="ghost" onClick={()=>void retryStatus()}>Retry</Button></p>:null}
+          </div>:null}
           {status.link?<label className="mt-3 flex min-h-11 items-center gap-3 text-sm text-body">
             <Checkbox checked={status.link.enabled} disabled={busy}
               onChange={()=>void toggleLink()}/>
