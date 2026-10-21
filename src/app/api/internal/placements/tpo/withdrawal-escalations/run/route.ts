@@ -10,9 +10,14 @@ export const dynamic="force-dynamic";
 export async function POST(request:Request){
  const secret=process.env.TPO_NOTICE_SCHEDULER_SECRET??"";
  const provided=request.headers.get("x-tpo-scheduler-key")??"";
+ // The scheduler credential is mandatory in each deployment. Distinguish a
+ // missing worker configuration from a bad caller key without exposing either.
+ if(secret.length<32)
+  return NextResponse.json({error:"SCHEDULER_NOT_CONFIGURED",
+   message:"Configure TPO_NOTICE_SCHEDULER_SECRET (at least 32 characters) for the withdrawal escalation worker."},
+   {status:403,headers:{"Cache-Control":"no-store"}});
  const expected=Buffer.from(secret),actual=Buffer.from(provided);
- if(secret.length<32||expected.length!==actual.length||
-  !timingSafeEqual(expected,actual))
+ if(expected.length!==actual.length||!timingSafeEqual(expected,actual))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
   const result=await executeScheduledJobWithLease(
