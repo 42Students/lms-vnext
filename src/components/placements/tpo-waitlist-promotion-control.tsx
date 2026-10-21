@@ -41,7 +41,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   {preview.next&&preview.storageReady?<div className="min-w-0 space-y-3 border-b border-border pb-4">
    <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">Offer to next waitlisted: {preview.next.name} (rank {preview.next.rank})</h2>
    <p className="text-sm text-body">Review the ranked queue before release. The offer issuer rechecks held-offer rules, eligibility and response deadline.</p>
-   <label className="grid min-w-0 gap-1 text-sm">Reason for promotion
+   <label className="grid min-w-0 gap-[6px] text-[13px]">Reason for promotion
     <Textarea rows={2} minLength={3} maxLength={500} value={reason} onChange={e=>{setReason(e.target.value);setError("");}} className="min-h-24 w-full min-w-0"
      /></label>
    <Button variant="primary" type="button" disabled={busy||reason.trim().length<3} onClick={()=>setConfirmOpen(true)}

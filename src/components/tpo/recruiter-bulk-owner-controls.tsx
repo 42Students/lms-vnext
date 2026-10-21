@@ -187,7 +187,7 @@ export function RecruiterBulkOwnerControls({
               No eligible owner memberships were found. No assignment can be made.
             </p>
           ) : (
-            <label className="block text-sm font-semibold text-foreground">
+            <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
               New owner
               <Select
                 className={fieldClass + " mt-1 block w-full max-w-md"}

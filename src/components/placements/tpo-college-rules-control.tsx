@@ -93,7 +93,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       </p>
       <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
         {dirty?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="info" message="Unsaved changes"/></div>:null}
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
           A student counts as placed when the offer is
           <Select value={form.countsAsPlacedAt} disabled={busy}
             onChange={(event) => {setError(null);setNotice("");setForm(current=>({...current,countsAsPlacedAt:event.target.value}));}}
@@ -103,7 +103,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           </Select>
         </label>
         {(["maxHeldOffers", "upliftPct", "minResponseHours"] as const).map((key) => (
-          <label key={key} className="grid gap-1 text-sm font-semibold text-body">
+          <label key={key} className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
             {key === "maxHeldOffers" ? "Maximum held offers" : key === "upliftPct" ? "Offer uplift %" : "Minimum response hours"}
             <Input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
               value={form[key]} disabled={busy}

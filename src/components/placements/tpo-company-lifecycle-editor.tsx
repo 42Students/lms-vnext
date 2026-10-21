@@ -63,7 +63,7 @@ export function TpoCompanyLifecycleEditor({ company }: { company: Company }) {
       <p className="border-b border-[var(--lms-canvas-border)] pb-3 text-sm text-body">
         Status: <strong>{company.status}</strong> · Trusted: <strong>{company.isTrusted ? "Yes" : "No"}</strong>
       </p>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
         Reason for change
         <Textarea
           value={reason} onChange={(event) => {setReviewAction(null);setReason(event.target.value);}}

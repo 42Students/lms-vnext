@@ -84,13 +84,13 @@ export function TpoGeneralRequestsPanel(){
    <div className="min-w-0 space-y-3 break-words">
     <p className="text-sm">{selection?.reason}</p>
     {selection?<TpoGeneralRequestFacts kind={selection.kind} payload={selection.payload}/>:null}
-   <label className="mt-3 grid gap-1 text-sm">Decision
+   <label className="mt-3 grid gap-[6px] text-[13px]">Decision
     <Select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} >
      {approveSupported(selection?.kind??"")?<option value="APPROVE">Approve and apply</option>:null}
      <option value="REJECT">Decline with reason</option>
     </Select>
    </label>
-   <label className="mt-3 grid gap-1 text-sm">Reason / decision note
+   <label className="mt-3 grid gap-[6px] text-[13px]">Reason / decision note
     <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}/>
    </label>
    {!approveSupported(selection?.kind??"")?<p className="text-sm">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}

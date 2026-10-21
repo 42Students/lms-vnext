@@ -55,7 +55,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
  }
  return <section className="mt-6 space-y-4 border-t border-border pt-5" aria-label="Public placements content">
   <h2 className="font-semibold">About your placements</h2>
-  <label className="grid gap-1 text-sm">About your placements
+  <label className="grid gap-[6px] text-[13px]">About your placements
    <Textarea rows={5} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}
     placeholder="Tell recruiters about your placement cell and your students."
