@@ -301,8 +301,8 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [x] `src/components/tracker/independent-finding-actions.tsx`
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
 
 
 ## Dimension sweep: lane chat-11 owns "Icons and imagery" across the whole codebase
@@ -312,14 +312,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 
 - [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
 - [x] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/page.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/learner-assessment-metric-glyph.tsx`
+- [x] `src/app/page.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/learner-assessment-metric-glyph.tsx`
 - [ ] `src/components/courses/learner-course-card-image.tsx`
 - [ ] `src/components/marketing/marketing-layout.tsx`
 - [ ] `src/components/placements/learner-placement-snapshot-glyph.tsx`
