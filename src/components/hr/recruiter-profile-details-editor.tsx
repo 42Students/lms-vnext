@@ -104,6 +104,24 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     const code=payload && typeof payload==="object" && "error" in payload &&
       typeof payload.error==="string" ? payload.error : undefined;
     const errors=recruiterProfileFieldErrors(form,code);
+    // The old controller reports contactMobile / snake_case field names.
+    // Map server errors to the vNext input name instead of dropping them.
+    if (payload && typeof payload==="object" && "fieldErrors" in payload &&
+      payload.fieldErrors && typeof payload.fieldErrors==="object" &&
+      !Array.isArray(payload.fieldErrors)) {
+      const fields=payload.fieldErrors as Record<string,unknown>;
+      const mapping={
+        first_name:"firstName",last_name:"lastName",contactMobile:"phone",
+        contact_mobile:"phone",designation:"title",
+      } as const;
+      for (const [key,value] of Object.entries(fields)) {
+        const target=key in mapping?mapping[key as keyof typeof mapping]:key;
+        if ((target==="firstName"||target==="lastName"||
+          target==="title"||target==="phone") && typeof value==="string") {
+          errors[target]=value;
+        }
+      }
+    }
     if(code==="INVALID_MOBILE")errors.phone="Check the mobile number.";
     setFieldErrors(errors);
     if(Object.keys(errors).length){
