@@ -226,8 +226,8 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    <span className="text-body sm:col-span-2 lg:col-span-5">Changes are tracked with per-row results. Students receive in-app notifications; email is not available.</span>
   </div>
 
-  {error&&!dialog?<div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
-   <span className="min-w-0 flex-1">{error}</span>
+  {error&&!dialog?<div className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
+   <span role="alert" className="min-w-0 flex-1">{error}</span>
    {failedDetailId?<Button type="button" variant="secondary" disabled={busy}
     onClick={()=>void openDetail(failedDetailId)}>Retry details</Button>:null}
    <Button type="button" variant="secondary" onClick={()=>router.refresh()}>Reload applications</Button>

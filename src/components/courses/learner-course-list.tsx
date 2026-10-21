@@ -377,7 +377,7 @@ export function LearnerCourseList({
              (!Number.isFinite(row.course.credits)||row.course.credits<0))?
             <Badge tone="warning">Invalid Credits — excluded from total</Badge>:null}
         </div>
-        <div aria-label="Semester summary details" className="relative mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3 text-xs">
+        <div role="group" aria-label="Semester summary details" className="relative mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3 text-xs">
           <LearnerMetricPopover title="Semester Details">
             <div className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>

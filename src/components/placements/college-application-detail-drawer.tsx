@@ -340,8 +340,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
      </Button>
     </div>
     {interviewLoading?<p role="status">Loading candidate interviews…</p>:null}
-    {interviewError?<div role="alert" className="space-y-2">
-      <p className="text-error">Failed to load interviews. {interviewError}</p>
+    {interviewError?<div className="space-y-2">
+      <p role="alert" className="text-error">Failed to load interviews. {interviewError}</p>
       <Button type="button" variant="secondary" onClick={()=>void loadCandidateInterviews()}>Retry interviews</Button>
      </div>:null}
     {interviewData?<>

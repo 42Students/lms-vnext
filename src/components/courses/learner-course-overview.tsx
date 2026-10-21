@@ -439,7 +439,7 @@ export function LearnerCourseOverview({
 
       <details className="scroll-mt-24 border-t border-border pt-3" id="course-overview-progress">
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Course progress breakdown</summary>
-      <div aria-label="Course progress summary" className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4 md:grid-cols-2 xl:grid-cols-4">
+      <div role="group" aria-label="Course progress summary" className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
           value={!progressLoadFailed && progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
