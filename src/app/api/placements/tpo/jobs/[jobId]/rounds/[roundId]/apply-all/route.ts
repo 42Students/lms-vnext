@@ -8,7 +8,14 @@ type Params={params:Promise<{jobId:string;roundId:string}>};
 export async function GET(_request:Request,{params}:Params){
  try{const {jobId,roundId}=await params;
   const data=await getTpoRoundApplyPreview(await getCurrentRequestContext(),jobId,roundId);
-  return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+  return NextResponse.json({
+    ...data,contract:"PENDING_RESULTS_ONLY",
+    legacyPendingRoute:"/api/v1/tpo/rounds/"+roundId+"/results/pending",
+    legacyApplyRoute:"/api/v1/tpo/rounds/"+roundId+"/results/apply",
+    navigation:{review:"/tpo/jobs/"+jobId+"/rounds/"+roundId+"/results",
+      apply:"/api/placements/tpo/jobs/"+jobId+"/rounds/"+roundId+"/apply-all"},
+    message:"Review unapplied round results before confirming.",
+  },{headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
 export async function POST(request:Request,{params}:Params){
@@ -28,7 +35,9 @@ export async function POST(request:Request,{params}:Params){
   },{status:422,headers:{"Cache-Control":"private, no-store"}});
   const {jobId,roundId}=await params;
   const result=await applyTpoWholeRound(await getCurrentRequestContext(),jobId,roundId,await request.json());
-  return NextResponse.json({...result,notify:true,notificationChannel:"IN_APP"},
+  return NextResponse.json({...result,notify:true,notificationChannel:"IN_APP",
+    contract:"PENDING_RESULTS_ONLY",requiresReload:true,
+    message:"Pending round results applied. Refresh to review any remaining decisions."},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(e){return apiErrorResponse(e);}
 }
