@@ -45,6 +45,9 @@ export async function listSuperAdminBroadcastColleges(context:RequestContext){
  * relax audience authorization merely because the payload names a college.
  * Each recipient college requires active-org/college, active TPO audience and
  * explicit college.manage permission; the reviewed exact set is immutable.
+ * ALL_COLLEGES means current eligible colleges at publication time, not a
+ * lifetime dynamic subscription. Newly enabled colleges require a new send;
+ * removed colleges fail reviewed-recipient equality rather than leaking notices.
  */
 export async function publishSuperAdminCollegeBroadcast(context:RequestContext,raw:unknown){
  if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))throw new AuthorizationError("college.manage");
@@ -82,6 +85,7 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
  for(const target of targets){
   requirePermission(context,"college.manage",{organizationId:target.organizationId,collegeId:target.id});
  }
+ const resolvedAt=new Date();
  const created=await db.transaction(async tx=>{
   const rows=targets.map(target=>({
    organizationId:target.organizationId,collegeId:target.id,
@@ -104,7 +108,9 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    groupKey:"college-broadcast:"+broadcastGroupId,
    dedupeKey:"college-broadcast:"+broadcastGroupId+":"+row.collegeId,
    metadata:{audienceMode:input.audienceMode,noticeId:row.id,broadcastGroupId,
-    reviewedTargetCount:targets.length},
+    reviewedTargetCount:targets.length,recipientCollegeIds:targets.map(t=>t.id),
+    recipientResolvedAt:resolvedAt.toISOString(),operatorAction:"PUBLISH_IMMEDIATELY",
+    deliveryStatus:"SENT"},
   }))).returning({id:activityEvents.id,collegeId:activityEvents.collegeId});
   // Fan-out and announcement rows share one transaction. An immediate
   // notification failure rolls back the entire publication.
@@ -129,5 +135,10 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    }
   return inserted;
  });
- return {broadcastGroupId,count:created.length,noticeIds:created.map(x=>x.id)};
+ return {broadcastGroupId,count:created.length,noticeIds:created.map(x=>x.id),
+  status:"SENT" as const,audienceMode:input.audienceMode,
+  resolvedAt,recipientCollegeIds:targets.map(x=>x.id),
+  // A scheduled/retry request is intentionally NOT supported by this
+  // immediate-only route: it requires an owned due-worker and separate CAS.
+  retryable:false};
 }

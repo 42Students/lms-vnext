@@ -102,6 +102,35 @@ async function assertGroupMemberActor(
 
 export const GROUP_SELF_ACCESS_MESSAGE = "Learners only";
 
+/** Legacy no-body join/leave buttons derive the learner from the active
+ * college x role membership, never from a browser-supplied learner id. */
+export async function joinOwnGroup(context: RequestContext, groupId: string) {
+  const membershipId = context.membership?.id;
+  if (!membershipId) throw new GroupServiceError("GROUP_SELF_ACCESS_DENIED");
+  return joinGroup(context, groupId, membershipId, "SELF");
+}
+export async function leaveOwnGroup(context: RequestContext, groupId: string) {
+  const membershipId = context.membership?.id;
+  if (!membershipId) throw new GroupServiceError("GROUP_SELF_ACCESS_DENIED");
+  return leaveGroup(context, groupId, membershipId, "SELF");
+}
+
+export function groupMemberActionMessage(code: string): string {
+  const messages: Record<string, string> = {
+    GROUP_SELF_ACCESS_DENIED: "Learners only",
+    GROUP_NOT_FOUND: "Group not found",
+    GROUP_NOT_ACTIVE: "This group is not open yet",
+    GROUP_SELF_JOIN_CLOSED: "Joining this group is closed",
+    GROUP_CAPACITY_REACHED: "This group is full",
+    GROUP_MEMBERSHIP_LOCKED: "This membership is locked. Contact your college administrator.",
+    GROUP_MEMBER_NOT_FOUND: "You are not a member of this group",
+    GROUP_SELF_LEAVE_DISABLED: "Leaving this group is disabled",
+    ELECTIVE_PRIMARY_SECTION_REQUIRED: "You are not eligible to join this elective",
+    ELECTIVE_MAX_PICK_REACHED: "You have reached the elective selection limit",
+  };
+  return messages[code] ?? "Could not update your group. Please try again.";
+}
+
 async function lockGroup(tx: Tx, groupId: string) {
   const [row] = await tx.select().from(lmsGroups).where(eq(lmsGroups.id, groupId)).for("update");
   if (!row || row.deletedAt || row.status === "ARCHIVED") throw new GroupServiceError("GROUP_NOT_FOUND");
@@ -756,10 +785,11 @@ export async function allocateGroupMembersFromLegacySelection(
  context:RequestContext,groupIdInput:string,raw:unknown,
 ) {
  const selection=z.strictObject({
-  learnerIds:z.array(uuid).max(500).optional(),
+  learnerIds:z.array(z.union([uuid,z.number().int().positive()])).max(500).optional(),
   rollNumbers:z.array(z.string().trim().min(1).max(128)).max(500).optional(),
   fromClassId:uuid.optional(),
   note:z.string().trim().max(500).optional(),
+  source:z.enum(["MANUAL","CSV"]).default("MANUAL"),
  }).refine(v=>Boolean(v.learnerIds?.length||v.rollNumbers?.length||v.fromClassId),{
   message:"Select learners, roll numbers or a class",
  }).parse(raw);
@@ -770,7 +800,31 @@ export async function allocateGroupMembersFromLegacySelection(
   isNull(lmsGroups.deletedAt))).limit(1);
  if(!group?.collegeId)throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
  requirePermission(context,"academics.manage",{collegeId:group.collegeId});
- const all=new Set(selection.learnerIds??[]);
+ const all=new Set<string>(selection.learnerIds?.filter(
+  (id):id is string=>typeof id==="string")??[]);
+ const legacyIds=selection.learnerIds?.filter(
+  (id):id is number=>typeof id==="number")??[];
+ if(legacyIds.length) {
+  // Legacy numeric learner IDs map only through this college's persisted
+  // learner profile; never assume an integer identifies a global membership.
+  const found=await getDb().select({
+   membershipId:learnerProfiles.membershipId,
+   legacyId:learnerProfiles.legacyLearnerId,
+  }).from(learnerProfiles)
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProfiles.membershipId))
+   .where(and(eq(collegeMemberships.collegeId,group.collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+    inArray(learnerProfiles.legacyLearnerId,legacyIds))).limit(501);
+  const byLegacyId=new Map<number,string[]>();
+  for(const row of found)if(row.legacyId!==null){
+   byLegacyId.set(row.legacyId,[...(byLegacyId.get(row.legacyId)??[]),row.membershipId]);
+  }
+  for(const id of legacyIds){
+   const mapped=byLegacyId.get(id)??[];
+   if(mapped.length!==1)throw new GroupServiceError("GROUP_LEGACY_LEARNER_UNRESOLVED");
+   all.add(mapped[0]!);
+  }
+ }
  if(selection.rollNumbers?.length) {
   const found=await getDb().select({
    membershipId:learnerProfiles.membershipId,roll:learnerProfiles.rollNumber,
@@ -798,7 +852,7 @@ export async function allocateGroupMembersFromLegacySelection(
  const results:{membershipId:string;status:"IMPORTED"|"FAILED";reason?:string}[]=[];
  for(const membershipId of all){
   try{
-   await joinGroup(context,groupId,membershipId,"MANUAL",false,"CSV",
+   await joinGroup(context,groupId,membershipId,"MANUAL",false,selection.source,
     selection.note);
    results.push({membershipId,status:"IMPORTED"});
   }catch(error){
@@ -807,5 +861,36 @@ export async function allocateGroupMembersFromLegacySelection(
   }
  }
  return {requested:all.size,imported:results.filter(row=>row.status==="IMPORTED").length,
-  failed:results.filter(row=>row.status==="FAILED").length,results};
+  failed:results.filter(row=>row.status==="FAILED").length,source:selection.source,results};
+}
+
+/** Admin reconciliation is a separate explicit, audited operation; joining,
+ * leaving and waitlist promotion all remain serialized on the group row.
+ * The UI may display drift first without mutating any counter. */
+export async function inspectCollegeGroupCounter(context:RequestContext,groupIdInput:string,
+ repair=false) {
+ const groupId=uuid.parse(groupIdInput);
+ return getDb().transaction(async tx=>{
+  const group=await lockGroup(tx,groupId);
+  if(!group.collegeId)throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
+  requirePermission(context,"academics.manage",{collegeId:group.collegeId});
+  await assertPersistedGroupActor(tx,context,{collegeId:group.collegeId,mode:"MANUAL"});
+  const [countRow]=await tx.select({actual:count()}).from(lmsGroupMembers)
+   .where(and(eq(lmsGroupMembers.groupId,groupId),eq(lmsGroupMembers.state,"ACTIVE")));
+  const actual=countRow?.actual??0;
+  const drift=actual-group.activeCount;
+  if(repair && drift!==0){
+   await tx.update(lmsGroups).set({activeCount:actual,
+    version:sql.raw('"version" + 1'),updatedAt:new Date()})
+    .where(eq(lmsGroups.id,groupId));
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_GROUP_UPDATED,
+    collegeId:group.collegeId,subjectType:"lms_group",subjectId:groupId,
+    subjectLabel:group.name,summary:"Group membership counter reconciled",
+    metadata:{groupId,previousCount:group.activeCount,actualCount:actual,drift},
+   });
+  }
+  return {groupId,storedCount:group.activeCount,actualCount:actual,drift,
+   repaired:repair&&drift!==0};
+ });
 }

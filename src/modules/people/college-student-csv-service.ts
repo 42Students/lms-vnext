@@ -149,6 +149,8 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     csv: request.csv, programId: request.programId ?? null,
     cohortId: request.cohortId ?? null, sectionId: request.sectionId ?? null,
   })).digest("hex");
+  // The run ID is the durable import-batch identity used by history and
+  // manual recovery. Individual membership IDs are recorded in the receipt.
   const runId = randomUUID();
   const results: StudentCsvResult[] = [];
   for (const entry of checked) {
@@ -224,11 +226,15 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
    metadata:{count:results.length,created:results.filter(x=>x.status==="IMPORTED").length,
     partial:results.filter(x=>x.status==="PARTIAL").length,
     failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length,
-    sourceFingerprint, receipts,
+    runId,bulkImportBatchId:runId,learnerCount:results.length,
+    createdMembershipIds:receipts.filter(x=>x.membershipId).map(x=>x.membershipId),
+    actorRole:isSuperAdmin(context)?"SUPER_ADMIN":"COLLEGE_ADMIN",
+    selectedCollegeId:member.collegeId,sourceFingerprint, receipts,
     recoveryPolicy:"MANUAL_RECONCILIATION_REQUIRED_FOR_PARTIAL",
     reversible:false},
   });
-  return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,runId,
+  return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,
+    runId,bulkImportBatchId:runId,learnerCount:results.length,
     reversible:false, recoveryRequired:results.some(item=>item.status==="PARTIAL") };
 }
 
@@ -237,7 +243,9 @@ export async function listSuperAdminStudentCsvImportHistory(context: RequestCont
   if (!isSuperAdmin(context)) throw new AuthorizationError("people.manage");
   const selected = await resolveActingCollege(context, "people.manage");
   return getDb().select({
+    runId:activityEvents.subjectId,
     occurredAt:activityEvents.occurredAt,
+    actorUserId:activityEvents.actorUserId,
     metadata:activityEvents.metadata,
   }).from(activityEvents).where(and(
     eq(activityEvents.collegeId,selected.collegeId),
