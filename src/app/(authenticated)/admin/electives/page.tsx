@@ -25,7 +25,7 @@ export default async function SuperAdminElectivesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
-      action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>} />
+      action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, options] = await Promise.all([
@@ -107,6 +107,6 @@ export default async function SuperAdminElectivesPage({
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
       {data.truncated ? <p className="text-sm text-muted-foreground">Showing only 200 matching elective slots. Narrow the search for older entries.</p> : null}
     </>}
-    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Academic overview</Link>
+    <Link href="/admin/academics" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Academic overview</Link>
   </div>;
 }
