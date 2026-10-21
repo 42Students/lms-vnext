@@ -9,6 +9,7 @@ export const facultyBulkRowSchema = z.object({
   phoneE164: z.string().regex(/^\+91[6-9][0-9]{9}$/),
   email: z.email().optional(),
   facultyType: z.enum(["LECTURER","MENTOR"]).default("LECTURER"),
+  departmentName: z.string().trim().min(1).max(160).optional(),
 }).strict();
 export type FacultyBulkRow = z.infer<typeof facultyBulkRowSchema>;
 
@@ -78,6 +79,7 @@ export function parseFacultyBulkCsv(source: string): FacultyBulkRow[] {
       firstName,lastName,phoneE164,
       facultyType,
       ...(email?{email}:{}),
+      ...(department?{departmentName:department}:{}),
     });
     if(!parsed.success){
       const errorFields=new Set(parsed.error.issues.map(issue=>String(issue.path[0]??"")));
@@ -87,12 +89,6 @@ export function parseFacultyBulkCsv(source: string): FacultyBulkRow[] {
         issues.push("Record "+rowNumber+": First Name and Last Name are required.");
       if(errorFields.has("facultyType"))
         issues.push("Record "+rowNumber+": Faculty Type must be LECTURER or MENTOR.");
-      continue;
-    }
-    if(department){
-      // A name-only department cannot be safely bound to a tenant UUID.
-      // Do not create the person then silently skip its academic assignment.
-      issues.push("Record "+rowNumber+": Department import requires verified department mapping. Use the faculty assignment workflow.");
       continue;
     }
     const duplicateMobile=mobileRows.get(phoneE164);
