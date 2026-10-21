@@ -9,6 +9,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {CollegeInterviewAppointments} from "./college-interview-appointments";
+import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 type Event={from:string|null;to:string;reason:string|null;when:string};
 type CandidateInterviews={
  rounds:Array<{id:string;name:string;status:string;kind:string}>;
@@ -152,7 +153,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  }
  async function attachLetter(offerId:string){
   if(savingLetter)return;
-  const url=letterInput[offerId]?.trim()??"";
+  const url=(letterInput[offerId]??detail?.offers.find(row=>row.id===offerId)?.offerLetterUrl??"").trim();
   if(!url.startsWith("https://")){setError("Enter a secure HTTPS offer-letter URL.");return;}
   setSavingLetter(true);setError("");setSuccess("");
   try{
@@ -296,18 +297,25 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        {detail.offers.length?<ul className="mt-2 divide-y divide-border border-y border-border text-sm">{detail.offers.map(o=>
         <li key={o.id} className="min-w-0 space-y-2 break-words py-3">
          <p>{o.status} · {when(o.issuedAt)}</p>
-         {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
-           className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
+         {o.offerLetterUrl&&/^https:\/\//i.test(o.offerLetterUrl)?
+          <a href={o.offerLetterUrl} target="_blank" rel="noreferrer noopener"
+           className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:
+          o.offerLetterUrl?<p className="text-muted-foreground">Offer letter link unavailable (invalid URL)</p>:
+          <p className="text-muted-foreground">No offer letter attached</p>}
+         {o.offerLetterAttachedAt?<p className="text-xs text-muted-foreground">
+          Letter linked {when(o.offerLetterAttachedAt)}
+         </p>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
           <p className="text-xs text-muted-foreground">Legacy forms accepted HTTP links. For applicant safety, only HTTPS offer-letter links can be attached. This stores the URL on the selected issued or accepted offer without changing its status.</p>
           <label className="grid gap-2 text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
-           <Input type="url" placeholder="https://... link to the offer letter document" value={letterInput[o.id]??""}
+           <Input type="url" placeholder="https://... link to the offer letter document" value={letterInput[o.id]??o.offerLetterUrl??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
             />
           </label>
-          <Button variant="secondary" type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
+          <Button variant="secondary" type="button"
+            disabled={savingLetter||!letterDirty} onClick={()=>void attachLetter(o.id)}
            >
-           {savingLetter?"Saving…":"Attach Offer Letter"}</Button>
+           {savingLetter?"Saving…":o.offerLetterUrl?"Update link":"Attach offer letter link"}</Button>
          </div>:null}
         </li>)}</ul>:
         <p className="mt-2 text-sm text-body">No issued offers.</p>}
@@ -387,7 +395,41 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 text-sm">
          Full interview schedule
         </a>
+        <Button type="button" variant="secondary" disabled={interviewLoading}
+          onClick={()=>void loadCandidateInterviews()}>
+         {interviewLoading?"Loading interviews…":"Load calendar invitations"}
+        </Button>
        </div>
+       {interviewError?<div role="alert" className="mt-3 space-y-2 text-sm">
+        <p className="text-error">Interview history unavailable: {interviewError}</p>
+        <Button variant="secondary" type="button" disabled={interviewLoading}
+          onClick={()=>void loadCandidateInterviews()}>Retry interviews</Button>
+       </div>:null}
+       {interviewData?<div className="mt-3 space-y-2">
+        {interviewData.interviews.filter(row=>row.applicationId===applicationId&&row.status!=="CANCELLED")
+         .map(row=>{
+          const round=interviewData.rounds.find(item=>item.id===row.roundId);
+          const title=[detail.application.name,round?.name??"Interview",detail.application.role]
+           .filter(Boolean).join(" · ");
+          const duration=row.durationMinutes;
+          const date=new Date(row.scheduledAt);
+          const valid=Number.isFinite(date.getTime())&&Number.isInteger(duration)&&duration>0&&duration<=1440;
+          const calendar=valid?collegeInterviewIcs({id:row.id,title,
+           date:row.scheduledAt,durationMinutes:duration,
+           location:row.venue??row.meetingUrl}):null;
+          return <div key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
+           <span className="break-words">{round?.name??"Interview"} · {when(row.scheduledAt)}</span>
+           {calendar?<a download={"interview-"+row.id+".ics"}
+            href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(calendar)}
+            aria-label={"Download calendar invitation for "+title}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+            Download .ics
+           </a>:<span className="text-muted-foreground">Calendar invitation unavailable</span>}
+          </div>;
+         })}
+        {!interviewData.interviews.some(row=>row.applicationId===applicationId&&row.status!=="CANCELLED")?
+          <p className="text-sm text-muted-foreground">No booked candidate interviews to add to your calendar.</p>:null}
+       </div>:null}
       </section>
       <h3 className="mt-4 text-base font-semibold text-heading">History</h3>
       {sections.map(section=><Disclosure key={section.label} title={section.label} className="border-b border-border py-2" contentClassName="pb-3">
