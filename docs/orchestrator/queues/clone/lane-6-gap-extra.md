@@ -6,26 +6,26 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L11-U008 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/[roundId].js`
-- [ ] L11-U009 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/index.js`
-- [ ] L11-U010 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js`
-- [ ] L11-U011 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId]/edit.js`
-- [ ] L11-U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/index.js`
-- [ ] L11-U014 (FE page) `docs/legacy-source/frontend/src/pages/tpo/home.js`
-- [ ] L11-U017 (FE page) `docs/legacy-source/frontend/src/pages/tpo/more.js`
-- [ ] L11-U020 (FE page) `docs/legacy-source/frontend/src/pages/tpo/recruiters/index.js`
-- [ ] L11-U023 (FE page) `docs/legacy-source/frontend/src/pages/tpo/requests.js`
-- [ ] L11-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicBugTrackerController.java`
-- [ ] L11-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/sprints.js`
-- [ ] L12-U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java`
-- [ ] L12-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/JobApplication.java`
-- [ ] L12-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ProjectWorkspaceController.java`
-- [ ] L13-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoRequestController.java`
-- [ ] L14-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Interview.java`
-- [ ] L14-U029 (FE page) `docs/legacy-source/frontend/src/pages/tpo/batches/[batchId].js`
-- [ ] L15-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminE2eController.java`
-- [ ] L17-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassroomMessage.java`
-- [ ] L17-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js`
-- [ ] L18-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassSchedule.java`
-- [ ] L18-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js`
-- [ ] L19-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ModuleAccessController.java`
+- [x] L11-U008 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/[roundId].js`
+- [x] L11-U009 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drive-day/index.js`
+- [x] L11-U010 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId].js`
+- [x] L11-U011 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/[jobId]/edit.js`
+- [x] L11-U012 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/index.js`
+- [x] L11-U014 (FE page) `docs/legacy-source/frontend/src/pages/tpo/home.js`
+- [x] L11-U017 (FE page) `docs/legacy-source/frontend/src/pages/tpo/more.js`
+- [x] L11-U020 (FE page) `docs/legacy-source/frontend/src/pages/tpo/recruiters/index.js`
+- [x] L11-U023 (FE page) `docs/legacy-source/frontend/src/pages/tpo/requests.js`
+- [x] L11-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicBugTrackerController.java`
+- [x] L11-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/sprints.js`
+- [x] L12-U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/recruiter/RecruiterNotificationService.java`
+- [x] L12-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/JobApplication.java`
+- [x] L12-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ProjectWorkspaceController.java`
+- [x] L13-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoRequestController.java`
+- [x] L14-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Interview.java`
+- [x] L14-U029 (FE page) `docs/legacy-source/frontend/src/pages/tpo/batches/[batchId].js`
+- [x] L15-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminE2eController.java`
+- [x] L17-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassroomMessage.java`
+- [x] L17-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js`
+- [x] L18-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassSchedule.java`
+- [x] L18-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js`
+- [x] L19-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ModuleAccessController.java`
