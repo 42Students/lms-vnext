@@ -237,65 +237,65 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
 - [x] `src/app/(authenticated)/tpo/home/page.tsx`
 - [x] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/not-found.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/profile/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/[slug]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/(authenticated)/tpo/not-found.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx`
+- [x] `src/app/(authenticated)/tpo/profile/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/[slug]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-branch/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/failure-reasons/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/intelligence/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/page.tsx`

@@ -83,15 +83,15 @@ export default async function TpoByCompanyReportPage({
       <form action="/tpo/reports/by-company" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end" aria-label="Filter by company">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 w-full flex-1 gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company name
+        <label className="grid min-w-0 w-full flex-1 gap-2 min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company name
           <Input type="search" name="q" maxLength={100} defaultValue={view.query.q} className="w-full"/>
-        </label><label className="grid min-w-0 w-full gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded placement outcome
+        </label><label className="grid min-w-0 w-full gap-2 min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded placement outcome
           <Select name="outcome" defaultValue={view.query.outcome}
             className="w-full">
             <option value="ALL">All companies</option><option value="HAS_PLACED">At least one placed learner</option>
             <option value="NO_PLACED">No placed learners recorded</option>
           </Select>
-        </label><label className="grid min-w-0 w-full gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order companies
+        </label><label className="grid min-w-0 w-full gap-2 min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order companies
           <Select name="sort" defaultValue={view.query.sort} className="w-full">
             <option value="NAME">Company name</option><option value="PLACED_DESC">Placed learners (high first)</option>
             <option value="ACCEPTED_DESC">Accepted offers (high first)</option><option value="APPLICATIONS_DESC">Submitted applications (high first)</option><option value="DRIVES_DESC">Recorded drives (high first)</option><option value="AVG_CTC_DESC">Average accepted full-time CTC (high first)</option><option value="HIGHEST_CTC_DESC">Highest accepted full-time CTC (high first)</option>
@@ -135,7 +135,7 @@ export default async function TpoByCompanyReportPage({
         emptyDescription="No company records are available for the selected reporting scope and filters."
       />
       <nav aria-label="Company report pages" className="flex flex-wrap items-center justify-between gap-3 text-sm"><span className="text-body">Page {view.page} of {view.totalPages}</span><div className="flex flex-wrap items-center gap-4">{view.page>1?<Link href={href(view.page-1)} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link md:min-h-9">← Previous</Link>:null}{view.page<view.totalPages?<Link href={href(view.page+1)} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link md:min-h-9">Next →</Link>:null}</div></nav>
-      <section className="border-t border-border pt-4 sm:pt-5" aria-label="Company report drill-down">
+      <section className="border-t border-border pt-4 sm:pt-6" aria-label="Company report drill-down">
         <h2 className="font-semibold text-foreground">Open company records</h2>
         <p className="mt-1 text-sm text-body">These company pages show your college relationship and full persisted history, not just this report season.</p>
         {companyLinks.rows.length===0?<p className="mt-3 text-sm text-body">No company records in this report scope.</p>:

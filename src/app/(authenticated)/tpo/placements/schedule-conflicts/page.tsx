@@ -48,7 +48,7 @@ export default async function TpoScheduleConflictsPage({
 
   const data = await getTpoScheduleConflicts(context, validated.data);
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="TPO · Drive scheduling"
         title="Round venue conflicts"
@@ -91,7 +91,7 @@ export default async function TpoScheduleConflictsPage({
         Only non-cancelled and non-completed upcoming rounds on published drives
         count here. Missing venue, mode or duration cannot be considered conflict-free.
       </p>
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="border-b border-[var(--lms-canvas-border)] pb-3">
           <h2 className="text-lg font-semibold text-foreground">Confirmed venue/time overlaps</h2>
         </div>
@@ -118,12 +118,12 @@ export default async function TpoScheduleConflictsPage({
           </div>
         )}
       </section>
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5">
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="border-b border-[var(--lms-canvas-border)] pb-3">
           <h2 className="text-lg font-semibold text-foreground">Cannot fully assess</h2>
         </div>
         {data.unassessable.length === 0 ? (
-          <p className="py-5 text-sm text-body">
+          <p className="py-4 text-sm text-body">
             All on-campus candidate rounds in the selected window have a recorded venue and duration.
           </p>
         ) : (

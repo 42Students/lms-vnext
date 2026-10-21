@@ -27,7 +27,7 @@ function BrandColor({
   field: TpoBrandingField;
 }) {
   return (
-    <div className="border-b border-border pb-5">
+    <div className="border-b border-border pb-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <h3 className="m-0 text-base font-semibold text-foreground">
           {label}
@@ -103,7 +103,7 @@ export default async function TpoPlacementBrandingPage() {
        <Alert tone="warning">Email signature settings are not available in this database.</Alert>}
       <Disclosure title="Existing college branding" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-5)] pt-[var(--lms-space-2)]">
 
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -142,7 +142,7 @@ export default async function TpoPlacementBrandingPage() {
 
       <section
         aria-label="College logo"
-        className="border-t border-border pt-5"
+        className="border-t border-border pt-6"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
           <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -192,7 +192,7 @@ export default async function TpoPlacementBrandingPage() {
 
       <section
         aria-labelledby="placement-brand-colors"
-        className="space-y-3 border-t border-border pt-5"
+        className="space-y-3 border-t border-border pt-6"
       >
         <div>
           <h2

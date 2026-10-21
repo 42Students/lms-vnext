@@ -194,7 +194,7 @@ export default async function TpoMyNotificationsPage({
           method="get"
           className="mt-[var(--lms-space-4)] grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]"
         >
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-40 leading-4">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-40 leading-4">
             Read status
             <Select
               name="view"
@@ -213,7 +213,7 @@ export default async function TpoMyNotificationsPage({
             </Select>
           </label>
 
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-28 leading-4">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-28 leading-4">
             Page size
             <Select
               name="pageSize"
@@ -242,7 +242,7 @@ export default async function TpoMyNotificationsPage({
         </form>
       </section>
 
-      <section className="space-y-3 border-t border-border pt-5">
+      <section className="space-y-3 border-t border-border pt-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-lg font-semibold text-foreground">
