@@ -209,3 +209,10 @@
 
 ## Packet 49 — immutable round results migration
 - `drizzle_0024_placements_p6c_results.sql.md` | G2-12-022-009/059: reviewed old Long ID/result double→vNext round/result UUID, outcome status, source, score_percent integral 0..100, reason/comment privacy. Historic source score must be finite and in [0,100] before explicit half-up whole-percent rounding; preserve original score and actor/source in restricted provenance or quarantine. TPO/HR/IMPORT mapping must be explicit, public candidate_message separated from private internal_comment. | Existing migration 0024 NOT MODIFIED. No historic imports under greenfield plan; old Double precision, actor and nullable category cannot be inferred from current schema. Import/status service handoff; no SQL executed.
+
+
+## Packet 50 — immutable lesson SQL legacy crosswalk
+- `drizzle_0004_courses_c2_learning.sql.md` | G2-13-013-054/G2-18-002-120: original Lesson.id/course_id ints→verified UUID lesson/learningPath ancestry; active→course_lessons.status, enabled→visibleToStudents, is_deleted→deletedAt independent of status, sequence LONG→nonnegative integer checked overflow, version LONG→bigint optimistic CAS. Old course-wide casefold name and sequence uniqueness must be preflighted across all learning paths and offering/course duplicates; don't silently delete colliding lessons. | Existing migration 0004 immutable, no legacy data import required in greenfield. Import must resolve course/learning path before placement, reject ambiguous names and duplicate sequence; service owner handoff. No SQL executed.
+
+## Packet 51 — saved job ownership integrity
+- `src_db_schema_placement-external.ts.md` | G2-19-012-048/G2-3-019-042: added same-college composite references for placementSavedJobs membership and job, with preflight migration 0169 (reject existing mismatches). Documented int learner/job→tenant verified membership/job UUID crosswalk, savedAt from known source timezone, preserved member+job uniqueness. | No historic MySQL saved jobs in greenfield; source ID remap and original createdAt provenance for future approved import. 0169 NOT EXECUTED.
