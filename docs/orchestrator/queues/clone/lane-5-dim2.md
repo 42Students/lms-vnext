@@ -213,56 +213,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
 - [x] `src/components/admin/super-admin-college-company-actions.tsx`
 - [x] `src/components/admin/super-admin-company-verification.tsx`
-- [ ] `src/components/admin/super-admin-faculty-assignment-create.tsx`
-- [ ] `src/components/admin/super-admin-faculty-bulk-import.tsx`
-- [ ] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-people-csv-control.tsx`
-- [ ] `src/components/admin/super-admin-platform-block-action.tsx`
-- [ ] `src/components/admin/tenant-directory-csv-control.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-restore-action.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/auth/connection-failure-notice.tsx`
-- [ ] `src/components/auth/device-list.tsx`
-- [ ] `src/components/auth/login-form.tsx`
-- [ ] `src/components/auth/portal-access-notice.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-faculty-lifecycle-action.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-offering-lifecycle-action.tsx`
-- [ ] `src/components/college/college-offering-metadata-action.tsx`
-- [ ] `src/components/college/college-person-audit-modal.tsx`
-- [ ] `src/components/college/college-person-edit-action.tsx`
-- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/college/college-student-lifecycle-action.tsx`
-- [ ] `src/components/college/college-student-register-form.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-course-display-editor.tsx`
-- [ ] `src/components/courses/admin-learning-structure-actions.tsx`
-- [ ] `src/components/courses/admin-offering-section-preview.tsx`
-- [ ] `src/components/courses/admin-offering-teachers-panel.tsx`
-- [ ] `src/components/courses/assignment-file-open-control.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/components/courses/assignment-submission-links.tsx`
-- [ ] `src/components/courses/college-archived-lesson-restore.tsx`
-- [ ] `src/components/courses/college-assignment-actions.tsx`
+- [x] `src/components/admin/super-admin-faculty-assignment-create.tsx`
+- [x] `src/components/admin/super-admin-faculty-bulk-import.tsx`
+- [x] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-people-csv-control.tsx`
+- [x] `src/components/admin/super-admin-platform-block-action.tsx`
+- [x] `src/components/admin/tenant-directory-csv-control.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/admin/tenant-restore-action.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/auth/connection-failure-notice.tsx`
+- [x] `src/components/auth/device-list.tsx`
+- [x] `src/components/auth/login-form.tsx`
+- [x] `src/components/auth/portal-access-notice.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-faculty-lifecycle-action.tsx`
+- [x] `src/components/college/college-faculty-reassign-action.tsx`
+- [x] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [x] `src/components/college/college-offering-lifecycle-action.tsx`
+- [x] `src/components/college/college-offering-metadata-action.tsx`
+- [x] `src/components/college/college-person-audit-modal.tsx`
+- [x] `src/components/college/college-person-edit-action.tsx`
+- [x] `src/components/college/college-person-profile-overview-modal.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/college/college-student-lifecycle-action.tsx`
+- [x] `src/components/college/college-student-register-form.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-course-display-editor.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/components/courses/admin-offering-section-preview.tsx`
+- [x] `src/components/courses/admin-offering-teachers-panel.tsx`
+- [x] `src/components/courses/assignment-file-open-control.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/assignment-submission-links.tsx`
+- [x] `src/components/courses/college-archived-lesson-restore.tsx`
+- [x] `src/components/courses/college-assignment-actions.tsx`
 - [ ] `src/components/courses/college-assignment-create.tsx`
 - [ ] `src/components/courses/college-assignment-review.tsx`
 - [ ] `src/components/courses/college-course-missing-scope.tsx`
