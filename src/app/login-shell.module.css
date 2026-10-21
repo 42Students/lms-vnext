@@ -369,3 +369,11 @@
   .card { padding: 22px 16px; }
   .footer { padding-inline: 16px; }
 }
+
+/* Legacy Super Admin bookmark keeps a right-aligned desktop OTP form. */
+@media (min-width: 768px) {
+ .viewport[data-legacy-superadmin] .center { justify-content: flex-end; padding-inline: clamp(24px, 5vw, 72px); }
+ .viewport[data-legacy-superadmin] .card { width: min(100%, 420px); }
+}
+.viewport[data-legacy-superadmin] .footer { justify-content: center; gap: 8px; text-align: center; }
+.viewport[data-legacy-superadmin] .footerLinks { justify-content: center; }
