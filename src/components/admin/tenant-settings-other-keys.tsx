@@ -13,14 +13,15 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
 }){
  const router=useRouter();
  const inFlightRef=useRef(false);
- const validKey=/^[A-Za-z][A-Za-z0-9._-]*$/;
+ const validKey=/^[A-Za-z][A-Za-z0-9._-]*$/; // Deliberately matches the current protected server contract.
  const [key,setKey]=useState(""),[value,setValue]=useState("");
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [pendingRemoval,setPendingRemoval]=useState<Entry|null>(null);
  const others=entries.filter(entry=>LEGACY_TENANT_SETTING_MAP.get(entry.key)?.scope!==scopeType);
  const target={scopeType,...(collegeId?{collegeId}:{})};
- const documentedKey=LEGACY_TENANT_SETTING_MAP.has(key.trim());
+ const documentedSpec=LEGACY_TENANT_SETTING_MAP.get(key.trim());
+ const documentedKey=Boolean(documentedSpec);
  async function apply(method:"POST"|"DELETE",entry?:Entry){
   if(busy||inFlightRef.current||!ready)return;
   inFlightRef.current=true;
@@ -33,16 +34,29 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
     body:JSON.stringify(body),
    });
    if(!response.ok){
+    const failure=await response.json().catch(()=>null);
     setMessageTone("error");
-    setMessage(response.status===409
-     ?"This setting changed. Reload the stored values before retrying."
-     :"The setting could not be saved. Check the key and your scope.");
+    const detail=failure?.error;
+    setMessage(detail==="SETTING_STALE"||response.status===409
+      ? method==="POST"
+        ? "A stored setting with this key already exists at this scope. Choose another key."
+        : "This setting changed. Reload its stored value before retrying."
+      : detail==="SETTING_SCOPE_DENIED"||response.status===403
+        ? "This setting scope is unavailable for your current college or role."
+        : detail==="INVALID_SETTING"
+          ? "This key is restricted or documented. Use a non-secret custom key in the correct scope."
+          : response.status===400
+            ? "Check the key format, value and selected scope before saving."
+            : "The setting could not be saved. Check the key and your scope.");
     return;
    }
+   const changedKey=method==="POST"?key.trim():entry?.key??"";
    if(method==="POST"){setKey("");setValue("");}
    if(method==="DELETE")setPendingRemoval(null);
    setMessageTone("success");
-   setMessage(method==="POST"?"Setting added. Stored keys do not automatically change any runtime service.":"Stored setting removed.");
+   setMessage(method==="POST"
+     ? 'Added "'+changedKey+'". Stored keys do not automatically change any runtime service.'
+     : 'Removed "'+changedKey+'". The stored-only value has been deleted.');
    router.refresh();
   }catch{setMessageTone("error");setMessage("Connection failed. The stored setting was not confirmed.");}
   finally{inFlightRef.current=false;setBusy(false);}
@@ -78,9 +92,9 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
     <Textarea rows={2} value={value} onChange={event=>{setValue(event.target.value);setMessage("");}}
      maxLength={4096} className="min-h-24 w-full"/>
    </label>
-   <p id="other-keys-syntax" className="max-w-prose text-xs leading-5 text-body">Use letters, digits, dots, dashes and underscores. Typos create unused keys. Documented settings must be edited in their section above.</p>
-   {key&&!validKey.test(key)?<p role="alert" className="text-xs text-error leading-5">Enter a valid setting key.</p>:null}
-   {documentedKey?<p role="status" className="text-xs text-muted-foreground leading-5">This is a documented setting. Use its dedicated section above.</p>:null}
+   <p id="other-keys-syntax" className="max-w-prose text-xs leading-5 text-body">Start with a letter; then use letters, digits, dots, dashes or underscores. Custom keys are stored only and do not change runtime behavior. Typos create unused keys.</p>
+   {key&&!validKey.test(key)?<p role="alert" className="text-xs text-error leading-5">Start with a letter, then use only letters, digits, dots, dashes or underscores.</p>:null}
+   {documentedSpec?<p role="status" className="text-xs text-warning-text leading-5">This key is documented for {documentedSpec.scope==="GLOBAL"?"Global":"College"} scope. Switch to that scope if needed, then use its dedicated settings section instead of adding a stored-only key.</p>:null}
    <Button variant="primary" type="button" loading={busy} disabled={!ready||busy||!validKey.test(key)||documentedKey||!value.trim()}
     onClick={()=>void apply("POST")} className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Add setting"}</Button>
@@ -88,7 +102,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
   {message&&!(pendingRemoval&&messageTone==="error")?<Alert tone={messageTone}>{message}</Alert>:null}
   <ConfirmDialog open={pendingRemoval!==null} onOpenChange={open=>{if(!open)setPendingRemoval(null);}}
    title={pendingRemoval?'Remove "'+pendingRemoval.key+'"?':"Remove setting?"}
-   description="The stored value is deleted and the backend falls back to its built-in default. This does not remove a runtime configuration."
+   description="This removes the stored-only value. It does not change any live service or remove a documented operational setting."
    confirmLabel="Remove setting" confirmVariant="danger" pending={busy} confirmDisabled={!ready||!pendingRemoval}
    onConfirm={()=>{if(pendingRemoval)void apply("DELETE",pendingRemoval);}}>
     {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
