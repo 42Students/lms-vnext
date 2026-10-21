@@ -39,18 +39,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
 - [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
 - [x] `src/app/(authenticated)/college/page.tsx`
-- [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [ ] `src/app/(authenticated)/college/placements/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/page.tsx`
-- [ ] `src/app/(authenticated)/hr/company/reports/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
+- [x] `src/app/(authenticated)/college/placements/page.tsx`
+- [x] `src/app/(authenticated)/college/projects/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/activity/page.tsx`
+- [x] `src/app/(authenticated)/hr/company/reports/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx`
 - [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
 - [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx`
