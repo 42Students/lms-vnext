@@ -20,13 +20,14 @@ export default async function DeletedAdminProjectsPage() {
     : null;
   return <div className="min-w-0 space-y-5">
     <PageHeader title="Deleted workspaces"
-      description="Soft-deleted Project workspaces are retained and can be recovered by an authorized administrator."
+      description="Deleted workspaces you can still restore."
       actions={<Link href="/admin/projects"
         className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
         Back to workspaces
       </Link>} />
     {!collegeId
-      ? <EmptyState title="No college selected" description="Choose a college from the account switcher to view deleted workspaces." />
+      ? <div className="min-w-0 space-y-3"><p role="status" className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-3 text-sm text-body">Select a College to manage Projects</p>
+       <EmptyState title="No college selected" description="Choose a college from the account switcher to view deleted workspaces." /></div>
       : !deletedResult?.ok
         ? <ErrorState title="Deleted workspaces could not be loaded"
             description="Failed to load deleted workspaces. The selected college and its workspaces were not changed."
@@ -36,7 +37,7 @@ export default async function DeletedAdminProjectsPage() {
             </Link>}/>
         : deletedResult.value.length === 0
           ? <EmptyState title="No deleted workspaces" description="Workspaces moved to Deleted workspaces will appear here for recovery." />
-          : <div className="min-w-0 divide-y divide-border border-y border-border">
+          : <div aria-label="Deleted workspaces" className="min-w-0 divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 md:px-5">
           {deletedResult.value.map(project => <article key={project.id}
             className="flex min-w-0 flex-wrap items-start justify-between gap-3 py-4">
             <div className="min-w-0">
