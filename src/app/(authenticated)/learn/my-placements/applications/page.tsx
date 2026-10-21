@@ -14,12 +14,23 @@ import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-o
 import {ownApplicationInterviewLinks} from "@/modules/placements/learner-application-interview-links-model";
 import {ownApplicationAssessmentLinks} from "@/modules/placements/learner-application-assessment-links-model";
 
+/** Cancellation detail is only shown when carried by a verified imported
+ * posting. Absence is an explicit no-reason state, not a fabricated reason. */
+function legacyDriveCancelReason(posting:unknown):string|null {
+ if(!posting||typeof posting!=="object"||Array.isArray(posting))return null;
+ const record=posting as Record<string,unknown>;
+ const reason=record.cancelReason??record.cancelledReason;
+ return typeof reason==="string"&&reason.trim().length>0&&reason.length<=500
+  ?reason.trim():null;
+}
 export default async function LearnerPlacementApplicationsPage() {
   const context = await getCurrentRequestContext();
-  const [rows,roundsRead]=await Promise.all([
-    getLearnerPlacementJourney(context),
-    readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context)),
-  ]);
+  // The primary journey must load independently. Do not run a second
+  // workspace query when there are no applications to enrich.
+  const rows=await getLearnerPlacementJourney(context);
+  const roundsRead=rows.length>0
+    ?await readOptionalLearnerPlacementSource(()=>getLearnerPlacementRequestWorkspace(context))
+    :{available:true as const,value:{rounds:[]}};
   const rounds = roundsRead.available ? roundsRead.value.rounds : [];
   const interviewLinks=ownApplicationInterviewLinks(
     rounds.map(row=>({
@@ -76,6 +87,7 @@ export default async function LearnerPlacementApplicationsPage() {
        <ul className="m-0 divide-y divide-border p-0">
         {rows.map(row=>{
          const logo=safeTpoBrandLogoUrl(row.company.logoPublicUrl);
+         const cancelReason=legacyDriveCancelReason(row.job.legacyPostingDetails);
          const jobType=row.job.jobTypeLabel||row.job.employmentType;
          const pay=row.job.ctcLpa!==null
            ?String(row.job.ctcLpa)+" LPA"
@@ -106,6 +118,15 @@ export default async function LearnerPlacementApplicationsPage() {
             {row.offerStatus?<StatusBadge tone="success">Offer: {row.offerStatus.replaceAll("_"," ")}</StatusBadge>:null}
             {row.job.driveStatus==="CANCELLED"?<StatusBadge tone="warning">Drive cancelled</StatusBadge>:null}
            </div>
+           {row.job.driveStatus==="CANCELLED"?<Alert tone="warning">
+            <span className="font-semibold">This drive was cancelled.</span>{" "}
+            {cancelReason?"The placement cell said: "+cancelReason:
+             "The placement cell cancelled this drive. Your other applications are not affected."}
+           </Alert>:null}
+           {row.screening.status==="REJECTED"?<Alert tone="error">
+            <span className="font-semibold">The company did not select this application.</span>{" "}
+            {row.screening.candidateMessage||"No rejection message was provided."}
+           </Alert>:null}
            {row.applicationStatus==="SUBMITTED"?<p className="m-0 text-xs text-body">
              {row.withdrawalMode==="SELF"?"Self-withdrawal available":row.withdrawalMode==="REQUEST"?
                "Request withdrawal through the placement cell":"Withdrawal unavailable"}
@@ -125,7 +146,7 @@ export default async function LearnerPlacementApplicationsPage() {
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
         <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry round shortcuts</Link>
       </Alert> : null}
-      <Suspense fallback={<PageLoading label="Loading application filters" variant="form" count={2} />}>
+      <Suspense fallback={<PageLoading label="Loading application filters" variant="row" count={8} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}
           scheduledRounds={rounds.map(row=>({
             applicationId:row.applicationId,roundId:row.roundId,roundName:row.roundName,
