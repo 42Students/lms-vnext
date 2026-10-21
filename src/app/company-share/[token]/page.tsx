@@ -12,6 +12,7 @@ import {companyShareApplicantHref} from "@/modules/placements/company-share/publ
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
 import {COMPANY_SHARE_COLUMNS,safeCompanyShareColumns} from "@/modules/placements/company-share/column-model";
 import {ShareCodeForm} from "./share-code-form";
+import {ShareEmailCodeButton} from "./email-code-button";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
@@ -33,7 +34,10 @@ export default async function CompanySharePage({
    <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the one-time code the placement cell sent you.</p>
    {access==="invalid"?<p role="alert" className="mb-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-error)] bg-[rgba(239,68,68,0.06)] px-3 py-2 text-sm text-error">That code did not work, or this share is no longer available.</p>:null}
    <ShareCodeForm action={"/company-share/"+encodeURIComponent(token)+"/access"}/>
-   <p className="mt-3 text-xs leading-[20px] text-muted-foreground">If your invitation did not include a code, ask the placement cell. Email delivery is not available from this protected share.</p>
+   <div className="mt-3 space-y-2 border-t border-[var(--lms-canvas-border)] pt-3">
+    <ShareEmailCodeButton token={token}/>
+    <p className="text-xs leading-[20px] text-muted-foreground">To protect applicant privacy, email codes are sent only to an authenticated recruiter with access to this company and college. <Link href="/login" className="font-semibold text-primary-text underline">Sign in</Link> with that recruiter account, or ask the placement cell for the original code. Email requests are limited to three per hour.</p>
+   </div>
    <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
   </section>
  </main>;
@@ -110,7 +114,7 @@ export default async function CompanySharePage({
     </a>
    </div>
    <p role="note" className="max-w-3xl text-xs text-muted-foreground leading-[20px]">
-    Resume ZIP download is not available for this protected share. Ask the placement cell about separately authorized applicant documents.
+    Download all resumes (ZIP) was retired for this protected share: a bulk archive cannot preserve per-file clean-scan, access-grant expiry and individual download audit guarantees. When RESUME is a selected column, each authorized CLEAN resume may be opened using its own short-lived signed link. Ask the placement cell for any additional document permissions.
    </p>
   </section>
   </div>
