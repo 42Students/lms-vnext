@@ -701,13 +701,18 @@ function JobActions({
   );
 }
 
-function postedAtLabel(value: string | null | undefined): string {
-  if (!value) return "Posted date not specified";
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "Posted date not specified";
-  return "Posted " + new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeZone: "Asia/Kolkata",
-  }).format(date);
+function postedAtLabel(value:string|null|undefined,snapshotNowIso:string|null):string{
+ if(!value||!Number.isFinite(Date.parse(value)))return "Posted date not specified";
+ const base=snapshotNowIso?Date.parse(snapshotNowIso):Date.now();
+ const elapsed=Math.floor((Number.isFinite(base)?base:Date.now())-Date.parse(value))/86_400_000;
+ const days=Math.floor(elapsed);
+ if(days<=0)return "Posted Today";
+ if(days===1)return "Posted Yesterday";
+ if(days<7)return "Posted "+days+" days ago";
+ if(days<30)return "Posted "+Math.floor(days/7)+" weeks ago";
+ return "Posted "+new Intl.DateTimeFormat("en-IN",{
+  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+ }).format(new Date(value));
 }
 
 /** Legacy chip stages are independent of application channel. */
@@ -755,8 +760,9 @@ export function LearnerPlacementJobs({
   return (
     <div className="grid min-w-0 gap-4">
       {grouped.map(([driveId,roles]) => (
-        <article key={driveId} className="min-w-0 border-t border-border py-5"
+        <article key={driveId} className="relative min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-5 py-4 shadow-[var(--lms-elevation-1)]"
           aria-label={roles[0]?.job.title ?? "Placement drive"}>
+          <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-[var(--lms-primary)]" />
           <div className="divide-y divide-border/60">
           {roles.map((item,index) => {
         const firstRole=index===0;
@@ -778,6 +784,9 @@ export function LearnerPlacementJobs({
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
+                {firstRole?<span aria-hidden="true" className="mb-3 inline-flex size-12 items-center justify-center rounded-lg border border-border bg-primary-subtle text-sm font-bold text-primary-text">
+                  {item.company.name.trim().split(/\s+/).slice(0,2).map(word=>word.charAt(0)).join("").toUpperCase()||"C"}
+                </span>:null}
                 <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {firstRole?item.company.name:item.job.title}
                 </p>
@@ -819,61 +828,28 @@ export function LearnerPlacementJobs({
               </div>
             </div>
 
-            <div className="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 text-sm md:grid-cols-2 xl:grid-cols-4 [&>div]:min-w-0">
+            <dl className="mt-4 grid min-w-0 gap-x-5 gap-y-3 text-sm sm:grid-cols-3 [&>div]:min-w-0">
               <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Work
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {humanize(
-                    item.roleOption.employmentType,
-                  )}{" "}
-                  ·{" "}
-                  {humanize(
-                    item.roleOption.workMode,
-                  )}
-                </p>
+                <dt className="text-xs font-semibold text-muted-foreground">CTC</dt>
+                <dd className="mt-1 break-words font-semibold text-body">
+                  {formatCtc(item.roleOption.minimumAnnualCtcInr,item.roleOption.maximumAnnualCtcInr)}
+                </dd>
               </div>
               <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Location
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {item.roleOption.locations.length
-                    ? item.roleOption.locations.join(", ")
-                    : "Not specified"}
-                </p>
+                <dt className="text-xs font-semibold text-muted-foreground">Deadline</dt>
+                <dd className="mt-1 break-words font-semibold text-body">
+                  {learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).label}
+                </dd>
               </div>
               <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Compensation
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {formatCtc(
-                    item.roleOption
-                      .minimumAnnualCtcInr,
-                    item.roleOption
-                      .maximumAnnualCtcInr,
-                  )}
-                </p>
+                <dt className="text-xs font-semibold text-muted-foreground">Location</dt>
+                <dd className="mt-1 break-words font-semibold text-body">
+                  {item.roleOption.locations.length?item.roleOption.locations.join(", "):"Not specified"}
+                </dd>
               </div>
-              <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Deadline
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {formatDeadline(
-                    item.job.applicationDeadline,
-                  )}
-                </p>
-                <p className="mt-1 text-xs font-semibold text-body" role="status">
-                  {learnerDriveDeadlineUrgency(item.job.applicationDeadline,
-                    item.deadlinePassed,snapshotNowIso).label}
-                </p>
-              </div>
-            </div>
+            </dl>
 
-            <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt)}</p>
+            <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt,snapshotNowIso)}</p>
             {!item.canApply && !item.application ? (
               <div className="mt-3 min-w-0 border-t border-border pt-3 text-sm text-body"
                 aria-label="Why this role is not open to you">
