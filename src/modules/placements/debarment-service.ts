@@ -46,7 +46,7 @@ const createInput = z.object({
 });
 const liftInput = z.object({
   debarmentId: uuid,
-  reason: z.string().trim().min(1).max(500),
+  reason: z.string().trim().max(500).optional().default(""),
 }).strict();
 const countInput = z.object({
   debarmentId: uuid,
@@ -70,7 +70,7 @@ export class PlacementDebarmentError extends Error {
 type Client = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Client["transaction"]>[0]>[0];
 
-/** Explicit legacy default. Replace with per-college timezone before global launch. */
+/** Legacy college timezone. INDIA-local date semantics are used consistently for existing dated restrictions. */
 export const DB08_LEGACY_COLLEGE_TIMEZONE = "Asia/Kolkata";
 function collegeLocalDate(now = new Date()): string {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -222,7 +222,7 @@ export async function liftPlacementDebarment(
     const [updated] = await tx.update(placementDebarments).set({
       liftedAt: new Date(),
       liftedByUserId: context.user.id,
-      liftedReason: input.reason,
+      liftedReason: input.reason||"Lifted by placement officer; no reason supplied",
     }).where(eq(placementDebarments.id, locked.id)).returning();
     // The DB trigger creates an immutable LIFTED action. A repeated lift is a no-op.
     const [learner]=await tx.select({userId:collegeMemberships.userId})
@@ -317,4 +317,15 @@ export async function listTpoMemberDebarments(context:RequestContext,rawMembersh
   liftedAt:row.liftedAt?.toISOString()??null,
   active:isDebarmentActive(row,collegeLocalDate()),
  }));
+}
+
+// Legacy records may include both end date and drive count. Imported data
+// retains its original fields but evaluates date-first, while new requests
+// must supply at most one duration to avoid ambiguous policy.
+export function legacyDebarmentDurationLabel(value:{
+ untilDate:string|null;untilDrives:number|null;drivesCounted:number;
+}):string{
+ if(value.untilDate)return "Through "+value.untilDate+" (college local date)";
+ if(value.untilDrives!=null)return Math.max(0,value.untilDrives-value.drivesCounted)+" remaining published drives";
+ return "Until manually lifted";
 }

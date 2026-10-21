@@ -13,6 +13,8 @@ import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
+import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 
 type Choice = {
@@ -207,6 +209,11 @@ export function SectionOperations({
     useState("");
   const [eventLocation, setEventLocation] =
     useState("");
+  const [scheduleOpen,setScheduleOpen]=useState(false);
+  const [discardScheduleOpen,setDiscardScheduleOpen]=useState(false);
+  const scheduleDirty=Boolean(eventTitle.trim()||eventStart||eventEnd||eventLocation.trim()||eventFacultyId||eventDeliveryId);
+  function closeSchedule(){if(pending)return;if(scheduleDirty)setDiscardScheduleOpen(true);else setScheduleOpen(false);}
+  function resetSchedule(){setEventTitle("");setEventStart("");setEventEnd("");setEventLocation("");setEventFacultyId("");setEventDeliveryId("");}
 
   const activeEnrollmentMemberships = new Set(
     programEnrollments
@@ -517,7 +524,7 @@ export function SectionOperations({
                     "PATCH",
                     { action: "CANCEL" },
                   ),
-                "Class schedule cancelled successfully",
+                "Class schedule deleted successfully (cancelled in history)",
               )
             }
           >
@@ -806,12 +813,26 @@ export function SectionOperations({
             Section schedule
           </h2>
           <p className="mt-1 text-sm text-body leading-[22px]">
-            Section calendar for {section.startDate} → {section.endDate}. Link teaching sessions to a Course delivery so learner and Faculty calendars can filter and deep-link safely.
+            Section calendar for {section.startDate} → {section.endDate}. Attendance and roster details remain restricted to staff with section access. Link teaching sessions to a Course delivery for faculty and learner calendars.
           </p>
         </div>
 
-        <Disclosure id="section-add-event" title="Add event" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
-        <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] pt-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-3">
+        <Button type="button" variant="primary" onClick={()=>setScheduleOpen(true)} className="min-h-11 w-full sm:w-auto md:min-h-9">+ Schedule class</Button>
+        <Dialog open={scheduleOpen} onOpenChange={next=>next?setScheduleOpen(true):closeSchedule()}
+          title="Schedule class" description={"Set a schedule for "+section.name+" · "+section.programName}
+          dismissible={!pending} className="!max-w-[620px]" bodyClassName="max-h-[75dvh] overflow-y-auto"
+          footer={<div className="flex flex-wrap justify-end gap-2">
+            <Button type="button" variant="secondary" disabled={pending} onClick={closeSchedule}>Cancel</Button>
+            <Button type="button" disabled={pending||!eventTitle.trim()||!eventStart||!eventEnd}
+              onClick={()=>run(()=>request("/api/academics/schedule-events","POST",{
+                sectionId:section.id,facultyMembershipId:eventFacultyId||null,deliveryId:eventDeliveryId||null,
+                title:eventTitle,startsAt:new Date(eventStart).toISOString(),endsAt:new Date(eventEnd).toISOString(),
+                location:eventLocation.trim()||null,
+              }),"Class schedule created successfully",()=>{resetSchedule();setScheduleOpen(false);})}>
+              {pending?"Saving…":"Save class"}
+            </Button>
+          </div>}>
+        <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] pt-[var(--lms-space-3)] sm:grid-cols-1 md:grid-cols-2 [&_input]:min-w-0">
           <div>
             <label
               htmlFor="schedule-title"
@@ -936,57 +957,14 @@ export function SectionOperations({
               ))}
             </Select>
           </div>
-          <div className="flex min-w-0 justify-stretch md:col-span-2 md:justify-end xl:col-span-3 [&>button]:w-full md:[&>button]:w-auto">
-            <Button
-              disabled={
-                pending ||
-                !eventTitle.trim() ||
-                !eventStart ||
-                !eventEnd
-              }
-              onClick={() =>
-                run(
-                  () =>
-                    request(
-                      "/api/academics/schedule-events",
-                      "POST",
-                      {
-                        sectionId: section.id,
-                        facultyMembershipId:
-                          eventFacultyId || null,
-                        deliveryId:
-                          eventDeliveryId || null,
-                        title: eventTitle,
-                        startsAt: new Date(
-                          eventStart,
-                        ).toISOString(),
-                        endsAt: new Date(
-                          eventEnd,
-                        ).toISOString(),
-                        location:
-                          eventLocation.trim() ||
-                          null,
-                      },
-                    ),
-                  "Schedule event created",
-                  () => {
-                    setEventTitle("");
-                    setEventStart("");
-                    setEventEnd("");
-                    setEventLocation("");
-                    setEventFacultyId("");
-                    setEventDeliveryId("");
-                  },
-                )
-              }
-            >
-              Add event
-            </Button>
-          </div>
         </div>
-        </Disclosure>
+        </Dialog>
+        <ConfirmDialog open={discardScheduleOpen} onOpenChange={setDiscardScheduleOpen}
+          title="Discard class schedule?" description="Your unsaved schedule class details will be lost."
+          confirmLabel="Discard changes" confirmVariant="danger" onConfirm={()=>{resetSchedule();setScheduleOpen(false);setDiscardScheduleOpen(false);}}/>
 
-        <DataTable empty={<SectionEmpty href="#section-add-event" label="Add event" />}
+
+        <DataTable empty={<EmptyState title="No class schedules" description="Use Schedule class to create the first event." />}
           columns={scheduleColumns}
           rows={scheduleEvents}
           getRowKey={(row) => row.id}

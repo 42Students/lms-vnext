@@ -7,11 +7,18 @@ import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchLifecycles, placementEligibilityEvents } from "@/db/schema/placement-batches";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { placementTableExists } from "./staged-tables";
 import { requirePlacementManageScope } from "./scope";
 const uuid=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(100000).default(1);
 export async function requireTpoBatchActor(ctx:RequestContext) {
+ if(isSuperAdmin(ctx)){
+  const scope=await resolveActingCollege(ctx,"placements.manage");
+  requirePermission(ctx,"placements.manage",{collegeId:scope.collegeId,organizationId:scope.organizationId});
+  return scope.collegeId;
+ }
  const m=ctx.membership;
  if(!m||m.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
  const [persisted]=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
@@ -35,7 +42,9 @@ export async function listTpoBatches(ctx:RequestContext){
  const ready=await placementTableExists("placement_batch_lifecycles");
  const states=ready&&batches.length?await getDb().select().from(placementBatchLifecycles)
  .where(and(eq(placementBatchLifecycles.collegeId,collegeId),inArray(placementBatchLifecycles.cohortId,batches.map(b=>b.id)))):[];
- return {ready,batches:batches.map(batch=>{const state=states.find(r=>r.cohortId===batch.id);
+ return {ready,readiness:ready?"READY" as const:"PLACEMENT_BATCH_MIGRATION_REQUIRED" as const,
+  readinessMessage:ready?null:"Placement batch rules are unavailable until the college placement tables are deployed. Retry after the administrator completes setup.",
+  batches:batches.map(batch=>{const state=states.find(r=>r.cohortId===batch.id);
  return {...batch,invitedAt:state?.invitedAt??null,finishedAt:state?.finishedAt??null,deadline:state?.registrationDeadline??null};})};
 }
 export async function getTpoBatch(ctx:RequestContext,rawId:unknown){
@@ -57,7 +66,9 @@ export async function getTpoBatch(ctx:RequestContext,rawId:unknown){
     eq(placementEligibilityDecisions.scopeType,"COHORT"),eq(placementEligibilityDecisions.scopeId,id))).limit(1);
  const decision={status:stored?.status??"NOT_DECIDED",reason:stored?.reason??null,
   note:stored?.note??null,expectedVersion:stored?.updatedAt.toISOString()??"none"};
- return {batch,collegeId,ready,lifecycle:lifecycle??null,decision};
+ return {batch,collegeId,ready,readiness:ready?"READY" as const:"PLACEMENT_BATCH_MIGRATION_REQUIRED" as const,
+  readinessMessage:ready?null:"Placement batch lifecycle migration is not installed. Try again after setup.",
+  lifecycle:lifecycle??null,decision};
 }
 export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPage:unknown=1,rawSearch:unknown="",onlyDirect=false) {
  const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=pageSchema.parse(rawPage);
@@ -118,5 +129,5 @@ export async function listTpoBatchHistory(ctx:RequestContext,rawId:unknown){
   and(eq(placementEligibilityEvents.scopeType,"MEMBERSHIP"),sql`exists(select 1 from learner_program_enrollments e where e.membership_id=${placementEligibilityEvents.scopeId} and e.cohort_id=${batch.id})`),
   )))
  .orderBy(desc(placementEligibilityEvents.sequence)).limit(100):[];
- return {batch,ready,events};
+ return {batch,ready,readiness:ready?"READY" as const:"PLACEMENT_EVENTS_MIGRATION_REQUIRED" as const,events};
 }
