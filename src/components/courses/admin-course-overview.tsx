@@ -23,6 +23,7 @@ import type {
 } from "@/modules/courses/admin-course-workspace";
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
 import { SuperAdminCourseBulkVisibility } from "./super-admin-course-bulk-visibility";
+import {AdminCourseVisibilityControl} from "./admin-course-visibility-control";
 import {
   CourseActions,
   DeliveryActions,
@@ -88,13 +89,27 @@ export function AdminCourseOverview({
     Workspace["courses"][number]
   >[] = [
     {
+      key: "cover",
+      header: "Image",
+      cell:course=>(<div className="h-14 w-20 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+       {course.thumbnailUrl?.startsWith("https://")?
+        <img src={course.thumbnailUrl} alt={course.name+" cover"} loading="lazy"
+          className="h-full w-full object-cover"/>:
+        <span className="flex h-full items-center justify-center text-xs text-muted-foreground">No image</span>}
+      </div>),
+    },
+    {
       key: "course",
-      header: "Course",
+      header: "Course Name",
       cell: (course) => (
         <div>
-          <p className="m-0 font-semibold text-foreground">
+          <Link href={(()=>{
+           const first=workspace.offerings.find(item=>item.courseId===course.id&&item.status==="ACTIVE");
+           return first?offeringBasePath+"/"+encodeURIComponent(first.id):
+            courseBasePath+"?q="+encodeURIComponent(course.name);
+          })()} className="font-semibold text-primary-text underline-offset-2 hover:underline">
             {course.name}
-          </p>
+          </Link>
           <p className="mt-1 text-xs font-semibold text-primary-text">{course.code}</p>
           {(course.description || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
             <Disclosure title="Course details" className="mt-2" contentClassName="space-y-2 px-2 pb-2 text-xs leading-5 text-muted-foreground">
@@ -105,6 +120,11 @@ export function AdminCourseOverview({
           ) : null}
         </div>
       ),
+    },
+    {
+      key: "shortTitle",
+      header: "Short Title",
+      cell:course=><span className="text-sm text-body">{course.shortTitle??"—"}</span>,
     },
     {
       key: "department",
@@ -127,15 +147,17 @@ export function AdminCourseOverview({
       key: "status",
       header: COLLEGE_COURSES_COPY.studentsSeeIt,
       cell: (course) => (
-        <StatusBadge
-          tone={
-            course.status === "ACTIVE"
-              ? "success"
-              : "neutral"
-          }
-        >
-          {courseVisibleToStudentsLabel(course.status)}
-        </StatusBadge>
+        <div className="space-y-1">
+         <StatusBadge tone={course.status==="ACTIVE"&&course.enabled&&
+          course.legacyAllowedForDisplay!==0?"success":"neutral"}>
+          {courseVisibleToStudentsLabel(course.status==="ACTIVE"&&course.enabled&&
+           course.legacyAllowedForDisplay!==0?"ACTIVE":"HIDDEN")}
+         </StatusBadge>
+         <AdminCourseVisibilityControl course={{id:course.id,name:course.name,
+          status:course.status,enabled:course.enabled,
+          legacyAllowedForDisplay:course.legacyAllowedForDisplay,
+          updatedAt:course.updatedAt.toISOString()}}/>
+        </div>
       ),
     },
     {
@@ -152,6 +174,7 @@ export function AdminCourseOverview({
           allowMetadata={courseBasePath.startsWith("/admin/")}
           duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}
           activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
+          linkedLessonCount={lessonCountByCourse?.[course.id]??0}
           course={{
             id: course.id,
             updatedAt: course.updatedAt.toISOString(),
@@ -456,7 +479,7 @@ export function AdminCourseOverview({
         />
       </div>
 
-      <Disclosure title="Create Course and offering" defaultOpen={Boolean(duplicateCourseId)}
+      <Disclosure title="Create New Course" defaultOpen
         className="min-w-0 border-y border-[var(--lms-canvas-border)]"
         contentClassName="min-w-0 pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
       <AdminCourseCreatePanel
