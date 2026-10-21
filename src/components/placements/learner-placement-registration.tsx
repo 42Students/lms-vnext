@@ -3,6 +3,7 @@ import { Radio } from "@/components/ui/radio";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
 import { useState } from "react";
 import {
   learnerPlacementChoices, LEARNER_REGISTRATION_COPY,
@@ -19,10 +20,14 @@ const errors: Record<string,string> = {
   DB08_REGISTRATION_WINDOW_CLOSED: LEARNER_REGISTRATION_COPY.closed,
   DB08_REGISTRATION_NOT_ELIGIBLE: "Ask the placement cell about your eligibility.",
   DB08_REGISTRATION_ENROLLMENT_INVALID: "Ask your college to check your batch.",
-  DB08_REGISTRATION_CONSENT_REQUIRED: "Agree to the sharing statement before registering.",
+  DB08_REGISTRATION_CONSENT_REQUIRED: "To register for placements you need to agree to share your details with the companies you apply to",
+  DB08_REGISTRATION_MODULE_DISABLED: "Placements is not enabled for your college.",
+  DB08_REGISTRATION_FORBIDDEN: "You cannot register for placements with this account.",
+  DB08_REGISTRATION_CONSENT_NOT_APPLICABLE: "Consent is only needed when you choose Placements.",
 };
 export function LearnerPlacementRegistration({registration}:Props) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [choice,setChoice] = useState<LearnerPlacementChoice>(registration.choice ?? "PLACEMENTS");
   const [consent,setConsent] = useState(false);
   const [busy,setBusy] = useState(false);
@@ -40,9 +45,16 @@ export function LearnerPlacementRegistration({registration}:Props) {
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({choice,acceptedConsent: choice==="PLACEMENTS" && consent}),
       });
-      const data = await response.json() as {error?:string};
-      if (!response.ok) throw Error(errors[data.error??""] ?? LEARNER_REGISTRATION_COPY.failure);
+      const data = await response.json() as {error?:string;ok?:boolean;choice?:LearnerPlacementChoice;version?:number};
+      if(!response.ok){
+        if(response.status===409&&data.error==="DB08_REGISTRATION_WINDOW_CLOSED")
+          throw Error(LEARNER_REGISTRATION_COPY.closed);
+        throw Error(errors[data.error??""] ?? LEARNER_REGISTRATION_COPY.failure);
+      }
+      if(data.ok!==true||data.choice!==choice)
+        throw Error("Could not confirm your registration. Refresh and check your recorded choice.");
       setMessage(LEARNER_REGISTRATION_COPY.success);
+      showToast({tone:"success",title:"Registration saved"});
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error?cause.message:LEARNER_REGISTRATION_COPY.failure);
@@ -58,6 +70,8 @@ export function LearnerPlacementRegistration({registration}:Props) {
         <span className="min-w-0"><span className="block break-words font-semibold">{item.label}</span>
           <span className="block break-words text-sm text-muted-foreground">{item.hint}</span></span>
       </label>)}
+      {choice==="PLACEMENTS"&&registration.choice==="PLACEMENTS"?
+        <p className="text-sm text-muted-foreground">You previously chose Placements. To update or reconfirm this registration, please agree to the sharing statement again.</p>:null}
       {choice==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
         <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
         <span>{LEARNER_REGISTRATION_COPY.consent}</span>
