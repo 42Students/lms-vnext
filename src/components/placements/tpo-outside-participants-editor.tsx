@@ -71,7 +71,7 @@ export function TpoOutsideParticipantsEditor({recordId,available,choices,partici
      </Select>
     </label>
    </li>)}
-  </ul>:<p className="text-sm text-muted-foreground">No participating learners recorded yet.</p>}
-  <p className="text-xs text-muted-foreground">These are external historical outcomes only. No learner application, interview invitation, in-app offer or reminder is created.</p>
+  </ul>:<p className="text-sm text-muted-foreground leading-[22px]">No participating learners recorded yet.</p>}
+  <p className="text-xs text-muted-foreground leading-[20px]">These are external historical outcomes only. No learner application, interview invitation, in-app offer or reminder is created.</p>
  </section>;
 }

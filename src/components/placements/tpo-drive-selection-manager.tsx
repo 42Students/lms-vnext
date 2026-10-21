@@ -64,7 +64,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     Verify and release ({releasable.length})</Button>
   </div>
   {lastRecorded>0?<InlineNotice tone="success" message={lastRecorded+" selection(s) recorded, not yet released."}/>:null}
-  <p className="text-sm text-body">Selection alone does not issue an offer. Verify and release only after checking the company&apos;s selection list.</p>
+  <p className="text-sm text-body leading-[22px]">Selection alone does not issue an offer. Verify and release only after checking the company&apos;s selection list.</p>
   <DataTable<(typeof selections)[number]> caption="Recorded selections"
     rows={selections} getRowKey={row=>row.id}
     empty={<EmptyState title="No selections yet."/>}
@@ -86,7 +86,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      </Button>
     </div>}>
     <div className="min-w-0 space-y-4">
-    <p className="text-sm text-body">{mode==="RECORD"
+    <p className="text-sm text-body leading-[22px]">{mode==="RECORD"
       ?"Choose selected students and enter their package. Nothing is sent until release."
       :"Releasing issues offers immediately. Eligibility, held-offer limits and response deadlines are rechecked for each student. Skipped rows will be reported."}</p>
     {mode==="VERIFY_AND_RELEASE" && chosen.length>0 ? <Alert tone="info">
