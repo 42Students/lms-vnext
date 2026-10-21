@@ -6,6 +6,8 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {changeInboundMailStatusForAdmin,getInboundMailDetailForAdmin} from "@/modules/inbound-mail/admin-service";
 
 export const runtime="nodejs";
+/** Canonical CAS PATCH for triage. The old POST /{id}/done?done=true|false
+ * is translated under the same Super Admin guard at [id]/done/route.ts. */
 export async function PATCH(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
