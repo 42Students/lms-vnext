@@ -31,6 +31,9 @@ export type LearnerPlacementOfferItem = {
   offerId: string;
   applicationId: string;
   companyName: string;
+  companyLogoUrl?:string|null;
+  /** Source decimal CTC survives alongside rounded INR. */
+  legacyCtcLpa?:string|null;
   jobTitle: string;
   roleTitle: string;
   kind?: "OFFER" | "LOI";
@@ -82,6 +85,27 @@ function formatMoney(value: number | null) {
   }).format(amount);
 }
 
+function safePublicOfferLogo(url:string|null|undefined){
+  if(!url)return null;
+  try{
+    const parsed=new URL(url);
+    return parsed.protocol==="https:"&&!parsed.username&&!parsed.password
+      ?parsed.toString():null;
+  }catch{return null;}
+}
+
+/** Migration: RELEASED/OFFERED→ISSUED; HIRED→ACCEPTED;
+ * REJECTED→DECLINED. Joining and expiry remain distinct facts. */
+export function legacyOfferResponseState(
+  state:"RELEASED"|"OFFERED"|"HIRED"|"REJECTED"|"EXPIRED"|"WITHDRAWN",
+):LearnerPlacementOfferItem["status"]{
+  switch(state){
+    case "RELEASED":case "OFFERED":case "EXPIRED":return "ISSUED";
+    case "HIRED":return "ACCEPTED";
+    case "REJECTED":return "DECLINED";
+    case "WITHDRAWN":return "WITHDRAWN";
+  }
+}
 function formatWhen(value: string | null) {
   return learnerOfferDisplayDate(value);
 }
@@ -302,6 +326,12 @@ export function LearnerPlacementOffers({
           >
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div className="min-w-0 flex-1">
+                 {safePublicOfferLogo(item.companyLogoUrl)?(
+                   <img alt={item.companyName+" logo"}
+                     src={safePublicOfferLogo(item.companyLogoUrl)!}
+                     width={48} height={48} loading="lazy"
+                     className="mb-2 size-12 rounded-[var(--lms-control-radius)] border border-border object-contain"/>
+                 ):null}
                 <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {item.companyName}
                 </p>
