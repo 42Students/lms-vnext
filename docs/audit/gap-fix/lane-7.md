@@ -160,3 +160,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-custom-job-type-placed.tsx.md` | Corrected placed-policy confirmation to warn real atomic cascade to linked/archived drives and report effects; server impact counts not yet exposed, handoff. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_validation.ts.md` | Announcement create schema now matches legacy required receiver/title/message and length copy; empty search q normalizes to no filter. Entity-layer permissive blank data intentionally not replicated because publish safety requires nonempty. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-reassignment-workload-service.ts.md` | 3 findings: mentor workload now includes COMPLETED nonarchived workspaces consistent with list denominator; archived still excluded, tenant authorization untouched. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_placement-legacy-posting-model.ts.md` | 3 findings: importantDates parses legacy date or at, retains type/dateType classification, normalizes date-only to explicit UTC midnight. Cross-org targeting hierarchy still needs bounded migration adapter, handed off. No CI.
