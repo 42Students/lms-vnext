@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { DataTable } from "@/components/ui/data-table";
 import { Disclosure } from "@/components/ui/disclosure";
+import { Dialog } from "@/components/ui/dialog";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
 
 type MappingRead = {
@@ -116,6 +117,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const availableCourses = data.courses.filter(course => selectedTerm && !mappedIds.has(course.id));
   const editableTerm = selectedTerm?.isActive === true;
   const currentMappings = data.mapped.filter(item => item.termId === termId);
+  const editingRow = data.mapped.find(item => item.id === editing?.id);
 
   function prepare(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -285,34 +287,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           {key:"order",header:"Order",mobilePriority:"secondary",cell:row=>
             orderedPeers(row).findIndex(peer=>peer.id===row.id)+1},
           {key:"actions",header:TERM_MAPPING_COPY.columns.actions,mobilePriority:"action",cell:row=>
-            editing?.id===row.id ? (
-              <form aria-label={"Edit mapping for "+row.courseName} className="grid min-w-0 gap-2 sm:grid-cols-2"
-                onSubmit={event=>{
-                  event.preventDefault();
-                  updateMapping(row.id,editing.credits,Number(editing.position));
-                }}>
-                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Credits
-                  <Input type="number" min={1} max={10} step={1} required
-                    value={editing.credits}
-                    onChange={event=>setEditing({...editing,credits:event.target.value})}
-                    className="block min-h-11 w-full rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-2"/>
-                </label>
-                {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
-                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
-                  <Input type="number" min={1} max={orderedPeers(row).length} step={1}
-                    value={editing.position}
-                    onChange={event=>setEditing({...editing,position:event.target.value})}
-                    className="block min-h-[var(--lms-control-height)] w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
-                </label>
-                <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2 sm:col-span-2">
-                  <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="submit" disabled={pending}
-                    >Save</Button>
-                  <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={pending} onClick={cancelEditing}
-                    >Cancel</Button>
-                </div>
-              </form>
-            ) : (
-              <div className="flex min-w-0 flex-wrap gap-2">
+            (<div className="flex min-w-0 flex-wrap gap-2">
                 <Button className="min-h-11 md:min-h-9" variant="secondary" type="button" disabled={pending || !editableTerm}
                   
                   onClick={()=>setEditing({
@@ -333,13 +308,43 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   onClick={()=>{setError(null);setNotice(null);setConfirm({type:"REMOVE",id:row.id});}}>
                   {TERM_MAPPING_COPY.removeButton}
                 </Button>
-              </div>
-            )},
+              </div>)},
         ]}
       />}
     {termId && !editableTerm ? <p role="status" className="text-sm text-muted-foreground">This is an archived semester. Existing curriculum mappings are read-only.</p> : null}
     {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
     {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
+    <Dialog open={editing !== null} onOpenChange={open => { if (!open && !pending) cancelEditing(); }}
+      title="Edit Course Mapping" description={editingRow ? editingRow.courseName : undefined}
+      dismissible={false}>
+      {editing && editingRow ? <form aria-label={"Edit mapping for " + editingRow.courseName}
+        className="grid min-w-0 gap-4" onSubmit={event => {
+          event.preventDefault();
+          updateMapping(editingRow.id, editing.credits, Number(editing.position));
+        }}>
+        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Credits
+          <Input type="number" min={1} max={10} step={1} required
+            value={editing.credits}
+            onChange={event => {
+              setFieldErrors(current => ({ ...current, credits: undefined }));
+              setEditing({ ...editing, credits: event.target.value });
+            }}
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
+          {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
+        </label>
+        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Order
+          <Input type="number" min={1} max={orderedPeers(editingRow).length} step={1} required
+            value={editing.position}
+            onChange={event => setEditing({ ...editing, position: event.target.value })}
+            className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
+        </label>
+        {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">Course mapping was not updated. {error}</p> : null}
+        <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button type="button" variant="secondary" disabled={pending} onClick={cancelEditing}>Cancel</Button>
+          <Button type="submit" disabled={pending} loading={pending}>Save Changes</Button>
+        </div>
+      </form> : null}
+    </Dialog>
     <ConfirmDialog open={switchDraft !== null} onOpenChange={open => { if (!open) setSwitchDraft(null); }}
       title={switchDraft?.kind === "program"
         ? "Switch programs with unsaved course choices?" : "Switch semesters with unsaved course choices?"}
