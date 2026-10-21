@@ -477,3 +477,67 @@
 - G2-2-037-019 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Match character count threshold, placeholder, rows and disabled states.
 - G2-12-009-008 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy one-line Keep course conversations in one place and follow along easily; faculty now gets extra Guide the class conversation… description and Students can post questions here anytime.
 - G2-12-009-065 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy Enter to send · Shift+Enter for a new line always; vNext Tap Send to post · Enter adds a new line on phone.
+
+## Wave2 academic schema part 1 — scoped UI/service dependencies
+- G2-18-015-001 — src/modules/academics/class-service.ts / section and group-backed selectors: Document legacy class-to-section identity mapping; no direct table reuse
+- G2-18-015-003 — src/modules/academics/class-service.ts / section and group-backed selectors: Confirm API presentation dates and label differences
+- G2-18-015-004 — src/modules/academics/class-service.ts / section and group-backed selectors: Prevent grouping legacy group-backed classes as SECTION during imports
+- G2-18-015-007 — src/modules/academics/class-service.ts / section and group-backed selectors: Define zero vs unset semantics and display default
+- G2-18-015-010 — src/modules/academics/class-service.ts / section and group-backed selectors: Map program/batch to cohort and program of cohort with null-batch handling
+- G2-18-015-015 — src/modules/academics/class-service.ts / section and group-backed selectors: Preserve name-or-ID class selector via scoped search
+- G2-18-015-021 — src/modules/academics/class-service.ts / section and group-backed selectors: Map null/false soft delete to ACTIVE and archived to non-active status
+- G2-18-015-023 — src/modules/academics/class-service.ts / section and group-backed selectors: Publish precise computed legacy date fields in export/import
+- G2-18-015-026 — src/modules/academics/class-service.ts / section and group-backed selectors: Ensure field-required labels reflect new date scope
+- G2-18-015-027 — src/modules/academics/class-service.ts / section and group-backed selectors: Preserve '[Elective]' display for group-backed legacy selectors
+- G2-18-015-029 — src/modules/academics/class-service.ts / section and group-backed selectors: Guarantee scope-specific name sort for targets
+- G2-18-015-031 — src/modules/academics/class-service.ts / section and group-backed selectors: Record import collision and mapping strategy
+- G2-18-015-034 — src/modules/academics/class-service.ts / section and group-backed selectors: Write DB migration mapping for class soft-delete/date FK
+- G2-18-015-037 — src/modules/academics/class-service.ts / section and group-backed selectors: Document intended historical duplicate behavior vs active naming
+- G2-18-020-001 — src/modules/academics/class-service.ts / section and group-backed selectors: Map legacy /scheduleClass and /admin timetable deep links to new schedule events and calendar entry points, retaining section context
+- G2-18-020-003 — src/modules/academics/class-service.ts / section and group-backed selectors: Reconstitute exact event detail row order and labels in calendar/drawer; avoid exposing raw UUIDs in cards
+- G2-18-020-005 — src/modules/academics/class-service.ts / section and group-backed selectors: Default blank legacy title consistently in new UI; ensure required title not a confusing validation regression
+- G2-18-020-006 — src/modules/academics/class-service.ts / section and group-backed selectors: Show hall name/number if hall assigned and location fallback only when absent; match old room label
+- G2-18-020-010 — src/modules/academics/class-service.ts / section and group-backed selectors: Map hall records and title fallback, preserve display of no hall
+- G2-18-020-018 — src/modules/academics/class-service.ts / section and group-backed selectors: If unassigned events allowed, display 'Faculty not assigned' and exclude from faculty-owned read until assigned
+- G2-18-020-035 — src/modules/academics/class-service.ts / section and group-backed selectors: Ensure cancelled event excluded from schedule/attendance denominator and historical audit retained appropriately
+- G2-18-020-050 — src/modules/academics/class-service.ts / section and group-backed selectors: Return courseSlug-equivalent in DTO when caller depends on slug bookmarks, not persisted
+- G2-19-019-053 — src/modules/academics/class-service.ts / section and group-backed selectors: Reconstruct historical cohort even if section/cohort moves, do not treat section-level grant as course grant
+- G2-13-018-010 — src/modules/academics/program-service.ts / academic directory: Resolve old department numeric IDs to current UUID and reject dangling links
+- G2-13-018-047 — src/modules/academics/program-service.ts / academic directory: Use paginated API for institution-scale program listings; don't materialize all org records
+- G2-13-018-049 — src/modules/academics/cohort-service.ts / batch UI: Use exact integer conversion and flag unsupported >10-year legacy values
+- G2-13-018-050 — src/modules/academics/program-service.ts / academic directory: Document unique exclusion for archived and handle restoration collisions
+- G2-13-018-052 — src/modules/academics/program-service.ts / academic directory: Schema migration needs old numeric-to-UUID map and explicit foreign-key integrity plan
+- G2-2-029-100 — src/modules/academics/cohort-service.ts / batch UI: Normalize legacy `YYYY-YY` into accepted new format and retain unparseable originals for review.
+- G2-2-031-020 — src/modules/academics/class-service.ts / section and group-backed selectors: Expose editable class minimum only if legacy parity required; preserve stored min_size data.
+- G2-2-031-058 — src/modules/academics/class-service.ts / section and group-backed selectors: Map historic legacy dates to period/metadata or preserve separate historical fields.
+- G2-20-019-001 — src/modules/academics/class-service.ts / section and group-backed selectors: Crosswalk faculty/course/class to membership/section and derive course
+- G2-20-019-005 — src/modules/people/college-faculty-detail-service.ts / assignments: Map Active/Ended badge and default
+- G2-20-019-007 — src/modules/academics/class-service.ts / section and group-backed selectors: Preserve ID translation
+- G2-20-019-012 — src/modules/academics/class-service.ts / section and group-backed selectors: Handle incomplete mapping and role default
+- G2-20-019-021 — src/modules/people/college-faculty-detail-service.ts / assignments: Map old deactivation date to endedAt when known
+- G2-20-019-031 — src/modules/academics/class-service.ts / section and group-backed selectors: Write full DDL and migration crosswalk
+- G2-20-019-033 — src/modules/academics/class-service.ts / section and group-backed selectors: Validate retired partial mappings
+- G2-14-026-014 — src/modules/academics/program-service.ts / academic directory: Legacy college listing includes any underlying new_program not deleted per service, vNext ACTIVE-only and excludes archived parent departments.
+- G2-5-011-069 — src/modules/academics/class-service.ts / section and group-backed selectors: Map legacy identities and attendance session semantics to new schema; document migration deliberate divergence.
+
+## Wave2 academic schema part 2 — scoped UI/service dependencies
+- G2-5-014-022 — src/modules/academics/class-service.ts / section and group-backed selectors: Provide separate tenant-wide exact existence indicator or approve restricted uniqueness semantics
+- G2-5-014-024 — src/modules/academics/class-service.ts / section and group-backed selectors: Translate old numeric class references or document mapping for usage recording
+- G2-5-014-080 — src/modules/academics/class-service.ts / section and group-backed selectors: Document deletion semantics and uniqueness changes
+- G2-5-021-003 — src/modules/academics/cohort-service.ts / batch UI: Project exact legacy columns in batch UI in intended order.
+- G2-5-021-006 — src/modules/academics/cohort-service.ts / batch UI: Map IDs at migration/import boundaries.
+- G2-5-021-009 — src/modules/academics/cohort-service.ts / batch UI: Convert timezone-dependent java.util.Date to date-only without day shift.
+- G2-5-021-012 — src/modules/academics/cohort-service.ts / batch UI: Normalize legacy hyphen-year values to numeric start and display format.
+- G2-5-021-013 — src/modules/academics/cohort-service.ts / batch UI: Build enum transition/retirement mapping; do not silently treat INACTIVE as COMPLETED.
+- G2-5-021-043 — src/modules/academics/cohort-service.ts / batch UI: Map visible labels and data formats exactly.
+- G2-5-021-047 — src/modules/academics/schedule-service.ts / class calendar: Define Asia/Kolkata calendar boundary explicitly.
+- G2-18-020-052 — src/modules/academics/class-service.ts / section and group-backed selectors: Align deletion policy after cancelling sessions; handle old 'active only' count difference.
+- G2-14-031-037 — src/modules/people/college-faculty-detail-service.ts / assignments: Enforce immutable ordinal after assignment
+- G2-14-031-053 — src/modules/academics/program-service.ts / academic directory: Record per-column department ID/chair mapping
+- G2-14-031-056 — src/modules/academics/class-service.ts / section and group-backed selectors: Document class/team/student/teacher membership translation
+- G2-9-002-081 — src/modules/academics/cohort-service.ts / batch UI: Write explicit legacy schema field mapping.
+- G2-9-002-083 — src/modules/academics/cohort-service.ts / batch UI: Review name uniqueness vs code-uniqueness semantics across migrations.
+- G2-9-002-084 — src/modules/academics/cohort-service.ts / batch UI: Verify mapping for COMPLETED and reactivation.
+- G2-9-003-087 — src/modules/academics/cohort-service.ts / batch UI: Create field mapping and account for original status values.
+- G2-9-029-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
+- G2-9-023-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value

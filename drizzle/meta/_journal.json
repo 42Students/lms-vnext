@@ -1268,6 +1268,27 @@
       "when": 1792352171266,
       "tag": "0180_lane15_application_history_query_indexes",
       "breakpoints": true
+    },
+    {
+      "idx": 181,
+      "version": "7",
+      "when": 1792352231266,
+      "tag": "0181_lane15_academic_program_batch_import",
+      "breakpoints": true
+    },
+    {
+      "idx": 182,
+      "version": "7",
+      "when": 1792352291266,
+      "tag": "0182_lane15_academic_section_group_import",
+      "breakpoints": true
+    },
+    {
+      "idx": 183,
+      "version": "7",
+      "when": 1792352351266,
+      "tag": "0183_lane15_academic_faculty_schedule_import",
+      "breakpoints": true
     }
   ]
 }
