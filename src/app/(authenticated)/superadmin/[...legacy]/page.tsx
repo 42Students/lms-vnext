@@ -162,6 +162,25 @@ export default async function LegacySuperAdminRedirect({
   if (typeof query.from === "string" && /^[a-z0-9_-]{1,64}$/i.test(query.from)) {
     search.set("from", query.from);
   }
+  // Restore only filters supported by the new selected-college page. Do not
+  // reuse opaque numeric course IDs as UUIDs or accept a foreign college.
+  if (destination === "/admin/lessons") {
+    if (typeof query.courseCode === "string" && /^[a-z0-9_-]{1,64}$/i.test(query.courseCode))
+      search.set("courseCode", query.courseCode);
+    if (typeof query.status === "string" && ["ALL","ACTIVE","ARCHIVED"].includes(query.status))
+      search.set("status", query.status);
+    if (typeof query.pageSize === "string" && ["10","25","50","100"].includes(query.pageSize))
+      search.set("pageSize", query.pageSize);
+    if (typeof query.page === "string" && /^[1-9][0-9]{0,2}$/.test(query.page))
+      search.set("page", query.page);
+  }
+  // Legacy template backlinks may be kept only within the authorized modern
+  // Super Admin projects area, never arbitrary redirects or user-provided hosts.
+  if (destination.startsWith("/admin/projects/") &&
+      typeof query.return === "string" &&
+      /^\/admin\/projects\/(?:templates|audit|readiness|at-risk)(?:\/[a-z0-9-]{1,96})?$/i.test(query.return)) {
+    search.set("return", query.return);
+  }
   const selectedCollegeId = context.adminScope?.collegeId;
   if (selectedCollegeId &&
       (query.collegeId === selectedCollegeId || query.college === selectedCollegeId)) {
