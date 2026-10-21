@@ -149,6 +149,13 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
   async createDomain(input) {
     const db = getDb();
 
+    // A retired hostname retains historical tenant ownership even when the
+    // public-routing partial unique index no longer includes its tombstone.
+    // Reassignment requires a reviewed release, not a normal create retry.
+    const [retired]=await db.select({id:tenantDomains.id}).from(tenantDomains)
+      .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
+        sql`${tenantDomains.deletedAt} is not null`)).limit(1);
+    if(retired)throw new TenantDomainServiceError("HOST_CONFLICT");
     try {
       const [created] = await db
         .insert(tenantDomains)
@@ -208,8 +215,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         if(row.host===input.host)return;
         const [taken]=await tx.select({id:tenantDomains.id})
           .from(tenantDomains)
-          .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
-            sql`${tenantDomains.deletedAt} is null`)).limit(1);
+          .where(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`).limit(1);
         if(taken&&taken.id!==row.id)
           throw new TenantDomainServiceError("HOST_CONFLICT");
         const now=new Date();
@@ -297,6 +303,9 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
               : current.verifiedAt,
           lastCheckedAt: input.checkedAt,
           lastCheckResult: input.result,
+          // Never store raw DNS TXT values (which may contain challenge
+          // secrets). Keep a finite, human-readable failure category only.
+          lastFoundValues:input.result==="TXT_VALUE_MISMATCH"?"TXT value does not match":null,
           updatedAt: input.checkedAt,
         })
         .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)));

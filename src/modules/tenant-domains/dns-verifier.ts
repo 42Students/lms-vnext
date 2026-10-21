@@ -28,7 +28,7 @@ export const dnsTenantDomainVerifier: TenantDomainVerifier = {
 
       return values.includes(expected)
         ? { verified: true, result: "VERIFIED" }
-        : { verified: false, result: "TXT_RECORD_MISSING" };
+        : { verified: false, result: values.length ? "TXT_VALUE_MISMATCH" : "TXT_RECORD_MISSING" };
     } catch (error) {
       const code = dnsErrorCode(error);
       if (code === "ENODATA" || code === "ENOTFOUND") {

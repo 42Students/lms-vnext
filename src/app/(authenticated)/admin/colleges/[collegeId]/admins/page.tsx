@@ -11,7 +11,7 @@ import {Pagination} from "@/components/ui/pagination";
 import {ErrorState} from "@/components/ui/error-state";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {CollegeAdminLifecycleAction} from "@/components/admin/college-admin-lifecycle-action";
-import {listCollegeAdminSessionTargets} from "@/modules/colleges/admin-session-service";
+import {listCollegeAdminSessionTargetsPage} from "@/modules/colleges/admin-session-service";
 
 export const dynamic="force-dynamic";
 export default async function CollegeAdministratorsPage({params,searchParams}:{
@@ -20,11 +20,10 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
 }){
  const collegeId=(await params).collegeId;
  const context=await getCurrentRequestContext();
- const data=await listCollegeAdminSessionTargets(context,collegeId);
  const raw=await searchParams;
  const rawPage=raw.page;
  const validPage=Object.keys(raw).every(key=>key==="page")&&
-   (rawPage===undefined||(typeof rawPage==="string"&&/^[1-9][0-9]{0,4}$/.test(rawPage)));
+   (rawPage===undefined||(typeof rawPage==="string"&&/^[1-9][0-9]{0,4}$/.test(rawPage)&&Number(rawPage)<=10000));
  if(!validPage)return <div className="min-w-0 space-y-[var(--lms-space-4)]">
    <PageHeader title="College administrators"/>
    <ErrorState title="Invalid administrator page"
@@ -35,9 +34,9 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
      </Link>}/>
  </div>;
  const page=typeof rawPage==="string"?Number(rawPage):1;
- const pageSize=25;
- const pageCount=Math.max(1,Math.ceil(data.items.length/pageSize));
- const pageItems=data.items.slice((page-1)*pageSize,page*pageSize);
+ const data=await listCollegeAdminSessionTargetsPage(context,collegeId,page);
+ const pageCount=data.pageCount;
+ const pageItems=data.items;
  const baseHref="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title={data.college.name+" · Admins"}
@@ -52,11 +51,11 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
   <section aria-label="College administrator directory" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]">
    <h2 className="mb-3 font-semibold">College Admin and TPO accounts</h2>
    <p className="mb-3 text-sm text-muted-foreground" role="status">
-     Showing {pageItems.length} of {data.items.length}{data.truncated?"+ records in the first available 500 role entries":""} · Page {page} of {pageCount}
+     Showing {pageItems.length} of {data.total} college administrators · Page {page} of {pageCount}
    </p>
    <DataTable<(typeof data.items)[number]> caption="College Admin and TPO accounts" rows={pageItems} getRowKey={item=>item.userId}
-    empty={<EmptyState title={data.items.length===0?"No administrator accounts":"No administrators on this page"}
-      description={data.items.length===0?"No active College Admin or TPO accounts in this college.":"Return to an earlier page to see the available administrators."}/>}
+    empty={<EmptyState title={data.total===0?"No administrator accounts":"No administrators on this page"}
+      description={data.total===0?"No active College Admin or TPO accounts in this college.":"Return to an earlier page to see the available administrators."}/>}
     columns={[
       {key:"name",header:"Name",mobilePriority:"primary",cell:item=><strong>{item.name}</strong>},
       {key:"roles",header:"Role",mobilePriority:"secondary",cell:item=>item.roles.join(", ")},
@@ -94,10 +93,6 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
   {page>pageCount?<p role="alert" className="text-sm text-warning">
     Page outside the available results. Return to the first page; no other administrator data was loaded.
     <Link href={baseHref} className="ml-2 font-semibold text-primary-text underline">First page</Link>
-  </p>:null}
-  {data.truncated?<p role="status" className="text-sm text-warning">
-    Showing only the first 500 role records. Pagination covers the current scoped snapshot, not all administrators.
-    A server-side continuation is required before the directory can be considered complete.
   </p>:null}
  </div>;
 }

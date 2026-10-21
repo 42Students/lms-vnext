@@ -6,10 +6,11 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {useToast} from "@/components/ui/toast";
 type Company={id:string;name:string;website:string|null;industry:string|null;
  about:string|null;logoPublicUrl:string|null;updatedAt:string};
 export function SuperAdminCompanyEdit({company}:{company:Company}){
- const router=useRouter(),[open,setOpen]=useState(false),[error,setError]=useState("");
+ const router=useRouter(),{showToast}=useToast(),[open,setOpen]=useState(false),[error,setError]=useState("");
  const {pending,run}=useGuardedAction();
  async function save(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -27,7 +28,9 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
       logoPublicUrl:String(values.get("logoPublicUrl")??"").trim(),
      }),
     });
-    setOpen(false);router.refresh();
+    setOpen(false);
+    showToast({tone:"success",title:"Saved. Every drive of this company shows the new name and logo."});
+    router.refresh();
    }catch(e){setError(e instanceof Error?e.message:"Cannot update company. Retry.");}
   });
  }
@@ -40,10 +43,11 @@ export function SuperAdminCompanyEdit({company}:{company:Company}){
    name="name" defaultValue={company.name} className={cls}/></label>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS)<Input type="url" name="website"
    defaultValue={company.website??""} className={cls}/></label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Industry<Input name="industry" maxLength={160}
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Industry<Input name="industry" maxLength={100}
    defaultValue={company.industry??""} className={cls}/></label>
-  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">About<Textarea name="about" maxLength={3000}
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">About<Textarea name="about" maxLength={2000}
    defaultValue={company.about??""} rows={3} className={cls}/></label>
+  <p className="m-0 text-xs text-muted-foreground">Legacy limits: industry 100 characters, description 2000 characters. Shared company edits update the canonical employer across its linked college drives.</p>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Public logo URL (HTTPS)<Input name="logoPublicUrl"
    type="url" defaultValue={company.logoPublicUrl??""} className={cls}/></label>
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}

@@ -36,7 +36,8 @@ import type {
 import {
   hrApiErrorMessage,
   hrDisplayName,
-  hrStatusTone,
+  hrAccountStatusLabel,
+  hrAccountStatusTone,
 } from "./super-admin-hr-types";
 
 type DialogState =
@@ -457,7 +458,7 @@ export function SuperAdminHrAccounts({
   }
 
   function quickStatus(account:HrAccount){
-    if(!account.accountManageable||pending||account.status==="DISABLED")return;
+    if(!account.accountManageable||pending||account.status==="DISABLED"||account.legacyStatus==="DELETED")return;
     const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
     setActionError(null);
     setConfirmation({kind:"quick",userId:account.userId,name:hrDisplayName(account),status:next});
@@ -575,7 +576,7 @@ export function SuperAdminHrAccounts({
               : "This recruiter has grants outside the selected administrative scope"
               : undefined}
             onClick={() => openEdit(account)}>Edit</MenuItem>
-          {account.status !== "DISABLED" ? (
+          {account.status !== "DISABLED" && account.legacyStatus!=="DELETED" ? (
             <MenuItem disabled={pending || !account.accountManageable}
               onClick={() => quickStatus(account)}>{account.status === "ACTIVE" ? "Suspend" : "Reactivate"}</MenuItem>
           ) : null}
@@ -638,9 +639,9 @@ export function SuperAdminHrAccounts({
       header: "Status",
       cell: (account) => (
         <StatusBadge
-          tone={hrStatusTone(account.status)}
+          tone={hrAccountStatusTone(account)}
         >
-          {account.status==="ARCHIVED"?"Suspended":account.status==="ACTIVE"?"Active":"Disabled"}
+          {hrAccountStatusLabel(account)}
         </StatusBadge>
       ),
     },
