@@ -135,7 +135,7 @@ export function TopbarAccountMenu({
         className={style.menuItem} onClick={logout}>{pending ? "Signing out…" : copy.signOutLabel}
         <span className="ml-auto text-muted-foreground"><ChevronIcon /></span>
       </Button>
-      {error ? <p role="alert" className="min-w-0 break-words px-2 pt-[var(--lms-space-2)] text-xs text-error">{error}</p> : null}
+      {error ? <p role="alert" className="min-w-0 break-words px-2 pt-[var(--lms-space-2)] text-xs text-error leading-[20px]">{error}</p> : null}
     </PopoverPanel> : null}
   </div>;
 }

@@ -57,16 +57,16 @@ export function TpoGeneralRequestsPanel(){
  const pendingRows=rows.filter(row=>row.status==="PENDING");
  const approveSupported=(kind:string)=>["OFF_CAMPUS_OFFER","REGISTRATION_CHANGE"].includes(kind);
  return <section aria-label="Other student requests" className="space-y-3 border-b border-border pb-5">
-  <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
-  <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Other student requests · {pendingRows.length} waiting</h2>
+  <p className="text-sm leading-[22px]">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
   <Button variant="secondary" type="button" onClick={()=>void load()} loading={loading} disabled={loading} className="min-h-11 w-full px-3 sm:w-auto md:min-h-9">Refresh other requests</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
-  {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body">Loading other student requests…</p>:!rows.length?<EmptyState title="No other requests to review."/>:
+  {loading&&!rows.length?<p role="status" className="py-4 text-sm text-body leading-[22px]">Loading other student requests…</p>:!rows.length?<EmptyState title="No other requests to review."/>:
    <ul tabIndex={0} aria-label="Student requests, scroll for more" className="max-h-[min(70vh,44rem)] min-h-0 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_0%,black_90%,transparent_100%)]">{rows.map(row=><li key={row.id} className="min-w-0 py-3 text-sm">
     <h3 className="break-words font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words text-body">{row.reason}</p>
-    <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
+    <p className="text-xs leading-[20px]">{row.status.replaceAll("_"," ")}</p>
     <details className="min-w-0 py-1"><summary className="min-h-11 cursor-pointer py-3 font-semibold text-primary-text md:min-h-9 md:py-2">Request details</summary>
      <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     </details>
@@ -82,7 +82,7 @@ export function TpoGeneralRequestsPanel(){
     <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||(action==="APPROVE"&&!approveSupported(selection?.kind??""))} onClick={()=>void decide()}>
       {pending?"Saving…":"Confirm decision"}</Button></div>}>
    <div className="min-w-0 space-y-3 break-words">
-    <p className="text-sm">{selection?.reason}</p>
+    <p className="text-sm leading-[22px]">{selection?.reason}</p>
     {selection?<TpoGeneralRequestFacts kind={selection.kind} payload={selection.payload}/>:null}
    <label className="mt-3 grid gap-[6px] text-[13px]">Decision
     <Select value={action} onChange={e=>setAction(e.target.value as "APPROVE"|"REJECT")} >
@@ -93,7 +93,7 @@ export function TpoGeneralRequestsPanel(){
    <label className="mt-3 grid gap-[6px] text-[13px]">Reason / decision note
     <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}/>
    </label>
-   {!approveSupported(selection?.kind??"")?<p className="text-sm">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}
+   {!approveSupported(selection?.kind??"")?<p className="text-sm leading-[22px]">A specialist review is required before this kind can be approved. No placement record will be silently changed.</p>:null}
    {selection&&error?<InlineNotice tone="error" message={error}/>:null}
    </div>
   </Dialog>

@@ -133,7 +133,7 @@ export function CollegeRecurringPreview({
   }
   return (
     <section className="min-w-0 space-y-[var(--lms-space-4)]">
-      <p className="max-w-[75ch] text-sm leading-5 text-body">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p>
+      <p className="max-w-[75ch] text-sm text-body leading-[22px]">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p>
       {classes.length === 0 ? (
         <Alert tone="info">
           No active classes are registered for this college. Create a class before previewing a schedule.
@@ -152,7 +152,7 @@ export function CollegeRecurringPreview({
               {classes.map((c) => <option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
             </Select>
           </label>
-          {selected ? <p className="text-xs text-muted-foreground">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
+          {selected ? <p className="text-xs text-muted-foreground leading-[20px]">Academic period: {selected.periodStart} to {selected.periodEnd}</p> : null}
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course (optional)
             <Select value={deliveryId} onChange={e => setDeliveryId(e.target.value)}
               disabled={pending || !sectionId} className="min-h-11 min-w-0 md:min-h-9">
@@ -228,8 +228,8 @@ export function CollegeRecurringPreview({
         </>}
       </Alert> : null}
       {result ? <section aria-label="Schedule preview results" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-        <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</h2>
-        <p className="max-w-prose text-sm leading-6 text-muted-foreground">{result.notice}</p>
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Preview · {result.ready} clear, {result.blocked} blocked</h2>
+        <p className="max-w-prose text-sm text-muted-foreground leading-[22px]">{result.notice}</p>
         {previewChanged ? <Alert tone="warning">Schedule fields changed since the preview. Preview this pattern again before saving.</Alert> : null}
         <Button type="button" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || previewChanged || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>

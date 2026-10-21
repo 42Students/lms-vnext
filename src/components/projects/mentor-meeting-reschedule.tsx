@@ -72,9 +72,9 @@ export function MentorMeetingReschedule(props:{
             onChange={event=>{setEnd(event.target.value);setError(null);}}
             className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
         </label>
-        {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground">
+        {!parsed.success?<p id={validationId} role="alert" className="text-sm text-foreground leading-[22px]">
           Select valid start/end times, with a duration up to 12 hours.</p>:null}
-        {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+        {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
         <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={guard.requestClose}>Cancel</Button>
           <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!parsed.success||!changed||pending}>
@@ -86,8 +86,8 @@ export function MentorMeetingReschedule(props:{
       title="Confirm meeting reschedule?" confirmLabel="Confirm reschedule"
       description="Your new IST time will be checked against this project's scheduled meetings. No external message is sent."
       pending={pending} onConfirm={save}>
-      <p className="text-sm text-body">{start.replace("T"," ")} – {end.replace("T"," ")} IST</p>
-      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+      <p className="text-sm text-body leading-[22px]">{start.replace("T"," ")} – {end.replace("T"," ")} IST</p>
+      {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
     </ConfirmDialog>
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard reschedule changes?" description="You have unsaved project changes. Leave this page and discard them?"

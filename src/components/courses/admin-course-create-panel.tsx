@@ -280,7 +280,7 @@ export function AdminCourseCreatePanel({
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
       <form id="setup-course" onSubmit={createCourse} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{COLLEGE_COURSES_COPY.createTitle}</h2>
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body leading-[22px]">
           No departments in this college yet. Create a department before adding a course.{" "}
           <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
@@ -336,7 +336,7 @@ export function AdminCourseCreatePanel({
       </form>
 
       <form id="setup-offering" onSubmit={createOffering} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">New Course Offering</h2>
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">New Course Offering</h2>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Place a Course into one Cohort and Academic Period.</p>
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
@@ -382,7 +382,7 @@ export function AdminCourseCreatePanel({
       </form>
 
       <form id="setup-delivery" onSubmit={createDelivery} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Add Section Delivery</h2>
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Add Section Delivery</h2>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Connect an Offering to an exact Section. Only structurally compatible Sections are shown.</p>
         <div className="mt-4 grid gap-3">
           <div>
@@ -406,7 +406,7 @@ export function AdminCourseCreatePanel({
       </form>
 
       <form id="setup-faculty" onSubmit={assignTeacher} className="scroll-mt-24 border-b border-border pb-4">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Assign Course Faculty</h2>
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Assign Course Faculty</h2>
         <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Assign an active Faculty Membership to one exact Section Delivery.</p>
         <div className="mt-4 grid gap-3">
           <div>
