@@ -433,12 +433,12 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/projects/super-admin-template-subview-page.tsx`
 - [x] `src/components/tpo/grid/tpo-grid.tsx`
 - [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-builtin-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/ui/data-table.tsx`
-- [ ] `src/components/ui/table.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/tpo/tpo-academic-import-preview.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-builtin-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/ui/data-table.tsx`
+- [x] `src/components/ui/table.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
 - [ ] `src/styles/micro-details.css`
