@@ -9,7 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 
-type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string };
+type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string; departmentName?: string; shortTitle?: string };
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
 import { SearchIcon } from "./icons";
 import { TpoFindSuggestions } from "./tpo-find-suggestions";
@@ -19,20 +19,46 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const pathname = usePathname() ?? "/";
   const router = useRouter();
   const config = topbarConfigForPath(pathname);
+  const courseMode = config.portal === "learn" && !pathname.startsWith("/learn/my-placements");
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
   const [courseError, setCourseError] = useState<string | null>(null);
   const [queryError, setQueryError] = useState("");
-  const [courseLoading, setCourseLoading] = useState(config.portal === "learn");
+  const [courseLoading, setCourseLoading] = useState(courseMode);
+  const [reloadCourses,setReloadCourses]=useState(0);
+  const [recentIds,setRecentIds]=useState<string[]>([]);
+  const [popularity,setPopularity]=useState<Record<string,number>>({});
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const input = useRef<HTMLInputElement>(null);
   const root = useRef<HTMLDivElement>(null);
+  // Recent history is session-only and is always intersected with authorized courses.
+  useEffect(()=>{
+    if(!courseMode)return;
+    try {
+      const ids:unknown=JSON.parse(sessionStorage.getItem("lms-course-search-recent")??"[]");
+      const counts:unknown=JSON.parse(sessionStorage.getItem("lms-course-search-counts")??"{}");
+      if(Array.isArray(ids))setRecentIds(ids.filter((id):id is string=>typeof id==="string").slice(0,10));
+      if(counts&&typeof counts==="object"&&!Array.isArray(counts))
+        setPopularity(Object.fromEntries(Object.entries(counts).filter(([,v])=>typeof v==="number"&&Number.isSafeInteger(v)&&v>=0)));
+    }catch{setRecentIds([]);setPopularity({});}
+  },[courseMode]);
+  function rememberCourse(id:string){
+    const nextRecent=[id,...recentIds.filter(item=>item!==id)].slice(0,10);
+    const nextCounts={...popularity,[id]:(popularity[id]??0)+1};
+    setRecentIds(nextRecent);setPopularity(nextCounts);
+    try {
+      sessionStorage.setItem("lms-course-search-recent",JSON.stringify(nextRecent));
+      sessionStorage.setItem("lms-course-search-counts",JSON.stringify(nextCounts));
+    }catch{/* Storage is optional. */}
+  }
   // Preserve the old learner header's authorized course lookup when moving
   // its search box into the common command bar.
   useEffect(() => {
-    if (config.portal !== "learn") return;
+    if (!courseMode) {setCourses([]);setCourseLoading(false);return;}
     let cancelled = false;
+    setCourseLoading(true);
+    setCourseError(null);
     void apiFetch<unknown>("/api/courses/learner", { cache: "no-store" })
       .then(payload => {
         if (cancelled) return;
@@ -58,15 +84,21 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         }
       });
     return () => { cancelled = true; };
-  }, [config.portal]);
-  const courseMatches = useMemo(() => {
-    if (config.portal !== "learn") return [];
-    const search = query.trim().toLocaleLowerCase("en-IN");
-    return courses.filter(course => !search ||
-      [course.courseName, course.courseCode, course.sectionName]
-        .some(value => value.toLocaleLowerCase("en-IN").includes(search)))
-      .slice(0, 6);
-  }, [config.portal, courses, query]);
+  }, [courseMode,reloadCourses]);
+  const courseMatches=useMemo(()=>{
+    if(!courseMode)return [];
+    const search=query.trim().toLocaleLowerCase("en-IN");
+    const result=courses.filter(course=>!search||
+      [course.courseName,course.courseCode,course.sectionName,course.shortTitle??"",course.departmentName??""]
+        .some(value=>value.toLocaleLowerCase("en-IN").includes(search)));
+    return search?result.slice(0,15):result.sort((x,y)=>
+      (popularity[y.deliveryId]??0)-(popularity[x.deliveryId]??0)||
+      x.courseName.localeCompare(y.courseName)).slice(0,10);
+  },[courseMode,courses,query,popularity]);
+  const courseById=useMemo(()=>new Map(courses.map(course=>[course.deliveryId,course])),[courses]);
+  const recentCourses=courseMode&&!query.trim()?recentIds.map(id=>courseById.get(id))
+    .filter((course):course is LearnerCourse=>Boolean(course)):[];
+  const displayedCourses=!query.trim()?courseMatches.filter(course=>!recentIds.includes(course.deliveryId)):courseMatches;
   const commands = useMemo(() => topbarCommands(pathname, items), [pathname, items]);
   const destinations = topbarSearchDestinations(pathname, query);
   const matches = useMemo(() => {
@@ -111,6 +143,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       return;
     }
     if (query.trim() && courseMatches[0]) {
+      rememberCourse(courseMatches[0].deliveryId);
       router.push("/learn/courses/" + encodeURIComponent(courseMatches[0].deliveryId) + "/home");
     } else if (matches[0]) {
       router.push(matches[0].href);
@@ -120,8 +153,18 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
       // The destination applies the portal\u0027s own tenant and role policy.
       router.push(config.searchHref + "?q=" + encodeURIComponent(query.trim().slice(0,100)));
     }
+    setQuery("");
     setOpen(false);
     setMobileOpen(false);
+  }
+  function courseResult(course:LearnerCourse){
+    return <Link key={course.deliveryId} role="option" aria-selected={false}
+      href={"/learn/courses/"+encodeURIComponent(course.deliveryId)+"/home"} className={style.suggestion}
+      onClick={()=>{rememberCourse(course.deliveryId);setQuery("");setOpen(false);setMobileOpen(false);}}>
+      <SearchIcon/> <span className="min-w-0"><span className="block truncate">{course.shortTitle||course.courseName}</span>
+        <span className="block truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{course.departmentName||course.sectionName} · {course.courseCode}</span>
+      </span>
+    </Link>;
   }
 
   return <div ref={root}
@@ -201,20 +244,16 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
             : (index - 1 + options.length) % options.length;
           options[next]?.focus();
         }}>
-                {config.portal === "learn" && courseLoading ?
+                {courseMode && courseLoading ?
           <p role="status" className="px-2 py-2 text-xs text-muted-foreground leading-[20px]">Loading your courses…</p> : null}
         {queryError ? <p role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">{queryError}</p> : null}
-        {config.portal === "learn" && courseError ?
-          <p role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">{courseError}</p> : null}
-        {courseMatches.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Courses</p> : null}
-        {courseMatches.map(course => <Link key={course.deliveryId}
-          role="option" aria-selected={false}
-          href={"/learn/courses/" + encodeURIComponent(course.deliveryId) + "/home"}
-          className={style.suggestion}
-          onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
-          <SearchIcon /> <span className="min-w-0"><span className="block truncate">{course.courseName}</span>
-            <span className="block truncate text-[length:var(--lms-topbar-caption-size,11px)] text-muted-foreground">{course.courseCode} · {course.sectionName}</span></span>
-        </Link>)}
+        {courseMode && courseError ? <div role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">{courseError} <Button type="button" variant="link" size="sm" onClick={()=>setReloadCourses(v=>v+1)}>Retry</Button></div> : null}
+        {recentCourses.length>0?<p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-xs font-semibold text-muted-foreground">Recent</p>:null}
+        {recentCourses.map(courseResult)}
+        {displayedCourses.length>0?<p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-xs font-semibold text-muted-foreground">{query.trim()?"Search Results":"Popular"}</p>:null}
+        {displayedCourses.map(courseResult)}
+        {courseMode&&!courseLoading&&!courseError&&courseMatches.length===0?
+          <p role="status" className="px-2 py-2 text-xs text-muted-foreground">No courses found</p>:null}
         {config.portal === "tpo" && query.trim().length >= 2
           ? <TpoFindSuggestions query={query} onOpen={href => {
               router.push(href);
@@ -235,7 +274,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           onClick={() => { setQuery(""); setOpen(false); setMobileOpen(false); }}>
           <SearchIcon /> {command.label}
         </Link>)}
-        {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 &&
+        {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 && !courseMode &&
           !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground leading-[20px]">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
