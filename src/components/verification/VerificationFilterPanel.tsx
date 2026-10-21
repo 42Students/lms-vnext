@@ -42,7 +42,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
  return <Disclosure title="More filters: learner name, marksheets, batch, branch, class, waiting since" className="min-w-0 border-b border-border pb-3">
   
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
-   <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
+   <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact learner membership ID
      <Input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
       placeholder="Membership UUID" className="mt-1 w-full"/>
@@ -72,7 +72,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
       <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option><option value="WAITING_OVER_WEEK">Waiting over a week</option>
      </Select>
     </label>
-    {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 sm:col-span-2">
+    {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 md:col-span-2">
       <legend className="text-sm font-semibold">Waiting since</legend>
       <div className="flex flex-wrap gap-2">
         <FilterChip type="button" onClick={()=>chooseWaitingPreset("TODAY")}>Today</FilterChip>

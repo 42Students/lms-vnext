@@ -114,7 +114,7 @@ export function MentorSprintDetailsEdit({
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
         
-        <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-3">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-3">
           {([{label:"Start Date",value:start,set:setStart},
              {label:"End date",value:end,set:setEnd},
              {label:"Due date",value:due,set:setDue}]).map(row=>
@@ -123,11 +123,11 @@ export function MentorSprintDetailsEdit({
                   onChange={e=>row.set(e.target.value)}/></label>)}
         </div>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
-        <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] sm:flex-row sm:justify-end">
-          <Button className="w-full sm:w-auto" type="button" variant="secondary" onClick={guard.requestClose}>
+        <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:flex-row md:justify-end">
+          <Button className="w-full md:w-auto" type="button" variant="secondary" onClick={guard.requestClose}>
             Cancel
           </Button>
-          <Button className="w-full sm:w-auto" type="submit" disabled={!changed||!title.trim()}>
+          <Button className="w-full md:w-auto" type="submit" disabled={!changed||!title.trim()}>
             Review changes
           </Button>
         </div>

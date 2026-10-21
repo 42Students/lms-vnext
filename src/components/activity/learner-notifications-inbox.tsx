@@ -171,7 +171,7 @@ export function LearnerNotificationsInbox({
           </Button>
         </div>
       ):null}
-      <div className="flex min-w-0 flex-col items-start justify-between gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
+      <div className="flex min-w-0 flex-col items-start justify-between gap-[var(--lms-space-2)] md:flex-row md:items-center">
         <p role="status" className="text-sm text-body leading-[22px]">Showing {visible.length} of {combined.length} loaded notifications in this filtered view.</p>
         <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-primary-text)] md:min-h-9">Browse personal history</Link>
       </div>
@@ -181,7 +181,7 @@ export function LearnerNotificationsInbox({
         <div role="alert" className="border-y border-border py-[var(--lms-space-3)] text-sm text-body">
           <p className="font-semibold text-foreground">Announcements not refreshed</p>
           <p className="mt-1">{sourceStatus.notice}</p>
-          <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>router.refresh()}>
+          <Button size="sm" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>router.refresh()}>
             Retry announcements
           </Button>
         </div>
@@ -200,7 +200,7 @@ export function LearnerNotificationsInbox({
           } />
           {filtered ? (
             <Button type="button" onClick={resetFilters}
-              variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9 underline">
+              variant="ghost" className="min-h-11 w-full md:w-auto md:min-h-9 underline">
               View all
             </Button>
           ) : null}
@@ -245,7 +245,7 @@ export function LearnerNotificationsInbox({
             ) : null}
             {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
               <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text md:w-auto md:min-h-9">
                 {selected.externalCta.label} ↗
               </a>:null}
             <Button className="w-full min-[768px]:w-auto max-[767px]:min-h-11" onClick={() => setSelected(null)}>Got it</Button>

@@ -130,7 +130,7 @@ export function TpoAcademicImportWorkspace() {
         }} rows={5} maxLength={200000}
           className="mt-1.5 min-h-32 w-full min-w-0 font-mono text-sm" />
       </label></details>
-      <Button variant="secondary" loading={busy} className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden" disabled={busy} type="button" onClick={() => void validate()}
+      <Button variant="secondary" loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy} type="button" onClick={() => void validate()}
         >
         {busy ? "Checking…" : "Preview import"}
       </Button>
@@ -164,7 +164,7 @@ export function TpoAcademicImportWorkspace() {
               : preview.map(row => row.studentCode))} />
           Select all matched students
         </label>
-        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 sm:w-auto print:hidden" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
+        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
           >
           Confirm import
@@ -173,8 +173,8 @@ export function TpoAcademicImportWorkspace() {
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy&&!guardedPending)setConfirmOpen(value);}}
         title="Import verified academic details"
         description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? This updates their recorded CGPA and active backlogs."}
-        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button className="min-h-11 w-full md:min-h-9 sm:w-auto" loading={busy||guardedPending} disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></div>}>
+        footer={<div className="flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end"><Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button className="min-h-11 w-full md:min-h-9 md:w-auto" loading={busy||guardedPending} disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></div>}>
         <p className="text-sm leading-[22px]">Your academic import choices are kept below if the import cannot be completed.</p>
       </Dialog>
       {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error leading-[22px]">{error}</p>}
