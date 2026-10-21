@@ -79,14 +79,16 @@ export default async function TpoMessagesPage({
   // It is a search among authorized threads, not a public thread locator.
   const about=first(raw.about)??"";
   const companySearch=about.startsWith("COMPANY:")?about.slice("COMPANY:".length).trim().slice(0,120):"";
-  if(selectedTab==="team")return <div className="min-w-0 space-y-5">
+  if(selectedTab==="team")return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Your placement team's own conversations: who does what, and what you decided. Recruiters and students never see these."/>
-    {tabs("team")}
-    {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
-    <section id="tpo-messages-panel-team" role="tabpanel" aria-labelledby="tpo-messages-tab-team">
-    <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
-      selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}
-      page={/^[1-9]\d{0,3}$/.test(first(raw.page)??"")?Number(first(raw.page)):1}/>
+    <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4 md:p-6">
+      {tabs("team")}
+      {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
+      <section id="tpo-messages-panel-team" role="tabpanel" aria-labelledby="tpo-messages-tab-team">
+        <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
+          selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}
+          page={/^[1-9]\d{0,3}$/.test(first(raw.page)??"")?Number(first(raw.page)):1}/>
+      </section>
     </section>
   </div>;
   if(selectedTab!=="recruiters")return <div className="min-w-0 space-y-4">
@@ -109,8 +111,9 @@ export default async function TpoMessagesPage({
       <div className="min-w-0 space-y-6">
         <PageHeader
           title="Messages"
-          description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
+          description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."
         />
+        {tabs("recruiters")}
         <ErrorState
           title="Invalid message filters"
           description="Check status, date range, search and pagination values. No communication data was loaded."
