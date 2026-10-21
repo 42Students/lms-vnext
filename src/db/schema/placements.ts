@@ -928,6 +928,8 @@ export const placementCandidateAcademicEvidence = pgTable(
     ),
     /** For actual PG qualifications only; NULL means unprovided, not zero. */
     postgraduatePctBasisPoints: integer("postgraduate_pct_basis_points"),
+    /** Explicit qualification; null means unknown and cannot bypass PG rules. */
+    hasPostgraduateQualification:boolean("has_postgraduate_qualification"),
     gapYears: integer("gap_years"),
     isLateralEntry: boolean("is_lateral_entry")
       .notNull()

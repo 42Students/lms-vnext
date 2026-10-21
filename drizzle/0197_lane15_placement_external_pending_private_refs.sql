@@ -65,3 +65,21 @@ CREATE TABLE placement_public_external_job_links(
 CREATE UNIQUE INDEX public_external_job_slug_uq ON placement_public_external_job_links(slug);
 --> statement-breakpoint
 CREATE INDEX public_external_job_college_idx ON placement_public_external_job_links(college_id,job_id);
+
+--> statement-breakpoint
+ALTER TABLE placement_candidate_academic_evidence
+ ADD COLUMN IF NOT EXISTS postgraduate_pct_basis_points integer;
+--> statement-breakpoint
+ALTER TABLE placement_candidate_academic_evidence
+ ADD COLUMN IF NOT EXISTS has_postgraduate_qualification boolean;
+--> statement-breakpoint
+ALTER TABLE placement_job_eligibility_policies
+ ADD COLUMN IF NOT EXISTS min_postgraduate_pct_basis_points integer;
+--> statement-breakpoint
+ALTER TABLE placement_candidate_academic_evidence
+ ADD CONSTRAINT placement_evidence_pg_percent_ck CHECK(
+ postgraduate_pct_basis_points IS NULL OR postgraduate_pct_basis_points BETWEEN 0 AND 10000);
+--> statement-breakpoint
+ALTER TABLE placement_job_eligibility_policies
+ ADD CONSTRAINT placement_policy_pg_percent_ck CHECK(
+ min_postgraduate_pct_basis_points IS NULL OR min_postgraduate_pct_basis_points BETWEEN 0 AND 10000);
