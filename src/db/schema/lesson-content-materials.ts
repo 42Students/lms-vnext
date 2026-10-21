@@ -1,6 +1,6 @@
 /** Lesson content materials (LINK/FILE) with upload/scan lifecycle. Migration 0127. */
 import { sql } from "drizzle-orm";
-import { check, bigint, index, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { check, bigint, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { lessonContents } from "./courses";
 import { users } from "./users";
 
@@ -21,6 +21,11 @@ export const lessonContentMaterials = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
     notes: text("notes"),
+    /** Legacy arrays are decoded by a trusted importer, never directly exposed. */
+    legacySourceContentId: integer("legacy_source_content_id"),
+    legacyItemIndex: integer("legacy_item_index"),
+    legacyFileMetadata: jsonb("legacy_file_metadata")
+      .$type<{ fileName?: string; contentType?: string; sourceKind?: "FILE" | "LINK" }>(),
     uploadStatus: text("upload_status").notNull().default("READY"),
     uploadTokenHash: varchar("upload_token_hash",{length:64}),
     uploadExpiresAt: timestamp("upload_expires_at",{withTimezone:true}),
@@ -39,6 +44,8 @@ export const lessonContentMaterials = pgTable(
     index("lesson_content_materials_content_kind_idx").on(table.lessonContentId, table.kind),
     check("lesson_content_materials_kind_ck", sql`${table.kind} in (\'LINK\', \'FILE\')`),
     check("lesson_content_materials_sequence_ck", sql`${table.sequence} >= 0`),
+    check("lesson_content_materials_legacy_item_ck",
+      sql`${table.legacyItemIndex} is null or ${table.legacyItemIndex} >= 0`),
     check("lesson_content_materials_size_ck", sql`${table.sizeBytes} is null or (${table.sizeBytes} > 0 and ${table.sizeBytes} <= 52428800)`),
     check("lesson_content_materials_upload_status_ck", sql`${table.uploadStatus} in ('UPLOADING','VERIFYING','READY','QUARANTINED','FAILED','DELETED')`),
     check("lesson_content_materials_scan_status_ck", sql`${table.scanStatus} in ('PENDING','CLEAN','REJECTED')`),
