@@ -7,6 +7,12 @@ import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
+export class CollegeProfileVersionConflict extends Error {
+  constructor(){super("PROFILE_VERSION_CHANGED");this.name="CollegeProfileVersionConflict";}
+}
+export class CollegeProfileVersionRequired extends Error {
+  constructor(){super("PROFILE_VERSION_REQUIRED");this.name="CollegeProfileVersionRequired";}
+}
 const short = z.string().trim().max(150);
 const httpsLink = z.string().trim().max(500).refine(
   value => !value || /^https:\/\//i.test(value),
@@ -68,7 +74,10 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
   const [person, record] = await Promise.all([
     getDb().select({ displayName: users.displayName }).from(users)
       .where(eq(users.id, context.user.id)).limit(1),
-    getDb().select({ document: facultyProfiles.profileDocument })
+    getDb().select({
+      document: facultyProfiles.profileDocument,
+      version: facultyProfiles.profileDocumentVersion,
+    })
       .from(facultyProfiles).where(eq(facultyProfiles.membershipId, member.id)).limit(1),
   ]);
   if (!person[0]) throw new Error("PROFILE_NOT_FOUND");
@@ -83,12 +92,19 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
       String(item.path[0]??"profile")))];
     throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:"+sections.join(","));
   }
-  return { displayName: person[0].displayName ?? "", ...parsed.data };
+  return {
+    displayName: person[0].displayName ?? "", ...parsed.data,
+    profileDocumentVersion: record[0]?.version ?? 0,
+  };
 }
 
 export async function updateCollegeOwnProfile(context: RequestContext, raw: unknown) {
   const member = ownMembership(context);
   const input = collegeOwnProfileSchema.parse(raw);
+  const versionRaw=raw&&typeof raw==="object"&&!Array.isArray(raw)
+    ?(raw as Record<string,unknown>).profileDocumentVersion:undefined;
+  const version=z.number().int().nonnegative().safeParse(versionRaw);
+  if(!version.success)throw new CollegeProfileVersionRequired();
   const { displayName, ...details } = input;
   return getDb().transaction(async tx => {
     const [account] = await tx.select({ id: users.id }).from(users)
@@ -96,6 +112,8 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
     if (!account) throw new Error("PROFILE_NOT_FOUND");
     const [existing] = await tx.select().from(facultyProfiles)
       .where(eq(facultyProfiles.membershipId, member.id)).for("update").limit(1);
+    if((existing?.profileDocumentVersion??0)!==version.data)
+      throw new CollegeProfileVersionConflict();
     await tx.update(users).set({ displayName, updatedAt: new Date() })
       .where(eq(users.id, account.id));
     const previous=existing?.profileDocument?.collegeAdmin;
@@ -128,6 +146,6 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
         membershipId: member.id, profileDocument: document, profileDocumentVersion: 1,
       });
     }
-    return input;
+    return {...input,profileDocumentVersion:version.data+1};
   });
 }

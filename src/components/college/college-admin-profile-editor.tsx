@@ -11,6 +11,7 @@ import type { CollegeOwnProfileInput } from "@/modules/people/college-admin-prof
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
+type VersionedCollegeProfile=CollegeOwnProfileInput&{profileDocumentVersion:number};
 const fieldStyle = "min-h-11 w-full md:min-h-9";
 function Field({ label, value, onChange, type = "text", hint }: {
   label: string; value: string; onChange: (value: string) => void;
@@ -25,14 +26,14 @@ function Field({ label, value, onChange, type = "text", hint }: {
 }
 
 export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
-  initial: CollegeOwnProfileInput; email: string | null; phone: string | null; college: string | null;
+  initial: VersionedCollegeProfile; email: string | null; phone: string | null; college: string | null;
 }) {
   const router = useRouter();
-  const [profile, setProfile] = useState<CollegeOwnProfileInput>(initial);
+  const [profile, setProfile] = useState<VersionedCollegeProfile>(initial);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  const savedSnapshot=useRef<CollegeOwnProfileInput>(initial);
+  const savedSnapshot=useRef<VersionedCollegeProfile>(initial);
   const [discardOpen,setDiscardOpen]=useState(false);
   const dirty=JSON.stringify(profile)!==JSON.stringify(savedSnapshot.current);
   useEffect(()=>{
@@ -73,7 +74,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     }
     setSaving(true); setError(""); setSaved(false);
     try {
-      const result = await apiFetch<{profile:CollegeOwnProfileInput}>("/api/college/profile", {
+      const result = await apiFetch<{profile:VersionedCollegeProfile}>("/api/college/profile", {
         method: "PATCH", headers: { "content-type": "application/json" },
         body: JSON.stringify(profile),
       });
