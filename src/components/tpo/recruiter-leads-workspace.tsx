@@ -69,22 +69,46 @@ type Lead = {
   inviteStatus:string;
 };
 
-type RosterGridRow=Lead & {drivesRan:number|null};
+type RosterGridRow=Lead & {drivesRan:number|null;studentsPlaced:number|null};
+const recruiterDate=(value:string|null|undefined,withYear=false):string=>{
+ if(!value)return "-";
+ const parsed=new Date(value);
+ if(Number.isNaN(parsed.getTime()))return "-";
+ return new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Kolkata",day:"numeric",month:"short",...(withYear?{year:"numeric" as const}:{})
+ }).format(parsed);
+};
+function sourceLabel(code:string|null|undefined):string{
+ if(!code)return "Manual";
+ return SOURCE_CHOICES.find(([key])=>key===code)?.[1]??code.replaceAll("_"," ").toLowerCase().replace(/^./,letter=>letter.toUpperCase());
+}
+function inviteLabel(status:string):string{
+ const labels:Record<string,string>={NOT_SENT:"Not sent",NOT_INVITED:"Not sent",SENT:"Sent",
+  CLICKED:"Clicked",OPENED:"Clicked",JOINED:"Joined",BOUNCED:"Bounced"};
+ return labels[status]??status.replaceAll("_"," ");
+}
 const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
- {key:"Contact",label:"Contact",read:lead=>lead.name||"Unnamed contact"},
+ {key:"Contact",label:"Contact",read:lead=>(lead.name||"Unnamed contact")+
+ (lead.designation?" · "+lead.designation:"")},
  {key:"Status",label:"Status",read:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
  {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage]},
- {key:"Company",label:"Company",read:lead=>lead.companyName??""},
+ {key:"Company",label:"Company",read:lead=>lead.companyName||"Not set"},
+  {key:"Designation",label:"Designation",read:lead=>lead.designation||"-"},
  {key:"Email",label:"Email",read:lead=>lead.emailNorm},
  {key:"Phone",label:"Phone",read:lead=>lead.phoneNorm},
- {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>RECRUITER_ATTENTION_LABELS[chip]).join("; ")},
- {key:"Owner",label:"Owner",read:lead=>lead.ownerName??""},
- {key:"Last activity",label:"Last activity",read:lead=>lead.lastActivityAt??"",sortKind:"date"},
- {key:"Next follow-up",label:"Next follow-up",read:lead=>lead.nextFollowupAt??"",sortKind:"date"},
- {key:"Invite",label:"Invite",read:lead=>lead.inviteStatus.replaceAll("_"," ")},
- {key:"Added",label:"Added",read:lead=>lead.createdAt,sortKind:"date"},
- {key:"Source",label:"Source",read:lead=>lead.source??"Manual"},
+ {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>chip==="QUIET"?
+ "Quiet "+lead.quietDays+"d":RECRUITER_ATTENTION_LABELS[chip]).join(" · ")||"-"},
+ {key:"Owner",label:"Owner",read:lead=>lead.ownerName||"Unassigned"},
+ {key:"Last activity",label:"Last activity",read:lead=>recruiterDate(lead.lastActivityAt),
+  sortKind:"date",sortValue:lead=>lead.lastActivityAt?new Date(lead.lastActivityAt).getTime():null},
+ {key:"Next follow-up",label:"Next follow-up",read:lead=>recruiterDate(lead.nextFollowupAt),
+  sortKind:"date",sortValue:lead=>lead.nextFollowupAt?new Date(lead.nextFollowupAt).getTime():null},
+ {key:"Invite",label:"Invite",read:lead=>inviteLabel(lead.inviteStatus)},
+ {key:"Added",label:"Added",read:lead=>recruiterDate(lead.createdAt,true),
+  sortKind:"date",sortValue:lead=>new Date(lead.createdAt).getTime()},
+ {key:"Came from",label:"Came from",read:lead=>sourceLabel(lead.source)},
  {key:"Company drives",label:"Company drives",read:lead=>lead.drivesRan,sortKind:"number"},
+  {key:"Students placed",label:"Students placed",read:lead=>lead.studentsPlaced??"-",sortKind:"number"},
  {key:"Actions",label:"Actions",read:lead=>lead.recruiterUserId?"Joined":"Invite"},
 ];
 
@@ -225,13 +249,13 @@ export function RecruiterLeadsWorkspace({
   const [error, setError] = useState("");
   const [query, setQuery] = useState(initialFilters.q??"");
   const [filterOpen,setFilterOpen]=useState(false);
-  const [needsExpanded,setNeedsExpanded]=useState(true);
   const [ownerFilter,setOwnerFilter]=useState(initialFilters.owner??"ALL");
   const [inviteFilter,setInviteFilter]=useState(initialFilters.invite??"ALL");
   const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
   const [sourceFilter,setSourceFilter]=useState(initialFilters.source??"ALL");
   const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
   const [driveFilter,setDriveFilter]=useState(initialFilters.drives??"ALL");
+  const [placedFilter,setPlacedFilter]=useState("ALL");
   const [designationFilter,setDesignationFilter]=useState(initialFilters.designation??"");
   const [reachFilter,setReachFilter]=useState(initialFilters.reach??"ALL");
   const [nextFilter,setNextFilter]=useState(initialFilters.nextFollowup??"ALL");
@@ -414,17 +438,24 @@ export function RecruiterLeadsWorkspace({
   ];
   const leadDriveCounts=useMemo(()=>new Map(companies.flatMap(company=>
     company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
+  const leadPlacementCounts=useMemo(()=>new Map(companies.flatMap(company=>
+    company.people.map(person=>[person.id,company.studentsPlaced] as const))),[companies]);
   const rosterRows=useMemo(()=>rows.map(row=>({
     ...row,drivesRan:companiesPhase==="ready"?leadDriveCounts.get(row.id)??null:null,
-  })),[rows,leadDriveCounts,companiesPhase]);
+    studentsPlaced:companiesPhase==="ready"?leadPlacementCounts.get(row.id)??null:null,
+  })),[rows,leadDriveCounts,leadPlacementCounts,companiesPhase]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
     nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter,drives:driveFilter};
   const visible=useMemo(()=>filterEngageRoster(rosterRows,filters,lead=>
-    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
+    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))&&
+      (placedFilter==="ALL"||
+       (lead.studentsPlaced!==null&&(placedFilter==="NONE"?lead.studentsPlaced===0:
+        placedFilter==="ONE_TWO"?lead.studentsPlaced>=1&&lead.studentsPlaced<=2:
+        placedFilter==="THREE_PLUS"?lead.studentsPlaced>=3:true)))),
     [rosterRows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,
-      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter]);
+      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter,placedFilter]);
   const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
     [visible,rosterSort,sortAscending]);
   const filterChips=([
@@ -437,6 +468,7 @@ export function RecruiterLeadsWorkspace({
     {key:"source",label:"Source",value:sourceFilter},
     {key:"company",label:"Company",value:companyFilter},
     {key:"drives",label:"Drives that ran",value:driveFilter},
+    {key:"placed",label:"Students placed",value:placedFilter},
     {key:"designation",label:"Designation",value:designationFilter},
     {key:"reach",label:"Reach",value:reachFilter},
     {key:"nextFollowup",label:"Next follow-up",value:nextFilter},
