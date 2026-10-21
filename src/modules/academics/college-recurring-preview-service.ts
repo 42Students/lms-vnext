@@ -7,6 +7,7 @@ import {
   courseSectionDeliveries, courseOfferings, courses,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import { listFutureElectiveLearnerOverlaps } from "./schedule-service";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import {
   expandIstSessions, findPreviewConflicts, recurringPreviewSchema,
@@ -97,7 +98,16 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
         input.facultyMembershipId ? eq(sectionScheduleEvents.facultyMembershipId, input.facultyMembershipId) : undefined,
         input.lectureHallId ? eq(sectionScheduleEvents.lectureHallId, input.lectureHallId) : undefined),
     ));
-  const result = slots.map((slot) => ({ ...slot, conflicts: findPreviewConflicts(slot, input, existing) }));
+  const electiveOverlaps=await listFutureElectiveLearnerOverlaps(
+    context,input.sectionId,first,last);
+  const result=slots.map(slot=>{
+    const start=new Date(slot.startsAt).getTime();
+    const end=new Date(slot.endsAt).getTime();
+    const warnings=electiveOverlaps.some(row=>
+      start < row.endsAt.getTime() && row.startsAt.getTime() < end)
+      ? ["ELECTIVE_LEARNER_OVERLAP"] : [];
+    return {...slot,conflicts:findPreviewConflicts(slot,input,existing),warnings};
+  });
   return {
     slots: result,
     ready: result.filter((slot) => slot.conflicts.length === 0).length,
