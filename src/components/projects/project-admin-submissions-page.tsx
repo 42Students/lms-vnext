@@ -61,7 +61,7 @@ export async function ProjectAdminSubmissionsPage({
   const context = await getCurrentRequestContext();
   const allowLock = mayRecordCollegeAdminDeliveryLock(context,collegeId,
     context.adminScope?.organizationId ?? context.membership?.organizationId ?? "");
-  const parsed = parseProjectAdminSubmissionsQuery(searchParams,{superAdmin:basePath.startsWith("/admin/projects")});
+  const parsed = parseProjectAdminSubmissionsQuery(searchParams);
   if (!parsed.success) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Submissions dashboard"
@@ -229,62 +229,66 @@ export async function ProjectAdminSubmissionsPage({
         demoUrl:safeProjectExternalHref(submission.demoUrl),
       }))}/>} />
 
-      {!result.items.length ? (
-        <EmptyState title="No matching deliveries" description="No final-delivery versions match these filters."
-          action={<Link href={queuePath} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9">Clear filters</Link>}/>
-      ) : (
-        <div className="min-w-0 divide-y divide-border border-y border-border">
-          {result.items.map((submission) => (
-            <article
-              key={submission.id}
-              className="min-w-0 py-4"
-            >
-              <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-start md:justify-between">
-                <div className="min-w-0 flex-1">
-                  <Link
-                    href={
-                      basePath +
-                      "/" +
-                      submission.projectId +
-                      "/delivery"
-                    }
-                    className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-[var(--lms-heading)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
-                  >
-                    {submission.projectTitle}
-                  </Link>
-                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
-                    Version {submission.version} ·{" "}
-                    {formatDate(
-                      submission.submittedAt,
-                    )}
-                  </p>
-                </div>
-                <StatusBadge
-                  tone={tone(submission.status)}
-                >
-                  {submission.reopenedAt?"Draft (revising)":
-                    submission.lockedAt?"Locked":
-                    submission.status==="SUBMITTED"?"Under Review":submission.status}
-                </StatusBadge>
-              </div>
-              <dl className="mt-3 grid min-w-0 grid-cols-2 gap-3 text-xs text-body md:grid-cols-3">
-                <div><dt className="font-semibold">Pending</dt><dd>{
-                  submission.status === "SUBMITTED" && submission.submittedAt
-                    ? (projectAdminElapsedDays(submission.submittedAt,renderedAt)===null?"—":projectAdminElapsedDays(submission.submittedAt,renderedAt)+" days")
-                    : "—"
-                }</dd></div>
-                <div><dt className="font-semibold">Revisions</dt>
-                  <dd>{Math.max(0, submission.version - 1)}</dd></div>
-                <div><dt className="font-semibold">Mentor</dt><dd>{submission.mentorMembershipId?"Assigned":"Unassigned"}</dd></div>
-                <div><dt className="font-semibold">Reviewed by</dt>
-                  <dd>{submission.reviewedBy ?? "—"}</dd></div>
-              </dl>
-              <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{submission.summary}</p>
-              <div className="mt-3 flex flex-wrap gap-3 text-sm">
-                {([submission.sourceUrl, submission.demoUrl] as const).map((candidate, i) => {
-                  const href = safeProjectExternalHref(candidate);
-                  return href ? <a href={href} key={i} target="_blank" rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open link</a> : null;
+      <div className="min-w-0 space-y-3">
+        <p className="text-xs text-body">
+          Showing current and historical final-delivery versions. Historical versions
+          are read only; review actions target only the latest active version.
+        </p>
+        <DataTable caption="Project submission versions" rows={result.items}
+          getRowKey={submission=>submission.id}
+          sortHref={(column)=>{
+            const next=column==="pending"?"PENDING_DESC":
+              column==="revisions"?"REVISIONS_DESC":"SUBMITTED_DESC";
+            const params=new URLSearchParams();
+            if(query.q)params.set("q",query.q);
+            if(query.status)params.set("status",query.status);
+            if(query.submissionStatus)params.set("submissionStatus",query.submissionStatus);
+            if(query.pageSize)params.set("pageSize",String(query.pageSize));
+            params.set("sort",next);
+            return queuePath+"?"+params.toString();
+          }}
+          columns={[
+            {key:"workspace",header:"Workspace",mobilePriority:"primary",
+              cell:row=><Link href={basePath+"/"+row.projectId+"/delivery"}
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                {row.projectTitle}</Link>},
+            {key:"kind",header:"Submission type",mobilePriority:"secondary",
+              cell:row=>row.attachments.some(item=>item&&typeof item==="object"&&
+                "kind" in item&&item.kind==="FILE")?"File upload":
+                row.sourceUrl||row.demoUrl?"Link":"Text"},
+            {key:"reviewStatus",header:"Review status",mobilePriority:"secondary",
+              cell:row=><StatusBadge tone={tone(row.status)}>
+                {row.lockedAt?"Locked":row.reopenedAt?"Draft (revising)":
+                  row.status==="SUBMITTED"?"Under Review":row.status}
+              </StatusBadge>},
+            {key:"pending",header:"Pending",sortable:true,
+              sortDirection:sort==="PENDING_DESC"?"descending":"none",
+              mobilePriority:"secondary",cell:row=>row.status==="SUBMITTED"&&row.submittedAt
+                ?(projectAdminElapsedDays(row.submittedAt,renderedAt)??0)+" days":"—"},
+            {key:"submitted",header:"Submitted",sortable:true,
+              sortDirection:sort==="SUBMITTED_DESC"?"descending":"none",
+              mobilePriority:"secondary",cell:row=><div className="text-xs">
+                <p>{formatDate(row.submittedAt)}</p>
+                <p className="mt-1">{row.submittedBy??"—"}</p>
+              </div>},
+            {key:"revisions",header:"Revisions",sortable:true,
+              sortDirection:sort==="REVISIONS_DESC"?"descending":"none",
+              mobilePriority:"secondary",cell:row=>row.revisionCount??"—"},
+            {key:"reviewedBy",header:"Reviewed by",mobilePriority:"secondary",
+              cell:row=>row.reviewedBy?<div className="space-y-1 text-xs">
+                <p>{row.reviewedBy}</p>
+                <p>{formatDate(row.reviewedAt)}</p>
+                <StatusBadge tone="warning">{row.reviewedByType??"Reviewer"}</StatusBadge>
+              </div>:"—"},
+            {key:"evidence",header:"Files / Links",mobilePriority:"secondary",
+              cell:row=><div className="flex min-w-0 flex-col gap-1">
+                {([row.sourceUrl,row.demoUrl] as const).map((value,index)=>{
+                  if(!value)return null;
+                  const href=safeProjectExternalHref(value);
+                  return href?<a key={index} href={href} target="_blank"
+                    rel="noopener noreferrer" className="text-link underline">Open link</a>:
+                    <span key={index} role="status" className="text-xs text-error">
+                      Could not resolve this submission&apos;s file.</span>;
                 })}
                 {row.attachments.map((item,index)=>{
                   if(!item||typeof item!=="object")return null;
