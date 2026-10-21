@@ -19,6 +19,7 @@ import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import {FacultyQuizLearnerPreview} from "./faculty-quiz-learner-preview";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
+import { FacultyAssignmentResourcesEditor } from "./faculty-assignment-resources-editor";
 import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
@@ -251,6 +252,14 @@ function AssignmentItem({
               maxPoints: item.maxPoints,
               allowedMethods:normalizeAssignmentMethods(item.allowedSubmissionMethods),
             }}
+          />
+          <FacultyAssignmentResourcesEditor
+            assignment={{
+              id:item.id,title:item.title,description:item.description,
+              dueAt:item.dueAt,maxPoints:item.maxPoints,
+              updatedAt:item.updatedAt,status:item.status,
+            }}
+            deliveryId={deliveryId}
           />
           <FacultyAssessmentLifecycle
             key={item.id+":"+new Date(item.updatedAt).toISOString()}
