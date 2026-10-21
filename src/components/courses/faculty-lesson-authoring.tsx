@@ -13,6 +13,8 @@ import { Alert } from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Input } from "@/components/ui/input";
+import { FacultyAssignmentMethodPicker } from "./faculty-assignment-method-picker";
+import type { AssignmentMethod } from "@/modules/courses/assignment-submission-methods";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
@@ -102,7 +104,9 @@ export function FacultyLessonAuthoring({
   const [endsAt, setEndsAt] = useState("");
   const [dueAt, setDueAt] = useState("");
   const [maxPoints, setMaxPoints] =
-    useState("10");
+    useState("");
+  const [allowedAssignmentMethods, setAllowedAssignmentMethods] =
+    useState<AssignmentMethod[]>(["WRITTEN_RESPONSE"]);
   const [maxAttempts, setMaxAttempts] =
     useState("1");
   const [questions, setQuestions] =
@@ -127,13 +131,15 @@ export function FacultyLessonAuthoring({
     setStartsAt("");
     setEndsAt("");
     setDueAt("");
-    setMaxPoints("10");
+    setMaxPoints("");
+    setAllowedAssignmentMethods(["WRITTEN_RESPONSE"]);
     setMaxAttempts("1");
     setQuestions([initialQuestion()]);
   }
 
   const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
-    endsAt||dueAt||durationSeconds!==""||contentPoints!=="1"||maxPoints!=="10"||maxAttempts!=="1"||
+    endsAt||dueAt||durationSeconds!==""||contentPoints!=="1"||maxPoints!==""||maxAttempts!=="1"||
+    allowedAssignmentMethods.length!==1||allowedAssignmentMethods[0]!=="WRITTEN_RESPONSE"||
     questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
 
   useEffect(()=>{
@@ -258,9 +264,13 @@ export function FacultyLessonAuthoring({
     try {
       let createdContentId:string|null=null;
       const cleanTitle = title.trim();
-      if (!cleanTitle) {
+      if (!cleanTitle || cleanTitle.length > 255) {
         throw new Error(
-          "Enter a title before saving.",
+          mode === "RESOURCE"
+            ? "Choose a course/lesson and enter a Resource title (1–255 characters)."
+            : mode === "ASSIGNMENT"
+              ? "Enter assignment title."
+              : "Enter a title before saving.",
         );
       }
 
@@ -272,10 +282,21 @@ export function FacultyLessonAuthoring({
         throw new Error("Points must be a whole number between 0 and 1000.");
 
       if (mode === "RESOURCE") {
-        if (!notes.trim() && !url.trim()) {
-          throw new Error(
-            "Add notes or an HTTPS resource link.",
-          );
+        const resourceLink = url.trim();
+        if (!notes.trim() && !resourceLink) {
+          throw new Error("Add notes or an HTTPS resource link.");
+        }
+        if (resourceLink) {
+          let address: URL;
+          try {
+            address = new URL(resourceLink);
+          } catch {
+            throw new Error("Enter a valid HTTPS Resource link.");
+          }
+          if (address.protocol !== "https:" || address.username || address.password ||
+              /\s/.test(resourceLink)) {
+            throw new Error("Enter a valid HTTPS Resource link.");
+          }
         }
 
         const receipt=await post(
@@ -288,8 +309,7 @@ export function FacultyLessonAuthoring({
             points: contentPointValue,
             notes:
               notes.trim() || null,
-            externalUrl:
-              url.trim() || null,
+            externalUrl: resourceLink || null,
             sequence:
               nextContentSequence,
           },
@@ -370,15 +390,16 @@ export function FacultyLessonAuthoring({
       }
 
       if (mode === "ASSIGNMENT") {
-        const points = Number(maxPoints);
-        if (
-          !Number.isInteger(points) ||
-          points < 0 ||
-          points > 1000
-        ) {
-          throw new Error(
-            "Enter a whole number from 0 to 1000",
-          );
+        // Empty points means an ungraded assignment (zero); entered values
+        // follow the legacy authoring constraint of whole numbers 1–1000.
+        const rawPoints = maxPoints.trim();
+        const points = rawPoints === "" ? 0 : Number(rawPoints);
+        if (rawPoints !== "" &&
+            (!Number.isInteger(points) || points < 1 || points > 1000)) {
+          throw new Error("Enter a whole number from 1 to 1000.");
+        }
+        if (allowedAssignmentMethods.length === 0) {
+          throw new Error("Select at least one allowed submission method.");
         }
 
         await post(
@@ -392,6 +413,7 @@ export function FacultyLessonAuthoring({
             dueAt:
               authoringDueInstant(dueAt),
             maxPoints: points,
+            allowedMethods: allowedAssignmentMethods,
             sequence:
               nextAssignmentSequence,
           },
@@ -739,7 +761,7 @@ export function FacultyLessonAuthoring({
                   </FieldLabel>
                   <Input
                     type="number"
-                    min={0}
+                    min={1}
                     max={1000}
                     value={maxPoints}
                     onChange={(event) =>
@@ -747,8 +769,10 @@ export function FacultyLessonAuthoring({
                         event.target.value,
                       )
                     }
-                    required
                   />
+                  <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
+                    Leave blank for zero points, or enter a whole number from 1 to 1000.
+                  </span>
                 </label>
               ) : null}
 
@@ -802,6 +826,13 @@ export function FacultyLessonAuthoring({
               </label>
             ) : null}
 
+            {mode === "RESOURCE" ? (
+              <p className="mt-3 text-xs leading-5 text-muted-foreground">
+                Private file attachments require the separate verified upload workflow;
+                this quick form currently saves notes and HTTPS links only.
+              </p>
+            ) : null}
+
             {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
               <label className="mt-4 flex min-h-11 items-center gap-3 text-sm leading-5 text-body">
                 <Checkbox  checked={publishNow} onChange={event=>setPublishNow(event.target.checked)}/>
@@ -819,6 +850,16 @@ export function FacultyLessonAuthoring({
                 {(startsAt&&facultyIstQuarterHourIssue(startsAt)||
                   endsAt&&facultyIstQuarterHourIssue(endsAt))?
                   <Alert tone="warning">Choose 15-minute start and end times before publishing.</Alert>:null}
+              </div>
+            ) : null}
+
+            {mode === "ASSIGNMENT" ? (
+              <div className="mt-4 min-w-0">
+                <FacultyAssignmentMethodPicker
+                  methods={allowedAssignmentMethods}
+                  onChange={setAllowedAssignmentMethods}
+                  disabled={submitting}
+                />
               </div>
             ) : null}
 
