@@ -45,8 +45,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/assignments.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/faculty-assignment.js`
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/submissions/index.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/assignments.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/faculty-assignment.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/assignments.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/faculty-assignment.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/submissions/index.js`
 - [ ] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Assignments.js`
 - [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/FacultyAssignment.js`
