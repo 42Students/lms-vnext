@@ -32,7 +32,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   finally{setBusy(false);}
  }
  async function post(){
-  if(!body.trim())return;
+  if(!body.trim()){setError("message is required");return;}
   setBusy(true);setError(null);
   try{
    const result=await projectMutation(url,"POST",{
@@ -49,7 +49,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      Comments
    </Button>
    {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
-     <p className="text-xs text-muted-foreground leading-[20px]">Notes and progress updates people on this task have written.</p>
+     <p className="text-xs text-muted-foreground leading-[20px]">Task activity timeline with notes and progress updates.</p>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
          className="w-full">
@@ -69,6 +69,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
         }).format(new Date(row.createdAt))}
       </p>
       <p className="mb-1 text-xs font-semibold text-body leading-[20px]">
+        <span aria-hidden="true">{row.commentKind==="PROGRESS_UPDATE"?"Progress:":row.commentKind==="FLAG_FOR_MENTOR"?"Flag:":"Note:"}</span>{" "}
         {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind]??"Note"}
       </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
@@ -88,7 +89,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          onChange={e=>setBody(e.target.value)}/>
      </label>:null}
      {canPost && !body.trim() ? <p className="text-xs text-muted-foreground leading-[20px]">
-       Add a note before posting.
+       message is required
      </p> : null}
      {canPost?<Button className="w-full md:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}

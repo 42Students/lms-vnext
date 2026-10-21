@@ -179,8 +179,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     </div>}
     {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
      <Textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
-      className="mt-1 min-h-20 w-full" placeholder="Describe the correction required"/>
+      className="mt-1 min-h-20 w-full" placeholder="Or write what needs to change"/>
      <span className="mt-1 block text-xs leading-[20px]">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
+     {bulkReason.trim().length<3?<span role="alert" className="mt-1 block text-xs text-error">Say what needs to change</span>:null}
     </label>}
     {bulkAction==="SEND_BACK"&&<Button variant="secondary" type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
       onClick={()=>void executeBulk("SEND_BACK",bulkReason)} >

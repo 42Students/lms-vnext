@@ -25,13 +25,23 @@ export async function POST(request:Request){
   const context=await getCurrentRequestContext();
   const record=await submitOwnVerification(context,input.data.section,
    input.data.expectedVersion,createProfileVerificationRepository(verifyPrivateDocumentReceipt));
-  return NextResponse.json({status:record.status,version:record.version});
+  return NextResponse.json({status:record.status,version:record.version,
+   message:record.status==="UPDATE_PENDING"
+    ?"Changes sent for verification. Your previously verified details remain in effect until review."
+    :"Sent for verification"});
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"NOT_FOUND"},{status:404});
   if(error instanceof VerificationStateError){
    if(error.code==="NOT_ALLOWED")return NextResponse.json({error:"NOT_FOUND"},{status:404});
    const conflict=error.code==="STALE_VERSION"||error.code==="NOTHING_CHANGED";
-   return NextResponse.json({error:error.code},{status:conflict?409:422});
+   const message=error.code==="NOTHING_CHANGED"
+    ?"Nothing has changed since it was verified":
+    error.code==="INCOMPLETE_DOCUMENTS"
+    ?"Before sending: complete this section and add any required documents":
+    error.code==="INVALID_TRANSITION"
+    ?"This section cannot be submitted in its current state. Refresh the section and try again.":
+    "Your verification could not be submitted. Refresh and check this section.";
+   return NextResponse.json({error:error.code,message},{status:conflict?409:422});
   }
   throw error;
  }

@@ -269,3 +269,89 @@
 
 - work2 #9 `tpo-draft-drive-model.ts` | G2-3-011-033: constrained canonical label syntax; added scoped picker helper allowing all active configured labels and hidden saved historical choice only in its existing edit context. Employment category remains separate; createPlacementJob already verifies tenant status/built-ins. UI sourcing of all five choices handed off.
 - work2 #10 `public-page/publication-service.ts` | G2-17-022-026: added live publish eligibility signal requiring explicit enabled/published state and current >=5 consented active learners; historical snapshot not treated as live approval. 12-month metric aggregation remains in scoped public-read service and is handed off.
+
+- work2 #11 `placements/offers/[offerId]/actions/route.ts` | G2-17-023-026: retained authenticated vNext `{offer}` client contract, documented direct-object legacy response adapter instead of breaking current consumers.
+- work2 #12 `college-drive-archive-action.tsx` | G2-9-013-047: explicitly announces accurate `Drive archived` on confirmed successful request before returning to archived drives, not legacy false deletion claim.
+
+- work2 #13 `college-drive-row-lifecycle-action.tsx` | G2-9-015-049: failed close/reopen impact preview now explicitly reassures that nothing changed; legacy deletion copy deliberately not misapplied because this control has no delete path.
+- work2 #14 `bug-tracker/admin-validation.ts` | G2-17-024-017: explicit human-readable Zod status/resolution labels for admin listing and workflow updates, while retaining strict enum checks.
+
+- work2 #15 `learner-notification-membership-service.ts` | G2-18-004-037: retained active college membership requirement without imposing current section/class prerequisite; exported classless notice hint. UI handoff for display rather than hiding college/direct notices.
+- work2 #16 `api/activity/route.ts` | G2-18-024-025: provided legacy-compatible actorNames/targetNames dictionaries from authorized response items; retained truthful vNext cursor. Skipped page/size/global total since unbounded offset totals cannot be derived accurately from cursor response; adapter handoff.
+
+- work2 #17 `tpo-company-detail-read-service.ts` | G2-11-007-066: preserved strict canonical UUID/relationship detail route while documenting separate job-only college-scoped company-memory route. No unsafe synthetic recruiter relationship; route owner handoff for name-based legacy bookmark.
+- work2 #18 `tpo-builtin-job-types-editor.tsx` | G2-3-011-023: exact `Job types were not saved` failure, server reason, dismiss and Retry with fresh version via router.refresh; retains controls and no stale blind resubmission.
+
+- work2 #19 `learner-support-request-model.ts` | G2-14-023-026: added discriminated, chronologically ordered personal request history projection across placement and general request kinds without fake Job references. Authenticated dual-table service and combined post-merge filtering/pagination handed off.
+- work2 #20 `mentor/not-found.tsx` | G2-12-004-009/010: verified 404 fallback is not the dynamic legacy bookmark handler; did NOT redirect all unknown mentor routes (conflicting behavior). Documented exact dynamic route handoff for silent redirect without toast or UUID validation.
+
+- work2 #21 `college/jobs/[jobId]/archive/route.ts` | G2-9-013-055: documented explicit legacy soft-delete→confirmed archive translation, preview impact GET, same-origin POST and preserved downstream application/event history. Physical DELETE intentionally unavailable.
+- work2 #22 `tpo/team/[threadId]/page.tsx` | G2-3-022-017/018: documented exact verified action outcome mapping. Server page is not a mutation result surface, so fake toast on load skipped; child interactive controls must announce verified operation results, handoff recorded.
+
+- work2 #23 `college-shortlisted-query.ts` | G2-9-014-005/024: typed ASSESSMENT default and URL stage/status/source/department/program/batch UUID filters; deep-link HREF retains active filters and ignores defaults. Existing page already uses canonical driveApplicationsParams; form/query wiring for department/program/batch handed off.
+- work2 #24 `tpo/profile/error.tsx` | G2-19-030-023/024: restored legacy error heading and in-place Retry, no unsupported assertion that faculty record actually missing. Stale-profile warning only when real retained card exists, so handed to profile data component rather than claiming nonexistent cache.
+
+- work2 #25 `project-template-catalogue-model.ts` | G2-7-006-038: restores exact Title/Version/Summary CSV headers and filename remains caller-owned; optional summary field additive to avoid breaking existing consumers. Template loader must populate real summary, handed off.
+- work2 #26 `learner-application-detail-model.ts` | G2-5-015-025/037: immutable latest REJECTED transition uses prior recorded stage for exact Not shortlisted, Not cleared: Assessment/Interview, Waitlist ended labels; unknown stage neutral and no inferred rejection.
+
+- work2 #27 `faculty-content-edit-model.ts` | G2-12-008-022: exported exact historical YouTube deletion success/failure copy and 2-second toast duration; component must show only on verified API result, handed off.
+- work2 #28 `mobile-navigation.tsx` | G2-3-033-029: matched concise Open/Close menu accessible labels, disabled duplicate opening while native Drawer handles focus/Back/Escape/route close. Blocked link navigation feedback belongs shared SidebarNav handler; handed off rather than falsely claim success.
+
+- work2 #29 `super-admin-company-verification-service.ts` | G2-9-034-093: global verification audit now snapshots canonical primaryDomain and explicitly records that independent domain ownership is NOT inferred from company flag. Domain-proof consistency cannot be auto-propagated without separate verified domain evidence; handoff for approved schema/service migration.
+- work2 #30 `api/projects/reassign-mentor/route.ts` | G2-6-028-036: rejects obsolete numeric mentorId body with 400 MENTOR_MEMBERSHIP_ID_REQUIRED, retains membership-scoped bulk reassignment authority and roleLabel. Legacy tenant-checked ID crosswalk handed to adapter owner.
+
+- work2 #31 `learner-placement-notification-model.ts` | G2-4-015-020/025: added strict nullable legacy toggle adapter merging only explicitly non-null fields into live baseline; current confirmed CAS schema unchanged for safe writes. Endpoint integration handed off.
+- work2 #32 `faculty-assessment-route-boundary.ts` | G2-3-007-024/G2-4-013-032: distinct hidden/invalid report "Report not found." (no Retry) vs transient fetch "Couldn't load the report." with Retry, without revealing scoped resource existence. Render in report pages/error boundaries handed off.
+
+- work2 #33 `learn/my-placements/interviews/error.tsx` | G2-17-005-016: exact historical "We could not load your schedule" error copy with same Retry control and explicit failure-not-empty guidance retained.
+- work2 #34 `placements/season-service.ts` | G2-8-022-030: documented old season endpoint crosswalk and added scoped current ACTIVE season resolver. Legacy open-registration intentionally not conflated with season creation; requires batch-invitation route, handed off.
+
+- work2 #35 `api/projects/[projectId]/route.ts` | G2-2-020-023: preserved CAS project summary PATCH and explicit 400 USE_VERSIONED_SECTION_ENDPOINTS for unsupported legacy nested releases/sprints/tasks/resources/sectionTokens instead of silently discarding updates. Authenticated section API adapter handoff.
+- work2 #36 `tpo-outcome-label-settings-service.ts` | G2-2-030-035/026: added fixed-only, ACTIVE-account catalog reader for recruiter/no-college sessions; dynamic custom labels remain strict college/TPO auth. Endpoint owner must use safe fallback without swallowing database outage.
+
+- work2 #37 `learner-course-discussion.tsx` | 11 findings G2-2-033-029..033, G2-12-009-027..030, G2-19-031-051, G2-2-037-020: checked POST acknowledgment before draft reset, retained 409 draft; exact 2-second post/delete/pin error toasts, delete confirmation stays open on failure, history refresh warning exact two-line copy and Retry. Confirmed server POST refetch then scroll/focus; stale refresh keeps last messages.
+- work2 #38 `admin/people/page.tsx` | G2-8-002-019 restored exact no-college heading and detail while retaining global browsing link.
+
+- work2 #39 `tpo-drive-cancel-service.ts` | G2-8-011-001: explicit safe legacy lifecycle projection that keeps REQUEST/SENT_BACK/REJECTED in request domain and DRAFT/PUBLISHED/CLOSED/CANCELLED in Job domain; cancellation's immutable effects untouched; combined UI action mapping handed off.
+- work2 #40 `learner-attention-service.ts` | G2-15-004-065: typed projection maps persisted project status/progress, actual mentor membership start, delivery submit/review instants and due date to legacy learner view; no inferred review timestamp. Fixture/service integration handed off.
+
+- work2 #41 `learner-career-rounds-workspace.tsx` | G2-17-005-014/025: added legacy ahead/past/month alias mapping and initial upcoming default for interview schedule, URL Back/Forward adaptation. Combined standalone interviews, vendor tests and rounds must be supplied by authorized parent loader; not invented from per-kind prop.
+- work2 #42 `super-admin-content-authoring-service.ts` | G2-9-025-063: replaced fixed first-500 lesson limit with bounded searchable 50-per-page result, acting-college scope retained. Per-section delivery choices and content creation API must be wired to authorized delivery rather than blanket null; handoff.
+
+- work2 #43 `api/admin/faculty-assignment/batch/route.ts` | G2-14-027-016/020: kept 401 session error vs 403 CSRF integrity and added exact single-association success message while preserving atomic batch and counted plural success.
+- work2 #44 `tracker-cloud-logs.ts` | G2-12-024-006: explicit safe log detail projection of redacted/whitelisted identifier, time, event, message, path, request ID, component. Raw provider JSON omitted intentionally to prevent authentication/PII leakage.
+
+- work2 #45 `project-audit-page-export.tsx` | G2-7-036-012/017: switched export to legacy Action/Entity type/Entity ID/Actor/When headers; row inputs represent ungrouped authorized activity events, optional missing actor/entity IDs left blank rather than invented. Parent audit page source mapping handoff.
+- work2 #46 `public-work-email-policy.ts` | G2-13-012-028/G2-12-012-007: added known legacy academic suffixes and rejected IPv4 shorthand/numeric octal/hex/IPv6 address forms before invalid-host path. Full legacy resource-backed personal/disposable blocklists unavailable in source snapshot: owner must restore centrally refreshed rules; marked partial.
+
+- work2 #47 `lesson-content-order-service.ts` | G2-3-027-083: documented authenticated old class/content integer→verified delivery/content UUID crosswalk and active staged per-delivery order; existing full-order enforcement and runtime gate preserved. Migration/replay and group-backed class mapping handoff.
+- work2 #48 `faculty-student-detail-service.ts` | G2-3-009-054: mapped historical learner/class numeric IDs to authorized membership/section delivery UUIDs and name, roll, contact fields; existing active faculty + roster checks already restrict scope, no unsafe identity coercion. Future data import handoff.
+
+- work2 #49 `learner-course-card-search-model.ts` | G2-3-014-012: added bounded weighted ranking (exact 100/prefix 80/substring 60/edit distance <=2 40) with optional authorized usage boost and deterministic tie breaker for local course autocomplete. Full global synonym dictionary and cross-module usage unavailable; handoff for scoped source.
+- work2 #50 `api/courses/quiz-attempts/route.ts` | G2-3-001-049: explicit nextPage and deliveryId to permit reliable iteration across all section-scoped attempt pages, without truncating results silently or allowing unbounded cross-college query. Legacy college-wide consolidation remains authenticated consumer responsibility.
+
+- work2 #51 `learner-placement-job-detail.tsx` | G2-18-023-005/020: shows primary persisted application denial before generic availability, supplies REGISTER and RULES destinations derived from existing blockers; no eligibility-only OPEN assertion added. Need typed actionCode from apply service for exact parity.
+- work2 #52 `admin-readiness-overrides-service.ts` | G2-7-004-043/G2-7-032-078: includes archived projects in existing active override audit listing (chooser remains separate); exports active/clear, value, note, actor and timestamp event mapping; CLEAR remains excluded from active list.
+
+- work2 #53 `session-response-guard.tsx` | G2-1-037-028: root sign-in already shows session expired/revoked notice from validated auth query; replaced history entry to prevent Back loops after failed API auth and retained returnTo.
+- work2 #54 `mentor-notifications-service.ts` | G2-7-026-086: explicit legacy created_at/createdAt, type/title/message, receiverType, readAt projection into event plus authenticated recipient receipt; malformed timestamps and non-mentor audiences rejected. Persistence import/historical crosswalk requires authorized import service.
+
+- work2 #55 `admin-directory-query-model.ts` | G2-4-014-017: added strict legacy /search query/state/city/orgId/limit default15 validator without altering current admin directory default25; old numeric orgId requires verified scoped crosswalk.
+- work2 #56 `tracker/issues/[publicId]/retest/route.ts` | G2-17-024-020: still returns persisted refreshed issue envelope, now explicit status/version receipt and private no-store; UI must reread latest ticket on mutation completion.
+
+- work2 #57 `college-live-classes-directory.tsx` | G2-18-007-018: guarded Join rendering for validated HTTPS no-credentials meeting URL, Invalid link/No link when authorized data explicitly provides value, no guessing when aggregate intentionally omits links. Authorized source handoff required to populate meetingUrl.
+- work2 #58 `college-drive-bulk-actions.tsx` | G2-9-015-068/051/052: separated close from archival, documented scheduled-round and issued-offer consequences; exact single Job opened/closed success, verb-specific bulk result and failed selection retained for retry.
+
+- work2 #59 `mentor-release-editor.tsx` | G2-17-017-005/015: optional authoritative readiness totals (sprints, completed/committed points), Ship disabled until at least one/all linked sprints completed, versioned POST ship with confirmation and success/error states; parent rollup input remains integration handoff.
+- work2 #60 `faculty-profile-repeatable.tsx` | G2-1-003-040: exact 'Remove this entry?' confirmation title and delayed-save explanation moved into ConfirmDialog description; unsaved draft deletion only after confirmation.
+
+- work2 #61 `tpo/reports/failure-reasons/page.tsx` | G2-13-031-090: plotted applied FAIL shares using applied-decision denominator (not total adverse events), excluded unknown denominator from percentage chart instead of reporting zero, and explicitly named absent reasons.
+- work2 #62 `api/college/departments/[departmentId]/route.ts` | G2-18-027-017: documented standardized 409 DEPARTMENT_HAS_DEPENDENCIES mapping with safe message/usage/requestId and no-store archive response. Did not leak raw legacy exception text.
+
+- work2 #63 `app/globals.css` | G2-3-033-032: removed unsupported 26px mobile page title override; now inherits base 30px. Old shell's phone rules address header/nav only; alternate mobile typography awaits rendered legacy measurement.
+- work2 #64 `project-admin-collection-controls.tsx` | G2-10-028-020/G2-7-019-027: documented five historical labels and avoided false Ready=COMPLETED or Blocked=ARCHIVED aliases; authorized at-risk link exposes Blocked workbench, while canonical status filter remains accurate. Full legacy filter query needs domain rollup.
+
+- work2 #65 `tpo/reports/ctc/page.tsx` | G2-13-031-087: explicitly validates five legacy INR cutoffs 0/4/6/10/20 lakh and warns when the current 0–3/3–6/6–10/10–20/20+ aggregation cannot be truthfully split; no fabricated 3–4 counts. Raw-offer model reaggregation is a cross-file handoff.
+- work2 #66 `college/lessons/error.tsx` | G2-17-007-033: exact refresh-failure state and Retry plus list return, explicitly avoids claiming empty results or stale rows not actually mounted. Parent partial-fetch cache must retain verified rows; handoff.
+
+- work2 #67 `api/academics/schedule-events/route.ts` | G2-2-032-046: additive legacy `OK` status/message after confirmed create, while retaining vNext `{event}`, HTTP 201, and private no-store. Success-toast duration requires UI mutation handler integration.

@@ -35,6 +35,10 @@ export async function POST(
         new Date(),
         context.membership?.roles.includes("LEARNER") ? "ISSUED" : undefined,
       );
+    // vNext clients read {offer}; historical LearnerOfferController returned
+    // the offer object directly. Legacy integrations must unwrap response.offer
+    // at their adapter boundary; changing this authenticated route would break
+    // active clients and does not add server-side security.
     return NextResponse.json({ offer });
   } catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{

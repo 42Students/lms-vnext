@@ -20,7 +20,13 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   } catch (error) {
     if (error instanceof CollegeFacultyLifecycleError) {
       return NextResponse.json(
-        { error: error.code === "FACULTY_NOT_FOUND" ? "NOT_FOUND" : error.code },
+        {
+          error: error.code === "FACULTY_NOT_FOUND" ? "NOT_FOUND" : error.code,
+          ...(error.code === "FACULTY_HAS_ACTIVE_PROJECTS" ? {
+            message: error.message,
+            activeMentorProjects: error.activeMentorProjects,
+          } : {}),
+        },
         { status: error.code === "FACULTY_NOT_FOUND" ? 404 : 409 },
       );
     }

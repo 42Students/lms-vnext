@@ -7,6 +7,13 @@ export const learnerNotificationInboxQuerySchema = z.object({
   q:z.string().trim().max(100).optional().default(""),
 }).strict();
 export type LearnerInboxQuery = z.infer<typeof learnerNotificationInboxQuerySchema>;
+/** Legacy ?tab links use the same validated category vocabulary; the
+ * authenticated /learn/notifications route already performs the canonical
+ * redirect and rejects conflicting category/tab parameters.
+ */
+export function legacyLearnerNotificationCategory(value:unknown){
+ return z.enum(["course","project","general","job"]).safeParse(value).data??null;
+}
 /** Only validated learner inbox filters become navigable URLs; never identity selectors. */
 export function learnerNotificationInboxHref(raw: unknown) {
   const state=learnerNotificationInboxQuerySchema.parse(raw);

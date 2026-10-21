@@ -125,3 +125,69 @@
 
 - `src/components/tpo/tpo-draft-drive-step-one-form.tsx` G2-3-011-033: currently only three employment categories; add separate college-scoped jobTypeLabel picker for all five built-ins and active custom rows; use `tpoDraftAvailableJobTypeLabels` helper. Never show hidden type for new drives, but retain saved hidden label in historical edits.
 - Public placements metric read service G2-17-022-026: return live 12-month time-windowed metrics only when publication settings are enabled, publishedAt exists and >=5 current consented learners; never substitute old population snapshot or return suppressed small cohorts.
+
+- `src/app/(authenticated)/learn/notifications/page.tsx` G2-18-004-037: show `LEARNER_NO_CURRENT_CLASS_NOTICES_HINT` when class enrollment absent but keep college, cohort and direct notices visible to authorized learner membership.
+- Legacy Super Admin audit adapter G2-18-024-025: current activity route is cursor-paginated; actorNames/targetNames dictionaries now supplied. For old page/size/total API, implement separately authenticated, scope-checked count+offset adapter (not false total from cursor) if required by old consumers.
+
+- Legacy TPO company memory route G2-11-007-066: implement separate college-scoped job/lead name lookup for job-only entries not yet tied to a canonical recruiter-company relationship; never require fictitious association or leak ungranted companies. Canonical `getTpoCompanyDetailReadOnly` remains strict for UUID identities.
+
+- `src/modules/placements/learner-support-request-service.ts` G2-14-023-026: query `placement_learner_general_requests` with SAME current learner membership and college alongside placement requests, combine using `mergeLearnerPersonalRequestHistory`; apply type/status filters and pagination across combined history, not separately.
+- NEW `src/app/(authenticated)/mentor/courses/[courseId]/page.tsx` G2-12-004-009/010: redirect any legacy courseId segment to `/mentor/projects` with Next.js `redirect()`, no validation/toast. Do not alter generic mentor/not-found behavior.
+
+- Interactive `src/components/tpo/tpo-team-follow-controls.tsx`, `tpo-team-rename.tsx`, `tpo-team-message-actions.tsx`, `tpo-team-decision-toggle.tsx`, `tpo-team-ask-panel.tsx` G2-3-022-017/018: after successful authorized POST/PATCH show exact ADDED/OK/LEFT, EDITED/DELETED/DONE/CANCELLED feedback using role=status, never on speculative click or server render; preserve error and retry paths.
+
+- College shortlisted page/filter service G2-9-014-024: canonical `driveApplicationsParams` and pipeline query must receive department/program/batch UUID scope, render filter controls and clear-filters, retaining source/stage; companion `collegeShortlistedQuery` supports these URL keys now.
+- TPO profile data client G2-19-030-024: retain last successful profile in component state on refresh failure and show exact `Couldn't refresh profile. Showing the last profile we loaded.` only while cached card truly rendered; error.tsx cannot safely claim stale cached content by itself.
+
+- Project template catalogue loader G2-7-006-038: pass persisted template summary/overview into `TemplateCatalogueRow.summary` for exact three-column CSV; do not fabricate from section counts. Model/headers ready.
+
+- Faculty YouTube deletion component G2-12-008-022: consume `FACULTY_YOUTUBE_DELETE_FEEDBACK` in delete mutation handler after confirmed server success/failure, show accessible toast for durationMs=2000.
+- Shared `src/components/shell/sidebar-nav.tsx` G2-3-033-029: render blocked navigation feedback when route click fails/permission denies; mobile Drawer currently closes on link click and uses native focus recovery. Don't claim page opened until pathname changes; guard repeated pending link clicks.
+
+- Company identity/domain verification G2-9-034-093: define independent persisted verified domain evidence before syncing global company verification to domain flag; do NOT auto-mark domain owned just because a Super Admin marks company globally verified. Current service audits primaryDomain and domainProofNotInferred; schema/privileged verification reconciliation needs review.
+- Legacy project bulk mentor adapter G2-6-028-036: trusted admin client must resolve old integer mentorId to selected college's ACTIVE mentorMembershipId UUID, refuse ambiguous/out-of-tenant mappings, then POST new API; never cast old ID or bypass requirePermission.
+
+- Learner placement notification write adapter G2-4-015-020/025: for trusted old PUT, read current persisted booleans and call `mergeLegacyPlacementNotificationPatch`; then require confirmed and CAS expected baseline before using live narrow write service. Null master toggle MUST NOT reset another preference.
+- Faculty quiz/assignment report pages G2-3-007-024/G2-4-013-032: use `facultyAssessmentReportErrorCopy` to render exact "Report not found." without Retry for invalid/hidden route; for legitimate retriable load error preserve server-safe details and show Retry. Never show private details from 403.
+
+- Placement season API G2-8-022-030: if historic /current consumer required, expose `currentPlacementSeason` under persisted college scope; map legacy open-registration to authorized batch lifecycle invite with audit and preview, not generic season OPEN.
+
+- Legacy project workspace update adapter G2-2-020-023: split nested DTO into project summary and separately CAS-protected releases/sprints/tasks/resources endpoints under project scope and authorize every section; do not accept nested fields in summary route or execute partial untracked updates.
+- After-college choices endpoint G2-2-030-035/026: when account ACTIVE but no authorized college, use `fixedTpoOutcomeCatalog` rather than calling restricted `readTpoOutcomeLabels`; empty dynamic labels. Do not reveal college custom choices to recruiter/no scope or convert infrastructure errors to false success.
+
+- TPO drive lifecycle UI/read owner G2-8-011-001: use `tpoLegacyLifecycleProjection` to distinguish placement_recruiter_drive_requests REQUEST/SENT_BACK/REJECTED from placement_jobs DRAFT/PUBLISHED/CLOSED/CANCELLED; never send request IDs to job cancellation route.
+- Learner project workspace DTO adapter G2-15-004-065: map actual active projectMembers mentor, latest projectSubmissions submittedAt, immutable review events, projectInstances progressPercent/endDate to `learnerLegacyProjectProgressProjection`; add fixtures for each status/nullable timestamp; no fake review dates.
+
+- Learner schedule loader G2-17-005-025: produce combined authorized calendar of assessments, standalone interview slots and vendor tests, merging chronologically and respecting old /schedule view aliases; kind-specific workspace cannot conjure missing records.
+- Super Admin course authoring component/service G2-9-025-063: paginate/search `listSuperAdminContentAuthoringLessons` and add selected offering's courseSectionDeliveries (tenant-checked) to picker; create with verified deliveryId rather than always null. Maintain acting-college scope.
+
+- Project audit page G2-7-036-012/017: pass `actorName`, `entityType`, `entityId` from authorized ungrouped activity rows into ProjectAuditPageExport, not event ID as entity ID. Current caller only passes summary/label, so missing values export blank until integrated.
+- Company email policy G2-13-012-028: bundled old personal-mail-domains.txt/disposable-mail-domains.txt not found under legacy-source; retrieve authoritative resource lists, review/refresh central policy, prevent send until MX/tenancy provider checks. Local inline sets are incomplete by design.
+
+- DB05 lesson order owner G2-3-027-083: promote lessonContentDeliverySequences only after verified old content_id/class_id→new contentId/deliveryId/college crosswalk and same-offering ownership, full-order transaction and SQL replay; do not use fabricated group-backed delivery.
+- Faculty roster directory owner G2-3-009-054: resolve legacy learnerId/classId to authorized collegeMembership and courseSectionDelivery with role/college verification; map legacy contact_mobile/contact_mail only through masked-to-role disclosure policy.
+
+- Learner autocomplete G2-3-014-012: wire `rankLearnerCourseAutocomplete` into authorized result set; merge approved legacy global synonyms and independently authenticated usage boosts before claiming full global search parity.
+- College quiz attempts G2-3-001-049: list all authorized section deliveryIds for a quiz, iterate `nextPage` for each, and combine with stable attempt identity in UI/export; no unpaged cross-college leakage or hard first-page assumption.
+
+- Learner job apply gate G2-18-023-005/020: add typed backend actionCode REGISTER/RULES and authoritative denial reason to authorized per-role job detail DTO; current UI maps text blockers as fallback only, must agree with real apply service at click.
+- Project readiness historical audit G2-7-032-078: query all persisted events to show CLEAR and transitions using readinessOverrideAuditProjection; active list intentionally filters latest FORCE states while archived projects with active overrides remain visible.
+
+- Mentor legacy notification migration G2-7-026-086: translate vetted records through projectLegacyMentorNotification then persist activityEvents and inAppNotifications under trusted member college/user grant, never accept receiverType or userId from client as authorization. Ensure historical audience and readAt preserved.
+
+- College legacy search endpoint G2-4-014-017: bind legacyCollegeDirectorySearchSchema to authorized college directory query; resolve historic numeric orgId through verified tenant crosswalk, apply city/state predicates and top-N limit15 without relaxing admin scope.
+- Bug tracker retest consumer G2-17-024-020: after success use returned fresh issue.version/status and refresh page instead of mutating stale local state; still no raw legacy BugReportResponse replacement.
+
+- College live class aggregate G2-18-007-018: current `listCollegeContentAggregate` intentionally omits externalUrl, so permissioned reader must add a reviewed meetingUrl only for authorized college/offerings; then directory renders Join, Invalid link or No link. Do NOT expose raw URLs via unscoped aggregate before approval.
+- College drive bulk archive G2-9-015-068: bulk CLOSE preview only returns pendingLettersWithdrawn; extend impact if UI needs exact interview notification counts. Actual archive remains separate and must use per-drive impact confirmation.
+
+- Mentor release rollup G2-17-017-005/015: parent loader must supply verified `readiness` with readyToShip, completedSprintCount, committedPoints, completedPoints from tenant-scoped persisted release/sprint/task service; Ship stays disabled without those authoritative fields and server reconfirms gate.
+
+- Department archive legacy client G2-18-027-017: map DEPARTMENT_HAS_DEPENDENCIES 409+usage+safe message from current apiErrorResponse to old status ERROR conflict UI; do not reproduce raw server exception detail.
+
+- Legacy project workspace status filters G2-10-028-020/G2-7-019-027: build authorized five-state projection combining lifecycle and readiness/risk, extend URL parser & service before rendering noncanonical Select options. Never incorrectly alias Ready to COMPLETED or Blocked to ARCHIVED.
+
+- TPO CTC report model G2-13-031-087: change `src/modules/placements/report-model.ts` underlying knownCtc loop to boundaries 0/400000/600000/1000000/2000000 INR, labels below4/4-6/6-10/10-20/20+ LPA; regenerate CSV/metric tests. UI cannot accurately split existing 3–6 aggregate without raw offers.
+- College lessons partial load G2-17-007-033: maintain last valid rows in list component state when a subsequent partial scope fetch fails; show warning `Couldn't refresh lessons` plus Retry while retaining actual cached rows; error.tsx alone can't render the old list.
+
+- Class schedule creator UI G2-2-032-046: show verified create success toast and legacy duration from UI design source only after authorized POST acknowledgment; never show success on 401/403.

@@ -25,7 +25,7 @@ export function ProjectReadinessOverrideForm({
   compactLayout?: boolean;
 }) {
   const router = useRouter();
-  const [state, setState] = useState<ReadinessOverrideState>(initialState ?? "CLEAR");
+  const [state, setState] = useState<ReadinessOverrideState | "">(initialState ?? "");
   const [note, setNote] = useState(initialNote ?? "");
   const [pending, setPending] = useState(false);
   const pendingRef = useRef(false);
@@ -35,6 +35,7 @@ export function ProjectReadinessOverrideForm({
   function requestSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (pendingRef.current) return;
+    if (!state) { setFeedback("Choose an override state"); return; }
     if (state !== "CLEAR" && !note.trim()) {
       setFeedback(copy.noteRequired);
       return;
@@ -44,7 +45,7 @@ export function ProjectReadinessOverrideForm({
   }
 
   async function save() {
-    if (pendingRef.current) return;
+    if (pendingRef.current || !state) return;
     pendingRef.current = true;
     setPending(true);
     setFeedback(null);
@@ -57,9 +58,9 @@ export function ProjectReadinessOverrideForm({
       setConfirmOpen(false);
       setFeedback(copy.updated);
       router.refresh();
-    } catch {
+    } catch (error) {
       // Keep the selected direction and the entered note for a safe retry.
-      setFeedback(copy.failed);
+      setFeedback(error instanceof Error && error.message.trim() ? error.message : "Failed to update readiness");
     } finally {
       pendingRef.current = false;
       setPending(false);
@@ -90,12 +91,13 @@ export function ProjectReadinessOverrideForm({
             setFeedback(null);
           }}
         >
+          <option value="" disabled>Choose an override state</option>
           <option value="FORCE_UNLOCK">{copy.unlock}</option>
           <option value="FORCE_BLOCK">{copy.block}</option>
           <option value="CLEAR">{copy.clear}</option>
         </Select>
         </div>
-        {state !== "CLEAR" ? (
+        {Boolean(state) && state !== "CLEAR" ? (
           <div className="grid min-w-0 gap-[6px]">
             <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-note">{copy.note}</label>
             <Textarea
@@ -113,7 +115,7 @@ export function ProjectReadinessOverrideForm({
           </div>
         ) : null}
         <div className="flex min-w-0 justify-stretch md:justify-end">
-        <Button type="submit" variant="primary" loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
+        <Button type="submit" variant="primary" loading={pending} disabled={pending || !state} className="min-h-11 w-full md:min-h-9 md:w-auto">
           {copy.submit}
         </Button>
         </div>
@@ -128,7 +130,7 @@ export function ProjectReadinessOverrideForm({
         pending={pending}
         onConfirm={() => { void save(); }}
       >
-        {feedback === copy.failed ? <Alert tone="error" role="alert">{feedback}</Alert> : null}
+        {feedback && feedback !== copy.updated ? <Alert tone="error" role="alert">{feedback}</Alert> : null}
       </ConfirmDialog>
     </>
   );

@@ -111,6 +111,13 @@ export async function recordTpoOfferLifecycle(
       if (!canRecordTpoOfferAction(input.action, offer.status, currentJoining?.status ?? null)) {
         throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
       }
+      // A matured acceptance has already cascaded changes to sibling offers
+      // and applications. Generic withdrawal cannot leave those side effects
+      // behind; it must go through the dedicated audited cascade-undo flow.
+      if (input.action === "WITHDRAW" &&
+          offer.status === "ACCEPTED" && offer.cascadeId !== null) {
+        throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+      }
       if (input.action === "RECORD_JOINED" &&
           !canRecordTpoActualJoiningDate(input.joiningDate!, now)) {
         throw new PlacementsServiceError("PLACEMENT_JOINING_NOT_READY");
@@ -287,6 +294,14 @@ export async function finalizeMaturedExternalTpoAcceptances(
   now: Date = new Date(),
   batchSize = 40,
 ) {
+  // A zero-sized sweep is an intentional no-op; never mutate one offer
+  // because a caller passed zero, NaN, or a negative batch size.
+  const limit = Number.isFinite(batchSize)
+    ? Math.max(0, Math.min(100, Math.trunc(batchSize)))
+    : 0;
+  if (limit === 0) {
+    return { examined: 0, finalized: 0, disputed: 0, skipped: 0, failed: 0 };
+  }
   const db = getDb();
   const due = await db.select({
     offerId: placementOffers.id,
@@ -318,7 +333,7 @@ export async function finalizeMaturedExternalTpoAcceptances(
       // acceptance: maturity follows the offer, not the dashboard filter.
     ))
     .orderBy(asc(placementOffers.acceptedDisputableUntil), asc(placementOffers.id))
-    .limit(Math.max(1, Math.min(100, Math.trunc(batchSize) || 40)));
+    .limit(limit);
 
   let finalized = 0;
   let disputed = 0;

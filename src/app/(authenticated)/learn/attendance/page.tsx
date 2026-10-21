@@ -6,6 +6,7 @@ import {
   LearnerAttendanceWorkspace,
 } from "@/components/attendance/learner-attendance-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import {
   getLearnerAttendanceWorkspace,
 } from "@/modules/attendance/learner-service";
@@ -18,11 +19,23 @@ export default async function LearnerAttendancePage({searchParams}:{
   const selected=learnerAttendanceMonthSchema.safeParse(raw.month).data??defaultMonth;
   const context =
     await getCurrentRequestContext();
-  const workspace =
-    await getLearnerAttendanceWorkspace(
-      context,
-      {window:learnerAttendanceMonthWindow(selected)},
-    );
+  // Keep the requested IST month on a failed read; no records are fabricated.
+  const loaded=await getLearnerAttendanceWorkspace(context,{
+    window:learnerAttendanceMonthWindow(selected),
+  }).then(workspace=>({ok:true as const,workspace}))
+    .catch(()=>({ok:false as const}));
+  if(!loaded.ok)return <div className="min-w-0 space-y-4 md:space-y-6">
+    <PageHeader title="Attendance"/>
+    <Alert tone="error">
+      <strong>Failed to load attendance.</strong>
+      Something went wrong loading attendance for this month. No attendance records were changed.
+      <Link href={"/learn/attendance?"+new URLSearchParams({month:selected}).toString()}
+        className="lms-inline-link font-semibold underline underline-offset-4">
+        Retry attendance
+      </Link>
+    </Alert>
+  </div>;
+  const workspace=loaded.workspace;
 
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">

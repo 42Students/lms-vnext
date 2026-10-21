@@ -21,8 +21,18 @@ export const placementLegacyPostingDetailsSchema=z.strictObject({
   .nullable().optional().default(null).transform(v=>v||null),
  assessmentDeadline:z.iso.datetime({offset:true}).nullable().optional().default(null),
  importantDates:z.array(z.strictObject({
-  label:z.string().trim().min(1).max(120),at:z.iso.datetime({offset:true}),
- })).max(20).default([]),
+  label:z.string().trim().min(1).max(120),
+  at:z.iso.datetime({offset:true}).optional(),
+  date:z.union([z.iso.date(),z.iso.datetime({offset:true})]).optional(),
+  type:z.string().trim().max(80).optional(),
+  dateType:z.string().trim().max(80).optional(),
+ }).refine(v=>Boolean(v.at||v.date),{message:"Important date is required",path:["at"]})
+  .transform(v=>({
+   label:v.label,
+   at:v.at??(v.date!.length===10?v.date+"T00:00:00.000Z":v.date!),
+   ...(v.type?{type:v.type}:{}),
+   ...(v.dateType?{dateType:v.dateType}:{}),
+  }))).max(20).default([]),
  candidatePreferences:z.strictObject({
   preferredDegree:z.string().trim().max(160).default(""),
   specialization:z.string().trim().max(160).default(""),

@@ -27,6 +27,31 @@ export const STORAGE_FILE_ERROR_STATUS = {
 
 export type StorageFileErrorCode = keyof typeof STORAGE_FILE_ERROR_STATUS;
 
+/** Safe, operation-specific copy. Never pass raw R2/AWS exception messages
+ * through the upload UI or API response.
+ */
+export function storageFileFriendlyMessage(
+ code:StorageFileErrorCode,operation:"resource"|"generic"="generic",
+):string{
+ switch(code){
+  case "STORAGE_NOT_CONFIGURED":
+   return operation==="resource"?"Resource storage is unavailable":"File storage is unavailable. Contact your administrator.";
+  case "STORAGE_NAME_INVALID":
+  case "STORAGE_TYPE_NOT_ALLOWED":
+  case "STORAGE_EXTENSION_MISMATCH":
+   return operation==="resource"?"Unsupported Resource file name or MIME type":"This file name or type is not supported.";
+  case "STORAGE_FILE_TOO_LARGE":
+   return operation==="resource"?"Choose a Resource file between 1 byte and 50 MiB.":"This file is too large for the selected upload.";
+  case "STORAGE_SIZE_INVALID":
+   return "Choose a nonempty file within the configured size limit.";
+  case "STORAGE_CONTENT_REJECTED":
+   return "This upload was not accepted. Choose a different file.";
+  default:
+   return "The file operation could not be completed. Please try again.";
+ }
+}
+
+
 export class StorageFileError extends Error {
   constructor(public readonly code: StorageFileErrorCode) {
     super(code);

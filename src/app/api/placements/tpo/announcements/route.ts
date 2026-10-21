@@ -10,6 +10,18 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  if(!form)return noticePostError(request,"INVALID_BODY",400);
+ // Legacy composer fields: body -> message, linkLabel/Url -> buttonLabel/Url,
+ // when=NOW/LATER -> sendAt, audience.kind -> audience. Read-only mapping:
+ // historical recipient and read-receipt rows require a separate scoped import.
+ // Never infer a new audience from ambiguous historical targeting.
+ const when=String(form.get("when")??"NOW");
+ if(when!=="NOW"&&when!=="LATER")
+  return noticePostError(request,"INVALID_TIME",400);
+ const sendAt=String(form.get("sendAt")??"").trim();
+ if(when==="LATER"&&!sendAt)
+  return noticePostError(request,"INVALID_TIME",400);
+ const audienceInput=String(form.get("audience")??form.get("kind")??"COLLEGE");
+ const audience=audienceInput==="ALL"?"COLLEGE":audienceInput;
  const parsed=z.object({
   title:z.string(),message:z.string(),pinned:z.boolean(),
   buttonLabel:z.string().optional(),buttonUrl:z.string().optional(),
@@ -18,16 +30,21 @@ export async function POST(request:Request){
   targetId:z.string().uuid().optional(),
   targetIds:z.array(z.string().uuid()).max(50).optional(),
  }).strict().safeParse({
-  title:form.get("title"),message:form.get("message"),pinned:form.get("pinned")==="on",
-  buttonLabel:String(form.get("buttonLabel")??"").trim()||undefined,
-  buttonUrl:String(form.get("buttonUrl")??"").trim()||undefined,
-  sendAt:String(form.get("sendAt")??"")||undefined,
+  title:form.get("title"),message:form.get("message")??form.get("body"),pinned:form.get("pinned")==="on",
+  buttonLabel:String(form.get("buttonLabel")??form.get("linkLabel")??"").trim()||undefined,
+  buttonUrl:String(form.get("buttonUrl")??form.get("linkUrl")??"").trim()||undefined,
+  sendAt:when==="LATER"?sendAt||undefined:(sendAt||undefined),
   showUntil:String(form.get("showUntil")??"")||undefined,
-  audience:String(form.get("audience")??"COLLEGE"),
+  audience,
   targetId:String(form.get("targetId")??"")||undefined,
   targetIds:form.getAll("targetIds").length?form.getAll("targetIds").map(String):undefined,
  });
- if(!parsed.success)return noticePostError(request,"INVALID_BODY",400);
+ if(!parsed.success){
+  const field=parsed.error.issues[0]?.path[0];
+  return noticePostError(request,field==="title"?"TITLE_REQUIRED":
+   field==="message"?"MESSAGE_REQUIRED":field==="buttonUrl"?"BUTTON_URL_INVALID":
+   field==="sendAt"?"INVALID_TIME":"INVALID_BODY",400);
+ }
  try{
   const context=await getCurrentRequestContext();
   const notice=await createTpoNotice(context,parsed.data);

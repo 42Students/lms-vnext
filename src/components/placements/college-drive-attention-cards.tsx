@@ -3,6 +3,7 @@ import {useState} from "react";
 import Link from "next/link";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {Alert} from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import type {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import {CollegeDriveDeadlineAction} from "./college-drive-deadline-action";
@@ -21,13 +22,15 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
  // Source caps the latest PUBLISHED drives at 60. Do not claim the
  // filtered results are an exhaustive search of older drives.
  const visibleJobs=searchTerm
-  ?data.jobs.filter(job=>job.title.toLocaleLowerCase("en-IN").includes(searchTerm))
+  ?data.jobs.filter(job=>job.title.toLocaleLowerCase("en-IN").includes(searchTerm)||
+    job.companyName.toLocaleLowerCase("en-IN").includes(searchTerm))
   :data.jobs;
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
    <h2 className="text-lg font-semibold">Needs attention ({data.total})</h2>
-   {!data.categories.length?<p role="status" className="mt-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-3 text-sm text-body">
-    <span aria-hidden="true">✓ </span>No drives currently flagged in this view.</p>:categories.map(category=>{
+   {!data.categories.length?<Alert tone="success" className="mt-3">
+    <span><span aria-hidden="true">✓ </span>No drives currently flagged in this view.</span>
+   </Alert>:categories.map(category=>{
     const rows=data.categories.filter(item=>item.category===category);
     if(!rows.length)return null;
     return <div key={category} className="mt-4 space-y-2">
@@ -64,7 +67,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
    <label className="mb-3 grid max-w-xl gap-1 text-sm font-semibold text-body">
     Search drives
     <Input type="search" value={search} maxLength={100}
-     onChange={event=>setSearch(event.target.value)} placeholder="Search a drive title" />
+     onChange={event=>setSearch(event.target.value)} placeholder="Search a drive or company name" />
    </label>
    {data.jobs.length>=60?<p role="status" className="mb-3 text-xs text-muted-foreground">
     Showing at most the 60 newest active drives. Search here filters only these results;
@@ -78,6 +81,7 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
      <h3 className="pointer-events-none relative break-words [overflow-wrap:anywhere] font-semibold text-link underline">
       {job.title}
      </h3>
+     <p className="pointer-events-none relative text-xs text-body">{job.companyName}</p>
      <p className="text-sm">{job.applicants} applicants
       {job.attention>0?<span className="ml-2 font-semibold text-warning-text">
        {job.attention} attention item(s)</span>:null}</p>

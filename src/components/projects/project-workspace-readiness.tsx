@@ -21,7 +21,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
   if(!z.string().uuid().safeParse(projectId).success)
     return <div className="min-w-0 space-y-4">
       <PageHeader title={copy.title} eyebrow="Projects"/>
-      <ErrorState title="Workspace readiness unavailable"
+      <ErrorState title="Readiness could not be loaded"
         description="Return to workspaces and open an authorized workspace to try again."
         action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
@@ -33,7 +33,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
   if(!result.ok)
     return <div className="min-w-0 space-y-4">
       <PageHeader title={copy.title} eyebrow="Projects"/>
-      <ErrorState title="Workspace readiness unavailable"
+      <ErrorState title="Readiness could not be loaded"
         description="Return to workspaces and open an authorized workspace to try again."
         action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
@@ -45,7 +45,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
     <div className="min-w-0">
       <PageBackLink href={basePath} label="Back to workspaces" />
       <PageHeader title={copy.title} eyebrow="Projects"
-        description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side."
+        description="Releases are informational. Task and sprint completion and the audited manual override determine submission readiness."
         actions={<StatusBadge tone={isReady ? "success" : "warning"}>{isReady ? "Ready" : "Not ready"}</StatusBadge>} />
     </div>
     <Tabs ariaLabel="Workspace sections" renderPanel={false} value="readiness"
@@ -61,7 +61,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <dl className="mt-4 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.state??"Automatic"}</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason</dt><dd className="mt-2 whitespace-pre-wrap break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.note??
-          (readiness.execution.complete?"All execution items completed":"Incomplete tasks, sprints or releases")}</dd></div>
+          (readiness.execution.complete?"All execution items completed":"Incomplete tasks or sprints")}</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission status</dt>
           <dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
       </dl>

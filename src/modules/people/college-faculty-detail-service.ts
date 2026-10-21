@@ -65,22 +65,28 @@ export async function getCollegeFacultyDetail(
     cohortName: sql<string>`${cohorts.name}`.as("cohort_name"),
     sectionName: sql<string>`${sections.name}`.as("section_name"),
     periodName: sql<string>`${academicPeriods.name}`.as("period_name"),
+    metadataIncomplete: sql<boolean>`
+      ${courseSectionDeliveries.id} is null or ${courseOfferings.id} is null or
+      ${courses.id} is null or ${departments.id} is null or
+      ${cohorts.id} is null or ${programs.id} is null or
+      ${sections.id} is null or ${academicPeriods.id} is null
+    `.as("metadata_incomplete"),
   }).from(courseTeachingAssignments)
-    .innerJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
-    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
-    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
-    .innerJoin(departments, and(
+    .leftJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+    .leftJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .leftJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .leftJoin(departments, and(
       eq(departments.id, courses.departmentId),
       eq(departments.collegeId, owner.collegeId),
     ))
-    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
-    .innerJoin(programs, eq(programs.id, cohorts.programId))
-    .innerJoin(sections, and(
+    .leftJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
+    .leftJoin(programs, eq(programs.id, cohorts.programId))
+    .leftJoin(sections, and(
       eq(sections.id, courseSectionDeliveries.sectionId),
       eq(sections.cohortId, cohorts.id),
       eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
     ))
-    .innerJoin(academicPeriods, and(
+    .leftJoin(academicPeriods, and(
       eq(academicPeriods.id, courseOfferings.academicPeriodId),
       eq(academicPeriods.collegeId, owner.collegeId),
     ))
@@ -117,6 +123,13 @@ export async function getCollegeFacultyDetail(
     filter,
     assignments: raw.map(row => ({
       ...row,
+      // Keep an orphaned assignment visible to admins with explicit degraded metadata.
+      courseName: row.courseName ?? "Unresolved course",
+      courseCode: row.courseCode ?? null,
+      cohortName: row.cohortName ?? "Unresolved cohort",
+      sectionName: row.sectionName ?? "Unresolved section",
+      periodName: row.periodName ?? "Unresolved academic period",
+      metadataIncomplete: row.metadataIncomplete,
       status: facultyTeachingAssignmentState(row.endedAt, row.deliveryEndedAt),
     })),
     truncated: rows.length > 100,

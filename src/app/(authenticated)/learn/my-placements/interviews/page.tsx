@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {getOwnInterviewWithdrawalTargets} from "@/modules/placements/learner-interview-withdrawal-service";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -34,6 +35,13 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
     <div className="min-w-0 space-y-5">
       <PageHeader title="Interviews"
         description="Your scheduled placement interview rounds and joining details." />
+      <p className="text-sm text-body">
+        Looking for all scheduled tests, talks and interviews?{" "}
+        <Link href="/learn/my-placements/schedule" className="lms-inline-link font-semibold underline underline-offset-4">
+          Open Schedule
+        </Link>.
+        This view keeps interview details and withdrawal actions together.
+      </p>
       <LearnerCareerRoundsWorkspace
         key={link.key ?? "all-interviews"}
         kind="INTERVIEW"

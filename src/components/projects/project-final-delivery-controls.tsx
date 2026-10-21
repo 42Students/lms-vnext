@@ -505,6 +505,8 @@ export function FinalReviewControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const openedFromDeliveryLink = useRef(false);
   const [confirmReview,setConfirmReview]=useState(false);
   const [staleReview,setStaleReview]=useState(false);
   const [decision, setDecision] = useState<
@@ -515,6 +517,15 @@ export function FinalReviewControl({
   const [pending, setPending] =
     useState(false);
   const reviewInFlight=useRef(false);
+  // The legacy mentor ?tab=delivery link opens one review on entry.
+  // A dismissal must not immediately reopen it while the URL is unchanged.
+  useEffect(() => {
+    if (mode !== "MENTOR" || searchParams.get("tab") !== "delivery" ||
+        openedFromDeliveryLink.current) return;
+    openedFromDeliveryLink.current = true;
+    setDecision("APPROVED");
+    setOpen(true);
+  }, [mode, searchParams]);
   function discardDraft(){
     setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
   }

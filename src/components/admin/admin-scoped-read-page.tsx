@@ -1,6 +1,7 @@
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
@@ -66,6 +67,37 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry loading directory</Link>}/>
  </div>;
  const data=directory.value;
+ // Explicit legacy headings restore navigable columns while the authorized
+ // server directory continues to own filtering, identity and pagination.
+ const detailValue=(row:SuperAdminReadRow,label:string)=>
+  row.details.find(detail=>detail.startsWith(label+": "))?.slice(label.length+2)??"—";
+ const actionCell=(row:SuperAdminReadRow)=><div className="flex min-w-0 flex-col items-start gap-2">
+  {renderRowActions?.(row)}
+  {row.href?<Link href={row.href} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open details →</Link>:null}
+  {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">{row.secondaryLabel??"Manage →"}</Link>:null}
+ </div>;
+ const studentColumns:DataTableColumn<SuperAdminReadRow>[]=[
+  {key:"name",header:"Name",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
+  {key:"roll",header:"Roll No.",mobilePriority:"secondary",cell:row=>detailValue(row,"Roll number")},
+  {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:row=>detailValue(row,"Mobile")},
+  {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>detailValue(row,"Email")},
+  {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
+  {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
+  {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+ ];
+ const assignmentColumns:DataTableColumn<SuperAdminReadRow>[]=[
+  {key:"faculty",header:"Faculty",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
+  {key:"course",header:"Course",mobilePriority:"secondary",cell:row=>row.subtitle},
+  {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
+  {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>detailValue(row,"Semester")},
+  {key:"year",header:"Year",mobilePriority:"secondary",cell:row=>detailValue(row,"Year")},
+  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>detailValue(row,"Teaching role")},
+  {key:"active",header:"Active",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status==="ACTIVE"?"Yes":"No"}</StatusBadge>},
+  {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+ ];
+ const scopedColumns=peopleFilters?.kind==="LEARNER"?studentColumns:
+  title==="Faculty Assignments"?assignmentColumns:null;
  const summaries=peopleFilters?await Promise.allSettled([
   loader({...parsed.data,status:"ALL",page:1}),
   loader({...parsed.data,status:"ACTIVE",page:1}),
@@ -100,7 +132,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {label:peopleFilters?.kind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
     {label:"Active",value:peopleSummary[1].total},
     {label:"Suspended",value:peopleSummary[2].total},
-    {label:"Visible now",value:data.items.length},
+    {label:"Visible now",value:data.total},
    ].map(stat=><article key={stat.label} className="p-4">
     <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{stat.label}</p>
     <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
@@ -243,6 +275,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."
     action={<Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>}
+  </> : scopedColumns?<>
+    <DataTable columns={scopedColumns} rows={data.items} getRowKey={row=>row.id}
+      caption={title} empty={<EmptyState title="No matching records" description="No persisted records match the selected college and filters."/>}/>
+    <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>
   </> : <>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">

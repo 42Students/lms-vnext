@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { AdminAssessmentDirectory } from "@/components/courses/admin-assessment-read-directory";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
 import {getCollegeAssignmentAuthoringCatalog} from "@/modules/courses/college-assignment-authoring-options";
-import { adminAssessmentExportHref } from "@/modules/courses/admin-assessment-directory-model";
+import { adminAssessmentExportHref, adminAssessmentHref } from "@/modules/courses/admin-assessment-directory-model";
 import {parseSuperAdminAssignmentQuery} from "@/modules/admin-ui/super-admin-quiz-query-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
@@ -23,6 +23,7 @@ export default async function SuperAdminAssignmentsPage({
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
       action={<Link href="/admin/assignments" className="inline-flex min-h-11 items-center font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
+  const retryHref=adminAssessmentHref("ASSIGNMENT",query.data);
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
@@ -42,9 +43,9 @@ export default async function SuperAdminAssignmentsPage({
   ]);
   if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
-    <ErrorState title="Assignments unavailable"
+    <ErrorState title="Assignments could not be loaded"
       description="The assignment directory could not be loaded. Your filters have not changed."
-      action={<Link href="/admin/assignments"
+      action={<Link href={retryHref}
         className="inline-flex min-h-11 items-center font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading assignments</Link>} />
   </div>;
   const data=dataResult.value;
@@ -52,8 +53,12 @@ export default async function SuperAdminAssignmentsPage({
     <PageHeader title="Assignments" actions={lessonsResult.status==="fulfilled"?
       <CollegeAssignmentCreate lessons={lessonsResult.value.lessons} deliveries={lessonsResult.value.deliveries}/>:
       null}/>
-    {lessonsResult.status==="rejected"?<Alert tone="warning" role="status">
-      Assignment creation options are temporarily unavailable. Existing assignments remain visible.
+    {lessonsResult.status==="rejected"?<Alert tone="warning" role="alert">
+      <strong>Course list unavailable · Section list unavailable.</strong>
+      <span>Assignment creation options could not be verified. Existing assignments remain visible, but creation is paused.</span>
+      <Link href={retryHref} className="lms-inline-link font-semibold underline underline-offset-4">
+        Retry courses and sections
+      </Link>
     </Alert>:null}
     <AdminAssessmentDirectory data={data} showHeader={false} />
     <div className="flex min-w-0 flex-wrap justify-start gap-2 print:hidden">

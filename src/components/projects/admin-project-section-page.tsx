@@ -36,9 +36,12 @@ export async function AdminProjectSectionPage({
   }
 
   const context = await getCurrentRequestContext();
+  // A soft-deleted workspace may be inspected and recovered from Summary only.
+  // Every other section and all ordinary manage mutations remain inaccessible.
   await requireProjectManageAccess(
     context,
     projectId,
+    { includeDeleted: section === "summary" },
   );
   const workspace =
     await getProjectWorkspaceView(

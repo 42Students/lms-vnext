@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,gt,isNull,lte,inArray,or,sql,asc} from "drizzle-orm";
+import {and,eq,gt,isNull,lte,inArray,or,sql,asc,exists} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
-import {activityEvents,collegeMemberships,users} from "@/db/schema";
+import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoNoticeAudiences,placementTpoNoticeRecipients}
  from "@/db/schema/placement-tpo-notice-audiences";
 import {placementTableExists} from "@/modules/placements/staged-tables";
@@ -16,7 +16,8 @@ export async function deliverDueTpoNotices(now=new Date()){
  if(!await placementTableExists("announcements")||
     !await placementTableExists("placement_tpo_notice_audiences")||
     !await placementTableExists("placement_tpo_notice_recipients"))
-  return {ready:false as const,scanned:0,delivered:0};
+  return {ready:false as const,scanned:0,delivered:0,failed:0,
+    failures:[] as {announcementId:string;status:"FAILED";retryable:true}[]};
  const db=getDb(),cutoff=new Date(now.getTime()-30_000);
  const due=await db.select({
   id:db10Announcements.id,collegeId:db10Announcements.collegeId,
@@ -36,9 +37,15 @@ export async function deliverDueTpoNotices(now=new Date()){
      and e.event_type='placements.tpo_notice.created')`,
  )).orderBy(asc(db10Announcements.createdAt),asc(db10Announcements.id)).limit(100);
  let delivered=0,scanned=0;
+ const failures:{announcementId:string;status:"FAILED";retryable:true}[]=[];
  for(const notice of new Map(due.map(row=>[row.id,row])).values()){
   scanned++;
-  const result=await db.transaction(async tx=>{
+  // Each announcement is an independent atomic release. A broken notice
+  // must not discard deliveries for the other due announcements; unfinished
+  // ones remain retryable because no partial event batch is committed.
+  let result=0;
+  try {
+   result=await db.transaction(async tx=>{
    const [active]=await tx.select({
     id:db10Announcements.id,scheduledAt:db10Announcements.scheduledAt,
     expiresAt:db10Announcements.expiresAt,deletedAt:db10Announcements.deletedAt,
@@ -56,12 +63,24 @@ export async function deliverDueTpoNotices(now=new Date()){
    const [target]=await tx.select({kind:placementTpoNoticeAudiences.kind})
     .from(placementTpoNoticeAudiences)
     .where(eq(placementTpoNoticeAudiences.announcementId,notice.id)).limit(1);
+   // A missing audience record is an incomplete migration, not permission
+   // to broadcast to all staff or all college members.
+   if(!target)return 0;
+   const learners=exists(tx.select({id:membershipRoles.id})
+     .from(membershipRoles).where(and(
+       eq(membershipRoles.membershipId,collegeMemberships.id),
+       eq(membershipRoles.role,"LEARNER"),
+     )));
    const members=await tx.selectDistinct({userId:collegeMemberships.userId})
     .from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
     .where(and(
      eq(collegeMemberships.collegeId,notice.collegeId),
      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
-     ...(target?[inArray(collegeMemberships.id,
+     // Legacy TPO placement announcements address learners, not college
+     // staff. A person who is also Faculty needs a verified LEARNER role
+     // to receive this notice; a generic COLLEGE row is not an all-users fanout.
+     learners,
+     ...(target.kind!=="COLLEGE"?[inArray(collegeMemberships.id,
       tx.select({id:placementTpoNoticeRecipients.membershipId})
        .from(placementTpoNoticeRecipients)
        .where(eq(placementTpoNoticeRecipients.announcementId,notice.id)))]:[]),
@@ -79,8 +98,14 @@ export async function deliverDueTpoNotices(now=new Date()){
     done+=result.delivered;
    }
    return done;
-  });
+   });
+  }catch{
+   // Do not disclose raw database messages or claim FAILED was persisted:
+   // DB10 has no durable per-release failure column yet.
+   failures.push({announcementId:notice.id,status:"FAILED",retryable:true});
+   continue;
+  }
   delivered+=result;
  }
- return {ready:true as const,scanned,delivered};
+ return {ready:true as const,scanned,delivered,failed:failures.length,failures};
 }

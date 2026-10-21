@@ -23,6 +23,12 @@ import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } 
 import {Button} from "@/components/ui/button";
 import {Disclosure} from "@/components/ui/disclosure";
 import {EmptyState} from "@/components/ui/empty-state";
+/** User-facing acknowledgements belong to the interactive action controls,
+ * not to this server-rendered conversation snapshot. Their verified response
+ * outcomes map ADDED/OK/LEFT for participant/follow/mute/leave/topic actions
+ * and EDITED/DELETED/DONE/CANCELLED for messages, decisions and team asks.
+ * Do not invent a success toast on page load: an API mutation must first succeed.
+ */
 export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[];ask?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!hasPlacementTeamMembership(context))redirect("/dashboard");

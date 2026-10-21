@@ -332,7 +332,7 @@ db
 
   // Dashboard cards are bounded; headline counts are NOT card-array lengths.
   // Metrics represent all non-archived jobs for the selected college.
-  const [[jobTotals], [applicationTotals], [resultTotals], [offerTotals], [roundTotals]] =
+  const [[jobTotals], [applicationTotals], [resultTotals], [offerTotals], [actionTotals]] =
     await Promise.all([
       db.select({
         total: sql<number>`count(*)::int`,
@@ -367,12 +367,111 @@ db
         .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
         .leftJoin(placementJoiningOutcomes, eq(placementJoiningOutcomes.offerId, placementOffers.id))
         .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt))),
+      // One distinct, college-scoped count across ALL non-archived drives.
+      // A job can have many action categories; per-job EXISTS avoids both
+      // double counting and loading applications/offers into the process.
+      // Unlike workQueue, this must not depend on the 60+20 card sample.
       db.select({
-        scheduled: sql<number>`count(*) filter (where ${placementJobRounds.status} = 'SCHEDULED')::int`,
-      }).from(placementJobRounds)
-        .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
-        .where(and(eq(placementJobs.collegeId, collegeId),
-          isNull(placementJobs.archivedAt), ne(placementJobRounds.status, "CANCELLED"))),
+        count: sql<number>`count(*)::int`,
+      }).from(placementJobs)
+        .where(and(
+          eq(placementJobs.collegeId, collegeId),
+          isNull(placementJobs.archivedAt),
+          sql`(
+            ${placementJobs.status} = 'DRAFT'
+            or (
+              ${placementJobs.status} = 'PUBLISHED'
+              and not exists (
+                select 1 from placement_job_rounds r
+                where r.job_id = ${placementJobs.id} and r.status <> 'CANCELLED'
+              )
+            )
+            or (
+              ${placementJobs.status} = 'PUBLISHED'
+              and exists (
+                select 1 from placement_job_rounds r
+                where r.job_id = ${placementJobs.id} and r.status = 'PENDING'
+              )
+              and not exists (
+                select 1 from placement_job_rounds r
+                where r.job_id = ${placementJobs.id}
+                  and r.status not in ('PENDING', 'CANCELLED')
+              )
+            )
+            or exists (
+              select 1 from placement_applications a
+              join placement_application_screenings s on s.application_id = a.id
+              where a.job_id = ${placementJobs.id} and a.status = 'SUBMITTED'
+                and s.status in ('PENDING', 'HOLD')
+            )
+            or exists (
+              select 1 from placement_round_results res
+              join placement_job_rounds r on r.id = res.round_id
+              where r.job_id = ${placementJobs.id} and res.status = 'STAGED'
+            )
+            or exists (
+              select 1 from placement_offers o
+              join placement_applications a on a.id = o.application_id
+              where a.job_id = ${placementJobs.id} and o.status = 'ISSUED'
+            )
+            or exists (
+              select 1 from placement_offers o
+              join placement_applications a on a.id = o.application_id
+              join placement_joining_outcomes jo on jo.offer_id = o.id
+              where a.job_id = ${placementJobs.id}
+                and o.status = 'ACCEPTED' and jo.status = 'PENDING'
+                and (o.acceptance_channel is distinct from 'EXTERNAL_IMPORT'
+                     or o.cascade_id is not null)
+            )
+            or (
+              ${placementJobs.status} = 'PUBLISHED'
+              and (
+                exists (
+                  select 1 from placement_offers o
+                  join placement_applications a on a.id = o.application_id
+                  where a.job_id = ${placementJobs.id}
+                    and o.status in ('ISSUED', 'ACCEPTED')
+                    and nullif(btrim(o.offer_letter_url), '') is null
+                )
+                or exists (
+                  select 1 from placement_applications a
+                  join placement_application_screenings s on s.application_id = a.id
+                  where a.job_id = ${placementJobs.id} and a.status = 'SUBMITTED'
+                    and s.status in ('PENDING', 'HOLD')
+                    and a.submitted_at <= ${staleBefore}
+                )
+                or (
+                  exists (
+                    select 1 from placement_job_rounds r
+                    where r.job_id = ${placementJobs.id}
+                      and r.kind = 'INTERVIEW' and r.status <> 'CANCELLED'
+                  )
+                  and not exists (
+                    select 1 from placement_job_rounds r
+                    where r.job_id = ${placementJobs.id}
+                      and r.kind = 'INTERVIEW' and r.status = 'SCHEDULED'
+                  )
+                  and exists (
+                    select 1 from placement_applications a
+                    join placement_application_screenings s on s.application_id = a.id
+                    where a.job_id = ${placementJobs.id} and a.status = 'SUBMITTED'
+                      and s.status = 'SHORTLISTED'
+                  )
+                )
+                or (
+                  ${placementJobs.openings} is not null
+                  and ${placementJobs.applicationDeadline} > ${now}
+                  and ${placementJobs.applicationDeadline} <= ${new Date(now.getTime() + 7 * 86400000)}
+                  and (
+                    select count(*) from placement_applications a
+                    where a.job_id = ${placementJobs.id}
+                      and a.status = 'SUBMITTED'
+                  ) < ceil(${placementJobs.openings} / 2.0)
+                )
+              )
+            )
+          )`,
+        )),
     ]);
 
 
@@ -683,10 +782,10 @@ db
       issuedOffers: Number(offerTotals?.issued ?? 0),
       acceptedPendingJoining: Number(offerTotals?.pendingJoining ?? 0),
       joinedOffers: Number(offerTotals?.joined ?? 0),
-      activeDrives: Number(roundTotals?.scheduled ?? 0),
-      jobsNeedingAttention: new Set(
-        workQueue.map((item) => item.jobId),
-      ).size,
+      // Active drive means a published drive, not the number of its
+      // scheduled rounds. A single drive can schedule several rounds.
+      activeDrives: Number(jobTotals?.published ?? 0),
+      jobsNeedingAttention: Number(actionTotals?.count ?? 0),
     },
     workQueue,
     attention,

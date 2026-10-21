@@ -141,10 +141,12 @@ export function SuperAdminHrAccounts({
   loadError,
   statusSummary,
   scopeDescription,
+  selectedCollegeId,
 }: {
   list: HrAccountsPageData | null;
   statusSummary: {accounts:number;active:number;archived:number;disabled:number}|null;
   scopeDescription:string;
+  selectedCollegeId?:string|null;
   filters: HrListFilters;
   loadError: string | null;
 }) {
@@ -184,7 +186,7 @@ export function SuperAdminHrAccounts({
   const detailRequestVersion = useRef(0);
   const optionsRequestVersion = useRef(0);
 
-  async function loadRelationships() {
+  async function loadRelationships(): Promise<boolean> {
     const version =
       ++optionsRequestVersion.current;
 
@@ -202,7 +204,7 @@ export function SuperAdminHrAccounts({
       if (
         version !== optionsRequestVersion.current
       ) {
-        return;
+        return false;
       }
 
       if (!Array.isArray(payload.relationships)) {
@@ -210,17 +212,22 @@ export function SuperAdminHrAccounts({
           "The server returned an invalid relationship list.",
         );
       }
+      if(!Array.isArray(payload.colleges)||!payload.colleges.length){
+        throw new Error("College options could not be loaded. Retry before adding a recruiter.");
+      }
 
       setRelationships(payload.relationships);
-      setColleges(Array.isArray(payload.colleges)?payload.colleges:[]);
+      setColleges(payload.colleges);
+      return true;
     } catch (error) {
       if (
         version !== optionsRequestVersion.current
       ) {
-        return;
+        return false;
       }
 
       setOptionsError(errorText(error));
+      return false;
     } finally {
       if (
         version === optionsRequestVersion.current
@@ -296,11 +303,11 @@ export function SuperAdminHrAccounts({
     void loadRelationships();
   }
 
-  function openCreate() {
-    if(saving||pending)return;
+  async function openCreate() {
+    if(saving||pending||optionsLoading)return;
     setFormError(null);
-    setDialog({ kind: "create" });
-    void loadRelationships();
+    // Do not show a create form until college options are validated.
+    if(await loadRelationships())setDialog({kind:"create"});
   }
 
   function openEdit(account: HrAccount) {
@@ -350,8 +357,8 @@ export function SuperAdminHrAccounts({
         if (created.account.reusedExisting) {
           openDetail(created.account);
           showToast({
-            tone: "success",
-            title: "Recruiter account found",
+            tone: "info",
+            title: "Recruiter account already exists",
             description: "A recruiter with this mobile already exists. Opening it so you can add colleges.",
           });
         } else {
@@ -524,7 +531,7 @@ export function SuperAdminHrAccounts({
 
         showToast({
           tone: "success",
-          title: "College access revoked",
+          title: "College access removed",
           description:
             "The grant was revoked. If this was the last visible grant, the recruiter may disappear from the current scoped list.",
         });
@@ -542,7 +549,7 @@ export function SuperAdminHrAccounts({
 
         showToast({
           tone: "success",
-          title: "All sessions terminated",
+          title: "All sessions ended",
           description:
             "Existing device sessions for this canonical user have been revoked.",
         });
@@ -663,13 +670,22 @@ export function SuperAdminHrAccounts({
         title="Recruiter accounts"
         description="Recruiter accounts: manage company links and college access. Account actions follow the current administrative scope."
         actions={
-          <Button className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={saving||pending} onClick={openCreate}>
+          <Button className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={saving||pending||optionsLoading} onClick={()=>void openCreate()}>
             Add recruiter
           </Button>
         }
       />
 
       <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
+      {optionsError?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+        College options could not be loaded. Create and grant changes require verified college relationships.{" "}
+        <Button type="button" variant="secondary" size="sm" disabled={optionsLoading}
+          onClick={()=>void loadRelationships()} className="ml-2 min-h-11 md:min-h-9">Retry colleges</Button>
+      </p>:null}
+      <p className="text-xs text-muted-foreground">
+        Suspended represents an archived recruiter account and can be reactivated. Disabled is a separate platform identity state, not the legacy Deleted state.
+        Permanent deletion is not offered by this workspace; suspension preserves historical grants and audit records.
+      </p>
       <section aria-label="Recruiter account lifecycle" className="min-w-0 space-y-1 border-b border-border pb-4">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--lms-teal-deep)]">Industry access</p>
         <h2 className="text-base font-semibold text-foreground">Recruiter account lifecycle</h2>
@@ -680,7 +696,7 @@ export function SuperAdminHrAccounts({
         <Button type="button" variant="secondary" size="sm" onClick={()=>router.refresh()} className="ml-2 min-h-11 md:min-h-9">Retry totals</Button>
       </p>}
       {statusSummary ? <dl className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-4">{([
-        ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled",statusSummary?.disabled],
+        ["Accounts",statusSummary?.accounts],["Active",statusSummary?.active],["Suspended",statusSummary?.archived],["Disabled (not deleted)",statusSummary?.disabled],
       ] as const).map(([label,value])=><div key={label} className="min-w-0 border-r border-border pr-[var(--lms-space-4)] even:border-r-0 md:even:border-r md:last:border-r-0"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value??"Unavailable"}</dd></div>)}</dl> : null}
       <form
         key={[
@@ -744,7 +760,7 @@ export function SuperAdminHrAccounts({
 
       {loadError ? (
         <ErrorState
-          title="Could not load recruiter accounts"
+          title="Recruiter accounts could not be loaded"
           description={loadError}
           action={
             <Button
@@ -786,7 +802,7 @@ export function SuperAdminHrAccounts({
                     Clear filters
                   </Link>
                 ) : (
-                  <Button className="min-h-11 w-full md:w-auto md:min-h-9 print:hidden" disabled={saving||pending} onClick={openCreate}>
+                  <Button className="min-h-11 w-full md:w-auto md:min-h-9 print:hidden" disabled={saving||pending||optionsLoading} onClick={()=>void openCreate()}>
                     Add recruiter
                   </Button>
                 )
@@ -885,6 +901,7 @@ export function SuperAdminHrAccounts({
           }
           relationships={relationships}
           colleges={colleges}
+          selectedCollegeId={selectedCollegeId}
           optionsLoading={optionsLoading}
           optionsError={optionsError}
           pending={saving}

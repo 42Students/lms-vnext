@@ -6,12 +6,13 @@ import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents, collegeMemberships, membershipRoles, inAppNotifications,
-  colleges, organizations, placementCompanies,
+  colleges, organizations, placementCompanies, placementCompanyDomains,
   placementCompanyRelationships, placementPublicJoinLinks,
   placementPublicJoinChallenges, placementRecruiterProfiles,
   placementRecruiterCollegeGrants, placementTpoCollegeSettings, users,
 } from "@/db/schema";
-import { registrableWorkDomain,matchesCompanyDomain } from "./domain-model";
+import { registrableWorkDomain } from "./domain-model";
+import { companyJoinEmailCandidate } from "./company-preview-policy";
 import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
 import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
@@ -19,12 +20,27 @@ import { publicJoinTablesReady } from "./readiness";
 import { publicRecruiterJoinedNotification } from "./join-notification-model";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
 
+/** Legacy public-link behavior is deliberately not implicitly grandfathered.
+ * Old indefinite HMAC/nonced links and direct-post paths cannot be authorized
+ * by vNext's explicit expiry/revocation, OTP and reviewed-drive grant model.
+ * The owner must explicitly approve any compatibility importer, not reuse
+ * old long-lived tokens or set bypassesDriveReview=true.
+ */
+export const PUBLIC_JOIN_LEGACY_COMPATIBILITY = {
+ indefiniteLegacyLinks:"RETIRED_PENDING_OWNER_APPROVAL",
+ directPostWithoutReview:"RETIRED_PENDING_OWNER_APPROVAL",
+ modernLinkRequiresOtp:true,
+ modernLinkRequiresExpiry:true,
+ modernLinkRequiresRevocation:true,
+ bypassesDriveReview:false,
+} as const;
+
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinAcceptError extends Error {
   constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
     "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY" | "WRONG_CODE" |
     "CODE_EXPIRED" | "CODE_LOCKED" | "CODE_REQUIRED" |
-    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
+    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "COMPANY_REQUIRED" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinAcceptError";
   }
@@ -78,7 +94,15 @@ export async function acceptPublicRecruiterJoin(
     if (!link) return "DENIED";
     const emailDomain = registrableWorkDomain(email);
     if(!emailDomain)return "OTHER_COMPANY_EMAIL";
-    if(scope==="COMPANY"&&!matchesCompanyDomain(email,link.companyDomain??""))return "OTHER_COMPANY_EMAIL";
+    if(scope==="COMPANY"){
+      if(!link.companyId)return "OTHER_COMPANY_EMAIL";
+      const verified=await tx.select({domain:placementCompanyDomains.domain})
+        .from(placementCompanyDomains).where(and(
+          eq(placementCompanyDomains.companyId,link.companyId),
+          eq(placementCompanyDomains.verifiedBy42,true)));
+      if(!companyJoinEmailCandidate(email,[link.companyDomain??"",
+        ...verified.map(item=>item.domain)]))return "OTHER_COMPANY_EMAIL";
+    }
     const hourAgo = new Date(now.getTime() - 60 * 60_000);
     const counts = await tx.execute<{ n: number }>(sql`
       select count(*)::integer as n from placement_public_join_rate_events
@@ -137,7 +161,7 @@ export async function acceptPublicRecruiterJoin(
       if (existingCompany && existingCompany.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
       if (existingCompany) companyId = existingCompany.id;
       else {
-        if (companyName.trim().length < 2) throw new PublicJoinAcceptError("INVALID");
+        if (companyName.trim().length < 2) throw new PublicJoinAcceptError("COMPANY_REQUIRED");
         const [sameName] = await tx.select({ id: placementCompanies.id }).from(placementCompanies)
           .where(sql`lower(${placementCompanies.name}) = lower(${companyName})`).limit(1);
         if (sameName) throw new PublicJoinAcceptError("COMPANY_EXISTS");

@@ -29,7 +29,10 @@ export function CollegeDriveRowLifecycleAction({jobId,title,status}:{
    if(!applied.updated)throw Error(applied.results?.[0]?.reason??"Drive was not changed");
    setPreview(null);setMessage(action==="CLOSE"?"Drive closed":"Drive opened");
    router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Drive action unavailable");}
+  }catch(cause){
+   setError(!confirm?"Could not preview drive impact. Nothing was changed.":
+    cause instanceof Error?cause.message:"Drive action unavailable");
+  }
   finally{setBusy(false);}
  }
  return <div className="inline-flex flex-col gap-2 text-sm">

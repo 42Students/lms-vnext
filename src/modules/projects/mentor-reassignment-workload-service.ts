@@ -88,7 +88,7 @@ export async function listCollegeProjectMentorWorkload(context: RequestContext, 
     .leftJoin(users,eq(users.id,collegeMemberships.userId)).where(and(
     eq(projectInstances.collegeId, college.id),
     ne(projectInstances.status, "ARCHIVED"),
-    ne(projectInstances.status, "COMPLETED"),
+    // Completed workspaces remain in legacy non-archived mentor workload.
   )).groupBy(projectMembers.membershipId,users.displayName);
   return rows;
   });

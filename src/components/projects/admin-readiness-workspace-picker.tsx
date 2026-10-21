@@ -32,7 +32,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
    {!rows.length?<EmptyState title="No matching workspaces" description="No matching workspaces."/>:null}
   </fieldset>
   <div className="flex min-w-0 flex-col gap-2 text-sm text-body md:flex-row md:items-center md:justify-between">
-   <span>{matching.length} matching · Page {current} of {count}</span>
+   <span>{matching.length === 0 ? "0–0" : ((current - 1) * pageSize + 1) + "–" + Math.min(current * pageSize, matching.length)} of {matching.length}{items.length >= 1000 ? " (first 1,000 loaded)" : ""}</span>
    <div className="flex flex-wrap gap-2">
     <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
       >Previous</Button>

@@ -11,6 +11,7 @@ export type TemplateCatalogueRow = {
   templateId: string;
   title: string;
   version: number;
+  summary?: string | null;
   sections: TemplateSectionCounts;
 };
 export function projectTemplateSectionCounts(value: unknown): TemplateSectionCounts {
@@ -28,15 +29,8 @@ export function projectTemplateSectionCounts(value: unknown): TemplateSectionCou
   };
 }
 export function projectTemplateCatalogueCsv(rows: readonly TemplateCatalogueRow[]) {
-  const lines = [
-    ["Template", "Version", "Sections", "Overview", "Releases", "Sprints", "Tasks", "Resources"],
-    ...rows.map(row => [
-      row.title, String(row.version),
-      String(row.sections.overview + row.sections.releases + row.sections.sprints +
-        row.sections.tasks + row.sections.resources),
-      String(row.sections.overview), String(row.sections.releases),
-      String(row.sections.sprints), String(row.sections.tasks), String(row.sections.resources),
-    ]),
-  ];
-  return projectAdminCsv(lines);
+  return projectAdminCsv([
+    ["Title","Version","Summary"],
+    ...rows.map(row=>[row.title,String(row.version),row.summary??""]),
+  ]);
 }

@@ -1,6 +1,6 @@
 # Notice for lane 2 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_modules_placements_tpo-student-notes-service.ts.md
 - src_modules_placements_company-share_access-service.ts.md
@@ -130,3 +130,43 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_modules_placements_college-bulk-drive-service.ts.md
 - src_modules_placements_learner-career-calendar-url-model.ts.md
 - src_modules_placements_tpo-student-nudge-send-service.ts.md
+- src_modules_placements_placement-legacy-posting-model.ts.md
+- src_modules_placements_recruiter-company-reports-service.ts.md
+- src_modules_placements_learner-placement-announcement-model.ts.md
+- src_modules_placements_public-join_domain-model.ts.md
+- src_modules_placements_tpo-trusted-domain-validation.ts.md
+- src_modules_placements_tpo-drive-next-step-model.ts.md
+- src_modules_placements_tpo-live-drive-day-model.ts.md
+- src_modules_placements_learner-job-apply-blockers-model.ts.md
+- src_components_placements_super-admin-drive-deadline.tsx.md
+- src_modules_placements_college-drive-interviews-model.ts.md
+- src_components_placements_super-admin-drive-quick-search.tsx.md
+- src_modules_placements_recruiter-profile-service.ts.md
+- src_modules_placements_recruiter-profile-details-model.ts.md
+- src_modules_placements_college-interview-action-model.ts.md
+- src_modules_placements_recruiter-self-grants-service.ts.md
+- src_modules_placements_college-drive-archive-preview-service.ts.md
+- src_modules_placements_college-drive-read-model.ts.md
+- src_modules_placements_college-company-directory-service.ts.md
+- src_modules_placements_tpo-bulk-action-confirm-service.ts.md
+- src_modules_placements_tpo-academic-import-service.ts.md
+- src_modules_placements_learner-registration-read-service.ts.md
+- src_modules_placements_tpo-delete-draft-service.ts.md
+- src_modules_placements_tpo-recruiter-invite-service.ts.md
+- src_modules_placements_tpo-academic-preview-import-model.ts.md
+- src_modules_placements_hr-conversation-inbox-service.ts.md
+- src_modules_placements_tpo-offer-lifecycle-model.ts.md
+- src_modules_placements_hr-job-read-service.ts.md
+- src_modules_placements_recruiter-drive-search-service.ts.md
+- src_modules_placements_public-page_content-model.ts.md
+- src_modules_placements_super-admin-hr-validation.ts.md
+- src_modules_placements_recruiter-profile-details-service.ts.md
+- src_modules_placements_tpo-self-profile-service.ts.md
+- src_modules_placements_company-share_column-model.ts.md
+- src_components_placements_tpo-college-rules-control.tsx.md
+- src_modules_placements_learner-placement-event-copy.ts.md
+- src_modules_placements_tpo-configuration-read-service.ts.md
+- src_modules_placements_tpo-coding-profile-model.ts.md
+- src_modules_placements_public-join_error-copy.ts.md
+- src_components_placements_learner-placement-registration.tsx.md
+- src_components_placements_tpo-round-check-in.tsx.md

@@ -619,3 +619,19 @@ export async function archiveCourseOffering(
     return archived;
   });
 }
+
+/** Legacy semester-course assignment maps to a particular cohort + academic
+ * period offering in the new membership/period model; it does NOT mutate
+ * every course section delivery implicitly. Callers must first resolve the
+ * semester mapping, choose the matching cohort and period, then invoke the
+ * existing permission-checked createCourseOffering transaction for each
+ * authorized item. Course deliveries require a separate explicit action.
+ */
+export function offeringDraftFromSemesterCourseMapping(input:{
+ courseId:string;cohortId:string;academicPeriodId:string;
+ type:CreateCourseOfferingInput["type"];
+ credits:CreateCourseOfferingInput["credits"];
+ displayOrder:CreateCourseOfferingInput["displayOrder"];
+}):CreateCourseOfferingInput{
+ return createCourseOfferingInputSchema.parse(input);
+}

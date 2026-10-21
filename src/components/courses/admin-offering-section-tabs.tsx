@@ -26,6 +26,16 @@ export function AdminOfferingSectionTabs(){
     window.addEventListener("hashchange",sync);
     return ()=>window.removeEventListener("hashchange",sync);
   },[]);
+  // These sections are server-rendered siblings. Hide every inactive pane
+  // after hydration rather than leaving four anchor-scroll sections visible.
+  useEffect(()=>{
+    for(const section of sections){
+      const panel=document.getElementById(section.value);
+      if(!panel)continue;
+      panel.hidden=section.value!==selected;
+      panel.setAttribute("aria-hidden",section.value===selected?"false":"true");
+    }
+  },[selected]);
   return <Tabs ariaLabel="Course detail tabs" renderPanel={false}
     value={selected} items={sections.map(item=>({
       ...item,href:pathname+"#"+item.value,

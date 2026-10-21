@@ -7,15 +7,29 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 import {listHrNotifications} from "./hr-notifications-service";
 import {HR_NOTIFICATION_EVENTS} from "./hr-notifications-model";
+/** Scope is resolved by the inbox service before either feed page is read.
+ * Only the newest 40 events from the last 30 days are shown in the bell.
+ * Older unread receipts are reported as hidden, not silently marked read. */
 export async function readHrRecruiterBell(ctx:RequestContext){
  const data=await listHrNotifications(ctx,{});
- if(data.status!=="READY")return {status:data.status,unread:0,items:[]};
- return {status:"READY" as const,unread:data.unread,
-  items:data.rows.slice(0,10).map(item=>({
+ if(data.status!=="READY")return {
+  status:data.status,unread:0,unreadTotal:0,hiddenUnread:0,feed:[],items:[],
+ };
+ const more=data.pages>1
+  ? await listHrNotifications(ctx,{collegeId:data.collegeId,page:2})
+  : null;
+ const cutoff=Date.now()-30*24*60*60*1000;
+ const rows=[...data.rows,...(more?.status==="READY"?more.rows:[])]
+  .filter(item=>item.createdAt.getTime()>=cutoff)
+  .slice(0,40);
+ const items=rows.map(item=>({
    id:item.id,label:item.label,unread:item.unread,
    at:item.createdAt.toISOString(),
    href:"/hr/placements/jobs/"+encodeURIComponent(item.jobId),
-  }))};
+ }));
+ const hiddenUnread=Math.max(0,data.unread-items.filter(item=>item.unread).length);
+ return {status:"READY" as const,unread:data.unread,unreadTotal:data.unread,
+  hiddenUnread,feed:items,items};
 }
 /** Mark only the caller's notifications for persisted employer-visible drives.
  * Other users, ungranted colleges and message threads cannot be modified. */

@@ -48,3 +48,23 @@ export function projectAdminReassignMentorHref(
   const suffix=params.toString();
   return basePath+"/reassign-mentor"+(suffix?"?"+suffix:"");
 }
+
+/** Historical numeric mentor IDs are a different identity namespace from vNext
+ * membership UUIDs. Only a caller-supplied, college-scoped mapping may restore
+ * them; an unresolved bookmark must not silently become an unfiltered search.
+ */
+export async function resolveLegacyReassignMentorBookmark(
+ params:Record<string,string|string[]|undefined>,
+ lookupInSelectedCollege:(legacyMentorId:number)=>Promise<string|null>,
+):Promise<{ok:true;params:Record<string,string|string[]|undefined>}|
+ {ok:false;reason:"INVALID_LEGACY_ID"|"LEGACY_MENTOR_NOT_MAPPED"}> {
+ const raw=params.fromMentorId;
+ if(typeof raw!=="string" || !/^[0-9]+$/.test(raw))
+  return {ok:true,params};
+ if(!/^[1-9][0-9]{0,14}$/.test(raw)||!Number.isSafeInteger(Number(raw)))
+  return {ok:false,reason:"INVALID_LEGACY_ID"};
+ const mapped=await lookupInSelectedCollege(Number(raw));
+ if(!mapped || !z.string().uuid().safeParse(mapped).success)
+  return {ok:false,reason:"LEGACY_MENTOR_NOT_MAPPED"};
+ return {ok:true,params:{...params,fromMentorId:mapped}};
+}

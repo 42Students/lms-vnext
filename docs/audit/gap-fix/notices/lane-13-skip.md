@@ -1,6 +1,6 @@
 # Notice for lane 13 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_app_campaign-unsubscribe_confirmed_page.tsx.md
 - src_components_auth_connection-failure-notice.tsx.md
@@ -20,3 +20,45 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_modules_people_identity-provisioning-repository.ts.md
 - src_modules_people_faculty-profile-error-model.ts.md
 - src_modules_storage_ui-models.ts.md
+- src_app_api_auth_login_email_route.ts.md
+- src_modules_announcements_validation.ts.md
+- src_modules_announcements_tpo-notice-form-error-model.ts.md
+- src_modules_people_learner-education-picker-model.ts.md
+- src_modules_storage_file-errors.ts.md
+- src_modules_log-alerts_manual-ops.ts.md
+- src_modules_log-alerts_redaction.ts.md
+- src_app_api_profile_me_route.ts.md
+- src_modules_announcements_visibility-model.ts.md
+- src_modules_people_college-contacts-privacy.ts.md
+- src_app_api_people_onboard_route.ts.md
+- src_modules_people_college-student-detail-service.ts.md
+- src_modules_people_faculty-profile-readiness.ts.md
+- src_modules_people_college-role-directory-model.ts.md
+- src_modules_people_identity-provisioning.ts.md
+- src_modules_people_membership-domain.ts.md
+- src_modules_people_college-faculty-detail-service.ts.md
+- src_modules_people_college-faculty-lifecycle-model.ts.md
+- src_modules_attendance_parent-sms-provider.ts.md
+- src_modules_attendance_learner-attendance-filter-model.ts.md
+- src_modules_attendance_faculty-schedule-mutation-model.ts.md
+- src_modules_attendance_faculty-marking-window.ts.md
+- NEW_docs_audit_gap2_lane-20_learner-group-controller.md.md
+- src_modules_log-alerts_reporter.ts.md
+- NEW_docs_audit_gap2_lane-20_r2-storage-utils.md.md
+- src_app_api_auth_devices_route.ts.md
+- src_app_api_announcements_admin_route.ts.md
+- src_modules_announcements_tpo-placement-write-service.ts.md
+- src_app_api_people_student-import_route.ts.md
+- src_modules_people_learner-profile-access-service.ts.md
+- src_modules_people_learner-profile-data-access-service.ts.md
+- src_app_api_people_faculty-self-document_route.ts.md
+- src_modules_attendance_learner-attendance-calendar-model.ts.md
+- src_modules_attendance_faculty-schedule-editor-model.ts.md
+- src_modules_attendance_faculty-grid-model.ts.md
+- src_modules_attendance_faculty-learner-attendance-detail.ts.md
+- src_proxy.ts.md
+- src_app_campaign-unsubscribe_token_page.tsx.md
+- src_components_profile_learner-skill-catalog-input.tsx.md
+- src_app_api_auth_admin-scope_route.ts.md
+- src_app_api_auth_session_route.ts.md
+- src_app_api_announcements_announcementId_route.ts.md

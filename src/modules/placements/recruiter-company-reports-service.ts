@@ -316,7 +316,7 @@ export async function getRecruiterCompanyReports(
         where p.kind='INTERVIEW' and r.status='APPLIED') as interview,
       (select count(distinct a.id)::int from applicants a
         join placement_offers o on o.application_id=a.id
-        where o.status in ('ISSUED','ACCEPTED','DECLINED','EXPIRED')) as offered,
+        where o.status in ('ISSUED','ACCEPTED','DECLINED')) as offered,
       (select count(distinct a.id)::int from applicants a
         join placement_offers o on o.application_id=a.id
         join placement_joining_outcomes j on j.offer_id=o.id

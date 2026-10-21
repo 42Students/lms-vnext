@@ -26,3 +26,28 @@ export async function finishCollegeInterview(ctx:RequestContext,raw:unknown){
   expectedVersion:value.expectedVersion,reason:value.reason,
  });
 }
+
+/** Legacy interview lifecycle routing contract. The active slot writer
+ * already supports SCHEDULE/EDIT/CANCEL/COMPLETED/NO_SHOW with version CAS.
+ * Reschedule REQUESTS are learner consent objects, not slot edits.
+ * A cancellation of a pending reschedule must cancel that learner request,
+ * never the underlying BOOKED interview.
+ */
+export const LEGACY_INTERVIEW_TRANSITION_ROUTES = {
+ SCHEDULED:"SCHEDULE",
+ CONFIRMED:"SCHEDULE",
+ RESCHEDULE_REQUESTED:"/api/placements/requests",
+ RESCHEDULE_REQUEST_CANCELLED:"/api/placements/requests/{requestId}/actions",
+ RESCHEDULED:"EDIT",
+ COMPLETED:"COMPLETED",
+ CANCELLED:"CANCEL",
+ NO_SHOW:"NO_SHOW",
+} as const;
+
+/** True only for cancellable pending request records. The linked interview
+ * remains booked; the caller must use the authenticated request action. */
+export function canCancelInterviewRescheduleRequest(request:{
+ requestType:string;status:string;
+}):boolean{
+ return request.requestType==="ROUND_RESCHEDULE"&&request.status==="PENDING";
+}

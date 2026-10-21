@@ -38,3 +38,27 @@ export function projectTpoCompanyHiringPulse(input:{
   confirmedJoinsWithoutYear:yearless.size,
  };
 }
+/** Legacy "Hiring per year" is NOT the confirmed JOINED chart above.
+ * It attributes each distinct placed learner to the creating job's calendar
+ * year. The read service must compute countsAsPlaced from the selected
+ * college's placement policy (offer type/status/accepted threshold), never
+ * infer it from JOINED or a job title.
+ */
+export function projectTpoLegacyPlacedByJobYear(
+ rows: readonly { membershipId: string; jobCreatedAt: Date; countsAsPlaced: boolean }[],
+): { year: number; placedLearners: number }[] {
+ const years = new Map<number, Set<string>>();
+ for (const row of rows) {
+  if (!row.countsAsPlaced || !row.membershipId.trim() ||
+      !(row.jobCreatedAt instanceof Date) ||
+      !Number.isFinite(row.jobCreatedAt.getTime())) continue;
+  const year = Number(new Intl.DateTimeFormat("en", {
+   timeZone: "Asia/Kolkata", year: "numeric",
+  }).format(row.jobCreatedAt));
+  if (!Number.isSafeInteger(year)) continue;
+  if (!years.has(year)) years.set(year, new Set());
+  years.get(year)!.add(row.membershipId);
+ }
+ return [...years.entries()].sort((a,b)=>a[0]-b[0])
+  .map(([year, learners]) => ({year, placedLearners: learners.size}));
+}

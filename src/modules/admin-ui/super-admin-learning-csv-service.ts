@@ -20,7 +20,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   if([...searchParams.keys()].some(key=>searchParams.getAll(key).length!==1))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
   const query=Object.fromEntries(searchParams);
-  const pageOnly=kind==="ASSIGNMENT"&&query.exportMode==="PAGE";
+  const pageOnly=(kind==="ASSIGNMENT"||kind==="QUIZ")&&query.exportMode==="PAGE";
   if(query.exportMode!==undefined&&!pageOnly)
     return Response.json({error:"INVALID_FILTERS"},{status:400});
   if(pageOnly)delete query.exportMode;
@@ -31,7 +31,8 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
        (query.results!==undefined&&query.results!=="ALL"))))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
   const headers:string[]=pageOnly?
-    ["Title","Course","Scope","Points","Deadline","Submitted","Total students","Graded"]:
+    (kind==="QUIZ"?["Title","Course","Status","Points","Due"]:
+     ["Title","Course","Scope","Points","Deadline","Submitted","Total students","Graded"]):
     kind==="LESSONS"?["id","lessonName","sequence","status","courseName","courseCode","cohort","semester","contentCount","publishedContentCount"]:
    kind==="PROGRESS"?["offeringId","courseName","courseCode","cohort","semester","status","recordedRows","completedRows","learnersWithRecords"]:
    ["id","title","courseName","courseCode","lessonName","status","dueAt","points","activityCount","eligibleLearners","submittedLearners","gradedLearners","resultsPublished"];
@@ -59,12 +60,13 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
         timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
         hour:"2-digit",minute:"2-digit",hourCycle:"h23",
       }).format(date):"";
-      rows.push(...data.items.map(item=>[
-        item.title||"Untitled",item.courseName||item.courseCode,
-        item.deliverySpecific?"Section-specific":"All eligible sections",
-        item.points,localDate(item.dueAt),item.submittedLearners,
-        item.eligibleLearners,item.gradedLearners,
-      ]));
+      rows.push(...data.items.map(item=>kind==="QUIZ"?
+        [item.title||"Untitled quiz",item.courseName||item.courseCode,
+         item.status||"DRAFT",item.points,localDate(item.dueAt)]:
+        [item.title||"Untitled",item.courseName||item.courseCode,
+         item.deliverySpecific?"Section-specific":"All eligible sections",
+         item.points,localDate(item.dueAt),item.submittedLearners,
+         item.eligibleLearners,item.gradedLearners]));
     }else rows.push(...data.items.map(item=>[
       item.id,item.title,item.courseName,item.courseCode,item.lessonName,item.status,
       item.dueAt?.toISOString()??null,item.points,item.activityCount,
@@ -78,7 +80,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   const items=rows.slice(0,max);
   if(!pageOnly&&total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records."]);
   const filename=pageOnly?
-    "assignments-college-"+collegeId+"-page-"+params.data.page+".csv":
+    (kind==="QUIZ"?"quizzes-college-":"assignments-college-")+collegeId+"-page-"+params.data.page+".csv":
     kind.toLowerCase().replace("progress","course-progress")+".csv";
   return new Response("\uFEFF"+placementReportCsv(headers,items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",

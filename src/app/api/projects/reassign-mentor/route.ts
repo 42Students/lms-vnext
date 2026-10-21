@@ -17,7 +17,12 @@ export async function POST(request: Request) {
   try {
     const context =
       await getCurrentRequestContext();
-    const input = await request.json();
+    const input: unknown = await request.json();
+    // Old numeric mentorId is not a persisted membership UUID. Importers must
+    // resolve it against the selected college before invoking this route.
+    if(input && typeof input==="object" && !Array.isArray(input) &&
+       "mentorId" in input && !("mentorMembershipId" in input))
+      return NextResponse.json({error:"MENTOR_MEMBERSHIP_ID_REQUIRED"},{status:400});
     const result =
       await bulkReassignProjectMentor(
         context,

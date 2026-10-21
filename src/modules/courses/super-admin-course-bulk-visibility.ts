@@ -15,9 +15,10 @@ export const superAdminCourseBulkSchema=z.strictObject({
  confirmed:z.literal(true),
 });
 
-/** SA-academics-people-52, SA-academics-people-53: fan out to the already audited
- * tenant-scoped lesson content visibility CAS path, never archive courses to hide them.
- * Unpublished and archived items keep their own status. */
+/** Published descendant lesson content visibility ONLY; never the legacy
+ * course active/enabled bulk-status lifecycle. This endpoint does not archive
+ * courses or change unpublished/future lessons. Keep the UI explicitly labeled
+ * Published content visibility until a separate approved lifecycle exists. */
 export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:unknown){
  const input=superAdminCourseBulkSchema.parse(raw);
  const acting=await resolveActingCollege(context,"courses.manage");
@@ -66,7 +67,8 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    }
   }
  }
- return {selectedCourses:selected.length,matchedLessons:ids.length,
+ return {operation:"PUBLISHED_CONTENT_VISIBILITY_ONLY" as const,
+  selectedCourses:selected.length,matchedLessons:ids.length,
   matchedContents,changed,unchanged,failures,
   failedCourseIds:input.courseIds.filter(id=>failedCourses.has(id))};
 }

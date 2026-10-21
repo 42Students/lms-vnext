@@ -29,6 +29,22 @@ import {
   type TpoDriveCancelImpact,
 } from "./tpo-drive-cancel-model";
 
+/** Legacy lifecycle is split between recruiter requests and real drives.
+ * REQUEST, SENT_BACK and REJECTED have request IDs, never phantom Job IDs.
+ * CANCELLED is persisted separately from CLOSED with irreversible stop effects.
+ */
+export function tpoLegacyLifecycleProjection(status:string){
+ switch(status){
+  case "REQUEST": return {entity:"REQUEST" as const,label:"Requested"};
+  case "SENT_BACK": return {entity:"REQUEST" as const,label:"Sent back"};
+  case "REJECTED": return {entity:"REQUEST" as const,label:"Rejected"};
+  case "DRAFT": return {entity:"JOB" as const,label:"Draft"};
+  case "PUBLISHED": return {entity:"JOB" as const,label:"Published"};
+  case "CLOSED": return {entity:"JOB" as const,label:"Closed"};
+  case "CANCELLED": return {entity:"JOB" as const,label:"Cancelled"};
+  default: return null;
+ }
+}
 async function pendingWaitlistReservations(tx:TpoJobTx,jobId:string):Promise<number>{
  const [row]=await tx.select({total:count()}).from(placementWaitlistPromotions)
   .where(and(eq(placementWaitlistPromotions.jobId,jobId),

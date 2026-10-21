@@ -14,6 +14,14 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
  ];
 }
 
+/** Exact six old-LMS inner tabs, in their original order. New vNext Overview
+ * remains the workspace landing route; UI owners can render this six-tab
+ * strip without losing the seven-entry primary navigation contract. */
+export function tpoDriveLegacyInnerTabs(jobId:string):TpoDriveTab[]{
+ const tabs=tpoDriveTabs(jobId);
+ return tabs.filter(tab=>tab.label!=="Overview");
+}
+
 /** Secondary workflows remain accessible without crowding the tab strip. */
 export function tpoDriveMoreTabs(jobId:string):TpoDriveTab[]{
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);

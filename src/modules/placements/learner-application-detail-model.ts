@@ -5,6 +5,20 @@ export type ApplicationStatusEvent = {
   occurredAt: Date;
 };
 
+/** Historical rejection uses the PREVIOUS recorded stage, not a guessed
+ * current application status. Unknown stages keep neutral copy.
+ */
+export function learnerApplicationRejectionLabel(priorStage:string|null):string{
+ switch(priorStage?.toUpperCase()){
+  case "APPLIED":
+  case "SUBMITTED":
+  case "SHORTLISTED":return "Not shortlisted";
+  case "ASSESSMENT":return "Not cleared: Assessment";
+  case "INTERVIEW":return "Not cleared: Interview";
+  case "WAITLISTED":return "Waitlist ended";
+  default:return "Application status updated";
+ }
+}
 export function learnerApplicationHistoryTimeline(
   events: readonly ApplicationStatusEvent[],
 ) {
@@ -23,7 +37,9 @@ export function learnerApplicationHistoryTimeline(
         ? "Application submitted"
         : event.toStatus === "WITHDRAWN"
           ? "Application withdrawn"
-          : "Application status updated",
+          : event.toStatus === "REJECTED"
+            ? learnerApplicationRejectionLabel(event.fromStatus)
+            : "Application status updated",
     }));
 }
 

@@ -4,7 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
-import { driveInterviewsHref, driveInterviewsParams, driveRoundTime } from "@/modules/placements/college-drive-interviews-model";
+import { driveInterviewsHref, driveInterviewsParams, driveRoundTime, filterDriveCandidateAppointments, driveInterviewFilterError } from "@/modules/placements/college-drive-interviews-model";
 import { listCollegeDriveInterviews } from "@/modules/placements/college-drive-interviews-service";
 import { getCollegeRoundSlotAppointments } from "@/modules/placements/college-round-slot-action-service";
 import { CollegeInterviewAppointments } from "@/components/placements/college-interview-appointments";
@@ -12,6 +12,7 @@ import {Select} from "@/components/ui/select";
 import {EmptyState} from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
 
 export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   params:Promise<{jobId:string}>;
@@ -22,7 +23,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const {jobId}=await params;
   const query=driveInterviewsParams(await searchParams);
   if(!query) return <ErrorState title="Invalid interview filters"
-    description="Round kind, status or page is invalid. No records were loaded." action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
+    description={driveInterviewFilterError(await searchParams)} action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),
     getCollegeRoundSlotAppointments(context,jobId),
@@ -56,8 +57,39 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center"><Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
       {(query.kind!=="ALL" || query.status!=="ALL") ? <Link href={driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}</div>
     </form>
+    <form method="get" role="search" aria-label="Candidate interview appointment filters"
+      className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-4">
+      {query.kind!=="ALL"?<input type="hidden" name="kind" value={query.kind}/>:null}
+      {query.status!=="ALL"?<input type="hidden" name="status" value={query.status}/>:null}
+      {query.applicationId?<input type="hidden" name="applicationId" value={query.applicationId}/>:null}
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Appointment status
+        <Select name="appointmentStatus" defaultValue={query.appointmentStatus??"ALL"}>
+          <option value="ALL">All statuses</option>
+          <option value="UPCOMING">Upcoming</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="CANCELLED">Cancelled and no-show</option>
+        </Select>
+      </label>
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Interview mode
+        <Select name="appointmentMode" defaultValue={query.appointmentMode??"ALL"}>
+          <option value="ALL">All modes</option><option value="ON_CAMPUS">On campus</option>
+          <option value="VIRTUAL">Virtual</option>
+        </Select>
+      </label>
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold">Application
+        <Input name="appointmentSearch" maxLength={120} defaultValue={query.appointmentSearch??""}
+          placeholder="Search application"/>
+      </label>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9">Filter interviews</Button>
+    </form>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
-      candidates={appointments.candidates} appointments={appointments.interviews}
+      candidates={appointments.candidates} appointments={filterDriveCandidateAppointments(
+        appointments.interviews, {
+          appointmentStatus: query.appointmentStatus,
+          mode: query.appointmentMode,
+          search: query.appointmentSearch,
+        },
+      )}
       preferredApplicationId={query.applicationId}/>
     <section aria-label="Persisted interview rounds" className="space-y-2">
       <p role="status" className="text-sm text-body leading-[22px]">{data.total} matching interview/GD rounds</p>

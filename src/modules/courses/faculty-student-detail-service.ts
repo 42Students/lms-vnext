@@ -12,6 +12,13 @@ import {
   summarizeFacultyStudentAttendance,
 } from "./faculty-student-detail-model";
 
+/** Old student ID + class ID are numeric legacy identifiers, never UUIDs.
+ * Authenticate the courseSectionDelivery UUID and membership UUID from the
+ * current roster before revealing profile/contact details. Legacy first/last
+ * name -> displayName; roll_number -> rollNumber; contact_mobile/mail ->
+ * phoneE164/email through the authorized directory projection. Do not use a
+ * numeric cast or a stale course roster to bypass membership authorization.
+ */
 /** Exact current delivery roster is authoritative; do not accept caller college scope. */
 export async function getFacultyStudentDetail(context: RequestContext, rawParams: unknown) {
   const params = facultyStudentDetailParamsSchema.parse(rawParams);

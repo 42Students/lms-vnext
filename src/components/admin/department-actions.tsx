@@ -33,6 +33,7 @@ export function DepartmentActions({
   const [nextName, setNextName] = useState(name);
   const [discardOpen, setDiscardOpen] = useState(false);
   const [archiveError, setArchiveError] = useState("");
+  const [editError, setEditError] = useState("");
   const hasDependencies = usage === null || usage === undefined || (usage.programs + usage.courses + usage.faculty) > 0;
   function requestEditClose() {
     if (pending) return;
@@ -43,7 +44,9 @@ export function DepartmentActions({
   const inFlightRef=useRef(false);
 
   function rename() {
-    if(pending||inFlightRef.current||!nextName.trim())return;
+    if(pending||inFlightRef.current)return;
+    if(!nextName.trim()){setEditError("Enter a department name.");return;}
+    setEditError("");
     inFlightRef.current=true;
     startTransition(async () => {
       try {
@@ -58,14 +61,17 @@ export function DepartmentActions({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
-        showToast({
-          tone: "error",
-          title: DEPARTMENT_COPY.updateFailed,
-          description:
-            payload?.error === "DEPARTMENT_NAME_CONFLICT"
-              ? "That department name is already active in this college."
-              : undefined,
-        });
+        const message=payload?.error==="DEPARTMENT_NAME_CONFLICT"
+          ? "That department name is already active in this college."
+          : payload?.fieldErrors?.name || response.status===400
+            ? "Check the department name and try again."
+            : response.status===403
+              ? "You do not have permission to update this department."
+              : response.status===404
+                ? "This department is no longer available. Refresh the list before trying again."
+                : "Could not save this department. Please try again.";
+        setEditError(message);
+        showToast({tone:"error",title:DEPARTMENT_COPY.updateFailed,description:message});
         return;
       }
 
@@ -75,7 +81,10 @@ export function DepartmentActions({
         title: DEPARTMENT_COPY.updatedMessage,
       });
       router.refresh();
-      }catch{showToast({tone:"error",title:DEPARTMENT_COPY.updateFailed});}
+      }catch{
+        setEditError("Could not save this department. Check your connection and try again.");
+        showToast({tone:"error",title:DEPARTMENT_COPY.updateFailed});
+      }
       finally{inFlightRef.current=false;}
     });
   }
@@ -116,10 +125,10 @@ export function DepartmentActions({
               .join(", ")
           : "";
 
-        setArchiveError("Department was not deleted. Move or remove its programs, courses, faculty before deleting. Refresh and retry after resolving dependencies.");
+        setArchiveError("Department was not archived. Move or remove its programs, courses or faculty assignments, then retry.");
         showToast({
           tone: "error",
-          title: "Archive blocked",
+          title: "Department was not archived",
           description:
             payload?.error ===
               "DEPARTMENT_HAS_DEPENDENCIES"
@@ -138,7 +147,10 @@ export function DepartmentActions({
           `${name} is no longer active.`,
       });
       router.refresh();
-      }catch{setArchiveError("Department was not deleted. Move or remove its programs, courses, faculty before deleting. Refresh and retry after resolving dependencies.");showToast({tone:"error",title:"Archive blocked",description:"The department could not be archived."});}
+      }catch{
+        setArchiveError("Department was not archived. Check your connection and retry.");
+        showToast({tone:"error",title:"Department was not archived",description:"The department could not be archived."});
+      }
       finally{inFlightRef.current=false;}
     });
   }
@@ -152,6 +164,7 @@ export function DepartmentActions({
         disabled={pending}
         onClick={() => {
           setNextName(name);
+          setEditError("");
           setOpen(true);
         }}
       >
@@ -160,7 +173,7 @@ export function DepartmentActions({
       <Dropdown label="Department actions" trigger="More" align="end" mobileSheet triggerClassName="md:!min-h-9">
         <Menu className="w-full min-w-0">
           <MenuItem disabled={pending || hasDependencies}
-            title={hasDependencies ? "Move or remove its programs, courses, faculty before deleting." : "Archive this department"}
+            title={hasDependencies ? "Move or resolve its programs, courses and faculty assignments before archiving." : "Archive this department"}
             onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
             Archive
           </MenuItem>
@@ -204,11 +217,18 @@ export function DepartmentActions({
         <Input
           id={`department-name-${departmentId}`}
           value={nextName}
-          onChange={(event) =>
-            setNextName(event.target.value)
-          }
+          onChange={(event) => {
+            setNextName(event.target.value);
+            setEditError("");
+          }}
           maxLength={255}
+          aria-invalid={editError === "Enter a department name." || editError === "That department name is already active in this college."}
         />
+        {editError ? <Alert tone="error" className="mt-3">
+          <span><strong>{DEPARTMENT_COPY.updateFailed}.</strong> {editError}</span>
+          <div><Button variant="ghost" type="button" disabled={pending}
+            onClick={() => setEditError("")}>Dismiss error</Button></div>
+        </Alert> : null}
       </Dialog>
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard department changes?" description={`Your edits to “${name}” will be lost.`}
@@ -219,7 +239,7 @@ export function DepartmentActions({
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         dismissible={!pending}
         title="Archive department"
-        description={`Archive ${name}? This is allowed only when it has no active programs, faculty assignments, or courses.`}
+        description={`Archive ${name}? This is allowed only when it has no linked programs, faculty assignments or courses.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
@@ -247,13 +267,13 @@ export function DepartmentActions({
           <Alert tone="error">
             <span>{archiveError}</span>
             <div><Button variant="ghost" type="button" disabled={pending}
-              onClick={archive}>Retry delete</Button></div>
+              onClick={archive}>Retry archive</Button></div>
           </Alert>
         ) : null}
         <p className="m-0 max-w-prose text-sm text-body">
-          Existing dependencies are checked
-          server-side immediately before the
-          archive is applied.
+          Archiving removes the department from active selections without deleting historical records.
+          All linked programs, courses and faculty assignments must be resolved first; dependencies
+          are rechecked immediately before the archive. Reactivation is not available here.
         </p>
       </Dialog>
     </>

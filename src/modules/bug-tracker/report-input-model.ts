@@ -16,7 +16,7 @@ export const trackerReportSchema = z.object({
   severity: z.enum(BUG_SEVERITIES),
   description: z.string().trim().min(1, "description is required")
     .max(4000, "Keep the description under 4000 characters."),
-  evidenceLink: z.union([z.url({ protocol: /^https?$/ }).max(1000), z.literal(""), z.null()]).optional(),
+  evidenceLink: z.union([z.url({ protocol: /^https?$/ }).max(1000, "Evidence link is too long."), z.literal(""), z.null()]).optional(),
   sourceUrl: z.union([
     z.url({ protocol: /^https?$/ }).max(2000).refine(value => {
       try {
@@ -35,7 +35,9 @@ export const trackerReportSchema = z.object({
 }).strict().superRefine((value, ctx) => {
   const page = LOCATION_OPTIONS.find(option => option.value === value.page);
   if (!page) {
-    ctx.addIssue({ code: "custom", path: ["page"], message: "Select the page and area." });
+    // Historical pages/screens are free text in the original tracker.
+    // Keep unknown-but-nonempty legacy locations rather than discarding them;
+    // known pages still enforce the dependent dropdown hierarchy below.
     return;
   }
   const screen = page.children?.find(option => option.value === value.screen);

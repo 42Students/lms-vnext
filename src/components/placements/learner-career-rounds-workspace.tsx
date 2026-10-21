@@ -50,6 +50,15 @@ import {
 } from "@/modules/placements/learner-rounds-browse-model";
 
 type Kind = "ASSESSMENT" | "INTERVIEW";
+/** Legacy /schedule view aliases retain their original meaning. The combined
+ * schedule itself must be populated by an authorized cross-kind page loader.
+ */
+export function legacyLearnerScheduleView(view:string|null):LearnerRoundTimeBucket{
+ if(view==="ahead")return "upcoming";
+ if(view==="past")return "past";
+ if(view==="month")return "all";
+ return "upcoming";
+}
 const timeChoices: { value: LearnerRoundTimeBucket; label: string }[] = [
   { value:"all", label:"All" },
   { value:"upcoming", label:"Upcoming" },
@@ -77,7 +86,7 @@ export function LearnerCareerRoundsWorkspace({
   membershipId = null,
   initialSelectedKey = null,
   initialSearch = "",
-  initialTimeView = "all",
+  initialTimeView = "upcoming",
   initialDueBucket = "all",
   withdrawalTargets = [],
 }: {
@@ -116,10 +125,11 @@ export function LearnerCareerRoundsWorkspace({
   useEffect(()=>{
     if(kind!=="INTERVIEW")return;
     const onPop=()=>{
-      const view=learnerInterviewScheduleViewSchema.safeParse(
-        new URLSearchParams(window.location.search).get("view")??"all",
-      );
+      const raw=new URLSearchParams(window.location.search).get("view");
+      const view=learnerInterviewScheduleViewSchema.safeParse(raw??"upcoming");
       if(view.success)setFilters(current=>({...current,time:view.data}));
+      else if(raw==="ahead"||raw==="month")
+        setFilters(current=>({...current,time:legacyLearnerScheduleView(raw)}));
     };
     window.addEventListener("popstate",onPop);
     return ()=>window.removeEventListener("popstate",onPop);

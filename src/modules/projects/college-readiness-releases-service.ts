@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,inArray,ne,sql} from "drizzle-orm";
+import {and,asc,eq,ilike,inArray,ne,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
@@ -10,19 +10,22 @@ import {getProjectAdminCollegeId} from "./admin-college-scope";
 import {ProjectsServiceError} from "./errors";
 import {loadProjectCollegeScope} from "./scope";
 
-export async function listCollegeReadinessWorkspaceChoices(context:RequestContext,collegeId:string){
+export async function listCollegeReadinessWorkspaceChoices(context:RequestContext,collegeId:string,options:{page?:number;pageSize?:number;search?:string}={}){
  const id=z.string().uuid().parse(collegeId);
  if(getProjectAdminCollegeId(context)!==id)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const college=await loadProjectCollegeScope(id);
  requirePermission(context,"projects.manage",{organizationId:college.organizationId,collegeId:college.id});
+ const page=z.number().int().min(1).max(100000).parse(options.page??1);
+ const pageSize=z.number().int().min(1).max(1000).parse(options.pageSize??1000);
+ const search=z.string().trim().max(160).parse(options.search??"");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"projects.manage",{
    organizationId:college.organizationId,collegeId:college.id,
   });
   return tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
-   .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),ne(projectInstances.status,"ARCHIVED")))
-   .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(1000);
+   .from(projectInstances).where(and(eq(projectInstances.collegeId,college.id),ne(projectInstances.status,"ARCHIVED"),...(search?[ilike(projectInstances.title,"%"+search+"%")]:[])))
+   .orderBy(asc(projectInstances.title),asc(projectInstances.id)).limit(pageSize).offset((page-1)*pageSize);
  });
 }
 

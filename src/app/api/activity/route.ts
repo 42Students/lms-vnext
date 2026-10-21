@@ -84,8 +84,17 @@ export async function GET(
         },
       );
 
+    // Add truthful name dictionaries for legacy audit list adapters without
+    // pretending that cursor pagination provides an absolute page or total.
+    const actorNames=Object.fromEntries(result.items
+      .filter(row=>row.actor?.id&&row.actor.displayName)
+      .map(row=>[row.actor!.id!,row.actor!.displayName!]));
+    const targetNames=Object.fromEntries(result.items
+      .filter(row=>row.event.subjectId&&row.event.subjectLabel)
+      .map(row=>[row.event.subjectId,row.event.subjectLabel!]));
     return NextResponse.json({
       ...result,
+      actorNames,targetNames,
       nextCursor:
         result.nextCursor
           ? {

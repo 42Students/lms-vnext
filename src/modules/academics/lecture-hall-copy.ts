@@ -21,6 +21,7 @@ export const LECTURE_HALL_COPY = {
   descriptionLabel: "Description",
   descriptionPlaceholder: "e.g., AC room, projector available",
   createdMessage: "Lecture hall created successfully!",
+  createFailureMessage: "Could not create the room. Try again.",
   updatedMessage: "Lecture hall updated successfully!",
   columns: { name: "Name", type: "Room Type", capacity: "Capacity", department: "Department", description: "Description" },
 } as const;

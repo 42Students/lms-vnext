@@ -1,6 +1,6 @@
 "use client";
 import {Checkbox} from "@/components/ui/checkbox";
-import { InlineNotice } from "@/components/ui/inline-notice";
+import {Button} from "@/components/ui/button";
 import {DataTable} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
@@ -28,7 +28,8 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
     data.error==="TPO_JOB_TYPE_LAST_ACTIVE"?"Keep at least one job type visible.":
     "Could not save this job type. Refresh and try again.");
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Unable to change type");}finally{setBusy(false);}
+   }catch(e){setError("Job types were not saved. "+
+    (e instanceof Error?e.message:"Please try again."));}finally{setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-4">
   {dialog}
@@ -46,6 +47,13 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
     </label>},
    ]}/>
   <p className="text-xs text-muted-foreground">Internship never counts as placed; Internship + full-time counts once the full-time offer is made. Drive consumers must load the authoritative college choice list.</p>
-  {error?<InlineNotice tone="error" message={error}/>:null}
+  {error?<div role="alert" className="space-y-2 border border-border p-3 text-sm text-error">
+    <p>{error}</p>
+    <div className="flex gap-2">
+     <Button type="button" variant="secondary" disabled={busy}
+      onClick={()=>router.refresh()}>Retry</Button>
+     <Button type="button" variant="secondary" onClick={()=>setError("")}>Dismiss</Button>
+    </div>
+   </div>:null}
  </section>;
 }

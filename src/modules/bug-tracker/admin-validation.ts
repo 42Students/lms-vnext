@@ -18,10 +18,10 @@ export const BUG_ENVIRONMENTS = [
 ] as const;
 
 export const trackerAdminListSchema = z.object({
-  status: z.enum(BUG_STATUSES).optional(),
+  status: z.enum(BUG_STATUSES,{error:"Choose a valid issue status"}).optional(),
   severity: z.enum(BUG_SEVERITIES).optional(),
   accountRole: z.enum(BUG_ACCOUNT_ROLES).optional(),
-  resolution: z.enum(["UNRESOLVED",...BUG_RESOLUTIONS] as const).optional(),
+  resolution: z.enum(["UNRESOLVED",...BUG_RESOLUTIONS] as const,{error:"Choose a valid resolution"}).optional(),
   retestStatus: z.enum(["NOT_RETESTED","PASS","FAIL"]).optional(),
   productionVerified: z.boolean().optional(),
   environment: z.enum(BUG_ENVIRONMENTS).optional(),
@@ -51,8 +51,8 @@ export const trackerPublicIdSchema = z.string().trim().regex(/^LMS-[0-9]{4,}$/i)
 
 export const trackerWorkflowUpdateSchema = z.object({
   expectedVersion: z.number().int().min(0),
-  status: z.enum(BUG_STATUSES).nullable().optional(),
-  resolution: z.enum(BUG_RESOLUTIONS).or(z.literal("")).nullable().optional(),
+  status: z.enum(BUG_STATUSES,{error:"Choose a valid issue status"}).nullable().optional(),
+  resolution: z.enum(BUG_RESOLUTIONS,{error:"Choose a valid resolution"}).or(z.literal("")).nullable().optional(),
   affectedLayer: z.enum(BUG_AFFECTED_LAYERS).nullable().optional(),
   rootCause: z.string().max(4000).nullable().optional(),
   fixNotes: z.string().max(4000).nullable().optional(),

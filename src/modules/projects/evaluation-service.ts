@@ -15,6 +15,8 @@ import {
   users,
   projectEvaluationItems,
   projectEvaluations,
+  projectSubmissionReviews,
+  projectDeliveryEvents,
   projectInstances,
   projectSubmissions,
 } from "@/db/schema";
@@ -289,20 +291,84 @@ export async function getProjectEvaluation(
     return null;
   }
 
-  const items = await getDb()
-    .select()
-    .from(projectEvaluationItems)
-    .where(
-      eq(
-        projectEvaluationItems.evaluationId,
-        evaluation.id,
-      ),
-    )
-    .orderBy(
-      asc(projectEvaluationItems.sequence),
-    );
-
-  return { evaluation, items };
+  // Evidence remains scoped to the same authorized project and submission.
+  // Preserve original versions, reviewer identity, decisions and attachment
+  // provenance without interpreting a file storage key as public access.
+  const [items,submissionRows,reviewRows,events] = await Promise.all([
+    getDb().select().from(projectEvaluationItems)
+      .where(eq(projectEvaluationItems.evaluationId,evaluation.id))
+      .orderBy(asc(projectEvaluationItems.sequence)),
+    getDb().select({
+      id:projectSubmissions.id,version:projectSubmissions.version,
+      status:projectSubmissions.status,submittedAt:projectSubmissions.submittedAt,
+      submittedByMembershipId:projectSubmissions.submittedByMembershipId,
+      attachments:projectSubmissions.attachments,
+      sourceUrl:projectSubmissions.sourceUrl,demoUrl:projectSubmissions.demoUrl,
+      legacyDeliveryId:projectSubmissions.legacyDeliveryId,
+      legacyOptimisticVersion:projectSubmissions.legacyOptimisticVersion,
+      legacyRevisionCount:projectSubmissions.legacyRevisionCount,
+      legacyReviewStatus:projectSubmissions.legacyReviewStatus,
+      legacyFileName:projectSubmissions.legacyFileName,
+      legacyFileSize:projectSubmissions.legacyFileSize,
+      legacyMimeType:projectSubmissions.legacyMimeType,
+    }).from(projectSubmissions).where(and(
+      eq(projectSubmissions.id,submissionId),
+      eq(projectSubmissions.projectId,scope.project.id),
+    )).limit(1),
+    getDb().select({
+      decision:projectSubmissionReviews.decision,
+      feedback:projectSubmissionReviews.feedback,
+      reviewedByUserId:projectSubmissionReviews.reviewedByUserId,
+      reviewedByMembershipId:projectSubmissionReviews.reviewedByMembershipId,
+      reviewedAt:projectSubmissionReviews.reviewedAt,
+    }).from(projectSubmissionReviews).where(and(
+      eq(projectSubmissionReviews.projectId,scope.project.id),
+      eq(projectSubmissionReviews.submissionId,submissionId),
+    )).limit(1),
+    getDb().select({
+      eventType:projectDeliveryEvents.eventType,
+      actorMembershipId:projectDeliveryEvents.actorMembershipId,
+      reason:projectDeliveryEvents.reason,
+      occurredAt:projectDeliveryEvents.occurredAt,
+      legacyAction:projectDeliveryEvents.legacyAction,
+      legacyStatus:projectDeliveryEvents.legacyStatus,
+      legacyActorId:projectDeliveryEvents.legacyActorId,
+      legacyActorName:projectDeliveryEvents.legacyActorName,
+      legacyActorType:projectDeliveryEvents.legacyActorType,
+      legacyNotes:projectDeliveryEvents.legacyNotes,
+      legacyAttachmentUrl:projectDeliveryEvents.legacyAttachmentUrl,
+      legacyFeedback:projectDeliveryEvents.legacyFeedback,
+      legacyRevisionCount:projectDeliveryEvents.legacyRevisionCount,
+    }).from(projectDeliveryEvents).where(and(
+      eq(projectDeliveryEvents.projectId,scope.project.id),
+      eq(projectDeliveryEvents.submissionId,submissionId),
+    )).orderBy(asc(projectDeliveryEvents.occurredAt)).limit(201),
+  ]);
+  const submission=submissionRows[0]??null;
+  return {
+    evaluation,items,
+    evidence:{
+      submission:submission?{
+        id:submission.id,version:submission.version,status:submission.status,
+        submittedAt:submission.submittedAt,
+        submittedByMembershipId:submission.submittedByMembershipId,
+        legacyDeliveryId:submission.legacyDeliveryId,
+        legacyOptimisticVersion:submission.legacyOptimisticVersion,
+        legacyRevisionCount:submission.legacyRevisionCount,
+        legacyReviewStatus:submission.legacyReviewStatus,
+      }:null,
+      review:reviewRows[0]??null,
+      attachments:submission?.attachments??[],
+      legacyFile:submission?.legacyFileName?{
+        name:submission.legacyFileName,size:submission.legacyFileSize,
+        mimeType:submission.legacyMimeType,
+      }:null,
+      sourceUrl:submission?.sourceUrl??null,
+      demoUrl:submission?.demoUrl??null,
+      events:events.slice(0,200),
+      eventsTruncated:events.length>200,
+    },
+  };
 }
 
 export async function listProjectEvaluations(

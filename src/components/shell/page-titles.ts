@@ -53,6 +53,14 @@ const ADMIN_ROUTE_TITLES: Record<string, string> = {
   profile: "Profile",
 };
 
+/** User/tenant IDs and opaque route tokens must never become tab titles. */
+function safeRouteTitle(segment:string):string|null{
+ if(!/^[a-z][a-z0-9_-]{0,39}$/i.test(segment))return null;
+ if(/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(segment))return null;
+ if(/(?:^|[-_])[0-9a-f]{16,}(?:$|[-_])/i.test(segment))return null;
+ return titleCase(segment);
+}
+
 function titleCase(segment: string) {
   return segment
     .replace(/[-_]+/g, " ")
@@ -75,18 +83,23 @@ export function pageTitleForPath(
 
   if (area === "college") {
     if (!second) return "Dashboard";
-    return ADMIN_ROUTE_TITLES[second] ?? titleCase(second);
+    return ADMIN_ROUTE_TITLES[second] ?? safeRouteTitle(second);
   }
 
   if (area === "learn" || area === "teacher") {
     if (!second) return area === "learn" ? "Courses" : null;
-    return ROUTE_TITLES[second] ?? null;
+    return ROUTE_TITLES[second] ?? safeRouteTitle(second);
   }
 
   if (area === "mentor") {
     if (!second) return ROUTE_TITLES.mentor;
     if (second === "projects") return ROUTE_TITLES.mentor;
-    return ROUTE_TITLES[second] ?? null;
+    return ROUTE_TITLES[second] ?? safeRouteTitle(second);
+  }
+
+  if (area === "tpo" || area === "hr" || area === "recruiter") {
+    if (!second) return area === "tpo" ? "Placements" : "Recruiter";
+    return ROUTE_TITLES[second] ?? ADMIN_ROUTE_TITLES[second] ?? safeRouteTitle(second);
   }
 
   return null;

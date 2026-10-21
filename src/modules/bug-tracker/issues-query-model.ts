@@ -11,7 +11,8 @@ export function parseTrackerIssuesPageParams(raw:Record<string,string|string[]|u
   sort:raw.sort||undefined,
   beforeCreatedAt:raw.beforeCreatedAt||undefined,
   beforeId:raw.beforeId||undefined,
-  limit:50,
+  // Legacy issue directory displays 20 rows per fetch; cursors retain every facet.
+  limit:20,
  };
  const parsed=trackerAdminListSchema.safeParse(input);
  return parsed.success?{input,display:parsed.data}:null;

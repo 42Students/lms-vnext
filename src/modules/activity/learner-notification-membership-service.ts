@@ -7,6 +7,13 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { requireLearnerNotificationsAccess } from "./learner-notifications-access";
 
+/** No section/class enrollment is required for membership-scoped notices.
+ * A learner without current classes still receives authorized college and
+ * batch announcements; only class-specific feeds may be empty.
+ */
+export const LEARNER_NO_CURRENT_CLASS_NOTICES_HINT =
+  "No current classes. College announcements and personal notifications are still available.";
+
 /** Trust neither a stale JWT role nor a caller-chosen college. The current
  * persisted membership must belong to this signed-in active learner. */
 export async function requirePersistedLearnerNotificationMembership(

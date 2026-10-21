@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, isNull, or } from "drizzle-orm";
+import { and, asc, count, eq, exists, ilike, inArray, isNull, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -22,7 +22,18 @@ const querySchema=z.object({
   pageSize:z.coerce.number().int().min(10).max(50).default(20),
 }).strict();
 
-/** No private contact fields or photos may escape this public directory. */
+/** Contacts parity/security crosswalk:
+ * Old ContactDTO included first/last, email, mobile, photo and userType.
+ * This learner/teacher directory deliberately exposes only active, same-
+ * college membership ID, display name, department and public role badges.
+ * The membership ID is an opaque, scoped route key; userId, email, mobile,
+ * photo and any storage path are never queried or exposed here.
+ * Email/mobile search remains disabled to prevent existence probing.
+ * Old staff-wide access is intentionally narrower: the vNext teacher role
+ * workspace requires a persisted ACTIVE FACULTY grant plus courses.read.
+ * Super Admin, College Admin, Mentor, Recruiter and Learner instead use
+ * their own role workspace; never infer access merely from an old URL.
+ */
 async function requirePersistedFaculty(context:RequestContext) {
   const membership=context.membership;
   if (!membership || context.user.platformStatus!=="ACTIVE" ||
@@ -55,7 +66,14 @@ export async function listFacultyContacts(context:RequestContext,rawInput:unknow
   const db=getDb();
   const role=input.tab==="ALL"?null:input.tab;
   const escaped=input.search.replace(/[%_\\]/g,"\\$&");
+  // Restrict the ALL directory to the old teaching/learner audience.
+  // EXISTS avoids multiplying one person across multiple role grants.
+  const contactAudience=exists(db.select({id:membershipRoles.id})
+    .from(membershipRoles)
+    .where(and(eq(membershipRoles.membershipId,collegeMemberships.id),
+      inArray(membershipRoles.role,["FACULTY","LEARNER"]))));
   const filters=and(
+    contactAudience,
     eq(collegeMemberships.collegeId,actor.collegeId),
     eq(collegeMemberships.status,"ACTIVE"),
     eq(users.platformStatus,"ACTIVE"),
@@ -100,8 +118,9 @@ export async function listFacultyContacts(context:RequestContext,rawInput:unknow
   const ids=rows.map(row=>row.membershipId);
   const grants=ids.length===0?[]:await db.select({
     membershipId:membershipRoles.membershipId,role:membershipRoles.role,
-  }).from(membershipRoles).where(or(
-    ...ids.map(id=>eq(membershipRoles.membershipId,id)),
+  }).from(membershipRoles).where(and(
+    inArray(membershipRoles.role,["FACULTY","LEARNER"]),
+    or(...ids.map(id=>eq(membershipRoles.membershipId,id))),
   )).orderBy(asc(membershipRoles.role));
   const byId=new Map<string,string[]>();
   for(const grant of grants){
@@ -136,10 +155,14 @@ export async function getFacultyContactDetail(context:RequestContext,rawParams:u
       eq(collegeMemberships.collegeId,actor.collegeId),
       eq(collegeMemberships.status,"ACTIVE"),
       eq(users.platformStatus,"ACTIVE"),
+      exists(db.select({id:membershipRoles.id}).from(membershipRoles)
+        .where(and(eq(membershipRoles.membershipId,collegeMemberships.id),
+          inArray(membershipRoles.role,["FACULTY","LEARNER"])))),
     )).limit(1);
   if(!contact) throw new CoursesServiceError("FACULTY_TEACHING_SCOPE_REQUIRED");
   const grants=await db.select({role:membershipRoles.role}).from(membershipRoles)
-    .where(eq(membershipRoles.membershipId,contact.membershipId))
+    .where(and(eq(membershipRoles.membershipId,contact.membershipId),
+      inArray(membershipRoles.role,["FACULTY","LEARNER"])))
     .orderBy(asc(membershipRoles.role));
   const roles=grants.map(x=>x.role);
   if(!facultyContactTabMatches(params.contactsTab,roles))

@@ -10,6 +10,9 @@ export type LearnerApplicationBrowseItem = {
     decidedAt: Date | null;
   };
   offerStatus?: string | null;
+  /** Authoritatively derived drive live flag, if returned by the journey. */
+  live?: boolean | null;
+  jobStatus?: string | null;
   results: readonly { appliedAt: Date | null; outcome?: string | null }[];
 };
 
@@ -29,7 +32,7 @@ export const DEFAULT_LEARNER_APPLICATION_FILTERS: LearnerApplicationBrowseFilter
 export function learnerApplicationStage(item: LearnerApplicationBrowseItem): string {
   if (item.withdrawnAt || item.applicationStatus === "WITHDRAWN") return "WITHDRAWN";
   if (item.offerStatus === "ACCEPTED") return "HIRED";
-  if (item.offerStatus === "ISSUED") return "OFFERED";
+  if (item.offerStatus === "ISSUED" || item.offerStatus === "RELEASED") return "OFFERED";
   const applied = item.results.filter((row) => row.appliedAt && row.outcome)
     .sort((a,b) => b.appliedAt!.getTime() - a.appliedAt!.getTime());
   const latest = applied[0]?.outcome;
@@ -39,9 +42,16 @@ export function learnerApplicationStage(item: LearnerApplicationBrowseItem): str
 }
 
 export function learnerApplicationIsComplete(item: LearnerApplicationBrowseItem) {
-  return learnerApplicationStage(item) === "WITHDRAWN" ||
-    learnerApplicationStage(item) === "REJECTED" ||
-    learnerApplicationStage(item) === "HIRED";
+  const stage=learnerApplicationStage(item);
+  if(stage==="WITHDRAWN"||stage==="HIRED")return true;
+  // Old LMS treats a released offer as in progress even after the drive ends.
+  if(item.offerStatus==="RELEASED"||item.offerStatus==="ISSUED")return false;
+  // Honor the verified drive-live fact when present; otherwise retain
+  // vNext's safe terminal-stage fallback instead of guessing from a title.
+  if(typeof item.live==="boolean")return !item.live;
+  if(item.jobStatus==="PUBLISHED")return false;
+  if(item.jobStatus==="CLOSED"||item.jobStatus==="ARCHIVED"||item.jobStatus==="CANCELLED")return true;
+  return stage==="REJECTED";
 }
 
 /** Current saved application/screening statuses, not inferred employer hiring outcomes. */

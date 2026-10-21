@@ -47,7 +47,17 @@ export async function POST(
       projectId,
       parsed.data,
     );
-    return NextResponse.json({ project });
+    // Archiving is reversible; it is not the legacy destructive Delete.
+    // Recovery stays discoverable even when the archived workspace is hidden.
+    return NextResponse.json({
+      project,
+      message: "Project archived",
+      recovery: {
+        action: "RESTORE",
+        href: "/api/projects/" + encodeURIComponent(projectId) + "/restore",
+        method: "POST",
+      },
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }

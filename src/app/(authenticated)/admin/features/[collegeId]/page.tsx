@@ -7,12 +7,13 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { Banner } from "@/components/ui/banner";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import { collegeIdSchema } from "@/modules/colleges/validation";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {parseAdminModuleDetailPageParams} from "@/modules/module-access/admin-module-detail-query";
 import {
   ADMIN_MODULE_LABELS,
@@ -64,11 +65,33 @@ export default async function SuperAdminCollegeModuleAccessPage({
     );
   }
   const {academicPage,...filters}=parsed;
-  const result = await getSuperAdminCollegeModuleAccess(context,collegeId,filters);
+  const moduleRead = await getSuperAdminCollegeModuleAccess(context,collegeId,filters)
+    .then(value => ({ok:true as const,value}))
+    .catch(error => {
+      if (error instanceof AuthorizationError) throw error;
+      return {ok:false as const,value:null};
+    });
+  if (!moduleRead.ok) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="Module Access" />
+      <ErrorState title="Couldn't load module access"
+        description="The selected college hierarchy could not be loaded. No module rules were changed."
+        action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          Retry loading module access
+        </Link>}/>
+    </div>;
+  }
+  const result = moduleRead.value;
   if (!result) notFound();
 
   const { college, modules, ancestors } = result;
-  const academicScopes=await listCollegeModuleScopeChoices(context,college.id,academicPage);
+  const academicRead = await listCollegeModuleScopeChoices(context,college.id,academicPage)
+    .then(value => ({ok:true as const,value}))
+    .catch(error => {
+      if (error instanceof AuthorizationError) throw error;
+      return {ok:false as const,value:null};
+    });
   const ancestorLevels = [
     "GLOBAL",
     "ORGANIZATION",
@@ -164,8 +187,16 @@ export default async function SuperAdminCollegeModuleAccessPage({
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
             <p>Effective policy in {college.name}: <strong>{decision.enabled?"On":"Off"}</strong></p>
             <p>{placementFeatureEffects(decision.enabled).impact}</p>
-            <p className="text-xs text-muted-foreground">Learner academic Placements overrides can change individual access. This college-level preview does not claim every learner has the same effective policy.</p>
+            <p className="text-xs text-muted-foreground">Placement cell decides learner eligibility. Historical academic Placements rules may still be stored, but this preview does not treat them as eligibility decisions.</p>
             <p className="text-xs text-muted-foreground">Turning access off does not delete historical jobs, applications or learner placement records.</p>
+            <Banner tone="warning" role="status">
+              Active jobs, in-progress applications, pending offers and upcoming interviews:
+              verified impact counts are not available from this module-access read.
+              Review the selected college in Placement Operations before disabling access.
+              <Link href="/admin/placements" className="ml-2 font-semibold text-primary-text underline">
+                Review placements
+              </Link>
+            </Banner>
           </div>
         ))}
         </Disclosure>
@@ -231,12 +262,21 @@ export default async function SuperAdminCollegeModuleAccessPage({
               key:level,header:MODULE_SCOPE_LABELS[level],mobilePriority:"secondary" as const,
               cell:(module:(typeof OPTIONAL_MODULE_KEYS)[number])=>{
                 const stored=ancestorRule(level,module);
-                return <span className="font-semibold">{stored?describeStoredOverride(stored):"Inherit"}</span>;
+                return <span className="flex flex-wrap items-center gap-2">
+                  <StatusBadge tone={!stored?"neutral":stored.enabled?"success":"neutral"}>
+                    {!stored?"Inherit":stored.enabled?"On":"Off"}
+                  </StatusBadge>
+                  {stored?.locked ? <span className="text-xs font-semibold text-warning-text">Locked</span> : null}
+                  {!stored ? <span className="text-xs text-muted-foreground">No stored rule</span> : null}
+                </span>;
               },
             })),
             {key:"effective",header:"Effective at college",mobilePriority:"secondary",cell:module=>{
               const effective=modules.find(value=>value.module===module);
-              return <span className="font-semibold">{effective?effective.enabled?"On":"Off":"Unavailable"}</span>;
+              return effective ? <div className="space-y-1">
+                <StatusBadge tone={effective.enabled?"success":"neutral"}>{effective.enabled?"On":"Off"}</StatusBadge>
+                <p className="text-xs leading-5 text-muted-foreground">{describeModuleDecision(effective)}</p>
+              </div> : <span className="text-xs text-warning-text">Unavailable</span>;
             }},
           ]}/>
 
@@ -244,10 +284,18 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section aria-label="Academic module rules" className="border-t border-border pt-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Department, Program, Batch and Class access</h2>
-        <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
-        <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
-        <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
-   baseHref={pageHref(result.page)}/>
+        <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Placements eligibility is decided by the placement cell; that control is read-only here.</p>
+        {academicRead.ok ? <>
+          <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicRead.value}/>
+          <AcademicModuleScopeInventory scopes={academicRead.value} page={academicPage}
+            baseHref={pageHref(result.page)}/>
+        </> : <Banner tone="warning" role="status">
+          Couldn't load student overrides or the academic hierarchy. Existing college
+          module decisions are still shown above. No descendant rules were changed.
+          <Link href={pageHref(result.page)} className="ml-2 font-semibold text-primary-text underline">
+            Retry loading student overrides
+          </Link>
+        </Banner>}
       </section>
       <section className="min-w-0 space-y-3">
         <div>

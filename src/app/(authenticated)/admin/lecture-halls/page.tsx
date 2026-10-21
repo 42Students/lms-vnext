@@ -29,7 +29,7 @@ export default async function SuperAdminLectureHallsPage({
     <PageHeader  title="Lecture Halls"
       description="Lecture hall administration requires an exact college safety scope." />
     <EmptyState title="Select a college to continue"
-      description="Choose a college in the header above to see its lecture halls." />
+      description="Choose a college in the header above to see its lecture halls. This workspace requires one selected college; global multi-college search is not available." />
   </div>;
   requireSuperAdminSelectedCollege(context,"academics.manage");
 
@@ -41,7 +41,9 @@ export default async function SuperAdminLectureHallsPage({
       action={<Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
 
-  const [halls, departments] = await Promise.all([
+  // Departments are optional filter metadata: their failure must not hide
+  // otherwise authorized halls or the inline create card.
+  const [hallResult, departmentResult] = await Promise.allSettled([
     listLectureHalls(context, {
       collegeId,
       q: query.q || undefined,
@@ -56,6 +58,21 @@ export default async function SuperAdminLectureHallsPage({
     }),
     listDepartments(context, collegeId),
   ]);
+  const departments = departmentResult.status==="fulfilled"?departmentResult.value:[];
+  if(hallResult.status==="rejected")return <div className="min-w-0 space-y-4 md:space-y-6">
+    <PageHeader title="Lecture Halls" description="Create and maintain lecture halls in the selected college."/>
+    <ErrorState title="Could not load lecture halls"
+      description="The existing lecture hall list could not be loaded. Creation is still available; no unverified rooms are displayed."
+      action={<Link href={superAdminLectureHallHref(query)} className="font-semibold text-primary-text underline">Retry halls</Link>}/>
+    {departmentResult.status==="rejected"?<p role="alert" className="text-sm text-warning">
+      Departments could not be loaded.{" "}
+      <Link href={superAdminLectureHallHref(query)} className="font-semibold underline">Retry departments</Link>.
+    </p>:null}
+    <LectureHallManager key={collegeId} collegeId={collegeId}
+      availabilityBase="/admin/lecture-halls" halls={[]} departments={departments.map(d=>({id:d.id,name:d.name}))}
+      emptyState={{title:"Could not load lecture halls",description:"Retry the existing rooms list before making changes to a room."}}/>
+  </div>;
+  const halls=hallResult.value;
   const total = halls.pagination.total;
   const pages = superAdminLectureHallPages(total, query.pageSize);
   const first = halls.items.length ? (query.page - 1) * query.pageSize + 1 : 0;
@@ -134,6 +151,10 @@ export default async function SuperAdminLectureHallsPage({
       </div>
     </section>
     <section aria-label="Lecture hall results" className="min-w-0 space-y-[var(--lms-space-3)]">
+      {departmentResult.status==="rejected"?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
+        Departments could not be loaded. Rooms remain visible. Department filter choices are unavailable.{" "}
+        <Link href={superAdminLectureHallHref(query)} className="font-semibold text-primary-text underline">Retry departments</Link>.
+      </p>:null}
       <p role="status" className="text-sm text-muted-foreground">{total} matching {total === 1 ? "hall" : "halls"} · Showing {first}–{last}</p>
       <LectureHallManager key={collegeId} collegeId={collegeId}
         availabilityBase="/admin/lecture-halls"

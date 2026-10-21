@@ -30,7 +30,7 @@ export async function previewCollegeDriveArchive(ctx:RequestContext,rawId:unknow
   job,canArchive:job.status!=="PUBLISHED"&&job.status!=="ARCHIVED",
   applications:apps[0]?.total??0,rounds:rounds[0]?.total??0,
   offers:Object.fromEntries(offers.map(row=>[row.status,row.total])),
-  note:"Archive hides the drive from active lists but retains its applications, interviews, offer history and audit trail. Published drives must be closed first.",
+  note:"Archive hides the drive from active lists but retains its applications, interviews, offer history and audit trail. Published drives must be closed first. Archiving retains scheduled interviews and does not currently issue the legacy cancellation notifications automatically; review affected candidates before proceeding.",
  };
 }
 export async function archiveCollegeDrive(ctx:RequestContext,rawId:unknown,raw:unknown){

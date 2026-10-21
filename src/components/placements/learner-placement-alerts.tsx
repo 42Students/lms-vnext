@@ -5,8 +5,11 @@ import {learnerAlertSafeDate} from "@/modules/placements/learner-alert-safe-date
 import {LearnerPlacementAlertAction} from "./learner-placement-alert-action";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
+type RestrictionNotice={active:true;untilDate:string|null;remainingDrives:number|null};
 
-export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false }: { alerts: Alerts; filtered?: boolean; unreadOnly?:boolean }) {
+export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=false, restriction=null }: {
+ alerts: Alerts; filtered?: boolean; unreadOnly?:boolean; restriction?:RestrictionNotice|null;
+}) {
   return (
     <section aria-labelledby="learner-placement-alerts"
       className="min-w-0 border-t border-border pt-4">
@@ -23,6 +26,13 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
         Your most recent persisted placement-related personal notifications.
         These are not a substitute for official college-wide placement notices or dispute decisions.
       </p>
+      {restriction?.active?<aside aria-label="Placement restriction" role="status"
+        className="mt-4 border-l-4 border-warning bg-muted px-4 py-3 text-sm leading-[22px]">
+        <p className="font-semibold">Placement restriction active</p>
+        {restriction.untilDate?<p>Restricted until {restriction.untilDate} (IST).</p>:null}
+        {restriction.remainingDrives!==null?<p>Remaining drive restrictions: {restriction.remainingDrives}.</p>:null}
+        <p>Contact your placement cell to review the reason or request a dispute.</p>
+      </aside>:null}
       {alerts.length === 0 ? (
         <div role="status" className="mt-4 flex min-h-40 flex-col items-center justify-center gap-3 px-3 py-6 text-center text-sm leading-6 text-body">
           {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}{" "}

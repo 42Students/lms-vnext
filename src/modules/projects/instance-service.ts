@@ -489,6 +489,7 @@ export async function listProjectInstances(
     .from(projectInstances)
     .where(
       eq(projectInstances.collegeId, college.id),
+      isNull(projectInstances.deletedAt),
     )
     .orderBy(asc(projectInstances.title));
 }

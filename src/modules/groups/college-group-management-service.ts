@@ -17,8 +17,8 @@ import {
 } from "./college-group-management-model";
 
 export class CollegeGroupManagementError extends Error {
-  constructor(public readonly code: string) {
-    super(code);
+  constructor(public readonly code: string, message?: string) {
+    super(message??code);
     this.name = "CollegeGroupManagementError";
   }
 }
@@ -125,11 +125,17 @@ export async function changeCollegeStudyGroup(context: RequestContext, groupIdRa
       .where(and(
         eq(lmsGroups.id, groupId),
         eq(lmsGroups.collegeId, member.collegeId),
-        eq(lmsGroups.ownerScope, "COLLEGE"),
-        eq(lmsGroups.kind, "STUDY_GROUP"),
         isNull(lmsGroups.deletedAt),
       )).for("update");
     if (!group) throw new CollegeGroupManagementError("GROUP_NOT_FOUND");
+    if(group.kind==="ELECTIVE")
+      throw new CollegeGroupManagementError("GROUP_FEATURE_OWNER_REQUIRED",
+        "Elective groups are managed from the Electives page");
+    if(group.kind==="PROJECT_TEAM")
+      throw new CollegeGroupManagementError("GROUP_FEATURE_OWNER_REQUIRED",
+        "Project team groups are managed from the project's Team tab");
+    if(group.ownerScope!=="COLLEGE" || group.kind!=="STUDY_GROUP")
+      throw new CollegeGroupManagementError("GROUP_NOT_FOUND");
     if (group.version !== input.expectedVersion) throw new CollegeGroupManagementError("GROUP_STALE");
     const before = {
       name: group.name, description: group.description,

@@ -24,11 +24,17 @@ export async function POST(request:Request){
       return NextResponse.json({message:"A manual alert was sent recently. Try again in 10 minutes."},
         {status:429,headers:{"Retry-After":"600"}});
     if(result.reason==="UNCONFIGURED")
-      return NextResponse.json({message:"Telegram alerts are not configured."},{status:503});
+      return NextResponse.json({
+        configured:false,accepted:false,delivered:null,
+        message:"Telegram alerts are not configured.",
+      },{status:503});
     if(!result.sent)
       return NextResponse.json({message:"Telegram could not confirm delivery. Try again later."},{status:503});
-    return NextResponse.json({sent:true,message:"Alert sent to Telegram."},
-      {headers:{"Cache-Control":"no-store"}});
+    // Provider acceptance does not confirm that a user received the alert.
+    return NextResponse.json({
+      configured:true,accepted:true,delivered:null,sent:true,
+      message:"Telegram accepted the alert request. Delivery is not confirmed.",
+    },{headers:{"Cache-Control":"no-store"}});
   }catch{
     return NextResponse.json({message:"Could not send the alert. Try again later."},{status:503});
   }

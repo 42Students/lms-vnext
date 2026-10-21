@@ -3,8 +3,30 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {readAdminSignInRequestBody,AdminSignInRequestError} from "@/modules/colleges/admin-signin-request-body";
-import {CollegeSignInPolicyError,saveAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
+import {CollegeSignInPolicyError,readAdminCollegeSignInPolicy,saveAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-policy-service";
 export const runtime="nodejs";
+/** Legacy branding readers consume data.branding.loginMethods or
+ * data.data.branding.loginMethods; do not expose unrelated tenant branding.
+ */
+export async function GET(_request:Request,{params}:{params:Promise<{collegeId:string}>}){
+ try{
+  const {collegeId}=await params;
+  const state=await readAdminCollegeSignInPolicy(await getCurrentRequestContext(),collegeId);
+  if(state.policy.kind==="MIGRATION_PENDING")
+   return NextResponse.json({error:"SIGNIN_STORAGE_PENDING"},{status:503,
+    headers:{"Cache-Control":"private, no-store"}});
+  if(state.policy.kind==="INVALID_POLICY")
+   return NextResponse.json({error:"SIGNIN_POLICY_INVALID"},{status:409,
+    headers:{"Cache-Control":"private, no-store"}});
+  const legacyMethod=state.policy.method==="EMAIL_AND_PHONE"?"EMAIL_PHONE"
+   :state.policy.method==="PHONE_AND_EMAIL"?"PHONE_EMAIL"
+   :state.policy.method??"EMAIL_PHONE";
+  const branding={loginMethods:legacyMethod};
+  return NextResponse.json({
+   branding,data:{branding},policy:state.policy,
+  },{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
+}
 export async function PUT(request:Request,{params}:{params:Promise<{collegeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{

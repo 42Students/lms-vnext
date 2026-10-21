@@ -5,9 +5,11 @@ import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useToast} from "@/components/ui/toast";
 export function SuperAdminCompanyVerification({companyId,name,verified}:{
  companyId:string;name:string;verified:boolean;
 }){
+ const {showToast}=useToast();
  const router=useRouter(),[confirm,setConfirm]=useState(false),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  async function save(){
@@ -18,7 +20,10 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({companyId,verified:!verified}),
    });
-   setConfirm(false);setNotice(verified?"Company verification removed.":"Company verified.");router.refresh();
+   const legacyMessage=verified?"Removed from 42\'s list":"Verified by 42";
+   setConfirm(false);setNotice(legacyMessage);
+   showToast({tone:"success",title:legacyMessage});
+   router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Verification unavailable. Please try again.");}
   finally{setBusy(false);}
  }

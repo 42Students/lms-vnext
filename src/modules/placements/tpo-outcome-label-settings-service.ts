@@ -35,6 +35,17 @@ function decodeLabels(raw:unknown):TpoOutcomeLabel[]{
  const parsed=z.array(entrySchema).safeParse(raw);
  return parsed.success?parsed.data.map(row=>({...row,id:row.id??null})):[];
 }
+/** Fixed after-college vocabulary may be read by any authenticated ACTIVE
+ * account, including recruiter/no selected college. Dynamic custom choices
+ * still require persisted college/TPO authorization below.
+ */
+export function fixedTpoOutcomeCatalog(context:RequestContext){
+ if(context.user.platformStatus!=="ACTIVE")return {ready:false as const,
+  fixed:[] as Array<{value:string;label:string}>,labels:[] as TpoOutcomeLabel[]};
+ return {ready:true as const,
+  fixed:Object.entries(AFTER_COLLEGE_LABELS).map(([value,label])=>({value,label})),
+  labels:[] as TpoOutcomeLabel[]};
+}
 export async function readTpoOutcomeLabels(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))

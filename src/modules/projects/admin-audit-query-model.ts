@@ -13,6 +13,55 @@ const eventTypes = new Set<string>(
 );
 const importanceValues = new Set<string>(ACTIVITY_IMPORTANCE);
 
+const legacyProjectAuditActions:Readonly<Record<string,string>> = {
+ PROJECT_CREATE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_CREATED,
+ PROJECT_ARCHIVE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
+ PROJECT_DELETE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_DELETED,
+ PROJECT_RESTORE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_RESTORED,
+ PROJECT_READINESS_OVERRIDE:ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN,
+ PROJECT_ASSIGN_MENTOR:ACTIVITY_EVENT_TYPES.PROJECTS_MENTOR_REASSIGNED,
+ PROJECT_TEMPLATE_CREATE:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_CREATED,
+ PROJECT_TEMPLATE_UPDATE:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_REVISED,
+ PROJECT_TEMPLATE_ARCHIVE:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ARCHIVED,
+ PROJECT_TEMPLATE_PUBLISH:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_PUBLISHED,
+ PROJECT_TEMPLATE_UNPUBLISH:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNPUBLISHED,
+ PROJECT_TEMPLATE_DUPLICATE:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_DUPLICATED,
+ PROJECT_TEMPLATE_ROLLBACK:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ROLLED_BACK,
+ PROJECT_TEMPLATE_COLLEGE_ASSIGN:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_ASSIGNED,
+ PROJECT_TEMPLATE_COLLEGE_UNASSIGN:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
+ PROJECT_RESOURCE_SYNC:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
+ PROJECT_DELIVERY_ADMIN_REVIEW:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REVIEWED,
+};
+
+/** Read old link-only range/entity/page keys without ever accepting arbitrary
+ * query operators. A page offset cannot be applied to a cursor stream without
+ * fetching each intervening page, so callers must surface its legacyPage hint.
+ */
+export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:Date) {
+ const range=params.range;
+ const entityId=params.entityId;
+ const page=params.page;
+ const validRange=typeof range==="string"&&["today","7d","30d","all"].includes(range);
+ const validEntity=typeof entityId==="string"&&entityId.trim().length>0&&entityId.length<=500;
+ const validPage=typeof page==="string"&&/^(0|[1-9]\d{0,4})$/.test(page);
+ const translated:ProjectAdminAuditSearchParams={...params};
+ delete translated.range;
+ delete translated.entityId;
+ delete translated.page;
+ if(validEntity&&!translated.subjectId)translated.subjectId=entityId.trim();
+ if(validRange&&range!=="all"&&Number.isFinite(now.getTime())){
+  const start=new Date(now);
+  start.setUTCHours(0,0,0,0);
+  if(range!=="today")start.setUTCDate(start.getUTCDate()-(range==="7d"?7:30));
+  if(!translated.from)translated.from=start.toISOString().slice(0,10);
+ }
+ const legacyPage=validPage?Number(page):0;
+ return {params:translated,legacyPage,
+  needsCursorReplay:legacyPage>0,
+  invalidLegacyLink:(range!==undefined&&!validRange)||
+   (entityId!==undefined&&!validEntity)||(page!==undefined&&!validPage)};
+}
+
 function validCalendarDate(value: string): boolean {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
   const instant = new Date(value + "T00:00:00.000Z");
@@ -62,8 +111,9 @@ export function parseProjectAdminAuditQuery(params: ProjectAdminAuditSearchParam
   const ambiguousAction=new Set(actionAliases).size>1;
   if(ambiguousAction)ignoredInvalidFilters=true;
   const action=ambiguousAction?undefined:actionAliases[0];
-  const eventType = action && eventTypes.has(action)
-    ? action : undefined;
+  const canonicalAction=action ? legacyProjectAuditActions[action]??action : undefined;
+  const eventType = canonicalAction && eventTypes.has(canonicalAction)
+    ? canonicalAction : undefined;
   if (action && !eventType) ignoredInvalidFilters = true;
 
   const importanceValue = allow("importance", (value) => importanceValues.has(value));

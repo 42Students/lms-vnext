@@ -15,6 +15,18 @@ import { ProjectsServiceError } from "./errors";
 import { deriveMentorProjectAttention } from "./mentor-attention";
 import { currentPendingMentorSubmissions } from "./mentor-latest-review-model";
 
+/** Legacy mentor notification crosswalk (read-only, never fabricated):
+ * resolvedDelivery / latest deliverable => newest persisted projectSubmissions
+ *   whose version/status means a learner still needs mentor review;
+ * meetingsList => per-project REQUESTED/SCHEDULED/RESCHEDULED meeting rows;
+ * project.status => projectInstances.status (ARCHIVED never produces attention);
+ * updatedAt => newest scoped activity/project submission/task submission/
+ *   meeting update, falling back to projectInstances.updatedAt;
+ * user-visible occurredAt => submission.submittedAt for REVIEW and
+ *   meeting.startsAt for REQUESTED/MEETING_SOON, rather than read time.
+ * This translation preserves vNext membership-scoped identifiers and its
+ * independent task-submission/meeting tables; no legacy table is imported.
+ */
 /** All project IDs originate from active same-college mentor membership rows.
  * Never accept a client-provided project list for this cross-project feed.
  */

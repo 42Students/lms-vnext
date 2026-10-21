@@ -13,6 +13,7 @@ export async function getSuperAdminScreeningDetail(context:RequestContext,rawId:
   applicationId:placementApplications.id,applicationStatus:placementApplications.status,
   eligibility:placementApplications.eligibilityStatus,channel:placementApplications.channel,
   screeningStatus:placementApplicationScreenings.status,decidedAt:placementApplicationScreenings.decidedAt,
+  candidateMessage:placementApplicationScreenings.candidateMessage,
   submittedAt:placementApplications.submittedAt,
   applicant:users.displayName,jobTitle:placementJobs.title,
  }).from(placementApplications)
@@ -31,6 +32,14 @@ export async function getSuperAdminScreeningDetail(context:RequestContext,rawId:
    {label:"Application status",value:r.applicationStatus},
    {label:"Eligibility",value:r.eligibility},{label:"Channel",value:r.channel},
    {label:"Submitted",value:placementDateIst(r.submittedAt)},
-   {label:"Screening decision",value:placementDateIst(r.decidedAt)},
+   {label:"Manual screening status",value:r.screeningStatus},
+   {label:"Manual decision recorded",value:placementDateIst(r.decidedAt)},
+   {label:"Automated screening",value:"Not performed; this is a human decision"},
+   {label:"Automated score (0–1)",value:"Not recorded"},
+   {label:"Matched skills",value:"Not assessed in this workflow"},
+   {label:"Missing skills",value:"Not assessed in this workflow"},
+   {label:"Score provenance",value:"No automated score; do not infer ranking from manual status"},
+   {label:"Candidate-facing explanation",value:r.candidateMessage?.trim() || "Not recorded"},
+   {label:"Excluded attributes",value:"Protected attributes are not used to compute a score"},
    {label:"Privacy",value:"Internal review notes and candidate private contact details are not shown"}]};
 }

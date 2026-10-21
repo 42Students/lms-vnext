@@ -3,6 +3,8 @@ import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 import {collegeActivityItem} from "./college-activity-presentation";
 
 export const COLLEGE_ACTIVITY_EXPORT_CAP = 1000;
+/** College-admin activity exports deliberately do not expose IP addresses. */
+export const COLLEGE_ACTIVITY_IP_POLICY="REDACTED" as const;
 export const collegeActivityExportQuerySchema = z.object({
   view: z.enum(["IMPORTANT", "EVERYTHING"]).optional(),
   category: z.enum(["ACADEMIC_SETUP", "PEOPLE_ACCESS", "TEACHING", "PROJECTS"]).optional(),
@@ -46,7 +48,7 @@ export function buildCollegeActivityCsv(
       row.summary,
       collegeActivityItem(row),
       row.eventType,
-      "",
+      "Redacted",
     ].map(escapeActivityCsvCell).join(","));
   }
   if(truncated){

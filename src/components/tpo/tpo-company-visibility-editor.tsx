@@ -2,6 +2,7 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {useToast} from "@/components/ui/toast";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
@@ -18,7 +19,7 @@ type Choice=Record<keyof typeof labels,boolean>;
 export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  collegeId:string;initial:Choice;version:number;
 }){
- const router=useRouter(),[values,setValues]=useState(initial);
+ const router=useRouter(),{showToast}=useToast(),[values,setValues]=useState(initial);
  const [busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const {askConfirm,dialog}=useConfirmFlow();
  async function save(){
@@ -29,7 +30,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
     method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({collegeId,expectedVersion:version,...values}),
    });
-   setMessage("Saved");router.refresh();
+   setMessage("Saved");showToast({tone:"success",title:"Saved"});router.refresh();
   }catch(error){setMessage(error instanceof FriendlyFetchError&&error.status===409?
     "Sharing policy changed elsewhere. Refresh before retrying.":
     error instanceof Error?error.message:"Could not save.");}
@@ -38,7 +39,13 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  return <section aria-label="Edit company visibility" className="space-y-3 border-t border-border pt-5">
   <h3 className="font-semibold">What companies see</h3>
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
-  <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5"><li>The college sets the fields recruiters may see.</li><li>Learner consent and verification still apply.</li><li>Some values appear only as a band when exact sharing is off.</li><li>These settings do not grant access to a learner or drive.</li><li>Changes to sharing settings affect future views and exports.</li></ul></Disclosure>
+  <Disclosure title="How sharing works" className="min-w-0 border-t border-border pt-3" contentClassName="pt-2 text-sm"><ul className="list-disc space-y-1 pl-5">
+  <li>The college selects which verified academic fields and project links can be shown to an authorized recruiter.</li>
+  <li>When exact undergraduate percentage sharing is off, eligible views may show a percentage band instead.</li>
+  <li>Phone numbers and other private contact data are not controlled by these switches. Access still requires a separate need-to-know permission.</li>
+  <li>These switches do not grant a recruiter access to a student, drive or download.</li>
+  <li>Retention and deletion schedules, including any 90-day requirement, must be enforced by the separate data-retention service; this form does not promise automatic deletion.</li>
+ </ul></Disclosure>
   {Object.entries(labels).slice(0,3).map(([key,label])=><label key={key} className="flex min-h-11 min-w-0 items-center justify-between gap-3 border-b border-border py-2 text-sm">
    <span className="min-w-0 flex-1 break-words">{label}</span>
    <Checkbox disabled={busy} checked={values[key as keyof Choice]}

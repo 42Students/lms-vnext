@@ -12,7 +12,7 @@ export default function LearnerAttendanceError({
 }) {
   return (
     <section className="min-w-0 space-y-4">
-      <PageHeader title={"Couldn't load attendance"} />
+      <PageHeader title="Failed to load attendance." />
       <Alert tone="error" className="max-w-2xl">
         Something went wrong loading attendance for this month. This is a load failure, not a zero-attendance result.
       </Alert>

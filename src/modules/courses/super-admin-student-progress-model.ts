@@ -12,3 +12,16 @@ export function studentCourseCompletion(input:{
   .reduce((sum,value)=>sum+value,0);
  return Math.round(completed/total*100);
 }
+
+/** Match the legacy no-work/no-roster reason, never report a fabricated zero %. */
+export function studentCourseProgressEmptyNote(input:{
+ measuredItemCount:number;activeLearnerCount:number;
+}):string|null {
+ if(!Number.isSafeInteger(input.measuredItemCount)||input.measuredItemCount<0||
+    !Number.isSafeInteger(input.activeLearnerCount)||input.activeLearnerCount<0)
+  return null;
+ if(input.measuredItemCount===0)
+  return "This course has no videos, assignments or quizzes for this class yet, so there is nothing measurable to report.";
+ if(input.activeLearnerCount===0)return "This class has no active learners.";
+ return null;
+}

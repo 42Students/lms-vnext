@@ -42,3 +42,35 @@ export function placementRequestTypeLabel(value:string){
     default:return "Placement request";
   }
 }
+
+/** Cross-table personal history projection. Callers must fetch both sets with
+ * the authenticated membership + college, then apply filters/pagination AFTER
+ * combining. Never fabricate a placement Job for a general request.
+ */
+export type LearnerGeneralRequestHistorySource={
+ id:string;kind:string;status:string;reason:string;requestedAt:Date;
+ decisionNote:string|null;
+};
+export type LearnerUnifiedRequestHistoryItem={
+ id:string;source:"PLACEMENT"|"GENERAL";type:string;status:string;
+ reason:string;requestedAt:Date;decisionNote:string|null;jobTitle:string|null;
+};
+export function mergeLearnerPersonalRequestHistory(
+ placementRows:readonly LearnerSupportRequestRow[],
+ generalRows:readonly LearnerGeneralRequestHistorySource[],
+):LearnerUnifiedRequestHistoryItem[]{
+ const placement=placementRows.map(row=>({
+  id:row.request.id,source:"PLACEMENT" as const,type:row.request.requestType,
+  status:row.request.status,reason:row.request.reason,
+  requestedAt:row.request.requestedAt,decisionNote:row.request.decisionNote,
+  jobTitle:row.job.title,
+ }));
+ const general=generalRows.map(row=>({
+  id:row.id,source:"GENERAL" as const,type:row.kind,status:row.status,
+  reason:row.reason,requestedAt:row.requestedAt,decisionNote:row.decisionNote,
+  jobTitle:null,
+ }));
+ return [...placement,...general].sort((left,right)=>
+  right.requestedAt.getTime()-left.requestedAt.getTime()||
+  left.source.localeCompare(right.source)||left.id.localeCompare(right.id));
+}

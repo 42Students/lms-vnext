@@ -640,8 +640,8 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 [data-slot="form-field"] [role="alert"] { color: var(--lms-error-text); font-size: 12px; }
 @media (max-width: 639px) {
   [data-slot="page-canvas"] { padding: 16px; }
-  [data-slot="page-canvas"] h1,
-  [data-slot="page-header"] h1 { font-size: 26px; }
+  /* Legacy mobile shell rules change header/navigation rather than page-title
+     typography. Keep base 30px until old mobile render measurements exist. */
   [data-slot="button"], [data-slot="input"], [data-slot="select"], [data-slot="pagination"] a { min-height: 44px; }
   /* Legacy Ant mobile modals are centered, inset 16px with rounded panels. */
   [data-slot="dialog"] { border-radius: 12px; box-shadow: var(--lms-elevation-4); }

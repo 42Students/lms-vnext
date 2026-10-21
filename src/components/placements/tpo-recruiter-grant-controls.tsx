@@ -96,6 +96,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   const [confirmOpen,setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [reason, setReason] = useState("");
   async function revoke() {
     if (busy) return;
     setBusy(true); setError(null);
@@ -104,10 +105,10 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
         method: "POST", credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "REVOKE", confirmed: true,
-          grantId, expectedUpdatedAt }),
+          grantId, expectedUpdatedAt, reason: reason.trim() || null }),
       });
       if (!response.ok) throw new Error("Grant changed or revocation failed. Refresh to review the current state.");
-      setNotice("Access removed");setConfirmOpen(false);router.refresh();
+      setNotice("Access removed");setReason("");setConfirmOpen(false);router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Revoke failed.");
     } finally { setBusy(false); }
@@ -123,6 +124,12 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
       confirmLabel="Revoke access" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}>
+      <label className="grid gap-2 text-sm font-semibold text-body">
+        Reason for removal (optional)
+        <Input type="text" maxLength={500} value={reason} disabled={busy}
+          onChange={event=>setReason(event.target.value)}
+          className="w-full min-w-0" />
+      </label>
       {error?<InlineNotice tone="error" message={error}/>:null}
     </ConfirmDialog>
   </div>;
@@ -132,7 +139,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
  grantId:string;expectedUpdatedAt:string;displayName:string;ended?:boolean;
 }){
  const router=useRouter();
- const [months,setMonths]=useState<3|6|12>(6);
+ const [months,setMonths]=useState<3|6|12|24>(6);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [confirmOpen,setConfirmOpen]=useState(false);
  async function extend(){
@@ -144,16 +151,24 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
     body:JSON.stringify({action:"EXTEND",confirmed:true,grantId,expectedUpdatedAt,months}),
    });
    if(!response.ok)throw Error("Recruiter access has changed. Refresh and try again.");
-   setNotice("Access extended");setConfirmOpen(false);router.refresh();
+   const result=await response.json() as {outcome:string;validUntil?:string};
+   if(result.outcome!=="extended")throw Error("Recruiter access could not be confirmed. Refresh and review the grant.");
+   const validTime=result.validUntil?Date.parse(result.validUntil):NaN;
+   const until=Number.isFinite(validTime)
+    ?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(validTime))
+    :null;
+   setNotice("Access extended"+(until?" · Until "+until:""));
+   setConfirmOpen(false);router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:"Access could not be extended.");}
   finally{setBusy(false);}
  }
  return <div className="mt-2 grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">{ended?"Give access again":"Extend access"}
    <Select value={months} disabled={busy}
-    onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
+    onChange={e=>setMonths(Number(e.target.value) as 3|6|12|24)}
     className="min-h-11 w-full md:min-h-9">
     <option value={3}>3 months</option><option value={6}>6 months</option><option value={12}>12 months</option>
+    <option value={24}>24 months</option>
    </Select>
   </label>
   <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(true)}

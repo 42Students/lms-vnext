@@ -1,6 +1,6 @@
 # Notice for lane 11 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_app_api_colleges_collegeId_branding_route.ts.md
 - src_components_admin_department-directory.tsx.md
@@ -47,3 +47,7 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_app_api_admin_placements_applications_export_route.ts.md
 - src_app_api_admin_features_collegeId_trace_route.ts.md
 - src_observability_logger.ts.md
+- src_app_api_lecture-halls_hallId_route.ts.md
+- src_app_api_lecture-halls_route.ts.md
+- src_modules_profile-verification_service.ts.md
+- src_components_shell_shell-model.ts.md

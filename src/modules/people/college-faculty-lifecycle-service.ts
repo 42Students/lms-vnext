@@ -3,15 +3,16 @@ import "server-only";
 import { and, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  collegeMemberships, membershipRoles, users,
+  collegeMemberships, membershipRoles, users, identityDeviceSessions,
   courseTeachingAssignments, sectionFacultyAssignments,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {assertMutableMembershipTarget} from "./membership-protection";
-import {activeMentorProjectCount} from "./active-mentor-project-guard";
+import {activeMentorProjectCount,mentorSuspensionMessage} from "./active-mentor-project-guard";
 import {
   collegeFacultyIdSchema, collegeFacultyLifecycleSchema,
 } from "./college-faculty-lifecycle-model";
@@ -19,8 +20,10 @@ import {
 export class CollegeFacultyLifecycleError extends Error {
   constructor(public readonly code:
     "FACULTY_NOT_FOUND" | "FACULTY_STATUS_CHANGED" |
-    "FACULTY_HAS_ACTIVE_ASSIGNMENTS" | "FACULTY_HAS_ACTIVE_PROJECTS") {
-    super(code);
+    "FACULTY_HAS_ACTIVE_ASSIGNMENTS" | "FACULTY_HAS_ACTIVE_PROJECTS",
+    public readonly activeMentorProjects?: number) {
+    super(code==="FACULTY_HAS_ACTIVE_PROJECTS" && activeMentorProjects !== undefined
+      ? mentorSuspensionMessage(activeMentorProjects) : code);
     this.name = "CollegeFacultyLifecycleError";
   }
 }
@@ -39,6 +42,16 @@ export async function transitionCollegeFaculty(
     collegeId: own.collegeId, organizationId: own.organizationId,
   });
   return getDb().transaction(async tx => {
+    // Revalidate the current administrator's role in this same transaction:
+    // a request snapshot may outlive a membership/permission revocation.
+    const checked=await assertPersistedPlatformPermission(tx,context,
+      "membership.lifecycle.manage",{
+        collegeId:own.collegeId,organizationId:own.organizationId,
+      });
+    if(!checked.membership||checked.membership.id!==own.id||
+       checked.membership.collegeId!==own.collegeId||
+       !checked.membership.roles.includes("COLLEGE_ADMIN"))
+      throw new AuthorizationError("membership.lifecycle.manage");
     const [faculty] = await tx.select({
       id: collegeMemberships.id, userId:collegeMemberships.userId, status: collegeMemberships.status,
       name: users.displayName, userStatus: users.platformStatus,
@@ -64,8 +77,9 @@ export async function transitionCollegeFaculty(
     if (faculty.status !== input.expectedStatus)
       throw new CollegeFacultyLifecycleError("FACULTY_STATUS_CHANGED");
     if(input.action==="DEACTIVATE"){
-      if(await activeMentorProjectCount(tx,membershipId)>0)
-        throw new CollegeFacultyLifecycleError("FACULTY_HAS_ACTIVE_PROJECTS");
+      const activeProjects = await activeMentorProjectCount(tx,membershipId);
+      if (activeProjects > 0)
+        throw new CollegeFacultyLifecycleError("FACULTY_HAS_ACTIVE_PROJECTS",activeProjects);
     }
     const now = new Date();
     const action = input.action === "DEACTIVATE" ? "SUSPENDED" : "ACTIVE";
@@ -78,8 +92,22 @@ export async function transitionCollegeFaculty(
       eq(collegeMemberships.id, membershipId),
       eq(collegeMemberships.status, input.expectedStatus),
       eq(collegeMemberships.collegeId, own.collegeId),
-    )).returning({ id: collegeMemberships.id, status: collegeMemberships.status });
+    )).returning({
+      id: collegeMemberships.id,status: collegeMemberships.status,
+      suspendedAt:collegeMemberships.suspendedAt,
+      suspensionReason:collegeMemberships.suspensionReason,
+    });
     if (!updated) throw new CollegeFacultyLifecycleError("FACULTY_STATUS_CHANGED");
+    if(action==="SUSPENDED"){
+      // vNext device sessions are user-scoped across college memberships.
+      // Revoke all current sessions atomically when this college membership
+      // is suspended; other active colleges require a fresh sign-in.
+      await tx.update(identityDeviceSessions).set({
+        revokedAt:now,revokedByUserId:context.user.id,
+        revocationReason:"MEMBERSHIP_SUSPENDED",
+      }).where(and(eq(identityDeviceSessions.userId,faculty.userId),
+        isNull(identityDeviceSessions.revokedAt)));
+    }
     await recordActivityEventInTransaction(tx, context, {
       eventType: input.action === "DEACTIVATE"
         ? ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_SUSPENDED
@@ -94,6 +122,8 @@ export async function transitionCollegeFaculty(
         role: "FACULTY", fromStatus: faculty.status,
         toStatus: action,
         reason: input.action === "DEACTIVATE" ? input.reason : null,
+        lifecycleSemantic:"SUSPEND_NOT_LEGACY_DELETE",
+        userSessionsRevoked:action==="SUSPENDED",
       },
     });
     return updated;

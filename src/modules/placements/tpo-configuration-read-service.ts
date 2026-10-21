@@ -10,6 +10,16 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
 import { placementTpoBlockedDates as tpoBlockedDates, placementTpoJobTypes as tpoJobTypes, placementTpoPrepReadiness as tpoPrepReadiness } from "@/db/schema/tpo-configuration";
 
+/** Legacy ChoicesController advertised these fields. Only job types and
+ * outcome labels have authoritative college-scoped providers here; remaining
+ * keys must be provided by their owning modules, never fabricated as empty
+ * arrays that look like real tenant choices.
+ */
+export const TPO_LEGACY_CHOICES_KEYS=[
+ "genders","jobTypes","outcomes","outcomeLabels","driveModes",
+ "registrationChoices","educationTypes","gradingTypes",
+ "codingPlatforms","recruiterLeadSources","branches","passingYears",
+] as const;
 export async function getTpoJobTypes(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
  const ready=await placementTableExists("placement_tpo_job_types");

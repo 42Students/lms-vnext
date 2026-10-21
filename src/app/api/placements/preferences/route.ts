@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
+import {patchCandidatePreferences} from "@/modules/placements/candidate-preferences-patch-service";
 import {
   getCandidatePreferences,
   upsertCandidatePreferences,
@@ -43,4 +44,14 @@ export async function PUT(request: Request) {
   } catch (error) {
     return apiErrorResponse(error);
   }
+}
+
+/** Conflict-aware partial update, unlike the legacy full-form PUT. */
+export async function PATCH(request:Request){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const context=await getCurrentRequestContext();
+  const preferences=await patchCandidatePreferences(context,await request.json());
+  return NextResponse.json({preferences},{headers:{"cache-control":"no-store"}});
+ }catch(error){return apiErrorResponse(error);}
 }

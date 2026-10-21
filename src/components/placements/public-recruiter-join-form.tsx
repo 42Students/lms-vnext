@@ -12,6 +12,7 @@ import { useEffect,useRef,useState } from "react";
 import type { PublicJoinPreview } from "@/modules/placements/public-join/preview-model";
 import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placements/public-join/client-error-model";
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
+import { publicRecruiterWorkEmailSchema } from "@/modules/placements/public-college-join-model";
 import { JOIN_ERROR_COPY,joinErrorMessage } from "@/modules/placements/public-join/error-copy";
 
 type JoinField="email"|"name"|"phone"|"companyName"|"code";
@@ -92,18 +93,11 @@ export function PublicRecruiterJoinForm({
 
   async function sendCode() {
     if(submittingRef.current)return;
+    // Email-only stage: name, phone and company are checked when joining.
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope,stage:"SEND"});
-    const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
+    const parsed=publicRecruiterWorkEmailSchema.safeParse(email);
     if(validation||!parsed.success){
-     const field=validation?joinFieldForError(validation):
-      (parsed.success?null:parsed.error.issues[0]?.path[0]);
-     const allowed:JoinField|null=field==="email"||field==="name"||
-      field==="phone"||field==="companyName"?field:null;
-     const message=validation??(allowed==="name"?"Enter your name":
-      allowed==="email"?"Enter a valid email":
-      allowed==="phone"?"Enter a valid 10-digit mobile number, or leave it blank.":
-      allowed==="companyName"?"Enter your company name":"Check the contact details.");
-     showError(message,allowed);return;
+      showError(validation??"Enter a valid email","email");return;
     }
     submittingRef.current=true;
     setPending(true);
@@ -112,7 +106,7 @@ export function PublicRecruiterJoinForm({
       const response = await fetch(
         scope === "COMPANY" ? "/api/public/company-join/send-code" : "/api/public/college-join/send-code",
         { method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, email: parsed.data.email }) },
+          body: JSON.stringify({ token, email: parsed.data }) },
       );
       if(!response.ok){
         const body:unknown=await response.json().catch(()=>null);
@@ -122,7 +116,7 @@ export function PublicRecruiterJoinForm({
       const responseData=await response.json().catch(()=>null) as {companyName?:string|null}|null;
       setKnownCompany(responseData?.companyName??null);
       if(responseData?.companyName)setCompanyName(responseData.companyName);
-      setSentTo(parsed.data.email);
+      setSentTo(parsed.data);
       setCode("");
     } catch {
       showError(joinErrorMessage(null,"SEND"));
@@ -181,7 +175,8 @@ export function PublicRecruiterJoinForm({
         {preview.kind !== "READY" ? (
           <>
             <PageHeader title="This link is no longer valid" />
-            <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one.</p>
+            <p className="mt-3 max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for a new one. Already joined? Sign in with your work email.</p>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
         ) : blockedReason ? (
           <div role="alert" className="space-y-3">
@@ -193,9 +188,7 @@ export function PublicRecruiterJoinForm({
             <span aria-hidden="true" className="mb-3 flex size-10 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] text-lg font-bold text-primary-text">✓</span>
             <PageHeader title={alreadyJoined?"You already have access to "+college:"You now have access to "+college} />
             <p className="mt-3 text-sm text-body">
-              {alreadyJoined
-                ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
-                : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
+              {"Sign in with your work email, "+signInEmail+", on the college's placement address. We'll email you a code each time."}
             </p>
             <Link href="/login" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
@@ -257,6 +250,7 @@ export function PublicRecruiterJoinForm({
                 <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                   Company name
                   <Input ref={companyNameRef} type="text" value={companyName} maxLength={200}
+                    required={scope==="COLLEGE"&&!knownCompany} autoComplete="organization"
                     aria-invalid={Boolean(fieldErrors.companyName)} aria-describedby={fieldErrors.companyName?"join-company-error":undefined}
                     onChange={event => {setCompanyName(event.target.value);clearField("companyName");}}
                     className="w-full min-w-0" />

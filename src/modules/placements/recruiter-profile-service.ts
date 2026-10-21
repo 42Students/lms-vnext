@@ -25,7 +25,7 @@ export function ownRecruiterGrant(
   return grant;
 }
 
-export async function getRecruiterSelfProfile(context: RequestContext) {
+export async function getRecruiterSelfProfile(context: RequestContext, selectedCollegeId?: string) {
   if (!hasActiveRecruiter(context) || !context.recruiter || context.recruiter.userId !== context.user.id) {
     throw new AuthorizationError("placements.recruiter.read");
   }
@@ -63,7 +63,8 @@ export async function getRecruiterSelfProfile(context: RequestContext) {
    .from(placementRecruiterPublicContacts).where(
     eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).limit(1):[];
   return { ...row, contactPhoneDigits:contact?.phone??null,contactReady,
-   grants: context.recruiter.grants };
+   // A caller selecting a college must not receive unrelated college grants.
+   grants: selectedCollegeId ? context.recruiter.grants.filter(grant=>grant.collegeId===selectedCollegeId) : context.recruiter.grants };
 }
 
 export async function leaveOwnRecruiterCollegeAccess(

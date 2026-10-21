@@ -7,6 +7,7 @@ import { deliverPublicRecruiterJoinCode } from "@/modules/messaging/public-join-
 import { publicEnquiryTablesReady } from "./readiness";
 import { publicEnquirySendSchema,canSendPublicEnquiryCode,newEnquiryCode,enquiryMac,PUBLIC_ENQUIRY_TTL_MS } from "./otp-model";
 import { z } from "zod";
+import {publicPublicationFresh} from "../public-page/publication-freshness-model";
 
 export class PublicEnquiryError extends Error {
  constructor(readonly code:"NOT_READY"|"INVALID"|"LIMIT"|"DELIVERY_FAILED"){super("PUBLIC_ENQUIRY_"+code);}
@@ -30,11 +31,15 @@ export async function sendPublicEnquiryCode(collegeId:string,raw:unknown,verifie
  const {email}=input.data,code=newEnquiryCode(),challengeId=randomUUID();
  await getDb().transaction(async tx=>{
   const now=new Date(),hourAgo=new Date(now.getTime()-3600000);
-  const [page]=await tx.select({id:colleges.id}).from(placementPublicPageSettings)
+  const [page]=await tx.select({id:colleges.id,
+   publishedAt:placementPublicPageSettings.publishedAt,
+   populationCount:placementPublicPageSettings.populationCount,
+ }).from(placementPublicPageSettings)
    .innerJoin(colleges,eq(colleges.id,placementPublicPageSettings.collegeId))
    .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"),
     eq(placementPublicPageSettings.enabled,true))).for("update").limit(1);
-  if(!page)throw new PublicEnquiryError("INVALID");
+  if(!page||!page.publishedAt||!publicPublicationFresh(page.publishedAt,now)||
+      (page.populationCount??0)<5)throw new PublicEnquiryError("INVALID");
   const [own]=await tx.select({n:count()}).from(placementPublicEnquiryChallenges).where(and(
    eq(placementPublicEnquiryChallenges.collegeId,collegeId),
    eq(placementPublicEnquiryChallenges.workEmail,email),
@@ -60,5 +65,5 @@ export async function sendPublicEnquiryCode(collegeId:string,raw:unknown,verifie
    .where(eq(placementPublicEnquiryChallenges.id,challengeId));
   throw new PublicEnquiryError("DELIVERY_FAILED");
  }
- return {sent:true as const};
+ return {sent:true as const,status:"CODE_SENT" as const,email};
 }

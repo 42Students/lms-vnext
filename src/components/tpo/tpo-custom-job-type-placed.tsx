@@ -10,7 +10,7 @@ export function TpoCustomJobTypePlaced({id,label,version,value}:{id:string;label
  async function update(next:boolean){
   if(busy||next===value)return;
   if(!(await askConfirm("Change what counts as placed? Offers from "+label+
-   " may change placement numbers once the drive and report consumers are connected.")))return;
+   " will change the placed rule on all linked drives, including archived records, and may change placement percentages and reports. Verify the affected drives before continuing.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/"+encodeURIComponent(id)+"/placed",{

@@ -33,3 +33,10 @@ export function independentFindingHref(input:FindingFilters,page=input.page){
 }
 export const INDEPENDENT_AUDIT_PAGE_SIZE=50;
 export const ACTIVE_FINDING_STATUSES=["NEW","CONFIRMED","IN_PROGRESS","FIXED_DEV","RELEASED_PROD","NEEDS_INFO"] as const;
+
+/** Release blockers stop at production release; open work intentionally still
+ * includes RELEASED_PROD until human verification.
+ */
+export const RELEASE_BLOCKER_FINDING_STATUSES=[
+ "NEW","CONFIRMED","IN_PROGRESS","FIXED_DEV","NEEDS_INFO",
+] as const;

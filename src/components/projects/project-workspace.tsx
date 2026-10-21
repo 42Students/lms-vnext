@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
+import { ProjectChangeTemplateControl } from "./project-change-template-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
 import {MentorProjectAboutEditor} from "./mentor-project-about-editor";
@@ -41,6 +42,8 @@ import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import {MentorMeetingHistory} from "./mentor-meeting-history";
+import { ProjectMeetingPlanEditor } from "./project-meeting-plan-editor";
+import { projectMeetingPlanToken } from "@/modules/projects/project-meeting-plan-token";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -167,8 +170,21 @@ function Metric({
 }
 
 
+/** Format literal calendar dates without offset-induced day changes. */
+function formatWorkspaceTarget(value: string | null | undefined) {
+  if (!value) return "Not set";
+  if (!new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}$").test(value)) return value;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 ||
+      date.getUTCDate() !== day) return value;
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+  }).format(date);
+}
+
 /** Match the legacy read-first snapshot without overwriting execution-managed progress. */
-function WorkspaceHealthSnapshot({ workspace }: { workspace: Workspace }) {
+function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Workspace; templateHref: string }) {
   const tasks = workspace.readiness.execution.tasks;
   const sprints = workspace.readiness.execution.sprints;
   const progress = tasks.total > 0
@@ -180,7 +196,7 @@ function WorkspaceHealthSnapshot({ workspace }: { workspace: Workspace }) {
     { label: "Team", value: workspace.members.length + " member" + (workspace.members.length === 1 ? "" : "s") },
     { label: "Tasks", value: tasks.total ? tasks.done + " / " + tasks.total + " done" : "No tasks yet" },
     { label: "Sprints", value: sprints.total ? sprints.completed + " / " + sprints.total + " done" : "No sprints yet" },
-    { label: "Target", value: workspace.project.endDate ?? workspace.project.dueLabel ?? "Not set" },
+    { label: "Target", value: formatWorkspaceTarget(workspace.project.endDate ?? workspace.project.dueLabel) },
   ];
   return <section aria-label="Workspace health" className="border-b border-[var(--lms-canvas-border)] pb-5">
     <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
@@ -188,7 +204,15 @@ function WorkspaceHealthSnapshot({ workspace }: { workspace: Workspace }) {
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Workspace health</p>
         <div className="flex flex-wrap items-center gap-2">
           <StatusBadge tone={tone(workspace.project.status)}>{label(workspace.project.status)}</StatusBadge>
-          <StatusBadge tone="neutral">{workspace.project.templateVersionId ? "Template attached" : "No template attached"}</StatusBadge>
+          {workspace.project.templateVersionId ? (
+            <Link href={templateHref} className="rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]"
+              aria-label={"View template " + (workspace.templateTitle ?? "attached to workspace")}>
+              <StatusBadge tone="neutral">
+                Template · {workspace.templateTitle ?? "Attached"}
+                {workspace.templateVersion ? " v" + workspace.templateVersion : ""}
+              </StatusBadge>
+            </Link>
+          ) : <StatusBadge tone="neutral">No template attached</StatusBadge>}
           {workspace.project.phase ? <StatusBadge tone="neutral">Phase: {label(workspace.project.phase)}</StatusBadge> : null}
         </div>
         <p className="whitespace-pre-wrap text-sm leading-6 text-body">
@@ -314,6 +338,14 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                 >
                   {label(workspace.project.status)}
                 </StatusBadge>
+                {mode === "ADMIN" ? (
+                  <ProjectChangeTemplateControl
+                    projectId={workspace.project.id}
+                    status={workspace.project.status}
+                    expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
+                    deleted={Boolean(workspace.project.deletedAt)}
+                  />
+                ) : null}
                 {mode === "ADMIN" ? (
                   <ProjectArchiveControl
                     projectId={workspace.project.id}
@@ -498,7 +530,12 @@ export function ProjectWorkspace({
         </section>
       ) : null}
 
-      {mode === "ADMIN" && show("summary") ? <WorkspaceHealthSnapshot workspace={workspace} /> : null}
+      {mode === "ADMIN" && show("summary") ? (
+        <WorkspaceHealthSnapshot workspace={workspace}
+          templateHref={(backHref.startsWith("/college/") ? "/college/projects/templates/" : "/admin/projects/templates/") +
+            encodeURIComponent(workspace.project.templateId) +
+            (backHref.startsWith("/college/") ? "" : "/overview")} />
+      ) : null}
       {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
         project={workspace.project} taskProgress={readiness.execution.tasks}/>:null}
@@ -1727,6 +1764,22 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode === "ADMIN" && !readOnly && ["PLANNED", "ACTIVE"].includes(workspace.project.status) ? (
+            <ProjectMeetingPlanEditor projectId={workspace.project.id}
+              meetingsToken={projectMeetingPlanToken(workspace.meetings)}
+              meetings={workspace.meetings.filter(meeting => !meeting.deletedAt).map(meeting => ({
+                id: meeting.id, status: meeting.status, title: meeting.title,
+                agenda: meeting.agenda, startsAt: meeting.startsAt.toISOString(),
+                endsAt: meeting.endsAt.toISOString(), linkedSprintId: meeting.linkedSprintId,
+                linkedTaskId: meeting.linkedTaskId,
+              }))}
+              sprints={workspace.sprints.map(sprint => ({
+                id: sprint.id, title: sprint.title,
+              }))}
+              tasks={workspace.tasks.filter(task => !task.deletedAt).map(task => ({
+                id: task.id, title: task.title, sprintId: task.sprintId,
+              }))} />
+          ) : null}
           {mode==="MENTOR" && workspace.meetings.length ? (() => {
             const upcoming=workspace.meetings.filter(m=>(m.status==="SCHEDULED"||m.status==="RESCHEDULED")&&new Date(m.endsAt)>renderTime)
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());

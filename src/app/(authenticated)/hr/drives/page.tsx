@@ -60,24 +60,43 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   if (query.data.collegeId && !grants.some(grant => grant.collegeId === query.data.collegeId)) notFound();
   const selectedCollege = query.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
   if (!selectedCollege) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Drives" description="Choose an authorized college to open its hiring drives." />
-    {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
+    {grants.length === 0 ? <EmptyState title="Drive access is not switched on" description="Your placement-cell relationship must be active and have Drives permission before any hiring drives are visible. Contact the placement cell to request access." /> :
     <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
       key:grant.collegeId,label:grant.collegeName,
-      href:recruiterDrivesHref({...query.data,collegeId:grant.collegeId}),
+      href:recruiterDrivesHref({
+          ...query.data,collegeId:grant.collegeId,view:"ALL",q:"",
+          employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT",
+        }),
     }))}/>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
-  const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
-  const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
-  // eslint-disable-next-line react-hooks/purity -- the request clock drives IST deadline filters.
+  // A transient source failure is not an invalid filter or empty list.
+  // eslint-disable-next-line react-hooks/purity -- deadline filters use the request clock.
   const now = new Date();
-  const pageResult=await searchOwnRecruiterDrives(context,selectedCollege,{
-    ...query.data,collegeId:selectedCollege,
-  },now);
+  let requests: Awaited<ReturnType<typeof listOwnRecruiterDriveRequests>>;
+  let pageResult: Awaited<ReturnType<typeof searchOwnRecruiterDrives>>;
+  try {
+    [requests, pageResult] = await Promise.all([
+      listOwnRecruiterDriveRequests(context, selectedCollege),
+      searchOwnRecruiterDrives(context, selectedCollege,
+        {...query.data, collegeId:selectedCollege}, now),
+    ]);
+  } catch {
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+      <PageHeader title="Drives" description="Hiring drives for your selected college." />
+      <ErrorState title="Could not load your drives"
+        description="The drive list could not be refreshed. No drives were changed; try again."
+        action={<Link href={returnTo} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+    </div>;
+  }
+  const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
+  // A request linked to a created job is not a second independent drive.
+  // Approved draft receipts remain visible below in their own request section.
+  const standaloneRequests = requests.filter(req=>!req.approvedJobId);
   const totals = {...pageResult.totals,
-    all:pageResult.totals.all+requests.length,
+    all:pageResult.totals.all+standaloneRequests.length,
     waiting:requests.filter(req=>["REQUEST","SENT_BACK","DRAFT"].includes(req.status)).length,
     closed:pageResult.totals.closed+
-      requests.filter(req=>["REJECTED","CANCELLED"].includes(req.status)).length,
+      standaloneRequests.filter(req=>["REJECTED","CANCELLED"].includes(req.status)).length,
   };
   const viewOptions = [
     {view: "ALL", label: "All", count: totals.all},
@@ -87,17 +106,26 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   ] as const;
   const deadlineBase={...query.data,collegeId:selectedCollege,view:"LIVE" as const,
     q:"",employment:"ALL" as const,mode:"ALL" as const,page:1,sort:"DEADLINE" as const};
-  const [soon,past]=await Promise.all([
+  // Auxiliary attention cards/counts are nonblocking. The authoritative
+  // drive page remains visible if a secondary counter temporarily fails.
+  const [soon,past]=await Promise.allSettled([
     searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"SOON"},now,{pageSize:5,previewOnly:true}),
     searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"PAST"},now,{
       pageSize:5,descendingDeadline:true,previewOnly:true,
     }),
   ]);
-  const attention={soon:soon.rows,past:past.rows};
-  const [visibleCounts,unansweredRequests]=await Promise.all([
+  const attention={
+    soon:soon.status==="fulfilled"?soon.value.rows:[],
+    past:past.status==="fulfilled"?past.value.rows:[],
+  };
+  const [countsResult,answerableResult]=await Promise.allSettled([
     recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id)),
     countRecruiterAnswerableDriveRequests(selectedCollege,pageResult.rows.map(row=>row.job.id)),
   ]);
+  const visibleCounts=countsResult.status==="fulfilled"?countsResult.value:{};
+  const unansweredRequests=answerableResult.status==="fulfilled"?answerableResult.value:{};
+  const partialLoadFailure=soon.status==="rejected"||past.status==="rejected"||
+    countsResult.status==="rejected"||answerableResult.status==="rejected";
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
@@ -105,6 +133,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
       </Link>} />
+    {partialLoadFailure ? <Alert tone="warning">
+      Some drive details could not be refreshed. Your current drive list is still available. <Link href={returnTo} className="font-semibold text-primary-text underline">Retry</Link>
+    </Alert> : null}
     <details className="min-w-0 border-t border-border pt-2">
       <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Sent discussion proposals</summary>
       <nav aria-label="Recruiter proposal history" className="flex min-w-0 flex-col items-start gap-2 py-2 md:flex-row md:items-center md:gap-3">
@@ -123,7 +154,10 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {grants.length > 1 ? <NeedsDoingChips label="College:" selectedKey={selectedCollege}
       items={grants.map(grant=>({
         key:grant.collegeId,label:grant.collegeName,
-        href:recruiterDrivesHref({...query.data,collegeId:grant.collegeId}),
+        href:recruiterDrivesHref({
+          ...query.data,collegeId:grant.collegeId,view:"ALL",q:"",
+          employment:"ALL",mode:"ALL",deadline:"ALL",page:1,sort:"RECENT",
+        }),
       }))}/> : null}
     {(attention.soon.length>0||attention.past.length>0)?<section aria-label="Recruiter deadline attention"
       className="border-b border-border pb-4 md:pb-6">

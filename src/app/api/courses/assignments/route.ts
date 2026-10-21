@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { isDatabaseUnavailableError } from "@/lib/db-outage";
 import {
   createCourseAssignment,
   listCourseAssignments,
@@ -50,10 +51,18 @@ export async function POST(request: Request) {
       );
 
     return NextResponse.json(
-      { assignment },
+      { assignment, message: "Assignment saved" },
       { status: 201 },
     );
   } catch (error) {
+    if (isDatabaseUnavailableError(error)) {
+      // Preserve the central request ID/status/retry headers while presenting
+      // the old LMS actionable offline-writer message.
+      const response=apiErrorResponse(error);
+      const body=await response.json() as Record<string,unknown>;
+      return NextResponse.json({...body,message:"Assignment writer unavailable"},
+        {status:503,headers:response.headers});
+    }
     return apiErrorResponse(error);
   }
 }

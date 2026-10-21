@@ -1,12 +1,12 @@
 import "server-only";
-import { and, desc, eq, gte, isNull, lte } from "drizzle-orm";
+import { and, desc, eq, gte, isNull, lt } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementJobRounds, placementJobs } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { getTpoRoundDriveDay } from "./tpo-round-drive-day-service";
-import { isTpoRoundHappeningNow, summarizeTpoLiveAttendance } from "./tpo-live-drive-day-model";
+import { isTpoRoundOnDriveDay, summarizeTpoLiveAttendance, tpoIstDayWindow } from "./tpo-live-drive-day-model";
 
 /** TPO-only snapshot. Max 20 live rounds; never infer current activity from date alone. */
 export async function getTpoLiveDriveDaySummary(context: RequestContext, now: Date = new Date()) {
@@ -21,7 +21,7 @@ export async function getTpoLiveDriveDaySummary(context: RequestContext, now: Da
   }
   requirePermission(context, "placements.manage", { collegeId });
   await requirePlacementManageScope(context, collegeId);
-  const earliest = new Date(now.getTime() - 1_440 * 60_000);
+  const { start: earliest, end: dayEnd } = tpoIstDayWindow(now.toISOString());
   const candidates = await getDb().select({
     id: placementJobRounds.id,
     status: placementJobRounds.status,
@@ -35,11 +35,11 @@ export async function getTpoLiveDriveDaySummary(context: RequestContext, now: Da
       isNull(placementJobs.archivedAt),
       eq(placementJobRounds.status, "SCHEDULED"),
       gte(placementJobRounds.scheduledAt, earliest),
-      lte(placementJobRounds.scheduledAt, now),
+      lt(placementJobRounds.scheduledAt, dayEnd),
     ))
     .orderBy(desc(placementJobRounds.scheduledAt), desc(placementJobRounds.id))
     .limit(101);
-  const live = candidates.filter((round) => isTpoRoundHappeningNow({
+  const live = candidates.filter((round) => isTpoRoundOnDriveDay({
     status: round.status,
     scheduledAt: round.scheduledAt?.toISOString() ?? null,
     durationMinutes: round.durationMinutes,

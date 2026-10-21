@@ -91,11 +91,18 @@ export default async function ActivityPage({
   const effectiveModule=moduleValue??categoryModule;
   const selectedCollegeId=isSuperAdmin(context)?context.adminScope?.collegeId??null:null;
   const selectedOrganizationId=isSuperAdmin(context)?context.adminScope?.organizationId??null:null;
-  const collegeOptions = isSuperAdmin(context)
-    ? (await listColleges(context)).filter(college=>
-        !selectedCollegeId && (!selectedOrganizationId ||
-          college.organizationId===selectedOrganizationId))
-    : [];
+  // A college-filter directory failure is recoverable: it must not turn a
+  // successfully scoped activity read into a route-level 500 error.
+  let collegeOptions: Awaited<ReturnType<typeof listColleges>> = [];
+  let collegeOptionsFailed = false;
+  if (isSuperAdmin(context) && !selectedCollegeId) {
+    try {
+      collegeOptions = (await listColleges(context)).filter(college=>
+        !selectedOrganizationId || college.organizationId===selectedOrganizationId);
+    } catch {
+      collegeOptionsFailed = true;
+    }
+  }
   const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   }).format(date);
@@ -283,6 +290,12 @@ export default async function ActivityPage({
          :context.adminScope?.organizationId?"Organization-wide activity."
          :"Platform-wide activity."}
       </p>:null}
+      {collegeOptionsFailed ? (
+        <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-3 text-sm text-body">
+          <span>College filter options could not load. Your activity results are still scoped to the current administrator access.</span>
+          <a href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Retry</a>
+        </div>
+      ) : null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="min-w-0 space-y-3">
        <details className="min-w-0 border-b border-border pb-3" open>
        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Activity Log category presets</summary>
@@ -300,7 +313,10 @@ export default async function ActivityPage({
       </nav>:null}
       <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         <input type="hidden" name="view" value={selectedPreset} />
-        {isSuperAdmin(context) && !selectedCollegeId ? (
+        {collegeOptionsFailed && one(params.collegeId) ? (
+          <input type="hidden" name="collegeId" value={one(params.collegeId)} />
+        ) : null}
+        {isSuperAdmin(context) && !selectedCollegeId && !collegeOptionsFailed ? (
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
             <Select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
