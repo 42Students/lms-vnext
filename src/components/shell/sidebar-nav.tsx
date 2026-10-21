@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import {cx} from "@/lib/class-names";
-import {scopedShellNavigation,shellNavIconKey,
+import {canonicalShellPath,scopedShellNavigation,shellNavIconKey,
  TPO_SECTION_LABELS,type ShellNavItem} from "./shell-model";
 import {ShellNavGlyph} from "./shell-nav-icons";
 import {legacySidebarItemActive} from "./legacy-sidebar-active-model";
@@ -45,8 +45,9 @@ export function SidebarNav({
  onNavigate?:()=>void;
 }){
  const pathname=usePathname();
+ const route=canonicalShellPath(pathname);
  const [tpoCounts,setTpoCounts]=useState<TpoShellCounters|null>(null);
- const visibleItems=scopedShellNavigation(items,pathname);
+ const visibleItems=scopedShellNavigation(items,route);
  // A college-only Placement cell shortcut still renders the college menu
  // while the URL is /tpo/home. Derive rail styling from the visible role,
  // not only the URL, so it does not acquire TPO headings/scrollbar chrome.
@@ -87,10 +88,10 @@ export function SidebarNav({
   };
  },[pathname,sidebarPortal]);
 
- const superAdminGroup=pathname.startsWith("/admin/")
-  ?superAdminLegacyGroupForPath(pathname):null;
- const collegeGroup=pathname.startsWith("/college/")
-  ?collegeLegacyGroupForPath(pathname):null;
+ const superAdminGroup=route.startsWith("/admin/")
+  ?superAdminLegacyGroupForPath(route):null;
+ const collegeGroup=route.startsWith("/college/")
+  ?collegeLegacyGroupForPath(route):null;
 
  return <nav aria-label="Main navigation" data-sidebar-portal={sidebarPortal}
   data-sidebar-skin={sidebarSkin}
@@ -98,7 +99,7 @@ export function SidebarNav({
  >{visibleItems.map((item,index)=>{
    const previousGroup=index>0?visibleItems[index-1]?.group:null;
    const startsNewGroup=Boolean(item.group)&&(index===0||item.group!==previousGroup);
-   const active=legacySidebarItemActive(pathname,item,
+   const active=legacySidebarItemActive(route,item,
     superAdminGroup?.title??null,collegeGroup?.title??null);
    const label=sectionLabel(item,sidebarPortal);
    const count=tpoCounts?tpoItemCount(item.href,tpoCounts):null;

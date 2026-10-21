@@ -119,3 +119,15 @@
  body:has(.lms-legacy-mobile-footer),
  body:has(.lms-tpo-mobile-footer) { --lms-mobile-footer-clearance: 64px; }
 }
+
+/* Six 44px learner shortcuts fit the narrow 320px viewport without shrinking
+ * the touch targets. Long captions clip, never add horizontal page scroll. */
+@media (max-width:359px) {
+ .lms-legacy-mobile-footer-items {padding-inline:4px;gap:0;}
+ .lms-legacy-mobile-footer-link {
+  flex:1 1 0;min-width:44px;max-width:none;padding-inline:2px;
+ }
+ .lms-legacy-mobile-footer-label {
+  max-width:44px;white-space:nowrap;text-overflow:ellipsis;
+ }
+}

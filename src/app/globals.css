@@ -1282,3 +1282,14 @@ body {
     transition: transform 50ms ease, opacity 50ms ease;
   }
 }
+
+@media (min-width:640px) and (max-width:767px) {
+ .lms-shell-page-main { padding-inline:12px; }
+ [data-slot="page-canvas"] { padding:16px; }
+}
+@media (max-width:767px) {
+ body:has(.lms-legacy-mobile-footer) [data-slot="toast-stack"],
+ body:has(.lms-tpo-mobile-footer) [data-slot="toast-stack"] {
+  --lms-toast-navigation-offset:calc(64px + env(safe-area-inset-bottom,0px));
+ }
+}
