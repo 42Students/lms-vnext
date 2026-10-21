@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ScrollCue } from "@/components/ui/scroll-cue";
+import { TableSelectAll } from "@/components/ui/table-select-all";
 import { Disclosure } from "@/components/ui/disclosure";
 import { cx } from "@/lib/class-names";
 import { isSafeInternalHref } from "@/lib/safe-internal-href";
@@ -33,6 +34,8 @@ export type DataTableProps<Row> = {
   caption?: string;
   rowHref?: (row: Row) => string;
   className?: string;
+  pagination?: ReactNode;
+  totalItems?: number;
   /** Legacy dense tables keep every column reachable on a narrow viewport. */
   mobileMode?: "cards"|"scroll";
   /** Safe same-origin URL for the *next* sort state. Query params persist state. */
@@ -51,7 +54,7 @@ export type DataTableProps<Row> = {
 /** Backwards-compatible export for existing DataTable consumers and tests. */
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
-export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className, sortHref, rowSelection, mobileMode = "scroll" }: DataTableProps<Row>) {
+export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className, sortHref, rowSelection, pagination, totalItems, mobileMode = "scroll" }: DataTableProps<Row>) {
   if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
   // Native form association keeps this component usable in Server Components:
   // checkboxes join a form by stable caller-owned ID without a client boundary.
@@ -133,7 +136,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         <thead className={cx("md:table-header-group md:bg-[var(--lms-white)]",horizontal?"table-header-group bg-surface":"hidden")}>
           <tr>
             {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)]">
-              <span className="sr-only">Select records</span>
+              <TableSelectAll fieldName={selection.fieldName??"selected"} />
             </th> : null}
             {columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
               className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)] md:first:left-0 md:first:z-20",col.className)}>
@@ -150,7 +153,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
             className={cx("min-w-0 bg-surface md:table-row md:overflow-visible md:rounded-none md:border-0 md:p-0 md:transition-colors md:duration-[var(--lms-motion-fast)] md:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] md:focus-within:border-[var(--lms-canvas-border)] md:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none",
               horizontal?"table-row border-0 p-0":"block overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-[var(--lms-space-4)]")}>
             {selection ? <td className={cx("py-1 md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)]",horizontal?"table-cell px-3":"block")}>
-              <input type="checkbox" name={selection.fieldName??"selected"} value={item.key}
+              <input type="checkbox" data-table-selection="row" name={selection.fieldName??"selected"} value={item.key}
                 form={selection.formId} disabled={!item.selectable}
                 aria-label={"Select record "+item.key}
                 className="size-4 accent-[var(--lms-primary)] disabled:opacity-50"/>
@@ -197,5 +200,9 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
       action={selection.action} className="mt-3 flex min-h-11 items-center gap-2">
       {selection.controls}
     </form> : null}
+    {pagination || totalItems !== undefined ? <div data-slot="data-table-footer" className="mt-3 flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
+      <span className="text-xs text-[var(--lms-neutral-500)] tabular-nums">{typeof totalItems === "number" && Number.isSafeInteger(totalItems) && totalItems >= 0 ? totalItems : rows.length} items in this view</span>
+      {pagination}
+    </div> : null}
   </div>;
 }
