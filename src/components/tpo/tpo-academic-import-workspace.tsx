@@ -5,6 +5,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {FileUpload} from "@/components/ui/file-upload";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -29,6 +30,9 @@ export function TpoAcademicImportWorkspace() {
   const {showToast}=useToast();
   const id = useId();
   const [open, setOpen] = useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
+  const [previewTab,setPreviewTab]=useState<"WILL_UPDATE"|"CANT_MATCH">("WILL_UPDATE");
+  const [skipAcknowledged,setSkipAcknowledged]=useState(false);
   const [csv, setCsv] = useState("studentCode,cgpa,activeBacklogs\n");
   const [preview, setPreview] = useState<PreviewRow[] | null>(null);
   const [legacyRows,setLegacyRows]=useState<TpoLegacyAcademicStagingRow[]|null>(null);
@@ -52,7 +56,7 @@ export function TpoAcademicImportWorkspace() {
     try{
       const value=/\.xlsx$/i.test(file.name)
         ?await recruiterXlsxToCsv(file):await file.text();
-      setCsv(value);setPreview(null);setLegacyRows(null);
+      setCsv(value);setPreview(null);setLegacyRows(null);setSkipAcknowledged(false);
       setExcluded([]);setError("");setNotice("");
     }catch(error){setError(error instanceof Error?error.message:"Invalid Excel or CSV file.");}
   }
@@ -87,7 +91,7 @@ export function TpoAcademicImportWorkspace() {
         :await send("PREVIEW",parsed);
       if(!Array.isArray(result.preview?.rows))throw Error("Could not process the academic details. Please try again.");
       const rows = result.preview.rows as PreviewRow[];
-      setPreview(rows);
+      setPreview(rows);setPreviewTab("WILL_UPDATE");setSkipAcknowledged(false);
       setExcluded(rows.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode));
     } catch (cause) {
       setPreview(null);
@@ -97,6 +101,8 @@ export function TpoAcademicImportWorkspace() {
 
   async function commit() {
     if (!preview) return;
+    const unmatched=preview.filter(row=>row.match!=="WILL_UPDATE");
+    if(unmatched.length&&!skipAcknowledged){setError("Review and explicitly skip unmatched rows before importing.");return;}
     const selected = preview.filter(row => !excluded.includes(row.studentCode));
     const matched = selected.filter(row => row.match === "WILL_UPDATE");
     if(matched.length>200){
@@ -122,15 +128,24 @@ export function TpoAcademicImportWorkspace() {
     } finally { setBusy(false); }
   }
 
+  const unresolved=Boolean(preview?.some(row=>row.match==="CANT_MATCH"));
+  const dirty=Boolean(preview||legacyRows||csv.trim()!=="studentCode,cgpa,activeBacklogs");
+  function requestClose(){
+    if(busy||guardedPending)return;
+    if(dirty&&!notice){setDiscardOpen(true);return;}
+    setOpen(false);
+  }
   return <div className="min-w-0">
-    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={() => setOpen(value => !value)}
-      aria-expanded={open} aria-controls={id}
+    <Button variant="secondary" type="button" className="min-h-11 md:min-h-9 print:hidden" onClick={() => open ? requestClose() : setOpen(true)}
+      aria-expanded={open}
       >
       Import academic details
     </Button>
-    {open && <section id={id} aria-label="Import academic details"
-      className="mt-3 w-full min-w-0 max-w-4xl space-y-3 border-y border-border py-4">
-      <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Import academic details</h2>
+    <Dialog open={open} onOpenChange={value=>{if(!value)requestClose();else setOpen(true);}}
+      dismissible={!busy&&!guardedPending} title="Import academic details"
+      description="Preview matched academic details before saving any changes."
+      className="!max-w-[820px]" bodyClassName="max-h-[75dvh] space-y-3 overflow-y-auto">
+      <p className="text-sm text-body">Match learners using their college roll numbers before importing CGPA, marks, backlogs, gaps or passing-year values. Only CGPA and backlogs are currently writable; other fields stay visible in the preview.</p>
       <details className="border-b border-border pb-3 text-sm text-muted-foreground">
         <summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Academic CSV requirements</summary><p>
         Upload up to 5,000 rows of .xlsx or CSV for a scoped preview.
@@ -144,7 +159,7 @@ export function TpoAcademicImportWorkspace() {
         Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
       </p>
       <a download="academic-import-template.csv"
-        href="data:text/csv;charset=utf-8,studentCode%2Ccgpa%2CactiveBacklogs%0A"
+        href="data:text/csv;charset=utf-8,roll%2Ccgpa%2CtenthPct%2CtwelfthPct%2CugPct%2CgapYears%2CpassingYear%2Cbatch%2CactiveBacklogs%0A24A001%2C8.5%2C91%2C90%2C85%2C0%2C2026%2CBatch%202026%2C0%0A"
         className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">
         Download a template
       </a>
@@ -164,9 +179,13 @@ export function TpoAcademicImportWorkspace() {
         <p role="status" className="text-sm leading-[22px]">
           Will update {preview.filter(row => row.match === "WILL_UPDATE").length}
           {" · "}Can&apos;t match {preview.filter(row => row.match === "CANT_MATCH").length}.
-          Unmatched rows are excluded from confirmation.
+          Unmatched rows must be explicitly acknowledged as skipped before import.
         </p>
-        <DataTable rows={preview} getRowKey={row=>row.studentCode}
+        <div role="tablist" aria-label="Import preview categories" className="flex flex-wrap gap-2">
+          <Button type="button" role="tab" variant={previewTab==="WILL_UPDATE"?"primary":"secondary"} aria-selected={previewTab==="WILL_UPDATE"} onClick={()=>setPreviewTab("WILL_UPDATE")}>Will update ({preview.filter(row=>row.match==="WILL_UPDATE").length})</Button>
+          <Button type="button" role="tab" variant={previewTab==="CANT_MATCH"?"primary":"secondary"} aria-selected={previewTab==="CANT_MATCH"} onClick={()=>setPreviewTab("CANT_MATCH")}>Can\u0027t match ({preview.filter(row=>row.match==="CANT_MATCH").length})</Button>
+        </div>
+        <DataTable rows={preview.filter(row=>row.match===previewTab)} getRowKey={row=>row.studentCode+":"+row.match}
           caption="Academic import preview"
           empty={<p>No rows found. The first row must be the column headings.</p>}
           columns={[
@@ -193,7 +212,11 @@ export function TpoAcademicImportWorkspace() {
               : preview.map(row => row.studentCode))} />
           Select all matched students
         </label>
-        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
+        {unresolved?<label className="flex min-h-11 items-center gap-2 text-sm">
+          <Checkbox checked={skipAcknowledged} disabled={busy} onChange={event=>setSkipAcknowledged(event.target.checked)}/>
+          I reviewed the unmatched students and agree to skip those rows ({preview.filter(row=>row.match==="CANT_MATCH").length}).
+        </label>:null}
+        <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy || (unresolved&&!skipAcknowledged) || preview.every(row => excluded.includes(row.studentCode))}
           onClick={() => setConfirmOpen(true)}
           >
           Confirm import
@@ -208,6 +231,12 @@ export function TpoAcademicImportWorkspace() {
       </Dialog>
       {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error leading-[22px]">{error}</p>}
       {notice && <p role="status" className="text-sm text-body leading-[22px]">{notice}</p>}
-    </section>}
+    </Dialog>
+    <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+      title="Discard academic import?" description="Your unsaved file and academic import selections will be lost."
+      confirmVariant="danger" confirmLabel="Discard changes" onConfirm={()=>{
+        setDiscardOpen(false);setOpen(false);setPreview(null);setLegacyRows(null);
+        setCsv("studentCode,cgpa,activeBacklogs\n");setExcluded([]);setSkipAcknowledged(false);
+      }}/>
   </div>;
 }
