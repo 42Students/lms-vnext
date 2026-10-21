@@ -22,7 +22,21 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
    id:projectTaskComments.id,body:projectTaskComments.body,
    commentKind:projectTaskComments.commentKind,
    authorMembershipId:projectTaskComments.authorMembershipId,
-   createdAt:projectTaskComments.createdAt,authorName:users.displayName,
+   createdAt:projectTaskComments.createdAt,
+   // Prefer the immutable actor display captured when this particular comment
+   // was posted. User profile name changes must not rewrite historical notes.
+   authorName:sql<string|null>`coalesce(
+     (select nullif(ae.metadata ->> 'authorDisplayName','')
+        from activity_events ae
+       where ae.college_id=${scope.collegeId}
+         and ae.subject_type='project_task'
+         and ae.subject_id=${taskId}
+         and ae.event_type=${ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED}
+         and ae.metadata ->> 'projectId'=${scope.project.id}
+         and ae.metadata ->> 'commentId'=${projectTaskComments.id}::text
+       order by ae.occurred_at desc,ae.id desc limit 1),
+     ${users.displayName}
+   )`,
    taskStatusSnapshot:projectTaskComments.taskStatusSnapshot,
    progressValue:projectTaskComments.progressValue,
  }).from(projectTaskComments)
