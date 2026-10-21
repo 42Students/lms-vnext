@@ -24,13 +24,29 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     getLearnerPlacementRequestWorkspace(context),listOwnAppliedPlacementResults(context),
   ]);
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
+  // Newest request wins. A pending move must suppress attendance actions
+  // until the placement cell responds, even if the original booking is live.
+  const rescheduleByRound=new Map<string,typeof workspace.requests[number]>();
+  for(const item of workspace.requests){
+    if(item.request.requestType!=="ROUND_RESCHEDULE"||!item.request.roundId)continue;
+    const key=item.request.applicationId+":"+item.request.roundId;
+    if(!rescheduleByRound.has(key))rescheduleByRound.set(key,item);
+  }
   const now = new Date();
+  const roundCanBeManaged=(row:typeof workspace.rounds[number])=>{
+    const key=row.applicationId+":"+row.roundId;
+    const pending=rescheduleByRound.get(key)?.request.status==="PENDING";
+    const scheduled=row.exception?.scheduledAt??row.scheduledAt;
+    return row.booked&&row.roundKind!=="TALK"&&!pending&&
+      !outcomeByRound.has(key)&&
+      scheduled!==null&&scheduled.getTime()>now.getTime();
+  };
   type WorkspaceRound = typeof workspace.rounds[number];
   const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now) as {
     ahead: WorkspaceRound[]; past: WorkspaceRound[]; undated: WorkspaceRound[];
   };
   const today = initialCareerCalendarDay();
-  const needsConfirmation=ahead.filter(row=>row.booked&&!row.learnerConfirmedAt).length;
+  const needsConfirmation=ahead.filter(row=>roundCanBeManaged(row)&&!row.learnerConfirmedAt).length;
   const rounds = workspace.rounds.map(row => ({
     ...row,
     scheduledAt: row.scheduledAt?.toISOString() ?? null,
@@ -61,6 +77,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     : "Date to be told";
   const details = (row: typeof workspace.rounds[number]) => {
     const outcome=outcomeByRound.get(row.applicationId+":"+row.roundId);
+    const move=rescheduleByRound.get(row.applicationId+":"+row.roundId)?.request;
     const outcomeText=outcome?.outcome==="PASS"?"Cleared":
       outcome?.outcome==="FAIL"?"Not cleared":
       outcome?.outcome==="ABSENT"?"Marked absent":
@@ -81,13 +98,23 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           Rescheduled · The time, venue and links shown above are the latest recorded booking.
         </p>
       ) : null}
+      {move?.status==="PENDING" ? (
+        <p role="status" className="text-xs font-semibold text-warning">Reschedule asked · Your original booking remains until the placement cell responds.</p>
+      ) : move?.status==="REJECTED" ? (
+        <p role="status" className="text-xs font-semibold text-body">Reschedule declined · Your original booking still applies.</p>
+      ) : move?.status==="APPROVED" ? (
+        <p role="status" className="text-xs font-semibold text-primary-text">Reschedule approved</p>
+      ) : null}
+      {move?.decisionNote && (move.status==="APPROVED"||move.status==="REJECTED") ? (
+        <p className="text-sm text-body">Placement cell reply: {move.decisionNote}</p>
+      ) : null}
       <p className="text-xs font-semibold text-body">
         {row.booked ? "Booked for this round" : "Round scheduled · Individual booking not yet recorded"}
       </p>
-      {row.booked&&!outcomeText&&
-        ((row.exception?.scheduledAt??row.scheduledAt)?.getTime()??0)>now.getTime()?
+      {roundCanBeManaged(row) ?
          <LearnerRoundConfirmAttendance applicationId={row.applicationId}
-           roundId={row.roundId} confirmed={Boolean(row.learnerConfirmedAt)}/>:null}
+           roundId={row.roundId} confirmed={Boolean(row.learnerConfirmedAt)}/> :
+         row.learnerConfirmedAt ? <p role="status" className="text-xs font-semibold">Attendance confirmed</p> : null}
       {outcomeText==="Marked absent" ? (
         <p className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
           Marked absent. If this is wrong, tell the placement cell.
@@ -119,11 +146,15 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         {ahead.map(row => <article key={row.roundId+":"+row.applicationId} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 min-[768px]:py-6">
           <p className="mb-1 text-xs font-semibold uppercase text-primary-text">{dayLabel(row.exception?.scheduledAt??row.scheduledAt)}</p>
           <h3 className="font-semibold text-[var(--lms-heading)]">{row.roundName} · {row.companyName}</h3>
-          <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
+          <p className="text-sm text-body">
+            <Link href={"/learn/my-placements/applications/"+row.applicationId}
+              className="font-semibold text-primary-text underline">{row.roleTitle}</Link>
+            {" · "+fmt(row.exception?.scheduledAt ?? row.scheduledAt)}
+          </p>
           {details(row)}
-          <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
+          {roundCanBeManaged(row) ? <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
             mode={(row.exception?.mode??row.mode)==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS"} venue={row.exception?.venue??row.venue}
-            meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/>
+            meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/> : null}
           <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}
         {ahead.length === 0 ? <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9" href="/learn/my-placements/applications">See where your applications stand</Link> : null}
