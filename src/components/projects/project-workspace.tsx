@@ -996,7 +996,8 @@ export function ProjectWorkspace({
               </p>
             </div>
             <DataTable columns={backlogColumns} rows={backlogTasks}
-              getRowKey={task => task.id} caption="Unassigned project tasks" />
+              getRowKey={task => task.id} caption="Unassigned project tasks"
+              empty={<EmptyState title="No backlog tasks" description="All tasks are assigned to a sprint." />} />
           </section>
         ) : null}
         <div className="space-y-4">
