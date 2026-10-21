@@ -237,17 +237,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
 - [x] `src/app/(authenticated)/tpo/home/page.tsx`
 - [x] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/not-found.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
+- [x] `src/app/(authenticated)/tpo/not-found.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`

@@ -31,38 +31,38 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Download all matching CSV</a>
    </div>}/>
   <form method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stage
     <Select name="stage" defaultValue={result.stage} className="block min-h-11 w-full min-[768px]:min-h-9">
      {stages.map(stage=><option key={stage} value={stage}>{stage}</option>)}
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll, branch, batch, email, phone or role
     <Input type="search" name="search" defaultValue={result.search} maxLength={100} className="block min-h-11 w-full min-[768px]:min-h-9"/>
    </label>
    <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[992px]:w-auto">Preview filters</Button>
    <details className="group col-span-full" open={result.flag !== "ALL" || result.channel !== "ALL" || result.eligibility !== "ALL" || result.sort !== "NEWEST" || result.submittedWithin !== "ALL"}>
     <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-sm font-semibold text-[var(--lms-teal-deep)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Applicant flags · Channel · Eligibility evidence · Order by · Submitted window</summary>
     <div className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-2 min-[1280px]:grid-cols-5">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applicant flags
     <Select name="flag" defaultValue={result.flag} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">Any flag</option><option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
      <option value="NO_SHOW">No-show</option><option value="PLACED_ELSEWHERE">Accepted another offer</option>
      <option value="ADDED_BY_COLLEGE">Added by college</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Channel
     <Select name="channel" defaultValue={result.channel} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">All</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Eligibility evidence
     <Select name="eligibility" defaultValue={result.eligibility} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">All</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · missing evidence</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
     <Select name="sort" defaultValue={result.sort} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
      <option value="LEARNER_NAME">Learner name</option>
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
+   <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
     <Select name="submittedWithin" defaultValue={result.submittedWithin} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="ALL">Any date</option><option value="LAST_7_DAYS">Last 7 × 24h</option>
      <option value="LAST_30_DAYS">Last 30 × 24h</option>
