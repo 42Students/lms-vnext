@@ -26,11 +26,11 @@ export default async function CollegeActivityPage({
   searchParams,
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div className="space-y-3"><PageHeader title="Activity Log"/><ErrorState title="College activity access unavailable" description="Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail."/></div>;
+  if (!context.membership) return <div className="min-w-0 space-y-3"><PageHeader title="Activity Log"/><ErrorState title="College activity access unavailable" description="Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail."/></div>;
   const parsed = collegeActivityQuerySchema.safeParse(
     activitySearchParams(await searchParams),
   );
-  if (!parsed.success) return <div className="space-y-4">
+  if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
