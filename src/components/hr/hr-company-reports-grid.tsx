@@ -44,16 +44,40 @@ const columns: readonly TpoGridColumn<HrCompanyReportSheetRow>[] = [
       className="block w-full min-h-9 py-2 text-body hover:text-link">{row.applications}</Link>,
     sortKind:"number",sortValue:row=>row.applications},
   {key:"submitted",label:"Submitted",read:row=>row.submittedApplications,
+    render:row=><Link href={driveHref(row)}
+      aria-label={"Open drive "+row.title+" submitted report"}
+      className="block min-h-9 w-full py-2 text-body hover:text-link">
+      {row.submittedApplications}</Link>,
     sortKind:"number",sortValue:row=>row.submittedApplications},
   {key:"withdrawn",label:"Withdrawn",read:row=>row.withdrawnApplications,
+    render:row=><Link href={driveHref(row)}
+      aria-label={"Open drive "+row.title+" withdrawn report"}
+      className="block min-h-9 w-full py-2 text-body hover:text-link">
+      {row.withdrawnApplications}</Link>,
     sortKind:"number",sortValue:row=>row.withdrawnApplications},
   {key:"offered",label:"Offered",read:row=>reportValue(offeredCount(row),row.reportUnavailable),
+    render:row=><Link href={driveHref(row)}
+      aria-label={"Open drive "+row.title+" offered report"}
+      className="block min-h-9 w-full py-2 text-body hover:text-link">
+      {reportValue(offeredCount(row),row.reportUnavailable)}</Link>,
     sortKind:"number",sortValue:row=>offeredCount(row)},
   {key:"accepted",label:"Accepted",read:row=>reportValue(row.acceptedOffers,row.reportUnavailable),
+    render:row=><Link href={driveHref(row)}
+      aria-label={"Open drive "+row.title+" accepted report"}
+      className="block min-h-9 w-full py-2 text-body hover:text-link">
+      {reportValue(row.acceptedOffers,row.reportUnavailable)}</Link>,
     sortKind:"number",sortValue:row=>row.reportUnavailable?null:row.acceptedOffers},
   {key:"declined",label:"Declined",read:row=>reportValue(row.declinedOffers,row.reportUnavailable),
+    render:row=><Link href={driveHref(row)}
+      aria-label={"Open drive "+row.title+" declined report"}
+      className="block min-h-9 w-full py-2 text-body hover:text-link">
+      {reportValue(row.declinedOffers,row.reportUnavailable)}</Link>,
     sortKind:"number",sortValue:row=>row.reportUnavailable?null:row.declinedOffers},
   {key:"joined",label:"Joined",read:row=>reportValue(row.joinedOffers,row.reportUnavailable),
+    render:row=><Link href={driveHref(row)}
+      aria-label={"Open drive "+row.title+" joined report"}
+      className="block min-h-9 w-full py-2 text-body hover:text-link">
+      {reportValue(row.joinedOffers,row.reportUnavailable)}</Link>,
     sortKind:"number",sortValue:row=>row.reportUnavailable?null:row.joinedOffers},
 ];
 
