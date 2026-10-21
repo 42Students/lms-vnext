@@ -47,6 +47,10 @@ export default async function LearnerAssignmentsPage({searchParams}:{searchParam
           assignment.submissionText,
         submissionUrl:
           assignment.submissionUrl,
+        // Additional repository/website links and files are loaded inside
+        // the authenticated assignment drawer using the persisted submission ID.
+        // The first submissionType is not the full multipart history.
+        submissionReadUnavailable:false,
         submittedAt:
           assignment.submittedAt?.toISOString() ??
           null,

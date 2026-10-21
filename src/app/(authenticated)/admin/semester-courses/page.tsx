@@ -38,10 +38,18 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
    {!curriculumResult.ok?<Banner tone="warning">
     Semester mapping editor is temporarily unavailable. The directory remains accessible.
    </Banner>:null}
-   {curriculum?<details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage semester course mappings</summary>
-    <div className="min-w-0 pt-3"><CollegeTermMappingManager data={curriculum}/></div>
-   </details>:null}
+   {curriculum?<div aria-label="Manage semester course mappings" className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-5 lg:grid-cols-[minmax(0,10fr)_minmax(240px,4fr)]">
+    <section className="min-w-0 space-y-3">
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Manage semester course mappings</h2>
+      <CollegeTermMappingManager data={curriculum}/>
+    </section>
+    <aside className="min-w-0 space-y-3 border-t border-border pt-4 text-sm text-body lg:border-l lg:border-t-0 lg:pl-4 lg:pt-0">
+      <h3 className="font-semibold text-[var(--lms-heading)]">Mapping guide</h3>
+      <p>Choose a program and semester, then review its mapped courses, credits and order before saving.</p>
+      <p>The directory below is a separate read-only view of the current selected-college mappings.</p>
+      <Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">View semesters</Link>
+    </aside>
+   </div>:null}
   </section>}
   title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}
   exportPath="/api/admin/semester-courses/export" exportFilename="super-admin-semester-courses-ist.csv"

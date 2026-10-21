@@ -18,13 +18,27 @@ export async function GET(request:Request){
   const data=await getSuperAdminCompanyHiringReport(await getCurrentRequestContext(),parsed.data);
   const groups=hiringCompanyRollups(data.rows);
   const keys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
-  const rows:(string|number)[][]=[
-   ...data.rows.map(row=>[row.companyName,row.jobTitle,...keys.map(key=>row[key])]),
-   ...groups.map(row=>[row.companyName,"Company total",...keys.map(key=>row[key])]),
+  const totals=Object.fromEntries(keys.map(key=>[key,data.rows.reduce((sum,row)=>sum+row[key],0)]))
+    as Record<(typeof keys)[number],number>;
+  const summary:(string|number)[][]=[
+   ["Companies",groups.length],["Drives",data.rows.length],
+   ...keys.map(key=>[key,totals[key]] as [string,number]),
   ];
-  if(data.truncated)rows.push(["TRUNCATED: report limited to 5000 drives","","","","","","","","","","",""]);
+  const funnelKeys=["applied","shortlisted","assessment","interview","offered","hired"] as const;
+  const funnel:(string|number)[][]=funnelKeys.map(key=>[
+   key,data.funnelRows.reduce((sum,row)=>sum+row[key],0),
+  ]);
+  const companyRows=data.rows.map(row=>[row.companyName,row.jobTitle,...keys.map(key=>row[key])]);
+  const companyTotals=groups.map(row=>[row.companyName,"Company total",...keys.map(key=>row[key])]);
+  const csv=[
+   placementReportCsv(["Hiring Report Summary","Value"],summary),
+   placementReportCsv(["Hiring Funnel","Count"],funnel),
+   placementReportCsv(COMPANY_HIRING_COLUMNS,companyRows),
+   placementReportCsv(COMPANY_HIRING_COLUMNS,companyTotals),
+   ...(data.truncated?[placementReportCsv(["Report Note"],[["TRUNCATED: report limited to 5000 drives"]])]:[]),
+  ].join("\r\n");
   const date=new Date().toISOString().slice(0,10);
-  return new Response("\uFEFF"+placementReportCsv(COMPANY_HIRING_COLUMNS,rows),{
+  return new Response("\uFEFF"+csv,{
    headers:{
     "Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="hiring-report-'+date+'.csv"',

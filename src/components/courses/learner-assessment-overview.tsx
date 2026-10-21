@@ -32,6 +32,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
+import { AssignmentSubmissionLinks } from "./assignment-submission-links";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { quizOverviewActionState } from "./quiz-overview-state";
 import { assignmentOverviewState } from "@/modules/courses/learner-assignment-display";
@@ -691,7 +692,7 @@ export function LearnerAssessmentOverview({
               </Link>
             </section>
 
-            {!loadError && !selectedAssignment.submissionReadUnavailable && selectedAssignment.submissionId && selectedAssignment.submissionType === "FILE" ?
+            {!loadError && !selectedAssignment.submissionReadUnavailable && selectedAssignment.submissionId ?
               <AssignmentFileOpenControl key={selectedAssignment.submissionId}
                 submissionId={selectedAssignment.submissionId} enabled={fileUploadsEnabled} /> : null}
             {(loadError || selectedAssignment.submissionReadUnavailable) ? (
@@ -725,8 +726,7 @@ export function LearnerAssessmentOverview({
                   </StatusBadge>
                 </div>
 
-                {selectedAssignment.submissionType === "TEXT" &&
-                selectedAssignment.submissionText ? (
+                {selectedAssignment.submissionText ? (
                   <div className="min-w-0 border-t border-border pt-3">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Written Response
@@ -737,8 +737,7 @@ export function LearnerAssessmentOverview({
                   </div>
                 ) : null}
 
-                {selectedAssignment.submissionType === "LINK" &&
-                selectedAssignment.submissionUrl ? (
+                {selectedAssignment.submissionUrl ? (
                   <div className="min-w-0 border-t border-border pt-3">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                       Submitted Link
@@ -766,6 +765,8 @@ export function LearnerAssessmentOverview({
                   </div>
                 ) : null}
 
+                <AssignmentSubmissionLinks submissionId={selectedAssignment.submissionId}/>
+                <p className="text-xs text-muted-foreground">Multi-part submissions can include text, website links, repository links and one or more private files. Each part is loaded from your authorized submission; a missing part is not assumed.</p>
                 {selectedAssignment.gradePublished &&
                 selectedAssignment.feedback ? (
                   <div className="min-w-0 border-t border-border pt-3">
