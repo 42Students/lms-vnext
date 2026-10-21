@@ -11,7 +11,16 @@ export const tpoCalendarUrlSchema=z.object({
 }).strict();
 export function parseTpoCalendarUrl(raw:unknown){return tpoCalendarUrlSchema.safeParse(raw);}
 
-/** Legacy adaptive start: narrow devices open Agenda, desktops Week. Explicit URL wins. */
+/** Client viewport is authoritative for the legacy 768px calendar breakpoint.
+ * Pass an explicit URL view when present; it must override responsive defaults. */
+export function tpoCalendarViewForViewport(
+ viewportWidth:number,
+ explicitView?:"agenda"|"week"|"month",
+):"agenda"|"week"|"month"{
+ return explicitView??(viewportWidth<768?"agenda":"week");
+}
+
+/** Server fallback until the client viewport is known; never use UA as width. */
 export function initialTpoCalendarView(userAgent:string):"agenda"|"week"{
  return /Android|iPhone|iPad|iPod|Mobile|Mobi/i.test(userAgent)?"agenda":"week";
 }
