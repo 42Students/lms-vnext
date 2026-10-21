@@ -1,6 +1,8 @@
 import { sql } from "drizzle-orm";
 import {
   foreignKey,
+  integer,
+  check,
   index,
   pgTable,
   text,
@@ -17,6 +19,13 @@ export const colleges = pgTable(
   "colleges",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyCollegeId: integer("legacy_college_id"),
+    legacyOrganizationId: integer("legacy_organization_id"),
+    legacyUniqueId: varchar("legacy_unique_id",{length:64}),
+    legacyChairId: integer("legacy_chair_id"),
+    legacyViceChairId: integer("legacy_vice_chair_id"),
+    legacyLogoUrl: varchar("legacy_logo_url",{length:255}),
+    legacyDomainHost: varchar("legacy_domain_host",{length:255}),
     organizationId: uuid("organization_id")
       .notNull()
       .references(() => organizations.id, { onDelete: "restrict" }),
@@ -39,6 +48,12 @@ export const colleges = pgTable(
   },
   (table) => [
     uniqueIndex("colleges_code_uq").on(sql`lower(${table.code})`),
+    uniqueIndex("colleges_legacy_id_uq").on(table.legacyCollegeId)
+      .where(sql`${table.legacyCollegeId} is not null`),
+    uniqueIndex("colleges_legacy_unique_id_uq").on(sql`lower(${table.legacyUniqueId})`)
+      .where(sql`${table.legacyUniqueId} is not null`),
+    check("colleges_legacy_unique_id_ck",sql`
+      ${table.legacyUniqueId} is null or length(trim(${table.legacyUniqueId})) between 1 and 64`),
     uniqueIndex("colleges_id_organization_uq").on(table.id, table.organizationId),
     foreignKey({
       name: "colleges_chair_membership_scope_fk",
