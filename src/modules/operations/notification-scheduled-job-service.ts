@@ -41,17 +41,16 @@ export async function releaseScheduledInAppNotifications(
   if (fence.lease.jobName !== "notification.release")
     throw new Error("INVALID_NOTIFICATION_JOB_LEASE");
   return guardedBatch(fence, async (tx) => {
-    const response = await tx.execute<{ processed: number }>(sql`
+    const response = await tx.execute<{ processed: number; has_more: boolean }>(sql`
       with due as (
-        select id, event_id from in_app_notifications
+        select id, event_id, scheduled_at from in_app_notifications
         where delivery_status = 'SCHEDULED'
           and scheduled_at <= clock_timestamp()
           and deleted_at is null
         order by scheduled_at, id
-        for update skip locked
-        limit 201
+        limit 201 for update skip locked
       ), limited as (
-        select id, event_id from due order by id limit 200
+        select id, event_id from due order by scheduled_at, id limit 200
       ), released as (
         update in_app_notifications n
         set delivery_status = 'SENT', delivered_at = clock_timestamp(),
@@ -69,7 +68,7 @@ export async function releaseScheduledInAppNotifications(
       select (select count(*)::integer from released) as processed,
              (select count(*) from due) > 200 as has_more
     `);
-    const row = response.rows[0] as { processed: number; has_more: boolean } | undefined;
+    const row = response.rows[0];
     return { processed: Number(row?.processed ?? 0), hasMore: row?.has_more === true };
   });
 }
@@ -85,13 +84,12 @@ export async function cleanupScheduledInAppNotifications(
   return guardedBatch(fence, async (tx) => {
     const response = await tx.execute<{ processed: number; has_more: boolean }>(sql`
       with due as (
-        select id from in_app_notifications
+        select id, created_at from in_app_notifications
         where deleted_at is null
           and created_at < clock_timestamp() - interval '90 days'
         order by created_at, id
-        for update skip locked
-        limit 201
-      ), limited as (select id from due limit 200),
+        limit 201 for update skip locked
+      ), limited as (select id from due order by created_at, id limit 200),
       removed as (
         update in_app_notifications n
         set deleted_at = clock_timestamp()
