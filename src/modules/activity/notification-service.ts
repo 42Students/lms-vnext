@@ -43,6 +43,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import { ActivityServiceError } from "./errors";
 import { sanitizeActivityMetadata } from "./metadata-sanitizer";
 import { safeExternalAssessmentUrl, safeNotificationActionHref } from "./notification-action";
@@ -513,6 +514,48 @@ export async function requireStaffNotificationRetarget(
   await requireStaffNotificationMutation(context, eventIdInput);
   const { audience } = await requireStaffNotificationAudience(context, nextDraft);
   return audience;
+}
+
+/** The first faculty/admin preflight is for UI feedback only. The write
+ * transaction must reconstruct the actor's current permission and lock a
+ * live assignment, including for previously authorized retargeting. */
+async function assertStaffNoticeWriterInTransaction(
+ tx:PermissionTransaction,context:RequestContext,audience:StaffNotificationAudience,
+ creatorUserId?:string|null,
+){
+ const fromContextAdmin=isSuperAdmin(context)||hasMembershipRole(context,"COLLEGE_ADMIN");
+ const persisted=await assertPersistedPlatformPermission(tx,context,
+  fromContextAdmin?"courses.manage":"courses.read",{
+   collegeId:audience.collegeId,organizationId:audience.organizationId,
+  });
+ const persistedAdmin=isSuperAdmin(persisted)||hasMembershipRole(persisted,"COLLEGE_ADMIN");
+ if(!persistedAdmin&&creatorUserId!==undefined&&creatorUserId!==persisted.user.id)
+  throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+ if(!persistedAdmin){
+  const member=persisted.membership;
+  if(!member||member.collegeId!==audience.collegeId)
+   throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  const [assignment]=audience.classId
+   ?await tx.select({id:sectionFacultyAssignments.id})
+     .from(sectionFacultyAssignments).where(and(
+      eq(sectionFacultyAssignments.sectionId,audience.classId),
+      eq(sectionFacultyAssignments.membershipId,member.id),
+      isNull(sectionFacultyAssignments.endedAt),
+     )).for("share").limit(1)
+   :await tx.select({id:courseTeachingAssignments.id})
+     .from(courseTeachingAssignments)
+     .innerJoin(courseSectionDeliveries,
+      eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+     .innerJoin(courseOfferings,
+      eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+     .where(and(
+      eq(courseOfferings.courseId,audience.courseId!),
+      eq(courseTeachingAssignments.membershipId,member.id),
+      isNull(courseTeachingAssignments.endedAt),
+      isNull(courseSectionDeliveries.endedAt),
+     )).for("share").limit(1);
+  if(!assignment)throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+ }
 }
 
 export type InAppNotificationDeliveryInput =
@@ -1369,6 +1412,7 @@ export async function createStaffNotification(
   const deliveryStatus = scheduledAt ? "SCHEDULED" : "SENT";
 
   return getDb().transaction(async (tx) => {
+    await assertStaffNoticeWriterInTransaction(tx,context,audience);
     await assertScopedNotificationRecipients(tx, audience, userIds);
     const [event] = await tx.insert(activityEvents).values({
       collegeId: audience.collegeId,
@@ -1426,19 +1470,24 @@ export async function deleteStaffNotification(
   eventIdInput: unknown,
 ): Promise<StaffNoticeOperationResult> {
   const id = z.string().uuid().parse(eventIdInput);
-  await requireStaffNotificationMutation(context, id);
+  const original=await requireStaffNotificationMutation(context,id);
   return getDb().transaction(async (tx) => {
     const [event] = await tx.select({
       actorUserId: activityEvents.actorUserId,
       metadata: activityEvents.metadata,
       collegeId: activityEvents.collegeId,
+      organizationId:activityEvents.organizationId,
     }).from(activityEvents).where(eq(activityEvents.id, id)).for("update").limit(1);
     if (!event || event.metadata.deletedAt != null ||
-        event.collegeId !== (context.adminScope?.collegeId ?? context.membership?.collegeId ?? event.collegeId) ||
+        event.collegeId !== original.collegeId ||
+        event.organizationId !== original.organizationId ||
+        (event.metadata.classId??null)!==original.classId ||
+        (event.metadata.courseId??null)!==original.courseId ||
         (event.actorUserId !== context.user.id &&
          !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
+    await assertStaffNoticeWriterInTransaction(tx,context,original,event.actorUserId);
     const deletedAt = new Date();
     await tx.update(activityEvents).set({
       metadata: {
@@ -1497,10 +1546,15 @@ export async function updateStaffNotification(
     if (!event || event.metadata.deletedAt != null ||
         event.collegeId !== original.collegeId ||
         event.organizationId !== original.organizationId ||
+        (event.metadata.classId??null)!==original.classId ||
+        (event.metadata.courseId??null)!==original.courseId ||
         (event.actorUserId !== context.user.id &&
          !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
+    await assertStaffNoticeWriterInTransaction(tx,context,original,event.actorUserId);
+    if (!sameAudience)
+      await assertStaffNoticeWriterInTransaction(tx,context,audience,event.actorUserId);
     const status = event.metadata.deliveryStatus;
     if (status !== "SCHEDULED" && status !== "SENT") {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
