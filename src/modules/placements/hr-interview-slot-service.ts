@@ -8,6 +8,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {PlacementsServiceError} from "./errors";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
@@ -121,7 +122,9 @@ export async function writeHrInterviewSlot(
       lt(hrInterviewSlots.startAt,input.endAt),
       gt(hrInterviewSlots.endAt,input.startAt)))
     .limit(1);
-   if(recruiterConflict)throw new Error("RECRUITER_SLOT_OVERLAP");
+   // The recruiter slot route translates this code to HTTP 409; using an
+   // unrecognized conflict target previously caused HTTP 500.
+   if(recruiterConflict)throw new Error("SLOT_OVERLAP");
    // A named on-campus room is a college resource, not a recruiter-owned
    // resource. The college row lock in verifyRecruiterSlotJob serializes
    // competing recruiter proposals for this college before this predicate.
@@ -137,9 +140,20 @@ export async function writeHrInterviewSlot(
       lt(hrInterviewSlots.startAt,input.endAt),
       gt(hrInterviewSlots.endAt,input.startAt),
      )).limit(1);
-    // Reuse the route's existing conflict code until it can return a
-    // distinct room-conflict message; never expose another recruiter slot.
     if(roomConflict)throw new Error("SLOT_OVERLAP");
+    // A TPO-confirmed room booking also occupies this venue, including
+    // when that booking belongs to another interview round or drive.
+    const [candidateRoomConflict]=await tx.select({id:placementRoundCandidateSlots.id})
+     .from(placementRoundCandidateSlots)
+     .innerJoin(placementJobs,eq(placementJobs.id,placementRoundCandidateSlots.jobId))
+     .where(and(
+      eq(placementJobs.collegeId,job.collegeId),
+      ne(placementRoundCandidateSlots.status,"CANCELLED"),
+      sql`lower(btrim(${placementRoundCandidateSlots.room})) = ${room}`,
+      lt(placementRoundCandidateSlots.startsAt,input.endAt),
+      gt(placementRoundCandidateSlots.endsAt,input.startAt),
+     )).limit(1);
+    if(candidateRoomConflict)throw new Error("SLOT_OVERLAP");
    }
    const [newSlot]=await tx.insert(hrInterviewSlots).values({
     collegeId:job.collegeId,jobId:job.id,roundId:round.id,startAt:input.startAt,endAt:input.endAt,
