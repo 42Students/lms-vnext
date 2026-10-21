@@ -30,11 +30,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
 - [x] `src/app/(authenticated)/admin/courses/page.tsx`
 - [x] `src/app/(authenticated)/admin/departments/page.tsx`
-- [ ] `src/app/(authenticated)/admin/domains/page.tsx`
-- [ ] `src/app/(authenticated)/admin/electives/error.tsx`
-- [ ] `src/app/(authenticated)/admin/electives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty-assignment/error.tsx`
-- [ ] `src/app/(authenticated)/admin/faculty/error.tsx`
+- [x] `src/app/(authenticated)/admin/domains/page.tsx`
+- [x] `src/app/(authenticated)/admin/electives/error.tsx`
+- [x] `src/app/(authenticated)/admin/electives/page.tsx`
+- [x] `src/app/(authenticated)/admin/faculty-assignment/error.tsx`
+- [x] `src/app/(authenticated)/admin/faculty/error.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/error.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
