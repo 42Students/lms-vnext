@@ -131,3 +131,69 @@ export function prepareSafeDriveChangeJobPatch(
  }
  return null;
 }
+
+/**
+ * Atomic acceptance plan for an unambiguous recruiter change suggestion.
+ * Caller MUST first authorize a live TPO/college member, lock the same job
+ * and request, and record the audit event in the surrounding transaction.
+ * One statement changes the job version and only then records ACCEPTED.
+ * A zero-row result is a stale, revoked, wrong-college or invalid decision.
+ */
+export function atomicSafeDriveChangeAcceptanceStatement(input: {
+  requestId: string;
+  jobId: string;
+  collegeId: string;
+  actorUserId: string;
+  expectedJobVersion: number;
+  at: Date;
+  patch: SafeDriveChangeJobPatch;
+}) {
+  const uuidPattern = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+  if (![input.requestId,input.jobId,input.collegeId,input.actorUserId]
+       .every(value => uuidPattern.test(value)) ||
+      !Number.isSafeInteger(input.expectedJobVersion) || input.expectedJobVersion < 1 ||
+      !Number.isFinite(input.at.getTime()))
+    throw new Error("Invalid scoped job change request");
+  const updateField = input.patch.field === "DEADLINE"
+    ? sql`application_deadline = ${input.patch.changes.applicationDeadline},`
+    : sql`locations = ${input.patch.changes.locations}::text[],`;
+  return sql`
+    WITH eligible AS MATERIALIZED (
+      SELECT r.id FROM placement_drive_change_requests r
+        JOIN placement_jobs j ON j.id = r.job_id
+       WHERE r.id = ${input.requestId}::uuid
+         AND r.job_id = ${input.jobId}::uuid
+         AND j.college_id = ${input.collegeId}::uuid
+         AND j.version = ${input.expectedJobVersion}
+         AND j.status NOT IN ('ARCHIVED','CANCELLED')
+         AND r.status = 'OPEN' AND r.mode = 'SUGGEST'
+         AND r.field = ${input.patch.field}
+         AND r.applied_at IS NULL
+       FOR UPDATE OF j, r
+    ), patched_job AS (
+      UPDATE placement_jobs j
+         SET ${updateField}
+             version = j.version + 1, updated_at = ${input.at}
+       WHERE j.id = ${input.jobId}::uuid
+         AND j.college_id = ${input.collegeId}::uuid
+         AND j.version = ${input.expectedJobVersion}
+         AND EXISTS (SELECT 1 FROM eligible)
+      RETURNING j.id, j.version
+    ), accepted AS (
+      UPDATE placement_drive_change_requests r
+         SET status = 'ACCEPTED',
+             applied_at = ${input.at},
+             applied_by_user_id = ${input.actorUserId}::uuid,
+             applied_job_version = j.version,
+             decided_at = ${input.at},
+             decided_by_user_id = ${input.actorUserId}::uuid,
+             resolved_at = ${input.at},
+             updated_at = ${input.at}
+        FROM patched_job j
+       WHERE r.id = ${input.requestId}::uuid
+         AND r.job_id = j.id AND r.status = 'OPEN'
+      RETURNING r.id, r.job_id, r.applied_job_version
+    )
+    SELECT * FROM accepted
+  `;
+}

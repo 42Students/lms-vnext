@@ -177,3 +177,5 @@
 - Wave3 DB05 lesson order G2-17-018-020/-040: `0306_chat14_lesson_delivery_offering_fk.sql` upgrades staged 0243 sequence with composite `(delivery_id,offering_id)` FK and source mapping; lane 15 must register/replay 0243 then 0306, and verify DB05 same-offering trigger and negative tests before activating authoring reorder API.
 
 - Wave3 lane-12 notification query regression: `src/modules/activity/notification-service.ts` listOwnNotificationPage uses a replacement literal containing `appendNotificationContextFilters(conditions, options);` instead of the intended escaped wildcard replacement, and references `options.category` absent from its options TypeScript type. Lane 12 owns this file; repair the malformed query, duplicate context filter and strict type before release-worker certification.
+
+- G2-16-025-052: src/modules/placements/tpo-drive-change-request-service.ts (lane 6): on ACCEPT use atomicSafeDriveChangeAcceptanceStatement for verified DEADLINE/LOCATION, audit the versioned job patch in the same transaction, and block unsupported fields rather than marking ACCEPTED without applying.
