@@ -111,7 +111,8 @@ export async function transitionMentorProjectSprint(
     }
     const [sprint]=await tx.select().from(projectSprints)
       .where(and(eq(projectSprints.id,params.sprintId),
-        eq(projectSprints.projectId,scope.project.id)))
+        eq(projectSprints.projectId,scope.project.id),
+        isNull(projectSprints.deletedAt)))
       .for("update").limit(1);
     if(!sprint) throw new ProjectsServiceError("PROJECT_SPRINT_NOT_FOUND");
     if(!isValidMentorSprintTransition(sprint.status,input.action) ||
@@ -129,24 +130,35 @@ export async function transitionMentorProjectSprint(
     if(input.action==="START" || input.action==="REOPEN") {
       const [active]=await tx.select({id:projectSprints.id}).from(projectSprints)
         .where(and(eq(projectSprints.projectId,scope.project.id),
-          eq(projectSprints.status,"ACTIVE"),ne(projectSprints.id,sprint.id)))
+          eq(projectSprints.status,"ACTIVE"),isNull(projectSprints.deletedAt),
+          ne(projectSprints.id,sprint.id)))
         .limit(1);
       if(active) throw new ProjectsServiceError("PROJECT_SPRINT_ALREADY_ACTIVE");
     } else {
       const [openTask]=await tx.select({id:projectTasks.id}).from(projectTasks)
         .where(and(eq(projectTasks.projectId,scope.project.id),
-          eq(projectTasks.sprintId,sprint.id),ne(projectTasks.status,"DONE")))
+          eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt),
+          ne(projectTasks.status,"DONE")))
         .limit(1);
       if(!mayCloseProjectSprint(openTask ? 1 : 0))
         throw new ProjectsServiceError("PROJECT_SPRINT_HAS_OPEN_TASKS");
     }
     const status=input.action==="COMPLETE"?"COMPLETED":"ACTIVE";
     const now=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
+    const actorMembershipId=context.membership?.collegeId===scope.collegeId?
+      context.membership.id:null;
     const [updated]=await tx.update(projectSprints)
-      .set({status,updatedAt:now})
+      .set({
+        status,updatedAt:now,
+        ...(input.action==="COMPLETE"?
+          {completedAt:now,completedByMembershipId:actorMembershipId}:
+          {startedAt:now,startedByMembershipId:actorMembershipId,
+           ...(input.action==="REOPEN"?
+             {completedAt:null,completedByMembershipId:null}:{})}),
+      })
       .where(and(eq(projectSprints.id,sprint.id),
         eq(projectSprints.projectId,scope.project.id),
-        eq(projectSprints.status,sprint.status)))
+        eq(projectSprints.status,sprint.status),isNull(projectSprints.deletedAt)))
       .returning();
     if(!updated) throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     if(input.action!=="COMPLETE") {
@@ -170,8 +182,11 @@ export async function transitionMentorProjectSprint(
       metadata:{
         projectId:scope.project.id,sprintId:updated.id,
         action:input.action,from:sprint.status,to:updated.status,
-        actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
-        transitionedAt:now.toISOString(),
+        actorUserId:context.user.id,actorMembershipId,
+        priorStartedAt:sprint.startedAt?.toISOString()??null,
+        priorCompletedAt:sprint.completedAt?.toISOString()??null,
+        completedAt:updated.completedAt?.toISOString()??null,
+        startedAt:updated.startedAt?.toISOString()??null,
       },
       groupKey:"project:"+scope.project.id,
       dedupeKey:"project-sprint:"+updated.id+":transition:"+randomUUID(),
