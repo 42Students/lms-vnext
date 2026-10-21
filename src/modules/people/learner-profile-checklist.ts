@@ -12,6 +12,38 @@ export const learnerProfileSectionSchema = z.enum([
 
 export type LearnerProfileSection = z.infer<typeof learnerProfileSectionSchema>;
 
+/** The exact 20 legacy ProfileSectionsPanel learner entries, in display order.
+ * Section=null means the new identity/media/placement controller owns the
+ * action; these are visible in profile navigation but never inflate the
+ * 16-field completion denominator or masquerade as an editable profile field.
+ */
+export const LEARNER_LEGACY_PROFILE_ANATOMY: readonly {
+ legacyKey:string; label:string; shape:"single"|"list";
+ section:LearnerProfileSection|null;
+ surface:"PROFILE"|"PLACEMENTS"|"PRIVATE_FILE"|"MEDIA";
+}[] = [
+ {legacyKey:"header",label:"Header",shape:"single",section:"profile-introduction",surface:"PROFILE"},
+ {legacyKey:"about",label:"About",shape:"single",section:"profile-introduction",surface:"PROFILE"},
+ {legacyKey:"personalDetails",label:"Personal Details",shape:"single",section:"personal-details",surface:"PROFILE"},
+ {legacyKey:"identity",label:"Identity Documents",shape:"single",section:"identity",surface:"PROFILE"},
+ {legacyKey:"languages",label:"Languages",shape:"list",section:"languages",surface:"PROFILE"},
+ {legacyKey:"contact",label:"Contact",shape:"single",section:"contacts",surface:"PROFILE"},
+ {legacyKey:"address",label:"Address",shape:"single",section:"address",surface:"PROFILE"},
+ {legacyKey:"social",label:"Social Profiles",shape:"single",section:"social-profiles",surface:"PROFILE"},
+ {legacyKey:"education",label:"Education",shape:"list",section:"education",surface:"PROFILE"},
+ {legacyKey:"jobPreferences",label:"Job Preferences",shape:"single",section:null,surface:"PLACEMENTS"},
+ {legacyKey:"resume",label:"Resume",shape:"single",section:null,surface:"PRIVATE_FILE"},
+ {legacyKey:"certifications",label:"Certifications",shape:"list",section:"certifications",surface:"PROFILE"},
+ {legacyKey:"achievements",label:"Achievements",shape:"list",section:"achievements",surface:"PROFILE"},
+ {legacyKey:"skills",label:"Skills",shape:"list",section:"skills",surface:"PROFILE"},
+ {legacyKey:"projects",label:"Projects",shape:"list",section:"projects",surface:"PROFILE"},
+ {legacyKey:"experiences",label:"Experience / Internships",shape:"list",section:"experiences",surface:"PROFILE"},
+ {legacyKey:"extracurricular",label:"Extra-curricular",shape:"list",section:"extracurriculars",surface:"PROFILE"},
+ {legacyKey:"hobbies",label:"Hobbies & Interests",shape:"single",section:"hobbies",surface:"PROFILE"},
+ {legacyKey:"videoIntro",label:"Video Intro",shape:"single",section:null,surface:"MEDIA"},
+ {legacyKey:"metadata",label:"Metadata",shape:"single",section:"metadata",surface:"PROFILE"},
+];
+
 export function learnerProfileChecklist(document: LearnerProfileDocument) {
   const hasText = (value: unknown) =>
     typeof value === "string" && value.trim().length > 0;
