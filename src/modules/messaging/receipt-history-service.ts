@@ -6,7 +6,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
-import { messagingHistoryQuerySchema, projectMessagingHistory } from "./receipt-history-model";
+import { messagingHistoryQuerySchema, projectMessagingHistory, legacyMessagingHistoryPaging } from "./receipt-history-model";
 import {messagingHistoryPageWindow} from "./receipt-history-window-model";
 
 const PAGE_SIZE = 25;
@@ -86,19 +86,55 @@ export async function listTpoMessagingHistory(
  * The implementation requires an active GLOBAL Super Admin and deliberately
  * projects only a last-four suffix, never the submitted phone or message body.
  */
+/** Legacy AdminSmsLogController compatibility. The URL accepts no phone:
+ * this callable is reached through same-origin POST, and only last-four
+ * digits reach the append-only Exotel ledger query.
+ *
+ * The underlying provider adapter uses 1-based pages. Translate its cursor
+ * and response back to legacy zero-based "number", 50 default/200 max.
+ */
 export async function listSupportSmsDeliveryHistory(
  context:RequestContext,
  raw:{recipientSuffix?:unknown;purpose?:unknown;page?:unknown;size?:unknown}={},
 ){
  const {listSmsDeliveryAttemptsForSupport}=await import("@/modules/notifications/exotel-sms");
- const digits=typeof raw.recipientSuffix==="string"
-  ?raw.recipientSuffix.replace(/[^0-9]/g,""):"";
- if(raw.recipientSuffix!==undefined&&digits.length<4)
+ const suffix=typeof raw.recipientSuffix==="string"
+  ?raw.recipientSuffix.replace(/[^0-9]/g,"").slice(-4):"";
+ if(raw.recipientSuffix!==undefined&&raw.recipientSuffix!==null&&suffix.length<4)
   throw new Error("Enter at least four digits for the recipient suffix");
- return listSmsDeliveryAttemptsForSupport(context,{
-  suffix:digits?digits.slice(-4):undefined,
-  purpose:raw.purpose,
-  page:typeof raw.page==="number"?raw.page:1,
-  size:typeof raw.size==="number"?raw.size:25,
- });
+ const {page,size}=legacyMessagingHistoryPaging(raw.page,raw.size);
+ try{
+  const result=await listSmsDeliveryAttemptsForSupport(context,{
+   suffix:suffix||undefined,purpose:raw.purpose,
+   page:page+1,size,
+  });
+  const content=result.content.map(row=>({
+   id:row.id,purpose:row.purpose,
+   recipientSuffix:row.recipientSuffix,
+   status:row.outcome==="PROVIDER_ACCEPTED"?"SENT" as const:"FAILED" as const,
+   providerMessageId:row.providerMessageId,
+   errorSummary:row.failureSummary,
+   collegeId:row.collegeId,
+   createdAt:row.createdAt,
+   provider:row.provider,
+   providerStatus:row.statusLabel,
+  }));
+  return {
+   ready:result.ready,content,entries:content,
+   totalElements:result.totalElements,totalPages:result.totalPages,
+   number:page,page,size,
+   error:result.readError,
+   retryable:!result.ready,
+   note:result.note,
+  };
+ }catch(error){
+  // Authentication/authorization failures MUST bubble up rather than be
+  // silently turned into a zero-entry response.
+  if(error instanceof AuthorizationError)throw error;
+  return {
+   ready:false,content:[],entries:[],totalElements:0,totalPages:0,
+   number:page,page,size,error:"SMS_LEDGER_UNAVAILABLE",
+   retryable:true,note:"SMS history cannot be loaded. Retry later.",
+  };
+ }
 }
