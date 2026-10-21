@@ -1,5 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
+import {PageHeader} from "@/components/ui/page-header";
 import { Disclosure } from "@/components/ui/disclosure";
 
 import { Button } from "@/components/ui/button";
@@ -80,10 +81,28 @@ export function FacultyAssessmentOverview({
         }).format(value);
   };
 
+  const assignmentsHeader=kind==="ASSIGNMENT"?
+    <PageHeader title="My Assignments" actions={
+      <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:items-end sm:gap-3">
+        <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-body sm:min-w-[210px]">
+          All courses
+          <Select aria-label="All courses" value={courseCode} onChange={event=>{
+            setCourseCode(event.target.value);setPage(1);
+          }}>
+            <option value="">All courses</option>
+            {courseChoices.map(course=><option key={course.code} value={course.code}>
+              {course.code} · {course.name}
+            </option>)}
+          </Select>
+        </label>
+        <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} toolbar/>
+      </div>
+    }/>:null;
   if (items.length === 0) {
     return (
       <div className="min-w-0 space-y-6">
-        <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
+        {assignmentsHeader}
+        {kind!=="ASSIGNMENT"?<FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices}/>:null}
         <EmptyState
           title={kind === "QUIZ" ? "No quizzes yet" : "No assignments yet"}
           description={kind==="QUIZ"?"Create your first quiz to get started.":"Create your first assignment to get started."}
@@ -94,7 +113,8 @@ export function FacultyAssessmentOverview({
 
   return (
     <div className="min-w-0 space-y-6">
-      <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
+      {assignmentsHeader}
+      {kind!=="ASSIGNMENT"?<FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices}/>:null}
       <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
         <Badge  tone="neutral">
           {items.length} {kind === "QUIZ" ? (items.length === 1 ? "Quiz" : "Quizzes") : (items.length === 1 ? "Assignment" : "Assignments")}
@@ -114,7 +134,7 @@ export function FacultyAssessmentOverview({
         </ul>
       </Disclosure>
       <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        {kind!=="ASSIGNMENT"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Course
           <Select
             value={courseCode}
@@ -131,7 +151,7 @@ export function FacultyAssessmentOverview({
               </option>
             ))}
           </Select>
-        </label>
+        </label>:null}
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select
