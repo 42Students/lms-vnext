@@ -6,12 +6,14 @@ import {verifiedParentPhoneSchema,type AttendanceParentSmsKind} from "./parent-s
  * A configuration gap MUST never reuse the OTP sender/template or send. */
 export async function sendAttendanceParentSms(input:{
  phoneE164:string;body:string;kind:AttendanceParentSmsKind;
+ collegeId?:string|null;organizationId?:string|null;
 },env:Record<string,string|undefined>=process.env,
  fetchImpl:typeof fetch=fetch):Promise<"ACCEPTED"|"NOT_CONFIGURED"|"REJECTED">{
  const purpose=input.kind==="ABSENT"?"attendance.absence":"attendance.correction";
  const record=async(outcome:"PROVIDER_ACCEPTED"|"FAILED",providerSid:string|null,failureCode:string|null)=>{
   // Ledger failure must never change the SMS transport outcome.
-  await appendSmsDeliveryAttempt({purpose,recipient:input.phoneE164,outcome,providerSid,failureCode}).catch(()=>undefined);
+  await appendSmsDeliveryAttempt({purpose,recipient:input.phoneE164,outcome,providerSid,failureCode,
+   collegeId:input.collegeId??null,organizationId:input.organizationId??null}).catch(()=>undefined);
  };
  const key=env.EXOTEL_API_KEY,token=env.EXOTEL_API_TOKEN;
  const sid=env.EXOTEL_ACCOUNT_SID,entity=env.EXOTEL_DLT_ENTITY_ID;

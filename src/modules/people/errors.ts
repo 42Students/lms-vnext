@@ -19,7 +19,8 @@ export type PeopleServiceErrorCode =
   | "FACULTY_ROLE_REQUIRED"
   | "FACULTY_PROFILE_VERSION_CONFLICT"
   | "DEPARTMENT_NOT_FOUND"
-  | "PRIVATE_IDENTITY_STORAGE_NOT_READY";
+  | "PRIVATE_IDENTITY_STORAGE_NOT_READY"
+  | "PRIVATE_IDENTITY_UPDATE_DENIED";
 
 export class PeopleServiceError extends Error {
   constructor(public readonly code: PeopleServiceErrorCode) {

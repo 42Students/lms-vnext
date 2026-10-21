@@ -282,6 +282,41 @@ export type ReadableObject = {
   contentType: string;
 };
 
+/** Translate legacy read modes to private, owner-checked signed URLs.
+ * Callers must first resolve a file by a tenant-scoped resource database row;
+ * accepting a legacy fileName alone never grants storage access.
+ */
+export type LegacyFileReadMode = "download" | "get" | "stream";
+export function legacyFileReadOptions(mode: LegacyFileReadMode, fileName: string) {
+  const name = fileName.trim();
+  if (!name || name.length > 255 || name === "." || name === ".." ||
+      name.includes("/") || name.includes("\\") ||
+      Array.from(name).some(character => character.charCodeAt(0) < 32)) {
+    throw new StorageFileError("STORAGE_NAME_INVALID");
+  }
+  return {
+    ttlSeconds: FILE_READ_TTL_SECONDS,
+    maxTtlSeconds: FILE_READ_TTL_SECONDS,
+    disposition: mode === "download" ? "attachment" as const : "inline" as const,
+    fileName: name,
+  };
+}
+
+/** Legacy folder names are hints only, never generic presign permissions. */
+export const LEGACY_FILE_GRANT_ROUTE = {
+  assignments: "/api/courses/assignments/[assignmentId]/file-upload",
+  "lesson-content": null,
+  "profile-images": null,
+  "video-intros": null,
+  resumes: null,
+  "course-images": null,
+  "identity-docs": null,
+  marksheets: null,
+  "college-branding": null,
+  "offer-letters": null,
+  "jd-files": null,
+} as const;
+
 export const FILE_READ_TTL_SECONDS = 5 * 60;
 export const VIDEO_PLAYBACK_DEFAULT_TTL_SECONDS = 60 * 60;
 export const VIDEO_PLAYBACK_MAX_TTL_SECONDS = 120 * 60;

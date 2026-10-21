@@ -58,6 +58,7 @@ const correctionSchema = z.strictObject({
     "LATE",
   ]),
   note: z.string().trim().max(500,{error:"Keep the correction note under 500 characters"}).optional(),
+  expectedMarkedAt: z.union([z.iso.datetime({offset:true}),z.null()]).optional(),
 });
 
 export async function requireAttendanceCollege(
@@ -66,23 +67,17 @@ export async function requireAttendanceCollege(
 ) {
   const collegeId = uuid.parse(collegeIdInput);
 
-  if (isSuperAdmin(context)) {
-    if (
-      !context.adminScope?.collegeId ||
-      context.adminScope.collegeId !== collegeId
-    ) {
-      throw new CoursesServiceError(
-        "LEARNING_ACCESS_DENIED",
-      );
-    }
-  } else if (
+  // A global or organization-scoped Super Admin may choose a target
+  // college. The persisted organization+college permission check below is
+  // authoritative, rather than requiring an unrelated college membership.
+  if (!isSuperAdmin(context) && (
     !context.membership ||
     !hasMembershipRole(
       context,
       "COLLEGE_ADMIN",
     ) ||
     context.membership.collegeId !== collegeId
-  ) {
+  )) {
     throw new CoursesServiceError(
       "LEARNING_ACCESS_DENIED",
     );
@@ -426,6 +421,40 @@ export async function getAdminAttendanceGrid(
   };
 }
 
+/** Read a fresh tenant-scoped record and a stable optimistic token. */
+export async function getAdminCurrentAttendanceRecord(context:RequestContext,raw:unknown) {
+  const input=z.strictObject({
+    collegeId:uuid,deliveryId:uuid,scheduleEventId:uuid,membershipId:uuid,
+  }).parse(raw);
+  const {college,delivery}=await requireAdminDelivery(context,input.collegeId,input.deliveryId);
+  const [event]=await getDb().select({id:sectionScheduleEvents.id})
+    .from(sectionScheduleEvents)
+    .innerJoin(sectionScheduleEventCourses,
+      eq(sectionScheduleEventCourses.scheduleEventId,sectionScheduleEvents.id))
+    .where(and(
+      eq(sectionScheduleEvents.id,input.scheduleEventId),
+      eq(sectionScheduleEvents.sectionId,delivery.sectionId),
+      eq(sectionScheduleEventCourses.deliveryId,delivery.deliveryId),
+    )).limit(1);
+  if(!event)throw new CoursesServiceError("CONTENT_DELIVERY_MISMATCH");
+  const roster=await listActiveDeliveryLearners({
+    deliveryId:delivery.deliveryId,sectionId:delivery.sectionId,
+    academicPeriodId:delivery.academicPeriodId,collegeId:college.id,
+  });
+  if(!roster.some(item=>item.membershipId===input.membershipId))
+    throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+  const [record]=await getDb().select({
+    status:attendanceRecords.status,note:attendanceRecords.note,
+    markedAt:attendanceRecords.markedAt,
+  }).from(attendanceRecords).where(and(
+    eq(attendanceRecords.scheduleEventId,input.scheduleEventId),
+    eq(attendanceRecords.membershipId,input.membershipId),
+  )).limit(1);
+  return {scheduleEventId:input.scheduleEventId,membershipId:input.membershipId,
+    status:record?.status??"PRESENT",note:record?.note??null,
+    expectedMarkedAt:record?.markedAt?.toISOString()??null};
+}
+
 export async function correctAdminAttendance(
   context: RequestContext,
   scheduleEventIdInput: string,
@@ -528,10 +557,17 @@ export async function correctAdminAttendance(
 
       const [priorRecord]=await tx.select({
         id:attendanceRecords.id,status:attendanceRecords.status,note:attendanceRecords.note,
+        markedAt:attendanceRecords.markedAt,
       }).from(attendanceRecords).where(and(
         eq(attendanceRecords.scheduleEventId,scheduleEventId),
         eq(attendanceRecords.membershipId,input.membershipId),
       )).for("update").limit(1);
+      // A requested compare-and-set token prevents overwriting another
+      // administrator's correction made after the current-record read.
+      if (input.expectedMarkedAt !== undefined &&
+          input.expectedMarkedAt !== (priorRecord?.markedAt?.toISOString()??null)) {
+        throw new CoursesServiceError("ATTENDANCE_ROSTER_CONFLICT");
+      }
       const priorStatus=priorRecord?.status??"PRESENT";
       // A repeated correction is a no-op and must not create a false event.
       if(priorStatus===input.status){
