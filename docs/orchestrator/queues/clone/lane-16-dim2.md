@@ -152,12 +152,12 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/recorded-outside/[recordId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/leads/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/by-company/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/leads/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx`
