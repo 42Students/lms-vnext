@@ -1,8 +1,9 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,isNull,count} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {projectTemplates,projectTemplateVersions} from "@/db/schema";
+import {projectTemplates,projectTemplateVersions,projectInstances,
+ projectTemplateCollegeAssignments} from "@/db/schema";
 import {requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import type {RequestContext} from "@/modules/identity/context";
@@ -15,6 +16,43 @@ const rollbackSchema=z.strictObject({
  expectedTemplateVersion:z.number().int().min(1),
  confirmed:z.literal(true),
 });
+
+/** Read-only blast-radius preview. No workspaces are mutated on content
+ * rollback: current project instances are pinned to their materialized
+ * version, and assigned colleges continue using the published pointer.
+ */
+export async function previewProjectTemplateRollbackImpact(
+ context:RequestContext,templateIdInput:string,
+){
+ requirePermission(context,"project-template.manage");
+ const templateId=z.string().uuid().parse(templateIdInput);
+ return getDb().transaction(async tx=>{
+  const [template]=await tx.select({
+   id:projectTemplates.id,status:projectTemplates.status,
+   currentVersion:projectTemplates.currentVersion,
+   publishedVersion:projectTemplates.publishedVersion,
+  }).from(projectTemplates).where(eq(projectTemplates.id,templateId)).limit(1);
+  if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,context,"project-template.manage");
+  const [assignmentTotals,instanceTotals]=await Promise.all([
+   tx.select({total:count()}).from(projectTemplateCollegeAssignments).where(and(
+    eq(projectTemplateCollegeAssignments.templateId,templateId),
+    isNull(projectTemplateCollegeAssignments.revokedAt),
+   )),
+   tx.select({total:count()}).from(projectInstances)
+    .where(eq(projectInstances.templateId,templateId)),
+  ]);
+  return {
+   expectedTemplateVersion:template.currentVersion,
+   assignedCollegeCount:Number(assignmentTotals[0]?.total??0),
+   pinnedWorkspaceCount:Number(instanceTotals[0]?.total??0),
+   existingWorkspacesRewritten:0,
+   publishedVersionUnchanged:template.publishedVersion,
+   lifecycleUnchanged:template.status,
+  };
+ });
+}
+
 /** Restore a prior snapshot as a NEW version. Existing workspaces and published version remain unchanged. */
 export async function rollbackProjectTemplate(context:RequestContext,templateIdInput:string,raw:unknown){
  requirePermission(context,"project-template.manage");

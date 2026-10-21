@@ -8,15 +8,20 @@ import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import styles from "./legacy-project-touch-actions.module.css";
 export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
- currentVersion,status}:{templateId:string;selectedVersion:{
+ currentVersion,status,impact}:{templateId:string;selectedVersion:{
   id:string;version:number;title:string};
- currentVersion:number;status:string}){
+ currentVersion:number;status:string;impact:{
+  expectedTemplateVersion:number;assignedCollegeCount:number;pinnedWorkspaceCount:number;
+  existingWorkspacesRewritten:number;publishedVersionUnchanged:number|null;
+  lifecycleUnchanged:string;
+ }}){
  const router=useRouter();
  const {showToast}=useToast();
  const {askConfirm,dialog}=useConfirmFlow();
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [reviewed,setReviewed]=useState(false);
- const enabled=selectedVersion.version!==currentVersion&&status!=="ARCHIVED";
+ const enabled=selectedVersion.version!==currentVersion&&status!=="ARCHIVED"&&
+   impact.expectedTemplateVersion===currentVersion;
  async function rollback(){
   if(!enabled||busy||!reviewed)return;
   if(!(await askConfirm("Roll back to this version? "+
@@ -50,6 +55,17 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
    assigned colleges and existing workspaces keep their current pinned versions.
    Unlike the old LMS snapshot rollback, this does not restore published,
    archived or deleted state. Publish the new revision separately.</p>
+  <dl className="grid gap-2 border-y border-border py-3 text-sm sm:grid-cols-2">
+    {([
+      ["Assigned colleges",impact.assignedCollegeCount],
+      ["Workspaces pinned to a version",impact.pinnedWorkspaceCount],
+      ["Existing workspaces changed now",impact.existingWorkspacesRewritten],
+      ["Published version retained",impact.publishedVersionUnchanged??"None"],
+    ] as const).map(([label,value])=><div key={label}>
+      <dt className="text-xs text-body">{label}</dt>
+      <dd className="font-semibold tabular-nums">{value}</dd>
+    </div>)}
+  </dl>
   <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
     <input type="checkbox" checked={reviewed} disabled={!enabled||busy}
       onChange={event=>setReviewed(event.target.checked)}
