@@ -50,7 +50,7 @@ function MeetingRow({
         {meeting.linkedSprintTitle ? " · Sprint: " + meeting.linkedSprintTitle : ""}
       </p>
       {meeting.projectStatus === "ARCHIVED" ? (
-        <p className="mt-2 text-xs text-muted-foreground">Archived project · Read-only</p>
+        <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Archived project · Read-only</p>
       ) : null}
       <div className={styles.actions}>
         {safeProjectExternalHref(href) ? <a className={styles.action} href={safeProjectExternalHref(href)!}

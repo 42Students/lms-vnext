@@ -106,7 +106,7 @@ export function TpoAcademicImportWorkspace() {
     </Button>
     {open && <section id={id} aria-label="Import academic details"
       className="mt-3 w-full min-w-0 max-w-4xl space-y-3 border-y border-border py-4">
-      <h2 className="text-lg font-semibold">Import academic details</h2>
+      <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Import academic details</h2>
       <details className="border-b border-border pb-3 text-sm text-muted-foreground">
         <summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Academic CSV requirements</summary><p>
         One row per student, matched by student membership ID. Upload a CSV with
@@ -114,7 +114,7 @@ export function TpoAcademicImportWorkspace() {
         Nothing is saved until you review the matches and confirm import.
         A roll number alone cannot identify a membership in this vNext workflow.
       </p></details>
-      <p aria-label="Import with preview steps" className="text-xs text-muted-foreground print:hidden">
+      <p aria-label="Import with preview steps" className="text-xs text-muted-foreground print:hidden leading-[20px]">
         Choose file or paste rows → Preview matched and unmatched records → Confirm selected import.
       </p>
       <a download="academic-import-template.csv"
@@ -135,7 +135,7 @@ export function TpoAcademicImportWorkspace() {
         {busy ? "Checking…" : "Preview import"}
       </Button>
       {preview && <div className="space-y-3">
-        <p role="status" className="text-sm">
+        <p role="status" className="text-sm leading-[22px]">
           Will update {preview.filter(row => row.match === "WILL_UPDATE").length}
           {" · "}Can&apos;t match {preview.filter(row => row.match === "CANT_MATCH").length}.
           Unmatched rows are excluded from confirmation.
@@ -175,10 +175,10 @@ export function TpoAcademicImportWorkspace() {
         description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? This updates their recorded CGPA and active backlogs."}
         footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"><Button variant="secondary" className="min-h-11 w-full md:min-h-9 sm:w-auto" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
           <Button className="min-h-11 w-full md:min-h-9 sm:w-auto" loading={busy||guardedPending} disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></div>}>
-        <p className="text-sm">Your academic import choices are kept below if the import cannot be completed.</p>
+        <p className="text-sm leading-[22px]">Your academic import choices are kept below if the import cannot be completed.</p>
       </Dialog>
-      {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error">{error}</p>}
-      {notice && <p role="status" className="text-sm text-body">{notice}</p>}
+      {error && <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-error leading-[22px]">{error}</p>}
+      {notice && <p role="status" className="text-sm text-body leading-[22px]">{notice}</p>}
     </section>}
   </div>;
 }

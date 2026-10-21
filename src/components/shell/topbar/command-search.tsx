@@ -181,9 +181,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           options[next]?.focus();
         }}>
                 {config.portal === "learn" && courseLoading ?
-          <p role="status" className="px-2 py-2 text-xs text-muted-foreground">Loading your courses…</p> : null}
+          <p role="status" className="px-2 py-2 text-xs text-muted-foreground leading-[20px]">Loading your courses…</p> : null}
         {config.portal === "learn" && courseError ?
-          <p role="alert" className="px-2 py-2 text-xs text-error">Could not load courses. Search shortcuts remain available.</p> : null}
+          <p role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">Could not load courses. Search shortcuts remain available.</p> : null}
         {courseMatches.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Courses</p> : null}
         {courseMatches.map(course => <Link key={course.deliveryId}
           role="option" aria-selected={false}
@@ -214,7 +214,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon /> {command.label}
         </Link>)}
         {matches.length === 0 && destinations.length === 0 && courseMatches.length === 0 &&
-          !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground">
+          !(config.portal === "tpo" && query.trim().length >= 2) && !courseLoading ? <p role="status" className="min-w-0 break-words p-2 text-xs text-muted-foreground leading-[20px]">
           No matching shortcuts. Press Enter to search this portal.
         </p> : null}
       </PopoverListbox> : null}

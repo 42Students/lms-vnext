@@ -49,7 +49,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      Comments
    </Button>
    {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
-     <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
+     <p className="text-xs text-muted-foreground leading-[20px]">Notes and progress updates people on this task have written.</p>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
          className="w-full">
@@ -59,16 +59,16 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          </option>)}
        </Select>
      </label>
-     {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
+     {rows.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments yet.</p>:null}
      {rows.length>0&&!rows.some(row=>filter==="ALL"||row.commentKind===filter)?
-       <p role="status" className="text-sm text-muted-foreground">No comments match this filter.</p>:null}
+       <p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments match this filter.</p>:null}
      {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
-      <p className="mb-1 text-xs font-semibold text-muted-foreground">
+      <p className="mb-1 text-xs font-semibold text-muted-foreground leading-[20px]">
         {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
         }).format(new Date(row.createdAt))}
       </p>
-      <p className="mb-1 text-xs font-semibold text-body">
+      <p className="mb-1 text-xs font-semibold text-body leading-[20px]">
         {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind]??"Note"}
       </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
@@ -87,11 +87,11 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
          placeholder="Share a progress update or note..."
          onChange={e=>setBody(e.target.value)}/>
      </label>:null}
-     {canPost && !body.trim() ? <p className="text-xs text-muted-foreground">
+     {canPost && !body.trim() ? <p className="text-xs text-muted-foreground leading-[20px]">
        Add a note before posting.
      </p> : null}
      {canPost?<Button className="w-full sm:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}
-   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
  </div>;
 }

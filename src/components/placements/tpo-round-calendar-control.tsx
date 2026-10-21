@@ -111,8 +111,8 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       </Select>
     </label>
     {round ? <div className="min-w-0 space-y-4">
-      <p className="break-words text-sm text-body">Status: {round.status}. Kind: {round.kind}. Duration: {round.durationMinutes ?? "Unknown"} minutes.</p>
-      <p className="text-xs text-muted-foreground">On-campus rounds need a recorded duration for venue collision checking.</p>
+      <p className="break-words text-sm text-body leading-[22px]">Status: {round.status}. Kind: {round.kind}. Duration: {round.durationMinutes ?? "Unknown"} minutes.</p>
+      <p className="text-xs text-muted-foreground leading-[20px]">On-campus rounds need a recorded duration for venue collision checking.</p>
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date/time (IST)
         <Input type="datetime-local" className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"
