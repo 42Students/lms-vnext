@@ -13,3 +13,23 @@ export function isPlacementApplicationDeadlinePassed(
 ): boolean {
   return deadline !== null && now.getTime() >= deadline.getTime();
 }
+
+/**
+ * Lifecycle decision (G2-19-011-001): application closure is derived from
+ * the persisted deadline, not an overnight job-status mutation. A PUBLISHED
+ * drive stays visible for history while applications close at the exact
+ * deadline. A manual CLOSED/ARCHIVED drive remains closed independently.
+ *
+ * Every application write must recheck this server-side; client disabled
+ * buttons and scheduled workers are not authorization checks. Do not turn
+ * a deadline into the manual close transition: that transition has separate
+ * effects on rounds, offers and drive history.
+ */
+export function canAcceptPlacementApplications(
+  jobStatus: "DRAFT" | "PUBLISHED" | "CLOSED" | "ARCHIVED",
+  deadline: Date | null,
+  now: Date,
+): boolean {
+  return jobStatus === "PUBLISHED" &&
+    !isPlacementApplicationDeadlinePassed(deadline, now);
+}
