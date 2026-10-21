@@ -58,8 +58,9 @@ export function LearnerNotificationBell(){
   const check=()=>{if(document.visibilityState==="visible")void refresh();};
   const interval=window.setInterval(check,30000);
   window.addEventListener("focus",check);
+  window.addEventListener("placement-announcements-read",check);
   document.addEventListener("visibilitychange",check);
-  return ()=>{window.clearInterval(interval);window.removeEventListener("focus",check);document.removeEventListener("visibilitychange",check);};
+  return ()=>{window.clearInterval(interval);window.removeEventListener("focus",check);window.removeEventListener("placement-announcements-read",check);document.removeEventListener("visibilitychange",check);};
  },[refresh]);
  useEffect(()=>{
   function clickOutside(event:PointerEvent){

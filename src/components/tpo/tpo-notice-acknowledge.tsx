@@ -24,6 +24,11 @@ export function TpoNoticeAcknowledge({id}:{id:string}){
    if(!raw||typeof raw!=="object"||!("read" in raw)||raw.read!==true)
     throw new Error("Notice acknowledgement could not be confirmed.");
    setRead(true);
+   // Match the legacy placement-announcements-read signal only after the
+   // membership-scoped receipt is durably acknowledged, never on a failed GET.
+   window.dispatchEvent(new CustomEvent("placement-announcements-read",{
+     detail:{noticeId:id},
+   }));
   }catch{
    setError("Notice still unread. Retry marking this notice read.");
   }finally{busyRef.current=false;setBusy(false);}
