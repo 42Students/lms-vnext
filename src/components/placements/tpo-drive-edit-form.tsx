@@ -3,6 +3,7 @@ import { DateInput } from "@/components/ui/date-input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import {useState,type FormEvent} from "react";
 import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
 import {useToast} from "@/components/ui/toast";
@@ -20,7 +21,16 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
  applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
- allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>};
+ allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>;
+ roleOptions:Array<{id:string;title:string}>;
+ employmentType:"FULL_TIME"|"INTERNSHIP"|"CONTRACT";
+ workMode:"ONSITE"|"HYBRID"|"REMOTE";recruiterDriveMode:"ON_CAMPUS"|"OFF_CAMPUS";
+ jobTypeLabel:string|null;
+ verifiedMarksOnly:boolean;
+ minTenthPctBasisPoints:number|null;minTwelfthPctBasisPoints:number|null;
+ minDiplomaPctBasisPoints:number|null;minUndergraduatePctBasisPoints:number|null;
+ minPostgraduatePctBasisPoints:number|null;
+ allowedPassingYears:number[];allowedProgramIds:string[];};
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
  const router=useRouter();
@@ -32,6 +42,11 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  const [error,setError]=useState<string|null>(null);
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [proposal,setProposal]=useState<Record<string,unknown>|null>(null);
+ const [reviewTitle,setReviewTitle]=useState(job.title);
+ const [reviewDeadline,setReviewDeadline]=useState(job.applicationDeadline??"");
+ const completeChecklist=Number(reviewTitle.trim().length>=3)
+  +Number(job.roleOptions.length>0)
+  +Number(Boolean(reviewDeadline));
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending)return;
   const fields=new FormData(event.currentTarget);
@@ -57,8 +72,8 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
   const title=String(fields.get("title")??"").trim();
   const description=String(fields.get("description")??"").trim();
-  if(title.length<2||title.length>200){
-   setError("Title must be between 2 and 200 characters.");return;
+  if(title.length<3||title.length>100){
+   setError("Job title must be between 3 and 100 characters");return;
   }
   if(!description||description.length>20000){
    setError("Description is required and must be 20,000 characters or fewer.");return;
@@ -126,9 +141,9 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  }
  const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[7px] text-[var(--lms-form-ink)] md:min-h-9";
  return <><form onSubmit={submit} onChange={()=>{markDirty();setSaved(null);}} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
-  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
-  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={4} className={cls}/></label>
-  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Locations (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <details className="group min-w-0 border-y border-border py-3">
    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
     Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
