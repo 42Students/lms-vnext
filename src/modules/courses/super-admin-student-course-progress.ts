@@ -98,7 +98,14 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
    and l.status='ACTIVE' and l.visible_to_students=true
    and l.deleted_at is null and q.status='PUBLISHED'
  )
- select * from (
+ select progress.*,
+  count(*) over()::int as "__totalRows",
+  avg(case when ("totalVideos"+"totalAssignments"+"totalQuizzes")=0 then null
+   else (videos+assignments+quizzes)*100.0/("totalVideos"+"totalAssignments"+"totalQuizzes")
+  end) over()::float8 as "__meanPercent",
+  sum(case when (videos+assignments+quizzes)=0 then 1 else 0 end)
+   over()::int as "__notStartedCount"
+ from (
  select r.membership_id as "membershipId",r.student_name as "studentName",
  (select lp.roll_number from learner_profiles lp where lp.membership_id=r.membership_id) as "rollNumber",
  (select count(distinct pr.lesson_content_id)::int
@@ -150,8 +157,11 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  limit ${pageSize+1} offset ${offset}
  `);
  type DbRow={membershipId:string;studentName:string;rollNumber:string|null;videos:number;assignments:number;quizzes:number;
-  totalVideos:number;totalAssignments:number;totalQuizzes:number};
- const rows=(result.rows as unknown as DbRow[]).slice(0,pageSize).map(row=>({
+  totalVideos:number;totalAssignments:number;totalQuizzes:number;
+  __totalRows:number;__meanPercent:number|null;__notStartedCount:number};
+ const received=result.rows as unknown as DbRow[];
+ const first=received[0];
+ const rows=received.slice(0,pageSize).map(row=>({
   membershipId:row.membershipId,studentName:row.studentName,rollNumber:row.rollNumber,
   videos:Number(row.videos),assignments:Number(row.assignments),quizzes:Number(row.quizzes),
   totalVideos:Number(row.totalVideos),totalAssignments:Number(row.totalAssignments),
@@ -172,7 +182,10 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  // Callers can iterate pages of 20/50/100 without exposing other deliveries.
  return {
   offeringId,deliveryId,collegeId,rows,page,pageSize,
-  hasMore:result.rows.length>pageSize,
-  truncated:result.rows.length>pageSize || page>1,
+  totalRows:first?Number(first.__totalRows):0,
+  meanPercent:first?.__meanPercent==null?null:Number(first.__meanPercent),
+  notStartedCount:first?Number(first.__notStartedCount):0,
+  hasMore:received.length>pageSize,
+  truncated:received.length>pageSize || page>1,
  };
 }
