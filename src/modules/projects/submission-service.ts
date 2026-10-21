@@ -696,16 +696,33 @@ export async function listProjectSubmissions(
     legacyAttachmentUrl:string|null;
   };
   const byId=new Map(submissions.map(submission=>[submission.id,submission]));
+  const memberIds=[...new Set(submissions.flatMap(row=>[
+    row.createdByMembershipId,row.submittedByMembershipId,
+  ]).filter((id):id is string=>Boolean(id)))];
+  const reviewerIds=[...new Set(reviews.map(row=>row.reviewedByUserId))];
+  const [memberActors,reviewerActors]=await Promise.all([
+    memberIds.length?db.select({id:collegeMemberships.id,name:users.displayName})
+      .from(collegeMemberships)
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(inArray(collegeMemberships.id,memberIds)):Promise.resolve([]),
+    reviewerIds.length?db.select({id:users.id,name:users.displayName})
+      .from(users).where(inArray(users.id,reviewerIds)):Promise.resolve([]),
+  ]);
+  const memberNames=new Map(memberActors.map(row=>[row.id,row.name]));
+  const reviewerNames=new Map(reviewerActors.map(row=>[row.id,row.name]));
   const history:HistoryEntry[]=[];
   for(const submission of submissions){
    history.push({id:"created:"+submission.id,submissionId:submission.id,
      version:submission.version,kind:"DRAFT_CREATED",
      occurredAt:submission.createdAt.toISOString(),status:"DRAFT",feedback:null,
-     actorName:null,actorType:"LEARNER",legacyNotes:null,legacyAttachmentUrl:null});
+     actorName:memberNames.get(submission.createdByMembershipId)??null,
+     actorType:"LEARNER",legacyNotes:null,legacyAttachmentUrl:null});
    if(submission.submittedAt)history.push({id:"submitted:"+submission.id,
      submissionId:submission.id,version:submission.version,kind:"SUBMITTED",
      occurredAt:submission.submittedAt.toISOString(),status:"SUBMITTED",feedback:null,
-     actorName:null,actorType:"LEARNER",legacyNotes:null,legacyAttachmentUrl:null});
+     actorName:submission.submittedByMembershipId?
+       memberNames.get(submission.submittedByMembershipId)??null:null,
+     actorType:"LEARNER",legacyNotes:null,legacyAttachmentUrl:null});
   }
   for(const review of reviews){
    const submission=byId.get(review.submissionId);
@@ -713,7 +730,8 @@ export async function listProjectSubmissions(
    history.push({id:"review:"+review.id,submissionId:review.submissionId,
     version:submission.version,kind:"REVIEWED",occurredAt:review.reviewedAt.toISOString(),
     status:review.decision,feedback:review.feedback,
-    actorName:null,actorType:"REVIEWER",legacyNotes:null,legacyAttachmentUrl:null});
+    actorName:reviewerNames.get(review.reviewedByUserId)??null,
+    actorType:"REVIEWER",legacyNotes:null,legacyAttachmentUrl:null});
   }
   for(const event of deliveryEvents){
    const submission=byId.get(event.submissionId);

@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,inArray,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,colleges,legacyIdMap,membershipRoles,
+import {collegeMemberships,legacyIdMap,membershipRoles,
   projectTemplates,sections,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
