@@ -85,12 +85,13 @@ export async function issueTpoRecruiterInvite(
   collegeIdInput: string,
   leadIdInput: string,
   now = new Date(),
+  delivery?: { sendEmail: boolean; deliver: (collegeId: string, leadId: string, token: string) => Promise<boolean> },
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(collegeIdInput);
   const leadId = tpoCrmLeadIdSchema.parse(leadIdInput);
   const college=await requirePlacementManageScope(context, collegeId);
 
-  return getDb().transaction(async (tx) => {
+  const issued = await getDb().transaction(async (tx) => {
     const [lead] = await tx
       .select()
       .from(placementTpoLeads)
@@ -173,6 +174,27 @@ export async function issueTpoRecruiterInvite(
       emailed: false,
     };
   });
+  if (!delivery?.sendEmail) return issued;
+  if (!issued.emailAvailable) return { ...issued, emailed: false };
+  // This call is after commit: provider failure must never claim delivery.
+  // A retried email may use the still-valid issued credential, not an invented one.
+  let accepted = false;
+  try { accepted = await delivery.deliver(collegeId, issued.leadId, issued.token); }
+  catch { accepted = false; }
+  let deliveryAuditRecorded = !accepted;
+  if (accepted) {
+    try {
+      await getDb().insert(placementTpoLeadActivities).values({
+        collegeId, leadId: issued.leadId, type: "SYSTEM", isSystem: true,
+        note: "Invite email accepted by provider", createdAt: new Date(),
+      });
+      deliveryAuditRecorded = true;
+    } catch {
+      // The provider already accepted this message; never imply it was not sent.
+      deliveryAuditRecorded = false;
+    }
+  }
+  return { ...issued, emailed: accepted, deliveryAuditRecorded };
 }
 
 /**

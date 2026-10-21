@@ -83,9 +83,14 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
      }
      return {outcome:{id:selected.id,status:"updated",reason:null},undo:null};
    }catch(error){
+     if(error instanceof TpoBulkStageError){
+       const reason = error.code === "STAGE_NOT_ALLOWED"
+         ? "Students can be moved only to Shortlisted, Test or Interview"
+         : error.code === "STAGE_STALE" ? "Applicant changed; preview again" : "Stage storage is not ready";
+       return {outcome:{id:selected.id,status:"skipped",reason},undo:null};
+     }
      if(error instanceof PlacementsServiceError||
         error instanceof TpoParticipationConflictError||
-        error instanceof TpoBulkStageError||
         error instanceof AuthorizationError){
        return {outcome:{id:selected.id,status:"skipped",reason:safeBulkActionFailure()},undo:null};
      }
@@ -119,7 +124,8 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
   // aggregate cannot mean the bulk actions were undone. Aggregate undo is
   // unavailable until a persisted batch summary exists.
  }
- return {outcomes,summaryRecorded,
+ return {outcomes,summaryRecorded,applicationActionsReversible:false,
+  undoWindowSeconds:plan.target==="STUDENTS"?300:0,
   summaryWarning:summaryRecorded?null:
    "Some decisions may have been saved, but the batch summary could not be recorded. Refresh and review history before retrying.",
   runAuditId:plan.target==="STUDENTS"&&undoRows.length?auditId:null,counts:{

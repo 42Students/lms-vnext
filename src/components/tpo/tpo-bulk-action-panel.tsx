@@ -155,7 +155,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }
  const options=target==="STUDENTS"
   ?([{value:"ELIGIBLE",label:"Mark eligible"},{value:"INELIGIBLE",label:"Make ineligible"},{value:"CLEAR_OVERRIDE",label:"Clear direct override"}] as const)
-  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"},{value:"MOVE_TEST",label:"Move to test"},{value:"MOVE_INTERVIEW",label:"Move to interview"}] as const);
+  :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"},{value:"MOVE_TEST",label:"Move to test round"},{value:"MOVE_INTERVIEW",label:"Move to interview round"}] as const);
  const suggested=suggestTpoBulkAction(actionCounts);
  async function undoLastRun(){
   if(!runAuditId||busy||actionInFlightRef.current)return;
@@ -270,6 +270,11 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       />
    </label>:null}
   </div>
+  {target==="APPLICATIONS"?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-xs text-warning-text">
+    Shortlist, Reject, Test and Interview stage moves are recorded separately for each applicant.
+    Stage moves require a scheduled target round; they cannot be blindly undone after confirmation.
+    To correct a result, open the applicant and record a new reviewed decision.
+   </p>:null}
   <section aria-label="Actions window" className="min-w-0 space-y-3 border-t border-border pt-4">
    <h3 className="font-semibold">Actions</h3>
    <p className="text-sm text-body">Check how many selected rows can receive each action before you confirm any change.</p>
@@ -354,6 +359,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
     busy={busy||guardedPending||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void runGuarded(confirm)}/>:null}
+  {outcomes.length>0&&target==="APPLICATIONS"?
+    <p role="status" className="text-xs text-muted-foreground">
+      Application decisions and messages are committed individually. Undo is unavailable for this batch; review each applicant to correct a decision.
+    </p>:null}
   {outcomes.length>0?<div className="min-w-0 space-y-2 border-b border-border py-3">
     <p role="status" className="text-sm font-semibold">
      {outcomes.filter(item=>item.status==="updated").length} updated ·

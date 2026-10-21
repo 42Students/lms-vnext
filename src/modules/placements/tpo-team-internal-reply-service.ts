@@ -1,10 +1,10 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
-import {placementTpoInternalThreads,placementTpoInternalMessages} from "@/db/schema/tpo-internal";
+import {placementTpoInternalThreads,placementTpoInternalMessages,placementTpoInternalThreadParticipants} from "@/db/schema/tpo-internal";
 import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -20,6 +20,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_internal_messages"))
   throw new Error("TEAM_TABLES_PENDING");
+ const groupReady=await placementTableExists("placement_tpo_internal_thread_participants");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -28,13 +29,22 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    id:placementTpoInternalThreads.id,
    startedByMembershipId:placementTpoInternalThreads.startedByMembershipId,
    invitedMembershipId:placementTpoInternalThreads.invitedMembershipId,
+   kind:groupReady?placementTpoInternalThreads.kind:sql<"DIRECT">`'DIRECT'`,
   }).from(placementTpoInternalThreads).where(and(
    eq(placementTpoInternalThreads.id,input.threadId),
    eq(placementTpoInternalThreads.collegeId,college.id),
   )).for("update").limit(1);
-  if(!thread||![thread.startedByMembershipId,thread.invitedMembershipId].includes(membership.id))
+  if(!thread) throw new Error("TEAM_THREAD_NOT_FOUND");
+  if(thread.kind!=="DIRECT"&&!groupReady)throw new Error("TEAM_TABLES_PENDING");
+  const memberIds=thread.kind==="DIRECT"
+    ? [thread.startedByMembershipId,thread.invitedMembershipId]
+    : (await tx.select({id:placementTpoInternalThreadParticipants.membershipId})
+      .from(placementTpoInternalThreadParticipants)
+      .where(and(eq(placementTpoInternalThreadParticipants.threadId,thread.id),
+        eq(placementTpoInternalThreadParticipants.collegeId,college.id),
+        isNull(placementTpoInternalThreadParticipants.leftAt)))).map(row=>row.id);
+  if(!memberIds.includes(membership.id)||memberIds.length<2)
     throw new Error("TEAM_THREAD_NOT_FOUND");
-  const memberIds=[thread.startedByMembershipId,thread.invitedMembershipId];
   const active=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -47,7 +57,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     eq(collegeMemberships.status,"ACTIVE"),
     eq(users.platformStatus,"ACTIVE"),
    )).for("share");
-  if(new Set(active.map(member=>member.id)).size!==2)throw new Error("TEAM_PARTICIPANT_INACTIVE");
+  if(new Set(active.map(member=>member.id)).size!==memberIds.length)throw new Error("TEAM_PARTICIPANT_INACTIVE");
   // Repeating the same keyed POST reuses its committed message, even after
   // a client timeout; the thread row lock serializes competing retries.
   const key=input.idempotencyKey?
@@ -65,7 +75,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     if(existing.metadata.bodyHash!==bodyHash||
      Boolean(existing.metadata.markDecision)!==Boolean(input.markDecision)||typeof saved!=="string")
      throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
-    return {id:saved,threadId:thread.id,notified:1};
+    return {id:saved,threadId:thread.id,notified:memberIds.length-1};
    }
   }
   const [message]=await tx.insert(placementTpoInternalMessages).values({
@@ -93,18 +103,17 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     metadata:{messageId:message.id},
    });
   }
-  const other=active.find(member=>member.id!==membership.id);
-  if(!event||!other)throw new Error("TEAM_PARTICIPANT_INACTIVE");
+  const others=active.filter(member=>member.id!==membership.id);
+  if(!event||others.length===0)throw new Error("TEAM_PARTICIPANT_INACTIVE");
   const [actor]=await tx.select({displayName:users.displayName})
    .from(users).where(eq(users.id,context.user.id)).limit(1);
   const actorName=actor?.displayName?.trim()||"TPO colleague";
-  await tx.insert(inAppNotifications).values({
+  await tx.insert(inAppNotifications).values(others.map(other=>({
    eventId:event.id,userId:other.userId,
    title:input.markDecision?"Decision from "+actorName:"New message from "+actorName,
    body:input.body.slice(0,120)+(input.body.length>120?"…":""),
    actionHref:"/tpo/team/"+thread.id+"?m="+message.id,
-  });
-  // A private thread has exactly one other active participant; Everyone counts its recipients separately.
-  return {id:message.id,threadId:thread.id,notified:1};
+  })));
+  return {id:message.id,threadId:thread.id,notified:others.length};
  });
 }

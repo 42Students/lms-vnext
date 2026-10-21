@@ -5,14 +5,16 @@ import {Alert} from "@/components/ui/alert";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getTpoDriveDiscussion} from "@/modules/placements/tpo-drive-discussion-service";
+import {TpoRecruiterMessageReply} from "@/components/tpo/tpo-recruiter-message-reply";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 
 export default async function TpoDriveDiscussion({params}:{
  params:Promise<{jobId:string}>
 }){
  const {jobId}=await params;
+ const context=await getCurrentRequestContext();
  let data:Awaited<ReturnType<typeof getTpoDriveDiscussion>>;
- try{data=await getTpoDriveDiscussion(await getCurrentRequestContext(),jobId)}
+ try{data=await getTpoDriveDiscussion(context,jobId)}
  catch(error){if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")notFound();throw error}
  const root="/tpo/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="min-w-0 space-y-4">
@@ -36,6 +38,13 @@ export default async function TpoDriveDiscussion({params}:{
     </div>
     <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
       className="inline-flex min-h-11 w-full shrink-0 items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Open conversation</Link>
+    <div className="w-full sm:basis-full">
+      <details className="border-t border-border pt-2">
+        <summary className="cursor-pointer text-sm font-semibold text-link">Reply in this drive discussion</summary>
+        <TpoRecruiterMessageReply threadId={thread.id} actorUserId={context.user.id} unread={thread.unread>0}/>
+        <p className="mt-1 text-xs text-muted-foreground">For earlier messages and quotes, open the full conversation.</p>
+      </details>
+    </div>
    </li>)}</ul>
    </section>}
   <p className="text-xs text-muted-foreground leading-5">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>

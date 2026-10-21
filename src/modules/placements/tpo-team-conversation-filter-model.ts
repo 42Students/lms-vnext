@@ -3,7 +3,7 @@ import {z} from "zod";
 export const tpoTeamConversationFilterSchema=z.enum(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS","ASKS","AT_ME"]);
 export type TpoTeamConversationFilter=z.infer<typeof tpoTeamConversationFilterSchema>;
 export type TpoTeamConversationCard={
- id:string;following:boolean;muted:boolean;unreadCount:number;kind:"PRIVATE"|"TOPIC";hasDecisions?:boolean;openAsks?:number;asksForMe?:number;
+ id:string;following:boolean;muted:boolean;unreadCount:number;kind:"PRIVATE"|"DIRECT"|"TOPIC"|"DRIVE"|"COMPANY";hasDecisions?:boolean;openAsks?:number;asksForMe?:number;
 };
 /** TPO-inbox-team-18/20: preserve precise per-member following/unread semantics.
  * Other legacy chips (mentions, asks, decisions and object threads) are

@@ -23,6 +23,7 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
   if (!membership || !hasPlacementTeamMembership(context))
     throw new AuthorizationError("placements.manage");
   const college = await requirePlacementManageScope(context, membership.collegeId);
+  const groupsReady=await placementTableExists("placement_tpo_internal_thread_participants");
   if (!await placementTableExists("placement_tpo_internal_threads"))
     return { status: "NOT_REGISTERED" as const, thread: null, messages: [], page, pages: 1 };
   return getDb().transaction(async tx => {
@@ -47,7 +48,17 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
     }).from(placementTpoInternalThreads).where(and(
       eq(placementTpoInternalThreads.id, id),
       eq(placementTpoInternalThreads.collegeId, college.id),
-      or(
+      groupsReady ? sql`((
+        ${placementTpoInternalThreads.kind} = 'DIRECT'
+        and (${placementTpoInternalThreads.startedByMembershipId} = ${membership.id}::uuid
+          or ${placementTpoInternalThreads.invitedMembershipId} = ${membership.id}::uuid)
+      ) or (
+        ${placementTpoInternalThreads.kind} <> 'DIRECT'
+        and exists (select 1 from placement_tpo_internal_thread_participants p
+          where p.thread_id=${placementTpoInternalThreads.id}
+            and p.college_id=${college.id}::uuid
+            and p.membership_id=${membership.id}::uuid and p.left_at is null)
+      ))` : or(
         eq(placementTpoInternalThreads.startedByMembershipId, membership.id),
         eq(placementTpoInternalThreads.invitedMembershipId, membership.id),
       ),

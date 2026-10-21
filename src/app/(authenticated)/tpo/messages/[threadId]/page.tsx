@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
@@ -24,7 +25,17 @@ export default async function TpoRecruiterConversationPage({params}:{
   <ErrorState title="Messages unavailable" description="Recruiter messaging tables are not registered. No messages were loaded."/>
  </div>;
  const {threadId}=await params;
- const data=await getTpoRecruiterThreadDetail(context,threadId);
+ let data: Awaited<ReturnType<typeof getTpoRecruiterThreadDetail>>;
+ try { data = await getTpoRecruiterThreadDetail(context,threadId); }
+ catch {
+   // Keep the route and scope, so refresh retries the same thread.
+   return <div className="min-w-0 space-y-4">
+     <PageHeader title="Recruiter conversation" actions={<PageBackLink href="/tpo/messages" label="All conversations"/>}/>
+     <ErrorState title="Could not load this conversation" description="The conversation is still available to retry. No messages have been marked read."
+       action={<Link href={"/tpo/messages/"+encodeURIComponent(threadId)}
+         className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry conversation</Link>} />
+   </div>;
+ }
  if(!data)notFound();
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Recruiter conversation" description={data.total+" messages · Showing the latest 100"} actions={<PageBackLink href="/tpo/messages" label="All conversations"/>}/>

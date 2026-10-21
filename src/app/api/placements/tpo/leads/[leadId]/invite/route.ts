@@ -29,16 +29,18 @@ export async function POST(request: Request, { params }: RouteContext) {
       context,
       collegeId,
       leadId,
+      new Date(),
+      { sendEmail: body.sendEmail===true, deliver: deliverTpoRecruiterInviteEmail },
     );
     if(body.sendEmail===true){
-      const emailed=await deliverTpoRecruiterInviteEmail(collegeId,leadId,invite.token);
-      if(!emailed)
-        return NextResponse.json({error:"INVITE_EMAIL_NOT_ACCEPTED",emailed:false},{
-          status:503,headers:{"Cache-Control":"no-store"},
-        });
-      return NextResponse.json({invite:{leadId:invite.leadId,
-       expiresAt:invite.expiresAt,emailed:true}},
-       {headers:{"Cache-Control":"no-store"}});
+      if(!invite.emailed)
+        return NextResponse.json({
+          error:"INVITE_EMAIL_NOT_ACCEPTED",emailAvailable:invite.emailAvailable,emailed:false,
+        },{status:503,headers:{"Cache-Control":"no-store"}});
+      return NextResponse.json({invite:{
+        leadId:invite.leadId,expiresAt:invite.expiresAt,
+        emailAvailable:invite.emailAvailable,emailed:true,
+      }},{headers:{"Cache-Control":"no-store"}});
     }
     return NextResponse.json({ invite },{headers:{"Cache-Control":"no-store"}});
   } catch (error) {
