@@ -103,12 +103,6 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       value={{
        job:{
         id:job.id,title:job.title,description:job.description,
-      companyRelationshipId:job.companyRelationshipId,
-      assessmentUrl:job.legacyPostingDetails?.assessmentUrl??null,
-      assessmentDeadline:job.legacyPostingDetails?.assessmentDeadline??null,
-      candidatePreferences:job.legacyPostingDetails?.candidatePreferences??{
-       preferredDegree:"",specialization:"",graduationYear:null,minGpa:null,city:"",
-      },
         employmentType:job.employmentType,jobTypeLabel:job.jobTypeLabel,
         workMode:job.workMode,locations:job.locations,openings:job.openings,
         minimumAnnualCtcInr:job.minimumAnnualCtcInr,
@@ -144,6 +138,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
      companies={publishedCompanies.map(c=>({relationshipId:c.relationshipId,name:c.name}))}
      job={{
       id:job.id,title:job.title,description:job.description,
+      companyRelationshipId:job.companyRelationshipId,
+      assessmentUrl:job.legacyPostingDetails?.assessmentUrl??null,
+      assessmentDeadline:job.legacyPostingDetails?.assessmentDeadline??null,
+      candidatePreferences:job.legacyPostingDetails?.candidatePreferences??{
+       preferredDegree:"",specialization:"",graduationYear:null,minGpa:null,city:"",
+      },
       locations:job.locations,applicationDeadline:job.applicationDeadline?.toISOString()??null,
       openings:job.openings,minCtc:job.minimumAnnualCtcInr,maxCtc:job.maximumAnnualCtcInr,
       updatedAt:job.updatedAt.toISOString(),
