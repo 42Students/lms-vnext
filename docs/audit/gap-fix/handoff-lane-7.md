@@ -247,3 +247,32 @@ Intentional divergences requiring owner signoff: G2-2-001-001/-041 no separate p
 - G2-14-030-029 | `src/components/placements/college-interview-appointments.tsx` | Add legacy info notification on attempted busy cancel.
 
 Current model distinction: Super Admin interview *round* detail is read-only and college appointment edits are authorized for college placements admins, not globally. Do not wire a Super Admin button directly to the college endpoint or accept unscoped organization IDs. Schema/status and selected-college write access need coordinated owning-lane implementation. 27/27 findings **handed off, not fixed**.
+
+## Faculty teaching assignment controller — lane-7 packet handoff (2026-10-21)
+
+- G2-12-027-001 | `src/app/api/courses/teaching-assignments/[assignmentId]/route.ts` | Implement owner-scoped assignment detail GET or provide verified equivalent link/projection with legacy metadata.
+- G2-12-027-002 | `src/modules/courses/teaching-assignment-service.ts` | Map full update semantics to scoped edit surface or explicitly document retained-field restrictions.
+- G2-12-027-003 | `src/modules/courses/teaching-assignment-service.ts` | Expose equivalent faculty/class/batch query projections without conflating section-grants and course-grants.
+- G2-12-027-009 | `src/modules/courses/teaching-assignment-service.ts` | Build equivalent projection joining delivery/section/cohort/course/period and include missing fields or explicit absence mapping.
+- G2-12-027-010 | `src/modules/admin-ui/super-admin-faculty-assignments-service.ts` | Surface orphan references as degraded records with explicit error indicator, not silently drop from results.
+- G2-12-027-011 | `src/db/schema/courses.ts + migration ledger` | Document migration projections and historical start/end date conversion; preserve year and batch semantics.
+- G2-12-027-017 | `src/modules/courses/validation.ts + historical mapping` | Restore editable academic-year/lifecycle details or explicitly preserve through linked period and migration strategy.
+- G2-12-027-019 | `src/modules/courses/validation.ts` | Provide validated full reassignment/edit or formally deprecate partial-edit capabilities.
+- G2-12-027-022 | `src/modules/courses/validation.ts` | Retain start/end ordering check if dates are migrated/editable; otherwise document retired date rule.
+- G2-12-027-030 | `src/app/api/college/teaching-assignments/bulk/route.ts` | Preserve atomic bulk contract or explicitly label partial success and provide rollback action.
+- G2-12-027-031 | `src/modules/courses/teaching-assignment-service.ts` | Define explicit hard-delete vs end/deactivate policy and data retention; avoid calling end an exact delete match.
+- G2-12-027-034 | `src/modules/courses/teaching-assignment-service.ts` | Expose controlled changes for necessary legacy fields or document replacement assignment flow.
+- G2-12-027-035 | `src/modules/permissions/policy.ts + courses permissions` | Ensure faculty department-admin analog retains manage access or document role-policy removal.
+- G2-12-027-038 | `src/modules/courses/teaching-assignment-batch-service.ts` | Check elective/retake deliveries are assignable even without strict term-course mapping; add coverage.
+- G2-12-027-042 | `src/modules/admin-ui/super-admin-faculty-assignments-service.ts` | Display degraded data with icon/helper instead of dropping records silently.
+- G2-12-027-052 | `src/modules/courses/teaching-assignment-service.ts + academic period migration` | Reconcile date-only legacy records into effective delivery period with timezone-safe conversion.
+- G2-12-027-053 | `src/modules/courses/teaching-assignment-batch-service.ts + college bulk route` | Unify batch semantics across SA and college callers or explicitly distinguish atomic vs partial.
+- G2-12-027-057 | `src/db/schema/courses.ts + migration ledger` | Provide column-by-column migration mapping with explicit year, role, archived/inactive, and date-only semantics.
+- G2-12-027-021 | `src/components/admin/super-admin-faculty-assignment-create.tsx` | Map validation to specific missing field/role errors rather than generic combined notice.
+- G2-12-027-023 | `src/components/admin/super-admin-faculty-assignment-create.tsx` | Keep distinct backend error codes and exact legacy fallback wording per action if parity.
+- G2-12-027-024 | `src/modules/courses/teaching-assignment-service.ts + API error mapping` | Map not-found code and client-facing message to legacy exact text and HTTP status.
+- G2-12-027-027 | `src/components/admin/super-admin-faculty-assignment-create.tsx` | Add exact update/end confirmation and distinguish hard delete from end.
+- G2-12-027-025 | `src/components/admin/super-admin-faculty-assignment-create.tsx` | Restore exact single-assignment success string where copy parity applies.
+- G2-12-027-026 | `src/components/admin/super-admin-faculty-assignment-create.tsx` | Match legacy count wording or document deliberate clarity improvement.
+
+Boundary decision: Teaching assignments are part of Courses/Academics and schema ownership, not lane-7's unplaced, lib, marketing, dashboard and admin-scope code. Existing college bulk intentionally returns per-delivery partial outcomes; SA bulk uses transactional batch. Owner must decide whether to keep explicit distinction rather than silently rewrite contract. Do not introduce numeric legacy IDs or bypass membership/college permissions. **24/24 handed off; not fixed.**
