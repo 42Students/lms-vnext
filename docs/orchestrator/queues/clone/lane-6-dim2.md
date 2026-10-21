@@ -355,14 +355,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
 - [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
 - [x] `src/components/tracker/tracker-issue-logs-panel.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/ui/action-pagination.tsx`
-- [ ] `src/components/ui/breadcrumbs.tsx`
-- [ ] `src/components/ui/data-table.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/ui/action-pagination.tsx`
+- [x] `src/components/ui/breadcrumbs.tsx`
+- [x] `src/components/ui/data-table.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/file-upload.tsx`
 - [ ] `src/components/ui/menu.tsx`
 - [ ] `src/components/ui/multi-select.tsx`
 - [ ] `src/components/ui/pagination.tsx`
