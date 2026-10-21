@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {ErrorState} from "@/components/ui/error-state";
@@ -14,13 +17,27 @@ import { getFacultyAttendanceWorkspace } from "@/modules/attendance/faculty-serv
 import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import { resolveFacultyAttendanceDeepLink } from "@/modules/attendance/faculty-attendance-edit-state";
 
-export default async function FacultyCourseAttendancePage({
+function AttendanceDetailLoading() {
+ return <section className="flex min-h-48 items-center justify-center" aria-busy="true" aria-label="Loading attendance">
+  <span role="status" className="inline-flex items-center gap-3 text-sm text-muted-foreground">
+   <svg aria-hidden="true" viewBox="0 0 24 24" width="34" height="34" fill="none"
+     stroke="currentColor" strokeWidth="2" className="animate-spin text-primary-text">
+    <path d="M12 2a10 10 0 1 1-10 10"/>
+   </svg>
+   Loading attendance…
+  </span>
+ </section>;
+}
+type AttendanceDetailParams={params:Promise<{deliveryId:string}>;searchParams:Promise<{sessionId?:string;cls?:string}>};
+export default function FacultyCourseAttendancePage(props:AttendanceDetailParams) {
+ return <Suspense fallback={<AttendanceDetailLoading/>}>
+  <FacultyCourseAttendanceContent {...props}/>
+ </Suspense>;
+}
+async function FacultyCourseAttendanceContent({
   params,
   searchParams,
-}: {
-  params: Promise<{ deliveryId: string }>;
-  searchParams: Promise<{ sessionId?: string;cls?:string }>;
-}) {
+}: AttendanceDetailParams) {
   const context = await getCurrentRequestContext();
   const { deliveryId } = await params;
   const query = await searchParams;
@@ -34,7 +51,11 @@ export default async function FacultyCourseAttendancePage({
   if(query.cls){
     const target=sections.find(item=>item.sectionId===query.cls||
       item.deliveryId===query.cls||item.sectionCode===query.cls);
-    if(!target)notFound();
+    if(!target){
+      // A retired legacy ?cls value cannot select a foreign section. Use
+      // the known-safe selected delivery and discard the unsupported alias.
+      redirect("/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail");
+    }
     redirect("/teacher/courses/"+encodeURIComponent(target.deliveryId)+
       "/attendanceDetail"+(query.sessionId&&target.deliveryId===deliveryId?
        "?sessionId="+encodeURIComponent(query.sessionId):""));
@@ -46,7 +67,7 @@ export default async function FacultyCourseAttendancePage({
   }catch(error){
     if(error instanceof AuthorizationError||error instanceof CoursesServiceError)throw error;
     return <div className="min-w-0 space-y-4">
-      <ErrorState title="Couldn't load attendance data for this month."
+      <ErrorState title="Could not load the attendance roster"
         description="Failed to load students or attendance. Your existing marks have not been changed."
         action={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
@@ -91,16 +112,28 @@ export default async function FacultyCourseAttendancePage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      {sections.length>1?<nav aria-label="Teaching section selector" className="min-w-0 space-y-2 border-b border-border pb-3">
-       <p className="text-sm font-semibold text-foreground">Class</p>
-       <div className="flex flex-wrap gap-2">{sections.map(item=><Link key={item.deliveryId}
-        href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/attendanceDetail"}
-        aria-current={item.deliveryId===deliveryId?"page":undefined}
-        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+
-          (item.deliveryId===deliveryId?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-body hover:border-primary")}
-       >{item.sectionName} ({item.sectionCode})</Link>)}</div>
-       <p className="text-xs text-muted-foreground">Choose a class to see that section&#39;s attendance. Unsaved marks must be saved before switching.</p>
-      </nav>:null}
+      {sections.length>1?<form method="get"
+        action={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
+        aria-label="Teaching section selector"
+        className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-3">
+        <label className="grid min-w-[160px] flex-1 gap-1 text-sm font-semibold text-body">
+          Class
+          <Select name="cls" defaultValue={deliveryId}
+            className="min-h-11 w-full min-w-[160px] md:min-h-9">
+            <option value="" disabled>Select class</option>
+            {sections.map(item=><option key={item.deliveryId} value={item.deliveryId}>
+              {item.sectionName} ({item.sectionCode})
+            </option>)}
+          </Select>
+        </label>
+        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">
+          View class
+        </Button>
+        <p className="w-full text-xs text-muted-foreground">
+          Choose a class to see that section&#39;s attendance. Save any changed marks before switching.
+        </p>
+      </form>:null}
+      <p className="text-sm text-body">See your attendance record and class-wise status in one place.</p>
       <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}

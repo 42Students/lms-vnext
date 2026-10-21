@@ -63,6 +63,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     context,
     "organization.manage",
   );
+  const canCreateGlobal=canCreate&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId;
   const archiveResponse=canCreate
     ?await listArchivedOrganizations(context).then(value=>({ok:true as const,value}))
       .catch(()=>({ok:false as const,value:[]}))
@@ -81,14 +82,14 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
       ),
     },
     {
-      key: "status",header:"Status",mobilePriority:"secondary",
+      key: "status",header:"Status",mobilePriority:"secondary",className:"w-[100px]",
       cell:()=> <StatusBadge tone="success">Active</StatusBadge>,
     },
     {
       key: "actions",
       header: "Actions",
       mobilePriority: "action",
-      className: "text-right",
+      className: "min-w-[210px] text-right",
       cell: (organization) =>
         can(context, "organization.manage", {
           organizationId: organization.id,
@@ -107,8 +108,11 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         title="Organizations"
         description="Platform organizations are constrained by the selected Super Admin safety scope."
       />
-      <div className={"grid min-w-0 grid-cols-1 items-start gap-6 "+(canCreate?"lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"")}>
-        {canCreate?<section aria-label="Create New Organization"
+      <div className={"grid min-w-0 grid-cols-1 items-start gap-6 "+(canCreateGlobal?"lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"")}>
+        {canCreate&&!canCreateGlobal?<p role="status" className="text-sm text-muted-foreground">
+          Clear scope to manage organizations. Creating a platform organization requires the global Super Admin scope.
+        </p>:null}
+        {canCreateGlobal?<section aria-label="Create New Organization"
           className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm">
           <h2 className="-mx-4 border-b border-border px-4 pb-4 text-base font-semibold text-[var(--lms-heading)]">Create New Organization</h2>
           <OrganizationCreateForm/>
@@ -177,7 +181,8 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
             </tr></thead>
             <tbody>{archived.map(organization=><tr key={organization.id} className="border-b border-border">
               <th scope="row" className="px-3 py-3 font-semibold">{organization.name}</th>
-              <td className="px-3 py-3 text-muted-foreground">{organizationCreatedIstDate(organization.createdAt)} · Archived</td>
+              <td className="px-3 py-3 text-muted-foreground">{organizationCreatedIstDate(organization.createdAt)} · Archived
+                {organization.updatedAt?" · Updated "+organizationCreatedIstDate(organization.updatedAt):""}</td>
               <td className="px-3 py-3"><TenantRestoreAction kind="organization" id={organization.id} name={organization.name}/></td>
             </tr>)}</tbody>
           </table>
