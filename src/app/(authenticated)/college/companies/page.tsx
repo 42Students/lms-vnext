@@ -5,8 +5,9 @@ import { FilterBar } from "@/components/ui/filter-bar";
 import { Pagination } from "@/components/ui/pagination";
 import { Checkbox } from "@/components/ui/checkbox";
 import { redirect } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
@@ -23,16 +24,23 @@ export default async function CollegeCompaniesPage({
   searchParams,
 }: {searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
+  const collegeId = context.membership && hasMembershipRole(context,"COLLEGE_ADMIN")
+    ? context.membership.collegeId
+    : isSuperAdmin(context) ? context.adminScope?.collegeId : null;
+  if (!collegeId) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Companies"/>
+    <Alert tone="warning" title="Admin not assigned to a college">
+      You must be assigned to a college to manage companies. Contact your administrator.
+    </Alert>
+  </div>;
+  if (!hasMembershipRole(context,"COLLEGE_ADMIN") && !isSuperAdmin(context))
     redirect("/dashboard");
-  }
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
       action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear company filters</Link>}/>
   </div>;
   const query=parsed.data;
-  const collegeId=context.membership.collegeId;
   const [data,owners]=await Promise.all([
     listCollegeCompanyDirectory(context,query),
     listPlacementRelationshipOwners(context,collegeId),

@@ -14,14 +14,23 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { membershipId } = await params;
+    const membership = await transitionCollegeFaculty(context, membershipId, await request.json());
+    // Keep the membership-scoped identity model while exposing the legacy
+    // row-refresh fields to all lifecycle callers.
     return NextResponse.json({
-      membership: await transitionCollegeFaculty(context, membershipId, await request.json()),
+      membership,
+      membershipId: membership.id,
+      scope: "COLLEGE_MEMBERSHIP",
+      status: membership.status,
+      suspendedAt: membership.suspendedAt,
+      suspensionReason: membership.suspensionReason,
     });
   } catch (error) {
     if (error instanceof CollegeFacultyLifecycleError) {
       return NextResponse.json(
         {
           error: error.code === "FACULTY_NOT_FOUND" ? "NOT_FOUND" : error.code,
+          ...(error.code === "FACULTY_NOT_FOUND" ? { message: "Not found" } : {}),
           ...(error.code === "FACULTY_HAS_ACTIVE_PROJECTS" ? {
             message: error.message,
             activeMentorProjects: error.activeMentorProjects,

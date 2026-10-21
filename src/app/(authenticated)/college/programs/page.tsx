@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
+import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
 import { CollegeArchivedPrograms } from "@/components/academics/college-archived-programs";
@@ -10,8 +11,14 @@ import { listDepartments } from "@/modules/departments/service";
 
 export default async function CollegeProgramsPage() {
   const context = await getCurrentRequestContext();
-  const collegeId = context.membership?.collegeId;
-  if (!collegeId) redirect("/dashboard");
+  const collegeId=context.membership?.collegeId ??
+    (isSuperAdmin(context)?context.adminScope?.collegeId:null);
+  if (!collegeId) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Programs"/>
+    <Alert tone="warning" title="Admin not assigned to a college">
+      You must be assigned to a college to view and manage programs. Contact your administrator.
+    </Alert>
+  </div>;
 
   // Both reads enforce scoped permissions and active college status.
   const [programs, departments, archived] = await Promise.all([
