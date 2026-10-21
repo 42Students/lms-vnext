@@ -89,7 +89,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <h2 id="section-compose-a-college-notice" className="sr-only">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
    <form role="search" method="get" action="/tpo/announcements"
-     className="mt-4 flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:flex-wrap sm:items-end"
+     className="mt-4 flex min-w-0 flex-col items-stretch gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:flex-wrap sm:items-end"
      aria-label="Announcement audience preview">
      <Input type="hidden" name="tab" value="yours"/>
      <TpoNoticeAudiencePicker

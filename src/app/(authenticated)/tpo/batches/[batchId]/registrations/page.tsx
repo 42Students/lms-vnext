@@ -35,7 +35,7 @@ export default async function BatchRegistrations({params,searchParams}:{
   <PageHeader title={data.batch.name+" — Registration choices"} description="Recorded student choices and consent evidence."/>
   <TpoBatchWorkspaceTabs batchId={batchId} active="registrations" />
   {!data.ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Registration storage is unavailable. No learner choices were loaded.</p>:<>
-   <form role="search" aria-label="registrations filters" action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2">
+   <form role="search" aria-label="registrations filters" action={"/tpo/batches/"+batchId+"/registrations"} method="get" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2">
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find learner
      <Input type="search" name="q" maxLength={100} defaultValue={data.filters.q}
       className="min-h-11 w-full md:min-h-9 mt-[6px] block"/>
