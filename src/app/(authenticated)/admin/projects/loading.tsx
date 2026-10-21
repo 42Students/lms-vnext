@@ -9,6 +9,6 @@ export default function Loading(){
   <p role="status" className="text-xs text-muted-foreground">
    Refreshing workspaces for the selected college. Previously fetched rows are not reused across scope changes.
   </p>
-  <div aria-hidden="true"><Skeleton variant="row" count={5} label="Loading workspace rows"/></div>
+  <div aria-hidden="true"><Skeleton variant="row" count={8} label="Loading workspace rows"/></div>
  </section>;
 }
