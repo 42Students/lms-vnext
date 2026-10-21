@@ -14,6 +14,7 @@ import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {learnerVisibleContentExternalUrl} from "./learner-live-link-availability-model";
 import {
   academicPeriods,
+  departments,
   electiveOfferings,
   electiveSlots,
   cohorts,
@@ -150,6 +151,7 @@ export async function listLearnerCourseDeliveries(
         learnerProgramEnrollments.programId,
       ),
     )
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
     .innerJoin(
       sections,
       eq(
@@ -233,7 +235,7 @@ export async function listLearnerCourseDeliveries(
           learnerProgramEnrollments.membershipId,
           membership.id,
         ),
-        eq(programs.collegeId,membership.collegeId),
+        eq(departments.collegeId,membership.collegeId),
         includeHistorical
           ? inArray(
               learnerProgramEnrollments.status,
@@ -322,6 +324,7 @@ export async function listLearnerCourseDeliveries(
     .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
     .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
     .innerJoin(academicPeriods, eq(academicPeriods.id, courseOfferings.academicPeriodId))
     .leftJoin(electiveOfferings,and(
       eq(electiveOfferings.backedDeliveryId,courseSectionDeliveries.id),
@@ -334,7 +337,7 @@ export async function listLearnerCourseDeliveries(
     ))
     .where(and(
       inArray(courseSectionDeliveries.id, groupDeliveryIds),
-      eq(programs.collegeId,membership.collegeId),
+      eq(departments.collegeId,membership.collegeId),
       eq(courseOfferings.status, "ACTIVE"),
       eq(courses.status, "ACTIVE"),
       eq(courses.enabled, true),
