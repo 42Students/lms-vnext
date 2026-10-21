@@ -43,12 +43,13 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
       placeholder={kind==="domains"?"company.com or name@company.com":"e.g. TCS"}
       className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
      <Button type="submit" loading={pending} disabled={pending}
-      className="min-h-11 md:min-h-9">Add</Button>
+      aria-label={kind==="domains"?"Add company domain":"Add company other name"} className="min-h-11 md:min-h-9">Add</Button>
     </form>
     <ul className="space-y-1">{entries.map(value=><li key={value} className="flex items-center justify-between gap-2 flex-wrap">
      <span className="break-all">{value}</span>
      <Button type="button" variant="danger" disabled={pending||(kind==="domains"&&domains.length<=1)}
       onClick={()=>void mutate(kind,"REMOVE",value)}
+      aria-label={`Remove ${kind==="domains"?"domain":"other name"} ${value}`}
       className="min-h-11 md:min-h-9">Remove</Button>
     </li>)}</ul>
    </div>;

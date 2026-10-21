@@ -206,56 +206,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/components/admin/organization-actions.tsx`
 - [x] `src/components/admin/organization-create-form.tsx`
 - [x] `src/components/admin/people-pagination.tsx`
-- [ ] `src/components/admin/placement-panel-error-boundary.tsx`
-- [ ] `src/components/admin/student-rule-editor.tsx`
-- [ ] `src/components/admin/super-admin-company-edit.tsx`
-- [ ] `src/components/admin/super-admin-company-identities.tsx`
-- [ ] `src/components/admin/super-admin-company-restore.tsx`
-- [ ] `src/components/admin/super-admin-today-board.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
-- [ ] `src/components/auth/connection-failure-notice.tsx`
-- [ ] `src/components/auth/portal-access-notice.tsx`
-- [ ] `src/components/courses/admin-course-overview.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-course-missing-scope.tsx`
-- [ ] `src/components/courses/college-lesson-create-control.tsx`
-- [ ] `src/components/courses/college-lesson-reorder-actions.tsx`
-- [ ] `src/components/courses/college-lesson-visibility-controls.tsx`
-- [ ] `src/components/courses/expandable-course-description.tsx`
-- [ ] `src/components/courses/expandable-course-update.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
-- [ ] `src/components/courses/faculty-item-actions.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/courses/learner-live-session-status.tsx`
-- [ ] `src/components/courses/learner-rich-response-editor.tsx`
-- [ ] `src/components/courses/learner-roadmap-item-dialog.tsx`
-- [ ] `src/components/courses/learner-video-player.tsx`
-- [ ] `src/components/courses/lesson-resource-materials-control.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/resource-progress-control.tsx`
-- [ ] `src/components/courses/super-admin-content-authoring.tsx`
-- [ ] `src/components/courses/super-admin-lesson-create.tsx`
-- [ ] `src/components/electives/college-elective-lifecycle-action.tsx`
-- [ ] `src/components/hr/recruiter-conversation-live-refresh.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-private-rating-editor.tsx`
-- [ ] `src/components/marketing/marketing-layout.tsx`
-- [ ] `src/components/placements/applicant-notes-panel.tsx`
-- [ ] `src/components/placements/campaign-unsubscribe-confirm.tsx`
-- [ ] `src/components/placements/college-drive-duplicate-action.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/learner-own-drive-journey.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/placements/learner-placement-partial-alert.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-prep-assignment-cards.tsx`
+- [x] `src/components/admin/placement-panel-error-boundary.tsx`
+- [x] `src/components/admin/student-rule-editor.tsx`
+- [x] `src/components/admin/super-admin-company-edit.tsx`
+- [x] `src/components/admin/super-admin-company-identities.tsx`
+- [x] `src/components/admin/super-admin-company-restore.tsx`
+- [x] `src/components/admin/super-admin-today-board.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
+- [x] `src/components/auth/connection-failure-notice.tsx`
+- [x] `src/components/auth/portal-access-notice.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-course-missing-scope.tsx`
+- [x] `src/components/courses/college-lesson-create-control.tsx`
+- [x] `src/components/courses/college-lesson-reorder-actions.tsx`
+- [x] `src/components/courses/college-lesson-visibility-controls.tsx`
+- [x] `src/components/courses/expandable-course-description.tsx`
+- [x] `src/components/courses/expandable-course-update.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-course-tab-navigation.tsx`
+- [x] `src/components/courses/faculty-item-actions.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-live-session-status.tsx`
+- [x] `src/components/courses/learner-rich-response-editor.tsx`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/components/courses/learner-video-player.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/courses/super-admin-content-authoring.tsx`
+- [x] `src/components/courses/super-admin-lesson-create.tsx`
+- [x] `src/components/electives/college-elective-lifecycle-action.tsx`
+- [x] `src/components/hr/recruiter-conversation-live-refresh.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/hr/recruiter-private-rating-editor.tsx`
+- [x] `src/components/marketing/marketing-layout.tsx`
+- [x] `src/components/placements/applicant-notes-panel.tsx`
+- [x] `src/components/placements/campaign-unsubscribe-confirm.tsx`
+- [x] `src/components/placements/college-drive-duplicate-action.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/learner-own-drive-journey.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/placements/learner-placement-partial-alert.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-prep-assignment-cards.tsx`
 - [ ] `src/components/placements/learner-recent-placement-activity.tsx`
 - [ ] `src/components/placements/learner-support-cancel.tsx`
 - [ ] `src/components/placements/placement-draft-edit-form.tsx`
