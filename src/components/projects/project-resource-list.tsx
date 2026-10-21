@@ -150,11 +150,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
       className="min-h-10 text-sm font-[650] text-link underline">Clear filters</Button>
   </div>
-  {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground">
+  {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
     {canReorder?"Drag resources to change their priority order, or use Move up and Move down.":
       "Resource reordering is available when no filters are active."}
   </p>:null}
-  {reorderError?<p role="alert" className="text-sm text-error">{reorderError}</p>:null}
+  {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
     :"Add the briefs, templates and reference links your team will need."}
@@ -172,12 +172,12 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
        <p className="font-semibold text-foreground">{resource.title}</p>
-       {resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{resource.description}</p>:null}
+       {resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
        {mode!=="LEARNER"&&resource.accessNotes?
-         <p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
+         <p className="mt-2 whitespace-pre-wrap break-words text-xs text-body leading-[20px]">
            Access notes: {resource.accessNotes}
          </p>:null}
-       <p className="mt-2 text-xs text-muted-foreground">
+       <p className="mt-2 text-xs text-muted-foreground leading-[20px]">
         Last updated: <time dateTime={new Date(resource.updatedAt).toISOString()}>
          {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
            timeZone:"Asia/Kolkata"}).format(new Date(resource.updatedAt))} IST
