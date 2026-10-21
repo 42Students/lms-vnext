@@ -132,8 +132,8 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </div>
   {reviewFeedback&&<Banner tone="info">{reviewFeedback}</Banner>}
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="min-w-0 space-y-2 border-y border-[var(--lms-canvas-border)] py-3">
-    <h2 className="font-semibold">Review one by one</h2>
-    <p className="text-sm">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Review one by one</h2>
+    <p className="text-sm leading-[22px]">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
     <Button variant="primary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={bulkBusy} onClick={()=>{
       setSequential({keys:queueKeys,index:0});setSelected(selectable[0]??null);setReviewFeedback("");
     }} >
@@ -152,7 +152,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </div>
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} batchChoices={batchChoices} branchChoices={branchChoices} classChoices={classChoices} programChoices={programChoices} onApply={changes=>navigate({...changes,page:"1"})}/>
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Bulk verification selection" className="min-w-0 space-y-3 border-y border-[var(--lms-canvas-border)] py-3">
-   <p role="status" className="text-sm">{selectedRows.length} of 20 requests selected on this page.</p>
+   <p role="status" className="text-sm leading-[22px]">{selectedRows.length} of 20 requests selected on this page.</p>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={bulkBusy} onClick={()=>{setSelection(selectEligibleVerificationKeys(selectable));resetBulkFeedback();}} >Select first 20 waiting</Button>
     {selectedRows.length>0&&<Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={bulkBusy} onClick={()=>{setSelection(new Set());resetBulkFeedback();}} >Clear selection</Button>}
@@ -160,9 +160,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     {selectedRows.length>0&&<Button variant="secondary" type="button" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={!canStartVerificationBulkPreview(bulkBusy,selectedRows.length)} onClick={()=>{setAcknowledged(false);setBulkReason("");setBulkAction("SEND_BACK");}} >Preview send back</Button>}
    </div>
    {bulkAction&&<div className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-3">
-    <h2 className="font-semibold">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
-    <p className="text-sm">{preview?.eligible.length??0} eligible and {preview?.skipped.length??0} skipped. This is a local preview only; the server will recheck each document, role and row version.</p>
-    <ul className="max-h-48 min-w-0 space-y-1 overflow-y-auto overscroll-contain text-[13px] leading-5" aria-label="Selected review candidates">
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Preview {bulkAction==="VERIFY"?"verify":"send back"}</h2>
+    <p className="text-sm leading-[22px]">{preview?.eligible.length??0} eligible and {preview?.skipped.length??0} skipped. This is a local preview only; the server will recheck each document, role and row version.</p>
+    <ul className="max-h-48 min-w-0 space-y-1 overflow-y-auto overscroll-contain text-[13px] leading-[22px]" aria-label="Selected review candidates">
      {preview?.eligible.map(item=><li key={item.key} className="break-words">{item.name} · {item.section} · version {item.version}</li>)}
      {preview?.skipped.map(item=><li key={item.key} className="break-words">{item.name} · {item.section}: skipped ({item.reason})</li>)}
      {missingProof.map(item=><li key={verificationSelectionKey(item)} className="break-words">{item.learnerName} · {item.section}: left out: {item.missingIdentityProof?"identity document is missing":"a marksheet is missing"}</li>)}
@@ -178,22 +178,22 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
             {reason}
           </Button>)}
     </div>}
-    {bulkAction==="SEND_BACK"&&<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Correction reason for every selected request
+    {bulkAction==="SEND_BACK"&&<label className="block text-sm">Correction reason for every selected request
      <Textarea disabled={bulkBusy} value={bulkReason} maxLength={500} onChange={event=>setBulkReason(event.target.value)}
       className="mt-1 min-h-20 w-full" placeholder="Describe the correction required"/>
-     <span className="mt-1 block text-xs">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
+     <span className="mt-1 block text-xs leading-[20px]">A shared reason of at least 3 characters is required and will be recorded for each learner.</span>
     </label>}
     {bulkAction==="SEND_BACK"&&<Button variant="secondary" type="button" disabled={bulkBusy||selectedRows.length===0||bulkReason.trim().length<3}
       onClick={()=>void executeBulk("SEND_BACK",bulkReason)} >
       {bulkBusy?"Sending decisions…":"Confirm send back selected"}</Button>}
     {bulkAction==="VERIFY"&&<>
-     <h3 className="font-semibold">Verify without opening</h3>
-     <p className="text-sm">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
+     <h3 className="font-semibold text-[16px] leading-[24px] text-[var(--lms-heading)]">Verify without opening</h3>
+     <p className="text-sm leading-[22px]">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
      <label className="flex items-start gap-2 text-sm">
        <Checkbox checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
        I have checked their documents another way (for example the college&apos;s own records).
      </label>
-     <p className="text-xs text-muted-foreground">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
+     <p className="text-xs text-muted-foreground leading-[20px]">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
      <Button variant="secondary" type="button" disabled={bulkBusy||!acknowledged||(preview?.eligible.length??0)===0}
       onClick={()=>void executeBulk("VERIFY")}
       >{bulkBusy?"Saving reviews…":"Verify "+(preview?.eligible.length??0)+" without opening each"}</Button>
@@ -208,19 +208,19 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1",...(kind==="IDENTITY"?{marksheets:"ANY",attention:query.attention==="MISSING_MARKSHEET"?"ALL":query.attention}:{})})}
    onReview={row=>setSelected(row)}/>
   {bulkResult&&<section aria-label="Bulk review outcome" role="status" className="space-y-2 border-y border-[var(--lms-canvas-border)] py-3">
-   <h2 className="font-semibold">Bulk review results</h2>
-   <p className="text-sm">{bulkResult.summary.succeeded} of {bulkResult.summary.attempted} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
-   <ul className="space-y-1 text-sm">{bulkResult.labels.map(result=><li key={result.key}>
+   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Bulk review results</h2>
+   <p className="text-sm leading-[22px]">{bulkResult.summary.succeeded} of {bulkResult.summary.attempted} succeeded; {bulkResult.summary.failed} could not be decided. Review the individual outcomes below.</p>
+   <ul className="space-y-1 text-sm leading-[22px]">{bulkResult.labels.map(result=><li key={result.key}>
     {result.label} · {result.section}: {result.message}
    </li>)}</ul>
    <Button variant="secondary" type="button"  onClick={()=>router.refresh()}>Refresh queue</Button>
   </section>}
   {bulkError&&<Banner tone="error">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</Banner>}
-  <section aria-label="Verification queue controls" className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-[13px] sm:grid-cols-2 md:flex md:flex-wrap md:items-center">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
+  <section aria-label="Verification queue controls" className="grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-[13px] leading-[22px] sm:grid-cols-2 md:flex md:flex-wrap md:items-center">
+   <label className="grid min-w-0 gap-1">Sort by <Select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
    </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
+   <label className="grid min-w-0 gap-1">Requests per page <Select value={pageSize} onChange={event=>navigate({pageSize:event.target.value,page:"1"})} className="w-full md:w-auto">
     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
    </Select></label>
    <span className="min-w-0 break-words sm:col-span-2 md:col-span-1">Showing {rows.length} of {total} requests in the selected view</span>
