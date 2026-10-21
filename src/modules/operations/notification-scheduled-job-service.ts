@@ -1,6 +1,7 @@
 import "server-only";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { safeNotificationActionHref } from "@/modules/activity/notification-action";
 import type { ScheduledJobFence } from "./scheduled-job-runner";
 
 type BatchResult = { processed: number; hasMore: boolean };
@@ -155,8 +156,8 @@ export async function releaseScheduledNotificationOutbox(
         typeof title === "string" && title.trim().length > 0 && title.length <= 240 &&
         typeof body === "string" && body.trim().length > 0 && body.length <= 2000 &&
         (href === null || href === undefined ||
-         (typeof href === "string" && href.startsWith("/") &&
-          !href.startsWith("//") && href.length <= 1000)) &&
+         (typeof href === "string" && href.length <= 1000 &&
+          safeNotificationActionHref(href) === href)) &&
         typeof entry.college_id === "string" && validId.test(entry.college_id) &&
         typeof entry.organization_id === "string" && validId.test(entry.organization_id);
       let eligible = false;
@@ -189,10 +190,17 @@ export async function releaseScheduledNotificationOutbox(
             select exists (
               select 1 from in_app_notifications n
               join activity_events e on e.id = n.event_id
+              join colleges c on c.id = e.college_id
+              join college_memberships m on m.college_id = c.id
+              join users u on u.id = m.user_id
               where n.user_id = ${userId}::uuid
                 and n.event_id = ${entry.event_id}::uuid
                 and e.college_id = ${entry.college_id}::uuid
                 and e.organization_id = ${entry.organization_id}::uuid
+                and c.status = 'ACTIVE'
+                and m.user_id = ${userId}::uuid
+                and m.status = 'ACTIVE'
+                and u.platform_status = 'ACTIVE'
             ) as present
           `);
           eligible = existing.rows[0]?.present === true;

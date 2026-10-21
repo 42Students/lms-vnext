@@ -1,7 +1,8 @@
 import "server-only";
-import { sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import type { RequestContext } from "@/modules/identity/context";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { messagingSmsDeliveryAttempts } from "@/db/schema/messaging-receipts";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
   OutboundDeliveryError,
@@ -431,5 +432,73 @@ export async function inspectOutboundDispatcherReadiness(): Promise<
     state: backlog.pending + backlog.retry + backlog.claimed > 0 ? "STALLED" :
       backlog.providerAccepted + backlog.failed > 0 ? "UNCONFIRMED" : "EMPTY_UNCONFIRMED",
     ...backlog,
+  };
+}
+
+
+/**
+ * Legacy support-style delivery attempt lookup, backed by the indexed,
+ * registered 0162 messaging_sms_delivery_attempts ledger rather than the
+ * unregistered DB31 staging table. An accepted provider response is not
+ * confirmation that an SMS reached the handset.
+ *
+ * The lookup is deliberately restricted to a scoped SUPER_ADMIN, returns
+ * only sanitized status metadata, and never exposes OTPs, full phone numbers,
+ * message bodies, provider credentials or raw provider error payloads.
+ */
+export async function readSmsDeliveryAttemptsForSupport(
+  context: RequestContext,
+  query: {
+    organizationId?: string | null;
+    collegeId?: string | null;
+    recipientSuffix?: string | null;
+    purpose?: string | null;
+    page?: number;
+    size?: number;
+  },
+) {
+  if (!isSuperAdmin(context)) {
+    requirePermission(context, "system-role.manage");
+  }
+  const organizationId = query.organizationId ?? context.adminScope?.organizationId ?? null;
+  const collegeId = query.collegeId ?? context.adminScope?.collegeId ?? null;
+  if ((organizationId && !/^[0-9a-f-]{36}$/i.test(organizationId)) ||
+      (collegeId && !/^[0-9a-f-]{36}$/i.test(collegeId))) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  requirePermission(context, "organization.read", { organizationId, collegeId });
+  const suffix = query.recipientSuffix?.trim() || null;
+  const purpose = query.purpose?.trim() || null;
+  const page = query.page ?? 0;
+  const size = query.size ?? 20;
+  if ((suffix && !/^[0-9]{2,4}$/.test(suffix)) ||
+      (purpose && (!/^[a-zA-Z0-9._-]{1,64}$/.test(purpose))) ||
+      !Number.isSafeInteger(page) || page < 0 || page > 10_000 ||
+      !Number.isSafeInteger(size) || size < 1 || size > 100) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  const constraints = [
+    ...(organizationId ? [eq(messagingSmsDeliveryAttempts.organizationId, organizationId)] : []),
+    ...(collegeId ? [eq(messagingSmsDeliveryAttempts.collegeId, collegeId)] : []),
+    ...(suffix ? [eq(messagingSmsDeliveryAttempts.recipientSuffix, suffix)] : []),
+    ...(purpose ? [eq(messagingSmsDeliveryAttempts.purpose, purpose)] : []),
+  ];
+  const rows = await getDb().select({
+    id: messagingSmsDeliveryAttempts.id,
+    attemptedAt: messagingSmsDeliveryAttempts.attemptedAt,
+    recipientSuffix: messagingSmsDeliveryAttempts.recipientSuffix,
+    purpose: messagingSmsDeliveryAttempts.purpose,
+    outcome: messagingSmsDeliveryAttempts.outcome,
+    providerStatus: messagingSmsDeliveryAttempts.providerStatus,
+    safeFailureSummary: messagingSmsDeliveryAttempts.safeFailureSummary,
+  }).from(messagingSmsDeliveryAttempts)
+    .where(and(...constraints))
+    .orderBy(desc(messagingSmsDeliveryAttempts.attemptedAt),
+      desc(messagingSmsDeliveryAttempts.id))
+    .limit(size).offset(page * size);
+  return {
+    attempts: rows,
+    page, size,
+    providerAcceptanceIsDelivery: false as const,
   };
 }
