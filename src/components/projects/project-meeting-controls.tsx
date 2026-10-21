@@ -641,7 +641,7 @@ export function ScheduleProjectMeetingControl({
             </label>
           </div>
           <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
-            <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Meeting notes and follow-up</summary>
+            <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Meeting notes and follow-up</summary>
             <fieldset className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             {([
               ["notes","Notes"],["actionItems","Action items"],
