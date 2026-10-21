@@ -13,6 +13,7 @@ import { RecruiterResultControls } from "@/components/placements/recruiter-resul
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { HrJobSelectionGrid } from "@/components/hr/hr-job-selection-grid";
+import {RecruiterSelectionComposer} from "@/components/hr/recruiter-selection-composer";
 import { Input } from "@/components/ui/input";
 import { HrJobOffersGrid } from "@/components/hr/hr-job-offers-grid";
 import { HrJobApplicantsGrid } from "@/components/hr/hr-job-applicants-grid";
@@ -727,13 +728,18 @@ export default async function HrPlacementJobPage({
             </div>)}
           </div>
           <section className="space-y-2 border-b border-border pb-4 md:pb-6">
-            <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
-            {driveOverview.readOnly ? <p role="status" className="text-sm text-body leading-[1.6]">
-              This drive is finished, so a selection list can no longer be sent.
-            </p> : null}
-            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, letter-of-intent and offer issue workflows remain with the placement team.</p>
-            {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
-              <Badge key={applicant.id} tone="success">{applicant.name || "Candidate"}</Badge>)}</div> : null}
+            <h3 className="font-semibold text-foreground">Selection readiness across all rounds</h3>
+            <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. Recruiters can submit a selection proposal; only the placement cell can verify and release a formal offer.</p>
+            <RecruiterSelectionComposer
+              jobId={workspace.job.id}
+              collegeId={workspace.college.id}
+              disabled={driveOverview.readOnly}
+              minCtcInr={workspace.job.minimumAnnualCtcInr}
+              maxCtcInr={workspace.job.maximumAnnualCtcInr}
+              candidates={applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>({
+                id:applicant.id,name:applicant.name??"Unnamed applicant",
+              }))}
+            />
           </section>
           <Tabs renderPanel={false} ariaLabel="Offer status" value={filters.offerState}
             items={HR_OFFER_STATES.map(status=>({value:status,
