@@ -76,7 +76,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
    eq(lessonContents.deliveryId,section.deliveryId))!);
  }
  if(search){
-  const pattern="%"+search.replace(/[\\%_]/g,"\\ const existing=await db.select({")+"%";
+  const pattern="%"+search.replace(/[\\%_]/g,(character)=>"\\"+character)+"%";
   where.push(or(ilike(lessonContents.title,pattern),ilike(courseLessons.name,pattern),
    ilike(courses.code,pattern))!);
  }
