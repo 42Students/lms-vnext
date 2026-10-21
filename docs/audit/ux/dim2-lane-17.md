@@ -458,3 +458,28 @@ src/components/ui/file-dropzone.tsx | none (no table/data-grid instance) | fixes
 src/components/ui/list-row.tsx | none (no table/data-grid instance) | fixes: none
 src/components/ui/segmented-control.tsx | none (no table/data-grid instance) | fixes: none
 src/components/ui/third-party-link.tsx | none (no table/data-grid instance) | fixes: none
+src/components/profile/learner-profile-workspace.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/mentor-board-task-detail-dialog.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/project-admin-collection-controls.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/project-mentor-reassignment.tsx | none (no table/data-grid instance) | fixes: none
+src/components/public/public-screen.module.css | none (CSS grid is page layout, not a data table) | fixes: none
+src/components/tpo/recruiter-invite-landing.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/tpo-builtin-job-types-editor.tsx | 1 table/grid instances (1 nodes, 0 roles, 0 CSS tokens) | legacy head white #ffffff versus --lms-table-header #ffffff; header text 12px/600 versus shared 12px/600; cell 12px vertical and 16px horizontal versus shared 12px/16px; hairline #e5e9f0 versus shared CSS | fixes: none
+src/components/tpo/tpo-mobile-footer.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/data-table.tsx | 8 table/grid instances (8 nodes, 0 roles, 0 CSS tokens) | legacy head white #ffffff versus --lms-table-header #ffffff; header text 12px/600 versus shared 12px/600; cell 12px vertical and 16px horizontal versus shared 12px/16px; hairline #e5e9f0 versus shared CSS | fixes: none
+src/components/ui/input.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/segmented-control.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/tooltip.tsx | none (no table/data-grid instance) | fixes: none
+src/app/(authenticated)/tpo/students/requests/loading.tsx | none (no table/data-grid instance) | fixes: none
+src/app/company-share/[token]/page.tsx | 1 table/grid instances (1 nodes, 0 roles, 0 CSS) | header white #ffffff = --lms-table-header; header 12px/600 = shared styles; cells 12px/16px = shared styles; 1px #e5e9f0 separators = shared styles | fixes: none
+src/components/admin/admin-scoped-read-page.tsx | none (no table/data-grid instance) | fixes: none
+src/components/admin/super-admin-hr-accounts.tsx | 1 table/grid instances (1 nodes, 0 roles, 0 CSS) | header white #ffffff = --lms-table-header; header 12px/600 = shared styles; cells 12px/16px = shared styles; 1px #e5e9f0 separators = shared styles | fixes: none
+src/components/college/college-faculty-assignment-actions.tsx | none (no table/data-grid instance) | fixes: none
+src/components/college/student-class-move-action.tsx | none (no table/data-grid instance) | fixes: none
+src/components/courses/faculty-assignment-review.tsx | none (no table/data-grid instance) | fixes: none
+src/components/courses/faculty-quiz-review.tsx | none (no table/data-grid instance) | fixes: none
+src/components/courses/super-admin-content-directory-page.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/learner-career-rounds.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-bulk-round-result-recorder.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-report-record-links.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/class-team-workspace-creator.tsx | 2 table/grid instances (2 nodes, 0 roles, 0 CSS) | header white #ffffff = --lms-table-header; header 12px/600 = shared styles; cells 12px/16px = shared styles; 1px #e5e9f0 separators = shared styles | fixes: none

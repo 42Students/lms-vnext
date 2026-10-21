@@ -36,31 +36,31 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/ui/list-row.tsx`
 - [x] `src/components/ui/segmented-control.tsx`
 - [x] `src/components/ui/third-party-link.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/project-admin-collection-controls.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/public/public-screen.module.css`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/tpo-builtin-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-mobile-footer.tsx`
-- [ ] `src/components/ui/data-table.tsx`
-- [ ] `src/components/ui/input.tsx`
-- [ ] `src/components/ui/segmented-control.tsx`
-- [ ] `src/components/ui/tooltip.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-report-record-links.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/project-admin-collection-controls.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/public/public-screen.module.css`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/components/tpo/tpo-builtin-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-mobile-footer.tsx`
+- [x] `src/components/ui/data-table.tsx`
+- [x] `src/components/ui/input.tsx`
+- [x] `src/components/ui/segmented-control.tsx`
+- [x] `src/components/ui/tooltip.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/loading.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-report-record-links.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
 - [ ] `src/components/projects/project-admin-at-risk-page.tsx`
 - [ ] `src/components/projects/project-resource-files-panel.tsx`
 - [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
