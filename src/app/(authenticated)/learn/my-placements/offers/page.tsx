@@ -114,8 +114,8 @@ export default async function LearnerOffersPage({
   const needsReply=(row:(typeof sorted)[number])=>row.offer.status==="ISSUED" &&
     (!row.offer.expiresAt || row.offer.expiresAt.getTime()>Date.parse(snapshotNowIso));
   const totalPending=sorted.filter(needsReply).length;
-  // Preserve the full pending group on its priority page, as in the old LMS.
-  const pageSize=view==="all"&&order==="priority"?Math.max(15,totalPending):15;
+  // Keep the pending group together up to the supported 50-result page limit.
+  const pageSize=view==="all"&&order==="priority"?Math.min(50,Math.max(15,totalPending)):15;
   const paginated = paginateOwnOffers(sorted,focused.page,pageSize);
   const waitingOnPage=paginated.items.filter(needsReply);
   const answeredOnPage=paginated.items.filter(row=>!needsReply(row));
