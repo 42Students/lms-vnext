@@ -129,7 +129,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/hr/hr-drive-draft-form.tsx`
 - [x] `src/components/hr/hr-recruiter-bell.tsx`
 - [x] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
+- [x] `src/components/hr/recruiter-round-inline-editor.tsx`
 - [ ] `src/components/people/faculty-profile-metadata.tsx`
 - [ ] `src/components/people/faculty-profile-repeatable.tsx`
 - [ ] `src/components/people/faculty-profile-skills.tsx`
