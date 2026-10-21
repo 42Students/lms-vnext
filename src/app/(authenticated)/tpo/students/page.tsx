@@ -455,7 +455,7 @@ export default async function TpoStudentsPage({
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewed with (company)
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewed with (company)
           <Input type="search" name="interviewedWith" maxLength={100}
            defaultValue={query.interviewedWith??""} placeholder="Company name"
            className="w-40"/>
@@ -472,36 +472,36 @@ export default async function TpoStudentsPage({
             <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
           </Select>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Furthest round reached (minimum)
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Furthest round reached (minimum)
           <Input type="number" name="minRoundReached" min={0} max={10000} step={1}
            defaultValue={query.minRoundReached??""} className="w-28"/>
         </label>
         <Disclosure title="Profile strength filters" className="w-full min-w-0 border-b border-border px-0 py-3">
          <p className="mt-2 text-xs text-muted-foreground">Projects here are self-reported profile entries, not verified Projects workspace outcomes or released grades.</p>
          <div className="mt-3 flex flex-wrap gap-3">
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
            <Select name="gender" defaultValue={query.gender??""} className="min-h-11 md:min-h-9 p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
            </Select>
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill name
+          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill name
            <Input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
             placeholder="e.g. Java" />
           </label>
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Birth year
+          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Birth year
            <Input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="w-28"/>
           </label>
           {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
-           <label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum {label}
+           <label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum {label}
             <Input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="w-28"/>
            </label>)}
-          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Profile links
+          <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Profile links
            <Select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-11 md:min-h-9 p-2">
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
            </Select>
           </label>
           {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
-           <label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+           <label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
             <Select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-11 md:min-h-9 p-2">
              <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
             </Select>
@@ -522,7 +522,7 @@ export default async function TpoStudentsPage({
           ["minCgpa","CGPA from",query.minCgpa],
           ["maxCgpa","CGPA to",query.maxCgpa],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+         <label key={name} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
           <Input type="number" name={name} min={0} max={10} step="0.01"
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
@@ -531,7 +531,7 @@ export default async function TpoStudentsPage({
           ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
           ["maxPastBacklogs","Max past backlogs",query.maxPastBacklogs],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+         <label key={name} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
           <Input type="number" name={name} min={0} max={100} step={1}
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
@@ -543,19 +543,19 @@ export default async function TpoStudentsPage({
               ["minTwelfthPct","12th % from",query.minTwelfthPct],
               ["minDiplomaPct","Diploma % from",query.minDiplomaPct],
               ["minUgPct","UG % from",query.minUgPct],
-            ] as const).map(([key,label,value])=><label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+            ] as const).map(([key,label,value])=><label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
               <Input type="number" min={0} max={100} step="0.01" name={key} defaultValue={value??""}
                className="w-28"/></label>)}
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Passing year
+            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Passing year
               <Input name="passingYear" type="number" min={1950} max={2100} defaultValue={query.passingYear??""}
                 className="w-28"/></label>
-            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum gap years
+            <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum gap years
               <Input name="maxGapYears" type="number" min={0} max={100} defaultValue={query.maxGapYears??""}
                 className="w-28"/></label>
             {([
               ["marksVerified","Marks verified",query.marksVerified],
               ["isLateralEntry","Lateral entry",query.isLateralEntry],
-            ] as const).map(([key,label,value])=><label key={key} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+            ] as const).map(([key,label,value])=><label key={key} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
               <Select name={key} defaultValue={value===undefined?"":value?"YES":"NO"}
                 className="min-h-11 md:min-h-9 p-2">
                 <option value="">Any</option><option value="YES">Yes</option><option value="NO">No</option>
@@ -597,7 +597,7 @@ export default async function TpoStudentsPage({
           ["minOffers","Offers from",query.minOffers],
           ["maxOffers","Offers to",query.maxOffers],
         ] as const).map(([name,label,value])=>
-         <label key={name} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+         <label key={name} className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
           <Input type="number" name={name} min={0} max={10000} step={1}
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
@@ -750,7 +750,7 @@ export default async function TpoStudentsPage({
 
       <Disclosure title="Branch intelligence" className="min-w-0 border-y border-border py-3" contentClassName="pt-3">
       <section className="min-w-0">
-        <div className="border-b border-border px-5 py-4">
+        <div className="border-b border-border px-6 py-4">
           <h2 className="text-lg font-semibold text-foreground">
             Branch intelligence
           </h2>
@@ -761,7 +761,7 @@ export default async function TpoStudentsPage({
         </div>
 
         {data.branches.length === 0 ? (
-          <p className="p-5 text-sm text-body">
+          <p className="p-6 text-sm text-body">
             No learners are available for this selection.
           </p>
         ) : (
@@ -843,7 +843,7 @@ export default async function TpoStudentsPage({
           </li>)}
         </ul> : null}
 
-        <p className="px-5 py-3 text-xs leading-5 text-muted-foreground">
+        <p className="px-6 py-3 text-xs leading-5 text-muted-foreground">
           *Rate uses the registered placement pool; — means no registered students.
         </p>
       </section>
@@ -873,7 +873,7 @@ export default async function TpoStudentsPage({
           className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
         >
           {first(raw.columns)&&<Input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
-          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Journey
             <Select
               name="journeyState"
@@ -889,7 +889,7 @@ export default async function TpoStudentsPage({
             </Select>
           </label>
 
-          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Branch
             <Select
               name="branchId"
@@ -910,7 +910,7 @@ export default async function TpoStudentsPage({
             <TpoDebouncedStudentSearch initial={query.search??""} />
           </label>
 
-          <label className="flex flex-col gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
@@ -926,7 +926,7 @@ export default async function TpoStudentsPage({
           <div className="md:col-span-2 lg:col-span-4">
             <Button variant="primary"
               type="submit"
-              className="min-h-11 w-full px-5 sm:w-auto md:min-h-9"
+              className="min-h-11 w-full px-6 sm:w-auto md:min-h-9"
             >
               Apply filters
             </Button>
