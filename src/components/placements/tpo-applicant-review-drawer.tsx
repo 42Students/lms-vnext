@@ -43,7 +43,7 @@ export function TpoApplicantReviewDrawer({jobId,jobStatus,app,previousId,nextId}
    </nav>
    <p className="text-xs text-body">Use left and right arrows outside form controls to open the previous or next applicant.</p>
    <Link href={applicantHref(app.id)}
-    className="inline-flex min-h-11 w-full items-center justify-center border-t border-border pt-3 text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9">
+    className="inline-flex min-h-11 w-full items-center justify-center border-t border-[var(--lms-field-hover-border)] pt-3 text-sm font-[650] text-[var(--lms-teal-deep)] hover:underline sm:w-auto sm:justify-start md:min-h-9 rounded-[var(--lms-control-radius)]">
     Open full applicant detail →
    </Link>
    </div>
