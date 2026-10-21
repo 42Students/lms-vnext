@@ -137,7 +137,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {recent===null?<InlineNotice tone="info" message="Recent decisions could not load. Open a batch to view its history."/>:null}
   {!data.ready&&deadlineParsed.data!=="ALL"?<InlineNotice tone="info" message="Deadline details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready&&parsed.data.state!=="ALL"?<InlineNotice tone="info" message="Batch state details are temporarily unavailable. All matching batches are still shown."/>:null}
-  {!data.ready?<Alert tone="warning">Couldn\u0027t refresh batches. Some batch details are temporarily unavailable; academic batches remain visible. <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link></Alert>:null}
+  {!data.ready?<Alert tone="warning">Couldn't refresh batches. Some batch details are temporarily unavailable; academic batches remain visible. <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link></Alert>:null}
   <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-[var(--lms-canvas-border)] md:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
   ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-[var(--lms-canvas-border)] p-3 last:border-r-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
