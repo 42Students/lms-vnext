@@ -40,7 +40,7 @@ type Draft = {
 const EMPTY: Draft = {
   name: "",
   capacity: "50",
-  roomType: "LECTURE_HALL",
+  roomType: "",
   departmentId: "",
   description: "",
 };
@@ -64,7 +64,7 @@ function errorText(payload: {
     case "HALL_NAME_TAKEN":
       return "Another active hall in this college already has that name.";
     case "HALL_IN_USE":
-      return `It has ${payload.upcomingClasses ?? "some"} upcoming class(es). Move or cancel them first.`;
+      return `It has ${payload.upcomingClasses ?? "some"} upcoming class(es). Reassign or cancel those scheduled classes before archiving.`;
     case "HALL_CAPACITY_CONFLICT":
       return "The new capacity is below the configured capacity of an upcoming scheduled class.";
     case "DEPARTMENT_NOT_FOUND":
@@ -93,36 +93,70 @@ export function LectureHallManager({
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const inFlightRef=useRef(false);
-  const [editing, setEditing] = useState<HallRow | "new" | null>(null);
+  const [editing, setEditing] = useState<HallRow | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY);
+  const [createDraft, setCreateDraft] = useState<Draft>(EMPTY);
   const [formError, setFormError] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const originalEditRef = useRef<string | null>(null);
   const [archiving, setArchiving] = useState<HallRow | null>(null);
 
-  function open(target: HallRow | "new") {
-    setDraft(target === "new" ? EMPTY : toDraft(target));
+  function snapshot(value: Draft) {
+    return JSON.stringify({
+      ...value,
+      name: value.name.trim(),
+      description: value.description.trim(),
+      departmentId: value.departmentId || "",
+    });
+  }
+
+  function finishEdit() {
+    setEditing(null);
+    setDiscardOpen(false);
+    originalEditRef.current = null;
+  }
+
+  function requestClose() {
+    if (pending || inFlightRef.current) return;
+    if (editing && originalEditRef.current !== snapshot(draft)) {
+      setDiscardOpen(true);
+      return;
+    }
+    finishEdit();
+  }
+
+  function open(target: HallRow) {
+    const values = toDraft(target);
+    originalEditRef.current = snapshot(values);
+    setDraft(values);
     setFormError(null);
+    setDiscardOpen(false);
     setEditing(target);
   }
 
-  function save() {
-    if(pending||inFlightRef.current||editing===null)return;
-    const capacity = Number(draft.capacity);
-    if (!draft.name.trim()) return setFormError("Enter a name.");
-    if (!Number.isInteger(capacity) || capacity < 1 || capacity > 5000) {
-      return setFormError("Capacity must be between 1 and 5000.");
+  function save(isNew = false) {
+    if (pending || inFlightRef.current || (!isNew && editing === null)) return;
+    const values = isNew ? createDraft : draft;
+    const setError = isNew ? setCreateError : setFormError;
+    const capacity = Number(values.capacity);
+    if (!values.name.trim()) return setError("Please enter room name");
+    if (!values.roomType) return setError("Select a room type");
+    if (!Number.isInteger(capacity) || capacity < 1 || capacity > 1000) {
+      return setError("Capacity must be between 1 and 1000.");
     }
+    setError(null);
 
     inFlightRef.current=true;
     startTransition(async () => {
       try {
       const body = {
-        name: draft.name,
+        name: values.name.trim(),
         capacity,
-        roomType: draft.roomType,
-        description: draft.description || null,
-        departmentId: draft.departmentId || null,
+        roomType: values.roomType,
+        description: values.description.trim() || null,
+        departmentId: values.departmentId || null,
       };
-      const isNew = editing === "new";
       const response = await fetch(
         isNew ? "/api/lecture-halls" : `/api/lecture-halls/${(editing as HallRow).id}`,
         {
@@ -133,18 +167,22 @@ export function LectureHallManager({
       );
 
       if (!response.ok) {
-        setFormError(errorText(await response.json().catch(() => null)));
+        const payload = await response.json().catch(() => null);
+        setError(payload?.error === "HALL_NAME_TAKEN"
+          ? `A lecture hall named “${values.name.trim()}” already exists among active halls.`
+          : errorText(payload));
         return;
       }
 
-      setEditing(null);
+      if (isNew) setCreateDraft(EMPTY);
+      else finishEdit();
       showToast({
         tone: "success",
         title: isNew ? LECTURE_HALL_COPY.createdMessage : LECTURE_HALL_COPY.updatedMessage,
       });
       router.refresh();
       } catch {
-        setFormError("Could not save the hall. Check your connection and retry.");
+        setError("Could not save the hall. Check your connection and retry.");
       } finally {inFlightRef.current=false;}
     });
   }
@@ -187,10 +225,53 @@ export function LectureHallManager({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <div className="flex min-w-0 justify-stretch print:hidden md:justify-end">
-        <Button className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={() => open("new")}>{LECTURE_HALL_COPY.createTitle}</Button>
-      </div>
-
+      <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+        <section aria-labelledby="create-lecture-hall-heading" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
+          <h2 id="create-lecture-hall-heading" className="mb-[var(--lms-space-4)] text-base font-semibold text-foreground">{LECTURE_HALL_COPY.createTitle}</h2>
+          <form className="space-y-[var(--lms-space-4)]" onSubmit={(event) => { event.preventDefault(); save(true); }}>
+            {createError ? <Banner tone="error">{createError}</Banner> : null}
+            <div>
+              <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+              <Select id="create-hall-dept" className="min-h-11 w-full md:min-h-9" value={createDraft.departmentId}
+                onChange={(event) => setCreateDraft({ ...createDraft, departmentId: event.target.value })}>
+                <option value="">Select department (optional)</option>
+                {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
+              </Select>
+            </div>
+            <div>
+              <label className={field} htmlFor="create-hall-name">{LECTURE_HALL_COPY.nameLabel}</label>
+              <Input id="create-hall-name" className="min-h-11 w-full md:min-h-9" maxLength={255} required
+                placeholder={LECTURE_HALL_COPY.namePlaceholder} value={createDraft.name}
+                onChange={(event) => setCreateDraft({ ...createDraft, name: event.target.value })}/>
+            </div>
+            <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
+              <div>
+                <label className={field} htmlFor="create-hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
+                <Select id="create-hall-type" required className="min-h-11 w-full md:min-h-9" value={createDraft.roomType}
+                  onChange={(event) => setCreateDraft({ ...createDraft, roomType: event.target.value })}>
+                  <option value="">{LECTURE_HALL_COPY.typePlaceholder}</option>
+                  {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </Select>
+              </div>
+              <div>
+                <label className={field} htmlFor="create-hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
+                <Input id="create-hall-capacity" className="min-h-11 w-full md:min-h-9" type="number" min={1} max={1000} required
+                  value={createDraft.capacity} onChange={(event) => setCreateDraft({ ...createDraft, capacity: event.target.value })}/>
+              </div>
+            </div>
+            <div>
+              <label className={field} htmlFor="create-hall-description">{LECTURE_HALL_COPY.descriptionLabel}</label>
+              <Input id="create-hall-description" className="min-h-11 w-full md:min-h-9" maxLength={255}
+                placeholder={LECTURE_HALL_COPY.descriptionPlaceholder} value={createDraft.description}
+                onChange={(event) => setCreateDraft({ ...createDraft, description: event.target.value })}/>
+            </div>
+            <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending}>
+              {LECTURE_HALL_COPY.createButton}
+            </Button>
+          </form>
+        </section>
+        <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0">
+          <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
       {halls.length === 0 ? (
         <EmptyState
           title={emptyState?.title ?? "No lecture halls found."}
@@ -246,20 +327,22 @@ export function LectureHallManager({
           getRowKey={(hall) => hall.id}
         />
       )}
+        </section>
+      </div>
 
       <Dialog
         open={editing !== null}
-        onOpenChange={(value) => !value && !pending && setEditing(null)}
+        onOpenChange={(value) => { if (!value) requestClose(); }}
         dismissible={!pending}
-        title={editing === "new" ? LECTURE_HALL_COPY.createTitle : "Edit lecture hall"}
+        title="Edit Lecture Hall"
         description="Hall names stay unique among the college's active halls."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-            <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={() => setEditing(null)}>
+            <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={requestClose}>
               Cancel
             </Button>
-            <Button className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={save}>
-              {pending ? "Saving…" : editing === "new" ? LECTURE_HALL_COPY.createButton : "Save hall"}
+            <Button className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={() => save()}>
+              {pending ? "Saving…" : "Update"}
             </Button>
           </div>
         }
@@ -278,13 +361,14 @@ export function LectureHallManager({
           <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] md:grid-cols-2">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
-              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={5000} value={draft.capacity}
+              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} value={draft.capacity}
                 onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
             </div>
             <div>
               <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
-              <Select className="min-h-11 md:min-h-9" id="hall-type" value={draft.roomType}
+              <Select className="min-h-11 md:min-h-9" id="hall-type" required value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
+                <option value="">{LECTURE_HALL_COPY.typePlaceholder}</option>
                 {Object.entries(ROOM_TYPE_LABELS).map(([value, label]) => (
                   <option key={value} value={value}>{label}</option>
                 ))}
@@ -308,6 +392,15 @@ export function LectureHallManager({
           </div>
         </div>
       </Dialog>
+
+      <ConfirmDialog
+        open={discardOpen}
+        onOpenChange={(value) => { if (!value) setDiscardOpen(false); }}
+        title={`Discard edits to “${editing?.name ?? "this lecture hall"}”?`}
+        description="Your unsaved changes will be lost."
+        confirmLabel="Discard edits"
+        onConfirm={finishEdit}
+      />
 
       <ConfirmDialog
         open={archiving !== null}
