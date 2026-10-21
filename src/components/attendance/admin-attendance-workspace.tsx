@@ -7,6 +7,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {
   useEffect,
   useMemo,
+  useRef,
   useState,
   useTransition,
 } from "react";
@@ -153,6 +154,12 @@ export function AdminAttendanceWorkspace({
   const [notice,setNotice]=useState<string|null>(null);
   const [absenceReason,setAbsenceReason]=useState<"ABSENT"|"EXCUSED"|"MEDICAL"|"LATE">("ABSENT");
   const [correctionNote,setCorrectionNote]=useState("");
+  const [verifiedRecord,setVerifiedRecord]=useState<{
+    status:"PRESENT"|"ABSENT"|"EXCUSED"|"MEDICAL"|"LATE";
+    note:string|null;expectedMarkedAt:string|null;
+  }|null>(null);
+  const [verifyingRecord,setVerifyingRecord]=useState(false);
+  const recordRequest=useRef(0);
   const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
   const [courseId, setCourseId] = useState(data.selectedCourseId ?? "");
   const [deliveryId,setDeliveryId]=useState(data.selectedDeliveryId??"");
@@ -177,7 +184,9 @@ export function AdminAttendanceWorkspace({
     setCourseId(data.selectedCourseId ?? "");
     setDeliveryId(data.selectedDeliveryId??"");
     setShowAllCourses(data.showAllCourses);
+    recordRequest.current+=1;
     setTarget(null);
+    setVerifiedRecord(null);
     setChooser(null);
   }
 
@@ -266,10 +275,34 @@ export function AdminAttendanceWorkspace({
   }
 
   function openCorrectionTarget(next:CellTarget){
+    const requestId=++recordRequest.current;
     setTarget(next);
+    setVerifiedRecord(null);
+    setVerifyingRecord(true);
     setAbsenceReason("ABSENT");
     setCorrectionNote("");
     setError(null);
+    const params=new URLSearchParams({
+      collegeId:data.collegeId,
+      deliveryId:data.selectedDeliveryId??"",
+      scheduleEventId:next.session.id,
+      membershipId:next.learner.membershipId,
+    });
+    void apiFetch<{
+      status:"PRESENT"|"ABSENT"|"EXCUSED"|"MEDICAL"|"LATE";
+      note:string|null;expectedMarkedAt:string|null;
+    }>("/api/attendance/admin/current-record?"+params.toString()).then(current=>{
+      if(recordRequest.current!==requestId)return;
+      setVerifiedRecord(current);
+      setCorrectionNote(current.note??"");
+      if(current.status!=="PRESENT")setAbsenceReason(current.status);
+    }).catch(cause=>{
+      if(recordRequest.current!==requestId)return;
+      setError(cause instanceof Error?cause.message:
+        "Could not verify the current attendance record. Refresh and try again.");
+    }).finally(()=>{
+      if(recordRequest.current===requestId)setVerifyingRecord(false);
+    });
   }
 
   async function correct(
@@ -284,8 +317,9 @@ export function AdminAttendanceWorkspace({
     if (
       !target ||
       !data.selectedDeliveryId ||
-      correcting || new Date(target.session.startsAt).getTime()>loadedAt ||
-      status === (target.record?.status ?? "PRESENT")
+      correcting || verifyingRecord || !verifiedRecord ||
+      new Date(target.session.startsAt).getTime()>loadedAt ||
+      status === verifiedRecord.status
     ) {
       return;
     }
@@ -302,11 +336,15 @@ export function AdminAttendanceWorkspace({
             deliveryId: data.selectedDeliveryId,
             membershipId: target.learner.membershipId,
             status,
+            expectedMarkedAt:verifiedRecord.expectedMarkedAt,
             ...(correctionNote.trim() ? { note: correctionNote.trim() } : {}),
           }),
         },
       );
-      setNotice(status==="PRESENT"?"Marked present":"Marked absent");
+      setNotice(status==="PRESENT"?"Marked present":status==="ABSENT"?
+        "Marked absent":"Marked "+status.toLowerCase());
+      recordRequest.current+=1;
+      setVerifiedRecord(null);
       setTarget(null);
       router.refresh();
     } catch (cause) {
@@ -656,7 +694,9 @@ export function AdminAttendanceWorkspace({
         dismissible={!correcting&&!correctionGuard.pending}
         onOpenChange={(open) => {
           if (!open && !correcting && !correctionGuard.pending) {
+            recordRequest.current+=1;
             setTarget(null);
+            setVerifiedRecord(null);
             setError(null);
           }
         }}
@@ -677,14 +717,14 @@ export function AdminAttendanceWorkspace({
         footer={
           target ? (
             <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
-              <Button size="sm" variant="secondary" disabled={correcting||refreshing}
-                onClick={()=>{setTarget(null);startRefresh(()=>router.refresh());}}>Refresh grid and reopen</Button>
-              {target.record && target.record.status !== "PRESENT" ? (
-                <Button size="sm" disabled={correcting||refreshing} onClick={()=>void correct("PRESENT")}>
+              <Button size="sm" variant="secondary" disabled={correcting||refreshing||verifyingRecord}
+                onClick={()=>{recordRequest.current+=1;setTarget(null);setVerifiedRecord(null);startRefresh(()=>router.refresh());}}>Refresh grid and reopen</Button>
+              {verifiedRecord?.status && verifiedRecord.status !== "PRESENT" ? (
+                <Button size="sm" disabled={correcting||refreshing||verifyingRecord||!verifiedRecord} onClick={()=>void correct("PRESENT")}>
                   {correcting?"Saving…":"Mark present"}
                 </Button>
               ) : (
-                <Button size="sm" variant="danger" disabled={correcting||refreshing} onClick={()=>void correct(absenceReason)}>
+                <Button size="sm" variant="danger" disabled={correcting||refreshing||verifyingRecord||!verifiedRecord} onClick={()=>void correct(absenceReason)}>
                   {correcting?"Saving…":"Mark absent"}
                 </Button>
               )}
@@ -699,32 +739,31 @@ export function AdminAttendanceWorkspace({
                 Current status
               </p>
               <p className="mt-1 text-body">
-                {
-                  codeFor(
-                    target.session,
-                    target.record,
-                  ).label
-                }
+                {verifyingRecord?"Verifying current attendance…":
+                  verifiedRecord?.status??"Current record could not be verified"}
               </p>
             </div>
-            {!(target.record && target.record.status !== "PRESENT") ? (
-              <label className="grid gap-[6px] text-sm font-semibold text-body">
-                Reason for absence
-                <Select value={absenceReason} disabled={correcting||refreshing}
-                  onChange={event=>setAbsenceReason(event.target.value as typeof absenceReason)}>
-                  <option value="ABSENT">Absent</option>
-                  <option value="EXCUSED">Excused</option>
-                  <option value="MEDICAL">Medical</option>
-                  <option value="LATE">Late</option>
-                </Select>
-              </label>
+            {verifiedRecord?.status==="PRESENT" ? (
+              <fieldset disabled={correcting||refreshing||verifyingRecord} className="space-y-2">
+                <legend className="text-sm font-semibold text-body">Reason for absence</legend>
+                <div className="flex flex-wrap gap-4">
+                  {([["ABSENT","Absent"],["EXCUSED","Excused"],["MEDICAL","Medical"],["LATE","Late"]] as const).map(([value,label])=>
+                    <label key={value} className="inline-flex min-h-11 items-center gap-2 text-sm">
+                      <input type="radio" name="attendance-absence-reason" value={value}
+                        checked={absenceReason===value} onChange={()=>setAbsenceReason(value)}
+                        className="size-4 accent-[var(--lms-primary)]"/>
+                      {label}
+                    </label>
+                  )}
+                </div>
+              </fieldset>
             ) : null}
             <label className="grid gap-[6px] text-sm font-semibold text-body">
               Correction note (optional)
               <Input maxLength={500} value={correctionNote} disabled={correcting||refreshing}
                 onChange={event=>setCorrectionNote(event.target.value)} />
             </label>
-            <p className="text-xs text-muted-foreground">This record was loaded with the grid. Choose Refresh grid and reopen before changing an older result; server authorization is checked again on save.</p>
+            <p className="text-xs text-muted-foreground">The current attendance record is re-read from the selected college immediately before editing. A changed record is rejected on save; refresh and retry to avoid overwriting someone else&apos;s correction.</p>
             <p className="text-xs text-muted-foreground">
               The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception. This change is recorded.
             </p>
@@ -760,6 +799,7 @@ export function AdminAttendanceWorkspace({
               </div>
             </dl>
             ) : null}
+            {verifyingRecord?<p role="status" className="text-sm text-muted-foreground">Verifying record and permissions…</p>:null}
             {error ? (
               <p
                 role="alert"
