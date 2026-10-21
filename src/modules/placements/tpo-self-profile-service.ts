@@ -30,8 +30,8 @@ import { requirePlacementManageScope } from "./scope";
  * - persisted membership roles/status;
  * - their own optional faculty department.
  *
- * Only this account's contact fields and avatar-availability flag may be
- * returned. Private storage paths are never exposed as public image URLs.
+ * Login phone and email are read-only and returned only for the authenticated
+ * membership owner. Profile documents and other memberships remain excluded.
  */
 export async function getOwnTpoProfile(
   context: RequestContext,
@@ -58,10 +58,9 @@ export async function getOwnTpoProfile(
   const rows = await getDb()
     .select({
       displayName: users.displayName,
-      contactMail: users.email,
-      contactMobile: users.phoneE164,
+      phone: users.phoneE164,
+      email: users.email,
       avatarObjectPath: facultyProfiles.avatarObjectPath,
-      profileDocument: facultyProfiles.profileDocument,
       collegeName: colleges.name,
       collegeCode: colleges.code,
       membershipStatus:
@@ -158,6 +157,9 @@ export async function getOwnTpoProfile(
 
   return {
     displayName: own.displayName,
+    phone: own.phone,
+    email: own.email,
+    avatarObjectPath: own.avatarObjectPath,
     collegeName: own.collegeName,
     collegeCode: own.collegeCode,
     membershipStatus: own.membershipStatus,
