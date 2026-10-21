@@ -45,7 +45,7 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
      <Button type="submit" loading={pending} disabled={pending}
       className="min-h-11 md:min-h-9">Add</Button>
     </form>
-    <ul className="space-y-1">{entries.map(value=><li key={value} className="flex items-center justify-between gap-2">
+    <ul className="space-y-1">{entries.map(value=><li key={value} className="flex items-center justify-between gap-2 flex-wrap">
      <span className="break-all">{value}</span>
      <Button type="button" variant="danger" disabled={pending||(kind==="domains"&&domains.length<=1)}
       onClick={()=>void mutate(kind,"REMOVE",value)}
