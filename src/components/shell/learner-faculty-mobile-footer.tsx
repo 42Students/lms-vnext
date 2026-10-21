@@ -26,7 +26,7 @@ type NotificationInboxRow = { notification: { readAt: string | null } };
 const learnerLinks: readonly FooterLink[] = [
   {href:"/learn/courses",label:"Courses",icon:"/assets/images/common/courses.svg",activeIcon:"/assets/images/common/course.svg"},
   {href:"/learn/notifications",label:"Notifications",visibleLabel:"Alerts",icon:"/assets/images/common/bell.svg"},
-  {href:"/learn/calendar",label:"Class Schedule",visibleLabel:"Schedule",icon:"/assets/images/common/calender.svg"},
+  {href:"/learn/calendar",label:"Class Schedule",visibleLabel:"Classes",icon:"/assets/images/common/calender.svg"},
   {href:"/learn/my-placements",label:"My Placements",visibleLabel:"Placements",icon:"/assets/images/common/assignment.svg"},
   {href:"/learn/projects",label:"Projects",icon:"/assets/images/common/folder.svg"},
   {href:"/learn/profile",label:"Profile",icon:"/assets/images/common/myAccount.svg"},
@@ -46,13 +46,23 @@ const recruiterLinks: readonly FooterLink[] = [
 ];
 const collegeLinks: readonly FooterLink[] = [
   {href:"/college",label:"Dashboard",icon:"/assets/images/common/analytics.svg"},
-  {href:"/college/departments",label:"Departments",icon:"/assets/images/common/folder.svg"},
+  {href:"/college/departments",label:"Departments",visibleLabel:"Academic",icon:"/assets/images/common/folder.svg"},
   {href:"/college/courses",label:"Courses",icon:"/assets/images/common/course.svg"},
-  {href:"/college/placements",label:"Jobs",icon:"/assets/images/common/assignment.svg"},
+  {href:"/college/placements",label:"Placements",icon:"/assets/images/common/assignment.svg"},
   {href:"/college/profile",label:"Profile",icon:"/assets/images/common/myAccount.svg"},
 ];
 const mentorLinks: readonly FooterLink[] = [
   {href:"/mentor/projects",label:"Projects",icon:"/assets/images/common/folder.svg"},
+  {href:"/mentor/calendar",label:"Meetings",icon:"/assets/images/common/calender.svg"},
+  {href:"/mentor/notifications",label:"Notifications",visibleLabel:"Alerts",icon:"/assets/images/common/notification.svg"},
+  {href:"/mentor/profile",label:"Profile",icon:"/assets/images/common/myAccount.svg"},
+];
+const tpoLinks: readonly FooterLink[] = [
+  {href:"/tpo/home",label:"Home",icon:"/assets/images/common/analytics.svg"},
+  {href:"/tpo/recruiters",label:"Engage",icon:"/assets/images/common/contact.svg"},
+  {href:"/tpo/placements",label:"Drives",icon:"/assets/images/common/assignment.svg"},
+  {href:"/tpo/students",label:"Students",icon:"/assets/images/common/myAccount.svg"},
+  {href:"/tpo/settings",label:"More",icon:"/assets/images/common/Menu-Icon.svg"},
 ];
 
 /** Name retained for existing shell imports; now covers all legacy mobile roles. */
@@ -63,31 +73,38 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
   const recruiter = pathname === "/hr" || pathname.startsWith("/hr/") ||
     pathname === "/recruiter" || pathname.startsWith("/recruiter/");
   const college = pathname === "/college" || pathname.startsWith("/college/");
+  const tpo = pathname === "/tpo" || pathname.startsWith("/tpo/");
   const mentor = pathname === "/mentor" || pathname.startsWith("/mentor/");
-  const [unread, setUnread] = useState<number | null>(null);
+  const [snapshot,setSnapshot] = useState<{
+    path:string;items:readonly ShellNavItem[];unread:number|null;
+  }|null>(null);
+  // A response from a previous role/college navigation must never paint a
+  // notification badge on the new member workspace.
+  const unread=snapshot?.path===pathname&&snapshot.items===items?snapshot.unread:null;
 
   useEffect(() => {
     if (!learner) return;
     let active = true;
+    const controller=new AbortController();
     void apiFetch<{notifications?: NotificationInboxRow[]}>(
-      "/api/notifications?limit=40", {cache:"no-store"},
+      "/api/notifications?limit=40", {cache:"no-store",signal:controller.signal},
     ).then(response=>{
       if (!active) return;
       if (!Array.isArray(response.notifications)) {
         // Invalid/unavailable count is not proof that there are zero unread.
-        setUnread(null);
+        setSnapshot({path:pathname,items,unread:null});
         return;
       }
-      setUnread(response.notifications.filter(row=>row.notification.readAt===null).length);
+      setSnapshot({path:pathname,items,unread:response.notifications.filter(row=>row.notification.readAt===null).length});
     }).catch(()=>{
       // Retire stale counts on failed refresh; keep navigation usable offline.
-      if (active) setUnread(null);
+      if (active) setSnapshot({path:pathname,items,unread:null});
     });
-    return ()=>{active=false;};
-  }, [learner, pathname]);
+    return ()=>{active=false;controller.abort();};
+  }, [learner, pathname, items]);
 
-  if (!learner && !faculty && !recruiter && !college && !mentor) return null;
-  const all = learner ? learnerLinks : faculty ? facultyLinks :
+  if (!learner && !faculty && !recruiter && !college && !mentor && !tpo) return null;
+  const all = tpo ? tpoLinks : learner ? learnerLinks : faculty ? facultyLinks :
     recruiter ? recruiterLinks : college ? collegeLinks : mentorLinks;
   // Match shell feature permissions: disabled learner modules cannot leak
   // into a separate bottom bar that bypasses the canonical sidebar.
