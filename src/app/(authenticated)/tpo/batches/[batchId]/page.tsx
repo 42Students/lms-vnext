@@ -42,7 +42,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  <section id="batch-next-step" aria-label="Next step" tabIndex={-1}
   className="scroll-mt-24 space-y-3 border-b border-[var(--lms-canvas-border)] py-4 target:animate-pulse">
   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-7">Next step</h2>
-  <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{next.title}</h3>
+  <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{next.title}</h3>
   <p className="text-sm text-body leading-[22px]">{next.detail}</p>
   <div className="flex flex-wrap gap-3">
    <Link href={"/tpo/batches/"+batchId+next.href}

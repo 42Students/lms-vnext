@@ -226,7 +226,7 @@ export default async function TpoCompanyDetailPage({
           ))}
         </dl>
         <div className="mt-5 border-t border-border pt-4">
-          <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Students placed, by year</h3>
+          <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Students placed, by year</h3>
           <p className="mt-1 text-xs text-muted-foreground leading-5">
             Distinct confirmed JOINED learners by recorded joining year (IST), not offers issued.
             {hiringPulse.yearsHiring>=2
