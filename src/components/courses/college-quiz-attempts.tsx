@@ -56,12 +56,12 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground leading-5">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="undefinedmb-[6px] grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search Student on this page
+    <label className="undefinedmb-[6px] grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search students on this page
      <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 md:min-h-9" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
-     <p className="text-xs text-muted-foreground leading-5">No Students match your search.</p>:null}
+     <p className="text-xs text-muted-foreground leading-5">No students match your search.</p>:null}
     <ul className="divide-y divide-border border-y border-border">{attempts.filter(item=>!learnerSearch.trim()||
       (item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||
       (item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())).map(item=><li key={item.id}
@@ -70,7 +70,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      <p>Attempt {item.attemptNumber} · {item.score}/{item.maxScore} points</p>
      <p className="text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{
       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.submittedAt))} IST</p>
-    <Disclosure title={`View Answers (${item.answers.length})`} className="mt-2 border-t border-border pt-2">
+    <Disclosure title={`View answers (${item.answers.length})`} className="mt-2 border-t border-border pt-2">
       {item.answers.length===0?<p className="mt-2 text-muted-foreground">No saved answers for this attempt.</p>:null}
       <ol className="mt-2 space-y-3">{item.answers.map((answer,index)=><li key={answer.id} className="border-b border-border py-2">
        <p className="font-semibold text-foreground">Question {index+1}: {answer.promptSnapshot}</p>
