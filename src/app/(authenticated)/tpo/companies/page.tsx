@@ -182,7 +182,7 @@ export default async function TpoCompanyMemoryPage({
           method="get"
           className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
-          <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search companies
             <Input
               type="search"
@@ -194,7 +194,7 @@ export default async function TpoCompanyMemoryPage({
             />
           </label>
 
-          <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Sort by
             <Select name="sort" defaultValue={query.sort}
               className="min-h-11 md:min-h-9">
@@ -204,7 +204,7 @@ export default async function TpoCompanyMemoryPage({
               <option value="JOINS">Most confirmed joins</option>
             </Select>
           </label>
-          <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
@@ -219,7 +219,7 @@ export default async function TpoCompanyMemoryPage({
 
           <Button
             type="submit"
-            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover md:min-h-9 xl:w-auto"
+            className="inline-flex min-h-11 w-full items-center justify-center self-end rounded-[var(--lms-control-radius)] bg-primary px-6 text-sm font-[650] text-on-primary hover:bg-primary-hover md:min-h-9 xl:w-auto"
           >
             Search
           </Button>

@@ -399,7 +399,7 @@ export default async function TpoCompanyDetailPage({
           </div>
         )}
 
-        <p className="px-5 py-4 text-xs leading-5 text-muted-foreground">
+        <p className="px-6 py-4 text-xs leading-5 text-muted-foreground">
           Hiring history represents persisted offer records,
           including versions and non-accepted statuses. Confirmed
           joins require an explicit JOINED outcome. No external
