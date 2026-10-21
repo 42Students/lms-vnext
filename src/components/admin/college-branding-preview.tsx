@@ -34,7 +34,7 @@ function SignInStylePreview({
       className={
         mobile
           ? "mx-auto flex aspect-[47/72] w-full max-w-56 max-w-full items-center justify-center overflow-hidden rounded-3xl border-4 border-border p-3 shadow-none"
-          : "flex min-h-80 items-center justify-center overflow-hidden rounded-[var(--college-card-radius,8px)] border border-border p-5"
+          : "flex min-h-80 items-center justify-center overflow-hidden rounded-[var(--college-card-radius,8px)] border border-border p-6"
       }
       style={canvasStyle}
     >
@@ -140,7 +140,7 @@ export function CollegeBrandingPreview({
         </StatusBadge>
       </section>
 
-      <section className="border-t border-border pt-5">
+      <section className="border-t border-border pt-6">
         <h2 className="m-0 text-base font-semibold text-foreground">
           College branding settings
         </h2>
@@ -251,7 +251,7 @@ export function CollegeBrandingPreview({
           Illustrative layout with persisted public images and existing LMS contrast
           maths. This is not a live tenant-host login or a pixel-perfect legacy preview.
         </p>
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           <Card as="article" className="p-4 sm:p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Desktop</h3>
             <SignInStylePreview branding={branding} mobile={false} />

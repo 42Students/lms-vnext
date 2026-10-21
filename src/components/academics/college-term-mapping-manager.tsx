@@ -129,7 +129,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
     <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
@@ -139,7 +139,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
       </label>
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
         <Select required value={termId} onChange={event => {
           if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
@@ -151,7 +151,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
 </div>
     {termId ? <Disclosure title="Add courses" className="min-w-0 border-y border-border py-2" contentClassName="pt-3">
       <form onSubmit={prepare} className="grid min-w-0 gap-3">
-      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses to Add
+      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Courses to Add
         <Select multiple size={8} value={selectedIds}
           disabled={!termId} onChange={event => setDraftByTerm(current => ({
             ...current, [termId]: Array.from(event.target.selectedOptions).map(option => option.value),
