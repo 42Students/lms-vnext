@@ -6,6 +6,11 @@ import {readCollegeLogoForm,CollegeLogoRequestError} from "@/modules/colleges/co
 import {CollegeLogoError,uploadCollegeLogo,getPublicCollegeLogo,removeCollegeLogo} from "@/modules/colleges/admin-branding-logo-service";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
+// The logo uses an explicitly scoped same-origin multipart endpoint as the
+// CORS-free fallback for its own PNG type only. Other file categories must
+// preserve their own grants/policies, not reuse college branding permissions.
+// Upload/removal persists independently of other branding fields; a future
+// staged form-save protocol must be coordinated with the branding owner.
 type Params={params:Promise<{collegeId:string}>};
 export async function POST(request:Request,{params}:Params){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
