@@ -2,7 +2,7 @@
 import { Alert } from "@/components/ui/alert";
 
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
@@ -23,6 +23,7 @@ function localDate(value:Date|null,zone:MeetingZone="Asia/Kolkata"){
 }
 export function SuperAdminContentActions({item}:{item:Content}){
  const router=useRouter();
+ const submissionLock=useRef(false);
  const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
  const [title,setTitle]=useState(item.title),[order,setOrder]=useState(String(item.sequence+1));
@@ -32,19 +33,21 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const [startsAt,setStartsAt]=useState(localDate(item.startsAt)),[endsAt,setEndsAt]=useState(localDate(item.endsAt));
  async function save(){
-  if(busy)return;
+  if(busy||submissionLock.current)return;
   const index=Number(order);
-  if(!title.trim()||title.length>255||!Number.isInteger(index)||index<1||index>10001){
-   setError("Enter a title and valid Order.");return;
+  if(!title.trim()){setError("Please enter a content title");return;}
+  if(title.trim().length>255){setError("Content title must not exceed 255 characters");return;}
+  if(!Number.isInteger(index)||index<1||index>10001){
+   setError("Order must be at least 1 and at most 10001");return;
   }
   let changes:Record<string,unknown>={title:title.trim(),sequence:index-1};
   if(["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)&&replacementUrl.trim()){
    const href=facultyContentExternalHref(item.contentType,replacementUrl.trim());
-   if(!href){setError("Enter a secure HTTPS link for this content.");return;}
+   if(!href){setError("Enter a valid HTTPS link without credentials or spaces.");return;}
    const parsed=new URL(href),host=parsed.hostname.toLowerCase();
    if(item.contentType==="YOUTUBE"&&host!=="youtube.com"&&host!=="youtu.be"&&
       !host.endsWith(".youtube.com")){
-    setError("Enter a YouTube URL supported by the content editor.");return;
+    setError("Enter a valid YouTube URL.");return;
    }
    if(parsed.hash||host==="localhost"||host.endsWith(".localhost")||
     host==="0.0.0.0"||host==="::1"||/^127\./.test(host)||/^10\./.test(host)||
@@ -61,6 +64,8 @@ export function SuperAdminContentActions({item}:{item:Content}){
    }else if(notes.trim())changes={...changes,notes:notes.trim()};
   }
   if(item.contentType==="YOUTUBE"){
+   if(!replacementUrl.trim()&&item.status==="DRAFT")
+    setError("Please enter a YouTube URL");
    const seconds=Number(duration);
    if(!duration||!Number.isInteger(seconds)||seconds<1||seconds>86400){
     setError("Video length must be 1–86400 seconds.");return;
@@ -80,27 +85,33 @@ export function SuperAdminContentActions({item}:{item:Content}){
    changes={...changes,startsAt:start,endsAt:end};
   }
   if(!window.confirm("Save changes?"))return;
-  setBusy(true);setError("");setNotice("");
+  submissionLock.current=true;setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
     method:"PATCH",headers:{"Content-Type":"application/json"},body:JSON.stringify(changes),
    });
-   setEditing(false);setReplacementUrl("");setNotice(item.contentType==="RESOURCE"?"Resource updated.":"Content updated.");router.refresh();
+   setEditing(false);setReplacementUrl("");
+   setNotice(item.contentType==="RESOURCE"?"Resource updated":"Lesson content updated successfully!");
+   router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
-  finally{setBusy(false);}
+  finally{submissionLock.current=false;setBusy(false);}
  }
  async function transition(action:"PUBLISH"|"ARCHIVE"){
-  if(busy)return;
+  if(busy||submissionLock.current)return;
   if(!window.confirm(action==="PUBLISH"?"Publish this content to enrolled students?":
     item.contentType==="RESOURCE"?"Delete this resource? Students will no longer see it.":"Delete this content from student access? The record will be archived."))return;
-  setBusy(true);setError("");setNotice("");
+  submissionLock.current=true;setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
    });
-   setEditing(false);setNotice(action==="PUBLISH"?"Content published.":item.contentType==="RESOURCE"?"Resource deleted.":"Content archived.");router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
-  finally{setBusy(false);}
+   setEditing(false);setNotice(action==="PUBLISH"?"Content published":
+    item.contentType==="RESOURCE"?"Resource deleted":"Lesson content archived. Uploaded files have been kept for restoration.");
+   router.refresh();
+  }catch(cause){setError(action==="ARCHIVE"&&item.contentType==="RESOURCE"?
+    "Could not delete resource. "+(cause instanceof Error?cause.message:"Try again."):
+    cause instanceof Error?cause.message:"Unable to update content.");}
+  finally{submissionLock.current=false;setBusy(false);}
  }
  function toggleEditor(){
   if(editing){
@@ -128,7 +139,11 @@ export function SuperAdminContentActions({item}:{item:Content}){
   </div>
   {editing?<fieldset disabled={busy} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] sm:grid-cols-2">
    <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
-    Private files and existing published URLs are not exposed in this form.</p>
+    Existing uploaded media is retained. Private-file replacement must use a verified, lesson-bound upload; never reuse another content item&apos;s file or object key.</p>
+   <p className="text-xs text-muted-foreground sm:col-span-2">
+    Visibility is enabled by default, but a draft is hidden from learners until explicitly published.
+    Delete archives the content and preserves uploaded files for authorized recovery.
+   </p>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
     <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
