@@ -50,7 +50,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/index.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/applications.js`
 - [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/index.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/interviews.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/interviews.js`
 - [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/settings.js`
 - [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js`
 - [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/all.js`
