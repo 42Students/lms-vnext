@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -31,26 +31,48 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [sprint,setSprint]=useState("");
  const [task,setTask]=useState("");
  const activeRows=rows.filter(row=>row.status==="ACTIVE");
+ const sourceOrder=[...activeRows].sort((a,b)=>a.sequence-b.sequence).map(row=>row.id);
+ const sourceKey=sourceOrder.join("|");
  const router=useRouter();
- const [orderIds,setOrderIds]=useState<string[]>(()=>rows.filter(row=>row.status==="ACTIVE").map(row=>row.id));
+ const [orderIds,setOrderIds]=useState<string[]>(()=>sourceOrder);
+ const [baselineIds,setBaselineIds]=useState<string[]>(()=>sourceOrder);
+ const baseKey=baselineIds.join("|");
+ const unsaved=orderIds.join("|")!==baseKey;
+ const sourceChanged=sourceKey!==baseKey;
+ useEffect(()=>{
+   if(!unsaved&&sourceChanged){
+     // Safe prop refresh: retain edits if the administrator is still editing.
+     setBaselineIds(sourceOrder);
+     setOrderIds(sourceOrder);
+   }
+ },[sourceKey,sourceChanged,unsaved]);
  const [reordering,setReordering]=useState(false);
  const [reorderError,setReorderError]=useState("");
- const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&
+ const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&!sourceChanged&&
     !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ACTIVE"&&!pinned&&
     !sprint&&!task&&activeRows.length<=250;
- async function saveOrder(ids:string[]){
-   if(!canReorder)return;
+ async function saveOrder(){
+   if(!canReorder||!unsaved)return;
+   if(sourceChanged){setReorderError("Resources changed. Discard edits and refresh before saving.");return;}
    setReordering(true);setReorderError("");
    try{
+     // Keep edits local until Save. The server serializes the project and
+     // validates the ID set; server-side original-order CAS is a separate
+     // required feature before this can claim whole-section atomic parity.
      await apiFetch("/api/projects/"+encodeURIComponent(projectId)+"/resources/reorder",{
        method:"POST",headers:{"content-type":"application/json"},
-       body:JSON.stringify({orderIds:ids}),
+       body:JSON.stringify({orderIds}),
      });
-     setOrderIds(ids);
+     setBaselineIds([...orderIds]);
      router.refresh();
    }catch{
      setReorderError("Resource order could not be saved. Try again.");
    }finally{setReordering(false);}
+ }
+ function discardOrder(){
+   setOrderIds(sourceOrder);
+   setBaselineIds(sourceOrder);
+   setReorderError("");
  }
  const stableOrder=[...orderIds.filter(id=>activeRows.some(item=>item.id===id)),
    ...activeRows.map(item=>item.id).filter(id=>!orderIds.includes(id))];
@@ -59,7 +81,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
    if(from<0||to<0||to>=stableOrder.length)return;
    const next=[...stableOrder];
    [next[from],next[to]]=[next[to]!,next[from]!];
-   void saveOrder(next);
+   setOrderIds(next);
  }
  function dropOnto(moving:string,target:string){
    if(moving===target||!stableOrder.includes(moving)||!stableOrder.includes(target))return;
@@ -151,9 +173,15 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       className="min-h-10 text-sm font-[650] text-link underline">Clear filters</Button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
-    {canReorder?"Drag resources to change their priority order, or use Move up and Move down.":
+    {canReorder?"Drag resources to arrange a draft, then select Save order.":
       "Resource reordering is available when no filters are active."}
   </p>:null}
+  {mode!=="LEARNER"&&!readOnly&&unsaved?<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Unsaved resource order">
+    <span className="text-xs text-muted-foreground">Resource order has unsaved changes.</span>
+    <Button type="button" disabled={!canReorder||sourceChanged} onClick={()=>void saveOrder()}>Save order</Button>
+    <Button type="button" variant="secondary" disabled={reordering} onClick={discardOrder}>Discard changes</Button>
+  </div>:null}
+  {sourceChanged&&unsaved?<p role="alert" className="text-sm text-error">Resources changed since you started arranging. Discard changes to reload the latest order.</p>:null}
   {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
