@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { UsersRound, BriefcaseBusiness, UserRound, ContactRound, Inbox, MessageCircle, CalendarDays, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import {TpoHomeReturnRefresh} from "@/components/tpo/tpo-home-return-refresh";
 import {eq} from "drizzle-orm";
@@ -8,7 +9,7 @@ import {tpoHomeGreeting} from "@/modules/placements/tpo-home-greeting-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
-import {buildTpoLegacyHomeRows,tpoHomeNeedsLine} from "@/modules/placements/tpo-home-legacy-rows";
+import {buildTpoLegacyHomeRows,tpoHomeNeedsLine,type TpoHomeLegacyRow} from "@/modules/placements/tpo-home-legacy-rows";
 import {buildTpoLegacyNextUp,operationalHomeNeeds} from "@/modules/placements/tpo-home-next-up";
 import {deadlineTpoHomeNeeds} from "@/modules/placements/tpo-home-deadline-signals";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
@@ -29,6 +30,12 @@ import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-serv
 import {listPlacementCalendarEvents} from "@/modules/placements/placement-calendar-service";
 import {placementCalendarDayKey} from "@/modules/placements/placement-calendar-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
+const homeIcons = { batches:UsersRound,drives:BriefcaseBusiness,students:UserRound,
+ engage:ContactRound,inbox:Inbox,team:MessageCircle,week:CalendarDays } as const;
+function TpoHomeRowIcon({kind}:{kind:TpoHomeLegacyRow["key"]}) {
+ const Icon=homeIcons[kind];
+ return <Icon size={20} strokeWidth={1.8} aria-hidden="true" className="shrink-0 text-[#667d86]"/>;
+}
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
  const ctx=await getCurrentRequestContext();
@@ -164,10 +171,7 @@ export default async function TpoHome(){
     type:"TEAM_ASKS",priority:1,title:teamAsks+" team asks for you",
     count:teamAsks,link:"/tpo/team?filter=me",
    }]:[]),
-   ...(teamUnread!==null&&teamUnread>0&&!(teamAsks!==null&&teamAsks>0)?[{
-    type:"TEAM_MESSAGES",priority:4,title:"Your team has new messages",
-    count:teamUnread,link:"/tpo/team",
-   }]:[]),
+
    ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount!,link:"/tpo/requests"}]:[]),
   ],
@@ -187,7 +191,38 @@ export default async function TpoHome(){
  <p className="text-sm font-semibold text-muted-foreground leading-[22px]">{greeting.date}</p>
  <PageHeader title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
- <div role="group" aria-label="Placement overview"
+ <p aria-live="polite" data-testid="home.need-line" className="text-sm leading-[22px] text-[var(--lms-body-text)]">{tpoHomeNeedsLine(rows)}</p>
+ <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
+ <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
+  <h2 className="text-xs font-bold uppercase leading-[18px] tracking-[.11em] text-[var(--lms-primary-text)]">Next up</h2>
+  {next?<div className="mt-2 space-y-2">
+   <p className="break-words font-semibold">{next.title}</p>
+   <p className="text-sm text-muted-foreground">{next.text}</p>
+   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
+  </div>:<div className="mt-3 space-y-1">
+   <p className="font-semibold text-[var(--lms-heading)]">Nothing is waiting on you.</p>
+   <p className="text-sm leading-6 text-muted-foreground">New requests, results and replies show up here first.</p>
+  </div>}
+ </section>
+ <section className="min-w-0 space-y-2" aria-label="Your placement work">
+  <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">{rows.map(row=><li key={row.key}>
+    <Link href={row.href} data-testid={"home.row."+row.key}
+     className="flex min-h-[66px] min-w-0 items-center gap-3 px-4 py-3 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+     <span className="flex h-9 w-9 shrink-0 items-center justify-center" aria-hidden="true"><TpoHomeRowIcon kind={row.key}/></span>
+     <span className="min-w-0 flex-1"><strong className="block break-words text-sm text-foreground">{row.title}</strong>
+      <span className="mt-1 block break-words text-xs text-muted-foreground">{row.status}</span></span>
+     {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
+     <ChevronRight aria-hidden="true" size={18} strokeWidth={1.7} className="shrink-0 text-[var(--lms-muted-text)]"/>
+    </Link>
+   </li>)}</ul>
+ </section>
+ </div>
+ <details className="mt-5 min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface">
+  <summary className="min-h-11 cursor-pointer px-4 py-3 text-sm font-semibold text-[var(--lms-heading)] md:px-6">
+   Placement overview metrics
+  </summary>
+  <div className="border-t border-border">
+   <div role="group" aria-label="Placement overview"
   className="grid min-w-0 grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface lg:grid-cols-4">
   {[
     {label:rows[1]?.title ?? "Drives",value:operationsResult?operations.summary.publishedJobs:"—",detail:rows[1]?.status,href:rows[1]?.href},
@@ -205,29 +240,7 @@ export default async function TpoHome(){
     {tile.detail?<span className="min-w-0 break-words text-xs leading-5 text-muted-foreground">{tile.detail}</span>:null}
   </Link>)}
  </div>
- <p aria-live="polite" className="text-sm font-semibold text-body leading-[22px]">{tpoHomeNeedsLine(rows)}</p>
- <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
- <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
-  <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Next up</h2>
-  {next?<div className="mt-2 space-y-2">
-   <p className="break-words font-semibold">{next.title}</p>
-   <p className="text-sm text-muted-foreground">{next.text}</p>
-   <Link href={next.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto motion-reduce:transition-none">{next.action}</Link>
-  </div>:rows.find(row=>row.needsAttention)?<div className="mt-2 space-y-2"><p className="text-sm">{rows.find(row=>row.needsAttention)?.status}</p>
-   <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto motion-reduce:transition-none">Open</Link>
-  </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
- </section>
- <section className="min-w-0 space-y-2" aria-label="Your placement work">
-  <ul className="divide-y divide-border rounded-[var(--lms-canvas-radius)] border border-border bg-surface">{rows.map(row=><li key={row.key}>
-    <Link href={row.href} data-testid={"home.row."+row.key}
-     className="flex min-h-16 min-w-0 items-center gap-3 px-4 py-3 text-body hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-     <span className="min-w-0 flex-1"><strong className="block break-words text-sm text-foreground">{row.title}</strong>
-      <span className="mt-1 block break-words text-xs text-muted-foreground">{row.status}</span></span>
-     {row.needsAttention?<Badge aria-label="Needs you"  tone="warning" className="shrink-0">Needs you</Badge>:null}
-     <span aria-hidden="true" className="shrink-0 text-link">›</span>
-    </Link>
-   </li>)}</ul>
- </section>
- </div>
+  </div>
+ </details>
  </div>;
 }

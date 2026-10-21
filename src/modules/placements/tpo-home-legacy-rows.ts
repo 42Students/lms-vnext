@@ -63,20 +63,20 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   }).format(new Date(now.getTime()+86400000));
   const time=new Intl.DateTimeFormat("en-IN",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date);
-  return (today===inDay?"Today":tomorrow===inDay?"Tomorrow":day)+" "+time;
+  return (today===inDay?"Today":tomorrow===inDay?"Tomorrow":day)+" "+time.replace(/:00(?=\s)/,"");
  };
  return [
   {key:"batches",title:"Placement eligibility",status:batchStatus,href:"/tpo/batches",
    needsAttention:!batch||(d.hasUninvitedBatch??!batch.invited)},
   {key:"drives",title:"Drives",status:drives,href:d.driveHref??"/tpo/placements",
    needsAttention:d.driveAttention>0||actionable.length>0},
-  {key:"students",title:"Students",status:d.registered===null?"":
-   d.registered?d.registered+" registered · "+(d.placedUnique??0)+" placed":"Nobody registered yet",
+  {key:"students",title:"Students",status:d.registered===null?"Registration data unavailable":
+   d.registered?d.registered+" registered"+(d.placedUnique===null?" · Placed data unavailable":" · "+d.placedUnique+" placed"):"Nobody registered yet",
    href:"/tpo/students",needsAttention:false},
-  {key:"engage",title:"Engage",status:d.recruiterLeads===null?"":
+  {key:"engage",title:"Engage",status:d.recruiterLeads===null?"Recruiter data unavailable":
    [plural(d.recruiterLeads,"recruiter"),d.followUps===null?null:
     d.followUps?plural(d.followUps,"follow-up")+" today":"no follow-ups today",
-    (d.recruiterAccess??0)>0?plural(d.recruiterAccess!,"new account")+" to approve":null].filter(Boolean).join(" · "),
+    d.recruiterAccess===null?"Recruiter access data unavailable":d.recruiterAccess>0?plural(d.recruiterAccess,"new account")+" to approve":null].filter(Boolean).join(" · "),
    href:d.followUps?"/tpo/recruiters?due=1":"/tpo/recruiters",
    needsAttention:(d.followUps??0)>0||(d.recruiterAccess??0)>0},
   {key:"inbox",title:"Inbox",status:inboxStatus,href:requests?"/tpo/requests":"/tpo/messages",
@@ -84,7 +84,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   {key:"team",title:"Team",status:(d.teamAsks??0)>0?plural(d.teamAsks!,"ask")+" for you":
    (d.teamMentions??0)>0?plural(d.teamMentions!,"mention"):
    (d.teamUnread??0)>0?plural(d.teamUnread!,"new message"):
-   d.teamAsks===null?"":"Nothing waiting on you",
+   d.teamAsks===null||d.teamMentions===null?"Team updates unavailable":"Nothing waiting on you",
    href:(d.teamAsks??0)+(d.teamMentions??0)>0?"/tpo/team?filter=me":"/tpo/team",
    needsAttention:(d.teamAsks??0)+(d.teamMentions??0)>0},
   {key:"week",title:"This week",status:next?showWhen(next.startsAt)+" · "+next.title+

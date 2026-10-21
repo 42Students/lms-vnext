@@ -20,6 +20,7 @@ export const collegeActivityQuerySchema = z.strictObject({
   subjectType: z.string().trim().min(1).max(80).optional(),
   subjectId: z.string().trim().min(1).max(500).optional(),
   pageSize: z.enum(["10","25","50"]).optional(),
+  loaded: z.coerce.number().int().min(1).max(10).optional(),
   from: dateOnly.optional(),
   to: dateOnly.optional(),
   beforeOccurredAt: z.string().datetime({ offset: true }).optional(),
@@ -56,7 +57,8 @@ export function collegeActivityHref(
   if (filter.actorName) params.set("actorName", filter.actorName);
   if (filter.subjectType) params.set("subjectType", filter.subjectType);
   if (filter.subjectId) params.set("subjectId", filter.subjectId);
-  if (filter.pageSize && filter.pageSize !== "25") params.set("pageSize",filter.pageSize);
+  if (filter.pageSize && filter.pageSize !== "50") params.set("pageSize",filter.pageSize);
+  if ((filter.loaded ?? 1)>1 && !cursor) params.set("loaded",String(filter.loaded));
   if (filter.from) params.set("from", filter.from);
   if (filter.to) params.set("to", filter.to);
   if (cursor) {
@@ -79,7 +81,7 @@ export function collegeActivityRecentHref(
   const start=new Date(Date.UTC(year,month-1,day-days+1));
   const from=start.toISOString().slice(0,10);
   const to=`${value("year")}-${value("month")}-${value("day")}`;
-  return collegeActivityHref({...filter,from,to});
+  return collegeActivityHref({...filter,loaded:1,from,to});
 }
 
 export function activitySearchParams(
@@ -99,10 +101,10 @@ export function activitySearchParams(
 /** COL-verification-misc-12: today follows the user's IST calendar, not UTC midnight. */
 export function collegeActivityTodayHref(filter:CollegeActivityQuery,asOf:Date){
  const day=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(asOf);
- return collegeActivityHref({...filter,from:day,to:day});
+ return collegeActivityHref({...filter,loaded:1,from:day,to:day});
 }
 export function collegeActivityAllTimeHref(filter:CollegeActivityQuery){
- return collegeActivityHref({...filter,from:undefined,to:undefined,range:"ALL"});
+ return collegeActivityHref({...filter,loaded:1,from:undefined,to:undefined,range:"ALL"});
 }
 
 // Legacy category validation is explicit rather than a generic filter error.

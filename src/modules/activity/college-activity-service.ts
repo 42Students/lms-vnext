@@ -5,7 +5,7 @@ import { hasMembershipRole,isSuperAdmin } from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { collegeActivityQuerySchema } from "./college-activity-model";
-import { getActivityEventDetail, listActivityEvents } from "./service";
+import { getActivityEventDetail, listActivityEvents, groupActivityEvents } from "./service";
 import { z } from "zod";
 
 async function requireCollegeActivity(context: RequestContext): Promise<string> {
@@ -29,7 +29,7 @@ async function requireCollegeActivity(context: RequestContext): Promise<string> 
 export async function listCollegeActivity(context: RequestContext, raw: unknown) {
   const query = collegeActivityQuerySchema.parse(raw);
   const collegeId=await requireCollegeActivity(context);
-  const { pageSize, view, category, range: _range, ...filter } = query;
+  const { pageSize, loaded, view, category, range: _range, ...filter } = query;
   const categories = {
     ACADEMIC_SETUP: "ACADEMICS",
     PEOPLE_ACCESS: "IDENTITY",
@@ -37,12 +37,28 @@ export async function listCollegeActivity(context: RequestContext, raw: unknown)
     PROJECTS: "PROJECTS",
   } as const;
   const activityModule = category ? categories[category] : filter.module;
-  const result = await listActivityEvents(context, {
+  const first = await listActivityEvents(context, {
     ...filter, collegeId, module: activityModule,
     importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filter.importance,
-    limit: Number(pageSize ?? "25"),
+    limit: Number(pageSize ?? "50"),
   });
-  return { ...result, query };
+  // Append bounded older pages to the same chronological feed, preserving
+  // the selected college and permission checks for every page.
+  const items = [...first.items];
+  let nextCursor = first.nextCursor;
+  let remainingCount = first.remainingCount;
+  for (let batch=1; batch<(loaded ?? 1) && nextCursor; batch++) {
+    const page = await listActivityEvents(context, {
+      ...filter, collegeId, module: activityModule,
+      importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filter.importance,
+      beforeOccurredAt:nextCursor.beforeOccurredAt,beforeId:nextCursor.beforeId,
+      limit:Number(pageSize ?? "50"),
+    });
+    items.push(...page.items);
+    nextCursor=page.nextCursor;
+    remainingCount=page.remainingCount;
+  }
+  return {items,groups:groupActivityEvents(items),nextCursor,remainingCount,query};
 }
 
 export async function getCollegeActivityDetail(context: RequestContext, rawId: unknown) {
