@@ -46,8 +46,6 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   if(input.status!=="ALL")conditions.push(eq(t.status,input.status));
   if(input.kind)conditions.push(eq(t.kind,input.kind));
   if(input.routingStatus)conditions.push(eq(t.routingStatus,input.routingStatus));
-  if(input.kind)conditions.push(eq(t.kind,input.kind));
-  if(input.routingStatus)conditions.push(eq(t.routingStatus,input.routingStatus));
   if(input.recipient)conditions.push(sql`lower(${t.toAddress}) = ${input.recipient}::text`);
   if(input.q){
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
@@ -60,6 +58,8 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
  async list(input){
   const t=inboundMailMessagesStaged,conditions:SQL[]=[];
   if(input.status!=="ALL")conditions.push(eq(t.status,input.status));
+  if(input.kind)conditions.push(eq(t.kind,input.kind));
+  if(input.routingStatus)conditions.push(eq(t.routingStatus,input.routingStatus));
   if(input.recipient)conditions.push(sql`lower(${t.toAddress}) = ${input.recipient}::text`);
   if(input.q) {
    const escaped=input.q.replace(/[\\%_]/g,"\\$&");
@@ -68,9 +68,14 @@ export const drizzleInboundMailAdminRepository:InboundMailAdminRepository={
   }
   return getDb().select({
    id:t.id,receivedAt:t.receivedAt,fromAddress:t.fromAddress,toAddress:t.toAddress,
-   subject:t.subject,bodyPlain:t.bodyPlain,status:t.status,version:t.version,
+   // List rows have a bounded preview. Fetch the entire body ONLY through
+   // getInboundMailDetailForAdmin after global Super Admin authorization.
+   subject:t.subject,bodyPlain:sql<string>`left(${t.bodyPlain}, 512)`,
+   status:t.status,version:t.version,
    kind:t.kind,routingStatus:t.routingStatus,handledAt:t.handledAt,
   }).from(t).where(conditions.length?and(...conditions):undefined)
+    // ReceivedAt is the delivery order; ID is the stable tie-breaker when
+    // messages arrive in the same millisecond or a worker is delayed.
     .orderBy(desc(t.receivedAt),desc(t.id)).limit(51).offset((input.page-1)*50);
  },
 };
@@ -84,7 +89,16 @@ export async function listInboundMailForAdmin(
  const input=inboundMailListQuerySchema.parse(raw);
  if(!await repository.tableExists())
   return {available:false,items:[],page:input.page,hasMore:false,total:null,toReadCount:null};
- const [items,total,toReadCount]=await Promise.all([repository.list(input),repository.count?repository.count(input):Promise.resolve(null),repository.count?repository.count({...input,status:"NEW",q:"",page:1,recipient:undefined}):Promise.resolve(null)]);
+ const [items,total,toReadCount]=await Promise.all([
+  repository.list(input),
+  repository.count?repository.count(input):Promise.resolve(null),
+  // The To read badge is global NEW mail, not dependent on the active
+  // Posted/routing/recipient filter tab.
+  repository.count?repository.count({
+    status:"NEW",q:"",page:1,recipient:undefined,
+    kind:undefined,routingStatus:undefined,
+  }):Promise.resolve(null),
+ ]);
  return {available:true,items:items.slice(0,50).map(item=>({...item,bodyPreview:safeInboundPreview(item.bodyPlain)})),page:input.page,hasMore:items.length>50,total,toReadCount};
 }
 
@@ -109,7 +123,13 @@ export async function changeInboundMailStatusForAdmin(
   return {kind:"UNAVAILABLE" as const};
  return getDb().transaction(async tx=>{
   const [updated]=await tx.update(inboundMailMessagesStaged)
-   .set({status:input.status,version:sql`${inboundMailMessagesStaged.version}+1`})
+   .set({
+     status:input.status,
+     // An actual manual resolve sets handled_at; reopening must clear it.
+     // Delivery routing status remains independent of human triage.
+     handledAt:input.status==="RESOLVED"?new Date():null,
+     version:sql`${inboundMailMessagesStaged.version}+1`,
+   })
    .where(and(eq(inboundMailMessagesStaged.id,input.id),
     eq(inboundMailMessagesStaged.status,input.expectedStatus),
     eq(inboundMailMessagesStaged.version,input.expectedVersion)))
@@ -124,7 +144,12 @@ export async function changeInboundMailStatusForAdmin(
    eventType:"platform.inbound_mail.status_changed",importance:"NORMAL",
    subjectType:"INBOUND_MAIL",subjectId:updated.id,
    summary:"Super Admin updated inbound mail triage",
-   metadata:{from:input.expectedStatus,to:input.status,version:updated.version},
+   metadata:{
+     from:input.expectedStatus,to:input.status,version:updated.version,
+     handlerUserId:context.user.id,
+     eventKind:input.status==="RESOLVED"?"HANDLED":
+       input.status==="NEW"?"REOPENED":"TRIAGED",
+   },
   });
   return {kind:"UPDATED" as const,...updated};
  });
@@ -157,7 +182,7 @@ export async function getInboundMailDetailForAdmin(
 }
 
 /** List previews never imply successful automatic recruiter posting. The
- * original schema lacks routingStatus, kind, thread, handled actor and date.
- * Those fields require a verified migration, not inference from mail address
- * or the separate NEW/TRIAGED/RESOLVED manual triage state. */
+ * Migration 0150 has routingStatus, kind and handledAt; the responsible actor
+ * remains in the immutable activity event rather than a guessed sender.
+ * Manual NEW/TRIAGED/RESOLVED is independent of automated delivery. */
 export const INBOUND_ROUTING_METADATA_READY=true;

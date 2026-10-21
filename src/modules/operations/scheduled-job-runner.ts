@@ -10,6 +10,8 @@
  * Exactly-once delivery still requires an outbox / recipient idempotency keys.
  */
 import type { JobLease } from "./scheduled-job-lease";
+import {randomUUID} from "node:crypto";
+import {TPO_SCHEDULED_JOBS,TPO_JOB_TIME_ZONE} from "./tpo-scheduled-job-registry";
 
 export interface ScheduledJobLeaseStore {
   acquire(input: {
@@ -148,7 +150,10 @@ export async function executeScheduledJobWithLease<T>(
  */
 export const LEGACY_NOTIFICATION_JOB_SCHEDULES = {
   release: { jobName: "notification.release", fixedDelayMs: 60_000, ttlMs: 5 * 60_000, batchSize: 200 },
-  cleanup: { jobName: "notification.cleanup", fixedDelayMs: 60 * 60_000, ttlMs: 60 * 60_000 },
+  // Legacy Sunday 02:00 was JVM-local. Choose Asia/Kolkata explicitly.
+  // A deployment-owned Cloud Scheduler executes it; this object starts no cron.
+  cleanup: { jobName: "notification.cleanup", cron: "0 2 * * 0",
+    timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000, retentionDays: 90, batchSize: 200 },
   interviewReminder: { jobName: "notification.interviewReminders", cron: "0 0 19 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
   assignmentReminder: { jobName: "notification.assignmentReminders", cron: "0 0 9 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
   deadlineToday: { jobName: "tpo.deadlineToday", cron: "0 0 8 * * *", timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000 },
@@ -275,13 +280,42 @@ export const LEGACY_LOG_MONITOR_SCHEDULES = {
 export function resolveScheduledContentDueAt(
   canonicalDueAt: Date | null,
   legacyDueAt: string | null,
+  warn?: (safeCode:"INVALID_LEGACY_DUE_AT")=>void,
 ): Date | null {
-  if (canonicalDueAt instanceof Date &&
-      Number.isFinite(canonicalDueAt.getTime())) return canonicalDueAt;
-  if (!legacyDueAt ||
-      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(legacyDueAt)) return null;
-  const parsed = new Date(legacyDueAt);
-  return Number.isFinite(parsed.getTime()) ? parsed : null;
+  // The canonical persisted due date always takes precedence, even when
+  // legacy lesson JSON disagrees. Bad legacy data only skips this row.
+  if(canonicalDueAt instanceof Date&&Number.isFinite(canonicalDueAt.getTime()))
+    return canonicalDueAt;
+  if(!legacyDueAt)return null; // No due date is an ordinary healthy no-op.
+  const raw=legacyDueAt.trim();
+  if(!raw)return null;
+  const withOffset=/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/;
+  if(withOffset.test(raw)){
+    const parsed=new Date(raw);
+    if(Number.isFinite(parsed.getTime()))return parsed;
+    warn?.("INVALID_LEGACY_DUE_AT");return null;
+  }
+  // Historical SQL dates and date-only strings are India-local, not
+  // server-local. Check every component after reconstruction, so Feb 30,
+  // hour 25, impossible leap days and timezone ambiguities are rejected.
+  const match=/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$/.exec(raw);
+  if(!match){warn?.("INVALID_LEGACY_DUE_AT");return null;}
+  const year=Number(match[1]),month=Number(match[2]),day=Number(match[3]),
+    hour=Number(match[4]??"0"),minute=Number(match[5]??"0"),
+    second=Number(match[6]??"0");
+  if(year<2000||year>2200||month<1||month>12||day<1||day>31||
+    hour>23||minute>59||second>59){
+    warn?.("INVALID_LEGACY_DUE_AT");return null;
+  }
+  const offset=330*60_000;
+  const instant=new Date(Date.UTC(year,month-1,day,hour,minute,second)-offset);
+  const local=new Date(instant.getTime()+offset);
+  if(local.getUTCFullYear()!==year||local.getUTCMonth()+1!==month||
+    local.getUTCDate()!==day||local.getUTCHours()!==hour||
+    local.getUTCMinutes()!==minute||local.getUTCSeconds()!==second){
+    warn?.("INVALID_LEGACY_DUE_AT");return null;
+  }
+  return instant;
 }
 
 /** Scheduler boundaries should report failure without terminating request
@@ -300,4 +334,127 @@ export async function runObservedScheduledTick<T>(
     // Cloud Scheduler or a cron operator must separately surface alert state.
     return { ran: false, reason: "TICK_FAILED" };
   }
+}
+
+/**
+ * One process instance holds a stable random salt until termination;
+ * a restart or another pod gets a different holder, even with the same
+ * hostname. Do not place machine credentials or full hostname in audit logs.
+ */
+const scheduledInstanceSalt=randomUUID().slice(0,16);
+export function scheduledJobWorkerIdentity(hostname?:string):{
+  holderId:string;hostPresent:boolean;
+}{
+  const host=hostname??process.env.HOSTNAME??"";
+  const normalized=host.trim();
+  const valid=/^[a-zA-Z0-9][a-zA-Z0-9.-]{0,59}$/.test(normalized);
+  return{
+    holderId:(valid?normalized:"worker-unknown")+"-"+scheduledInstanceSalt,
+    hostPresent:valid,
+  };
+}
+
+export type ScheduledJobOperatorSnapshot={
+  jobName:string;lastRunAt:Date|null;lastOutcome:"COMPLETED"|"SKIPPED"|"FAILED"|null;
+  completed:number;skipped:number;failed:number;
+};
+export type ScheduledJobOperatorRow=ScheduledJobOperatorSnapshot&{
+  description:string;cadence:string;timeZone:string;wired:boolean;
+  nextRunAt:Date|null;healthy:boolean;
+};
+/** Read-only job catalogue joined with validated persisted health snapshots.
+ * Exact next-run depends on the external scheduler's own run state. Never
+ * claim a scheduled fire was completed from a cron expression alone.
+ */
+export function listScheduledJobOperatorRows(
+  snapshots:readonly ScheduledJobOperatorSnapshot[],
+):ScheduledJobOperatorRow[]{
+  const jobs=[
+    ...Object.entries(LEGACY_NOTIFICATION_JOB_SCHEDULES).map(([,job])=>({
+      jobName:job.jobName,
+      description:job.jobName.replaceAll("."," "),
+      cadence:"cron" in job?job.cron:"fixedDelayMs" in job?String(job.fixedDelayMs)+" ms":"unknown",
+      timeZone:"timeZone" in job?job.timeZone:"UTC",
+      wired:false,
+    })),
+    ...Object.entries(TPO_SCHEDULED_JOBS).map(([name,job])=>({
+      jobName:name,description:job.description,
+      cadence:job.schedule,timeZone:TPO_JOB_TIME_ZONE,wired:job.wired,
+    })),
+  ];
+  const byName=new Map(snapshots.filter(row=>
+    /^[a-zA-Z][a-zA-Z0-9.:_-]{0,119}$/.test(row.jobName) &&
+    ["COMPLETED","SKIPPED","FAILED",null].includes(row.lastOutcome) &&
+    [row.completed,row.failed,row.skipped].every(value=>
+      Number.isSafeInteger(value)&&value>=0)
+  ).map(row=>[row.jobName,row]));
+  return jobs.map(job=>{
+    const snapshot=byName.get(job.jobName);
+    const lastRunAt=snapshot?.lastRunAt instanceof Date&&
+      Number.isFinite(snapshot.lastRunAt.getTime())?snapshot.lastRunAt:null;
+    return{
+      ...job,lastRunAt,lastOutcome:snapshot?.lastOutcome??null,
+      completed:snapshot?.completed??0,skipped:snapshot?.skipped??0,
+      failed:snapshot?.failed??0,nextRunAt:null,
+      healthy:job.wired&&lastRunAt!==null&&snapshot?.lastOutcome==="COMPLETED",
+    };
+  }).sort((a,b)=>(b.lastRunAt?.getTime()??0)-(a.lastRunAt?.getTime()??0)||
+    a.jobName.localeCompare(b.jobName));
+}
+
+/** Build a bounded soft-delete batch for the Sunday 02:00 IST cleanup.
+ * fetchEligible() MUST use an index on (deleted_at, created_at) and read
+ * only un-deleted notifications older than cutoff (limit 200). The callback
+ * MUST compare the lease fence in the transaction that updates deleted_at;
+ * this helper by itself does not create any DB/cron side effect.
+ */
+export async function executeFencedNotificationCleanup(
+  fence:ScheduledJobFence,now:Date,
+  fetchEligible:(cutoff:Date,limit:number)=>Promise<readonly string[]>,
+  markSoftDeleted:(ids:readonly string[],cutoff:Date,guard:ScheduledJobFence)=>Promise<number>,
+):Promise<{deleted:number;hasMore:boolean;cutoff:Date}>{
+  if(!(now instanceof Date)||!Number.isFinite(now.getTime()))
+    throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+  const cutoff=new Date(now.getTime()-90*24*60*60_000);
+  await fence.assertCurrent();
+  const ids=await fetchEligible(cutoff,201);
+  if(!ids.length)return{deleted:0,hasMore:false,cutoff}; // healthy no-op
+  if(ids.length>201||ids.some(id=>!/^[0-9a-f-]{36}$/i.test(id)))
+    throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+  await fence.assertCurrent();
+  const deleted=await markSoftDeleted(ids.slice(0,200),cutoff,fence);
+  if(!Number.isSafeInteger(deleted)||deleted<0||deleted>200)
+    throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+  return{deleted,hasMore:ids.length>200,cutoff};
+}
+
+/** Release/reminder candidates are read from persisted lesson dueAt first.
+ * A missing date produces an empty batch with no failed reminders.
+ * Invalid migration fallback dates are counted, not emitted as row payloads.
+ */
+export function collectDueScheduledContentIds(
+  now:Date,rows:readonly {id:string;dueAt:Date|null;legacyDueAt:string|null}[],
+):{ids:string[];invalidLegacyDates:number}{
+  const ids:string[]=[],seen=new Set<string>();
+  let invalidLegacyDates=0;
+  for(const row of rows.slice(0,1000)){
+    const due=resolveScheduledContentDueAt(row.dueAt,row.legacyDueAt,
+      ()=>{invalidLegacyDates++;});
+    if(!due||!isAssignmentReminderDue(now,due)||!row.id||
+      row.id.length>120||seen.has(row.id))continue;
+    seen.add(row.id);ids.push(row.id);
+  }
+  return{ids,invalidLegacyDates};
+}
+
+export function scheduledJobFailureExplanation(
+  error:unknown,
+):"Lease store unavailable"|"Worker lost lease"|"Invalid job configuration"|"Job execution failed"{
+ if(error instanceof ScheduledJobRunnerError){
+  if(error.code==="LEASE_STORE_UNAVAILABLE")return"Lease store unavailable";
+  if(error.code==="LEASE_LOST")return"Worker lost lease";
+  if(error.code==="INVALID_JOB_INPUT"||error.code==="INVALID_LEASE_GRANT")
+    return"Invalid job configuration";
+ }
+ return"Job execution failed";
 }
