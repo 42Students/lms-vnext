@@ -50,7 +50,14 @@ export function LearnerJobsBrowse({
   const lastCommittedQuery=useRef(urlSearch);
 
   const updateQuery=useCallback((changes:Record<string,string|null>)=>{
-    const query=learnerDriveQueryWithChanges(params.toString(),changes);
+    // Legacy ?tab=saved deep links keep their tab when a facet or page
+    // changes. Canonicalize only in the link we are about to navigate to.
+    const prior=new URLSearchParams(params.toString());
+    if(prior.get("tab")==="saved"){
+      prior.delete("tab");
+      if(!prior.has("saved"))prior.set("saved","1");
+    }
+    const query=learnerDriveQueryWithChanges(prior.toString(),changes);
     router.push(query?pathname+"?"+query:pathname,{scroll:false});
   },[pathname,params,router]);
 
@@ -86,17 +93,26 @@ export function LearnerJobsBrowse({
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityDriveCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const savedSummary=learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds);
-  const savedOnly=urlState.savedOnly;
+  const savedOnly=urlState.savedOnly||params.get("tab")==="saved";
   const matchingItems=savedOnly?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items;
   const visible = filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso));
   const parsedPage=urlState.page;
-  const pagination=learnerDrivePageState(visible.length,parsedPage,PAGE_SIZE);
+  const isNotOpen=(item:LearnerPlacementJobItem)=>
+    !item.canApply&&item.application===null&&!item.deadlinePassed;
+  // The old LMS paginates its open/current cards separately. Closed saved
+  // records and ineligible cards stay in their own sections, without
+  // consuming the 20 slots available on the primary open page.
+  const notOpenAll=visible.filter(isNotOpen);
+  const savedExpired=savedOnly?visible.filter(item=>item.deadlinePassed):[];
+  const primary= savedOnly
+    ?filters.availability==="closed"?savedExpired:visible.filter(item=>!item.deadlinePassed)
+    :filters.availability==="not-open"?notOpenAll:visible.filter(item=>!isNotOpen(item));
+  const pagination=learnerDrivePageState(primary.length,parsedPage,PAGE_SIZE);
   const {page,totalPages}=pagination;
-  const paged=visible.slice(pagination.startIndex,pagination.endIndex);
-  const ordinaryRoleCards=paged.filter(item=>item.canApply||item.application!==null||item.deadlinePassed);
-  const notOpenRoleCards=paged.filter(item=>!item.canApply&&item.application===null&&!item.deadlinePassed);
-  const savedExpired=paged.filter(item=>item.deadlinePassed);
-  const savedOpen=paged.filter(item=>!item.deadlinePassed);
+  const paged=primary.slice(pagination.startIndex,pagination.endIndex);
+  const ordinaryRoleCards=savedOnly?[]:paged.filter(item=>!isNotOpen(item));
+  const notOpenRoleCards=savedOnly?[]:filters.availability==="not-open"?paged:notOpenAll;
+  const savedOpen=savedOnly&&filters.availability!=="closed"?paged:[];
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11";
@@ -108,7 +124,7 @@ export function LearnerJobsBrowse({
         onChange={(next) => updateQuery({ saved: next === "saved" ? "1" : null })}
         options={[
           { value: "all", label: "All drives" },
-          { value: "saved", label: "Saved (" + savedSummary.saved + ")" },
+          { value: "saved", label: "Saved (" + new Set(savedJobIds).size + ")" },
         ]} />
       <section className="border-t border-border pt-4" aria-label="Find placement drives">
         <div className="mb-3">          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -204,7 +220,8 @@ export function LearnerJobsBrowse({
           </label>
           <Button variant="link" type="button" onClick={() => {
               setSearch("");
-              router.push(pathname, { scroll: false });
+              updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,availability:null});
+              setMobileOpen(false);
             }} className="min-h-11 px-2 md:min-h-9">
             Clear filters
           </Button>
@@ -224,7 +241,8 @@ export function LearnerJobsBrowse({
       </section>
       <p role="status" className="text-sm text-body">
         {visible.length===0?"No matching drives":
-          `Showing ${pagination.firstNumber}–${pagination.lastNumber} of ${visible.length} matching roles`}
+          primary.length===0?`${visible.length} matching roles in secondary sections`:
+          `Showing ${pagination.firstNumber}–${pagination.lastNumber} of ${primary.length} primary roles`}
       </p>
       {pagination.recovered ? (
         <p role="status" className="border-b border-border py-3 text-sm text-body">
@@ -237,6 +255,10 @@ export function LearnerJobsBrowse({
         </p>
       ):null}
 
+      {savedOnly&&savedSummary.expired>0?<p role="status" className="border-b border-border pb-3 text-xs text-body">
+        {savedSummary.expired} saved drive(s) are not available in your current authorized published catalog.
+        Their bookmarks remain saved; this list does not claim they were removed.
+      </p>:null}
       {savedOnly && matchingItems.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
         <h2 className="font-semibold text-foreground">No saved drives yet</h2>
         <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
@@ -255,7 +277,10 @@ export function LearnerJobsBrowse({
           <p className="font-semibold text-foreground">{empty.title}</p>
           <p className="mt-2 text-sm text-body">{empty.description}</p>
           {empty.showReset ? <Button variant="link" type="button"
-            onClick={()=>{setSearch("");router.push(pathname,{scroll:false});}}
+            onClick={()=>{
+              setSearch("");
+              updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,availability:null});
+            }}
             className="mt-3 min-h-11 px-0">
             Clear all filters
           </Button>:null}
@@ -273,7 +298,7 @@ export function LearnerJobsBrowse({
         </div>:<div className="space-y-5">
           {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-          {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenRoleCards.length+" roles on this page) · See reasons"}
+          {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenRoleCards.length+" roles) · See reasons"}
              defaultOpen={filters.availability==="not-open"} ariaLabel="Not open to you"
              className="border-t border-border py-3 [&>summary]:min-h-11 [&>summary]:text-foreground">
             <p className="mb-3 mt-2 text-sm text-body">

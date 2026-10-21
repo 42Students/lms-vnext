@@ -15,7 +15,7 @@ import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
 export const publicRecruitEnquirySchema=z.strictObject({
  email:publicRecruiterWorkEmailSchema.max(150),code:z.string().regex(/^[0-9]{6}$/),
- name:z.string().trim().min(1).max(120),company:z.string().trim().min(2).max(150),
+ name:z.string().trim().min(1).max(120),company:z.string().trim().max(150).default(""),
  mobile:normalizedTpoLeadPhoneSchema,
  hiringFor:z.string().trim().max(1500),
 });
