@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { ScrollCue } from "@/components/ui/scroll-cue";
-import type { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
+import type { listFacultyCourseDeliveries, FacultyCourseAssignmentDiagnostic } from "@/modules/courses/faculty-course-service";
 import type { FacultyCourseCardSummary } from "@/modules/courses/faculty-course-card-summary-service";
 
 type Course = Awaited<
@@ -45,8 +45,10 @@ function pathTone(
   return "neutral" as const;
 }
 
-export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sections,assignmentChoices}: {
+export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=false,query,pagination,scopeCount,periods,sections,assignmentChoices}: {
   rows: readonly FacultyCourseListRow[];
+  diagnostics?: readonly FacultyCourseAssignmentDiagnostic[];
+  diagnosticsUnavailable?: boolean;
   query: FacultyCourseListQuery;
   pagination: {page:number;totalPages:number;total:number};
   scopeCount: number;
@@ -54,7 +56,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   sections:readonly {id:string;name:string;count:number}[];
   assignmentChoices:readonly {deliveryId:string;courseName:string;sectionName:string;academicPeriodName:string}[];
 }) {
-  if (scopeCount === 0) {
+  const blocked=new Set(diagnostics.map(item=>item.teachingAssignmentId));
+  const visibleRows=rows.filter(row=>row.course.courseName.trim()&&!blocked.has(row.course.teachingAssignmentId));
+  if (scopeCount === 0 && diagnostics.length===0 && !diagnosticsUnavailable) {
     return (
       <EmptyState
         title="No teaching assignments found. Please contact your administrator."
@@ -65,6 +69,19 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+      {diagnostics.length>0||diagnosticsUnavailable?<div role="alert" className="border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-50)] p-4 text-sm text-body">
+        <p className="font-semibold">Some course records have incomplete or duplicate information.</p>
+        <p className="mt-1">Please contact your administrator to repair the affected teaching assignments. These courses cannot be opened.</p>
+        {diagnosticsUnavailable?<p className="mt-1">Assignment diagnostics could not be loaded. Retry this page.</p>:null}
+        {diagnostics.map(item=><article key={item.teachingAssignmentId}
+          aria-label="Incomplete assignment data" className="mt-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+          <strong>Incomplete assignment data</strong>
+          <p className="mt-1 text-muted-foreground">{item.reason==="MISSING_COURSE_NAME"?
+            "Course information unavailable":item.reason==="DUPLICATE_ASSIGNMENT"?
+            "Duplicate teaching assignment":"The linked course or class is unavailable."}</p>
+          <span className="text-xs text-muted-foreground">Ask an administrator to resolve the assignment.</span>
+        </article>)}
+      </div>:null}
       <div className="flex min-w-0 flex-wrap items-center gap-3 text-sm text-body" role="status">
         <Disclosure title={scopeCount+" "+(scopeCount===1?"Teaching assignment":"Teaching assignments")} className="relative min-w-0">
           <ScrollCue axis="y" label="Teaching assignments" className="mt-2" viewportClassName="max-h-48"><ul className="space-y-1 text-xs">
@@ -118,11 +135,11 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           <Button type="submit" variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply filters</Button>
           <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] min-[768px]:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
-            Showing {rows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
+            Showing {visibleRows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
           </p>
         </div>
       </form>
-      {rows.length === 0 ? (
+      {visibleRows.length === 0 ? (
         <EmptyState
           title={query.q?"No courses match “"+query.q+"”":"No teaching assignments in this section."}
           description="Try changing the filters to see your courses."
@@ -130,7 +147,7 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         />
       ) : (
       <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-x-6 gap-y-0 border-y border-[var(--lms-canvas-border)] lg:grid-cols-2">
-      {rows.map(({ course, workspace,thumbnailUrl }) => (
+      {visibleRows.map(({ course, workspace,thumbnailUrl }) => (
         <Link
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
