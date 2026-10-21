@@ -374,6 +374,40 @@ export function legacyUploadTypeHelp(rawType:string,rawFolder:string):{
  return {kind,accept,limitBytes,help,serverImportEnabled:false};
 }
 
+/** Legacy URL-import parity decision: an untrusted remote URL must never be
+ * downloaded by the LMS or used as an upload grant. The legacy server fetched
+ * arbitrary hosts (including redirects); that operation is intentionally
+ * retired under the private, scanned upload model. Preserve a LINK resource
+ * for public HTTPS documents; videos must be saved locally and uploaded by
+ * the scoped feature flow. No object key, unsigned read URL or provider
+ * credential is returned to the browser.
+ */
+export const LEGACY_REMOTE_IMPORT_COMPATIBILITY = {
+  "import-file-from-url": {
+    supported: false,
+    replacement: "LINK_OR_PRIVATE_UPLOAD",
+    message: "Add a public HTTPS link, or save an authorized copy and upload it using the file picker.",
+  },
+  "import-video-from-url": {
+    supported: false,
+    replacement: "PRIVATE_VIDEO_UPLOAD",
+    message: "Save an authorized local copy of the video, then use the lesson video uploader. Wait for verification before publishing.",
+  },
+  "validate-video-url": {
+    supported: false,
+    replacement: "LOCAL_VIDEO_VALIDATION",
+    message: "Remote video import is no longer supported. Select a local video to validate its type and size before upload.",
+  },
+} as const;
+
+export type LegacyRemoteImportAction = keyof typeof LEGACY_REMOTE_IMPORT_COMPATIBILITY;
+
+/** Public-facing migration copy; the return type cannot be mistaken for a
+ * successful remote import or a server-side fetch authorization. */
+export function legacyRemoteImportDecision(action: LegacyRemoteImportAction) {
+  return { ...LEGACY_REMOTE_IMPORT_COMPATIBILITY[action], serverFetchAllowed: false as const };
+}
+
 /** URL imports previously fetched arbitrary remote URLs. A URL remains a
  * first-class LINK Resource (no server-side fetching), never a video FILE.
  */
