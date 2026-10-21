@@ -3,6 +3,7 @@ import "server-only";
 import {and,asc,desc,eq,gte,ilike,inArray,isNull,lt,lte,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges,placementCompanies,placementCompanyRelationships,placementJobs} from "@/db/schema";
+import {placementRecruiterDriveRequests} from "@/db/schema/placement-drive-requests";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
@@ -45,7 +46,7 @@ export async function searchOwnRecruiterDrives(
   eq(placementCompanies.status,"ACTIVE"),
   eq(colleges.status,"ACTIVE"),
   isNull(placementJobs.archivedAt),
-  inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
+  inArray(placementJobs.status,["PUBLISHED","CLOSED","CANCELLED"]),
  );
  const counts=options.previewOnly?[]:await getDb().select({
   status:placementJobs.status,
@@ -58,18 +59,55 @@ export async function searchOwnRecruiterDrives(
   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
   .where(scope).groupBy(placementJobs.status);
  const live=Number(counts.find(row=>row.status==="PUBLISHED")?.count??0);
- const closed=Number(counts.find(row=>row.status==="CLOSED")?.count??0);
- const totals={all:live+closed,live,closed,waiting:0};
- if(query.view==="WAITING")return {
-  rows:[] as Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>,
-  total:0,page:1,pages:0,pageSize,totals,
- };
+ const closed=counts.filter(row=>row.status==="CLOSED"||row.status==="CANCELLED")
+  .reduce((sum,row)=>sum+Number(row.count),0);
+ // Pending drive requests have independent identities; never present a request
+ // UUID as a placement job. Scope, sort and paginate before returning.
+ const requestRows=await getDb().select({
+   id:placementRecruiterDriveRequests.id,
+   status:placementRecruiterDriveRequests.status,
+   draft:placementRecruiterDriveRequests.draft,
+   createdAt:placementRecruiterDriveRequests.createdAt,
+   relationshipId:placementRecruiterDriveRequests.companyRelationshipId,
+ }).from(placementRecruiterDriveRequests).where(and(
+   eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
+   eq(placementRecruiterDriveRequests.collegeId,collegeId),
+   inArray(placementRecruiterDriveRequests.companyRelationshipId,relationshipIds),
+   inArray(placementRecruiterDriveRequests.status,["SENT_BACK","REQUEST","DRAFT","CANCELLED","REJECTED"]),
+ )).orderBy(
+   sql`case when ${placementRecruiterDriveRequests.status}='SENT_BACK' then 0
+       when ${placementRecruiterDriveRequests.status}='REQUEST' then 1
+       when ${placementRecruiterDriveRequests.status}='DRAFT' then 2 else 3 end`,
+   desc(placementRecruiterDriveRequests.createdAt),desc(placementRecruiterDriveRequests.id),
+ ).limit(201);
+ const requestProjection=(items:typeof requestRows)=>items.map(item=>({
+   id:item.id,status:item.status,createdAt:item.createdAt,
+   title:typeof item.draft.title==="string"?item.draft.title.slice(0,240):"Drive request",
+ }));
+ const waitingRequests=requestRows.filter(row=>
+   row.status==="SENT_BACK"||row.status==="REQUEST"||row.status==="DRAFT");
+ const closedRequests=requestRows.filter(row=>
+   row.status==="CANCELLED"||row.status==="REJECTED");
+ for(const row of requestRows)requirePermission(context,"placements.recruiter.read",{
+   collegeId,placementCompanyRelationshipId:row.relationshipId,
+ });
+ const totals={all:live+closed+waitingRequests.length+closedRequests.length,
+  live,closed:closed+closedRequests.length,waiting:waitingRequests.length};
+ if(query.view==="WAITING"){
+  const pages=Math.ceil(waitingRequests.length/pageSize);
+  const page=Math.min(Math.max(1,query.page),Math.max(1,pages));
+  return {
+   rows:[] as Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>,
+   requests:requestProjection(waitingRequests.slice((page-1)*pageSize,page*pageSize)),
+   total:waitingRequests.length,page,pages,pageSize,totals,
+  };
+ }
 
  const escaped=query.q.trim().replace(/[%_\\]/g,"\\$&");
  const criteria=and(
   scope,
   query.view==="LIVE"?eq(placementJobs.status,"PUBLISHED"):undefined,
-  query.view==="CLOSED"?eq(placementJobs.status,"CLOSED"):undefined,
+  query.view==="CLOSED"?inArray(placementJobs.status,["CLOSED","CANCELLED"]):undefined,
   escaped?ilike(placementJobs.title,"%"+escaped+"%"):undefined,
   query.employment==="ALL"?undefined:eq(placementJobs.employmentType,query.employment),
   query.mode==="ALL"?undefined:eq(placementJobs.workMode,query.mode),
@@ -99,13 +137,14 @@ export async function searchOwnRecruiterDrives(
   ? [options.descendingDeadline
      ? sql`${placementJobs.applicationDeadline} desc nulls last`
      : sql`${placementJobs.applicationDeadline} asc nulls last`,asc(placementJobs.id)]
-  : [desc(placementJobs.createdAt),asc(placementJobs.id)];
+  : [desc(placementJobs.createdAt),desc(placementJobs.id)];
  const rows=await base().where(criteria).orderBy(...order)
   .limit(pageSize).offset((page-1)*pageSize);
  const visible=rows.filter(row=>isExactRecruiterEmployerRow(context.recruiter!,row));
  for(const row of visible)requirePermission(context,"placements.recruiter.read",{
   collegeId:row.collegeId,placementCompanyRelationshipId:row.relationshipId,
  });
- return {rows:visible,total:options.previewOnly?visible.length:total,
+ return {rows:visible,requests:requestProjection(query.view==="CLOSED"?closedRequests:waitingRequests),
+  total:options.previewOnly?visible.length:total,
   page,pages:options.previewOnly?(visible.length?1:0):pages,pageSize,totals};
 }
