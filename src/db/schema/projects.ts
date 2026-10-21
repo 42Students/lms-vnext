@@ -30,6 +30,10 @@ export const projectTemplates = pgTable(
     slug: varchar("slug", { length: 96 }).notNull(),
     title: text("title").notNull(),
     summary: text("summary"),
+    // Old template create defaults/status are import provenance only.
+    legacyInitialWorkspaceStatus: varchar("legacy_initial_workspace_status", { length: 40 }),
+    legacyCourseLabel: varchar("legacy_course_label", { length: 160 }),
+    legacyPhase: varchar("legacy_phase", { length: 120 }),
     status: varchar("status", { length: 32 })
       .notNull()
       .default("DRAFT"),
@@ -121,6 +125,41 @@ export const projectTemplateVersions = pgTable(
   ],
 );
 
+/**
+ * Historic legacy template actions are append-only events. Do not collapse
+ * same-numbered legacy actions into the immutable vNext blueprint version row.
+ * The source snapshot is historical data and not an executable template.
+ */
+export const projectTemplateLegacyEvents = pgTable(
+  "project_template_legacy_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    templateId: uuid("template_id")
+      .notNull()
+      .references(() => projectTemplates.id, { onDelete: "restrict" }),
+    legacyEventId: integer("legacy_event_id"),
+    legacyTemplateVersion: integer("legacy_template_version"),
+    actionType: varchar("action_type", { length: 40 }),
+    lifecycleStatus: varchar("lifecycle_status", { length: 20 }),
+    snapshot: jsonb("snapshot").$type<Record<string, unknown>>(),
+    sourceActorName: text("source_actor_name"),
+    changedByUserId: uuid("changed_by_user_id")
+      .references(() => users.id, { onDelete: "restrict" }),
+    changedAt: timestamp("changed_at", { withTimezone: true }),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("project_template_legacy_events_template_source_uq")
+      .on(table.templateId, table.legacyEventId)
+      .where(sql`${table.legacyEventId} is not null`),
+    index("project_template_legacy_events_template_time_idx")
+      .on(table.templateId, table.changedAt),
+  ],
+);
+
 export const projectTemplateCollegeAssignments =
   pgTable(
     "project_template_college_assignments",
@@ -196,6 +235,11 @@ export const projectInstances = pgTable(
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     legacyTemplateBound: boolean("legacy_template_bound"),
     legacyRecoverableContent: boolean("legacy_recoverable_content"),
+    legacyOverview: jsonb("legacy_overview").$type<Record<string, unknown>>(),
+    legacyTemplateSnapshot: jsonb("legacy_template_snapshot").$type<Record<string, unknown>>(),
+    legacyOrganizationId: integer("legacy_organization_id"),
+    legacyClassId: integer("legacy_class_id"),
+    legacyRevision: integer("legacy_revision"),
     slug: varchar("slug", { length: 96 }).notNull(),
     title: text("title").notNull(),
     summary: text("summary"),
@@ -893,6 +937,14 @@ export const projectSubmissions = pgTable(
     legacySnapshot: text("legacy_snapshot"),
     legacyStatus: varchar("legacy_status", { length: 60 }),
     legacyRevisionCount: integer("legacy_revision_count"),
+    legacyReviewStatus: varchar("legacy_review_status", { length: 60 }),
+    legacyOptimisticVersion: integer("legacy_optimistic_version"),
+    legacyFileName: varchar("legacy_file_name", { length: 255 }),
+    legacyFileSize: integer("legacy_file_size"),
+    legacyMimeType: varchar("legacy_mime_type", { length: 160 }),
+    legacyStorageKey: text("legacy_storage_key"),
+    legacySubmittedLocal: timestamp("legacy_submitted_local", { withTimezone: false }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     sourceUrl: text("source_url"),
     demoUrl: text("demo_url"),
     notes: text("notes"),
