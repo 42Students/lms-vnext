@@ -1,6 +1,8 @@
-import { and, asc, eq, inArray, isNull, ne } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, ne, sql } from "drizzle-orm";
 import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 import { getDb } from "@/db/client";
+import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
+import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import {deliverRecordedJobApplicantsPlacementEvent} from "./learner-placement-event-delivery";
@@ -199,6 +201,18 @@ export async function createPlacementJob(
       );
     }
 
+    const fallbackType = input.employmentType === "INTERNSHIP" ? "Internship"
+      : input.employmentType === "CONTRACT" ? "Contract" : "Full-time";
+    const requestedLabel = (input.jobTypeLabel ?? fallbackType).trim().replace(/\s+/g, " ");
+    const builtin = TPO_BUILTIN_JOB_TYPES.find(type => type.label.toLowerCase() === requestedLabel.toLowerCase());
+    const [configured] = await tx.select({label:placementTpoJobTypes.label,
+      active:placementTpoJobTypes.active,countsAsPlaced:placementTpoJobTypes.countsAsPlaced})
+      .from(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.collegeId,input.collegeId),
+        sql`lower(${placementTpoJobTypes.label}) = lower(${requestedLabel}::text)`)).limit(1);
+    if ((!builtin && !configured) || configured?.active === false)
+      throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
+    const jobTypeLabel = builtin?.label ?? configured!.label;
+    const countsAsPlaced = builtin?.countsAsPlaced ?? configured?.countsAsPlaced ?? true;
     const [job] = await tx
       .insert(placementJobs)
       .values({
@@ -211,6 +225,8 @@ export async function createPlacementJob(
         legacyPostingDetails:input.legacyPostingDetails??null,
         employmentType:
           input.employmentType,
+        jobTypeLabel,
+        countsAsPlaced,
         workMode: input.workMode,
         locations: input.locations,
         openings: input.openings ?? null,
