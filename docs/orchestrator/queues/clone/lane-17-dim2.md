@@ -368,19 +368,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/academics/academics-overview.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/after-college/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/branch-season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/academics/academics-overview.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
 - [ ] `src/components/academics/college-recurring-preview.tsx`
 - [ ] `src/components/academics/college-structure-directory.tsx`
 - [ ] `src/components/academics/college-term-mapping-manager.tsx`
