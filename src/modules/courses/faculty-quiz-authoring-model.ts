@@ -24,7 +24,7 @@ export const facultyQuizCommandSchema=z.discriminatedUnion("action",[
   confirmed:z.literal(true),
  }),
  z.object({
-  action:z.enum(["PUBLISH","CLOSE","ARCHIVE"]),quizId:z.string().uuid(),
+  action:z.enum(["PUBLISH","UNPUBLISH","CLOSE","ARCHIVE"]),quizId:z.string().uuid(),
   expectedUpdatedAt:z.iso.datetime({offset:true}),confirmed:z.literal(true),
  }).strict(),
 ]);

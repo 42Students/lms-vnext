@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import { useToast } from "@/components/ui/toast";
 import {FilterChip} from "@/components/ui/filter-chip";
 import { Input } from "@/components/ui/input";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
@@ -38,8 +39,9 @@ export function AssignmentSubmissionControl({
   methodsEnabled?:boolean;
 }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [submissionType, setSubmissionType] =
-    useState<SubmissionType>("TEXT");
+    useState<SubmissionType>(multipartEnabled ? "FILE" : "TEXT");
   const [textContent, setTextContent] =
     useState("");
   const [submissionUrl, setSubmissionUrl] =
@@ -92,14 +94,14 @@ export function AssignmentSubmissionControl({
       const methods=normalizeAssignmentMethods(body?.methods);
       setAllowedMethods(methods);
       setLinkKind(methods.includes("EXTERNAL_LINK")?"EXTERNAL_LINK":"REPOSITORY_LINK");
-      setSubmissionType(methods.includes("WRITTEN_RESPONSE")?"TEXT":
+      setSubmissionType(multipartEnabled ? "FILE" : methods.includes("WRITTEN_RESPONSE")?"TEXT":
         methods.includes("EXTERNAL_LINK")||methods.includes("REPOSITORY_LINK")?"LINK":"FILE");
       setMethodsLoaded(true);
     }).catch(()=>{
       if(!controller.signal.aborted)setMethodsError("Submission methods could not be loaded. Refresh before submitting.");
     });
     return ()=>controller.abort();
-  },[assignmentId,deliveryId,methodsEnabled]);
+  },[assignmentId,deliveryId,methodsEnabled,multipartEnabled]);
   const unsent=(!success)&&(textContent.trim().length>0||submissionUrl.trim().length>0);
   useEffect(()=>{
     if(!unsent&&!submitting)return;
@@ -195,13 +197,19 @@ export function AssignmentSubmissionControl({
       );
 
       if (!response.ok) {
-        setError(
-          await courseApiError(response),
-        );
+        const message=await courseApiError(response);
+        setError(message.toLowerCase().includes("deadline is not configured")
+          ? "This assignment does not have a valid deadline. Submission is unavailable."
+          : message.toLowerCase().includes("deadline has passed")
+            ? "This assignment's deadline has passed. Submissions are closed."
+            : message);
         return;
       }
 
+      // The recorded assignment submission is the canonical completion signal
+      // read by the learner-course workspace, without a duplicate content write.
       setSuccess(true);
+      showToast({tone:"success",title:"Assignment submitted successfully."});
       router.refresh();
     } catch {
       setError(
@@ -287,7 +295,7 @@ export function AssignmentSubmissionControl({
           </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
-          onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
+          onSubmitted={() => { setSuccess(true); showToast({tone:"success",title:"Assignment submitted successfully."}); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <section className="mt-[var(--lms-space-4)] min-w-0">
             <h3 className="mb-[var(--lms-space-2)] text-xs font-semibold text-body">Written response</h3>
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>

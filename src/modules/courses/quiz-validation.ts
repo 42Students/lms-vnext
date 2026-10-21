@@ -214,6 +214,7 @@ export const quizTransitionSchema = z.object({
   confirmed: z.literal(true).optional(),
   action: z.enum([
     "PUBLISH",
+    "UNPUBLISH",
     "CLOSE",
     "ARCHIVE",
   ]),

@@ -262,6 +262,7 @@ export const createCourseLessonInputSchema =
       .int()
       .min(0)
       .max(10000),
+    visibleToStudents: z.boolean().optional(),
   }).strict();
 
 export const updateCourseLessonInputSchema =

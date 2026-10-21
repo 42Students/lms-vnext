@@ -30,6 +30,15 @@ export const FRIENDLY_MESSAGES = {
 
 /** Keep only intentional, customer-readable domain overrides. */
 const domainMessages: Readonly<Record<string, string>> = {
+  QUIZ_DEADLINE_NOT_CONFIGURED: "Due date is required before publishing",
+  QUIZ_DEADLINE_PASSED: "Cannot publish a quiz after its due date",
+  QUIZ_QUESTION_INVALID: "Add at least one valid question before publishing",
+  QUIZ_UNPUBLISH_LOCKED: "A quiz cannot be unpublished after submissions exist or after its deadline has passed",
+  QUIZ_QUESTIONS_LOCKED: "Quiz questions cannot be changed after learner submissions exist or after a published quiz has closed",
+  QUIZ_ATTEMPT_LIMIT_LOCKED: "Attempt limit cannot be changed after learner submissions exist or after a published quiz has closed",
+  QUIZ_DEADLINE_LOCKED: "Quiz deadline cannot be changed after learner submissions exist or after a published quiz has closed",
+  QUIZ_RANDOMIZATION_LOCKED: "Quiz randomization settings cannot be changed after learner submissions exist or after a published quiz has closed",
+
   ADMIN_SCOPE_NOT_FOUND: "Invalid college or organization selection. Choose an active scope and try again.",
   TPO_CRM_CONTACT_REQUIRED: "Please add a contact before continuing.",
   TPO_CRM_LEAD_NOT_FOUND: "We could not find that lead. Refresh and try again.",

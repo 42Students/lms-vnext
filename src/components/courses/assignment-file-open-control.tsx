@@ -48,7 +48,7 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
     return () => controller.abort();
   }, [submissionId, enabled, retryKey]);
 
-  async function download(fileId: string) {
+  async function download(fileId: string, disposition: "inline" | "attachment" = "attachment") {
     if (busyId) return;
     const controller = new AbortController();
     pending.current = controller; setBusyId(fileId); setError(null);
@@ -56,13 +56,16 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
       const response = await fetch(
         `/api/courses/assignment-submission-files/${encodeURIComponent(fileId)}/download-grant`,
         { method: "POST", credentials: "same-origin", cache: "no-store", signal: controller.signal,
-          headers: { "Content-Type": "application/json" }, body: JSON.stringify({ disposition: "attachment" }) },
+          headers: { "Content-Type": "application/json" }, body: JSON.stringify({ disposition }) },
       );
       if (!response.ok) throw new Error(await storageApiError(response));
       // Event-handler only (async click); the purity rule misreads this closure as render.
       // eslint-disable-next-line react-hooks/purity
       const grant = parseFileDownloadGrant(await response.json(), Date.now());
       if (grant.file.id !== fileId) throw new Error("The file permission did not match the requested file.");
+      if (disposition === "inline" && (grant.file.contentType !== "application/pdf" ||
+          grant.file.sizeBytes > 25 * 1024 * 1024 || grant.file.status !== "READY"))
+        throw new Error("Unable to display the document inline.");
       if (controller.signal.aborted) return;
       // An ephemeral navigation only: never render, save, or log the signed URL.
       const link = document.createElement("a");
@@ -70,12 +73,14 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
       link.target = "_blank";
       link.rel = "noopener noreferrer";
       link.referrerPolicy = "no-referrer";
-      link.download = grant.file.originalName;
+      if (disposition === "attachment") link.download = grant.file.originalName;
       document.body.append(link);
       link.click();
       link.remove();
     } catch (failure) {
-      if (!controller.signal.aborted) setError(failure instanceof Error ? failure.message : "File download failed. Try again.");
+      if (!controller.signal.aborted) setError(disposition === "inline"
+        ? "Unable to display the document inline. Download the PDF instead."
+        : failure instanceof Error ? failure.message : "File download failed. Try again.");
     } finally {
       pending.current = null; setBusyId(null);
     }
@@ -91,6 +96,14 @@ export function AssignmentFileOpenControl({ submissionId, enabled }: {
         return <li key={file.id} className="flex min-w-0 flex-col items-stretch gap-2 py-3 sm:flex-row sm:flex-wrap sm:items-center">
           <span className="min-w-0 flex-1 break-words text-sm text-body">{file.originalName} · {formatFileSize(file.sizeBytes)}</span>
           <span title={descriptor.detail} className="self-start sm:self-auto"><StatusBadge tone={descriptor.tone}>{descriptor.label}</StatusBadge></span>
+          {descriptor.usable && file.contentType === "application/pdf" &&
+           file.sizeBytes <= 25 * 1024 * 1024 ?
+            <Button type="button" variant="secondary" size="sm"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
+              aria-label={`Open PDF ${file.originalName} in a new tab`}
+              disabled={busyId !== null} onClick={() => void download(file.id,"inline")}>
+              {busyId === file.id ? "Preparing PDF…" : "View PDF"}
+            </Button> : null}
           {descriptor.usable ? <Button type="button" variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9"
             disabled={busyId !== null} onClick={() => void download(file.id)}>
             {busyId === file.id ? "Preparing file…" : "Download"}

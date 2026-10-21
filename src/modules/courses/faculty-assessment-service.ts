@@ -69,10 +69,10 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
   const [assignmentRows, quizRows, contentOrders] = await Promise.all([
     getDb().select().from(courseAssignments)
       .where(and(inArray(courseAssignments.lessonId, lessonIds),
-        assignmentAudience, ne(courseAssignments.status, "ARCHIVED"))),
+        assignmentAudience)),
     getDb().select().from(courseQuizzes)
       .where(and(inArray(courseQuizzes.lessonId, lessonIds),
-        quizAudience, ne(courseQuizzes.status, "ARCHIVED"))),
+        quizAudience)),
     getDb().select({lessonId:lessonContents.lessonId,deliveryId:lessonContents.deliveryId,
       sequence:lessonContents.sequence}).from(lessonContents)
       .where(and(inArray(lessonContents.lessonId, lessonIds),
@@ -148,11 +148,11 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
     }
   }
 
-  const orderByDueTitle = <T extends {dueAt:Date|null;title:string}>(a:T,b:T) =>
-    (a.dueAt?.getTime() ?? Number.MAX_SAFE_INTEGER) -
-    (b.dueAt?.getTime() ?? Number.MAX_SAFE_INTEGER) ||
-    a.title.localeCompare(b.title);
-  empty.assignments.sort(orderByDueTitle);
-  empty.quizzes.sort(orderByDueTitle);
+  // The legacy quiz repository orders by newest created first; the vNext
+  // page already paginates the scoped collection in slices of 20.
+  const newestFirst = <T extends {createdAt:Date;id:string}>(a:T,b:T) =>
+    b.createdAt.getTime()-a.createdAt.getTime() || b.id.localeCompare(a.id);
+  empty.assignments.sort(newestFirst);
+  empty.quizzes.sort(newestFirst);
   return empty;
 }

@@ -235,6 +235,7 @@ export function apiErrorResponse(error: unknown) {
       "ASSIGNMENT_DEADLINE_NOT_CONFIGURED",
       "ASSIGNMENT_METHOD_NOT_ALLOWED",
       "QUIZ_QUESTION_INVALID",
+      "QUIZ_DEADLINE_NOT_CONFIGURED",
       "QUIZ_OPTION_INVALID",
       "QUIZ_ANSWER_INVALID",
     ]);
