@@ -24,16 +24,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/tpo/legacy-tpo-notification-feed.module.css`
 - [x] `src/components/tpo/tpo-bell-panel.tsx`
 - [x] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/ui/card.tsx`
-- [ ] `src/components/ui/error-state.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/textarea.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/projects/legacy-project-tabs.module.css`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-list.tsx`
-- [ ] `src/components/projects/super-admin-template-tabs.tsx`
+- [x] `src/components/ui/card.tsx`
+- [x] `src/components/ui/error-state.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/textarea.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/projects/legacy-project-tabs.module.css`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-list.tsx`
+- [x] `src/components/projects/super-admin-template-tabs.tsx`
 - [ ] `src/components/tpo/legacy-tpo-notification-feed.module.css`
 - [ ] `src/components/tpo/tpo-bell-panel.tsx`
 - [ ] `src/components/tpo/tpo-job-types-editor.tsx`
