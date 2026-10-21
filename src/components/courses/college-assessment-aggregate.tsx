@@ -86,7 +86,8 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           "Course authoring and detailed review remain in their offering workspaces."
         }
         actions={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {isAssignment ? leading : null}
             {isAssignment ? data.items.length ? <Link prefetch={false} download
               href={collegeAssessmentExportHref(data.kind,data.query,"PAGE")}
               className="inline-flex min-h-11 items-center gap-2 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
@@ -107,7 +108,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           </div>
         }
       />
-      {leading ? <section aria-label="New assessment" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
+      {!isAssignment && leading ? <section aria-label="New assessment" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
 
       <section aria-label="Assessment directory filters"
         className="border-b border-border pb-6">
