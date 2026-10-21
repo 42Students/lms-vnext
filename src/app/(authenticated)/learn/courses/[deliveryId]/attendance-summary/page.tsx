@@ -39,12 +39,12 @@ export default async function LearnerCourseAttendanceSummaryPage({
   return (
     <div className="min-w-0 space-y-6">
       <Link href={"/learn/courses/" + encodeURIComponent(deliveryId) + "/attendanceDetail"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         ← Course attendance
       </Link>
       <PageHeader title="Course attendance history" />
       <details className="border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">All-time course attendance</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">All-time course attendance</summary>
         <section aria-label="All-time course attendance" className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Marked attendance", value: attendance.overall?.markedSessions ?? 0 },

@@ -23,7 +23,7 @@ export default async function HrJobActivityPage({searchParams}:{
   collegeId:raw.collegeId,kind:raw.kind,page:raw.page,q:raw.q,
  });
  if(!input.success)return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Hiring activity"/>
-  <ErrorState title="Invalid activity filters" description="Review the college and event filters." action={<Link href="/hr/activity" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose again</Link>}/></div>;
+  <ErrorState title="Invalid activity filters" description="Review the college and event filters." action={<Link href="/hr/activity" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Choose again</Link>}/></div>;
  const result=await listRecruiterJobActivity(context,input.data);
  const fmt=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
@@ -89,7 +89,7 @@ export default async function HrJobActivityPage({searchParams}:{
    <footer className="min-w-0 space-y-2">
     <nav aria-label="Activity history pages" className="flex min-w-0 flex-wrap items-center gap-3">
      {result.page>1?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(result.page-1)}
-       className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+       className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
      <span className="text-xs text-muted-foreground">Page {result.page} · up to {input.data.limit} events</span>
      {result.hasNext?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(result.page+1)}
        className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}

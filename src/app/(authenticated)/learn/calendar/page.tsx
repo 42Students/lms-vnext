@@ -46,7 +46,7 @@ export default async function LearnerCalendarPage({searchParams}:{
     <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader title="Class Schedule" actions={(
         <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-[var(--lms-control-height)] w-full max-md:min-h-11 items-center justify-center md:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="inline-flex min-h-[var(--lms-control-height)] w-full max-md:min-h-11 items-center justify-center md:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Attendance calendar →
         </Link>
       )} />

@@ -38,7 +38,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
    return <div className="min-w-0 max-w-full space-y-4 min-[768px]:space-y-6"><PageHeader title="Messages"/>
     <ErrorState title="No access to this college"
      description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
-     action={<Link href="/hr/home" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Today</Link>}/>
+     action={<Link href="/hr/home" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Return to Today</Link>}/>
    </div>;
   }
   if(error instanceof TpoMessagingError)notFound();
@@ -76,11 +76,11 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <Alert tone="warning">Hiring drive details are temporarily unavailable. You can still read and reply to this authorized conversation.</Alert>:null}
   <div className="flex min-w-0 flex-wrap items-center gap-3">
   {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
-   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
    Open drive: {matchingDrive.job.title}
   </Link>:null}
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
-   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to conversations</Link>
+   className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to conversations</Link>
   </div>
   <p className="text-sm text-body">{result.total.toLocaleString("en-IN")} messages · {result.unread.toLocaleString("en-IN")} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
@@ -109,7 +109,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
         </li>)}
       </ol></ScrollCue>
       <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
-        className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Review requests, answers and decisions
       </Link>
     </details>:null}
@@ -123,7 +123,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
       <p>Proposal reference: {message.proposal.referenceId}</p>
       <p>Not a submitted approval request or a published drive.</p>
       <Link href={hrSentProposalsHref(result.thread.collegeId)}
-       className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
        View sent proposal history
       </Link>
      </div>:null}
@@ -133,13 +133,13 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   {!result.messages.length?<EmptyState title="No messages on this page" action={<Link href={"/hr/conversations?collegeId="+encodeURIComponent(result.thread.collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to conversations</Link>}/>:null}
   <nav aria-label="Conversation history" className="flex min-w-0 flex-wrap items-center gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newest messages</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-primary-text min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Newest messages</Link>:null}
    {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Oldest messages</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Oldest messages</Link>:null}
    {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Older</Link>:null}
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
-    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer</Link>:null}
+    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Newer</Link>:null}
   </nav>
   <div className="min-w-0 max-w-3xl">
    <RecruiterConversationReplyForm threadId={result.thread.id}/>
