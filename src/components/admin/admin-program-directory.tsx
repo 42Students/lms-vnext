@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch} from "@/lib/api-fetch";
 import {deriveSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
@@ -14,6 +14,7 @@ import { Select } from "@/components/ui/select";
 import { Disclosure } from "@/components/ui/disclosure";
 import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { useToast } from "@/components/ui/toast";
+import { Alert } from "@/components/ui/alert";
 import {
   adminProgramsCsv,
   filterAdminPrograms,
@@ -31,8 +32,8 @@ function listenSize(fn: () => void) {
 function storedSize(): number {
   try {
     const size = Number(localStorage.getItem(PROGRAM_SIZE_KEY));
-    return [10,25,50,100].includes(size) ? size : 10;
-  } catch { return 10; }
+    return [10,25,50,100].includes(size) ? size : 25;
+  } catch { return 25; }
 }
 function rememberSize(size: number) {
   try { localStorage.setItem(PROGRAM_SIZE_KEY, String(size)); } catch { return; }
@@ -86,12 +87,16 @@ export function AdminProgramDirectory({
   departments: readonly { id: string; name: string }[];
 }) {
   const router = useRouter();
+  const pathname=usePathname();
+  const departmentHref=pathname.startsWith("/college/")?"/college/departments":"/admin/departments";
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [departmentId, setDepartmentId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [durationYears, setDurationYears] = useState("4");
+  const [fieldErrors,setFieldErrors]=useState<{department?:string;name?:string;duration?:string}>({});
+  const [createError,setCreateError]=useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = useSyncExternalStore(listenSize, storedSize, () => 10);
@@ -103,35 +108,46 @@ export function AdminProgramDirectory({
 
   function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!validLegacyProgramYears(durationYears)) {
-      showToast({tone:"error",title:"Check program details",description:"Duration must be a whole number from 1 to 10 years."});return;
-    }
-    const parsed = createCollegeProgramSchema.safeParse({
-      departmentId, name, code:code.trim() || deriveSuperAdminProgramCode(name), durationTerms: legacyDurationYearsToTerms(Number(durationYears)),
+    if(pending)return;
+    setCreateError("");
+    const errors:{department?:string;name?:string;duration?:string}={};
+    if(!departmentId)errors.department="Please select a department";
+    if(!name.trim())errors.name="Please enter program name";
+    else if(name.length>255)errors.name="Maximum 255 characters";
+    if(!durationYears.trim())errors.duration="Please enter program duration";
+    else if(!validLegacyProgramYears(durationYears))
+      errors.duration="Duration must be a whole number from 1 to 10 years.";
+    setFieldErrors(errors);
+    if(Object.keys(errors).length)return;
+    const parsed=createCollegeProgramSchema.safeParse({
+      departmentId,name,code:code.trim()||deriveSuperAdminProgramCode(name),
+      durationTerms:legacyDurationYearsToTerms(Number(durationYears)),
     });
-    if (!parsed.success) {
-      showToast({
-        tone: "error", title: "Check program details",
-        description: parsed.error.issues[0]?.message ?? "Enter a valid department, program, code and duration.",
-      });
+    if(!parsed.success){
+      const issue=parsed.error.issues[0],key=issue?.path[0];
+      const message=issue?.message??"Enter a valid department, program, code and duration.";
+      if(key==="departmentId")setFieldErrors({department:"Please select a department"});
+      else if(key==="name")setFieldErrors({name:"Program name cannot be empty"});
+      else if(key==="durationTerms")setFieldErrors({duration:message});
+      else setCreateError(message);
       return;
     }
     startTransition(async () => {
       try {
-        await apiFetch("/api/academics/programs", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(parsed.data),
+        await apiFetch("/api/academics/programs",{
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify(parsed.data),
         });
-        setName("");
-        setCode("");
-        showToast({ tone: "success", title: `Created program “${name.trim()}”. Next, create its semesters and batches.` });
+        setName("");setCode("");setFieldErrors({});setCreateError("");
+        showToast({tone:"success",title:`Created program “${name.trim()}”. Next, create its semesters and batches.`});
         router.refresh();
-      } catch (error) {
-        showToast({
-          tone: "error", title: "Program creation failed",
-          description: error instanceof Error ? error.message : "Try again.",
-        });
+      }catch(error){
+        const message=error instanceof Error?error.message:"Failed to create program.";
+        setCreateError(message);
+        if(/dept_id|departmentId|department/i.test(message))setFieldErrors({department:message});
+        else if(/duration_years|durationTerms|durationYears/i.test(message))setFieldErrors({duration:message});
+        else if(/(?:program )?name/i.test(message))setFieldErrors({name:message});
+        showToast({tone:"error",title:"Program was not created",description:message});
       }
     });
   }
