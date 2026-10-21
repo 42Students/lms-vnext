@@ -4,6 +4,6 @@ AUDIT ONLY: do not change code. Units moved here from slower lanes. Rules, facet
 
 - [x] (from lane 2) L19-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java`
 - [x] (from lane 4) L18-U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Lesson.java`
-- [ ] (from lane 5) L18-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/SemesterManagement.js`
-- [ ] (from lane 6) L19-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ModuleAccessController.java`
+- [x] (from lane 5) L18-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/SemesterManagement.js`
+- [x] (from lane 6) L19-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ModuleAccessController.java`
 - [ ] (from lane 7) L18-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/JobImportantDateEventDTO.java`
