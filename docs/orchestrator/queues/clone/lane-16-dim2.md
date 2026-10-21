@@ -106,18 +106,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/attendance-corrections/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
