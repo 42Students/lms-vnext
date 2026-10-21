@@ -78,6 +78,12 @@ export async function PATCH(
   }
 }
 
+/** Legacy PUT /fetch-update callers may send the same complete name payload.
+ * Keep the vNext origin, role, schema and archived-parent checks in PATCH. */
+export async function PUT(request: Request, context: RouteContext) {
+  return PATCH(request, context);
+}
+
 export async function DELETE(
   request: Request,
   { params }: RouteContext,

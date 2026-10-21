@@ -4,6 +4,12 @@ import type { S3Config } from "./s3-client";
 import { PrivateObjectStorageError } from "./storage-errors";
 
 /**
+ * Legacy Spring properties: r2.account.id → R2_ACCOUNT_ID,
+ * r2.access.key → R2_ACCESS_KEY, r2.secret.key → R2_SECRET_KEY,
+ * r2.bucket.name → R2_PRIVATE_BUCKET (new dedicated PRIVATE bucket).
+ * r2.public.url / R2_PUBLIC_URL is retired for vNext reads and must never be
+ * used to expose private objects. See docs/architecture/r2-vnext-cutover.md.
+ *
  * Private object storage normally lives in its own R2 bucket. The legacy LMS
  * bucket (R2_BUCKET_NAME) is served publicly through R2_PUBLIC_URL, so the two
  * names are required to differ.

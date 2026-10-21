@@ -152,6 +152,10 @@ export default async function SuperAdminCollegeModuleAccessPage({
         </Link>
       </nav>
       <LearnerModuleAccessDrawer collegeId={college.id}/>
+      <Link href={`/admin/features/${encodeURIComponent(college.id)}/trace?overridesOnly=only`}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+        Review learner overrides and inherited settings →
+      </Link>
 
       <nav aria-label="Learner access explanation" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
         <p className="max-w-2xl text-sm leading-6 text-body">
@@ -301,7 +305,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       </section>
 
-      <section aria-label="Academic module rules" className="border-t border-border pt-6">
+      <section id="academic-module-rules" aria-label="Academic module rules" className="scroll-mt-24 border-t border-border pt-6">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Placements eligibility is decided by the placement cell; that control is read-only here.</p>
         {academicRead.ok ? <>
