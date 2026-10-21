@@ -451,7 +451,7 @@ export function RecruiterResultControls({
                     href={round.meetingUrl}
                     
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+                    className="mt-2 inline-flex min-h-11 items-center text-xs font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                   >
                     Open meeting →
                   </a>
