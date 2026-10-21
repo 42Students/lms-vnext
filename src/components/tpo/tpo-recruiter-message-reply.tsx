@@ -67,7 +67,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   }finally{pending.current=false;setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Reply to recruiter">
-  <h2 className="font-semibold text-foreground">Reply</h2>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply</h2>
   <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
@@ -83,7 +83,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
       onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent.isComposing){
        e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
    </label>
-   <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
+   <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
     <Button variant="secondary" type="button" disabled={busy||!body.trim()} onClick={discardDraft}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Discard draft</Button>
@@ -91,7 +91,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
       Send message
     </Button>
-    {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
+    {discardReview?<p role="status" className="w-full text-sm leading-[22px]">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
     {unread?<Button variant="secondary" type="button" disabled={busy} onClick={()=>void post("read")}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
       Mark as read

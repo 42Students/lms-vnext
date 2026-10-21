@@ -268,7 +268,7 @@ export function PersonMembershipActions({
         title={`Manage roles · ${displayName}`}
         description="Roles are membership-scoped. SUPER_ADMIN is never assigned here."
       >
-        <p className="mb-3 text-sm text-body">The College Admin role can only be assigned or removed by a Super Admin.</p>
+        <p className="mb-3 text-sm text-body leading-[22px]">The College Admin role can only be assigned or removed by a Super Admin.</p>
         <div role="group" aria-label="Membership roles" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {MEMBERSHIP_ROLES.map((role) => {
             const checked = currentRoles.includes(role);

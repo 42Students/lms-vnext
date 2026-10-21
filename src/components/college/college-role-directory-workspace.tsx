@@ -136,7 +136,7 @@ export async function CollegeRoleDirectoryWorkspace({
           ["Active",result.metrics.active],
           ["Suspended",result.metrics.suspended],
         ].map(([label,value])=><StatTile key={label} variant="college" label={String(label)} value={value}/>)}
-        <p className="col-span-full text-xs leading-5 text-muted-foreground">Visible now: <span className="font-semibold">Not tracked</span>. Do not infer presence from login or membership status.</p>
+        <p className="col-span-full text-xs text-muted-foreground leading-[20px]">Visible now: <span className="font-semibold">Not tracked</span>. Do not infer presence from login or membership status.</p>
       </section>
       <section className="min-w-0 border-t border-border pt-4" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
@@ -350,7 +350,7 @@ export async function CollegeRoleDirectoryWorkspace({
       </section>
 
       <section aria-label={title + " results"} className="min-w-0">
-        <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
+        <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground leading-[22px]">
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
         {result.items.length === 0 ? (
@@ -368,7 +368,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 <div className="min-w-0">
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
                     className="break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.name}</Link>
-                  <p className="mt-1 break-all text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
+                  <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">{item.email??"No email recorded"}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
@@ -376,8 +376,8 @@ export async function CollegeRoleDirectoryWorkspace({
                   </StatusBadge>
                   {item.userStatus!=="ACTIVE"?<span className="text-xs text-warning">Account: {item.userStatus}</span>:null}
                 </div>
-                <p className="break-words text-sm text-body">{describeCollegeDirectoryContext(kind,item)}</p>
-                <p className="text-xs text-muted-foreground">Joined {joinedLabel(item.joinedAt)} IST</p>
+                <p className="break-words text-sm text-body leading-[22px]">{describeCollegeDirectoryContext(kind,item)}</p>
+                <p className="text-xs text-muted-foreground leading-[20px]">Joined {joinedLabel(item.joinedAt)} IST</p>
                 <div className="flex flex-wrap gap-3 text-sm">
                   <Link href={collegeRoleContactHref(item.membershipId)}
                     className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View contact card</Link>
@@ -411,7 +411,7 @@ export async function CollegeRoleDirectoryWorkspace({
                     className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     {item.name}
                   </Link>
-                  <p className="mt-1 text-xs text-muted-foreground">{item.email??"No email recorded"}</p>
+                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">{item.email??"No email recorded"}</p>
                   <Link href={collegeRoleContactHref(item.membershipId)}
                     className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     View contact card
@@ -425,7 +425,7 @@ export async function CollegeRoleDirectoryWorkspace({
                   <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
                     {item.membershipStatus}
                   </StatusBadge>
-                  {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning">
+                  {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning leading-[20px]">
                     Platform account: {item.userStatus}
                   </p>:null}
                 </>},
@@ -458,7 +458,7 @@ export async function CollegeRoleDirectoryWorkspace({
       </section>
 
       <nav aria-label={title + " pagination"} className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground leading-[22px]">
           Page {result.filter.page.toLocaleString("en-IN")} of {result.totalPages.toLocaleString("en-IN")} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first.toLocaleString("en-IN")}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last.toLocaleString("en-IN")} of {result.total.toLocaleString("en-IN")} memberships
         </p>
         <div className="flex gap-2">
@@ -480,11 +480,11 @@ export async function CollegeRoleDirectoryWorkspace({
           ) : null}
         </div>
       </nav>
-      <p className="text-xs leading-5 text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[20px]">
         CSV applies the same roster filters as this view, not just name and status.
         Export includes only current-college role memberships, rechecks College Admin access and is capped at 1,000 rows.
       </p>
-      <p className="text-xs leading-5 text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[20px]">
         Directory records are scoped to this college.
         {kind === "FACULTY"
           ? " Counts are active teaching assignments, not a complete workload or schedule."

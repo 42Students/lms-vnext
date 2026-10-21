@@ -122,7 +122,7 @@ export async function SuperAdminTemplateSubviewPage({
     // template subview or accidentally present an empty global template.
     // The retry points back to the same authorized route, without exposing
     // exception text or version JSON to an unverified viewer.
-    return <div className="min-w-0 space-y-[var(--lms-space-5)]">
+    return <div className="min-w-0 space-y-5">
       <ProjectAdminNav basePath="/admin/projects" active="templates"/>
       <PageHeader title="Template section"/>
       <ErrorState title="Template section unavailable"
@@ -436,7 +436,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 Resources
               </h2>
               <StatusBadge>
@@ -523,7 +523,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 Active college assignments
               </h2>
               <StatusBadge>
