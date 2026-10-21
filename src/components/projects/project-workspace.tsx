@@ -188,11 +188,12 @@ function formatWorkspaceTarget(value: string | null | undefined) {
 function WorkspaceHealthSnapshot({ workspace, templateHref }: { workspace: Workspace; templateHref: string }) {
   const tasks = workspace.readiness.execution.tasks;
   const sprints = workspace.readiness.execution.sprints;
-  const progress = tasks.total > 0
-    ? Math.round(100 * tasks.done / tasks.total)
-    : sprints.total > 0
-      ? Math.round(100 * sprints.completed / sprints.total)
-      : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
+  // Legacy overall progress weighs every task and sprint equally. Only use the
+  // editable fallback when the project has no plan items at all.
+  const totalPlanItems = tasks.total + sprints.total;
+  const progress = totalPlanItems > 0
+    ? Math.round(100 * (tasks.done + sprints.completed) / totalPlanItems)
+    : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
   const facts = [
     { label: "Team", value: workspace.members.length + " member" + (workspace.members.length === 1 ? "" : "s") },
     { label: "Tasks", value: tasks.total ? tasks.done + " / " + tasks.total + " done" : "No tasks yet" },
@@ -251,8 +252,9 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
   const doneTasks = workspace.tasks.filter(task => task.status === "DONE");
   const withSubmission = doneTasks.filter(task => workspace.taskSubmissions.some(submission =>
     submission.taskId === task.id && Boolean(submission.submissionUrl))).length;
-  const progress = tasks.total > 0 ? Math.round(tasks.done * 100 / tasks.total)
-    : sprints.total > 0 ? Math.round(sprints.completed * 100 / sprints.total)
+  const totalPlanItems = tasks.total + sprints.total;
+  const progress = totalPlanItems > 0
+    ? Math.round(100 * (tasks.done + sprints.completed) / totalPlanItems)
     : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
   const override = readiness.readinessOverride;
   const overrideActive = override.state === "FORCE_UNLOCK" || override.state === "FORCE_BLOCK";
@@ -544,7 +546,13 @@ export function ProjectWorkspace({
       ) : null}
       {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
-        project={workspace.project} taskProgress={readiness.execution.tasks}/>:null}
+        project={workspace.project}
+        taskProgress={{
+          done: readiness.execution.tasks.done + readiness.execution.sprints.completed,
+          total: readiness.execution.tasks.total + readiness.execution.sprints.total,
+        }}
+        estimatedTaskCount={workspace.tasks.filter(task =>
+          !task.deletedAt && task.estimatePoints !== null).length}/>:null}
       {show("summary") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
@@ -1035,16 +1043,22 @@ export function ProjectWorkspace({
                   className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">add a release</a>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
-          {mode!=="MENTOR"&&workspace.releases.length===0?
-            <div className="space-y-2">
-              <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
-                description={mode==="ADMIN"
-                  ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
-                  :"Add the sprints this project should be measured against."}/>
-              {mode==="ADMIN"?<Link href={"?retry=1"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+          {workspace.releasesLoadError ? (
+            <div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-[3px] border-error bg-error-subtle px-3 py-3 text-sm">
+              <div>
+                <p className="font-semibold text-foreground">Could not load project releases.</p>
+                <p className="mt-1 text-body">Tasks, Team and other loaded workspace sections remain available.</p>
+              </div>
+              <Link href={"?retry=1"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
                 Retry releases
-              </Link>:null}
-            </div>:null}
+              </Link>
+            </div>
+          ) : null}
+          {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
+            <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
+              description={mode==="ADMIN"
+                ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
+                :"Add the sprints this project should be measured against."}/>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
