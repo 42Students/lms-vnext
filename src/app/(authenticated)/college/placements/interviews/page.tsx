@@ -101,7 +101,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     </Disclosure>
    </form>
    <div className="flex flex-wrap items-center gap-3">
-    <p role="status" className="text-sm">{data.total} matching appointments</p>
+    <p role="status" className="text-sm">{data.total.toLocaleString("en-IN")} matching appointments</p>
     
    </div>
    {data.limited?<Banner tone="warning">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</Banner>:null}
