@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ErrorState } from "@/components/ui/error-state";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default function CollegeBrandingPreviewError({
   reset,
@@ -11,6 +12,9 @@ export default function CollegeBrandingPreviewError({
   reset: () => void;
 }) {
   return (
+   <div className="min-w-0 space-y-4">
+    <PageHeader title="Look and feel"/>
+    <section aria-label="Branding load error" className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
     <ErrorState
       title="Could not load college branding"
       description="Branding settings could not be retrieved. No default or missing-data conclusion is inferred."
@@ -26,5 +30,7 @@ export default function CollegeBrandingPreviewError({
         </div>
       }
     />
+    </section>
+   </div>
   );
 }
