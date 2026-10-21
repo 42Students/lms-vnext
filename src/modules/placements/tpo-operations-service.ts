@@ -472,6 +472,122 @@ db
     };
   });
 
+
+  // The Super Admin attention summary is an independent, college-scoped
+  // read. Only capped sample rows leave PostgreSQL; window aggregates retain
+  // exact drive and candidate counts across the entire selected college.
+  // A failure must not hide the independently loaded drives and KPI tiles.
+  type AttentionRow = {
+    code: string; job_id: string; job_title: string; company_name: string;
+    affected: number; category_jobs: number; category_affected: number;
+  };
+  const attentionRead = await db.execute(sql<AttentionRow>`
+    with scoped_jobs as (
+      select j.id, j.title, j.status, j.application_deadline, j.openings,
+             c.name as company_name
+        from placement_jobs j
+        join placement_company_relationships rel on rel.id = j.company_relationship_id
+        join placement_companies c on c.id = rel.company_id
+       where j.college_id = ${collegeId} and j.archived_at is null
+    ),
+    applications as (
+      select a.job_id,
+             count(*) filter (where a.status = 'SUBMITTED')::int as submitted,
+             count(*) filter (where a.status = 'SUBMITTED' and s.status = 'SHORTLISTED')::int as shortlisted,
+             count(*) filter (
+               where a.status = 'SUBMITTED' and s.status in ('PENDING','HOLD')
+                 and a.submitted_at <= ${staleBefore}
+             )::int as stale
+        from placement_applications a
+        join scoped_jobs j on j.id = a.job_id
+        left join placement_application_screenings s on s.application_id = a.id
+       group by a.job_id
+    ),
+    interviews as (
+      select r.job_id,
+             count(*) filter (where r.kind = 'INTERVIEW' and r.status <> 'CANCELLED')::int as interviews,
+             count(*) filter (where r.kind = 'INTERVIEW' and r.status = 'SCHEDULED')::int as scheduled
+        from placement_job_rounds r join scoped_jobs j on j.id = r.job_id
+       group by r.job_id
+    ),
+    missing_letters as (
+      select a.job_id, count(*)::int as missing
+        from placement_offers o
+        join placement_applications a on a.id = o.application_id
+        join scoped_jobs j on j.id = a.job_id
+       where o.status in ('ISSUED','ACCEPTED')
+         and nullif(btrim(o.offer_letter_url),'') is null
+       group by a.job_id
+    ),
+    candidates as (
+      select 'STALE_APPLICATIONS'::text as code,
+             j.id as job_id, j.title as job_title, j.company_name,
+             coalesce(a.stale,0) as affected
+        from scoped_jobs j left join applications a on a.job_id = j.id
+       where j.status = 'PUBLISHED' and coalesce(a.stale,0) > 0
+      union all
+      select 'INTERVIEW_UNSCHEDULED', j.id, j.title, j.company_name,
+             coalesce(a.shortlisted,0)
+        from scoped_jobs j
+        left join applications a on a.job_id = j.id
+        left join interviews i on i.job_id = j.id
+       where j.status = 'PUBLISHED' and coalesce(a.shortlisted,0)>0
+         and coalesce(i.interviews,0)>0 and coalesce(i.scheduled,0)=0
+      union all
+      select 'OFFERED_NO_LETTER', j.id, j.title, j.company_name,
+             coalesce(o.missing,0)
+        from scoped_jobs j left join missing_letters o on o.job_id = j.id
+       where coalesce(o.missing,0)>0 and j.status <> 'CANCELLED'
+      union all
+      select 'CLOSING_SOON_LOW_CONVERSION', j.id, j.title, j.company_name,
+             greatest(1,coalesce(a.submitted,0))
+        from scoped_jobs j left join applications a on a.job_id = j.id
+       where j.status = 'PUBLISHED' and j.openings is not null
+         and j.application_deadline > ${now}
+         and j.application_deadline <= ${new Date(now.getTime()+7*86400000)}
+         and coalesce(a.submitted,0) < ceil(j.openings / 2.0)
+    ),
+    ranked as (
+      select code,job_id,job_title,company_name,affected,
+             count(*) over(partition by code)::int as category_jobs,
+             sum(affected) over(partition by code)::int as category_affected,
+             row_number() over(partition by code
+               order by affected desc,job_title asc,job_id asc) as rn
+        from candidates
+    )
+    select code,job_id,job_title,company_name,affected,category_jobs,category_affected
+      from ranked where rn<=3
+      order by code,rn
+  `).then(result=>result.rows).catch(()=>null);
+  const attentionCodes = [
+    "STALE_APPLICATIONS", "INTERVIEW_UNSCHEDULED",
+    "OFFERED_NO_LETTER", "CLOSING_SOON_LOW_CONVERSION",
+  ] as const;
+  const attentionCategories = attentionCodes.map(code => {
+    const rows = (attentionRead ?? []).filter(row => row.code === code);
+    return {
+      code,
+      jobs: Number(rows[0]?.category_jobs ?? 0),
+      affected: Number(rows[0]?.category_affected ?? 0),
+      samples: rows.map(row => ({
+        code, jobId: row.job_id, jobTitle: row.job_title,
+        companyName: row.company_name, count: Number(row.affected),
+        priority: (code === "STALE_APPLICATIONS" ||
+          code === "OFFERED_NO_LETTER" ? "HIGH" : "MEDIUM") as QueuePriority,
+      })),
+    };
+  });
+  // Avoid mixing sample size (three per category), number of flagged drives,
+  // and the number of affected learners. Keep each metric separately exposed.
+  // The existing workQueue is a dashboard sample; consumer UI must switch to
+  // attention.categories for exact category counts and distinct empty/error UI.
+  const attention = {
+    available: attentionRead !== null,
+    error: attentionRead === null ?
+      "Couldn't check for anything that needs attention." : null,
+    categories: attentionCategories,
+  };
+
   workQueue.sort((left, right) => {
     const priorityDifference =
       priorityRank[left.priority] -
@@ -575,6 +691,7 @@ db
       ).size,
     },
     workQueue,
+    attention,
     upcomingRounds,
     jobs: jobViews,
   };

@@ -44,6 +44,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { ActivityServiceError } from "./errors";
 import { sanitizeActivityMetadata } from "./metadata-sanitizer";
 import { safeNotificationActionHref } from "./notification-action";
+import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 
 type NotificationWriter = Pick<
   ReturnType<typeof getDb>,
@@ -301,15 +302,15 @@ export async function resolveStaffNotificationRecipients(
 }
 
 /**
- * Mandatory preflight for edit/recall: inspect the original persisted scope
- * before checking the requested destination; author ownership applies to
- * faculty while authorized admins may manage their own scoped notices.
- * Caller must still perform its edit/delete and commit atomically.
+ * Validate an authored notice's ORIGINAL persisted audience before a staff
+ * mutation. Faculty may touch only notices they created while still assigned
+ * to that original class/course; administrators must pass central scope checks.
+ * This is a preflight, not a replacement for checking again inside the write
+ * transaction once the authored-notice table is available.
  */
-export async function requireStaffNotificationRetarget(
+export async function requireStaffNotificationMutation(
   context: RequestContext,
   eventIdInput: unknown,
-  nextDraft: unknown,
 ): Promise<StaffNotificationAudience> {
   const eventId = z.string().uuid().parse(eventIdInput);
   const [existing] = await getDb().select({
@@ -320,28 +321,55 @@ export async function requireStaffNotificationRetarget(
     metadata: activityEvents.metadata,
   }).from(activityEvents).where(eq(activityEvents.id, eventId)).limit(1);
   if (!existing || existing.subjectType !== "NOTIFICATION" ||
-      !existing.collegeId || !existing.organizationId) {
+      !existing.collegeId || !existing.organizationId ||
+      existing.metadata.deletedAt != null) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
   const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN");
   if (!isAdmin && existing.actorUserId !== context.user.id) {
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   }
+  const audience: StaffNotificationAudience = {
+    organizationId: existing.organizationId,
+    collegeId: existing.collegeId,
+    classId: typeof existing.metadata.classId === "string"
+      ? existing.metadata.classId : null,
+    courseId: typeof existing.metadata.courseId === "string"
+      ? existing.metadata.courseId : null,
+  };
   if (isAdmin) {
     requirePermission(context, "courses.manage", {
       collegeId: existing.collegeId,
       organizationId: existing.organizationId,
     });
   } else {
+    // Treat missing/invalid legacy audience metadata as a denial, not as
+    // permission to fall back to an arbitrary current faculty membership.
     const previous = staffNotificationDraftSchema.safeParse({
       title: "Existing notification",
       htmlContent: "Existing notification",
-      classId: existing.metadata.classId,
-      courseId: existing.metadata.courseId,
+      classId: audience.classId ?? undefined,
+      courseId: audience.courseId ?? undefined,
     });
-    if (!previous.success) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    if (!previous.success) {
+      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    }
     await requireStaffNotificationAudience(context, previous.data);
   }
+  return audience;
+}
+
+/**
+ * Editing a notice to a different audience requires BOTH the original-scope
+ * mutation preflight and a second authorization for the requested audience.
+ * The API/campaign mutation must repeat the checks atomically before writing.
+ */
+export async function requireStaffNotificationRetarget(
+  context: RequestContext,
+  eventIdInput: unknown,
+  nextDraft: unknown,
+): Promise<StaffNotificationAudience> {
+  await requireStaffNotificationMutation(context, eventIdInput);
   const { audience } = await requireStaffNotificationAudience(context, nextDraft);
   return audience;
 }
@@ -434,6 +462,35 @@ function appendNotificationContextFilters(
   if (options.courseId) {
     const courseId = z.string().uuid().parse(options.courseId);
     conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'courseId'`, courseId));
+  }
+}
+
+/**
+ * Optional legacy category tabs are always ADDITIONAL filters on a personal
+ * recipient query; callers cannot turn a category into a cross-user feed.
+ * Category strings are bounded and known module/importance values validated.
+ */
+function appendNotificationCategoryFilters(
+  conditions: ReturnType<typeof eq>[],
+  options: {
+    module?: string;
+    eventType?: string;
+    importance?: string;
+    notificationType?: string;
+  },
+) {
+  if (options.module) {
+    conditions.push(eq(activityEvents.module, z.enum(ACTIVITY_MODULES).parse(options.module)));
+  }
+  if (options.importance) {
+    conditions.push(eq(activityEvents.importance, z.enum(ACTIVITY_IMPORTANCE).parse(options.importance)));
+  }
+  if (options.eventType) {
+    conditions.push(eq(activityEvents.eventType, z.string().trim().min(1).max(120).parse(options.eventType)));
+  }
+  if (options.notificationType) {
+    const notificationType = z.string().trim().min(1).max(120).parse(options.notificationType);
+    conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'notificationType'`, notificationType));
   }
 }
 
@@ -664,6 +721,10 @@ export async function listOwnNotifications(
     collegeId?: string;
     classId?: string;
     courseId?: string;
+    module?: string;
+    eventType?: string;
+    importance?: string;
+    notificationType?: string;
   } = {},
 ) {
   const limit = z
@@ -692,6 +753,7 @@ export async function listOwnNotifications(
   }
 
   appendNotificationContextFilters(conditions, options);
+  appendNotificationCategoryFilters(conditions, options);
 
   const rows = await getDb()
     .select({
@@ -766,6 +828,9 @@ export async function markOwnNotificationRead(
     .string()
     .uuid()
     .parse(notificationIdInput);
+  // Keep acknowledgements consistent with the live inbox visibility policy.
+  const releasedEventIds = getDb().select({ id: activityEvents.id })
+    .from(activityEvents).where(releasedNotificationEvent);
 
   const [current] = await getDb()
     .select()
@@ -780,6 +845,7 @@ export async function markOwnNotificationRead(
           inAppNotifications.userId,
           context.user.id,
         ),
+        inArray(inAppNotifications.eventId, releasedEventIds),
       ),
     )
     .limit(1);
@@ -806,6 +872,7 @@ export async function markOwnNotificationRead(
           inAppNotifications.userId,
           context.user.id,
         ),
+        inArray(inAppNotifications.eventId, releasedEventIds),
         isNull(
           inAppNotifications.readAt,
         ),
@@ -826,6 +893,7 @@ export async function markOwnNotificationRead(
       and(
         eq(inAppNotifications.id, notificationId),
         eq(inAppNotifications.userId, context.user.id),
+        inArray(inAppNotifications.eventId, releasedEventIds),
       ),
     )
     .limit(1);
@@ -884,6 +952,10 @@ export async function listOwnNotificationPage(
     collegeId?: string;
     classId?: string;
     courseId?: string;
+    module?: string;
+    eventType?: string;
+    importance?: string;
+    notificationType?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -903,6 +975,7 @@ export async function listOwnNotificationPage(
     }
   }
   appendNotificationContextFilters(conditions, options);
+  appendNotificationCategoryFilters(conditions, options);
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
     const id = z.string().uuid().parse(options.beforeId);

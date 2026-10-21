@@ -8,7 +8,7 @@ import { allowRequest, clientIp } from "@/auth/ip-rate-limit";
 import { createHash } from "node:crypto";
 import { logError, writeStructuredLog } from "@/observability/logger";
 import { AuthConfigError } from "./config";
-import { LoginError } from "./login-service";
+import { LoginError, loginErrorMessage } from "./login-service";
 import { resolveRequestTenant } from "./request-tenant";
 import {readBoundedAuthJson,AuthRequestBodyTooLarge} from "./bounded-json";
 
@@ -51,6 +51,7 @@ export function loginErrorResponse(
     return privateAuthJson(
       {
         error: error.code,
+        message: loginErrorMessage(error.code),
         ...(error.retryAfterSeconds
           ? { retryAfterSeconds: error.retryAfterSeconds }
           : {}),

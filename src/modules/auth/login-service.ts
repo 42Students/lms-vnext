@@ -54,6 +54,7 @@ export type LoginErrorCode =
   | "OTP_DELIVERY_FAILED"
   | "INVALID_ATTEMPT"
   | "OTP_EXPIRED"
+  | "EMAIL_OTP_EXPIRED"
   | "OTP_ATTEMPTS_EXCEEDED"
   | "INCORRECT_OTP"
   | "WRONG_TENANT"
@@ -73,6 +74,7 @@ const STATUS: Record<LoginErrorCode, number> = {
   OTP_DELIVERY_FAILED: 503,
   INVALID_ATTEMPT: 401,
   OTP_EXPIRED: 401,
+  EMAIL_OTP_EXPIRED: 401,
   OTP_ATTEMPTS_EXCEEDED: 429,
   INCORRECT_OTP: 401,
   WRONG_TENANT: 403,
@@ -82,13 +84,57 @@ const STATUS: Record<LoginErrorCode, number> = {
   SECOND_FACTOR_UNAVAILABLE: 403,
 };
 
+/**
+ * Public-safe legacy wording. API codes and HTTP statuses remain stable;
+ * avoid echoing phone, email, verification codes or tenant membership facts.
+ */
+export function loginErrorMessage(code: LoginErrorCode): string {
+  switch (code) {
+    case "ACCOUNT_SUSPENDED":
+      return "Contact your college administrator";
+    case "OTP_DELIVERY_FAILED":
+      return "Could not send the login code. Please try again.";
+    case "TOO_SOON":
+      return "A code was just sent. Wait a few seconds before asking for another.";
+    case "TOO_MANY_REQUESTS":
+      return "Too many OTP requests. Please try again later.";
+    case "EMAIL_NOT_AVAILABLE":
+      return "Email not found";
+    case "EMAIL_OTP_EXPIRED":
+      return "The email code has expired. Please request another code.";
+    case "OTP_EXPIRED":
+      return "The login code has expired. Please request another code.";
+    case "OTP_ATTEMPTS_EXCEEDED":
+      return "Too many verification attempts. Please try again later.";
+    case "INCORRECT_OTP":
+      return "Incorrect login code. Please try again.";
+    case "INVALID_CONTACT":
+      return "Enter a valid mobile number or email address.";
+    case "ACCOUNT_DISABLED":
+      return "This account is disabled. Contact your administrator.";
+    case "WRONG_TENANT":
+      return "This code cannot be used for this college.";
+    case "SECOND_FACTOR_REQUIRED":
+      return "Enter the email verification code to complete sign-in.";
+    case "SECOND_FACTOR_UNAVAILABLE":
+      return "Two-factor verification is unavailable for this account.";
+    case "CHANNEL_DISABLED":
+      return "This sign-in method is disabled.";
+    case "NOT_REGISTERED":
+    case "NO_ACCOUNT_FOR_DOMAIN":
+      return "Sign-in is not available for these details.";
+    case "INVALID_ATTEMPT":
+      return "This login attempt is no longer valid. Request a new code.";
+  }
+}
+
 export class LoginError extends Error {
   readonly status: number;
   constructor(
     public readonly code: LoginErrorCode,
     public readonly retryAfterSeconds?: number,
   ) {
-    super(code);
+    super(loginErrorMessage(code));
     this.name = "LoginError";
     this.status = STATUS[code];
   }
@@ -228,6 +274,8 @@ export type StartLoginInput = {
 
 export type StartLoginResult = {
   attemptId: string;
+  /** Additive legacy success alias, without replacing the channel field. */
+  mode?: "PHONE_OTP_SENT" | "EMAIL_OTP_SENT";
   channel: "PHONE" | "EMAIL";
   maskedContact: string;
   expiresInSeconds: number;
@@ -373,6 +421,7 @@ export async function startLogin(
   return {
     attemptId,
     channel: input.channel,
+    mode: isPhone ? "PHONE_OTP_SENT" : "EMAIL_OTP_SENT",
     maskedContact: isPhone ? maskPhone(normalized) : maskEmail(normalized),
     expiresInSeconds: ATTEMPT_LIFETIME_SECONDS,
     emailFallbackAvailable: isPhone && Boolean(user.email),
@@ -446,10 +495,20 @@ export async function sendEmailFallback(
     if (!accepted) throw new LoginError("OTP_DELIVERY_FAILED");
   }
 
+  // A fallback cannot outlive its parent challenge: report the real remaining
+  // expiry instead of incorrectly promising a fresh five minutes.
+  const remainingSeconds = Math.max(
+    0,
+    Math.min(
+      ATTEMPT_LIFETIME_SECONDS,
+      Math.floor((attempt.expiresAt.getTime() - deps.now().getTime()) / 1000),
+    ),
+  );
   return {
+    mode: "EMAIL_OTP_SENT" as const,
     attemptId: attempt.id,
     maskedEmail: maskEmail(user.email),
-    expiresInSeconds: ATTEMPT_LIFETIME_SECONDS,
+    expiresInSeconds: remainingSeconds,
   };
 }
 
@@ -533,12 +592,24 @@ export async function verifyLogin(
     // Evaluate both so timing does not reveal which failed.
     const smsOk = matches("sms", smsMac, input.code);
     const emailOk = matches("email", emailMac, input.secondCode ?? "");
-    if (!(smsOk && emailOk)) throw new LoginError("INCORRECT_OTP");
+    if (!(smsOk && emailOk)) {
+      if (attempt.emailCodeMac && attempt.emailCodeExpiresAt &&
+          attempt.emailCodeExpiresAt.getTime() <= now) {
+        throw new LoginError("EMAIL_OTP_EXPIRED");
+      }
+      throw new LoginError("INCORRECT_OTP");
+    }
   } else {
     // Either channel's code is enough for everyone else.
     const smsOk = matches("sms", smsMac, input.code);
     const emailOk = matches("email", emailMac, input.code);
-    if (!(smsOk || emailOk)) throw new LoginError("INCORRECT_OTP");
+    if (!(smsOk || emailOk)) {
+      if (!smsMac && attempt.emailCodeMac && attempt.emailCodeExpiresAt &&
+          attempt.emailCodeExpiresAt.getTime() <= now) {
+        throw new LoginError("EMAIL_OTP_EXPIRED");
+      }
+      throw new LoginError("INCORRECT_OTP");
+    }
   }
 
   // Authorization is checked at consume time, not just at issue time.

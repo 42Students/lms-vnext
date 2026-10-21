@@ -1,11 +1,19 @@
 "use client";
 
-import { GracefulErrorBoundary } from "@/components/public/graceful-error-boundary";
+import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 
-/** GR-20: route-specific fallback that keeps a retry visible. */
-export default function RouteError({ error, reset }: {
+/** A scoped read failure cannot be shown as an empty hierarchy. */
+export default function ModuleAccessError({ reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <GracefulErrorBoundary error={error} reset={reset} />;
+  return <section className="min-w-0 space-y-4">
+    <PageHeader title="Module Access" />
+    <Alert tone="error">
+      <p>Couldn't load module access. Could not load module access.</p>
+      <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
+    </Alert>
+  </section>;
 }

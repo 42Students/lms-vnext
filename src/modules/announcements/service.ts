@@ -94,6 +94,7 @@ async function resolveTarget(type: ReceiverType, id: string) {
       .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
       .where(and(
         eq(sections.id, id), eq(sections.status, "ACTIVE"),
+        eq(programs.status, "ACTIVE"),
         isNull(departments.archivedAt), eq(colleges.status, "ACTIVE"),
         eq(organizations.status, "ACTIVE"),
       ))
@@ -107,11 +108,13 @@ async function resolveTarget(type: ReceiverType, id: string) {
     .select({ collegeId: collegeMemberships.collegeId, organizationId: colleges.organizationId })
     .from(collegeMemberships)
     .innerJoin(membershipRoles, eq(membershipRoles.membershipId, collegeMemberships.id))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
     .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
     .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
     .where(and(
       eq(collegeMemberships.id, id),
       eq(collegeMemberships.status, "ACTIVE"),
+      eq(users.platformStatus, "ACTIVE"),
       eq(membershipRoles.role, requiredRole),
       eq(colleges.status, "ACTIVE"),
       eq(organizations.status, "ACTIVE"),
@@ -373,9 +376,17 @@ export async function restoreAnnouncement(
   return restored;
 }
 
+/** A stable cursor across pinned and chronological order, scoped to one membership. */
+export type MembershipAnnouncementCursor = {
+  isPinned: boolean;
+  createdAt: Date;
+  id: string;
+};
+
 export async function listVisibleAnnouncementsForMembership(
   context: RequestContext,
   now = new Date(),
+  options?: { limit?: number; before?: MembershipAnnouncementCursor },
 ) {
   if (!canAccessAnnouncements(context.user.platformStatus) || !context.membership || context.membership.status !== "ACTIVE") {
     return [];
@@ -465,20 +476,61 @@ export async function listVisibleAnnouncementsForMembership(
     or exists(select 1 from placement_tpo_notice_recipients tr
       where tr.announcement_id=${db10Announcements.id}
        and tr.membership_id=${membership.id}::uuid))`:undefined;
+  const before=options?.before;
+  // Descending pinned, timestamp, UUID: preserve both page ordering and
+  // a unique boundary even when many notices share the same createdAt.
+  const cursorCondition=before?or(
+    before.isPinned?eq(db10Announcements.isPinned,false):undefined,
+    and(
+      eq(db10Announcements.isPinned,before.isPinned),
+      or(
+        lt(db10Announcements.createdAt,before.createdAt),
+        and(
+          eq(db10Announcements.createdAt,before.createdAt),
+          lt(db10Announcements.id,before.id),
+        ),
+      ),
+    ),
+  ):undefined;
+  const requestedLimit=options?.limit;
+  const limit=typeof requestedLimit==="number"&&Number.isInteger(requestedLimit)
+    ?Math.min(101,Math.max(1,requestedLimit)):100;
 
   return getDb()
     .select()
     .from(db10Announcements)
     .where(and(
       targetedGuard,
+      cursorCondition,
       eq(db10Announcements.collegeId, membership.collegeId),
       isNull(db10Announcements.deletedAt),
       or(isNull(db10Announcements.scheduledAt), lt(db10Announcements.scheduledAt, now), eq(db10Announcements.scheduledAt, now)),
       or(isNull(db10Announcements.expiresAt), gt(db10Announcements.expiresAt, now)),
       or(...receiverConditions)!,
     ))
-    .orderBy(desc(db10Announcements.isPinned), desc(db10Announcements.createdAt))
-    .limit(100);
+    .orderBy(
+      desc(db10Announcements.isPinned),
+      desc(db10Announcements.createdAt),
+      desc(db10Announcements.id),
+    )
+    .limit(limit);
+}
+
+/** Cursor-ready membership feed; page/route owner must expose Older notices. */
+export async function listVisibleAnnouncementsForMembershipPage(
+  context: RequestContext,
+  now = new Date(),
+  before?: MembershipAnnouncementCursor,
+) {
+  const rows=await listVisibleAnnouncementsForMembership(context,now,{limit:101,before});
+  const items=rows.slice(0,100);
+  const last=items[items.length-1];
+  return {
+    items,
+    nextCursor:rows.length>100 && last
+      ?{isPinned:last.isPinned,createdAt:last.createdAt,id:last.id}
+      :null,
+  };
 }
 
 
