@@ -1,4 +1,5 @@
 import "server-only";
+import {alias} from "drizzle-orm/pg-core";
 import {and,count,eq,gte,lt,lte,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges,sectionScheduleEvents,sections,cohorts,programs,departments,
@@ -17,14 +18,15 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
  if(!college)throw new AuthorizationError("college.read");
  requirePermission(ctx,"college.read",{collegeId:id,organizationId:college.organizationId});
  const {from,to}=istDayBounds(now);
+ // Seven *local calendar dates* including today, not a guessed UTC date range.
+ const attendanceWindowFrom=new Date(from.getTime()-6*86400000);
+ const markedSessions=alias(attendanceSessions,"admin_today_marked_sessions");
  const db=getDb();
- const [classes,withoutTeacher,closingQuizzes]=await Promise.all([
+ const [classes,pendingAttendance,withoutTeacher,closingQuizzes]=await Promise.all([
   db.select({
-   scheduled:sql<number>`count(*)::int`,
-   ended:sql<number>`count(*) filter(where ${sectionScheduleEvents.endsAt}<=${now})::int`,
-   marked:sql<number>`count(*) filter(where ${attendanceSessions.status}='MARKED')::int`,
-   unmarked:sql<number>`count(*) filter(where ${sectionScheduleEvents.endsAt}<=${now}
-      and (${attendanceSessions.status} is null or ${attendanceSessions.status}<>'MARKED'))::int`,
+   scheduled:sql<number>`count(distinct ${sectionScheduleEvents.id})::int`,
+   ended:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${sectionScheduleEvents.endsAt}<=${now})::int`,
+   marked:sql<number>`count(distinct ${sectionScheduleEvents.id}) filter(where ${attendanceSessions.status}='MARKED')::int`,
   }).from(sectionScheduleEvents)
    .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
@@ -33,6 +35,19 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
    .leftJoin(attendanceSessions,eq(attendanceSessions.scheduleEventId,sectionScheduleEvents.id))
    .where(and(eq(departments.collegeId,id),eq(sectionScheduleEvents.status,"SCHEDULED"),
     gte(sectionScheduleEvents.startsAt,from),lt(sectionScheduleEvents.startsAt,to))),
+  // Previously only unmarked classes that ended *today* were counted.
+  // This is the legacy trailing-seven-day pending attendance scope, limited
+  // to non-cancelled scheduled events and with any MARKED session excluded.
+  db.select({n:count()}).from(sectionScheduleEvents)
+   .innerJoin(sections,eq(sections.id,sectionScheduleEvents.sectionId))
+   .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,eq(departments.id,programs.departmentId))
+   .leftJoin(markedSessions,and(eq(markedSessions.scheduleEventId,sectionScheduleEvents.id),
+     eq(markedSessions.status,"MARKED")))
+   .where(and(eq(departments.collegeId,id),eq(sectionScheduleEvents.status,"SCHEDULED"),
+     gte(sectionScheduleEvents.startsAt,attendanceWindowFrom),
+     lte(sectionScheduleEvents.endsAt,now),isNull(markedSessions.id))),
   db.select({n:count()}).from(courseSectionDeliveries)
    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
@@ -52,6 +67,6 @@ export async function getSuperAdminTodayBoard(ctx:RequestContext,rawCollegeId:st
     gte(courseQuizzes.dueAt,now),lte(courseQuizzes.dueAt,new Date(now.getTime()+7*86400000)))),
  ]);
  return {classesScheduled:classes[0]?.scheduled??0,classesEnded:classes[0]?.ended??0,
-  attendanceTaken:classes[0]?.marked??0,attendanceNotTaken:classes[0]?.unmarked??0,
+  attendanceTaken:classes[0]?.marked??0,attendanceNotTaken:pendingAttendance[0]?.n??0,
   coursesWithoutTeacher:withoutTeacher[0]?.n??0,quizzesClosingThisWeek:closingQuizzes[0]?.n??0};
 }
