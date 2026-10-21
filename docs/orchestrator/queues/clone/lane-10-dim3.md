@@ -61,18 +61,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/components/placements/placement-operations-overview.tsx`
 - [x] `src/components/placements/tpo-general-requests-panel.tsx`
 - [x] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/ui/loading-state.tsx`
-- [ ] `src/components/tpo/tpo-student-note-editor.tsx`
-- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
-- [ ] `src/components/tpo/tpo-team-rename.tsx`
-- [ ] `src/components/tracker/tracker-issue-logs-panel.tsx`
-- [ ] `src/components/ui/inline-notice.tsx`
-- [ ] `src/styles/micro-details.css`
-- [ ] `src/app/(authenticated)/tpo/audit/page.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/ui/loading-state.tsx`
+- [x] `src/components/tpo/tpo-student-note-editor.tsx`
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx`
+- [x] `src/components/tpo/tpo-team-rename.tsx`
+- [x] `src/components/tracker/tracker-issue-logs-panel.tsx`
+- [x] `src/components/ui/inline-notice.tsx`
+- [x] `src/styles/micro-details.css`
+- [x] `src/app/(authenticated)/tpo/audit/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
 - [ ] `src/components/activity/activity-center.tsx`
