@@ -17,7 +17,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_components_auth_login-form.tsx.md` (edit src/components/auth/login-form.tsx; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_faculty-self-section-model.ts.md` (edit src/modules/people/faculty-self-section-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_app_api_auth_memberships_route.ts.md` (edit src/app/api/auth/memberships/route.ts; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_components_profile_learner-profile-workspace.tsx.md` (edit src/components/profile/learner-profile-workspace.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_components_profile_learner-profile-workspace.tsx.md` (edit src/components/profile/learner-profile-workspace.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_attendance_faculty-schedule-mutation-service.ts.md` (edit src/modules/attendance/faculty-schedule-mutation-service.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_college-student-csv-service.ts.md` (edit src/modules/people/college-student-csv-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_announcements_tpo-notice-delivery-service.ts.md` (edit src/modules/announcements/tpo-notice-delivery-service.ts; 2 findings; best P1)
