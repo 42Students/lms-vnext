@@ -22,6 +22,7 @@ import { trackerPublicIdSchema } from "@/modules/bug-tracker/admin-validation";
 import { isSuperAdmin } from "@/modules/identity/context";
 
 import {parseTrackerActivityCursorParams} from "@/modules/bug-tracker/admin-detail-cursor-model";
+import {auditActivityText} from "@/modules/bug-tracker/audit-activity-display-model";
 
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
@@ -53,22 +54,6 @@ const ENVIRONMENT_TEXT:Record<string,string>={
 function legacyLabel(value:string|null|undefined,labels:Record<string,string>,fallback="Unknown"){
  return value?labels[value]??value:fallback;
 }
-function trackerActivityText(event:{type:string;fromValue:string|null;toValue:string|null}){
- if(event.type==="RETEST"||event.type==="RETEST_COMPLETED"){
-  return event.toValue==="CLOSED / FIXED"||event.toValue==="PASS"?
-   "Retest passed — issue closed":"Retest failed — returned to Fixing";
- }
- if(event.type==="STATUS_CHANGED"){
-  return "Status changed from "+legacyLabel(event.fromValue,STATUS_TEXT)+
-   " to "+legacyLabel(event.toValue,STATUS_TEXT);
- }
- if(event.type==="RESOLUTION_CHANGED"){
-  return "Resolution changed from "+legacyLabel(event.fromValue,RESOLUTION_TEXT,"None")+
-   " to "+legacyLabel(event.toValue,RESOLUTION_TEXT,"None");
- }
- return event.type.replaceAll("_"," ")||"Activity";
-}
-
 export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
  const {publicId}=await params;
  return {title:publicId+" · 42 Tracker"};
@@ -241,7 +226,7 @@ export default async function TrackerIssueDetailPage({
             {[...detail.activities].reverse().map(activity=><li key={activity.id}
               className="relative py-3">
               <span aria-hidden="true" className="absolute -left-[1.7rem] top-4 h-3 w-3 rounded-full border-2 border-primary bg-surface"/>
-              <p className="text-sm font-semibold text-foreground">{trackerActivityText(activity)}</p>
+              <p className="text-sm font-semibold text-foreground">{auditActivityText(activity)}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {activity.actorName??(activity.actorUserId?"Engineering":"Authorized tracker reporter")} · {when(activity.createdAt)}
               </p>
