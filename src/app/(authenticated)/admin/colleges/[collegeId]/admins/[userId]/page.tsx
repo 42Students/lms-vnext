@@ -25,7 +25,7 @@ export default async function AdminDeviceSessionsPage({params}:{
    actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="Admins"/>}/>
   <p role="status" className="text-sm text-muted-foreground tabular-nums">{data.devices.length} active session(s), up to 100 shown.</p>
   <DataTable<DeviceRow> caption="Active administrator device sessions" rows={data.devices} getRowKey={row=>row.id}
-    empty={<EmptyState title="No active sessions" description="No active sessions for this account."/>}
+    empty={<EmptyState title="No active sessions." description="No active sessions for this account."/>}
     columns={[
       {key:"device",header:"Device",mobilePriority:"primary",cell:row=><div className="min-w-0 break-words"><strong>{row.device_name??"Unknown device"}</strong><p className="mt-1 break-all text-xs text-muted-foreground">{row.user_agent??"Unknown browser"}</p></div>},
       {key:"ip",header:"IP",mobilePriority:"secondary",cell:row=>row.ip_address??"Unknown"},

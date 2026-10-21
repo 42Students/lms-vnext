@@ -288,15 +288,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 200 files (1472 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: every visible string vs old LMS wording catalogue in docs/audit/legacy-copy-A.md and legacy-copy-B.md; casing, punctuation, ellipsis, plural rules, date/number formats, success and error messages.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/activity/[eventId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
+- [x] `src/app/(authenticated)/activity/[eventId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/audit/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx`
 - [ ] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
 - [ ] `src/app/(authenticated)/admin/faculty-assignment/page.tsx`
