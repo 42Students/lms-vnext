@@ -39,6 +39,9 @@ import {
 } from "@/modules/courses/learner-course-service";
 import { createCourseTeachingAssignment } from "@/modules/courses/teaching-assignment-service";
 import {
+ previewAdminCourseProgressRetake,startAdminCourseProgressRetake,
+} from "@/modules/courses/admin-progress-retake-service";
+import {
   createCourseDiscussionMessage,
   deleteCourseDiscussionMessage,
   listCourseDiscussionMessages,
@@ -902,4 +905,51 @@ describe("courses C3 learner progress against PostgreSQL", () => {
       code: "23514",
     });
   });
+  it("admin retake preserves first attempt, resets only this learner's Section and detects stale confirmation", async () => {
+    const structure=await createStructure();
+    await saveLearnerContentProgress(learner,structure.resource.id,{
+      deliveryId:structure.deliveryA.id,completed:true,
+    });
+    await saveLearnerContentProgress(learner,structure.video.id,{
+      deliveryId:structure.deliveryA.id,positionSeconds:90,
+    });
+    const preview=await previewAdminCourseProgressRetake(collegeAdmin,{
+      offeringId:structure.offering.id,membershipId:learnerMembershipId,
+    });
+    expect(preview).toMatchObject({attempt:1,alreadyFresh:false,contentItems:2});
+    const retake=await startAdminCourseProgressRetake(collegeAdmin,{
+      offeringId:structure.offering.id,membershipId:learnerMembershipId,
+      expectedAttempt:1,confirmed:true,
+    });
+    expect(retake).toMatchObject({
+      attempt:2,previousAttempt:1,contentItemsReset:2,alreadyFresh:false,
+    });
+    const preserved=await pool.query<{
+      lesson_content_id:string;attempt:number;last_position_seconds:number;
+      completed_at:Date|null;
+    }>(`select lesson_content_id,attempt,last_position_seconds,completed_at
+      from learner_content_progress where membership_id=$1 and
+      lesson_content_id in ($2,$3,$4) order by attempt,lesson_content_id`,
+      [learnerMembershipId,structure.resource.id,structure.video.id,
+       structure.sectionBOnly.id]);
+    expect(preserved.rows).toHaveLength(4);
+    expect(preserved.rows.filter(row=>row.attempt===1)
+      .every(row=>row.completed_at!==null)).toBe(true);
+    expect(preserved.rows.filter(row=>row.attempt===2)
+      .every(row=>row.last_position_seconds===0&&row.completed_at===null)).toBe(true);
+    expect(preserved.rows.some(row=>row.lesson_content_id===structure.sectionBOnly.id))
+      .toBe(false);
+    expect(await getLearnerContentProgress(learner,structure.resource.id,
+      structure.deliveryA.id)).toMatchObject({
+      attempt:2,status:"NOT_STARTED",lastPositionSeconds:0,completedAt:null,
+    });
+    await expect(startAdminCourseProgressRetake(collegeAdmin,{
+      offeringId:structure.offering.id,membershipId:learnerMembershipId,
+      expectedAttempt:1,confirmed:true,
+    })).rejects.toMatchObject({code:"RETAKE_STALE"});
+    const after=await pool.query(`select count(*)::int as total from learner_content_progress
+      where membership_id=$1 and attempt=3`,[learnerMembershipId]);
+    expect(after.rows[0]?.total).toBe(0);
+  });
+
 });
