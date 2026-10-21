@@ -68,3 +68,74 @@ export function parseTpoAcademicImportCsv(csv: string) {
    return data;
  });
 }
+
+/** Legacy academic CSV staging: preserve sparse fields and roll references
+ * without mistaking a roll number for a globally authorized membership ID.
+ * Callers must resolve each roll within the authenticated college before
+ * passing UUID-only records to the verified evidence mutation. */
+export type TpoLegacyAcademicStagingRow={
+ rowNumber:number; rollNumber:string; studentCode:string|null;
+ cgpa:number|null; activeBacklogs:number|null; tenthPct:number|null;
+ twelfthPct:number|null; diplomaPct:number|null; ugPct:number|null;
+ gapYears:number|null; passingYear:number|null; batch:string|null; gender:string|null;
+ issue:string|null;
+};
+export const TPO_LEGACY_ACADEMIC_MAX_ROWS=5000;
+export const TPO_LEGACY_ACADEMIC_EXTENSIONS=[".csv",".xlsx"] as const;
+function legacyAcademicNumber(raw:string,field:string,row:number,max:number,min=0):number|null{
+ if(!raw.trim())return null;
+ const value=Number(raw.trim());
+ if(!Number.isFinite(value)||value<min||value>max)
+  throw new Error(field+" must be between "+min+" and "+max+" at row "+row+".");
+ return value;
+}
+function legacyAcademicCells(line:string):string[]{
+ const cells:string[]=[];let value="",quoted=false;
+ for(let i=0;i<line.length;i++){
+  const char=line[i]!;
+  if(char==='"'){
+   if(quoted&&line[i+1]==='"'){value+='"';i++;}else quoted=!quoted;
+  }else if(char===","&&!quoted){cells.push(value.trim());value="";}
+  else value+=char;
+ }
+ if(quoted)throw new Error("Unclosed quoted CSV field.");
+ cells.push(value.trim());return cells;
+}
+export function parseTpoLegacyAcademicImportCsv(csv:string):TpoLegacyAcademicStagingRow[]{
+ if(csv.length>5_000_000)throw new Error("Academic import file is too large.");
+ const lines=csv.replace(/^\uFEFF/,"").trim().split(/\r?\n/);
+ if(lines.length<2)throw new Error("The file must include a header and at least one student.");
+ if(lines.length-1>TPO_LEGACY_ACADEMIC_MAX_ROWS)
+  throw new Error("Maximum 5000 students per import.");
+ const fields=["roll","studentCode","cgpa","activeBacklogs","tenthPct","twelfthPct",
+  "diplomaPct","ugPct","gapYears","passingYear","batch","gender"] as const;
+ const mapped=mapTpoImportHeaders(legacyAcademicCells(lines[0]!),fields);
+ if(mapped.duplicates.length)throw new Error("Duplicate import headers: "+mapped.duplicates.join(", "));
+ if(!mapped.fields.includes("roll")&&!mapped.fields.includes("studentCode"))
+  throw new Error("Include Roll Number or Student ID.");
+ const seen=new Set<string>();
+ return lines.slice(1).filter(line=>line.trim()).map((line,index)=>{
+  const rowNumber=index+2;
+  const cells=legacyAcademicCells(line);
+  if(cells.length!==mapped.fields.length)throw new Error("Invalid academic CSV at row "+rowNumber+".");
+  const val=(key:typeof fields[number])=>cells[mapped.fields.indexOf(key)]??"";
+  const rollNumber=val("roll").trim();
+  const studentCode=val("studentCode").trim()||null;
+  const key=(rollNumber||studentCode||"").toLowerCase();
+  let issue:string|null=null;
+  if(!key)issue="Roll number or Student ID is required";
+  else if(seen.has(key))issue="Duplicate roll number / Student ID";
+  else seen.add(key);
+  const cgpa=legacyAcademicNumber(val("cgpa"),"CGPA",rowNumber,10);
+  const activeBacklogs=legacyAcademicNumber(val("activeBacklogs"),"Active backlogs",rowNumber,100);
+  const tenthPct=legacyAcademicNumber(val("tenthPct"),"10th percentage",rowNumber,100);
+  const twelfthPct=legacyAcademicNumber(val("twelfthPct"),"12th percentage",rowNumber,100);
+  const diplomaPct=legacyAcademicNumber(val("diplomaPct"),"Diploma percentage",rowNumber,100);
+  const ugPct=legacyAcademicNumber(val("ugPct"),"UG percentage",rowNumber,100);
+  const gapYears=legacyAcademicNumber(val("gapYears"),"Gap years",rowNumber,15);
+  const passingYear=legacyAcademicNumber(val("passingYear"),"Passing year",rowNumber,2100,1980);
+  return {rowNumber,rollNumber,studentCode,cgpa,activeBacklogs,tenthPct,
+   twelfthPct,diplomaPct,ugPct,gapYears,passingYear,
+   batch:val("batch")||null,gender:val("gender")||null,issue};
+ });
+}

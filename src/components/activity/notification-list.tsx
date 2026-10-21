@@ -28,6 +28,25 @@ export type NotificationListItem = {
   externalCta?:{label:string;href:string}|null;
 };
 
+function safeInternalAction(href:string|null):string|null {
+  if(!href||!href.startsWith("/")||href.startsWith("//")||/[\\\r\n]/.test(href))return null;
+  return href;
+}
+function safeExternalAction(href:string):string|null{
+  try{
+    const url=new URL(href);
+    return url.protocol==="https:"&&Boolean(url.hostname)&&!url.username&&!url.password?url.toString():null;
+  }catch{return null;}
+}
+function legacyActionLabel(item:NotificationListItem):string{
+  if(item.actionLabel)return item.actionLabel;
+  const path=item.actionHref??"";
+  if(/assessment|quiz/i.test(path))return "Take Assessment";
+  if(/interview/i.test(path))return "View Interview";
+  if(/applications?/i.test(path))return "View in My Applications";
+  if(/course|lesson/i.test(path))return "View Course";
+  return "View";
+}
 function formatWhen(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Date unavailable";
@@ -58,7 +77,7 @@ export function NotificationList({
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [groupingNow] = useState(() => new Date());
 
-  async function markRead(id: string, openHref?: string) {
+  async function markRead(id: string) {
     setPendingId(id);
     let acknowledged = false;
     try {
@@ -78,9 +97,9 @@ export function NotificationList({
       });
     } finally {
       setPendingId(null);
-      // TPO-inbox-team-64: never navigate away on failed acknowledgement.
-      if (acknowledged && openHref) router.push(openHref);
-      else if (acknowledged) router.refresh();
+      // Opening details does not acknowledge; only the explicit Mark read
+      // control performs the recipient-scoped mutation.
+      if (acknowledged) router.refresh();
     }
   }
 
@@ -111,8 +130,9 @@ export function NotificationList({
           {group.items.map((item) => (
             variant==="tpo"?<Button variant="ghost" type="button" key={item.id} disabled={pendingId!==null}
               onClick={()=>{
-               if(item.readAt){if(item.actionHref)router.push(item.actionHref);return;}
-               void markRead(item.id,item.actionHref??undefined);
+               if(onSelect){onSelect(item);return;}
+               const href=safeInternalAction(item.actionHref);
+               if(href)router.push(href);
               }}
               aria-label={"Open notification: "+item.title}
               loading={pendingId===item.id}
@@ -163,27 +183,22 @@ export function NotificationList({
                   </p>
                 </div>
                 <div className="flex w-full shrink-0 flex-wrap gap-2 min-[768px]:w-auto min-[768px]:justify-end">
-                  {item.actionHref ? (
-                    item.readAt ? (
+                  {safeInternalAction(item.actionHref) ? (
+                    (
                       <Link
-                        href={item.actionHref}
+                        href={safeInternalAction(item.actionHref)!}
                         className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:flex-none"
                       >
-                        {item.actionLabel??"Open"}
+                        {legacyActionLabel(item)}
                       </Link>
-                    ) : (
-                      <Button
-                        size="sm"
-                        variant="primary"
-                        loading={pendingId === item.id}
-                        className="min-h-11 min-w-0 flex-1 min-[768px]:min-h-9 min-[768px]:flex-none"
-                        disabled={pendingId !== null}
-                        onClick={() => markRead(item.id, item.actionHref ?? undefined)}
-                      >
-                        {pendingId === item.id ? "Opening…" : (item.actionLabel??"Open")}
-                      </Button>
                     )
                   ) : null}
+                  {item.externalCta&&safeExternalAction(item.externalCta.href)?(
+                    <a href={safeExternalAction(item.externalCta.href)!} target="_blank" rel="noopener noreferrer"
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                      {item.externalCta.label||"Take Assessment"}
+                    </a>
+                  ):null}
                   {!item.readAt && item.source !== "ANNOUNCEMENT" ? (
                     <Button
                       size="sm"
