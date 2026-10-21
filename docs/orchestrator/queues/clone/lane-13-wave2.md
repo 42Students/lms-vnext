@@ -90,7 +90,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_groups_college-rule-preview-service.ts.md` (edit src/modules/groups/college-rule-preview-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-target-options-service.ts.md` (edit src/modules/announcements/tpo-notice-target-options-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-placement-notice-lifecycle.ts.md` (edit src/modules/announcements/tpo-placement-notice-lifecycle.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-reminder-service.ts.md` (edit src/modules/announcements/tpo-notice-reminder-service.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-reminder-service.ts.md` (edit src/modules/announcements/tpo-notice-reminder-service.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_attendance_parent-sms-service.ts.md` (edit src/modules/attendance/parent-sms-service.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_api_people_membershipId_lifecycle_route.ts.md` (edit src/app/api/people/[membershipId]/lifecycle/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_learner-profile-checklist.ts.md` (edit src/modules/people/learner-profile-checklist.ts; 1 findings; best P2)
