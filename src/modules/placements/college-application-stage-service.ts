@@ -32,7 +32,11 @@ export async function getCollegeApplicationPipeline(context:RequestContext,rawJo
   // Withdrawal trumps mutable pipeline projections and is never moveable.
   const effectiveStage=row.status==="WITHDRAWN"?"WITHDRAWN":
    state?.stage.stage??row.stage;
-  return {...row,
+  const statusUpdatedAt=state?.stage.movedAt.toISOString()??null;
+  const effectiveAgeDate=state?.stage.movedAt??new Date(row.submittedAt);
+  const ageDays=Number.isFinite(effectiveAgeDate.getTime())
+   ?Math.max(0,Math.floor((Date.now()-effectiveAgeDate.getTime())/86400000)):0;
+  return {...row,ageDays,statusUpdatedAt,
    stage:effectiveStage,
    previousStage:state?.stage.previousStage??null,
    stageVersion:state?.stage.version??null,
@@ -86,10 +90,16 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     if(!screening)throw new PlacementsServiceError("PLACEMENT_SCREENING_NOT_FOUND");
     const from=old?.stage??(screening.status==="SHORTLISTED"?"SHORTLISTED":
      screening.status==="REJECTED"?"REJECTED":"APPLIED");
-    const next=input.action==="REINSTATE"?
-     (old?.previousStage==="SHORTLISTED"?"SHORTLISTED":"APPLIED"):input.stage!;
     if(input.action==="REINSTATE"&&from!=="REJECTED")
      throw Error("Only a rejected application can be reinstated.");
+    // Restore the last genuine pre-rejection stage. Treat a legacy application
+    // with no stage history as APPLIED (not a fabricated interview or offer).
+    // Never restore a recorded previous REJECTED/WITHDRAWN stage.
+    const prior=old?.previousStage;
+    if(input.action==="REINSTATE"&&prior&&
+       !(COLLEGE_APPLICATION_TRANSITIONS[prior]??[]).includes("REJECTED"))
+     throw Error("The previous stage cannot be restored. Review stage history.");
+    const next=input.action==="REINSTATE"?(prior??"APPLIED"):input.stage!;
     if(next===from)throw Error("Application is already in the selected stage.");
     if(input.action==="MOVE" && !(COLLEGE_APPLICATION_TRANSITIONS[from]??[]).includes(next)){
      const allowed=COLLEGE_APPLICATION_TRANSITIONS[from]??[];
@@ -161,7 +171,9 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
       internalReason:input.reason,candidateMessage:null,actorUserId:context.user.id,
      });
      screeningStatus="PENDING";
-     if(next==="SHORTLISTED"){
+     if(next!=="APPLIED"){
+      // Interview/assessment/waitlist states still require a valid shortlisted
+      // screening decision after restoration, never a lingering REJECTED flag.
       await tx.update(placementApplicationScreenings).set({
        status:"SHORTLISTED",candidateMessage:null,internalReason:input.reason,
        decidedByUserId:context.user.id,decidedAt:new Date(),updatedAt:new Date(),
@@ -212,13 +224,16 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      stageId:saved.id,fromStage:from,toStage:next,reason:input.reason,
      actorUserId:context.user.id,
     });
+    const humanStage=next.replaceAll("_"," ").toLowerCase();
+    const readableStage=humanStage[0]?.toUpperCase()+humanStage.slice(1);
     const [audit]=await tx.insert(activityEvents).values({
      organizationId:acting.organizationId,collegeId,
      actorUserId:context.user.id,actorMembershipId:context.membership?.collegeId===collegeId?context.membership.id:null,
      module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_APPLICATION_STAGE_MOVED",
      subjectType:"placement_application",subjectId:applicationId,
-     summary:input.action==="CORRECT"?"College Admin corrected application stage to "+next:
-      "College Admin moved application to "+next,
+     summary:input.action==="CORRECT"?"College Admin corrected application stage to "+readableStage:
+      input.action==="REINSTATE"?"College Admin reinstated application to "+readableStage:
+      "College Admin moved application to "+readableStage,
      metadata:{jobId,from,to:next,reason:input.reason,
       exceptionalCorrection:input.action==="CORRECT"},
     }).returning({id:activityEvents.id});
@@ -227,7 +242,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      title:"Your placement application was updated",
      body:next==="REJECTED"?
       "Your application was not selected. See My applications for the latest status.":
-      "Your placement stage is now "+next.toLowerCase().replaceAll("_"," ")+".",
+      "Your placement stage is now "+readableStage+".",
      actionHref:"/learn/my-placements/applications",
     }).onConflictDoNothing();
     return next;
