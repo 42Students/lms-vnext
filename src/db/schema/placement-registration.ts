@@ -118,3 +118,32 @@ export const placementBatchRegistrationEvents = pgTable(
     ),
   ],
 );
+
+/** Old registration used a season ID, while the current record is one choice
+ * per learner and academic cohort. Crosswalk season->cohort and numeric learner
+ * ID->college membership only after verifying both in the same college.
+ * A legacy consent with no version/date is NOT fresh PLACEMENTS consent. */
+export const LEGACY_PLACEMENT_REGISTRATION_FIELDS={
+ learner_id:"membershipId",season_id:"cohortId (verified only)",
+ choice:"choice",consent_version:"consentVersion",
+ consent_at:"consentAt",source:"source",
+ created_at:"createdAt",updated_at:"updatedAt",
+} as const;
+export function mapLegacyPlacementRegistrationChoice(raw:{
+ choice:string;consentVersion?:string|null;consentAt?:string|null;
+ source:string;
+}){
+ const choices=["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED",
+  "ENTREPRENEURSHIP","COMPETITIVE_EXAMS"] as const;
+ const choice=choices.find(value=>value===raw.choice);
+ if(!choice)throw new Error("Unrecognized source registration choice");
+ if(!["SELF","TPO","BACKFILL"].includes(raw.source))
+  throw new Error("Unrecognized source registration writer");
+ if(choice!=="PLACEMENTS")return {choice,consentVersion:null,consentAt:null};
+ const value=raw.consentAt ?new Date(raw.consentAt):null;
+ if(!value||!Number.isFinite(value.getTime())||
+    !/(?:Z|[+-]\d{2}:\d{2})$/.test(raw.consentAt??"")||
+    !(raw.consentVersion?.trim()))
+  throw new Error("Source placement consent requires independent review");
+ return {choice,consentVersion:raw.consentVersion.trim(),consentAt:value};
+}
