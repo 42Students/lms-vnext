@@ -35,8 +35,10 @@ export default async function IndependentFindingsPage({searchParams}:{
  if(ctx.adminScope?.collegeId||ctx.adminScope?.organizationId)redirect("/dashboard");
  requirePermission(ctx,"admin-scope.select");
  const parsed=parseIndependentFindingFilters(await searchParams);
+ const importerReady=independentAuditImporterReady()&&independentAuditGithubConfigured();
  const header=<><AuditFindingFilterMemory/><PageHeader title="Audit findings"
-  description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
+  description="Independent findings imported from the audit repository, not user bug reports."
+  actions={<IndependentFindingsSyncControl ready={importerReady}/>}/><TrackerAdminNav/></>;
  if(!parsed)return <div className="min-w-0 space-y-4">{header}
   <ErrorState title="Invalid audit findings filters." description="Independent findings imported from the audit repository, not user bug reports."
    action={<Link href="/tracker/audit-findings?view=OPEN"
@@ -63,7 +65,6 @@ export default async function IndependentFindingsPage({searchParams}:{
  }
  const data=findingsResult.value;
  const sync=syncResult.status==="fulfilled"?syncResult.value:null;
- const importerReady=independentAuditImporterReady()&&independentAuditGithubConfigured();
  // Persisted importer errors are untrusted: redact obvious credentials and
  // request tokens, and truncate. Do not print raw sync/provider payloads.
  const lastImportError=sync?.lastError
@@ -91,7 +92,6 @@ export default async function IndependentFindingsPage({searchParams}:{
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
-   <IndependentFindingsSyncControl ready={importerReady}/>
    {!importerReady?<Banner tone="warning">
     Sync now requires verified repository credentials and a durable import ledger.
     The shared legacy manager password no longer grants access.
