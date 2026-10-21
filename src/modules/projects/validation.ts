@@ -330,8 +330,13 @@ export const createProjectInstanceInputSchema = z
     collegeId: z.string().uuid(),
     templateId: projectTemplateIdSchema,
     slug: projectKeySchema,
-    title: titleSchema,
+    title: z.string().trim().min(1, "Title is required").max(160, "Title must be 160 characters or fewer"),
     summary: z.string().trim().min(1).max(2000).optional(),
+    phase: z.string().trim().max(120).optional(),
+    progressPercent: z.number().int().min(0).max(100).default(0),
+    dueLabel: z.string().trim().max(80).optional(),
+    blocker: z.string().trim().max(4000).optional(),
+    nextAction: z.string().trim().max(4000).optional(),
     primaryMentorMembershipId: z.string().uuid().optional(),
     sectionId: z.string().uuid().optional(),
     initialStatus: z.enum(["PLANNED","ACTIVE"]).default("PLANNED"),
@@ -339,7 +344,7 @@ export const createProjectInstanceInputSchema = z
   })
   .strict().superRefine((v,ctx)=>{
     if(v.initialStatus==="ACTIVE"&&!v.primaryMentorMembershipId)
-      ctx.addIssue({code:"custom",path:["primaryMentorMembershipId"],message:"This workspace has no mentor"});
+      ctx.addIssue({code:"custom",path:["primaryMentorMembershipId"],message:"A mentor is required before a workspace can be Active"});
     if(v.learnerMembershipIds.length && !v.sectionId)
       ctx.addIssue({code:"custom",path:["sectionId"],message:"Choose a class for the selected students"});
     if(new Set(v.learnerMembershipIds).size!==v.learnerMembershipIds.length)
