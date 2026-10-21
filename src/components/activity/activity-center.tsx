@@ -146,11 +146,11 @@ export function ActivityCenter({
                       </span>
                     ) : null}
                   </div>
-                  <h2 className="mt-2 break-words text-base font-semibold leading-6 text-foreground">
+                  <h2 className="mt-2 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">
                     {activityEventSentence(item.event,item.actor)}
                   </h2>
-                  <p className="mt-1 text-sm text-body">{item.event.summary}</p>
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <p className="mt-1 text-sm text-body leading-[22px]">{item.event.summary}</p>
+                  <p className="mt-2 text-xs text-muted-foreground leading-5">
                     {formatWhen(
                       item.event
                         .occurredAt,

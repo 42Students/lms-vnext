@@ -62,12 +62,12 @@ export function SuperAdminFacultyAssignmentCreate({
     className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
     Create teaching assignment
    </Button>
-   {!available.length?<p role="status" className="text-sm text-body">
+   {!available.length?<p role="status" className="text-sm text-body leading-[22px]">
     Create an active course offering and class delivery before assigning a teacher.
    </p>:null}
    {notice?<Alert tone="success">{notice}</Alert>:null}
    {open?<form onSubmit={e=>void submit(e)} className="grid min-w-0 gap-3 border-b border-border pb-5 md:grid-cols-2">
-    <p className="md:col-span-2 text-sm text-body">Select a course and class in the current college. Only active faculty can be assigned.</p>
+    <p className="md:col-span-2 text-sm text-body leading-[22px]">Select a course and class in the current college. Only active faculty can be assigned.</p>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / Class / Semester
      <Select required className={inputClass} value={deliveryId} onChange={e=>{setDeliveryId(e.target.value);setOtherDeliveryIds([]);}}>
       <option value="">Choose an active class</option>
@@ -78,7 +78,7 @@ export function SuperAdminFacultyAssignmentCreate({
     </label>
     {selected?<fieldset className="grid gap-2 border-b border-border pb-3 md:col-span-2">
       <legend className="px-1 text-[var(--lms-font-sm)] font-semibold text-foreground">Course(s)</legend>
-      <p className="text-xs text-body">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
+      <p className="text-xs text-body leading-5">Select several courses to assign this lecturer to all of them at once. The chosen course is always included. Select up to 9 additional courses for the same class and semester.</p>
       <div role="region" aria-label="Available courses in the selected class" tabIndex={0}
         className="grid min-w-0 max-h-48 gap-2 overflow-y-auto overscroll-contain md:grid-cols-2 [mask-image:linear-gradient(to_bottom,black_90%,transparent)]">
         {sameClass.map(item=><label key={item.id} className="flex min-h-11 items-center gap-2 text-sm">
@@ -104,7 +104,7 @@ export function SuperAdminFacultyAssignmentCreate({
       </option>)}
      </Select>
     </label>
-    {truncated?<p role="status" className="text-xs text-muted-foreground">
+    {truncated?<p role="status" className="text-xs text-muted-foreground leading-5">
      Only the first 500 active faculty members are available here. Use the course workspace to find others.
     </p>:null}
     {error?<Alert tone="error" className="md:col-span-2">{error}</Alert>:null}

@@ -40,8 +40,8 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
  }
  return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
   <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
-   <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
-  <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
+   <p role="status" className="text-sm text-muted-foreground leading-[22px]">{selected.length}/25 students selected</p></div>
+  <p className="text-xs text-muted-foreground leading-5">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
    <Checkbox checked={capped.length>0&&selected.length===Math.min(capped.length,25)}
     onChange={e=>setSelected(e.target.checked?capped.slice(0,25).map(x=>x.id):[])} disabled={busy}/>
@@ -65,7 +65,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
    <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy||!selected.length} onClick={()=>void submit()}
     >{busy?"Saving…":"Apply to selected"}</Button>
   </div>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm text-body">
    <p>{report.applied} of {report.requested} processed · {report.failures.length} failed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.map(f=><li key={f.id}>{f.id}: {f.error}</li>)}</ul>:null}

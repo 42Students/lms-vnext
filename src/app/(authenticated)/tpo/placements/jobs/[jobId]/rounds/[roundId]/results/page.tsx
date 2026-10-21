@@ -34,7 +34,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] md:w-auto underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">← Drive workspace</Link>} />
   <section className="grid grid-cols-2 overflow-hidden border border-border bg-surface md:grid-cols-4" aria-label="Result counts">
    {Object.entries(data.counts).map(([label,n])=><div key={label} className="min-w-0 border-b border-r border-border p-3 even:border-r-0 md:border-b-0 md:even:border-r md:last:border-r-0">
-    <p className="text-xs capitalize text-[var(--lms-muted-text)]">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
+    <p className="text-xs capitalize text-[var(--lms-muted-text)] leading-5">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
@@ -59,7 +59,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
   <TpoRoundResultsImport jobId={jobId} roundId={roundId}/>
     </div>
   </details>
-  <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
+  <p className="text-sm text-body leading-[22px]">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
   {data.truncated?<Alert tone="warning">Source capped at 500 application records; counts may be incomplete.</Alert>:null}
   <form method="get" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-end">
    <label className="min-w-0 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Student or role
@@ -72,13 +72,13 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    </label>
    <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground sm:w-auto md:min-h-9">Filter</Button>
   </form>
-  <p role="status" className="text-sm text-body">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
+  <p role="status" className="text-sm text-body leading-[22px]">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<EmptyState title="No eligible shortlisted submitted applicants match this round result filter."/>:
    <section className="min-w-0 divide-y divide-border border-y border-border" aria-label="Round result entries">
     {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 py-[var(--lms-space-4)]">
      <div className="mb-3">
       <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.student??"Name unavailable"}</h2>
-      <p className="text-sm text-body">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
+      <p className="text-sm text-body leading-[22px]">{row.role} · {row.resultStatus??"No result"} · {row.outcome??"No outcome"}</p>
      </div>
      {row.editable?<details className="group min-w-0">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
@@ -87,7 +87,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
       <div className="pt-3"><TpoRoundResultEntryForm key={row.resultId??"unrecorded"} roundId={roundId} applicationId={row.applicationId}
         currentResultId={row.resultId}/></div>
      </details>:
-      <p className="text-sm text-body">Result entry is unavailable for this round or an already applied result.</p>}
+      <p className="text-sm text-body leading-[22px]">Result entry is unavailable for this round or an already applied result.</p>}
     </article>)}
    </section>}
  </div>;

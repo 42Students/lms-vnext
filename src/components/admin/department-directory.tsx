@@ -68,7 +68,7 @@ export function DepartmentDirectory({
 
   return (
     <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label={DEPARTMENT_COPY.existingTitle}>
-      <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
+      <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">{DEPARTMENT_COPY.existingTitle}</h2>
       <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] print:hidden sm:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0 flex-1">
           <label htmlFor="department-directory-search" className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -100,7 +100,7 @@ export function DepartmentDirectory({
         </Disclosure>
       </div>
 
-      <p role="status" aria-live="polite" className="text-sm leading-5 text-muted-foreground">
+      <p role="status" aria-live="polite" className="text-sm leading-[22px] text-muted-foreground">
         {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}
       </p>
       <DataTable
@@ -115,7 +115,7 @@ export function DepartmentDirectory({
         rows={result.items}
         getRowKey={(row) => row.id}
         empty={
-          <p className="m-0 text-sm text-muted-foreground">
+          <p className="m-0 text-sm text-muted-foreground leading-[22px]">
             {search.trim()
               ? "No departments match this search."
               : "No departments found. Create a college first, then add departments."}
@@ -123,7 +123,7 @@ export function DepartmentDirectory({
         }
       />
       {rows.some((row) => row.usage === null) ? (
-        <p className="text-xs text-muted-foreground" role="status">
+        <p className="text-xs text-muted-foreground leading-5" role="status">
           Some dependency counts are unavailable. They are shown as —, not zero.
           Refresh to retry; archiving remains checked by the server.
         </p>

@@ -50,7 +50,7 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
       </form>
       <TpoReportPresentation />
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <p className="border-b border-[var(--lms-canvas-border)] bg-transparent py-4 text-sm text-body">
+      <p className="border-b border-[var(--lms-canvas-border)] bg-transparent py-4 text-sm text-body leading-[22px]">
         {data.scopeNote} Window: {data.asOfIst} through {data.throughIst} (IST, inclusive).
       </p>
       {data.truncated ? (
@@ -68,10 +68,10 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
                   <h2 className="break-words font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
                     {row.companyName} · {row.roleTitle}
                   </h2>
-                  <p className="mt-1 text-sm text-body">
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     {row.jobTitle} · {row.candidateName ?? "Student name not recorded"}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-link">
+                  <p className="mt-1 text-sm font-semibold text-link leading-[22px]">
                     Expires on {row.expiryDayIst} IST
                   </p>
                 </div>

@@ -21,7 +21,7 @@ export function AcademicSetupSteps({ step, showRefresh = true }: { step: 1 | 2 |
       className="flex min-w-0 flex-col items-stretch gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between print:hidden">
       <div>
         <StepIndicator current={step} total={steps.length} className="m-0 block" />
-        <p className="mt-1 text-xs text-muted-foreground">{steps[step - 1]?.label ?? "Academic Setup"}</p>
+        <p className="mt-1 text-xs text-muted-foreground leading-5">{steps[step - 1]?.label ?? "Academic Setup"}</p>
       </div>
       <div className="grid min-w-0 grid-cols-1 gap-2 text-sm sm:flex sm:flex-wrap sm:items-center">
         {showRefresh ? <AcademicDirectoryRefresh/> : null}

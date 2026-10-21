@@ -53,7 +53,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
       <StatTile label="Failed" value={draft.failed} className={tpoTileStyles.tile} />
       <StatTile label="Skipped" value={draft.skipped+Object.values(draft.suppressed_counts).reduce((a,b)=>a+b,0)} className={tpoTileStyles.tile} />
     </section>
-    <p className="text-xs text-muted-foreground">Provider acceptance is not proof of delivery.</p>
+    <p className="text-xs text-muted-foreground leading-5">Provider acceptance is not proof of delivery.</p>
     <TpoCampaignSendControl campaignId={campaignId} ready={deliveryReady}
       recipients={draft.total_recipients} status={draft.status}/>
     <section className="border-b border-[var(--lms-canvas-border)] pb-4">
@@ -65,11 +65,11 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
      <p className="mt-2 whitespace-pre-wrap break-words text-[14px] leading-[1.6] text-[var(--lms-body-text)]">{draft.body}</p>
      </div>
     </Disclosure>
-    <p className="text-xs text-muted-foreground">Template: {draft.template_key}</p>
+    <p className="text-xs text-muted-foreground leading-5">Template: {draft.template_key}</p>
 
     {recipients?.ready?<section aria-label="Campaign recipient statuses" className="space-y-3">
      <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recipients and delivery status</h2>
-     <p className="text-xs text-muted-foreground">Names and recorded provider outcomes only. Sent means the email provider accepted the request, not that the recruiter read it.</p>
+     <p className="text-xs text-muted-foreground leading-5">Names and recorded provider outcomes only. Sent means the email provider accepted the request, not that the recruiter read it.</p>
      {recipients.rows.length?<ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {recipients.rows.slice((page-1)*25,page*25).map(row=><li key={row.id} className="flex min-w-0 flex-col items-start gap-2 py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
        <Link href={"/tpo/recruiters/"+encodeURIComponent(row.leadId)}
@@ -84,7 +84,7 @@ export default async function TpoCampaignDraftDetail({params,searchParams}:{
      <Pagination page={page} pageCount={totalPages}
        hrefForPage={next=>"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(campaignId)+"?page="+next}
        label="Campaign recipient pages"/>
-     {recipients.hasMore?<p role="status" className="text-xs">Showing the first 500 recipients.</p>:null}
+     {recipients.hasMore?<p role="status" className="text-xs leading-5">Showing the first 500 recipients.</p>:null}
     </section>:null}
    </article>:null}
  </div>;

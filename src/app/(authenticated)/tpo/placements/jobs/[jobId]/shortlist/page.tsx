@@ -62,7 +62,7 @@ export default async function TpoDriveShortlistPage({
       >
         Recruiter-visible shortlist report →
       </Link>
-      <p className="text-sm leading-6 text-body">
+      <p className="text-sm leading-[22px] text-body">
         {data.total} shortlisted application(s). This is an application-level count:
         one learner may have multiple role-option applications. Withdrawn or
         subsequently rejected applications are not counted. Private screening

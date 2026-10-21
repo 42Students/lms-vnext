@@ -32,7 +32,7 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
    </>}/>
   <section aria-label="Current offer facts" className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5 print:overflow-visible">
    {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:last:border-r-0">
-    <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{name==="Current status"?<StatusBadge tone={value==="ACCEPTED"?"success":value==="DECLINED"?"error":value==="PENDING"?"warning":"neutral"}>{value}</StatusBadge>:value}</p>
+    <p className="text-xs text-muted-foreground leading-5">{name}</p><p className="mt-2 break-words font-semibold">{name==="Current status"?<StatusBadge tone={value==="ACCEPTED"?"success":value==="DECLINED"?"error":value==="PENDING"?"warning":"neutral"}>{value}</StatusBadge>:value}</p>
    </div>)}
   </section>
 
@@ -44,9 +44,9 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
       <strong className="min-w-0 break-words text-sm">{event.kind}: {event.from??"Initial"} → {event.to}</strong>
       <time dateTime={event.when} className="text-xs text-muted-foreground">{momentInIst(event.when)}</time>
      </div>
-     {event.reason?<p className="mt-2 whitespace-pre-wrap break-words text-sm leading-5 text-body">Recorded reason: {event.reason}</p>:null}
+     {event.reason?<p className="mt-2 whitespace-pre-wrap break-words text-sm leading-[22px] text-body">Recorded reason: {event.reason}</p>:null}
     </li>)}</ol>}
   </section>
-  <p className="text-xs text-muted-foreground">This page does not verify letter delivery, external acceptance, or employer confirmation.</p>
+  <p className="text-xs text-muted-foreground leading-5">This page does not verify letter delivery, external acceptance, or employer confirmation.</p>
  </div>;
 }

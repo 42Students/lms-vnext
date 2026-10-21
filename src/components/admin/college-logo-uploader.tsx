@@ -85,12 +85,12 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  }
  return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)]">
   <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">College logo</h2>
-  <p className="max-w-[75ch] text-sm leading-5 text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
+  <p className="max-w-[75ch] text-sm leading-[22px] text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
   {(savedUrl||(!removed&&currentUrl))?<div className="flex min-w-0 items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <Card as="div" className="w-fit shrink-0 p-2">
     <img src={(savedUrl||currentUrl)!} alt="Current college logo" className="aspect-square w-20 max-w-full object-contain"/>
    </Card>
-   <p className="min-w-0 text-sm text-muted-foreground">Current college logo</p>
+   <p className="min-w-0 text-sm text-muted-foreground leading-[22px]">Current college logo</p>
   </div>:null}
   {canEdit?<><label className="block print:hidden text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Select logo to crop
     <Input ref={fileInputRef} type="file" accept="image/png,image/jpeg,image/webp" disabled={busy}

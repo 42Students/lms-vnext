@@ -14,10 +14,10 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     <div className="mt-4 space-y-4">
     <div className="flex flex-wrap items-baseline justify-between gap-3">
       <div>
-        <h2 className="text-xl font-semibold text-foreground">{COLLEGE_SETUP_GUIDE_COPY.heading}</h2>
-        <p className="mt-1 text-sm text-body">{COLLEGE_SETUP_GUIDE_COPY.intro}</p>
+        <h2 className="text-xl font-semibold text-[var(--lms-heading)]">{COLLEGE_SETUP_GUIDE_COPY.heading}</h2>
+        <p className="mt-1 text-sm text-body leading-[22px]">{COLLEGE_SETUP_GUIDE_COPY.intro}</p>
       </div>
-      <p className="text-sm text-muted-foreground" aria-label="Setup steps containing persisted data">
+      <p className="text-sm text-muted-foreground leading-[22px]" aria-label="Setup steps containing persisted data">
         {recorded} of {steps.length} steps contain records
       </p>
     </div>
@@ -25,7 +25,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {phases.map(phase => <section key={phase.title}
         className="border-t border-border pt-4">
-        <h3 className="text-base font-semibold text-foreground">{phase.title}</h3>
+        <h3 className="text-base font-semibold text-[var(--lms-heading)]">{phase.title}</h3>
         <ul className="mt-3">
           {phase.steps.map(step => <ListRow key={step.key} title={step.label}
             detail={step.count > 0
