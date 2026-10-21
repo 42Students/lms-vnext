@@ -51,6 +51,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
    if(!payload.available)throw new Error("Instructor resources are unavailable.");
    setLinks(payload.links);
    if(input.action==="ADD"){setTitle("");setExternalUrl("");}
+   else setRemoveId(null);
   }catch(error){setError(error instanceof Error?friendlyApiError({}):"Could not save instructor resources.");}
   finally{lock.current=false;setPending(false);}
  }
@@ -58,7 +59,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
  return <section aria-label="Instructor assignment resources" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] max-[767px]:[&_button]:min-h-11">
   <h3 className="text-base font-semibold">Instructions &amp; resources</h3>
   {loading?<LoadingState label="Loading instructor links…" />:null}
-  {error?<Alert tone="error">{error}</Alert>:null}
+  {error&&removeId===null?<Alert tone="error">{error}</Alert>:null}
   {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground">No instructor resources yet.</p>:null}
   <ul className="divide-y divide-border">
    {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] py-[var(--lms-space-3)] text-sm md:flex-row md:items-center md:justify-between">
@@ -76,7 +77,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
     <Input value={externalUrl} onChange={e=>setExternalUrl(e.target.value)} type="url" maxLength={2048}
      placeholder="https://" className="min-h-11 w-full md:min-h-[var(--lms-control-height)]"/>
    </label>
-   <Button variant="secondary" type="button" disabled={pending||loading||links.length>=20||!parsed.success}
+   <Button variant="primary" type="button" loading={pending} disabled={pending||loading||links.length>=20||!parsed.success}
     onClick={()=>{if(parsed.success)void act({action:"ADD",link:parsed.data});}}
     className="w-full md:w-auto md:justify-self-end md:col-span-2" size="md">Add link</Button>
    </div>
@@ -92,10 +93,9 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
     pending={pending}
     onConfirm={()=>{
       if(!removeId||pending)return;
-      const selectedId=removeId;
-      setRemoveId(null);
-      void act({action:"REMOVE",materialId:selectedId});
-    }}
-  />
+      void act({action:"REMOVE",materialId:removeId});
+    }}>
+    {error&&removeId!==null?<Alert tone="error">{error}</Alert>:null}
+  </ConfirmDialog>
  </section>;
 }
