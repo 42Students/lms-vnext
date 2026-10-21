@@ -233,11 +233,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/error.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/deliveries/[submissionId]/review/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/meetings/[meetingId]/notes/error.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/error.tsx`
 - [ ] `src/components/courses/faculty-assessment-create.tsx`
 - [ ] `src/components/courses/faculty-assessment-overview.tsx`
