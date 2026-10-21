@@ -91,17 +91,17 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   const [user]=await tx.select({id:users.id,status:users.platformStatus})
    .from(users).where(sql`lower(${users.email})=${email}`).for("update").limit(1);
   if(!user||user.status!=="ACTIVE")throw invalid();
-  // Wait for authenticated consent before creating an existing user profile.
-  if(!pendingConsent)await tx.insert(placementRecruiterProfiles).values({
+  // The pending grant FK requires a recruiter profile. Creating that
+  // unprivileged profile does NOT activate a recruiter grant or impersonate
+  // the existing account; the signed-in user must accept first.
+  await tx.insert(placementRecruiterProfiles).values({
    userId:user.id,companyId:relationship.companyId,createdByUserId:user.id,
    title:updatedDesignation,
   }).onConflictDoNothing();
   const [profile]=await tx.select().from(placementRecruiterProfiles)
     .where(eq(placementRecruiterProfiles.userId,user.id)).for("update").limit(1);
-  if(!pendingConsent&&(!profile||profile.companyId!==relationship.companyId||
-    profile.status!=="ACTIVE"))throw invalid();
-  if(pendingConsent&&profile&&(profile.companyId!==relationship.companyId||
-    profile.status!=="ACTIVE"))throw invalid();
+  if(!profile||profile.companyId!==relationship.companyId||
+    profile.status!=="ACTIVE")throw invalid();
   const [existing]=await tx.select({id:placementRecruiterCollegeGrants.id})
    .from(placementRecruiterCollegeGrants).where(and(
     eq(placementRecruiterCollegeGrants.recruiterUserId,user.id),
