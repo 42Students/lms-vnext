@@ -25,7 +25,10 @@ export const TPO_SCHEDULED_JOBS = {
   },
   "tpo.finalizeExternalAcceptances": {
     schedule: "*/30 * * * *", leaseMs: 25 * 60_000, wired: false,
-    description: "External offer acceptance finalization",
+    // This dedicated name is not a separately exposed route: the wired 15m
+    // offer-expiry job runs the same idempotent finalizer, satisfying the
+    // legacy 30m upper bound without duplicate competing scheduler requests.
+    description: "External offer acceptance finalization (via 15m expiry worker)",
   },
   "tpo.recruiterInviteReminders": {
     schedule: "0 9 * * *", leaseMs: 30 * 60_000, wired: false,
