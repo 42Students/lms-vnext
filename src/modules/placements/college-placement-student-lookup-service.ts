@@ -7,6 +7,7 @@ import {collegeMemberships,learnerProfiles,membershipRoles,users,
  placementCompanies,placementCompanyRelationships,placementApplicationScreenings,
  placementCollegeApplicationStages,placementRoundCandidateSlots,placementJobRounds} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
+import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {capStudentLookupRows,STUDENT_LOOKUP_CAP,STUDENT_LOOKUP_APPLICATION_CAP} from "./college-placement-student-lookup-model";
 export async function lookupCollegeStudentPlacement(ctx:RequestContext,raw:unknown){
@@ -162,13 +163,15 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
    !nextInterviewByApplication.has(interview.applicationId))
     nextInterviewByApplication.set(interview.applicationId,interview);
  const doc=student.profileDocument;
- const validArray=(value:unknown):string[]=>Array.isArray(value)?
-  value.filter((item):item is string=>typeof item==="string").slice(0,50):[];
+ const validSkills=learnerProfileDocumentSchema.shape.skills.safeParse(doc?.skills??[]);
+ const validPreferences=learnerProfileDocumentSchema.shape.jobPreferences.safeParse(doc?.jobPreferences??{});
  return {
   student:{membershipId:student.membershipId,legacyLearnerId:student.legacyLearnerId,
    name:student.name,email:student.email,roll:student.roll,
-   profile:{skills:validArray(doc?.skills),jobPreferences:validArray(doc?.jobPreferences),
+   profile:{skills:validSkills.success?validSkills.data:[],
+    jobPreferences:validPreferences.success?validPreferences.data:null,
     resumeAvailable:Boolean(student.resumeObjectPath)&&student.resumeScanStatus==="CLEAN",
+    resumeScanStatus:student.resumeScanStatus,
     profileDocumentVersion:student.profileDocumentVersion??0}},
   page:input.page,pageSize,total:totalRow?.total??0,
   hasMore:input.page*pageSize<(totalRow?.total??0),
