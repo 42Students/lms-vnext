@@ -38,6 +38,19 @@ export function safeRecruiterEmailAddressName(value:string):string{
  // Avoid splitting a UTF-16 surrogate pair at the outbound provider boundary.
  return /[\uD800-\uDBFF]$/.test(excerpt)?excerpt.slice(0,-1):excerpt;
 }
+/** Exact old greeting fallback; safe for merge fields and address labels. */
+export function recruiterDigestGreetingName(raw:string|null|undefined){
+ const cleaned=safeRecruiterEmailAddressName(raw??"");
+ return cleaned||"there";
+}
+/** Legacy r[-dev]-20hex aliases remain inbound-only triage candidates.
+ * The 20-hex tag was not bound to vNext's 32-hex HMAC state and must never
+ * authenticate conversation posting by itself.
+ */
+export function legacyRecruiterReplyAlias(address:string,configuredDomain:string){
+ const match=/^(?:recruitment\+)?r(?:dev)?-([a-f0-9]{20})@([a-z0-9.-]+)$/i.exec(address.trim());
+ return Boolean(match&&match[2]?.toLowerCase()===configuredDomain.toLowerCase());
+}
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
  return messages.slice(-3).map(row=>safeRecruiterEmailMergeText(row.body));
 }
@@ -80,7 +93,7 @@ export function verifyRecruiterMailBridgeSignature(secret:string,body:string,sup
  * private conversation text. An all-quoted reply is not a message.
  */
 export function extractRecruiterEmailReply(raw:string):string|null{
- if(typeof raw!=="string"||raw.length>20_000)return null;
+ if(typeof raw!=="string"||raw.length>200_000)return null;
  const lines=raw.replace(/\r\n?/g,"\n").split("\n");
  const reply:string[]=[];
  for(const line of lines){
@@ -93,5 +106,9 @@ export function extractRecruiterEmailReply(raw:string):string|null{
   reply.push(line.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,""));
  }
  const body=reply.join("\n").trim();
- return body.length>=1&&body.length<=4000?body:null;
+ if(body.length<1)return null;
+ // The original service truncated to 4,000 UTF-16 code units rather than
+ // discarding a lengthy, otherwise valid reply. Avoid a dangling surrogate.
+ const clipped=body.slice(0,4000);
+ return /[\uD800-\uDBFF]$/.test(clipped)?clipped.slice(0,-1):clipped;
 }
