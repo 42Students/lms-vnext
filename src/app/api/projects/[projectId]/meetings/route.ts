@@ -56,7 +56,7 @@ export async function POST(
     );
 
     return NextResponse.json(
-      { meeting },
+      { meeting, message: "Project updated" },
       { status: 201 },
     );
   } catch (error) {
