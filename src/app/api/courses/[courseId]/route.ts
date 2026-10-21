@@ -24,16 +24,17 @@ type RouteContext = {
 /** Legacy course route crosswalk (no misleading archive/delete parity):
  * POST /api/v1/courses/create -> POST /api/courses (201 {course})
  * GET /fetch, /fetchAll, /fetchByCollege -> GET /api/courses?collegeId=
- * GET /by-slug/{slug}, /fetchCourse?courseId, /{id}/slug -> authenticated
- *   GET /api/courses/{uuid or code}?collegeId=; historic numeric IDs need a
- *   dedicated, verified mapping table before aliases can be redirected.
+ * GET /by-slug/{slug} -> authenticated GET /api/courses/by-slug/{slug}?collegeId=;
+ *   GET /api/courses/{uuid or scoped code/slug}?collegeId= accepts old bookmarks.
+ *   Historic numeric IDs need an independently verified import crosswalk.
  * PUT /update/{id} -> PATCH /api/courses/{uuid} (CAS expectedUpdatedAt)
  * DELETE /delete/{id} -> DELETE /api/courses/{uuid} (ARCHIVE, not hard delete)
- * GET /deleted and POST /restore have no safe vNext equivalents yet.
+ * GET /api/courses?onlyArchived=true and POST /api/courses/{uuid}/restore
+ *   preserve the archived course's college scope and history.
  * No unverified image upload or object cleanup is performed by metadata PATCH.
  */
 const courseUuid=z.string().uuid();
-const validSlug=/^[A-Za-z][A-Za-z0-9._-]{0,63}$/;
+const validSlug=/^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 function slugError(message:string){
  return NextResponse.json({error:"INVALID_SLUG",message},{status:400,headers:{"Cache-Control":"private, no-store"}});
 }
@@ -67,14 +68,19 @@ export async function GET(request:Request,{params}:RouteContext){
    const matched=await getDb().select({id:courses.id}).from(courses)
     .innerJoin(departments,eq(departments.id,courses.departmentId))
     .where(and(eq(departments.collegeId,college.id),eq(courses.status,"ACTIVE"),
-     sql`lower(${courses.code}) = ${id.toLowerCase()}`)).limit(2);
+     sql`(lower(${courses.code}) = ${id.toLowerCase()}
+       or lower(${courses.slug}) = ${id.toLowerCase()})`)).limit(2);
    if(matched.length!==1)throw new CoursesServiceError("COURSE_NOT_FOUND");
    scope=await loadCourseScope(matched[0]!.id);
   }
-  if(providedSlug!==null&&scope.code.toLowerCase()!==providedSlug.toLowerCase())
-   return NextResponse.json({error:"COURSE_SLUG_ID_MISMATCH",
-    message:"courseSlug and courseId do not refer to the same course"},
-    {status:400,headers:{"Cache-Control":"private, no-store"}});
+  if(providedSlug!==null){
+   // Validate the persisted immutable slug, not a renamed display code.
+   // Pre-slug records legitimately fall back to their scoped course code.
+   const [mapped]=await getDb().select({slug:courses.slug}).from(courses)
+     .where(eq(courses.id,scope.id)).limit(1);
+   if(!mapped||(mapped.slug??scope.code).toLowerCase()!==providedSlug.toLowerCase())
+    throw new CoursesServiceError("COURSE_NOT_FOUND");
+  }
   return NextResponse.json({course:scope},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
