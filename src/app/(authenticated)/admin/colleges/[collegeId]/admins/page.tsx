@@ -97,7 +97,7 @@ export default async function CollegeAdministratorsPage({params,searchParams}:{
       {key:"org",header:"Org",cell:()=>data.college.organizationId},
       {key:"college",header:"College",cell:()=>data.college.name},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status==="ACTIVE"?"Enabled":"Suspended"}</StatusBadge>},
-      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/></Disclosure>},
+      {key:"access",header:"Access",mobilePriority:"action",cell:item=><Disclosure title="Access" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]"><CollegeAdminLifecycleAction membershipId={item.membershipId} status={item.status} hasMentorRole={item.roles.includes("MENTOR")} displayName={item.name}/></Disclosure>},
       {key:"sessions",header:"Sessions",mobilePriority:"action",cell:item=><Link title="View active devices"
         href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
         className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">

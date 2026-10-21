@@ -7,7 +7,7 @@ export default function Loading() {
   <PageHeader title="Placement Analytics" />
   <p role="status" aria-live="polite" className="text-sm text-[var(--lms-body-text)]">Refreshing hiring dashboard…</p>
   <div className="border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-hidden="true">
-   <Skeleton variant="kpi" count={3} label="Refreshing hiring dashboard" />
+   <Skeleton variant="kpi" count={6} label="Refreshing six hiring dashboard metrics" />
   </div>
  </section>;
 }

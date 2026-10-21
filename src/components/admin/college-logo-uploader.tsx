@@ -102,6 +102,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)]">
   <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">College logo</h2>
   <p className="max-w-[75ch] text-sm leading-[22px] text-body">Choose a square logo, crop it, then select Save in the branding form. The current login logo stays active unless the branding save succeeds.</p>
+  <p className="text-xs leading-5 text-muted-foreground">Legacy logo links are not imported as active storage objects. To migrate an older logo, choose the original image here, crop it and save; the new private upload and college branding lifecycle then take ownership.</p>
   {stagedBlob||stagedRemoval?<Alert tone="warning">Unsaved logo {stagedRemoval?"removal":"replacement"} is staged. Save the branding form to apply it, or leave this page to discard it. Your current logo is still live.</Alert>:null}
   {(savedUrl||(!removed&&currentUrl))?<div className="flex min-w-0 items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <Card as="div" className="w-fit shrink-0 p-2">
@@ -115,6 +116,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
      className="mt-2 min-h-11 md:min-h-9 w-full"/>
    </label>
    {file&&preview?<div className="min-w-0 space-y-[var(--lms-space-4)] print:hidden">
+    <p className="text-sm font-semibold text-body">Logo crop and preview</p>
     <div className="grid min-w-0 items-start gap-[var(--lms-space-4)] md:grid-cols-[208px_minmax(0,1fr)]">
       <div className="relative aspect-square w-full max-w-52 overflow-hidden rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface-subtle">
         <img src={preview} alt="Selected logo crop preview" className="h-full w-full object-cover"
