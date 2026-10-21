@@ -3,14 +3,38 @@ import { useState } from "react";
 import { isSafeSignedUrl } from "@/modules/storage/ui-models";
 import { Button } from "@/components/ui/button";
 
+/** Migration classification, NOT authorization. A legacy key or public R2 URL
+ * cannot be used directly as a download grant. Server must resolve the
+ * exact tenant/project owner and mint a registered, verified file ID first.
+ */
+export function legacyProjectDeliveryEvidenceState(
+ legacyReference:string|null|undefined,
+ fileId:string|null|undefined,
+):"READY"|"MIGRATION_REQUIRED"|"UNAVAILABLE" {
+ if(fileId&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(fileId))
+  return "READY";
+ if(!legacyReference || legacyReference.length>2048 || /[\\x00-\\x1f\\x7f\\\\]/.test(legacyReference))
+  return "UNAVAILABLE";
+ // Deliberately never allow a legacy URL or key to become an href.
+ if(/^https:\/\//i.test(legacyReference)){
+  try {
+   const url=new URL(legacyReference);
+   return !url.username&&!url.password&&!url.hash?"MIGRATION_REQUIRED":"UNAVAILABLE";
+  }catch{return "UNAVAILABLE";}
+ }
+ return !legacyReference.startsWith("/")&&!legacyReference.includes("..") &&
+  /^[a-zA-Z0-9_./-]+$/.test(legacyReference)?"MIGRATION_REQUIRED":"UNAVAILABLE";
+}
+
 /** Download URLs remain ephemeral and are never rendered into HTML. */
-export function ProjectDeliveryEvidenceDownload({projectId,fileId,name}:{
-  projectId:string;fileId:string;name:string;
+export function ProjectDeliveryEvidenceDownload({projectId,fileId,name,legacyReference}:{
+  projectId:string;fileId:string|null;name:string;legacyReference?:string|null;
 }) {
+  const evidenceState=legacyProjectDeliveryEvidenceState(legacyReference,fileId);
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState<string|null>(null);
   async function download() {
-    if(busy)return;
+    if(busy||evidenceState!=="READY"||!fileId)return;
     setBusy(true);setError(null);
     try {
       const response=await fetch(
@@ -32,8 +56,13 @@ export function ProjectDeliveryEvidenceDownload({projectId,fileId,name}:{
     } finally {setBusy(false);}
   }
   return <span className="inline-flex flex-col items-start gap-1">
-    <Button variant="secondary" disabled={busy}
+    {evidenceState==="READY"?<Button variant="secondary" disabled={busy}
       onClick={()=>void download()}>{busy?"Opening file…":"Open attachment · "+name}</Button>
+     : <span role="status" className="text-xs text-muted-foreground">
+      {evidenceState==="MIGRATION_REQUIRED"
+       ?"Legacy attachment needs verification before download."
+       :"This attachment is not available for download."}
+     </span>}
     {error?<span role="alert" className="text-xs text-error">{error}</span>:null}
   </span>;
 }
