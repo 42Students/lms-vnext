@@ -44,7 +44,7 @@ export default async function TpoPerformanceIntelligencePage({
           description="The selected reporting filters were invalid." />
         <Alert tone="error">
           No reports were loaded. <Link href="/tpo/reports/intelligence"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
         </Alert>
       </div>
     );
@@ -65,7 +65,7 @@ export default async function TpoPerformanceIntelligencePage({
         description="Observed applications and offer decisions by employer, plus explicitly defined annual CTC measures."
         actions={
           <a href={csvHref}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 sm:w-auto text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 sm:w-auto text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Export intelligence CSV
           </a>
         }
