@@ -18,8 +18,31 @@ export type AnnouncementFeedItem = {
   isPinned: boolean;
   buttonLabel?:string|null;
   buttonUrl?:string|null;
-  createdAt: Date;
+  createdAt: Date | string | readonly [number, number, number];
 };
+
+/** Spring legacy [year, month, day] dates are IST calendar days, not JS
+ * zero-based month numbers. vNext timestamps are ISO instants. */
+function announcementTimestamp(raw: AnnouncementFeedItem["createdAt"]): Date | null {
+  let value: Date;
+  if (Array.isArray(raw)) {
+    const [year, month, day] = raw;
+    if (!Number.isInteger(year) || !Number.isInteger(month) || !Number.isInteger(day) ||
+        month < 1 || month > 12 || day < 1 || day > 31) return null;
+    value = new Date(Date.UTC(year, month - 1, day) - 330 * 60_000);
+    const local = new Date(value.getTime() + 330 * 60_000);
+    if (local.getUTCFullYear() !== year || local.getUTCMonth() + 1 !== month ||
+        local.getUTCDate() !== day) return null;
+  } else value = new Date(raw as Date | string);
+  return Number.isFinite(value.getTime()) ? value : null;
+}
+
+function announcementDateLabel(raw: AnnouncementFeedItem["createdAt"]): string {
+  const date = announcementTimestamp(raw);
+  return date ? new Intl.DateTimeFormat("en-IN", {
+    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  }).format(date) : "Date unavailable";
+}
 
 export function AnnouncementFeed({
   items,
@@ -77,15 +100,19 @@ export function AnnouncementFeed({
       </div>
 
       {items.length === 0 ? (
-        <div className="border-y border-border bg-surface px-3 py-4 text-sm text-body">
-          No active announcements for you right now.
+        <div className="flex items-start gap-3 border-y border-border bg-surface px-4 py-5 text-sm text-body">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="mt-0.5 h-6 w-6 shrink-0 text-muted-foreground"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
+          <div><p className="font-semibold text-foreground">No notifications yet</p>
+          <p className="mt-1 text-muted-foreground">Announcements across college, department, and faculty will appear here.</p></div>
         </div>
       ) : (
-        <div className="divide-y divide-border border-y border-border">
+        <div className="space-y-3" role="list" aria-label="College announcements">
           {items.map((item) => (
             <article
               key={item.id}
-              className="min-w-0 py-4"
+              role="listitem"
+              data-notification-type="lms_announcement"
+              className="min-w-0 rounded-lg border border-border bg-surface p-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -94,26 +121,25 @@ export function AnnouncementFeed({
                       <StatusBadge tone="warning">Pinned</StatusBadge>
                     ) : null}
                     <StatusBadge>
-                      {item.senderType.replaceAll("_", " ")}
+                      {item.senderType?.trim().replaceAll("_", " ") || "Announcement"}
                     </StatusBadge>
+                    {item.receiverType?.trim() ? <span className="text-xs text-muted-foreground">
+                      {item.receiverType.replaceAll("_", " ")}
+                    </span> : null}
                   </div>
                   <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
-                    {item.title}
+                    {item.title?.trim() || "Announcement"}
                   </h3>
                 </div>
                 <time
-                  dateTime={item.createdAt.toISOString()}
+                  dateTime={announcementTimestamp(item.createdAt)?.toISOString()}
                   className="text-xs text-muted-foreground"
                 >
-                  {new Intl.DateTimeFormat("en-IN", {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                    timeZone: "Asia/Kolkata",
-                  }).format(item.createdAt)}
+                  {announcementDateLabel(item.createdAt)}
                 </time>
               </div>
               <p className="mt-3 whitespace-pre-wrap text-sm leading-[22px] text-body">
-                {item.message}
+                {item.message?.trim() || "An announcement was shared with you."}
               </p>
               {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel) ?
                 <a href={trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.href}
