@@ -4,16 +4,24 @@ export function formatPromotionAcademicYear(yearStart: number): string {
   return `${yearStart}-${String((yearStart + 1) % 100).padStart(2, "0")}`;
 }
 
+/** Same year-override rule and inline copy as the legacy Batch Promotion form. */
+export const promotionAcademicYearError = "Use consecutive years, e.g. 2026-27";
+
 export const collegePromotionQuerySchema = z.object({
   programId: z.string().uuid().optional(),
   cohortId: z.string().uuid().optional(),
-  yearStart: z.preprocess((value) => {
+  yearStart: z.preprocess(value => {
+    if (value === "" || value === null) return undefined;
     if (typeof value !== "string") return value;
-    const match = /^(\d{4})-(\d{2})$/.exec(value.trim());
-    if (!match) return value;
-    const first = Number(match[1]);
-    return Number(match[2]) === (first + 1) % 100 ? first : value;
-  }, z.coerce.number().int().min(1900).max(9998).optional()),
+    const match = /^(\\d{4})-(\\d{2})$/.exec(value.trim());
+    if (!match) return Number.NaN;
+    const startYear = Number(match[1]);
+    return Number(match[2]) === (startYear + 1) % 100
+      ? startYear : Number.NaN;
+  }, z.number({ error: promotionAcademicYearError })
+    .int(promotionAcademicYearError)
+    .min(1900, promotionAcademicYearError)
+    .max(9998, promotionAcademicYearError).optional()),
 }).strict();
 
 export type CollegePromotionQuery = z.infer<typeof collegePromotionQuerySchema>;
@@ -43,6 +51,8 @@ export function batchPromotionPlan(input: {
   blockers: PromotionBlocker[];
 } {
   const blockers: PromotionBlocker[] = [];
+  // New cohorts begin PLANNED and need explicit activation plus term-one
+  // progression before promotion; never silently treat creation as a promotion.
   if (input.cohortStatus !== "ACTIVE") blockers.push("BATCH_NOT_ACTIVE");
   if (input.currentTermNumber === null) blockers.push("PROGRESSION_MISSING");
   const termValid = input.currentTermNumber !== null &&
@@ -51,7 +61,13 @@ export function batchPromotionPlan(input: {
     blockers.push("TERM_OUTSIDE_PROGRAM");
   if (!input.currentPeriodConfigured) blockers.push("PERIOD_NOT_CONFIGURED");
   else if (!input.currentPeriodOwned) blockers.push("PERIOD_OUTSIDE_COLLEGE");
-  const year = input.overrideYearStart ?? input.currentYearStart;
+  // Legacy advances the academic year when moving from an even term to
+  // the next odd term (2→3, 4→5). An explicit override always wins.
+  const boundaryRollover = termValid && !(
+    input.currentTermNumber === input.durationTerms
+  ) && input.currentTermNumber! % 2 === 0;
+  const year = input.overrideYearStart ?? (input.currentYearStart === null
+    ? null : input.currentYearStart + (boundaryRollover ? 1 : 0));
   if (year === null || year === undefined) blockers.push("ACADEMIC_YEAR_MISSING");
   const graduating = termValid && input.currentTermNumber === input.durationTerms;
   if (termValid && !graduating && !input.nextTermConfigured)

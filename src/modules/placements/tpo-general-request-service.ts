@@ -77,14 +77,14 @@ async function verifyLearnerTx(tx:Tx,collegeId:string,id:string){
  if(!row)throw new TpoGeneralRequestError("SCOPE");
  return row;
 }
-async function notifyTpo(tx:Tx,collegeId:string,eventId:string){
+async function notifyTpo(tx:Tx,collegeId:string,eventId:string,kind:string){
  const staff=await tx.selectDistinct({userId:collegeMemberships.userId}).from(collegeMemberships)
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"TPO")))
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")));
  if(staff.length)await tx.insert(inAppNotifications).values(staff.map(row=>({
-  userId:row.userId,eventId,title:"New student request",body:"A student needs your decision.",
+  userId:row.userId,eventId,title:"New "+kind.toLowerCase().replaceAll("_"," ")+" request to TPO",body:"A student needs your decision.",
   actionHref:"/tpo/requests",
  }))).onConflictDoNothing();
 }
@@ -176,7 +176,7 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
    metadata:{kind:input.kind},
   }).returning({id:activityEvents.id});
   if(!event)throw new TpoGeneralRequestError("TARGET_CHANGED");
-  await notifyTpo(tx,college.id,event.id);
+  await notifyTpo(tx,college.id,event.id,input.kind);
   return {id:request.id,replayed:false};
  });
 }
@@ -190,7 +190,7 @@ export async function listOwnTpoGeneralRequests(ctx:RequestContext){
   requestedAt:placementLearnerGeneralRequests.requestedAt,
  }).from(placementLearnerGeneralRequests).where(and(eq(placementLearnerGeneralRequests.collegeId,member.collegeId),
   eq(placementLearnerGeneralRequests.membershipId,member.id)))
-  .orderBy(desc(placementLearnerGeneralRequests.requestedAt)).limit(100);
+  .orderBy(desc(placementLearnerGeneralRequests.requestedAt),desc(placementLearnerGeneralRequests.id)).limit(100);
 }
 export async function listTpoGeneralRequests(ctx:RequestContext){
  const college=await requireTpo(ctx);
@@ -342,4 +342,35 @@ export async function decideTpoGeneralRequest(ctx:RequestContext,rawId:unknown,r
   }).onConflictDoNothing();
   return {id:row.id,status:nextStatus,effect};
  });
+}
+
+
+/** The global TPO Requests page composes this category with job-specific
+ * requests. Keep a bounded independently scoped reader for request history. */
+export async function listTpoGeneralRequestsPage(ctx:RequestContext,raw:unknown={}){
+ const college=await requireTpo(ctx);
+ await requireRegistered();
+ const filter=z.strictObject({
+  page:z.number().int().min(1).max(10000).default(1),
+  pageSize:z.number().int().min(10).max(50).default(20),
+  status:z.enum(["ALL","PENDING","APPROVED","REJECTED","CANCELLED"]).default("ALL"),
+ }).parse(raw);
+ const predicate=and(eq(placementLearnerGeneralRequests.collegeId,college.id),
+  filter.status!=="ALL"?eq(placementLearnerGeneralRequests.status,filter.status):undefined);
+ const [totalRows,rows]=await Promise.all([
+  getDb().select({count:sql<number>`count(*)::int`}).from(placementLearnerGeneralRequests).where(predicate),
+  getDb().select({
+    id:placementLearnerGeneralRequests.id,kind:placementLearnerGeneralRequests.kind,
+    status:placementLearnerGeneralRequests.status,reason:placementLearnerGeneralRequests.reason,
+    membershipId:placementLearnerGeneralRequests.membershipId,
+    requestedAt:placementLearnerGeneralRequests.requestedAt,
+    decidedAt:placementLearnerGeneralRequests.decidedAt,
+    decisionNote:placementLearnerGeneralRequests.decisionNote,
+  }).from(placementLearnerGeneralRequests).where(predicate)
+   .orderBy(desc(placementLearnerGeneralRequests.requestedAt),desc(placementLearnerGeneralRequests.id))
+   .limit(filter.pageSize).offset((filter.page-1)*filter.pageSize),
+ ]);
+ const total=Number(totalRows[0]?.count??0);
+ return {items:rows,total,page:filter.page,pageSize:filter.pageSize,
+  totalPages:Math.max(1,Math.ceil(total/filter.pageSize))};
 }

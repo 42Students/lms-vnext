@@ -42,7 +42,7 @@ function rememberSize(size: number) {
 
 const columns = (departments: readonly {id:string;name:string}[]): DataTableColumn<AdminProgramRow>[] => [
   {
-    key: "name", header: "Program", mobilePriority: "primary",
+    key: "name", header: "Program Name", mobilePriority: "primary",
     cell: (item) => (
       <div>
         <p className="m-0 min-w-0 break-words font-semibold text-foreground">{item.name}</p>
@@ -50,8 +50,8 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
       </div>
     ),
   },
-  { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName },
   { key: "duration", header: "Duration", mobilePriority: "secondary", cell: (item) => programDurationYearsLabel(item.durationTerms) },
+  { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName||"Name unavailable" },
   {
     key: "contents",
     header: "Contents",
@@ -99,7 +99,7 @@ export function AdminProgramDirectory({
   const [createError,setCreateError]=useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 10);
+  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 25);
 
   const filtered = filterAdminPrograms(programs, search);
   const result = paginateAdminPrograms(filtered, page, pageSize);

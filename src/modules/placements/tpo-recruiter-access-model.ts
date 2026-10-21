@@ -56,6 +56,7 @@ export type TpoRecruiterGrantSourceRow = {
   validUntil?: Date | null;
   capabilities?: string[];
   verificationStatus?: string;
+  grantedByType?: string|null;
 };
 
 export type TpoRecruiterGrantView = {
@@ -71,6 +72,7 @@ export type TpoRecruiterGrantView = {
   ended: boolean;
   capabilities: string[];
   verificationStatus: string;
+  joinedVia: "Public link"|"Company link"|"Invitation"|"Not recorded";
 };
 
 const istDateFormatter = new Intl.DateTimeFormat(
@@ -160,6 +162,11 @@ export function toTpoRecruiterGrantView(
     ended:tpoRecruiterGrantExpiryState(row)!=="CURRENT",
     capabilities:row.capabilities??[],
     verificationStatus:row.verificationStatus??"UNKNOWN",
+    // No separate joinedVia column exists in the new grant schema.
+    // Display a provenance badge only for explicitly recorded source values.
+    joinedVia:row.grantedByType==="PUBLIC_LINK"?"Public link":
+      row.grantedByType==="COMPANY_LINK"?"Company link":
+      row.grantedByType==="INVITE"?"Invitation":"Not recorded",
   };
 }
 

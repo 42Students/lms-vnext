@@ -23,6 +23,8 @@ import type {
 } from "@/modules/courses/admin-course-workspace";
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
 import { SuperAdminCourseBulkVisibility } from "./super-admin-course-bulk-visibility";
+import {AdminCourseVisibilityControl} from "./admin-course-visibility-control";
+import {CollegeCourseBulkVisibility} from "./college-course-bulk-visibility";
 import {
   CourseActions,
   DeliveryActions,
@@ -38,12 +40,13 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,
+  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,openCreateCourse=false,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
   allowOfferingLifecycle?: boolean;
   duplicateCourseId?:string;
+  openCreateCourse?:boolean;
   courseBasePath?:string;
   catalogueQuery?:CollegeCourseCatalogueQuery;
   catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
@@ -88,13 +91,27 @@ export function AdminCourseOverview({
     Workspace["courses"][number]
   >[] = [
     {
+      key: "cover",
+      header: "Image",
+      cell:course=>(<div className="h-14 w-20 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle">
+       {course.thumbnailUrl?.startsWith("https://")?
+        <img src={course.thumbnailUrl} alt={course.name+" cover"} loading="lazy"
+          className="h-full w-full object-cover"/>:
+        <span className="flex h-full items-center justify-center text-xs text-muted-foreground">No image</span>}
+      </div>),
+    },
+    {
       key: "course",
-      header: "Course",
+      header: "Course Name",
       cell: (course) => (
         <div>
-          <p className="m-0 font-semibold text-foreground">
+          <Link href={(()=>{
+           const first=workspace.offerings.find(item=>item.courseId===course.id&&item.status==="ACTIVE");
+           return first?offeringBasePath+"/"+encodeURIComponent(first.id):
+            courseBasePath+"?q="+encodeURIComponent(course.name);
+          })()} className="font-semibold text-primary-text underline-offset-2 hover:underline">
             {course.name}
-          </p>
+          </Link>
           <p className="mt-1 text-xs font-semibold text-primary-text">{course.code}</p>
           {(course.description || (courseBasePath.startsWith("/admin/") && (course.shortTitle || course.takeaways))) ? (
             <Disclosure title="Course details" className="mt-2" contentClassName="space-y-2 px-2 pb-2 text-xs leading-5 text-muted-foreground">
@@ -105,6 +122,11 @@ export function AdminCourseOverview({
           ) : null}
         </div>
       ),
+    },
+    {
+      key: "shortTitle",
+      header: "Short Title",
+      cell:course=><span className="text-sm text-body">{course.shortTitle??"—"}</span>,
     },
     {
       key: "department",
@@ -127,15 +149,17 @@ export function AdminCourseOverview({
       key: "status",
       header: COLLEGE_COURSES_COPY.studentsSeeIt,
       cell: (course) => (
-        <StatusBadge
-          tone={
-            course.status === "ACTIVE"
-              ? "success"
-              : "neutral"
-          }
-        >
-          {courseVisibleToStudentsLabel(course.status)}
-        </StatusBadge>
+        <div className="space-y-1">
+         <StatusBadge tone={course.status==="ACTIVE"&&course.enabled&&
+          course.legacyAllowedForDisplay!==0?"success":"neutral"}>
+          {courseVisibleToStudentsLabel(course.status==="ACTIVE"&&course.enabled&&
+           course.legacyAllowedForDisplay!==0?"ACTIVE":"HIDDEN")}
+         </StatusBadge>
+         <AdminCourseVisibilityControl course={{id:course.id,name:course.name,
+          status:course.status,enabled:course.enabled,
+          legacyAllowedForDisplay:course.legacyAllowedForDisplay,
+          updatedAt:course.updatedAt.toISOString()}}/>
+        </div>
       ),
     },
     {
@@ -152,6 +176,7 @@ export function AdminCourseOverview({
           allowMetadata={courseBasePath.startsWith("/admin/")}
           duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}
           activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
+          linkedLessonCount={lessonCountByCourse?.[course.id]??0}
           course={{
             id: course.id,
             updatedAt: course.updatedAt.toISOString(),
@@ -456,7 +481,9 @@ export function AdminCourseOverview({
         />
       </div>
 
-      <Disclosure title="Create Course and offering" defaultOpen={Boolean(duplicateCourseId)}
+      <div className={courseBasePath.startsWith("/admin/")?"grid min-w-0 items-start gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"space-y-[var(--lms-space-4)]"}>
+      <div id="create-course" className="min-w-0">
+      <Disclosure title="Create New Course" defaultOpen={openCreateCourse||Boolean(duplicateCourseId)||courseBasePath.startsWith("/admin/")}
         className="min-w-0 border-y border-[var(--lms-canvas-border)]"
         contentClassName="min-w-0 pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
       <AdminCourseCreatePanel
@@ -474,6 +501,7 @@ export function AdminCourseOverview({
         facultyTruncated={workspace.facultyTruncated}
       />
       </Disclosure>
+      </div>
 
       <section className="min-w-0 space-y-[var(--lms-space-3)]">
         <div>
@@ -502,7 +530,7 @@ export function AdminCourseOverview({
             {courseBasePath.startsWith("/admin/") ? <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Per page
               <Select name="pageSize" defaultValue={catalogueQuery.pageSize ?? "25"} className="min-h-11 md:min-h-9">
-                <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+                <option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option>
               </Select>
             </label> : null}
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] md:flex-row md:flex-wrap md:col-span-2">
@@ -528,6 +556,12 @@ export function AdminCourseOverview({
           collegeId={workspace.collegeId}
           maxSelection={(() => { const n=Number(process.env.COURSE_BULK_STATUS_MAX??"100"); return Number.isInteger(n)?Math.min(100,Math.max(1,n)):100; })()}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
+        {!courseBasePath.startsWith("/admin/")?<CollegeCourseBulkVisibility
+         key={workspace.collegeId}
+         courses={(catalogue?catalogue.items:workspace.courses).map(course=>({
+          id:course.id,name:course.name,enabled:course.enabled&&course.legacyAllowedForDisplay!==0,
+          updatedAt:course.updatedAt.toISOString(),
+         }))}/>:null}
         <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show. Create Course and offering above to add the first record.</p>}
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}
@@ -540,6 +574,7 @@ export function AdminCourseOverview({
             label="Course catalogue pages" showBoundaryLinks={false}/>
          </div>:null}
       </section>
+      </div>
 
       <Disclosure title="Course Offerings" className="min-w-0 border-t border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <div>

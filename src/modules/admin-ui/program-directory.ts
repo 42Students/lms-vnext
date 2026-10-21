@@ -10,7 +10,7 @@ export type AdminProgramRow = {
 
 export function programDurationYearsLabel(durationTerms:number) {
   const years=durationTerms/2;
-  return `${years} ${years===1?"year":"years"} (${durationTerms} ${durationTerms===1?"term":"terms"})`;
+  return Number.isFinite(years)&&years>0?`${years} ${years===1?"year":"years"}`:"—";
 }
 
 export function legacyDurationYearsToTerms(years:number) {
@@ -28,19 +28,15 @@ export function filterAdminPrograms(
     [row.name, row.code, row.departmentName].some((text) =>
       text.toLocaleLowerCase("en-IN").includes(search),
     ),
-  ).sort((a, b) =>
-    a.departmentName.localeCompare(b.departmentName, "en-IN") ||
-    a.name.localeCompare(b.name, "en-IN") ||
-    a.id.localeCompare(b.id),
   );
 }
 
 export function paginateAdminPrograms(
   rows: readonly AdminProgramRow[],
   page: number,
-  size = 10,
+  size = 25,
 ) {
-  const pageSize = Math.max(1, Math.min(100, Math.trunc(size) || 10));
+  const pageSize = Math.max(1, Math.min(100, Math.trunc(size) || 25));
   const pageCount = Math.max(1, Math.ceil(rows.length / pageSize));
   const currentPage = Math.max(1, Math.min(pageCount, Math.trunc(page) || 1));
   return {

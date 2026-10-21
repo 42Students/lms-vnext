@@ -1,12 +1,13 @@
 import { collegeClassBaseQuerySchema,withCollegeClassCapacityCheck } from "./college-structure-directory-model";
 import { escapeActivityCsvCell } from "@/modules/activity/college-activity-export-model";
 
-export const CLASSES_EXPORT_CAP = 1000;
+/** All filtered classes are exported using server-authored pages. */
+export const CLASSES_EXPORT_CAP = Number.MAX_SAFE_INTEGER;
 export const collegeClassesExportSchema = withCollegeClassCapacityCheck(collegeClassBaseQuerySchema.omit({ page: true }));
 
 export type ClassExportRow = {
-  name: string; code: string; programName: string; cohortName: string;
-  periodName: string; capacity: number | null; activeLearners: number; status: string;
+  id: string; name: string; linkedProgramId: string | null;
+  cohortId: string; minSize: number | null; capacity: number | null;
 };
 
 export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; classCode?: string; periodCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED"; programCode?:string; className?:string; cohortName?:string; schedulePresence?:"ALL"|"HAS_EVENTS"|"NO_EVENTS"; facultyCoverage?:"ALL"|"HAS_FACULTY"|"NO_FACULTY"; deliveryPresence?:"ALL"|"HAS_DELIVERIES"|"NO_DELIVERIES"; periodStartsOnOrAfter?:string; periodEndsOnOrBefore?:string; departmentCode?:string; status: "ALL" | "ACTIVE" | "ARCHIVED"; cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
@@ -19,7 +20,7 @@ export function classesExportHref(raw: { q: string; programId?: string; cohortCo
   if (raw.capacityState && raw.capacityState !== "ALL") params.set("capacityState",raw.capacityState);
   if (raw.minimumCapacity !== undefined) params.set("minimumCapacity", String(raw.minimumCapacity));
   if (raw.maximumCapacity !== undefined) params.set("maximumCapacity",String(raw.maximumCapacity));
-  if (raw.status !== "ACTIVE") params.set("status", raw.status);
+  if (raw.status !== "ALL") params.set("status", raw.status);
   if(raw.cohortStatus&&raw.cohortStatus!=="ALL")params.set("cohortStatus",raw.cohortStatus);
   if(raw.programStatus&&raw.programStatus!=="ALL")params.set("programStatus",raw.programStatus);
   if(raw.periodLifecycle && raw.periodLifecycle!=="ALL")params.set("periodLifecycle",raw.periodLifecycle);
@@ -35,18 +36,13 @@ export function classesExportHref(raw: { q: string; programId?: string; cohortCo
   return "/api/academics/college-classes-export" + (params.size ? "?" + params.toString() : "");
 }
 
-export function renderCollegeClassesCsv(rows: readonly ClassExportRow[], truncated: boolean) {
-  const headers = ["Class", "Code", "Program", "Batch", "Academic period", "Configured capacity",
-    "Active learner enrollments", "Status"];
+export function renderCollegeClassesCsv(rows: readonly ClassExportRow[], _truncated = false) {
+  const headers = ["ID", "Class/Section Name", "Program ID", "Batch ID", "Minimum Students", "Maximum Students"];
   const lines = [headers.map(escapeActivityCsvCell).join(",")];
   for (const row of rows) lines.push([
-    row.name, row.code, row.programName, row.cohortName, row.periodName,
+    row.id, row.name, row.linkedProgramId ?? "", row.cohortId,
+    row.minSize === null ? "" : String(row.minSize),
     row.capacity === null ? "" : String(row.capacity),
-    String(row.activeLearners), row.status,
-  ].map(escapeActivityCsvCell).join(","));
-  if (truncated) lines.push([
-    "EXPORT TRUNCATED", "", "", "", "",
-    "", "", "Only first 1,000 matching classes exported; narrow your filters.",
   ].map(escapeActivityCsvCell).join(","));
   return "\ufeff" + lines.join("\r\n");
 }

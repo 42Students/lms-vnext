@@ -1,21 +1,23 @@
 import {notFound,redirect} from "next/navigation";
 
-/** Legacy wrapper forwards safe navigation context, not identity/tenant scope. */
+/** Legacy bookmarks use course slugs or numeric IDs, sometimes with cls.
+ * The shared /home route resolves aliases only against the authenticated
+ * learner's authorized deliveries, and ignores cls for permission checks. */
 export default async function LearnerCourseRedirectPage({
  params,searchParams,
 }:{
  params:Promise<{deliveryId:string}>;
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
- const {deliveryId}=await params;
- if(!deliveryId?.trim()||deliveryId.length>128||deliveryId.includes("/"))notFound();
- const provided=await searchParams;
- const filtered=new URLSearchParams();
- for(const key of ["cls","section","tab","from","review","embed"]){
-  const value=provided[key];
-  if(typeof value==="string"&&value.length<=160&&
-    !/[\u0000-\u001f]/.test(value))filtered.set(key,value);
+ const [{deliveryId},query]=await Promise.all([params,searchParams]);
+ const allowed=["cls","ref","lesson","content","filter","academicPeriodId","semesterId"];
+ const suffix=new URLSearchParams();
+ for(const key of allowed){
+  const value=query[key];
+  const str=Array.isArray(value)?value[0]:value;
+  if(str&&str.length<=128)suffix.set(key,str);
  }
- const suffix=filtered.size?"?"+filtered.toString():"";
- redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+suffix);
+ const serialized=suffix.toString();
+ redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+
+  (serialized?"?"+serialized:""));
 }

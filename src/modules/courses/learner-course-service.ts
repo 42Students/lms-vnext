@@ -90,6 +90,9 @@ export async function listLearnerCourseDeliveries(
       courseName: courses.name,
       courseCode: courses.code,
       courseDescription: courses.description,
+      courseEnabled:courses.enabled,
+      courseStatus:courses.status,
+      courseAllowedForDisplay:courses.legacyAllowedForDisplay,
       offeringType: courseOfferings.type,
       credits: courseOfferings.credits,
       displayOrder:
@@ -266,6 +269,9 @@ export async function listLearnerCourseDeliveries(
       courseName: courses.name,
       courseCode: courses.code,
       courseDescription: courses.description,
+      courseEnabled:courses.enabled,
+      courseStatus:courses.status,
+      courseAllowedForDisplay:courses.legacyAllowedForDisplay,
       offeringType: courseOfferings.type,
       credits: courseOfferings.credits,
       displayOrder: courseOfferings.displayOrder,
@@ -464,6 +470,12 @@ export async function getLearnerCourseWorkspace(
     delivery.courseId,
     true,
   );
+  // The catalogue may still list a hidden/archived course for reference,
+  // but a direct UUID or legacy bookmark cannot bypass the old active and
+  // enabled access flags to reveal lesson/assessment content.
+  if(course.status!=="ACTIVE"||!course.enabled||
+     course.legacyAllowedForDisplay===0)
+    throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
   let [path] = await getDb()
     .select()
     .from(courseLearningPaths)
@@ -570,6 +582,7 @@ export async function getLearnerCourseWorkspace(
         lessonContents.endsAt,
       contentSequence:
         lessonContents.sequence,
+      contentCreatedAt:lessonContents.createdAt,
       progressPosition:
         learnerContentProgress.lastPositionSeconds,
       progressCompletedAt:
@@ -648,6 +661,7 @@ export async function getLearnerCourseWorkspace(
     startsAt: Date | null;
     endsAt: Date | null;
     sequence: number;
+    createdAt:Date;
     availability:
       | "SCHEDULED"
       | "AVAILABLE"
@@ -713,6 +727,7 @@ export async function getLearnerCourseWorkspace(
       id: string;
       title: string;
       sequence: number;
+      createdAt:Date;
       progress:
         | ContentItem["progress"]
         | AssessmentProgress;
@@ -778,6 +793,7 @@ export async function getLearnerCourseWorkspace(
       startsAt: row.contentStartsAt,
       endsAt: row.contentEndsAt,
       sequence: row.contentSequence!,
+      createdAt:row.contentCreatedAt!,
       availability: contentAvailability,
       progress: buildLearnerProgressView(
         {
@@ -1098,6 +1114,7 @@ export async function getLearnerCourseWorkspace(
         id: content.id,
         title: content.title,
         sequence: content.sequence,
+        createdAt:content.createdAt,
         progress: content.progress,
       })),
       ...lesson.assignments.map(
@@ -1106,6 +1123,7 @@ export async function getLearnerCourseWorkspace(
           id: assignment.id,
           title: assignment.title,
           sequence: assignment.sequence,
+          createdAt:assignment.createdAt,
           progress: assignment.progress,
         }),
       ),
@@ -1114,14 +1132,20 @@ export async function getLearnerCourseWorkspace(
         id: quiz.id,
         title: quiz.title,
         sequence: quiz.sequence,
+        createdAt:quiz.createdAt,
         progress: quiz.progress,
       })),
     ].sort(
-      (a, b) =>
-        a.sequence - b.sequence ||
-        kindOrder[a.kind] -
-          kindOrder[b.kind] ||
-        a.id.localeCompare(b.id),
+      (a,b)=>{
+        const validA=Number.isFinite(a.sequence)&&a.sequence>=0;
+        const validB=Number.isFinite(b.sequence)&&b.sequence>=0;
+        if(validA!==validB)return validA?-1:1;
+        if(validA&&validB&&a.sequence!==b.sequence)return a.sequence-b.sequence;
+        const dateA=a.createdAt?.getTime(),dateB=b.createdAt?.getTime();
+        if(Number.isFinite(dateA)&&Number.isFinite(dateB)&&dateA!==dateB)
+         return dateA!-dateB!;
+        return kindOrder[a.kind]-kindOrder[b.kind]||a.id.localeCompare(b.id);
+      },
     );
   }
 

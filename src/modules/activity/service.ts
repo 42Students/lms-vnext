@@ -99,7 +99,9 @@ const activityFilterSchema = z
       .number()
       .int()
       .min(1)
-      .max(100)
+      // Project audit's 30-day view intentionally reads 200 events;
+      // still cap every caller to a fixed bounded page.
+      .max(200)
       .default(40),
   })
   .strict()

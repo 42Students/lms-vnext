@@ -12,7 +12,7 @@ import {parseSuperAdminCourseQuery} from "@/modules/admin-ui/super-admin-course-
 import { ErrorState } from "@/components/ui/error-state";
 import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admin-course-dependencies-service";
 
-export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
+export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[];create?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   const collegeId =
@@ -28,7 +28,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       <div className="min-w-0 space-y-6">
         <PageHeader
           title="Courses"
-          description="Course administration requires a college safety scope."
+          description="Select a college to manage Courses"
         />
         <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
           items={[
@@ -43,8 +43,8 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           ]}
         />
         <Banner tone="warning" role="status">
-          Select a college to view and manage its courses. Global progress policy
-          can be reviewed only with the platform-wide Super Admin scope selected.
+          Select a college to manage Courses. Global progress policy can be reviewed
+          with the platform-wide Super Admin scope selected.
         </Banner>
         {globalPolicy?.ok && globalPolicy.value.state !== "UNAVAILABLE" ? (
           <CourseProgressPolicyEditor
@@ -67,8 +67,8 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           </Banner>
         )}
         <EmptyState
-          title="Select a college to continue"
-          description="Choose a college in the header above to see its courses."
+          title="Select a college to manage Courses"
+          description="Choose a college in the header above to view, create and edit Courses."
         />
       </div>
     );
@@ -93,17 +93,29 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
-  const {catalogueQuery,duplicateCourseId}=parsed;
-  const [workspace,lessonCountByCourse]=await Promise.all([
-    getAdminCourseWorkspace(context,collegeId),
-    getSuperAdminCourseDependencyCounts(context),
+  const {catalogueQuery,duplicateCourseId,openCreateCourse}=parsed;
+  const [workspaceResult,dependenciesResult]=await Promise.all([
+    getAdminCourseWorkspace(context,collegeId)
+      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
+    getSuperAdminCourseDependencyCounts(context)
+      .then(value=>({ok:true as const,value})).catch(()=>({ok:false as const})),
   ]);
+  if(!workspaceResult.ok)return <section className="min-w-0 space-y-5">
+    <PageHeader title="Courses" description="Manage Courses within the selected college." />
+    <ErrorState title="Could not load courses"
+      description="The courses for this college could not be loaded. Your existing changes were not affected."
+      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">Retry</Link>}/>
+  </section>;
+  const workspace=workspaceResult.value;
+  const lessonCountByCourse=dependenciesResult.ok?dependenciesResult.value:undefined;
 
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Courses"
-        description="Course structure inside the selected college safety scope."
+        description="Create New Course and manage Existing Courses."
+        actions={<Link href="/admin/courses?create=1#create-course"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">Create New Course</Link>}
       />
       <Tabs ariaLabel="Course and content directories" value="courses" renderPanel={false}
           items={[
@@ -117,8 +129,13 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             { value: "quizzes", label: "Quizzes →", href: "/admin/quizzes" },
           ]}
         />
+      {!dependenciesResult.ok?<Banner tone="warning" role="status">
+        Course lesson dependencies could not be verified. Archive decisions must be checked again before proceeding.
+        <Link href="/admin/courses" className="ml-2 font-semibold underline">Retry</Link>
+      </Banner>:null}
       <AdminCourseOverview
         workspace={workspace}
+        openCreateCourse={openCreateCourse}
         courseBasePath="/admin/courses"
         duplicateCourseId={duplicateCourseId}
         catalogueQuery={catalogueQuery}

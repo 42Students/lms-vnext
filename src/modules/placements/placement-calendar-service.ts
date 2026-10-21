@@ -25,6 +25,7 @@ import {
 } from "@/db/schema";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
+import {importedJobImportantDates} from "./job-important-date-adapter";
 import type { RequestContext } from "@/modules/identity/context";
 
 import { requirePlacementManageScope } from "./scope";
@@ -226,7 +227,7 @@ export async function listPlacementCalendarEvents(
 
   const readDeadlines =
     !input.kind ||
-    input.kind === "APPLICATION_DEADLINE";
+    input.kind === "APPLICATION_DEADLINE"||input.kind==="JOB_IMPORTANT_DATE";
 
   const readFollowups =
     !input.kind ||
@@ -347,6 +348,7 @@ export async function listPlacementCalendarEvents(
               status: placementJobs.status,
               applicationDeadline:
                 placementJobs.applicationDeadline,
+              legacyPostingDetails:placementJobs.legacyPostingDetails,
               companyId: placementCompanies.id,
               companyName:
                 placementCompanies.name,
@@ -386,14 +388,10 @@ export async function listPlacementCalendarEvents(
                   input.tpoLegacyScope?["PUBLISHED"]:
                   input.includeDraftDeadlines?["DRAFT","PUBLISHED","CLOSED"]:["PUBLISHED", "CLOSED"],
                 ),
-                gte(
-                  placementJobs.applicationDeadline,
-                  startsAt,
-                ),
-                lt(
-                  placementJobs.applicationDeadline,
-                  endsBefore,
-                ),
+                or(and(
+                  gte(placementJobs.applicationDeadline,startsAt),
+                  lt(placementJobs.applicationDeadline,endsBefore)
+                ),isNotNull(placementJobs.legacyPostingDetails)),
                 input.companyId
                   ? eq(
                       placementCompanies.id,
@@ -614,35 +612,37 @@ export async function listPlacementCalendarEvents(
     );
 
   const deadlines: PlacementCalendarEvent[] =
-    deadlineRows.flatMap(
-      (row): PlacementCalendarEvent[] => {
-        if (!row.applicationDeadline) {
-          return [];
-        }
-
-        return [
-          {
-            id: `deadline:${row.jobId}`,
-            kind: "APPLICATION_DEADLINE",
-            startsAt: row.applicationDeadline,
-            title: `Application deadline: ${row.jobTitle}`,
-            companyId: row.companyId,
-            companyName: row.companyName,
-            jobId: row.jobId,
-            jobTitle: row.jobTitle,
-            roundId: null,
-            roundKind: null,
-            leadId: null,
-            followupId: null,
-            status: row.status,
-            timezone: null,
-            venue: null,
-            note: null,
-            completedAt: null,
-          },
-        ];
-      },
-    );
+    deadlineRows.flatMap((row):PlacementCalendarEvent[]=>{
+      const imported=importedJobImportantDates(row.jobId,row.legacyPostingDetails)
+       .filter(item=>item.at>=startsAt&&item.at<endsBefore);
+      const explicit=row.applicationDeadline;
+      const firstMatching=explicit?imported.find(item=>item.applicationDeadline&&
+        item.at.getTime()===explicit.getTime()):null;
+      const standard:PlacementCalendarEvent[]=(explicit&&explicit>=startsAt&&explicit<endsBefore&&
+        (!input.kind||input.kind==="APPLICATION_DEADLINE"))?[{
+         id:"deadline:"+row.jobId,kind:"APPLICATION_DEADLINE",
+         startsAt:explicit,
+         title:firstMatching?.label??"Application deadline: "+row.jobTitle,
+         eventType:firstMatching?.eventType??null,
+         companyId:row.companyId,companyName:row.companyName,
+         jobId:row.jobId,jobTitle:row.jobTitle,
+         roundId:null,roundKind:null,leadId:null,followupId:null,
+         status:row.status,timezone:null,venue:null,note:null,completedAt:null,
+        }]:[];
+      const additional:PlacementCalendarEvent[]=imported.filter(item=>
+        !firstMatching||item.index!==firstMatching.index).filter(item=>
+         !input.kind||input.kind==="JOB_IMPORTANT_DATE"||
+         (input.kind==="APPLICATION_DEADLINE"&&item.applicationDeadline)
+        ).map(item=>({
+          id:item.id,kind:item.applicationDeadline?"APPLICATION_DEADLINE":"JOB_IMPORTANT_DATE",
+          eventType:item.eventType,startsAt:item.at,title:item.label,
+          companyId:row.companyId,companyName:row.companyName,
+          jobId:row.jobId,jobTitle:row.jobTitle,roundId:null,roundKind:null,
+          leadId:null,followupId:null,status:row.status,timezone:"Asia/Kolkata",
+          venue:null,note:item.originalType,completedAt:null,
+        }));
+      return [...standard,...additional];
+    });
 
   const followups: PlacementCalendarEvent[] =
     followupRows.map(

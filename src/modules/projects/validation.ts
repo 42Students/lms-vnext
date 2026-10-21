@@ -49,8 +49,12 @@ const sprintSchema = z
 const taskSchema = z
   .object({
     key: projectKeySchema,
-    sprintKey: projectKeySchema,
+    sprintKey: projectKeySchema.nullable().optional(),
     title: titleSchema,
+    taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).optional(),
+    legacyKey:z.string().trim().max(120).optional(),
+    dueLabel:z.string().trim().max(160).optional(),
+    approach:z.string().trim().max(4000).optional(),
     description: descriptionSchema,
     acceptanceCriteria: z
       .string()
@@ -122,7 +126,7 @@ export const projectTemplateBlueprintSchema = z
       .default({ deliverables: [] }),
     releases: z.array(releaseSchema).max(50).default([]),
     sprints: z.array(sprintSchema).max(200).default([]),
-    tasks: z.array(taskSchema).max(2000).default([]),
+    tasks: z.array(taskSchema).max(500).default([]),
     resources: z
       .array(resourceSchema)
       .max(200)
@@ -197,7 +201,7 @@ export const projectTemplateBlueprintSchema = z
       }
       taskKeys.add(task.key);
 
-      if (!sprintKeys.has(task.sprintKey)) {
+      if (task.sprintKey && !sprintKeys.has(task.sprintKey)) {
         ctx.addIssue({
           code: "custom",
           message: "Task must reference an existing sprint",
@@ -206,7 +210,7 @@ export const projectTemplateBlueprintSchema = z
       }
 
       const siblingSequence =
-        task.sprintKey + ":" + task.sequence;
+        (task.sprintKey??"__BACKLOG__") + ":" + task.sequence;
       if (taskSequences.has(siblingSequence)) {
         ctx.addIssue({
           code: "custom",
@@ -905,3 +909,67 @@ export type ScheduleProjectMeetingInput = z.infer<
 export type ProjectMeetingTransitionInput = z.infer<
   typeof projectMeetingTransitionInputSchema
 >;
+
+/** Import-only compatibility. Native template mutations still use the strict
+ * parsed model; old labels and non-kebab task keys must never be silently lost.
+ */
+export function normalizeLegacyProjectBlueprint(raw:unknown):unknown{
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))return raw;
+ const input=raw as Record<string,unknown>;
+ const normalizeRows=(value:unknown)=>Array.isArray(value)
+   ?value.filter((item):item is Record<string,unknown>=>Boolean(item)&&
+      typeof item==="object"&&!Array.isArray(item)):[];
+ const slug=(value:string)=>value.normalize("NFKD").toLowerCase()
+   .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
+   .replace(/^-|-$/g,"").slice(0,55).replace(/-$/g,"")||"item";
+ const hash=(value:string)=>{
+   let state=2166136261;
+   for(let i=0;i<value.length;i++){
+     state=Math.imul(state^value.charCodeAt(i),16777619)>>>0;
+   }
+   return state.toString(36);
+ };
+ const unique=(value:string,seen:Set<string>)=>{
+   const normalized=slug(value);
+   let next=normalized;
+   if(seen.has(next))next=(normalized.slice(0,54)+"-"+hash(value)).slice(0,64);
+   let seq=2;
+   while(seen.has(next))next=(normalized.slice(0,57)+"-"+(seq++)).slice(0,64);
+   seen.add(next);return next;
+ };
+ const sprintSeen=new Set<string>(),taskSeen=new Set<string>(),resourceSeen=new Set<string>();
+ const sprints=normalizeRows(input.sprints).map(row=>{
+   const legacy=typeof row.key==="string"?row.key:
+     typeof row.sprintKey==="string"?row.sprintKey:"sprint";
+   return {...row,key:unique(legacy,sprintSeen)};
+ });
+ const originalSprints=normalizeRows(input.sprints);
+ const sprintMap=new Map(originalSprints.map((row,i)=>[
+   String(row.key??row.sprintKey??""),String(sprints[i]?.key??""),
+ ]));
+ const tasks=normalizeRows(input.tasks).map(row=>{
+   const original=String(row.key??row.taskKey??row.title??"task");
+   const key=unique(original,taskSeen);
+   const legacyKey=original!==key&&original.length<=120?original:undefined;
+   const oldSprint=typeof row.sprintKey==="string"?row.sprintKey:"";
+   return {...row,key,legacyKey,
+     sprintKey:oldSprint?(sprintMap.get(oldSprint)||null):null,
+     taskType:typeof row.taskType==="string"?
+       row.taskType.toUpperCase():undefined};
+ });
+ const kindMap:Record<string,string>={
+   link:"LINK",pdf:"PDF",doc:"DOCUMENT",document:"DOCUMENT",
+   ppt:"SLIDES",slides:"SLIDES",video:"VIDEO",file:"FILE",
+ };
+ const resources=normalizeRows(input.resources).map(row=>{
+   const original=String(row.key??row.title??"resource");
+   const legacyType=String(row.type??row.resourceType??"LINK").toLowerCase();
+   const {isPinned:_,isRequired:__,resourceType:___,...rest}=row;
+   void _;void __;void ___;
+   return {...rest,key:unique(original,resourceSeen),
+     type:kindMap[legacyType]??"LINK",
+     pinned:row.pinned===true||row.isPinned===true,
+     required:row.required===true||row.isRequired===true};
+ });
+ return {...input,sprints,tasks,resources};
+}

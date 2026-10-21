@@ -3,6 +3,7 @@ import { and, eq, desc, gte, lt, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   attendanceSessions, cohorts, collegeMemberships, departments,
+  courseSectionDeliveries, courseOfferings, courses,
   programs, sectionScheduleEvents, sections, users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -67,12 +68,16 @@ export async function getCollegeDashboardAttendance(context: RequestContext, now
       startsAt: sectionScheduleEvents.startsAt,
       sectionName: sections.name,
       facultyName: users.displayName,
+      courseName: courses.name,
     }).from(sectionScheduleEvents)
       .innerJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
       .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))
       .leftJoin(attendanceSessions, eq(attendanceSessions.scheduleEventId, sectionScheduleEvents.id))
+      .leftJoin(courseSectionDeliveries, eq(courseSectionDeliveries.id, sectionScheduleEvents.deliveryId))
+      .leftJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .leftJoin(courses, eq(courses.id, courseOfferings.courseId))
       .leftJoin(collegeMemberships, eq(collegeMemberships.id, sectionScheduleEvents.facultyMembershipId))
       .leftJoin(users, eq(users.id, collegeMemberships.userId))
       .where(pendingFilter)
@@ -88,6 +93,7 @@ export async function getCollegeDashboardAttendance(context: RequestContext, now
     unattended: events.map(event => ({
       id: event.id, title: event.title, section: event.sectionName,
       faculty: event.facultyName || "Faculty not assigned",
+      course: event.courseName || "Course not linked",
       when: event.startsAt.toISOString(),
     })),
     unattendedCount: pendingCounts[0]?.total ?? 0,

@@ -31,3 +31,32 @@ export function Skeleton({ variant = "line", count = 1, label = "Loading…", cl
     </div>
   );
 }
+
+
+/** Shared old-LMS learner overview loading shape. The same responsive
+ * two/four-column grid remains mounted when real content replaces it.
+ * Its decorative bars make one accessible loading announcement in total. */
+export function LearnerOverviewSkeleton({label="Loading learner overview"}:{label?:string}={}){
+  return (
+    <section data-slot="learner-overview-skeleton" role="status" aria-live="polite"
+      aria-busy="true" className="min-w-0 space-y-5 p-4 md:p-6">
+      <span className="sr-only">{label}</span>
+      <div aria-hidden="true" className="space-y-4">
+        <div className="lms-skeleton-shimmer h-5 w-32 rounded bg-[var(--lms-neutral-100)] motion-reduce:animate-none"/>
+        <div className="lms-skeleton-shimmer h-8 w-[min(100%,420px)] rounded bg-[var(--lms-neutral-100)] motion-reduce:animate-none"/>
+        <div className="lms-skeleton-shimmer h-4 w-[min(100%,600px)] rounded bg-[var(--lms-neutral-100)] motion-reduce:animate-none"/>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          {Array.from({length:4},(_,i)=>(
+            <div key={i} className="lms-skeleton-shimmer h-28 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-[var(--lms-neutral-100)] motion-reduce:animate-none"/>
+          ))}
+        </div>
+        <div className="space-y-3 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-3 md:p-4">
+          <div className="lms-skeleton-shimmer h-5 w-32 rounded bg-[var(--lms-neutral-100)] motion-reduce:animate-none"/>
+          {Array.from({length:5},(_,i)=>(
+            <div key={i} className="lms-skeleton-shimmer h-11 w-full rounded bg-[var(--lms-neutral-100)] motion-reduce:animate-none"/>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

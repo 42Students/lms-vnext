@@ -53,8 +53,8 @@ export default async function AdminCollegeVerification({
  const parsed=invalidPaging||Object.values(raw).some(Array.isArray)?null:verificationQueueFilters.safeParse(Object.fromEntries(
   Object.entries(raw).filter(([,v])=>v!==undefined&&v!==""),
  ));
- const header=<PageHeader title={college.name}
-  description="College-scoped learner Education and Identity verification. Review only the currently selected college."
+ const header=<PageHeader title="Verification"
+  eyebrow={college.name} description="College-scoped learner Education and Identity verification. Review only the currently selected college."
   actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
   <ErrorState title="Invalid verification filters" description="Choose a valid set of verification filters."
@@ -76,17 +76,24 @@ export default async function AdminCollegeVerification({
     action={<Link className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4" href={retryHref}>Retry</Link>}/>
   </div>;
  }
- const [policy]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
-  .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,college.id)).limit(1);
+ const policyResult=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+  .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,college.id))
+  .limit(1).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
+ const policy=policyResult.ok?policyResult.value[0]:null;
  const query:Record<string,string>={};
  for(const [k,v] of Object.entries(data.filter)){if(v!==undefined&&v!==null)query[k]=String(v);}
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
-
+   <section aria-label="Verification access" className="rounded border border-border p-4">
+    <h2 className="text-lg font-semibold">Verification settings</h2>
+    <p className="mt-1 text-sm text-body">Super Admin may review the selected college's verification queue. The placement cell may verify profiles only when separately enabled below.</p>
+    {!policyResult.ok?<ErrorState title="Could not load placement-cell verification settings"
+     description="The latest setting is unverified. No change can be made until the policy read succeeds."
+     action={<Link href={base} className="font-semibold text-link underline">Retry settings</Link>}/>:
+     <TpoVerificationSwitch collegeId={college.id} initialEnabled={policy?.enabled??true}/>}
+   </section>
    <SuperAdminVerificationPanel key={college.id+":"+JSON.stringify(query)} collegeId={college.id} rows={data.rows}
     counts={data.counts} activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
     page={data.page} total={data.total} hasMore={data.hasMore} query={query} truncated={data.truncated}/>
-   <Disclosure title="Placement-cell verification setting" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
-   <TpoVerificationSwitch collegeId={college.id} initialEnabled={policy?.enabled??true}/>
-   </Disclosure>
+
  </div>;
 }

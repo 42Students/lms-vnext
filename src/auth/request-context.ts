@@ -54,6 +54,9 @@ async function resolveIdentityUid(cookieStore: CookieStore) {
   return identity.uid;
 }
 
+/** Verify session, load persisted membership and role selection, then resolve the
+ * actual request Host and enforce its college restriction. Cookies select a
+ * workspace but cannot grant permissions. Endpoint guards run afterwards. */
 export async function getCurrentRequestContext() {
   const cookieStore = await cookies();
   const identityUid =

@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
-  CollegeSectionError, updateCollegeSection,
+  CollegeSectionError, updateCollegeSection, deleteCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
 
 import { deleteCollegeSection, CollegeSectionLifecycleError } from "@/modules/academics/college-section-lifecycle-service";
@@ -37,19 +37,19 @@ export async function PATCH(request: Request, {
 
 export async function DELETE(request: Request, {
   params,
-}: { params: Promise<{ sectionId: string }> }) {
+}: {
+  params: Promise<{ sectionId: string }>;
+}) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
   try {
-    const context = await getCurrentRequestContext();
     const { sectionId } = await params;
-    const body: unknown = await request.json();
-    const deleted = await deleteCollegeSection(context, sectionId, body);
+    const deleted = await deleteCollegeSection(await getCurrentRequestContext(), sectionId);
     return NextResponse.json({ deleted });
   } catch (error) {
-    if (error instanceof CollegeSectionLifecycleError) {
-      return NextResponse.json({ error: error.code }, {
+    if (error instanceof CollegeSectionError) {
+      return NextResponse.json({ error: error.code, message: error.message }, {
         status: error.code === "CLASS_NOT_FOUND" ? 404 : 409,
       });
     }

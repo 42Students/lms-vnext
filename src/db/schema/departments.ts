@@ -9,6 +9,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
+  check,
   index,
   pgTable,
   text,
@@ -35,6 +36,8 @@ export const departments = pgTable(
       .on(table.collegeId, sql`lower(${table.name})`)
       .where(sql`${table.archivedAt} is null`),
     index("departments_college_idx").on(table.collegeId),
+    check("departments_legacy_name_length_ck",sql`
+      length(trim(${table.name})) between 1 and 255`),
     uniqueIndex("departments_id_college_uq").on(table.id, table.collegeId),
   ],
 );

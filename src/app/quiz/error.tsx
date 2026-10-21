@@ -1,10 +1,20 @@
 "use client";
 import Link from "next/link";
+import {useEffect,useRef} from "react";
+import {usePathname,useSearchParams} from "next/navigation";
 import {Button} from "@/components/ui/button";
 
 export default function RouteError({reset}:{
   error: Error & {digest?:string}; reset:()=>void;
 }){
+ const pathname=usePathname();
+ const search=useSearchParams();
+ const routeKey=pathname+"?"+search.toString();
+ const previous=useRef(routeKey);
+ // Quiz, review and embedded destinations cannot retain a previous quiz error.
+ useEffect(()=>{
+  if(previous.current!==routeKey){previous.current=routeKey;reset();}
+ },[routeKey,reset]);
  return <main className="flex min-h-[65vh] items-center justify-center px-4 py-10">
   <section role="alert" className="min-w-0 max-w-xl space-y-4 text-center">
    <h1 className="text-2xl font-semibold text-[var(--lms-heading)]">Something went wrong</h1>
