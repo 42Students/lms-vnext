@@ -41,7 +41,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_request-tenant.ts.md` (edit src/modules/auth/request-tenant.ts; 17 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_quizzes.ts.md` (edit src/db/schema/quizzes.ts; 17 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-round-candidate-slots.ts.md` (edit src/db/schema/placement-round-candidate-slots.ts; 16 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_attendance.ts.md` (edit src/db/schema/attendance.ts; 13 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_attendance.ts.md` (edit src/db/schema/attendance.ts; 13 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_permissions_policy.ts.md` (edit src/modules/permissions/policy.ts; 11 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-company-identities.ts.md` (edit src/db/schema/placement-company-identities.ts; 11 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_course-assignment-materials.ts.md` (edit src/db/schema/course-assignment-materials.ts; 10 findings; best P1)

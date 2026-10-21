@@ -1,0 +1,9 @@
+# Attendance source-to-vNext crosswalk — lane 14
+
+Legacy class_schedule stores numeric class/course/faculty/lecture hall identifiers, string clock start/end, and nullable attendance_marked_at. Resolve each through scoped legacy_id_map to exactly one sectionScheduleEvent/delivery; store source class/course/faculty and original mark time on attendance_sessions. NULL means **UNMARKED** even if all learners are present; a present marker means bulk attendance was actually taken even when there are zero absence rows.
+
+Legacy `attend` is an **absence-only** table, not a complete present/absent roster. Its `student_id` is a string, `class_schedule_id` is an integer and `drop_class_reason` is separate from nullable `attendance_status` (EXCUSED/MEDICAL/LATE). Resolve the learner's membership in that exact college and offering. Missing legacy marked_by is unknown, not the current actor; native attendance_records.markedByUserId remains non-null and import must quarantine unresolved provenance rather than synthesize an actor. Legacy isDeleted history is retained separately.
+
+Course attendance denominator is held scheduled sessions with startsAt no later than now, not all future/cancelled schedules; empty absences alone do not prove a session was marked. Transactionally write attendance session MARKED and rows together. Old faculty TakeAttendance allowed marking before session start; current policy intentionally restricts to eligible start/correction window, requiring a clear disabled explanation in UI.
+
+Registered migration 0033 has correction_window_hours between 1 and 168. Schema was corrected from 8760 to 168; a larger product window requires a reviewed new ALTER TABLE and UI/service compatibility, not an accidental mismatch. Migration 0225 is additive source projection and remains unregistered. No SQL, app, tests or CI executed.
