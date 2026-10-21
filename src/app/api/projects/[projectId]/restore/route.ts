@@ -11,6 +11,6 @@ export async function POST(request:Request,{params}:RouteContext){
     const context=await getCurrentRequestContext();
     const {projectId}=await params;
     const project=await restoreProjectInstance(context,projectId,await request.json());
-    return NextResponse.json({project});
+    return NextResponse.json({project,message:"Project restored"});
   }catch(error){return apiErrorResponse(error);}
 }
