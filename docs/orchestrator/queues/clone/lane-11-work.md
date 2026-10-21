@@ -120,7 +120,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-11/NEW_docs_audit_gap2_lane-6_teacher-index.md.md` (new; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_modules_colleges_admin-tenant-setup-journey.ts.md` (edit src/modules/colleges/admin-tenant-setup-journey.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_modules_tenant-domains_managed-subdomain-model.ts.md` (edit src/modules/tenant-domains/managed-subdomain-model.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_tenant-domains_route.ts.md` (edit src/app/api/tenant-domains/route.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_tenant-domains_route.ts.md` (edit src/app/api/tenant-domains/route.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_tenant-domains_domainId_verify_route.ts.md` (edit src/app/api/tenant-domains/[domainId]/verify/route.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_components_shell_shell-model.ts.md` (edit src/components/shell/shell-model.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_modules_profile-verification_service.ts.md` (edit src/modules/profile-verification/service.ts; 2 findings; best P1)

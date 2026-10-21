@@ -147,43 +147,40 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
   },
 
   async createDomain(input) {
-    const db = getDb();
-
-    // A retired hostname retains historical tenant ownership even when the
-    // public-routing partial unique index no longer includes its tombstone.
-    // Reassignment requires a reviewed release, not a normal create retry.
+    const db=getDb();
+    // Retired hosts preserve ownership and require a reviewed release.
     const [retired]=await db.select({id:tenantDomains.id}).from(tenantDomains)
       .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
         sql`${tenantDomains.deletedAt} is not null`)).limit(1);
     if(retired)throw new TenantDomainServiceError("HOST_CONFLICT");
-    try {
-      const [created] = await db
-        .insert(tenantDomains)
-        .values({
-          collegeId: input.collegeId,
-          host: input.host,
-          verificationToken: input.verificationToken,
-        })
-        .returning({ id: tenantDomains.id });
-
-      if (!created) {
-        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
-      }
-
-      const domain = await loadDomainFromDb(created.id);
-      if (!domain) {
-        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
-      }
+    try{
+      const domainId=await db.transaction(async tx=>{
+        await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
+          collegeId:input.collegeId,organizationId:input.organizationId,
+        });
+        const [created]=await tx.insert(tenantDomains).values({
+          collegeId:input.collegeId,host:input.host,
+          verificationToken:input.verificationToken,
+        }).returning({id:tenantDomains.id});
+        if(!created)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+        await tx.insert(activityEvents).values({
+          organizationId:input.organizationId,collegeId:input.collegeId,
+          actorUserId:input.context.user.id,module:"PLATFORM",
+          eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+          subjectType:"tenant_domain",subjectId:created.id,
+          summary:"Super Admin added a custom college domain",
+          metadata:{action:"CREATE_CUSTOM_HOST",host:input.host,pendingDnsVerification:true},
+        });
+        return created.id;
+      });
+      const domain=await loadDomainFromDb(domainId);
+      if(!domain)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       return domain;
-    } catch (error) {
-      if (error instanceof TenantDomainServiceError) {
-        throw error;
-      }
-      if (isUniqueViolation(error)) {
-        const existing = await loadDomainByHostFromDb(input.host);
-        if (existing?.collegeId === input.collegeId) {
-          return existing;
-        }
+    }catch(error){
+      if(error instanceof TenantDomainServiceError)throw error;
+      if(isUniqueViolation(error)){
+        const existing=await loadDomainByHostFromDb(input.host);
+        if(existing?.collegeId===input.collegeId)return existing;
         throw new TenantDomainServiceError("HOST_CONFLICT");
       }
       throw error;
