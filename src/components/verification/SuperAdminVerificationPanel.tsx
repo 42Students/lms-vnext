@@ -96,7 +96,14 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
     Only the first 1,000 matching source records were inspected. Counts and pages below are lower bounds, not complete college totals.
     Narrow the server-side filters to see and review other learners. No unseen request has been silently marked reviewed.
   </p>:null}
-  <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
+  <VerificationFilterPanel key={JSON.stringify(query)} query={query}
+   attentionCounts={{
+    MISSING_MARKSHEET:rows.filter(row=>row.section==="EDUCATION"&&row.missingMarksheet).length,
+    VERIFIED_DETAILS_CHANGED:rows.filter(row=>row.status==="UPDATE_PENDING").length,
+    WAITING_OVER_WEEK:rows.filter(row=>["SUBMITTED","UPDATE_PENDING"].includes(row.status)&&
+     (Date.now()-new Date(row.submittedAt).getTime())>7*24*60*60*1000).length,
+   }}
+   onApply={filters=>navigate({...filters,page:"1"})}/>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-sm text-muted-foreground">Select only eligible requests on this page. Bulk actions are limited to 20 per operation.</p>
    <label className="text-sm font-semibold">Sort requests
