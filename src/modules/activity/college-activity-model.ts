@@ -100,8 +100,12 @@ export function activitySearchParams(
 
 /** COL-verification-misc-12: today follows the user's IST calendar, not UTC midnight. */
 export function collegeActivityTodayHref(filter:CollegeActivityQuery,asOf:Date){
- const day=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(asOf);
- return collegeActivityHref({...filter,loaded:1,from:day,to:day});
+ if(!Number.isFinite(asOf.getTime()))throw new RangeError("INVALID_DATE");
+ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+   year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(asOf);
+ const component=(type:"year"|"month"|"day")=>parts.find(part=>part.type===type)?.value??"";
+ const day=`${component("year")}-${component("month")}-${component("day")}`;
+ return collegeActivityHref({...filter,from:day,to:day});
 }
 export function collegeActivityAllTimeHref(filter:CollegeActivityQuery){
  return collegeActivityHref({...filter,loaded:1,from:undefined,to:undefined,range:"ALL"});

@@ -51,6 +51,8 @@ export const assignmentGradeEventsStaged = pgTable(
     /** Source BIGINT/time/action are import provenance, never new actor IDs. */
     legacyGradeAuditId: bigint("legacy_grade_audit_id",{mode:"bigint"}),
     legacyAction: varchar("legacy_action",{length:40}),
+    /** Exact historic action string, not canonicalized event meaning. */
+    sourceAction: varchar("source_action",{length:120}),
     legacyOccurredAtLocal: varchar("legacy_occurred_at_local",{length:40}),
     actorNameSnapshot: varchar("actor_name_snapshot",{length:150}),
     assignmentSubmissionId: uuid("assignment_submission_id").notNull(),
@@ -308,4 +310,13 @@ export function gradeAuditHistoryDisplayState(
  enabled:boolean,rows:readonly unknown[],
 ):"UNAVAILABLE"|"NEVER_GRADED"|"READY"{
  return !enabled?"UNAVAILABLE":rows.length===0?"NEVER_GRADED":"READY";
+}
+
+/** Source action is immutable provenance; show canonical names separately. */
+export function normalizeGradeAuditAction(sourceAction:string):
+  {sourceAction:string;action:"GRADE"|"REGRADE"|"PUBLISH_GRADE"|null} {
+ const original=sourceAction.trim().slice(0,120);
+ const normalized=original.toUpperCase().replace(/[- ]+/g,"_");
+ return {sourceAction:original,action:normalized==="GRADE"||normalized==="REGRADE"||
+   normalized==="PUBLISH_GRADE"?normalized:null};
 }

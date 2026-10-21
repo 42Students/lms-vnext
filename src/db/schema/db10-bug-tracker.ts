@@ -18,6 +18,8 @@ export const db10BugTrackerAccess = pgTable("bug_tracker_access", {
   id: uuid("id").defaultRandom().primaryKey(),
   displayName: varchar("display_name", { length: 120 }).notNull(),
   legacyReporterAccessId: integer("legacy_reporter_access_id"),
+  /** Stable signed-in subject, not an externally issued reporter token. */
+  subjectUserId: uuid("subject_user_id").references(()=>users.id,{onDelete:"restrict"}),
   tokenHash: varchar("token_hash", { length: 64 }).notNull(),
   accessRole: varchar("access_role", { length: 24 }).notNull().default("REPORTER"),
   active: boolean("active").notNull().default(true),
@@ -25,6 +27,8 @@ export const db10BugTrackerAccess = pgTable("bug_tracker_access", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
   uniqueIndex("db10_tracker_access_hash_uq").on(t.tokenHash),
+  uniqueIndex("db10_tracker_access_subject_user_uq").on(t.subjectUserId)
+    .where(sql`${t.subjectUserId} is not null`),
   uniqueIndex("db10_tracker_access_legacy_uq").on(t.legacyReporterAccessId)
     .where(sql`${t.legacyReporterAccessId} is not null`),
   index("db10_tracker_access_name_active_idx").on(sql`lower(${t.displayName})`,t.active),

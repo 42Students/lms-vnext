@@ -75,3 +75,16 @@ export function adminScopeOutOfSync(
   return displayedScope.organizationId !== effectiveScope.organizationId ||
     displayedScope.collegeId !== effectiveScope.collegeId;
 }
+
+/** Browser localStorage and old JWT role claims are never authoritative.
+ * A cross-tab cookie change is restored only after the server has loaded the
+ * caller's currently permitted organization/college scopes. */
+export function restoreVerifiedAdminScope(
+ cookieValue:string|null|undefined,
+ permitted:readonly AdminScope[],
+):AdminScope|null {
+ const requested=decodeAdminScopeCookie(cookieValue);
+ if(!requested)return null;
+ return permitted.find(scope=>scope.organizationId===requested.organizationId&&
+   scope.collegeId===requested.collegeId)??null;
+}
