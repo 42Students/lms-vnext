@@ -28,7 +28,7 @@ export async function POST(request:Request) {
       const form=await request.formData();
       const consent=form.get("acceptedConsent")??form.get("consent");
       payload={choice:form.get("choice"),
-        acceptedConsent:consent===true||consent==="true"||consent==="on"||consent==="1"};
+        acceptedConsent:consent==="true"||consent==="on"||consent==="1"};
     }else{
       payload=await request.json();
     }
