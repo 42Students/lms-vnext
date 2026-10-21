@@ -1,4 +1,41 @@
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+/** Audit snapshots include durable, non-sensitive resource fields only. Private
+ * URLs, upload keys, descriptions, access notes and member identifiers never
+ * enter the activity stream, even if passed in a full DB result row.
+ */
+type ResourceAuditSnapshotInput={
+ id?:string;title?:string;sequence?:number;resourceOrder?:number|null;
+ required?:boolean;visibility?:string;resourceType?:string;
+ status?:string;pinned?:boolean;legacyResourceKind?:string|null;
+ url?:string|null;description?:string|null;accessNotes?:string|null;
+};
+export function redactedProjectResourceSnapshot(resource:ResourceAuditSnapshotInput|null|undefined){
+ if(!resource)return null;
+ const cleanTitle=(resource.title??"").replace(/(?:https?:\/\/|s3:\/\/|r2:\/\/)[^\s]+/gi,"[private reference]").slice(0,240);
+ return {
+  title:cleanTitle,
+  sequence:resource.sequence??resource.resourceOrder??null,
+  required:resource.required??null,
+  visibility:resource.visibility??null,
+  resourceType:resource.resourceType??null,
+  status:resource.status??null,
+  pinned:resource.pinned??null,
+  legacyResourceKind:resource.legacyResourceKind??null,
+  url:resource.url?"[redacted private resource URL]":null,
+  description:resource.description?"[redacted resource description]":null,
+  accessNotes:resource.accessNotes?"[redacted access notes]":null,
+ };
+}
+export function projectResourceAuditDelta(before:ResourceAuditSnapshotInput|null|undefined,
+ after:ResourceAuditSnapshotInput|null|undefined){
+ const beforeJson=redactedProjectResourceSnapshot(before);
+ const afterJson=redactedProjectResourceSnapshot(after);
+ const beforeFields=beforeJson??{},afterFields=afterJson??{};
+ const keys=new Set([...Object.keys(beforeFields),...Object.keys(afterFields)]);
+ const changedFields=[...keys].filter(field=>
+  beforeFields[field as keyof typeof beforeFields]!==afterFields[field as keyof typeof afterFields]);
+ return {beforeJson,afterJson,changedFields};
+}
 /** Does not copy resource URLs, descriptions or learner identities into audit metadata. */
 export function projectResourceAuditInput(
  action:"CREATED"|"UPDATED"|"ARCHIVED",
@@ -6,6 +43,7 @@ export function projectResourceAuditInput(
  resource:{id:string;title:string;resourceOrder?:number|null},
  nonce?:string,
  creatorRole?:"LEARNER"|"MENTOR"|"ADMIN",
+ snapshots?:{before?:ResourceAuditSnapshotInput|null;after?:ResourceAuditSnapshotInput|null},
 ){
  const eventType=action==="CREATED"?ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_CREATED:
   action==="UPDATED"?ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED:
@@ -18,6 +56,7 @@ export function projectResourceAuditInput(
   summary:"Project resource "+verb,
   metadata:{
    projectId:scope.projectId,resourceId:resource.id,
+   ...projectResourceAuditDelta(snapshots?.before??null,snapshots?.after??resource),
    ...(resource.resourceOrder!==undefined&&resource.resourceOrder!==null&&
       Number.isSafeInteger(resource.resourceOrder)&&resource.resourceOrder>=0
     ? {resourceOrder:resource.resourceOrder}:{}) ,
