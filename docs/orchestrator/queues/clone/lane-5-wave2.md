@@ -56,7 +56,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_departments_page.tsx.md` (edit src/app/(authenticated)/admin/departments/page.tsx; 10 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-2_r2-condition.md.md` (new; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_learn_my-placements_rules_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/rules/page.tsx; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_modules_courses_college-faculty-picker-service.ts.md` (edit src/modules/courses/college-faculty-picker-service.ts; 8 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_modules_courses_college-faculty-picker-service.ts.md` (edit src/modules/courses/college-faculty-picker-service.ts; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_projects_templates_templateId_versions_versionId_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/[templateId]/versions/[versionId]/page.tsx; 8 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_modules_placements_hr-job-read-service.ts.md` (edit src/modules/placements/hr-job-read-service.ts; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_learn_courses_deliveryId_progress_page.tsx.md` (edit src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx; 7 findings; best P2)
