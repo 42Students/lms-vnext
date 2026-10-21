@@ -89,10 +89,10 @@ export function TpoCompanyCreateForm() {
         className="min-h-11 w-full sm:w-auto md:min-h-9"
         onClick={() => { setOpen(true); setReviewing(false); setError("");setConflict(null);setResolved(null);setNotTheSame(false); }}
       >
-        Add company
+        Add other
       </Button>
       <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title="Create employer relationship"
-       description="Create or link a company to your college; new relationships are untrusted by default."
+       description="Add other company or link an existing employer to your college; new relationships are untrusted by default."
        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
          <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={close}>Cancel</Button>
          {resolved?
@@ -149,14 +149,14 @@ export function TpoCompanyCreateForm() {
               <p className="text-sm text-body">{conflict.message}</p>
               <div className="flex flex-wrap gap-2">
                <Button type="button" variant="secondary" disabled={pending}
-                onClick={()=>{router.push(conflict.companyId?"/tpo/companies/"+encodeURIComponent(conflict.companyId):"/tpo/companies");close();}}>Use existing</Button>
+                onClick={()=>{router.push(conflict.companyId?"/tpo/companies/"+encodeURIComponent(conflict.companyId):"/tpo/companies");close();}}>Use {conflict.name??"existing company"}</Button>
                <Button type="button" variant="secondary" disabled={pending}
-                onClick={()=>{setNotTheSame(true);setReviewing(true);setConflict(null);setError("");}}>It's different</Button>
+                onClick={()=>{setNotTheSame(true);setReviewing(true);setConflict(null);setError("");}}>It&apos;s a different company</Button>
               </div>
             </div>:null}
             {resolved?<div role="status" className="space-y-1 border-y border-border py-3 text-sm text-body">
               <p className="font-semibold text-[var(--lms-heading)]">{resolved.existed?"Existing company linked":"New company created"}: {resolved.name}</p>
-              <p>{resolved.verifiedBy42?"Verified company":"Company verification pending"}</p>
+              <p>{resolved.verifiedBy42?"Verified company":"Company verification pending"} · {resolved.existed?"Matched an existing employer":"New employer identity"}</p>
               <p>Review the company details before continuing.</p>
             </div>:null}
             {error ? <InlineNotice tone="error" message={error}/> : null}
