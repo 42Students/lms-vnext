@@ -69,8 +69,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       ];
       const serverErrors:Partial<Record<Field,string>>={};
       for(const [serverField,field] of candidates){
-        if(fields[serverField] && !serverErrors[field]){
-          serverErrors[field]=fields[serverField];
+        const message=fields[serverField];
+        if(message && !serverErrors[field]){
+          serverErrors[field]=message;
         }
       }
       if(Object.keys(serverErrors).length){
