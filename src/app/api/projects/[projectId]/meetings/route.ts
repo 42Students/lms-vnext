@@ -10,6 +10,9 @@ import {
 } from "@/modules/projects/meeting-service";
 
 export const runtime = "nodejs";
+/** Old bulk PUT /{projectId}/meetings maps to this GET collection plus
+ * individual POST create and scoped /{meetingId} PATCH/DELETE mutations.
+ * Never replace an entire meeting list without per-meeting version tokens. */
 
 type RouteContext = {
   params: Promise<{ projectId: string }>;
@@ -56,7 +59,7 @@ export async function POST(
     );
 
     return NextResponse.json(
-      { meeting, message: "Project updated" },
+      { meeting, message: "Project meeting scheduled" },
       { status: 201 },
     );
   } catch (error) {

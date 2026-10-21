@@ -88,6 +88,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         .for("share").limit(1);
       if (!assigned) throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
       const blueprint=publishableProjectTemplateBlueprintSchema.parse(assigned.blueprint);
+      if(input.initialStatus==="ACTIVE"&&!input.primaryMentorMembershipId)
+        throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       if (input.primaryMentorMembershipId) {
         const [mentor]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
           .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -122,7 +124,7 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         const [project]=await tx.insert(projectInstances).values({
           collegeId:scope.id,templateId:assigned.templateId,templateVersionId:assigned.versionId,
           teamGroupId:team.id,sectionId:section.id,slug:plan.slug,title:plan.title,summary:assigned.summary,
-          createdByUserId:context.user.id,
+          createdByUserId:context.user.id,status:input.initialStatus,phase:input.initialPhase??null,
         }).returning({id:projectInstances.id,title:projectInstances.title});
         if (!project) throw new Error("Workspace insert failed");
         await tx.insert(projectMembers).values([

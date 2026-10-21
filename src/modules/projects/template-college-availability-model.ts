@@ -43,3 +43,13 @@ export function templateAvailabilityCollegesInScope<T extends { id: string; orga
   if(platformWide)return [...colleges];
   return colleges.filter(row => templateAssignmentMatchesScope({ collegeId: row.id, organizationId: row.organizationId }, scope));
 }
+
+/** Local search is safe on the already scoped and loaded college page; the
+ * server query remains authoritative for cross-page/global matching. */
+export function templateCollegeSearchWithinLoaded<T extends {name:string;code:string}>(
+ rows:readonly T[],raw:string,
+):T[]{
+ const needle=raw.trim().toLocaleLowerCase("en-IN").slice(0,100);
+ return !needle?[...rows]:rows.filter(row=>
+  (row.name+" "+row.code).toLocaleLowerCase("en-IN").includes(needle));
+}

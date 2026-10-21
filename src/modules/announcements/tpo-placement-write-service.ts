@@ -35,6 +35,9 @@ export const tpoNoticeCreateSchema=z.object({
  if(grouped&&targets.length&&data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Select targets in one format"});
  if(new Set(targets).size!==targets.length)ctx.addIssue({code:"custom",path:["targetIds"],message:"Choose distinct audience targets"});
  if(data.audience==="DRIVE"&&!data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Choose an audience target"});
+ // The legacy COLLEGE audience legitimately has no explicit recipient IDs;
+ // every other targeted audience is checked for a live tenant-scoped match
+ // before commit. Never downgrade an empty targeted list to COLLEGE.
  if(["COLLEGE","PLACEMENTS"].includes(data.audience)&&(data.targetId||targets.length)||
     !grouped&&targets.length)ctx.addIssue({code:"custom",path:["targetIds"],message:"Unexpected audience target"});
 });
