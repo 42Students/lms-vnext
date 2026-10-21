@@ -65,7 +65,7 @@ export async function CollegeRoleDirectoryWorkspace({
     assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   } catch (error) {
     return (
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-5">
         <PageHeader title={title} />
         <ErrorState
           title="Invalid directory filters"

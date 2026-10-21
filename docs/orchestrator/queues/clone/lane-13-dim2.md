@@ -163,46 +163,46 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/admin/admin-scoped-read-page.tsx`
 - [x] `src/components/admin/college-branding-form.tsx`
 - [x] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/college-create-form.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/descendant-feature-rule-editor.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
-- [ ] `src/components/admin/super-admin-faculty-assignment-create.tsx`
-- [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/admin/super-admin-interview-operations.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/auth/login-form.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/college/college-person-edit-action.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/college/college-student-register-form.tsx`
-- [ ] `src/components/colleges/college-contact-profile-form.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-course-overview.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/components/courses/college-assessment-aggregate.tsx`
-- [ ] `src/components/courses/college-assignment-actions.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-content-aggregate.tsx`
-- [ ] `src/components/courses/college-learner-progress-report.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/college-lesson-create-control.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/courses/college-quiz-actions.tsx`
+- [x] `src/components/admin/college-create-form.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/super-admin-college-company-actions.tsx`
+- [x] `src/components/admin/super-admin-faculty-assignment-create.tsx`
+- [x] `src/components/admin/super-admin-hr-account-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/admin/super-admin-interview-operations.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/auth/login-form.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/college/college-person-edit-action.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/college/college-student-register-form.tsx`
+- [x] `src/components/colleges/college-contact-profile-form.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/college-assessment-aggregate.tsx`
+- [x] `src/components/courses/college-assignment-actions.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-content-aggregate.tsx`
+- [x] `src/components/courses/college-learner-progress-report.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/courses/college-lesson-create-control.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/courses/college-quiz-actions.tsx`
 - [ ] `src/components/courses/college-quiz-attempts.tsx`
 - [ ] `src/components/courses/college-quiz-create.tsx`
 - [ ] `src/components/courses/college-quiz-questions-editor.tsx`
