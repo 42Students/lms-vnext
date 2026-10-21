@@ -71,7 +71,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
       className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary disabled:opacity-50">Move</Button>
      <Button variant="secondary" type="button" disabled={busy||(requestReason[req.id]??"").trim().length<3}
       onClick={()=>void action({action:"KEEP_REQUEST",requestId:req.id,reason:(requestReason[req.id]??"").trim()})}
-      className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">Keep existing slot</Button>
+      className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] disabled:opacity-50">Keep existing slot</Button>
     </div>
    </div>)}
   </section>:null}
@@ -86,7 +86,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <Button variant="primary" type="button" disabled={busy||!(venue[p.id]??p.meetingLocation??"").trim()}
      onClick={()=>void action({action:"CONFIRM_RECRUITER_PROPOSAL",proposalId:p.id,expectedVersion:p.version,
       venue:(venue[p.id]??p.meetingLocation??"").trim()})}
-     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">
+     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-on-primary">
      Confirm recruiter proposal
     </Button>
    </div>)}
@@ -112,10 +112,10 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <Button variant="primary" type="button" disabled={busy||!date||!rooms.trim()} onClick={()=>void action({
       action:"GENERATE_DAY",startsAt:new Date(date+"+05:30").toISOString(),durationMinutes:minutes,
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
-    })} className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary">
+    })} className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-on-primary">
      Generate day</Button>
     <Button variant="secondary" type="button" disabled={busy||!free.length} onClick={()=>setConfirmRequest({title:"Remove "+free.length+" unbooked interview slots?",description:"Existing bookings stay unchanged.",body:{action:"CLEAR_AVAILABLE"}})}
-     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold disabled:opacity-50">
+     className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] disabled:opacity-50">
      Clear {free.length} unbooked slot(s)</Button>
    </div>
   </div>
@@ -135,7 +135,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
-   <Button variant="secondary" type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-[var(--lms-teal-deep)] disabled:opacity-50">
+   <Button variant="secondary" type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>setConfirmRequest({title:"Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"?",description:"Collision checks will skip blocked moves.",body:{action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom}})} className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-[var(--lms-teal-deep)] disabled:opacity-50">
     Previewed · Assign room
    </Button>
   </details>
@@ -154,7 +154,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
         className="min-h-11 w-full min-w-0 sm:w-auto md:min-h-9 text-sm">
         <option value="">Choose student</option>{waiting.map(c=><option key={c.applicationId} value={c.applicationId}>{c.roll??""} {c.name??"Learner"}</option>)}
        </Select>
-       <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold disabled:opacity-50 text-on-primary"
+       <Button variant="primary" type="button" disabled={busy||!pick[slot.id]} className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] disabled:opacity-50 text-on-primary"
         onClick={()=>void action({action:"BOOK",slotId:slot.id,expectedVersion:slot.version,applicationId:pick[slot.id]})}>Book</Button>
       </div>:<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
        <Select aria-label="Move to available slot" value={move[slot.id]??""}

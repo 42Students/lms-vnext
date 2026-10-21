@@ -84,7 +84,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
       <div className="mt-4">
         {readiness.close.allowed ? (
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text">
             Review close consequences before confirming
           </Link>
         ) : (
