@@ -72,3 +72,10 @@ export async function DELETE(request: Request) {
 
   return response;
 }
+
+/** Compatibility for legacy sign-out method. Both verbs revoke only the
+ * current opaque first-party session, return "Logged out" on success, and
+ * perform the same same-origin and cookie-clearing checks. */
+export async function POST(request:Request){
+ return DELETE(request);
+}

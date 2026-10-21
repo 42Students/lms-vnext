@@ -10,7 +10,7 @@ import {verificationFilterDraftError} from "@/modules/verification/filter-draft-
 type Fields={ageBand:string;enrollment:string;waitingState:string;membershipId:string;q:string;marksheets:string;attention:string;waitingSince:string;submittedFrom:string;programId:string;sectionId:string;batchId:string;branchId:string};
 const empty:Fields={ageBand:"ANY",enrollment:"ALL",waitingState:"ALL",membershipId:"",q:"",marksheets:"ANY",attention:"ALL",waitingSince:"",submittedFrom:"",programId:"",sectionId:"",batchId:"",branchId:""};
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices,programChoices}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList;programChoices?:VerificationFilterChoiceList}){
+export function VerificationFilterPanel({query,onApply,batchChoices,branchChoices,classChoices,programChoices,attentionCounts}:{query:Record<string,string>;onApply:(filters:Fields)=>void;batchChoices?:VerificationFilterChoiceList;branchChoices?:VerificationFilterChoiceList;classChoices?:VerificationFilterChoiceList;programChoices?:VerificationFilterChoiceList;attentionCounts?:Partial<Record<"MISSING_MARKSHEET"|"VERIFIED_DETAILS_CHANGED"|"WAITING_OVER_WEEK",number>>}){
  const selected=():Fields=>({ageBand:query.ageBand??"ANY",enrollment:query.enrollment??"ALL",waitingState:query.waitingState??"ALL",membershipId:query.membershipId??"",q:query.q??"",marksheets:query.marksheets??"ANY",attention:query.attention??"ALL",waitingSince:query.waitingSince??"",submittedFrom:query.submittedFrom??"",
   programId:query.programId??"",sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
@@ -39,10 +39,27 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   if(draftError){setError(draftError);return;}
   setError("");onApply(value);
  }
- return <Disclosure title="More filters: learner name, marksheets, batch, branch, class, waiting since" className="min-w-0 border-b border-border pb-3">
+ return <>
+  {attentionCounts?<section aria-label="Needs a closer look" className="min-w-0 space-y-2">
+   <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Needs a closer look</h2>
+   <div className="flex flex-wrap gap-2">
+    {([
+     ["MISSING_MARKSHEET","A marksheet missing"],
+     ["VERIFIED_DETAILS_CHANGED","Updates to verified details"],
+     ["WAITING_OVER_WEEK","Waiting over a week"],
+    ] as const).map(([key,label])=><FilterChip key={key} type="button"
+      aria-pressed={(fields.attention===key)}
+      onClick={()=>{const next={...fields,attention:fields.attention===key?"ALL":key};setFields(next);apply(next);}}>
+      {label} ({attentionCounts[key]??0})
+    </FilterChip>)}
+   </div>
+   <p className="text-xs text-muted-foreground">Counts reflect matching requests in the loaded page, not unseen college-wide totals.</p>
+  </section>:null}
+  <Disclosure title="More filters: learner name, marksheets, batch, branch, class, waiting since" className="min-w-0 border-b border-border pb-3">
   
   <form className="mt-3 space-y-3" onSubmit={e=>{e.preventDefault();apply(fields);}}>
    <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+    <h3 className="col-span-full border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">What to check</h3>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Exact learner membership ID
      <Input type="text" maxLength={36} value={fields.membershipId} onChange={e=>change("membershipId",e.target.value)}
       placeholder="Membership UUID" className="mt-1 w-full"/>
@@ -58,6 +75,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
       <option value="ANY">Any age</option><option value="WITHIN_48_HOURS">Under 48 hours</option><option value="TWO_TO_SEVEN_DAYS">2–7 days</option><option value="OVER_SEVEN_DAYS">At least 7 days</option>
      </Select>
     </label>}
+    <h3 className="col-span-full border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Whose</h3>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Learner name
      <Input type="search" maxLength={100} value={fields.q} onChange={e=>change("q",e.target.value)}
       placeholder="Search by name" className="mt-1 w-full"/>
@@ -65,7 +83,7 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Marksheets
      <Select value={fields.marksheets} onChange={e=>change("marksheets",e.target.value)}
       className="mt-1 w-full">
-      <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">Present</option>
+      <option value="ANY">Any (including non-Education checks)</option><option value="MISSING">Some missing</option><option value="PRESENT">All uploaded</option>
      </Select></label>
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Needs a closer look
      <Select value={fields.attention} onChange={e=>change("attention",e.target.value)} className="mt-1 w-full">
@@ -128,5 +146,5 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
     <Button variant="secondary" type="button" onClick={()=>{setFields(empty);apply(empty);}} className="min-h-[var(--lms-control-height)] ">Clear extra filters</Button>
    </div>
   </form>
- </Disclosure>;
+ </Disclosure></>;
 }
