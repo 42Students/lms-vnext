@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
@@ -125,7 +126,7 @@ export const attendanceRecords = pgTable(
     legacyAttendanceStatus: varchar("legacy_attendance_status", { length: 20 }),
     legacyAbsenceReason: text("legacy_absence_reason"),
     legacyMarkedById: integer("legacy_marked_by_id"),
-    legacyWasDeleted: integer("legacy_was_deleted"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     scheduleEventId: uuid("schedule_event_id")
       .notNull()
       .references(() => sectionScheduleEvents.id, {
