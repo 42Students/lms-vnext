@@ -464,7 +464,7 @@ export function LearnerCourseDiscussion({
           ref={scrollRef}
           onScroll={handleScroll}
           role="region" aria-label="Course discussion messages" tabIndex={0}
-          className="max-h-[56dvh] min-h-56 overflow-y-auto overscroll-contain px-1 py-3 sm:px-3 md:max-h-[34rem] md:min-h-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="max-h-[56dvh] min-h-56 overflow-y-auto overscroll-contain px-1 py-3 sm:px-3 md:max-h-[34rem] md:min-h-80 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           {loading ? (
             <div className="space-y-4" aria-busy="true">
