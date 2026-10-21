@@ -628,6 +628,8 @@ function AssignmentCard({
           multipartEnabled={multipartAssignmentRuntimeEnabled()}
           methodsEnabled={true}
           assignmentId={assignment.id}
+          assignmentTitle={assignment.title}
+          dueAt={assignment.dueAt?.toISOString()??null}
           deliveryId={deliveryId}
         />
       ) : null}

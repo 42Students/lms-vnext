@@ -131,7 +131,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           </Alert>
         ) : null}
         {item.dueAt && item.dueAt.getTime() > overview.snapshotNowMs ? (
-          <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} deliveryId={item.deliveryId} />
+          <AssignmentSubmissionControl fileUploadsEnabled={assignmentFilesRuntimeEnabled()} assignmentId={item.id} assignmentTitle={item.title} dueAt={item.dueAt.toISOString()} deliveryId={item.deliveryId} />
         ) : <div className="space-y-2">
           <p className="text-sm text-body">{item.dueAt ? "Submission deadline has passed" : "Assignment deadline is not configured"}</p>
           <Button type="button" variant="secondary" disabled aria-disabled="true"

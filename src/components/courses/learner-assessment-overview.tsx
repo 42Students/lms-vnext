@@ -798,6 +798,9 @@ export function LearnerAssessmentOverview({
                     key={selectedAssignment.deliveryId+":"+selectedAssignment.id}
                     fileUploadsEnabled={fileUploadsEnabled}
                     assignmentId={selectedAssignment.id}
+                    assignmentTitle={selectedAssignment.title}
+                    dueAt={selectedAssignment.dueAt}
+                    embeddedInDrawer
                     deliveryId={selectedAssignment.deliveryId}
                   />
                 ) : <Button type="button" disabled aria-disabled="true"

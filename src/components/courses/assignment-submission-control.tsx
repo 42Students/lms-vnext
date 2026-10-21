@@ -15,6 +15,7 @@ import {FilterChip} from "@/components/ui/filter-chip";
 import { Input } from "@/components/ui/input";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 import {Dialog} from "@/components/ui/dialog";
+import {Drawer} from "@/components/ui/drawer";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
@@ -31,14 +32,23 @@ export function AssignmentSubmissionControl({
   fileUploadsEnabled = false,
   multipartEnabled=false,
   methodsEnabled=false,
+  assignmentTitle,
+  dueAt,
+  embeddedInDrawer=false,
 }: {
   assignmentId: string;
   deliveryId: string;
   fileUploadsEnabled?: boolean;
   multipartEnabled?:boolean;
   methodsEnabled?:boolean;
+  assignmentTitle?:string;
+  dueAt?:string|null;
+  embeddedInDrawer?:boolean;
 }) {
   const router = useRouter();
+  const [drawerOpen,setDrawerOpen]=useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
+  const [formDirty,setFormDirty]=useState(false);
   const {showToast}=useToast();
   const [submissionType, setSubmissionType] =
     useState<SubmissionType>(multipartEnabled ? "FILE" : "TEXT");
@@ -46,6 +56,7 @@ export function AssignmentSubmissionControl({
     useState("");
   const [submissionUrl, setSubmissionUrl] =
     useState("");
+  const [additionalLinks,setAdditionalLinks]=useState<string[]>([]);
   const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
   const [methodsLoaded,setMethodsLoaded]=useState(!methodsEnabled);
   const [methodsError,setMethodsError]=useState<string|null>(null);
@@ -102,7 +113,18 @@ export function AssignmentSubmissionControl({
     });
     return ()=>controller.abort();
   },[assignmentId,deliveryId,methodsEnabled,multipartEnabled]);
-  const unsent=(!success)&&(textContent.trim().length>0||submissionUrl.trim().length>0);
+  const unsent=(!success)&&(formDirty||textContent.trim().length>0||
+    submissionUrl.trim().length>0||additionalLinks.some(value=>value.trim().length>0));
+  const deadlineError=dueAt===undefined?null:!dueAt||!Number.isFinite(Date.parse(dueAt))
+    ?"This assignment does not have a valid deadline. Submission is unavailable."
+    :Date.parse(dueAt)<=Date.now()
+      ?"This assignment's deadline has passed. Submissions are closed.":null;
+  function closeDrawer(next:boolean){
+    if(next){setDrawerOpen(true);return;}
+    if(submitting){setError("Wait for the upload to finish before closing this submission.");return;}
+    if(unsent){setDiscardOpen(true);return;}
+    setDrawerOpen(false);
+  }
   useEffect(()=>{
     if(!unsent&&!submitting)return;
     const guard=(event:BeforeUnloadEvent)=>{
@@ -135,6 +157,11 @@ export function AssignmentSubmissionControl({
   ) {
     event.preventDefault();
     if(!methodsLoaded||methodsError)return;
+    if(deadlineError){setError(deadlineError);return;}
+    if(additionalLinks.some(value=>value.trim())){
+      setError("Multiple links must be submitted together with a verified file in Combine work. Do not leave any link unsubmitted.");
+      return;
+    }
     if(submissionType==="TEXT"&&!mayWrite || submissionType==="LINK"&&!mayLink ||
        submissionType==="FILE"&&!mayUpload){setError("This submission method is not allowed.");return;}
     if (submissionType === "FILE" || !flight.current.begin()) return;
@@ -208,7 +235,7 @@ export function AssignmentSubmissionControl({
 
       // The recorded assignment submission is the canonical completion signal
       // read by the learner-course workspace, without a duplicate content write.
-      setSuccess(true);
+      setSuccess(true);setFormDirty(false);setDrawerOpen(false);
       showToast({tone:"success",title:"Assignment submitted successfully."});
       router.refresh();
     } catch {
@@ -227,8 +254,9 @@ export function AssignmentSubmissionControl({
     );
   }
 
-  return (
+  const form=(
     <form
+      onInputCapture={()=>setFormDirty(true)} onChangeCapture={()=>setFormDirty(true)}
       onSubmit={submit}
       className="min-w-0 space-y-[var(--lms-space-4)]"
     >
@@ -236,8 +264,10 @@ export function AssignmentSubmissionControl({
         <legend className="text-sm font-semibold text-foreground">
           Submit Your Work
         </legend>
+        <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-primary-text">Submitting for</p>
+        <p className="mt-1 break-words text-lg font-semibold text-[var(--lms-heading)]">{assignmentTitle?.trim()||"This assignment"}</p>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
-          Add your work using the method below. Submission is final once recorded.
+          Add your work using the allowed methods below. Submission is final once recorded.
         </p>
 
         <div
@@ -274,10 +304,11 @@ export function AssignmentSubmissionControl({
           <FilterChip type="button" className="col-span-2 min-h-11 w-full md:col-span-1 md:w-auto md:min-h-9" disabled={!methodsLoaded || submitting ||
               (multipartEnabled ? !(mayWrite&&mayLink) && !(fileUploadsEnabled&&mayUpload) : !fileUploadsEnabled || !mayUpload)}
             aria-pressed={submissionType === "FILE"} onClick={() => setSubmissionType("FILE")}>
-            {multipartEnabled?"Combine work":"File Upload"}
+            {multipartEnabled?"Combine work":allowedMethods.includes("PDF_UPLOAD")&&!allowedMethods.includes("FILE_UPLOAD")?"PDF Uploads":"File Uploads"}
           </FilterChip>
         </div>
 
+        {deadlineError?<Alert tone="warning" className="mt-2">{deadlineError}</Alert>:null}
         {methodsError?<Alert tone="error" className="mt-2">{methodsError}</Alert>:null}
         {methodsEnabled&&!methodsLoaded&&!methodsError?<p role="status" className="mt-2 text-xs leading-5">Loading allowed submission methods…</p>:null}
         {!fileUploadsEnabled&&mayUpload ? <Alert tone={mayWrite||mayLink?"warning":"error"} role={!mayWrite&&!mayLink?"alert":"status"} className="mt-2">
@@ -295,36 +326,43 @@ export function AssignmentSubmissionControl({
           </label>:null}
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
-          onSubmitted={() => { setSuccess(true); showToast({tone:"success",title:"Assignment submitted successfully."}); router.refresh(); }} /> : submissionType === "TEXT" ? (
+          onSubmitted={() => { setSuccess(true);setFormDirty(false);setDrawerOpen(false); showToast({tone:"success",title:"Assignment submitted successfully."}); router.refresh(); }} /> : submissionType === "TEXT" ? (
           <section className="mt-[var(--lms-space-4)] min-w-0">
             <h3 className="mb-[var(--lms-space-2)] text-xs font-semibold text-body">Written response</h3>
             <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
           </section>
         ) : (
-          <label className="mt-[var(--lms-space-4)] block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            <span className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Website / External Links<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-            </span>
-            <Input
-              type="url"
-              inputMode="url"
-              maxLength={2048}
-              value={submissionUrl}
-              onChange={(event) =>
-                setSubmissionUrl(
-                  event.target.value,
-                )
-              }
-              placeholder="Paste the link"
-              required
-            />
-          </label>
+          <section aria-label="Submission links" className="mt-4 space-y-3">
+            <h3 className="text-sm font-semibold text-foreground">{linkKind==="REPOSITORY_LINK"?"Repository Links":"Website / External Links"}</h3>
+            <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              {linkKind==="REPOSITORY_LINK"?"Repository Link":"Website / External Link"} 1
+              <Input type="url" inputMode="url" maxLength={2048} value={submissionUrl}
+               onChange={event=>setSubmissionUrl(event.target.value)}
+               placeholder="Paste the link" required/>
+            </label>
+            {additionalLinks.map((value,index)=><div key={index} className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
+              <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+                {linkKind==="REPOSITORY_LINK"?"Repository Link":"Website / External Link"} {index+2}
+                <Input type="url" inputMode="url" maxLength={2048} value={value}
+                 onChange={event=>setAdditionalLinks(old=>old.map((part,i)=>i===index?event.target.value:part))}
+                 placeholder="Paste the link" aria-label={"Submission link "+(index+2)}/>
+              </label>
+              <Button type="button" variant="danger" disabled={submitting}
+               aria-label={"Remove link "+(index+2)}
+               onClick={()=>setAdditionalLinks(old=>old.filter((_,i)=>i!==index))}>Remove</Button>
+            </div>)}
+            <Button variant="secondary" size="sm" type="button" disabled={submitting||additionalLinks.length>=19}
+             onClick={()=>setAdditionalLinks(old=>[...old,""])}>Add another {linkKind==="REPOSITORY_LINK"?"repository link":"link"}</Button>
+            {additionalLinks.some(value=>value.trim())?<Alert tone="warning">
+              This vNext API records one standalone link. To submit multiple links together, select Combine work and attach a verified file. Unsaved links are never silently dropped.
+            </Alert>:null}
+          </section>
         )}
 
         {error ? <Alert tone="error" className="mt-3">Assignment was not submitted. {error}</Alert> : null}
 
         {submissionType !== "FILE" ? <div className="mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] md:flex-row md:flex-wrap md:items-center">
-          <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={submitting} disabled={!methodsLoaded||Boolean(methodsError)||submitting}>
+          <Button type="submit" className="min-h-11 w-full md:w-auto md:min-h-9" loading={submitting} disabled={!methodsLoaded||Boolean(methodsError)||submitting||Boolean(deadlineError)||additionalLinks.some(value=>Boolean(value.trim()))}>
             {submitting
               ? "Submitting…"
               : error?"Retry":"Submit"}
@@ -338,19 +376,30 @@ export function AssignmentSubmissionControl({
       {submissionType !== "FILE" ? <ConfirmDialog open={finalConfirmOpen} onOpenChange={next=>{if(!next)settleFinal(false);}}
         title="Submit assignment?" description={learnerAssignmentFinalConfirmation(submissionType)}
         confirmVariant="primary" confirmLabel="Submit" onConfirm={()=>settleFinal(true)}/> : null}
-      <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
-        title="Discard this submission?" description="Your unsent answer will be lost."
+      <Dialog open={discardOpen||discardHref!==null} onOpenChange={open=>{if(!open){setDiscardHref(null);setDiscardOpen(false);}}}
+        title="Discard this submission?" description="You have unsaved work here (a written response, an upload, or a link). Closing now will discard it — it hasn’t been submitted yet."
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-          <Button type="button" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
+          <Button type="button" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>{setDiscardHref(null);setDiscardOpen(false);}}>Keep editing</Button>
           <Button type="button" variant="danger" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>{
             if(submitting)return;
             const href=discardHref;
-            setDiscardHref(null);setTextContent("");setSubmissionUrl("");
+            setDiscardHref(null);setDiscardOpen(false);setTextContent("");setSubmissionUrl("");setAdditionalLinks([]);setFormDirty(false);setDrawerOpen(false);
             if(href)router.push(href);
           }}>Discard</Button>
         </div>}>
-        <p className="text-sm text-body leading-[22px]">You have unsent work. Keep editing to preserve your answer.</p>
+        <p className="text-sm text-body leading-[22px]">Keep editing to preserve your answer.</p>
       </Dialog>
     </form>
   );
+  if(embeddedInDrawer)return form;
+  return <>
+    <Button type="button" onClick={()=>setDrawerOpen(true)} className="min-h-11 w-full sm:w-auto">
+      Submit Your Work
+    </Button>
+    <Drawer open={drawerOpen} onOpenChange={closeDrawer} dismissible={!submitting}
+      title="Submit Your Work" description={"Submitting for "+(assignmentTitle?.trim()||"This assignment")}
+      className="md:!w-[720px]">
+      {form}
+    </Drawer>
+  </>;
 }

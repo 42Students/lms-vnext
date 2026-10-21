@@ -235,7 +235,7 @@ export default async function SuperAdminLessonsPage({
                     <div className="mt-2 flex flex-col items-start gap-2">
                       <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lessonName,
                         visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
-                      {allRowsOfOnePath?<CollegeLessonReorderActions learningPathId={lesson.learningPathId}
+                      {allRowsOfOnePath?<CollegeLessonReorderActions fullCourseOrder hasActiveFilters={false} courseName={lesson.courseName} learningPathId={lesson.learningPathId}
                         lessonId={lesson.id} expectedSequence={lesson.sequence}
                         canMoveUp={listedLessons.some(other=>
                           other.learningPathId===lesson.learningPathId&&other.sequence===lesson.sequence-1)}

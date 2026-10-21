@@ -609,6 +609,8 @@ export function AdminOfferingLearningOverview({
                   </Disclosure>
                   <Disclosure title="Lesson management" className="mt-2" contentClassName="flex min-w-0 flex-wrap items-start gap-3 pt-3 pb-2">
                       <CollegeLessonReorderActions
+                        fullCourseOrder
+                        courseName={offering.courseName}
                         learningPathId={learningPath.id}
                         lessonId={lesson.id}
                         expectedSequence={lesson.sequence}
