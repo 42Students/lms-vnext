@@ -6,6 +6,8 @@ import { listPlacementOperationsJobPage } from "@/modules/placements/tpo-operati
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { SuperAdminDriveDirectoryFilters } from "@/components/placements/super-admin-drive-directory-filters";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions,SuperAdminDriveRowStatusAction } from "@/components/placements/super-admin-bulk-drive-actions";
@@ -96,15 +98,18 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    cell:row=><span title="All application records for this drive"
      className="tabular-nums">{row.metrics.applicants}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
+   className:"md:sticky md:right-0 md:z-10 md:min-w-[260px] md:bg-surface",
    cell:row=>{
     const base="/admin/placements/jobs/"+encodeURIComponent(row.job.id);
     const linkClass="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]";
     return <div className="flex min-w-0 flex-col items-start gap-2">
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
-        <Link href={base} className={linkClass}>Open drive</Link>
-        <Link href={base+"/applications"} className={linkClass}>View applications</Link>
-        <Link href={base+"/settings"} className={linkClass}>Edit drive</Link>
+        <Link href={base} aria-label={"Open job "+row.job.title} className={linkClass}>View</Link>
+        <Link href={base+"/applications"} aria-label={"View applications for "+row.job.title}
+          className={linkClass}>View Applications</Link>
+        <Link href={base+"/settings"} aria-label={"Edit job "+row.job.title} className={linkClass}>Edit</Link>
         <SuperAdminDriveRowStatusAction jobId={row.job.id} title={row.job.title} status={row.job.status}/>
+        <div aria-label={"Delete job "+row.job.title}><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
       </div>
       <details className="min-w-0 w-full border-t border-border pt-2 text-sm">
         <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -114,7 +119,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
           <SuperAdminDriveDuplicate jobId={row.job.id} title={row.job.title}/>
           {row.job.status==="PUBLISHED"?<SuperAdminDriveDeadline
             jobId={row.job.id} deadline={row.job.applicationDeadline?.toISOString()??null}/>:null}
-          <div aria-label="Delete drive"><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
+          <p className="text-xs text-muted-foreground">Archive and access changes are audited for this college.</p>
         </div>
       </details>
     </div>;
@@ -130,6 +135,25 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <Link href="/admin/placements/new"
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Create Job</Link>
    </div>} />
+  <section aria-label="Student placement lookup" className="min-w-0 rounded-[8px] border border-[var(--lms-canvas-border)] bg-surface p-4">
+    <div className="flex flex-wrap items-center justify-between gap-2">
+      <h2 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">Look up a student’s placement status</h2>
+      <Link href="/admin/placements/student-lookup" className="text-xs font-semibold text-link underline underline-offset-4">
+        Advanced lookup
+      </Link>
+    </div>
+    <form action="/admin/placements/student-lookup" method="get"
+      aria-label="Search student placement status" className="mt-3 flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+      <label className="min-w-0 flex-1">
+        <span className="sr-only">Student name, roll number or email</span>
+        <Input type="search" name="q" minLength={2} maxLength={150}
+          required placeholder="Search a student by name or email"
+          className="min-h-11 w-full md:min-h-9"/>
+      </label>
+      <Button variant="secondary" type="submit" className="min-h-11 shrink-0 md:min-h-9">Search student</Button>
+    </form>
+    <p className="mt-2 text-xs text-body">Search is limited to the college selected above. Open the matching student to review placement history.</p>
+  </section>
   <section aria-label="Jobs Management list" className="min-w-0 space-y-3">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
       <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Active drives</h2>
