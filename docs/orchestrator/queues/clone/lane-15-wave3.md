@@ -24,7 +24,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_modules_placements_learner-support-request-model.ts.md` (edit src/modules/placements/learner-support-request-model.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_profiles.ts.md` (edit src/db/schema/profiles.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_db06-history-staged.ts.md` (edit src/db/schema/db06-history-staged.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_modules_placements_tpo-outcome-label-settings-service.ts.md` (edit src/modules/placements/tpo-outcome-label-settings-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_modules_placements_tpo-outcome-label-settings-service.ts.md` (edit src/modules/placements/tpo-outcome-label-settings-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_drizzle_0057_college_branding.sql.md` (edit drizzle/0057_college_branding.sql; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_assessments.ts.md` (edit src/db/schema/assessments.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_discussions.ts.md` (edit src/db/schema/discussions.ts; 1 findings; best P1)
