@@ -26,19 +26,19 @@ export function TrackerIssueLogsPanel({publicId}:{publicId:string}){
     }finally{setBusy(false);}
   }
   return <section className="space-y-3 border-b border-border pb-5">
-    <h2 className="text-lg font-semibold">Logs around this report</h2>
-    <p className="text-sm text-body">Find warnings and errors from the ten minutes before and after the report.</p>
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Logs around this report</h2>
+    <p className="text-sm text-body leading-[22px]">Find warnings and errors from the ten minutes before and after the report.</p>
     <Button variant="secondary" type="button" disabled={busy} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>void load()}
      >
       {busy?"Loading nearby logs…":"Load warnings and errors from that moment"}
     </Button>
-    {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
-    {loaded&&!logs.length?<p className="text-sm text-body">No matching warnings or errors were found.</p>:null}
+    {notice?<p role="status" className="text-sm text-body leading-[22px]">{notice}</p>:null}
+    {loaded&&!logs.length?<p className="text-sm text-body leading-[22px]">No matching warnings or errors were found.</p>:null}
     {logs.length?<ul className="divide-y divide-border border-y border-border">{logs.map(entry=>
       <li key={entry.id} className="py-3 text-sm">
         <p className="break-words [overflow-wrap:anywhere] font-semibold">{entry.event} · {entry.time}</p>
         <p className="mt-1 whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-body">{entry.message}</p>
-        <p className="mt-1 break-all text-xs text-muted-foreground">{entry.path}</p>
+        <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">{entry.path}</p>
         <Link className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
           href={"/tracker/logs?query="+encodeURIComponent(entry.requestId??entry.event)}>
           Open in Logs
