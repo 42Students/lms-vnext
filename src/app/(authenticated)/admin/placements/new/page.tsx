@@ -3,7 +3,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import { Banner } from "@/components/ui/banner";
+import {AdminPlacementCreateDialog} from "@/components/placements/admin-placement-create-dialog";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementJobCreateWorkspace } from "@/components/placements/placement-job-create-workspace";
 import { requireSuperAdminSelectedCollege } from "@/modules/admin-ui/super-admin-selected-college";
@@ -34,13 +34,5 @@ export default async function AdminNewPlacementPage() {
       description="Company, season, or student eligibility choices could not be loaded. No draft was created."
       action={<Link href="/admin/placements/new" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto">Retry creating drive</Link>}/>
   </div>;
-  return <div className="mx-auto w-full max-w-[800px] min-w-0 space-y-4">
-    <Banner tone="info" role="status">
-      Create Drive uses a focused 800px-wide form with the same
-      persisted validation as the full page. Close it using Back to Drives.
-      Cloning a completed drive is available only through an authorized
-      existing-drive action; no unverified duplicate values are prefilled.
-    </Banner>
-    {loaded.view}
-  </div>;
+  return <AdminPlacementCreateDialog>{loaded.view}</AdminPlacementCreateDialog>;
 }
