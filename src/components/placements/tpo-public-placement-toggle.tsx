@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {useToast} from "@/components/ui/toast";
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
@@ -11,6 +12,7 @@ export const PUBLIC_PLACEMENT_TOGGLE_ERRORS={
 } as const;
 export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;canEnable:boolean}){
  const router=useRouter();
+ const {showToast}=useToast();
  const {pending:busy,run}=useGuardedAction({timeoutMs:30000});
  const [message,setMessage]=useState("");
  async function save(){
@@ -22,7 +24,8 @@ export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;ca
      method:"POST",body,credentials:"same-origin",redirect:"manual",
     });
     if(response.type==="opaqueredirect"||response.status===303||response.ok){
-     router.refresh();setMessage(enabled?"Your placements page is off":"Your placements page is live");return;
+     showToast({tone:"success",title:enabled?"Your placements page is off":"Your placements page is live"});
+     router.refresh();return;
     }
     const payload=await response.json().catch(()=>null) as {error?:string}|null;
     if(response.status===503)throw new Error(PUBLIC_PLACEMENT_TOGGLE_ERRORS.unavailable);

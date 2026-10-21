@@ -4,10 +4,10 @@ You own 67 work packets moved from slower lanes. Same rules as every wave-1 lane
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_tpo-public-placement-toggle.tsx.md` (edit src/components/placements/tpo-public-placement-toggle.tsx; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-placement-notification-settings.tsx.md` (edit src/components/placements/learner-placement-notification-settings.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_requests_route.ts.md` (edit src/app/api/placements/requests/route.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-offers-browse-service.ts.md` (edit src/modules/placements/learner-offers-browse-service.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_tpo-public-placement-toggle.tsx.md` (edit src/components/placements/tpo-public-placement-toggle.tsx; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-placement-notification-settings.tsx.md` (edit src/components/placements/learner-placement-notification-settings.tsx; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_requests_route.ts.md` (edit src/app/api/placements/requests/route.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-offers-browse-service.ts.md` (edit src/modules/placements/learner-offers-browse-service.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_learner_saved-jobs_route.ts.md` (edit src/app/api/placements/learner/saved-jobs/route.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-debar-model.ts.md` (edit src/modules/placements/tpo-debar-model.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-settings-people-service.ts.md` (edit src/modules/placements/tpo-settings-people-service.ts; 1 findings; best P1)
