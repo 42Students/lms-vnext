@@ -112,7 +112,7 @@ export default async function TrackerIssuesPage({
   if (current.reporter) next.set("reporter", current.reporter);
   next.set("sort", current.sort);
   if (page.nextCursor) {
-    if (parsed.legacyPage) {
+    if (parsed.legacyPage && parsed.legacyPage < 20) {
       next.set("page", String(parsed.legacyPage + 1));
     } else {
       next.set("beforeCreatedAt", page.nextCursor.beforeCreatedAt.toISOString());
