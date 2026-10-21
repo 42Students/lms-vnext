@@ -10,7 +10,7 @@ type Row={
  severity?:string|null;
 };
 /** SA-placements-projects-63: export exactly the visible, tenant-scoped page. */
-export function ProjectAtRiskPageExport({rows,collegeId}:{rows:Row[];collegeId:string}){
+export function ProjectAtRiskPageExport({rows}:{rows:Row[];collegeId:string}){
  function save(){
   const headings=["Workspace","Mentor","Status","Severity","Risk reasons"];
   const data=rows.map(row=>[
