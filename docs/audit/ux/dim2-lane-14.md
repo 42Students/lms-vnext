@@ -282,3 +282,12 @@ src/components/tpo/tpo-public-join-link-card.tsx | 29 responsive tokens checked 
 src/components/tpo/tpo-recruiter-message-reply.tsx | 19 responsive tokens checked | 375 tap 44px ↔ min-h-11; 768 tap 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 actions wrap ↔ flex-wrap | none
 src/components/tpo/tpo-student-clipboard-actions.tsx | 8 responsive tokens checked | 375 tap 44px ↔ min-h-11; 768 tap 36px ↔ md:min-h-9; 375 actions wrap ↔ flex-wrap; 375 control ↔ shared Button | none
 src/components/tpo/tpo-students-bulk-debar.tsx | 40 responsive tokens checked | 375 tap 44px ↔ min-h-11; 768 tap 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 actions stack ↔ sm:flex-row | none
+src/components/tpo/tpo-team-away-form.tsx | 8 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 header wraps ↔ flex-wrap | none
+src/components/tpo/tpo-team-forms.tsx | 9 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 full width ↔ w-full; 375 controls ↔ shared Button | none
+src/components/tpo/tpo-team-message-actions.tsx | 26 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 header wraps ↔ flex-wrap | none
+src/components/tpo/tpo-team-rename.tsx | 8 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 controls ↔ shared Button | none
+src/components/tpo/tpo-trusted-domain-editor.tsx | 17 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; ≥768 responsive columns ↔ sm:grid-cols-*; 375 min-width 0 ↔ min-w-0 | none
+src/components/tracker/audit-finding-status-action.tsx | 14 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; ≥768 responsive columns ↔ sm:grid-cols-*; 375 min-width 0 ↔ min-w-0 | none
+src/components/tracker/tracker-issue-copy-actions.tsx | 10 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 full width ↔ w-full | none
+src/components/tracker/tracker-issue-saved-views.tsx | 18 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 header wraps ↔ flex-wrap | none
+src/components/ui/action-pagination.tsx | 10 responsive tokens checked | 375 tap ≥44px ↔ min-h-11; 768 control 36px ↔ md:min-h-9; 375 min-width 0 ↔ min-w-0; 375 header wraps ↔ flex-wrap | none
