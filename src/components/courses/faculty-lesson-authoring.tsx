@@ -85,7 +85,7 @@ export function FacultyLessonAuthoring({
   initialMode = null,
   availableModes,
   onSaved,
-  enableAssignmentResources = false,
+  enableAssignmentResources = true,
 }: {
   lessonId: string;
   deliveryId: string | null;
@@ -119,7 +119,7 @@ export function FacultyLessonAuthoring({
   const [maxAttempts, setMaxAttempts] =
     useState("1");
   const [assignmentResources,setAssignmentResources]=
-    useState<FacultyAssignmentResourceInput[]>([]);
+    useState<FacultyAssignmentResourceInput[]>([{kind:"INSTRUCTIONS",title:"Instructions",body:""}]);
   const [resourceUploading,setResourceUploading]=useState(false);
   const [questions, setQuestions] =
     useState<QuizQuestionDraft[]>([
@@ -150,7 +150,7 @@ export function FacultyLessonAuthoring({
     setDueAt("");
     setMaxPoints("");
     setAllowedAssignmentMethods(["WRITTEN_RESPONSE"]);
-    setAssignmentResources([]);
+    setAssignmentResources([{kind:"INSTRUCTIONS",title:"Instructions",body:""}]);
     setMaxAttempts("1");
     setQuestions([initialQuestion()]);
   }
@@ -752,6 +752,19 @@ export function FacultyLessonAuthoring({
           <fieldset disabled={submitting}>
             {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
             {success ? <Alert tone="success" className="mb-4">{success}</Alert> : null}
+            {mode==="ASSIGNMENT"||mode==="RESOURCE"?<label className="block min-w-0 text-[13px] font-semibold md:col-span-2">
+              <FieldLabel>Visibility</FieldLabel>
+              <Select value={audience==="SECTION"?"CLASS":"SHARED"} disabled
+               aria-label="Visibility (set by the authorized course scope)">
+               <option value="CLASS">Class</option>
+               <option value="SHARED">Shared with all eligible sections</option>
+              </Select>
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">
+                Visibility is locked to the selected {audience==="SECTION"?"Section":"Course Offering"}.
+                Choose a different scope in the college course workspace; a faculty
+                author cannot promote a class resource into a shared one.
+              </span>
+             </label>:null}
             {mode==="ASSIGNMENT"?<h3 className="text-base font-semibold md:col-span-2">Assignment Details</h3>:null}
             <div className="grid min-w-0 gap-4 md:grid-cols-2">
               <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -861,8 +874,10 @@ export function FacultyLessonAuthoring({
             </label>:null}
             {mode === "RESOURCE" ? (
               <p className="mt-3 text-xs leading-5 text-muted-foreground">
-                Private file attachments require the separate verified upload workflow;
-                this quick form currently saves notes and HTTPS links only.
+                Resource materials support notes and individually titled HTTPS
+                links. A lesson file must have a CLEAN, server-verified private
+                upload receipt before it can be attached. This editor does not
+                accept unscanned local file paths or public storage URLs.
               </p>
             ) : null}
 
@@ -1264,9 +1279,10 @@ export function FacultyLessonAuthoring({
 
       {!mode && (!availableModes || availableModes.some((choice) => choice === "RESOURCE" || choice === "YOUTUBE" || choice === "LIVE_CLASS")) ? (
         <p className="mt-3 text-xs text-muted-foreground leading-5">
-          File/video upload authoring is hidden
-          until signed Cloud Storage upload receipts
-          are available.
+          Video uploads use the private video manager. Assignment PDF and file
+          resources use per-section signed grants and are blocked until scanned;
+          learner resources accept titled HTTPS links pending a separate
+          verified lesson-material file receipt service.
         </p>
       ) : null}
       {createdResourceTarget &&
