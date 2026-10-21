@@ -67,6 +67,29 @@ type OfferExtensionEffect = {
   requestedExpiresAt: string;
 };
 
+/** Read-only projection for historic free-text reschedule requests.
+ * Do not turn preferredTimes into an approved booking or execute an old reply.
+ * Modern requests still require the structured, validated RescheduleEffect.
+ */
+export function legacyRescheduleRequestDisplay(
+  payload:unknown,
+  status:"PENDING"|"APPROVED"|"REJECTED"|"CANCELLED",
+  decisionNote:string|null,
+) {
+  const fields = payload && typeof payload==="object" && !Array.isArray(payload)
+    ? payload as Record<string,unknown> : {};
+  const preferred = typeof fields.preferredTimes==="string"
+    ? fields.preferredTimes : typeof fields.preferred_times==="string"
+    ? fields.preferred_times : null;
+  const previousReply = typeof fields.reply==="string" ? fields.reply : null;
+  const text = preferred?.trim().slice(0,500) || null;
+  const reply = (decisionNote ?? previousReply)?.trim().slice(0,500) || null;
+  const stateLabel = status==="PENDING" ? "Waiting for the placement cell"
+    : status==="APPROVED" ? "Approved"
+    : status==="REJECTED" ? "Not approved" : "Cancelled";
+  return {preferredTimes:text,reply,stateLabel,decisionMade:status!=="PENDING"};
+}
+
 function requireLearner(context: RequestContext) {
   if (
     !context.membership ||
@@ -1412,7 +1435,13 @@ export async function getLearnerPlacementRequestWorkspace(
     ]);
 
   return {
-    requests,
+    requests: requests.map(row => ({
+      ...row,
+      legacyReschedule: row.request.requestType==="ROUND_RESCHEDULE"
+        ? legacyRescheduleRequestDisplay(
+          row.request.effectPayload,row.request.status,row.request.decisionNote,
+        ) : null,
+    })),
     rounds,
     offers,
   };
