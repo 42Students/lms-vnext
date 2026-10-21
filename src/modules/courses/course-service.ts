@@ -397,7 +397,9 @@ export async function createCourse(
         collegeId: department.collegeId, organizationId: department.organizationId,
         subjectType: "course", subjectId: created.id, subjectLabel: created.name,
         summary: "Course created",
-        metadata: { departmentId: created.departmentId, code: created.code },
+        metadata: { departmentId: created.departmentId, code: created.code,
+          legacyAuditAction:"COURSE_CREATE",source:"COURSE_CATALOG",
+          slug:created.slug,searchFreshness:"DATABASE_READ" },
       });
       return created;
     });
@@ -512,7 +514,8 @@ export async function updateCourse(
         subjectType: "course", subjectId: updated.id, subjectLabel: updated.name,
         summary: "Course updated",
         metadata: { previousName: locked.name, previousCode: locked.code,
-          updatedName: updated.name, updatedCode: updated.code },
+          updatedName: updated.name, updatedCode: updated.code,
+          legacyAuditAction:"COURSE_UPDATE",searchFreshness:"DATABASE_READ" },
       });
       return updated;
     });
@@ -605,8 +608,10 @@ export async function archiveCourse(
       eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_ARCHIVED,
       collegeId: scope.collegeId, organizationId: scope.organizationId,
       subjectType: "course", subjectId: archived.id, subjectLabel: archived.name,
-      summary: "Course archived",
-      metadata: { departmentId: archived.departmentId, code: archived.code },
+      summary: "Course deleted successfully",
+      metadata: { departmentId: archived.departmentId, code: archived.code,
+        legacyAuditAction:"COURSE_DELETE",softArchived:true,
+        retainedHistory:true,searchFreshness:"DATABASE_READ" },
     });
     return archived;
   });
@@ -682,6 +687,7 @@ export async function restoreCourse(
         summary: "Course restored",
         metadata: {
           restoredFromArchive: true,
+          legacyAuditAction:"COURSE_RESTORE",searchFreshness:"DATABASE_READ",
           departmentId: restored.departmentId,
           code: restored.code,
         },
@@ -692,4 +698,116 @@ export async function restoreCourse(
     if (error instanceof CoursesServiceError) throw error;
     throw mapCourseConstraint(error);
   }
+}
+
+/** Compatibility for legacy page=0&size=20 catalog readers. Explicit college
+ * must already be selected by a trusted role/college switcher; no global
+ * super-admin fallback is inferred from an untrusted query string.
+ * Unlike the legacy in-process cache, this reads the committed DB state. */
+export async function listLegacyCoursePage(
+ context:RequestContext,collegeId:string,options:{
+  page?:number;size?:number;departmentId?:string|null;includeArchived?:boolean
+ }={},
+){
+ const page=options.page??0,size=options.size??20;
+ if(!Number.isSafeInteger(page)||page<0||page>100000||
+   !Number.isSafeInteger(size)||size<1||size>100)
+  throw new RangeError("Invalid course page");
+ const result=await listCoursesPage(context,collegeId,{
+  limit:size,offset:page*size,
+ },options.departmentId,options.includeArchived??false);
+ return {...result,page,totalPages:Math.ceil(result.total/size)};
+}
+
+/** Resolve bookmarked old-slug URLs inside one authorized college only.
+ * A duplicate slug across departments is ambiguous: never choose a random
+ * tenant or expose a course from another selected membership. */
+export async function resolveCourseSlugInCollege(
+ context:RequestContext,collegeIdInput:string,slugInput:string,
+):Promise<string|null>{
+ const collegeId=collegeIdSchema.parse(collegeIdInput);
+ const college=await loadAcademicCollegeScope(collegeId);
+ requirePermission(context,"courses.read",{
+  collegeId,organizationId:college.organizationId,
+ });
+ const slug=slugInput.trim();
+ if(!/^[A-Za-z0-9_-]{1,128}$/.test(slug))return null;
+ const matches=await getDb().select({id:courses.id})
+  .from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(eq(departments.collegeId,collegeId),
+    isNull(departments.archivedAt),eq(courses.status,"ACTIVE"),
+    isNull(courses.deletedAt),eq(courses.slug,slug)))
+  .limit(2);
+ return matches.length===1?matches[0]!.id:null;
+}
+
+/** The old course editor could reassign a course to another department in
+ * the SAME college. Retain that operation only when it cannot detach active
+ * or historical teaching content from its original academic ownership.
+ * Caller must persist a fresh optimistic timestamp from the course detail.
+ */
+export async function moveCourseDepartment(
+ context:RequestContext,courseIdInput:string,newDepartmentIdInput:string,
+ expectedUpdatedAt:string,
+){
+ const courseId=courseIdSchema.parse(courseIdInput);
+ const newDepartmentId=departmentIdSchema.parse(newDepartmentIdInput);
+ const scope=await loadCourseScope(courseId);
+ const target=await loadAcademicDepartmentScope(newDepartmentId);
+ if(target.collegeId!==scope.collegeId||target.organizationId!==scope.organizationId)
+  throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
+ requireCourseWrite(context,scope.organizationId,scope.collegeId);
+ if(!Number.isFinite(Date.parse(expectedUpdatedAt)))
+  throw new CoursesServiceError("COURSE_STALE_VERSION");
+ try{
+  return await getDb().transaction(async tx=>{
+   const [current]=await tx.select({
+    id:courses.id,name:courses.name,code:courses.code,shortTitle:courses.shortTitle,
+    departmentId:courses.departmentId,status:courses.status,
+    updatedAt:courses.updatedAt,
+   }).from(courses).where(and(eq(courses.id,courseId),
+    eq(courses.departmentId,scope.departmentId))).for("update").limit(1);
+   if(!current||current.status!=="ACTIVE")throw new CoursesServiceError("COURSE_NOT_FOUND");
+   if(current.updatedAt.getTime()!==new Date(expectedUpdatedAt).getTime())
+    throw new CoursesServiceError("COURSE_STALE_VERSION");
+   if(newDepartmentId===current.departmentId)return current;
+   const [linkedOffering]=await tx.select({id:courseOfferings.id})
+    .from(courseOfferings).where(eq(courseOfferings.courseId,courseId)).limit(1);
+   if(linkedOffering)throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
+   const [lockedTarget]=await tx.select({id:departments.id})
+    .from(departments).where(and(eq(departments.id,newDepartmentId),
+      eq(departments.collegeId,scope.collegeId),isNull(departments.archivedAt)))
+    .for("share").limit(1);
+   if(!lockedTarget)throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
+   await assertCourseShortTitleUnique(tx,newDepartmentId,
+    current.shortTitle??current.name.slice(0,64),courseId);
+   const duplicate=await tx.select({id:courses.id})
+    .from(courses).where(and(eq(courses.departmentId,newDepartmentId),
+      eq(courses.status,"ACTIVE"),ne(courses.id,courseId),
+      sql<boolean>`(lower(${courses.name})=${current.name.toLowerCase()} or lower(${courses.code})=${current.code.toLowerCase()})`))
+    .limit(1);
+   if(duplicate.length)throw new CoursesServiceError("COURSE_NAME_CONFLICT");
+   const [updated]=await tx.update(courses).set({
+    departmentId:newDepartmentId,version:sql<number>`${courses.version}+1`,
+    updatedAt:sql`greatest(clock_timestamp(),${courses.updatedAt}+interval '1 millisecond')`,
+   }).where(and(eq(courses.id,courseId),eq(courses.departmentId,scope.departmentId),
+    eq(courses.status,"ACTIVE"),
+    sql`date_trunc('milliseconds',${courses.updatedAt})=${expectedUpdatedAt}::timestamptz`))
+   .returning();
+   if(!updated)throw new CoursesServiceError("COURSE_STALE_VERSION");
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.COURSES_CATALOG_UPDATED,
+    collegeId:scope.collegeId,organizationId:scope.organizationId,
+    subjectType:"course",subjectId:updated.id,subjectLabel:updated.name,
+    summary:"Course updated",metadata:{
+     legacyAuditAction:"COURSE_UPDATE",previousDepartmentId:scope.departmentId,
+     departmentId:newDepartmentId,
+    },
+   });
+   return updated;
+  });
+ }catch(error){
+  if(error instanceof CoursesServiceError)throw error;
+  throw mapCourseConstraint(error);
+ }
 }

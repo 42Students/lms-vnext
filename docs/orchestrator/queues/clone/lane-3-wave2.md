@@ -45,7 +45,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-verification-queue-service.ts.md` (edit src/modules/placements/tpo-verification-queue-service.ts; 20 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-20_privacy-policy.md.md` (new; 20 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_quiz-attempt-service.ts.md` (edit src/modules/courses/quiz-attempt-service.ts; 19 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_course-service.ts.md` (edit src/modules/courses/course-service.ts; 19 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_course-service.ts.md` (edit src/modules/courses/course-service.ts; 19 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_teaching-assignment-service.ts.md` (edit src/modules/courses/teaching-assignment-service.ts; 18 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_lesson-resource-materials-control.tsx.md` (edit src/components/courses/lesson-resource-materials-control.tsx; 18 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-learning-structure-actions.tsx.md` (edit src/components/courses/admin-learning-structure-actions.tsx; 17 findings; best P2)
