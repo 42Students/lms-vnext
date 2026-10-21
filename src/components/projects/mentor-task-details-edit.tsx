@@ -105,7 +105,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
-        <details defaultOpen={Boolean(props.approach||props.acceptanceCriteria)} className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
+        <details className="min-w-0 border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-5 text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Approach and done criteria</summary>
           <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)]">
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Approach (optional)

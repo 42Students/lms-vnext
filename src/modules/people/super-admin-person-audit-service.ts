@@ -10,7 +10,8 @@ import type {RequestContext} from "@/modules/identity/context";
  * Never infer actor records from a global user id in other colleges. */
 export async function listSuperAdminPersonAudit(context:RequestContext,membershipId:string){
  const scope=context.adminScope;
- if(!scope?.collegeId)return null;
+ const scopedCollegeId=scope?.collegeId;
+ if(!scopedCollegeId)return null;
  const membership=await getSuperAdminMembershipDetail(context,membershipId);
  if(!membership)return null;
  // The membership preflight is outside this read. A role/tenant scope may
@@ -18,7 +19,7 @@ export async function listSuperAdminPersonAudit(context:RequestContext,membershi
  // until the scoped audit query has completed.
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"people.manage",{
-   collegeId:scope.collegeId,organizationId:scope.organizationId,
+   collegeId:scopedCollegeId,organizationId:scope?.organizationId ?? null,
   });
   const events=await tx.select({
   id:activityEvents.id,occurredAt:activityEvents.occurredAt,
@@ -26,7 +27,7 @@ export async function listSuperAdminPersonAudit(context:RequestContext,membershi
   summary:activityEvents.summary,module:activityEvents.module,
   subjectType:activityEvents.subjectType,
  }).from(activityEvents)
- .where(and(eq(activityEvents.collegeId,scope.collegeId),
+ .where(and(eq(activityEvents.collegeId,scopedCollegeId),
   or(eq(activityEvents.actorMembershipId,membershipId),
      and(eq(activityEvents.subjectId,membershipId),
       or(eq(activityEvents.subjectType,"membership"),eq(activityEvents.subjectType,"college_membership"))))))

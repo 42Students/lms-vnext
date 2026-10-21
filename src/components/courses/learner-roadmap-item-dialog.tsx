@@ -35,7 +35,6 @@ export function LearnerRoadmapItemDialog({
       </Button>
       <Dialog open={open} onOpenChange={setOpen} title={kind + ": " + title}
         description={caption ?? kind}
-        footer={<Button type="button" variant="secondary" onClick={() => setOpen(false)} className="min-h-11 w-full sm:w-auto md:min-h-9">Close</Button>}
         >
         {open ? <div className="min-w-0 break-words [overflow-wrap:anywhere]">{children}</div> : null}
       </Dialog>
