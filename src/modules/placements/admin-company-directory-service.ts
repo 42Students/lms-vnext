@@ -75,6 +75,12 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     relationshipStatus: placementCompanyRelationships.status,
     companyStatus: placementCompanies.status,
     trusted: placementCompanyRelationships.isTrusted,
+    // Contact data is private to the selected college's relationship.
+    // A global or organization-level result never projects these fields.
+    contactPersonName:selected?.collegeId?placementCompanyRelationships.contactPersonName:
+      sql<string|null>`null::text`,
+    contactEmail:selected?.collegeId?placementCompanyRelationships.contactEmail:
+      sql<string|null>`null::text`,
     verifiedAt: placementCompanies.verifiedAt,
     website: placementCompanies.websiteUrl,
     industry: placementCompanies.industry,
@@ -117,4 +123,84 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     ...projectAdminCompanies(results), truncated: query.page * 50 < total, cap: 50,
     total, totalPages: Math.max(1,Math.ceil(total/50)),
   };
+}
+
+/** Platform-wide canonical employer identities. A company without any college
+ * link still belongs in this catalogue; counting relationship rows as
+ * companies would drop identities and duplicate employers across pages.
+ *
+ * Clearing the acting organization/college is an explicit prerequisite:
+ * this query must never silently expand a selected college's permissions.
+ */
+export async function listSuperAdminGlobalCompanyCatalogue(
+ context:RequestContext,raw:unknown,
+){
+ const query=adminCompaniesQuerySchema.parse(raw);
+ if(!isSuperAdmin(context)||context.adminScope?.collegeId||
+    context.adminScope?.organizationId||query.collegeId||
+    query.trust!=="ALL"||query.owner!=="ALL")
+  throw new AuthorizationError("placements.read");
+ requirePermission(context,"placements.read",{});
+ const conditions:SQL[]=[];
+ if(query.companyId)conditions.push(eq(placementCompanies.id,query.companyId));
+ const effectiveStatus=query.companyStatus==="MATCH"?query.status:query.companyStatus;
+ if(effectiveStatus!=="ALL")
+  conditions.push(eq(placementCompanies.status,effectiveStatus));
+ if(query.verified==="VERIFIED")conditions.push(isNotNull(placementCompanies.verifiedAt));
+ if(query.verified==="NOT_VERIFIED")conditions.push(isNull(placementCompanies.verifiedAt));
+ if(query.website==="HAS_WEBSITE")
+  conditions.push(sql`nullif(btrim(${placementCompanies.websiteUrl}), '') is not null`);
+ if(query.website==="MISSING_WEBSITE")
+  conditions.push(sql`nullif(btrim(${placementCompanies.websiteUrl}), '') is null`);
+ if(query.changedWithin!=="ALL"){
+  const cutoff=new Date(Date.now()-Number(query.changedWithin)*24*60*60*1000);
+  conditions.push(gte(placementCompanies.updatedAt,cutoff));
+ }
+ if(query.q){
+  const escaped=query.q.replace(/[\\%_]/g,"\\$&");
+  const needle="%"+escaped+"%";
+  const nameSearch=or(ilike(placementCompanies.name,needle),
+   exists(getDb().select({id:placementCompanyAliases.id}).from(placementCompanyAliases)
+    .where(and(eq(placementCompanyAliases.companyId,placementCompanies.id),
+      ilike(placementCompanyAliases.alias,needle)))));
+  const domainSearch=or(ilike(placementCompanies.primaryDomain,needle),
+   exists(getDb().select({id:placementCompanyDomains.id}).from(placementCompanyDomains)
+    .where(and(eq(placementCompanyDomains.companyId,placementCompanies.id),
+      ilike(placementCompanyDomains.domain,needle)))));
+  conditions.push(query.searchField==="NAME"?nameSearch!:
+    query.searchField==="DOMAIN"?domainSearch!:or(nameSearch,domainSearch)!);
+ }
+ const filter=conditions.length?and(...conditions):undefined;
+ const db=getDb();
+ const [totals,companies]=await Promise.all([
+  db.select({total:count()}).from(placementCompanies).where(filter),
+  db.select({
+   companyId:placementCompanies.id,name:placementCompanies.name,
+   companyStatus:placementCompanies.status,
+   website:placementCompanies.websiteUrl,primaryDomain:placementCompanies.primaryDomain,
+   industry:placementCompanies.industry,about:placementCompanies.about,
+   logoPublicUrl:placementCompanies.logoPublicUrl,verifiedAt:placementCompanies.verifiedAt,
+   createdAt:placementCompanies.createdAt,updatedAt:placementCompanies.updatedAt,
+   domains:sql<string[]>`(select coalesce(array_agg(d.domain order by d.domain),array[]::text[])
+    from placement_company_domains d where d.company_id=${placementCompanies.id})`,
+   aliases:sql<string[]>`(select coalesce(array_agg(a.alias order by a.alias),array[]::text[])
+    from placement_company_aliases a where a.company_id=${placementCompanies.id})`,
+   companyCollegeCount:sql<number>`(select count(distinct r.college_id)::int
+    from placement_company_relationships r where r.company_id=${placementCompanies.id})`.mapWith(Number),
+   driveCount:sql<number>`(select count(*)::int from placement_jobs j
+    inner join placement_company_relationships r on r.id=j.company_relationship_id
+    where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`.mapWith(Number),
+   lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j
+    inner join placement_company_relationships r on r.id=j.company_relationship_id
+    where r.company_id=${placementCompanies.id})`,
+  }).from(placementCompanies).where(filter)
+   .orderBy(...(query.sort==="RECENT"
+    ?[desc(placementCompanies.updatedAt),asc(placementCompanies.id)]
+    :[asc(placementCompanies.name),asc(placementCompanies.id)]))
+   .limit(50).offset((query.page-1)*50),
+ ]);
+ const total=Number(totals[0]?.total??0);
+ return {query,scope:{collegeId:null,organizationId:null},rows:companies,
+  total,cap:50,totalPages:Math.max(1,Math.ceil(total/50)),
+  truncated:query.page*50<total};
 }
