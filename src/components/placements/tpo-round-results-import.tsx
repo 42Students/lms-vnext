@@ -109,13 +109,13 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
    </Disclosure>
    <fieldset className="space-y-2 border-t border-border pt-3 text-sm print:hidden">
     <legend className="font-semibold">Students not in the file</legend>
-    <label className="flex gap-2"><Radio checked={missingPolicy==="LEAVE_PENDING"}
+    <label className="flex gap-[6px]"><Radio checked={missingPolicy==="LEAVE_PENDING"}
      onChange={()=>{setMissingPolicy("LEAVE_PENDING");setConfirmMissingFailure(false);}}/> Leave pending (do not change their result)</label>
-    <label className="flex gap-2"><Radio checked={missingPolicy==="MARK_NOT_CLEARED"}
+    <label className="flex gap-[6px]"><Radio checked={missingPolicy==="MARK_NOT_CLEARED"}
      onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
     {missingPolicy==="MARK_NOT_CLEARED"?<div className="space-y-2 text-foreground">
      <p>This also stages Not cleared for {preview.notInFile.length} currently eligible applicants missing from the file. Unmatched source rows must be resolved. Students are not told until results are applied.</p>
-     <label className="flex items-center gap-2 text-sm font-semibold">
+     <label className="flex items-center gap-[6px] text-[13px] font-semibold">
       <Checkbox checked={confirmMissingFailure} onChange={e=>setConfirmMissingFailure(e.target.checked)}/>
       I reviewed the missing students and choose to stage Not cleared.
      </label>

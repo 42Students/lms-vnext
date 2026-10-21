@@ -71,10 +71,10 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
   {open?<form id={editorId} onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
    <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
-   <label className="block text-sm font-semibold">Title
+   <label className="block text-[13px] font-semibold">Title
     <Input className="mt-1 min-h-11 w-full md:min-h-9" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="block text-sm font-semibold">What ships in this release?
+   <label className="block text-[13px] font-semibold">What ships in this release?
     <Textarea className="mt-1 min-h-20 w-full"
      maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
    <div className="flex flex-col gap-2 sm:flex-row">

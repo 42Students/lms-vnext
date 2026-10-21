@@ -72,7 +72,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
         <>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2">
             {(["name", "code", "startDate", "endDate"] as const).map((key) => (
-              <label key={key} className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+              <label key={key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                 {key === "startDate" ? "Start date" : key === "endDate" ? "End date" : key === "name" ? "Season name" : "Season code"}
                 <Input type={key.endsWith("Date") ? "date" : "text"}
                   value={form[key]} disabled={busy}

@@ -59,7 +59,7 @@ export function LearnerTaskProgressControl(props: {
         onClick={() => void change({ action: "MOVE_DOWN" })}>Move down</Button>
     </div>
     {showBlocker ? <div id={blockerId} className="grid min-w-0 gap-3 border-t border-border pt-3">
-      <label className="text-xs font-semibold text-body">Blocker note
+      <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Blocker note
         <Textarea className="mt-1"
           value={blockerNote} maxLength={2000} disabled={pending} aria-invalid={blockerNote.trim().length > 0 && blockerNote.trim().length < 3}
           onChange={event => { setBlockerNote(event.target.value); setError(""); }}
