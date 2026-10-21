@@ -304,7 +304,7 @@ export function AnnouncementAdminWorkspace({
                       {item.buttonLabel} ↗
                     </a>:null}
                     {safeLink ? <a href={safeLink} className="mt-2 inline-flex min-h-11 items-center break-all text-sm font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open linked resource ↗</a> : null}
-                    {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p> : null}
+                    {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</p> : null}
                     <p className="mt-2 text-xs text-muted-foreground">
                       Sender: {item.senderType} · Version {item.version}
                     </p>
