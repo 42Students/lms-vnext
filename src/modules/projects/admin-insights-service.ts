@@ -513,6 +513,15 @@ export async function listProjectAdminRiskQueue(
           searchPattern,
         ),
         sql`${projectInstances.id}::text ilike ${searchPattern}`,
+        sql`exists (
+          select 1 from project_members m
+          join college_memberships cm on cm.id=m.membership_id
+          join users u on u.id=cm.user_id
+          where m.project_id=project_instances.id and m.role='MENTOR'
+            and m.ended_at is null and cm.college_id=${college.id}
+            and cm.status='ACTIVE' and u.platform_status='ACTIVE'
+            and u.display_name ilike ${searchPattern}
+        )`,
       )
     : undefined;
   // Correlated subqueries below need a qualified outer reference: Drizzle
@@ -563,11 +572,20 @@ export async function listProjectAdminRiskQueue(
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
     );
+  const reasonCount=sql<number>`(
+    case when ${lastActivityAt} <= ${staleCutoff} then 1 else 0 end
+    + case when ${pendingReview} then 1 else 0 end
+    + case when ${blockedTask} then 1 else 0 end
+  )`;
+  const completedWithOpenRisk=sql<boolean>`(
+    ${projectInstances.status}<>'COMPLETED' or
+    ${pendingReview} or ${blockedTask}
+  )`;
   const where = and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
     ne(projectInstances.status, "ARCHIVED"),
-    ne(projectInstances.status, "COMPLETED"),
+    completedWithOpenRisk,
     query.status
       ? eq(projectInstances.status, query.status)
       : undefined,
@@ -590,7 +608,9 @@ export async function listProjectAdminRiskQueue(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
     ne(projectInstances.status, "ARCHIVED"),
-    ne(projectInstances.status, "COMPLETED"),
+    completedWithOpenRisk,
+    search,
+    query.status?eq(projectInstances.status,query.status):undefined,
   ));
   const buckets = {
     stalled: bucketTotals?.stalled ?? 0,
@@ -622,9 +642,8 @@ export async function listProjectAdminRiskQueue(
         .where(where)
         .orderBy(
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
-            query.riskSort==="SEVERITY"
-              ? asc(sql`case when ${blockedTask} or (${lastActivityAt} <= ${staleCutoff} and ${pendingReview}) then 0 else 1 end`)
-              : asc(lastActivityAt),
+          query.riskSort==="INACTIVE"?asc(lastActivityAt):
+            sql`${reasonCount} desc`,
           asc(projectInstances.title),
           asc(projectInstances.id),
         )
