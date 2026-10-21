@@ -27,7 +27,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_assessments.ts.md` (edit src/db/schema/assessments.ts; 19 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_memberships.ts.md` (edit src/db/schema/memberships.ts; 18 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_profiles.ts.md` (edit src/db/schema/profiles.ts; 14 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_projects_workspace-view-service.ts.md` (edit src/modules/projects/workspace-view-service.ts; 14 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_projects_workspace-view-service.ts.md` (edit src/modules/projects/workspace-view-service.ts; 14 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_campaign-unsubscribe-confirm.tsx.md` (edit src/components/placements/campaign-unsubscribe-confirm.tsx; 13 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_recruiter-drive-search-service.ts.md` (edit src/modules/placements/recruiter-drive-search-service.ts; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_colleges.ts.md` (edit src/db/schema/colleges.ts; 11 findings; best P2)

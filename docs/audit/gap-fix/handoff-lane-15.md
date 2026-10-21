@@ -648,3 +648,19 @@
 - G2-6-019-007 — src/modules/people learner/faculty profile read and storage services: Keep 1:1 scoped mapping from legacy learner to active membership; resolve transfers/duplicates.
 - G2-8-001-048 — src/modules/people learner/faculty profile read and storage services: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
 - G2-8-003-045 — src/modules/people learner/faculty profile read and storage services: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required
+
+## Wave2 workspace section-specific loading and compatibility
+- G2-17-004-036 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Instrument tab-switch request count and avoid redundant full workspace aggregation when changing filter/query.
+- G2-3-029-018 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy review fields are on resolvedDelivery; vNext getProjectWorkspaceView assembles separate finalDelivery.reviews and evaluations. Join latest proper review metadata.
+- G2-3-029-030 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy fetches one college-scoped workspace through admin API on client; vNext parallel server fetch of workspace/members/readiness/reviews/activity, with different failure cascade.
+- G2-3-029-036 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy data fetch starts loading true to avoid first render not-found; vNext server-rendered page needs route loading.tsx parity for equivalent skeleton.
+- G2-3-029-050 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy retrieves one workspace JSON in one call, vNext launches 8 parallel subqueries, increasing query/connection pressure.
+- G2-3-029-055 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy AdminService.getProjectWorkspaceById resolves college-scope payload; vNext typed workspace-view DB aggregator has different failure and loading telemetry.
+- G2-4-029-056 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Query resource-only rows newest first with server page/count.
+- G2-4-029-061 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Use discrete admin resource-audit service, avoid whole workspace dependencies.
+- G2-7-011-040 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Use section-specific projection/cache while preserving tenant enforcement and error states.
+- G2-7-012-030 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Optimize section projection and preserve error isolation
+- G2-7-012-053 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Readiness-only projections for large workspaces
+- G2-7-013-039 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Project normalized resource DTO onto legacy field identities
+- G2-7-015-045 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Avoid unrelated fetch blocking Summary load
+- G2-7-027-088 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Map every action request and notification into new typed API route/service
