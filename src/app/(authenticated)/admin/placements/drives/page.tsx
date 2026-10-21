@@ -17,7 +17,7 @@ import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-dri
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
+import { adminDriveDirectoryHref, adminDriveDirectoryQuerySchema, adminDriveStatus, adminDriveIsExpired, adminDriveIstDate } from "@/modules/placements/admin-drive-directory-model";
 
 export default async function SuperAdminDrivesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -82,7 +82,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    }},
   {key:"location",header:"Location",mobilePriority:"secondary",cell:row=>row.job.locations.join(", ")||"Not specified"},
   {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:row=>{
-    const expired=Boolean(row.job.applicationDeadline&&row.job.applicationDeadline.getTime()<=today.getTime());
+    const expired=adminDriveIsExpired(row.job.applicationDeadline,today);
     return <span className={"inline-flex items-center gap-1 "+(expired?"text-[#fa8c16]":"text-body")}>
       <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -165,7 +165,9 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     <SuperAdminDriveDirectoryFilters q={parsed.data.q} status={parsed.data.status}
       pageSize={parsed.data.pageSize}/>
   </section>
-  <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
+  <div className="min-w-0 rounded-md border border-transparent has-[input:checked]:border-[#91caff] has-[input:checked]:bg-[#e6f4ff] has-[input:checked]:px-3">
+    <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
+  </div>
   <p role="status" className="text-sm text-muted-foreground">
     {data.total===0?"No drives":((data.page-1)*data.pageSize+1)+"–"+Math.min(data.total,data.page*data.pageSize)+
       " of "+data.total.toLocaleString("en-IN")} drives · {data.pageSize} per page · Page {data.page} of {data.totalPages}
