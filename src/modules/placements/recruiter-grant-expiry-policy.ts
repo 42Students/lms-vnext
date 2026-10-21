@@ -35,3 +35,42 @@ export function recruiterGrantEffectiveAt(
     (neededCapability === undefined ||
       grant.capabilities.includes(neededCapability));
 }
+
+/**
+ * Legacy access months=0 meant a NULL end date. vNext requires a finite
+ * verified expiry and deliberately never turns an imported open-ended grant
+ * into a live recruiter authorization. A reviewer must pick a future end date.
+ * This crosswalk is migration-only: it must not replace the live auth check.
+ */
+export type LegacyRecruiterGrantMigration = {
+  legacyStatus:string;
+  deleted:boolean;
+  legacyValidUntil:Date|null;
+  recruiterActive:boolean;
+  collegeActive:boolean;
+  capability:string;
+  capabilities:readonly string[];
+  verificationStatus:string|null;
+};
+
+export function classifyLegacyRecruiterGrant(
+  legacy:LegacyRecruiterGrantMigration,now:Date,
+):"INACTIVE"|"EXPIRED"|"REQUIRES_EXPIRY"|"REQUIRES_VERIFICATION"|"READY"{
+  if(legacy.legacyStatus!=="ACTIVE"||legacy.deleted||
+     !legacy.recruiterActive||!legacy.collegeActive||
+     !legacy.capabilities.includes(legacy.capability))return "INACTIVE";
+  if(!legacy.legacyValidUntil)return "REQUIRES_EXPIRY";
+  if(!Number.isFinite(now.getTime())||
+     !Number.isFinite(legacy.legacyValidUntil.getTime())||
+     legacy.legacyValidUntil.getTime()<=now.getTime())return "EXPIRED";
+  if(legacy.verificationStatus!=="VERIFIED")return "REQUIRES_VERIFICATION";
+  return "READY";
+}
+
+/** Never invent a backfill expiry for legacy unlimited grants. */
+export function legacyRecruiterAccessMonthsToValidUntil(
+  grantedAt:Date,legacyMonths:number,
+):Date|null{
+  if(legacyMonths===0)return null;
+  return recruiterGrantValidUntil(grantedAt,legacyMonths);
+}
