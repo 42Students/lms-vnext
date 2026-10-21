@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Banner } from "@/components/ui/banner";
+import { CourseProgressPolicyEditor } from "@/components/admin/course-progress-policy-editor";
+import { getAdminTenantSettingState } from "@/modules/platform-settings/admin-editor-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
@@ -16,6 +19,11 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
     context.adminScope?.collegeId ?? null;
 
   if (!collegeId) {
+    const globalPolicy = !context.adminScope?.organizationId
+      ? await getAdminTenantSettingState(context,"GLOBAL","course.minInProgressPercent")
+        .then(value=>({ok:true as const,value}))
+        .catch(()=>({ok:false as const,value:null}))
+      : null;
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
@@ -34,6 +42,30 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             { value: "quizzes", label: "Quizzes directory →", href: "/admin/quizzes" },
           ]}
         />
+        <Banner tone="warning" role="status">
+          Select a college to view and manage its courses. Global progress policy
+          can be reviewed only with the platform-wide Super Admin scope selected.
+        </Banner>
+        {globalPolicy?.ok && globalPolicy.value.state !== "UNAVAILABLE" ? (
+          <CourseProgressPolicyEditor
+            initialValue={globalPolicy.value.state === "OVERRIDDEN"
+              ? Number(globalPolicy.value.value) : 5}
+            initialVersion={globalPolicy.value.version ?? 0}
+            isOverride={globalPolicy.value.state === "OVERRIDDEN"}
+          />
+        ) : context.adminScope?.organizationId ? (
+          <p className="text-sm leading-6 text-body">
+            Clear the organization selection in the Super Admin scope switcher
+            to edit platform-wide progress policy.
+          </p>
+        ) : (
+          <Banner tone="warning" role="status">
+            Progress policy could not be loaded. The stored value has not changed.
+            <Link href="/admin/courses" className="ml-2 font-semibold text-primary-text underline">
+              Retry loading progress policy
+            </Link>
+          </Banner>
+        )}
         <EmptyState
           title="Select a college to continue"
           description="Choose a college in the header above to see its courses."
