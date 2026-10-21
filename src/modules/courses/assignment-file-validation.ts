@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { courseSectionDeliveryIdSchema } from "./validation";
+import { MAX_ASSIGNMENT_FILES_PER_SUBMISSION } from "@/modules/storage/file-policy";
 
 export const MAX_ASSIGNMENT_FILE_BYTES =
   50 * 1024 * 1024;
@@ -83,6 +84,32 @@ export const assignmentFileSubmissionSchema =
     uploadReceiptId:
       z.string().uuid(),
   });
+
+/** Multi-asset receipt contract. Each attachment has its own verified
+ * upload receipt and immutable zero-based position. Validation alone does NOT
+ * prove ownership, MIME safety, quarantine clearance or single consumption:
+ * the submission transaction must verify all receipts before writing assets.
+ */
+export const assignmentMultipartFileSubmissionSchema=z.strictObject({
+ deliveryId:courseSectionDeliveryIdSchema,
+ submissionType:z.literal("FILE"),
+ files:z.array(z.strictObject({
+  uploadReceiptId:z.uuid(),
+  position:z.number().int().nonnegative(),
+ })).min(1).max(MAX_ASSIGNMENT_FILES_PER_SUBMISSION),
+}).superRefine((data,ctx)=>{
+ const seen=new Set<string>();
+ data.files.forEach((item,index)=>{
+  if(seen.has(item.uploadReceiptId))
+   ctx.addIssue({code:"custom",path:["files",index,"uploadReceiptId"],
+    message:"Each uploaded file must have its own receipt"});
+  seen.add(item.uploadReceiptId);
+  if(item.position!==index)
+   ctx.addIssue({code:"custom",path:["files",index,"position"],
+    message:"File order must match the selected attachment order"});
+ });
+});
+export type AssignmentMultipartFileSubmission=z.infer<typeof assignmentMultipartFileSubmissionSchema>;
 
 export type AssignmentFileUploadRequest =
   z.infer<
