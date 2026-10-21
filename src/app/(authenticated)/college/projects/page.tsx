@@ -98,6 +98,7 @@ export default async function CollegeProjectsPage({
    updatedAt:project.updatedAt,mentorName:project.mentorName,memberCount:project.memberCount,
    courseLabel:project.courseLabel,phase:project.phase,dueLabel:project.dueLabel,
    templateTitle:project.templateId ? (templateTitles.get(project.templateId)??null) : null,
+   templateId:project.templateId,
    progressPercent:project.progressPercent,
    riskReasons:project.riskReasons,
   }));

@@ -17,6 +17,7 @@ export type ProjectAdminWorkspaceListItem = {
   updatedAt: Date;
   mentorName: string | null;
   templateTitle?: string | null;
+  templateId?:string|null;
   courseLabel?:string|null;phase?:string|null;dueLabel?:string|null;
   memberCount: number;
   progressPercent: number;
