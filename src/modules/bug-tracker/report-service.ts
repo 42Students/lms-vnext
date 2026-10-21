@@ -43,6 +43,10 @@ export async function createBugTrackerIssueForAdmin(context: RequestContext, raw
       description: input.description,
       severity: input.severity,
       evidenceLink: input.evidenceLink || null,
+      sourceUrl: input.sourceUrl || null,
+      sourcePath: input.sourcePath || null,
+      browser: input.browser || null,
+      viewport: input.viewport || null,
     }).returning({ id: db10BugReports.id, publicId: db10BugReports.publicId });
     if (!report) throw new Error("Tracker report could not be saved");
     await tx.insert(db10BugReportActivities).values({

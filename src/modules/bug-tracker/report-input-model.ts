@@ -17,6 +17,21 @@ export const trackerReportSchema = z.object({
   description: z.string().trim().min(1, "Describe what went wrong.")
     .max(4000, "Keep the description under 4000 characters."),
   evidenceLink: z.union([z.url({ protocol: /^https?$/ }).max(1000), z.literal(""), z.null()]).optional(),
+  sourceUrl: z.union([
+    z.url({ protocol: /^https?$/ }).max(2000).refine(value => {
+      try {
+        const parsed = new URL(value);
+        return Boolean(parsed.hostname) && !parsed.username && !parsed.password;
+      } catch {
+        return false;
+      }
+    }, "Enter a valid source URL."),
+    z.literal(""),
+    z.null(),
+  ]).optional(),
+  sourcePath: z.string().trim().max(500).nullable().optional(),
+  browser: z.string().trim().max(500).nullable().optional(),
+  viewport: z.string().trim().max(64).nullable().optional(),
 }).strict().superRefine((value, ctx) => {
   const page = LOCATION_OPTIONS.find(option => option.value === value.page);
   if (!page) {
