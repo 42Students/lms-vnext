@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq} from "drizzle-orm";
+import {and,desc,eq,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -60,7 +60,10 @@ export async function getProjectResourceHistory(context:RequestContext,projectId
    eq(activityEvents.organizationId,scope.organizationId),
    eq(activityEvents.module,"PROJECTS"),
    eq(activityEvents.subjectType,"project_resource"),
-   eq(activityEvents.groupKey,"project:"+scope.project.id),
+   // Reorders predate the canonical resource group key. They are still
+   // auditable events for this exact authorized college + project.
+   or(eq(activityEvents.groupKey,"project:"+scope.project.id),
+      eq(activityEvents.groupKey,"project:"+scope.project.id+":resources")),
   )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(201);
   return {rows:entries.slice(0,200).map(({metadata,...row})=>{
    const meta=metadata??{};
@@ -68,16 +71,22 @@ export async function getProjectResourceHistory(context:RequestContext,projectId
    const key=meta.resourceKey;
    const type=meta.actionType;
    const changed=meta.changedFields;
+   const previousSequence=meta.previousSequence;
+   const nextSequence=meta.nextSequence;
+   const reordered=Number.isSafeInteger(previousSequence)&&
+    Number.isSafeInteger(nextSequence);
    return {
     ...row,occurredAt:row.occurredAt.toISOString(),
     resourceKey:typeof key==="string"&&key.length<=120?key:row.resourceId,
     actionType:typeof type==="string"&&["CREATE","UPDATE","DELETE","UPSERT"].includes(type)
      ?type:row.eventType,
-    resourceOrder:typeof order==="number"&&Number.isSafeInteger(order)&&order>=0?order:null,
-    beforeJson:safeSnapshot(meta.beforeJson),
-    afterJson:safeSnapshot(meta.afterJson),
+    resourceOrder:typeof order==="number"&&Number.isSafeInteger(order)&&order>=0
+     ?order:typeof nextSequence==="number"&&Number.isSafeInteger(nextSequence)&&nextSequence>=0
+      ?nextSequence:null,
+    beforeJson:safeSnapshot(meta.beforeJson)??(reordered?{sequence:previousSequence as number}:null),
+    afterJson:safeSnapshot(meta.afterJson)??(reordered?{sequence:nextSequence as number}:null),
     changedFields:Array.isArray(changed)?changed.filter((field):field is string=>
-      typeof field==="string"&&resourceSnapshotKeys.has(field)):[],
+      typeof field==="string"&&resourceSnapshotKeys.has(field)):(reordered?["sequence"]:[]),
    };
   }),hasMore:entries.length>200};
  }catch{
