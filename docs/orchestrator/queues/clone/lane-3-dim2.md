@@ -451,7 +451,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [ ] `src/components/hr/recruiter-profile-access.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-editor.tsx`
-- [x] `src/components/placements/college-drive-pipeline-overview.tsx`
+- [ ] `src/components/placements/college-drive-pipeline-overview.tsx`
 - [ ] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
 - [x] `src/components/placements/college-report-navigation.tsx`
