@@ -42,7 +42,7 @@ export function CollegeDriveDeadlineAction({jobId,title,currentDeadline}:{
    <div className="min-w-0 space-y-4">
     <p className="break-words text-sm text-body">Current deadline: {current}</p>
     <p className="break-words text-sm text-body">Extend deadline for {title}?</p>
-    <label className="grid min-w-0 gap-1 text-sm">New application deadline (IST)
+    <label className="grid min-w-0 gap-[6px] text-[13px] leading-4 font-semibold">New application deadline (IST)
      <Input type="datetime-local" value={value} onChange={e=>setValue(e.target.value)}
       />
     </label>

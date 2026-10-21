@@ -113,7 +113,7 @@ export function PlacementBulkOfferWithdraw({
         <>
           <div tabIndex={0} role="group" aria-label="Offers eligible for withdrawal, scroll for more" className="max-h-64 min-h-0 min-w-0 space-y-1 overflow-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border p-2 [mask-image:linear-gradient(to_bottom,black_0%,black_88%,transparent_100%)]">
             {available.map((item) => (
-              <label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-2 px-2 py-1 text-sm">
+              <label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer flex-wrap items-center gap-2 px-2 py-1 text-[13px]">
                 <input
                   type="checkbox"
                   checked={selected.includes(item.id)}
@@ -126,7 +126,7 @@ export function PlacementBulkOfferWithdraw({
               </label>
             ))}
           </div>
-          <label className="block text-sm font-semibold text-foreground">
+          <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
             Withdrawal reason (required)
             <Textarea
               value={reason}

@@ -53,7 +53,7 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     </dl>
     {preview.impact.acceptedOffers>0?<p role="alert" className="text-warning">
      Resolve accepted offers before deleting this drive.</p>:null}
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
      <Textarea required minLength={10} maxLength={1000} value={reason}
       onChange={e=>setReason(e.target.value)} rows={2}
       className="w-full"/></label>
