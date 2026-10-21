@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
 import {Banner} from "@/components/ui/banner";
@@ -29,7 +30,9 @@ const toLocal=(iso:string)=>new Intl.DateTimeFormat("sv-SE",{
 export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId}:{
  jobId:string;rounds:Round[];candidates:Candidate[];appointments:Appointment[];preferredApplicationId?:string;
 }){
- const router=useRouter();const [editing,setEditing]=useState<Appointment|null>(null);
+ const router=useRouter();const {showToast}=useToast();
+ const [editing,setEditing]=useState<Appointment|null>(null);
+ const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(rounds[0]?.id??"");
  const [applicationId,setApplicationId]=useState(candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
  const [start,setStart]=useState("");const [duration,setDuration]=useState(30);
@@ -47,7 +50,13 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   setMode(row?.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS");
   setVenue(row?.venue??"");setMeetingUrl(row?.meetingUrl??"");
   setInterviewer(row?.interviewer??"");setReason("");
+  setDirty(false);setConfirmDiscard(false);
   setError("");setSuccess("");setShow(true);
+ }
+ function closeSetup(){
+  if(busy)return;
+  if(dirty)setConfirmDiscard(true);
+  else setShow(false);
  }
  async function post(body:Record<string,unknown>){
   if(busy)return false;
@@ -59,7 +68,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    });
    setSuccess(body.action==="SCHEDULE"?"Interview scheduled and candidate notified." :
     "Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
-   router.refresh();return true;
+   if(body.action==="SCHEDULE"){
+    showToast({tone:"success",title:"Interview scheduled successfully"});
+   }
+   setDirty(false);router.refresh();return true;
   }catch(e){setError(e instanceof Error?e.message:"Interview action failed");return false;}
   finally{setBusy(false);}
  }
@@ -135,44 +147,52 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
           </div>
          </Disclosure>},
     ]}
-    empty={<EmptyState title="No candidate interviews" description="No candidate interviews have been scheduled for this drive."/>}
+    empty={<EmptyState title="No candidate interviews" description="No interviews scheduled for this drive yet."/>}
   />
   {success?<Banner tone="success">{success}</Banner>:null}
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
-  <Dialog open={show} onOpenChange={next=>{if(!next&&!busy)setShow(false);}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
+  <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||duration<5||duration>480||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
      {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</Button>
-    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={()=>setShow(false)}>Cancel</Button>
+    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={Boolean(editing)}
-     onChange={e=>setRoundId(e.target.value)} className="w-full">
+     onChange={e=>{setRoundId(e.target.value);setDirty(true);}} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </Select></label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={Boolean(editing)}
-     onChange={e=>setApplicationId(e.target.value)} className="w-full">
+     onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
-      onChange={e=>setStart(e.target.value)} className="w-full"/></label>
+      onChange={e=>{setStart(e.target.value);setDirty(true);}} className="w-full"/></label>
      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
-      onChange={e=>setDuration(Number(e.target.value))} className="w-full"/></label>
+      onChange={e=>{setDuration(Number(e.target.value));setDirty(true);}} className="w-full"/></label>
     </div>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} onChange={e=>{setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL");setDirty(true);}}
      className="w-full">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
-     <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
+     <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>{mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value);setDirty(true);}}
       className="w-full"/></label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Interviewer (optional)<Input value={interviewer}
-     onChange={e=>setInterviewer(e.target.value)} className="w-full"/></label>
+     onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/></label>
     {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason}
-     onChange={e=>setReason(e.target.value)} className="w-full"/></label>:null}
-    {error?<Banner tone="error">{error}</Banner>:null}
+     onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></label>:null}
+    {error?<Banner tone="error" action={<Button type="button" size="sm"
+      variant="secondary" onClick={()=>setError("")}>Dismiss</Button>}>
+      <strong>Interview was not scheduled.</strong> {error}
+    </Banner>:null}
 
   </Dialog>
+  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+   title="Discard interview setup?"
+   description="There are unsaved interview changes."
+   confirmLabel="Discard changes" cancelLabel="Keep editing"
+   onConfirm={()=>{setConfirmDiscard(false);setDirty(false);setShow(false);}}/>
   <ConfirmDialog open={decision!==null} onOpenChange={open=>{if(!open&&!busy)setDecision(null);}}
    title={decision?.action==="CANCEL"?"Cancel interview?":decision?.action==="NO_SHOW"?"Mark No Show?":"Mark interview completed?"}
    description="This action is recorded and the learner will be notified."
