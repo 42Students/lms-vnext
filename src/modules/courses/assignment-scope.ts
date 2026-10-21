@@ -9,6 +9,10 @@ import {
   courseAssignments,
 } from "@/db/schema";
 import { CoursesServiceError } from "./errors";
+import type { RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
+import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   loadCourseLessonScope,
   loadCourseSectionDeliveryScope,
@@ -136,4 +140,26 @@ export async function loadAssignmentSubmissionScope(
     collegeId: assignment.collegeId,
     organizationId: assignment.organizationId,
   };
+}
+
+/** Preflight principal gate before even loading a whole-assignment record.
+ * Legacy bulk controllers authorized the authenticated principal and then
+ * checked the full assignment scope before listing any learner submissions.
+ * This guard does not trust an assignment ID, a supplied college or a cached
+ * role: persisted membership/system permissions are rechecked in the tenant. */
+export async function requireWholeAssignmentBulkPermission(
+ context: RequestContext, assignmentId: string,
+) {
+ if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+  throw new AuthorizationError("courses.manage");
+ const scope=await loadCourseAssignmentScope(assignmentId);
+ requirePermission(context,"courses.manage",{
+  collegeId:scope.collegeId,organizationId:scope.organizationId,
+ });
+ await getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+   collegeId:scope.collegeId,organizationId:scope.organizationId,
+  });
+ });
+ return scope;
 }
