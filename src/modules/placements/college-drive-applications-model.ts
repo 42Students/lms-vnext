@@ -12,7 +12,7 @@ export const driveApplicationsQuerySchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export type DriveApplicationsQuery = z.infer<typeof driveApplicationsQuerySchema>;
-export const DRIVE_APPLICATIONS_PAGE_SIZE = 25;
+export const DRIVE_APPLICATIONS_PAGE_SIZE = 20;
 export const DRIVE_APPLICATION_EXPORT_CAP = 1000;
 export const DRIVE_APPLICATION_BULK_CAP = 3000;
 
@@ -20,9 +20,24 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
   const input: Record<string,string> = {};
   for (const key of ["q","status","stage","source","departmentId","programId","cohortId","screening","page"] as const) {
     const value = raw[key];
-    if (Array.isArray(value)) return null;
+    // The legacy page tolerates malformed optional filters, but identifiers
+    // must fail closed rather than silently broadening an academic scope.
+    if (Array.isArray(value)) {
+      if (key === "departmentId" || key === "programId" || key === "cohortId") return null;
+      continue;
+    }
     if (typeof value === "string" && value !== "") input[key] = value;
   }
+  const allowed: Record<string,readonly string[]> = {
+    status:["ALL","SUBMITTED","WITHDRAWN"],
+    source:["ALL","INTERNAL","EXTERNAL"],
+    stage:["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"],
+    screening:["ALL","PENDING","HOLD","SHORTLISTED","REJECTED","UNRECORDED"],
+  };
+  for (const key of ["status","stage","source","screening"] as const) {
+    if (input[key] && !allowed[key].includes(input[key])) delete input[key];
+  }
+  if (input.page && !/^[1-9]\\d{0,3}$/.test(input.page)) delete input.page;
   const result = driveApplicationsQuerySchema.safeParse(input);
   return result.success ? result.data : null;
 }
