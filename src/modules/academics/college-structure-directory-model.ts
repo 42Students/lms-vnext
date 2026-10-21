@@ -14,7 +14,7 @@ export const collegeStructureQuerySchema = z.object({
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   page: urlDecimalInt(1,1000).default(1),
-  pageSize: urlDecimalInt(10,100).refine(n => [10,25,50,100].includes(n)).default(10),
+  pageSize: urlDecimalInt(10,100).refine(n => [10,25,50,100].includes(n)).default(COLLEGE_STRUCTURE_PAGE_SIZE),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
@@ -169,7 +169,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   if (kind === "ELECTIVES" && "periodStartsOnOrAfter" in query && query.periodStartsOnOrAfter) params.set("periodStartsOnOrAfter",query.periodStartsOnOrAfter);
   if (kind === "ELECTIVES" && "periodEndsOnOrBefore" in query && query.periodEndsOnOrBefore) params.set("periodEndsOnOrBefore",query.periodEndsOnOrBefore);
   if (query.page > 1) params.set("page", String(query.page));
-  if (query.pageSize !== 10) params.set("pageSize", String(query.pageSize));
+  if (query.pageSize !== COLLEGE_STRUCTURE_PAGE_SIZE) params.set("pageSize", String(query.pageSize));
   return params.size ? path + "?" + params.toString() : path;
 }
 
