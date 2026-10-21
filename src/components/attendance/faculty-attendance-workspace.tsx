@@ -853,7 +853,7 @@ export function FacultyAttendanceWorkspace({
                         : ""}
                     </p>
                     {markingWindow !== "OPEN" ? (
-                      <p role="status" className="mt-2 text-xs font-semibold text-warning">
+                      <p role="status" className="mt-2 text-sm font-semibold text-warning">
                         {markingWindow === "NOT_STARTED"
                           ? "Cannot mark attendance for a class that has not started yet"
                           : `Attendance window has closed. Attendance can only be marked within ${workspace.policy.correctionWindowHours} hours after the class ends.`}
@@ -1018,7 +1018,7 @@ export function FacultyAttendanceWorkspace({
                 </label>
               ):null}
               {selectedSession?.attendanceStatus === "MARKED" ? (
-                <p role="status" className="mt-3 text-xs text-muted-foreground">
+                <p role="status" className="mt-3 text-sm text-muted-foreground">
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}

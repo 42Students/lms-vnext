@@ -551,7 +551,7 @@ export function LearnerClassSchedule({
             }} >
               Clear schedule filters
             </Button>
-            <span role="status" className="w-full text-xs text-muted-foreground">
+            <span role="status" className="w-full text-sm text-muted-foreground">
               {filteredEvents.length} matching authorized sessions
             </span>
           </div>
