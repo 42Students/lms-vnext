@@ -64,26 +64,26 @@ function KnownErrorCard({ item }: { item: KnownError }) {
     <article id={"known-error-"+item.id} className="scroll-mt-4 min-w-0 space-y-4 py-5">
       <div className="flex min-w-0 flex-col items-start gap-2 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="m-0 break-all font-mono text-xs text-muted-foreground">
+          <p className="m-0 break-all font-mono text-xs text-muted-foreground leading-[20px]">
             Signature {item.signatureHash.slice(0, 12)}…
           </p>
-          <h3 className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-base font-semibold text-foreground">
+          <h3 className="mt-2 flex min-w-0 flex-wrap items-center gap-2 text-base font-semibold text-[var(--lms-heading)]">
             <StatusBadge tone={item.fixStatus==="FIXED"?"success":item.fixStatus==="OPEN"?"warning":"info"}>{item.fixStatus}</StatusBadge>
             <StatusBadge tone={item.muted?"warning":"neutral"}>{item.muted ? "Muted" : "Unmuted"}</StatusBadge>
           </h3>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
             {item.occurrenceCount} occurrences · {item.affectedAccounts} distinct affected accounts
           </p>
         </div>
-        <p className="m-0 text-xs text-muted-foreground">
+        <p className="m-0 text-xs text-muted-foreground leading-[20px]">
           First seen {formatInstant(item.firstSeenAt)} · Last seen {formatInstant(item.lastSeenAt)}
         </p>
       </div>
       {item.acknowledgedAt ? (
-        <p role="status" className="text-xs text-muted-foreground">Acknowledged {formatInstant(item.acknowledgedAt)}</p>
+        <p role="status" className="text-xs text-muted-foreground leading-[20px]">Acknowledged {formatInstant(item.acknowledgedAt)}</p>
       ) : null}
       {item.regressedAt ? (
-        <p role="status" className="flex flex-wrap items-center gap-2 text-sm font-semibold text-error">
+        <p role="status" className="flex flex-wrap items-center gap-2 text-sm font-semibold text-error leading-[22px]">
           <StatusBadge tone="error">Regressed</StatusBadge> Regression observed {formatInstant(item.regressedAt)}
         </p>
       ) : null}
@@ -218,11 +218,11 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         </div>
       </Dialog>
       {item.issuePublicId ? (
-        <p className="m-0 text-xs text-muted-foreground">
+        <p className="m-0 text-xs text-muted-foreground leading-[20px]">
           Linked tracker issue: {item.issuePublicId}
         </p>
       ) : null}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[20px]">
         Raw log samples, error paths and account identities are deliberately not exposed here.
       </p>
     </article>
@@ -263,7 +263,7 @@ export function KnownErrorsWorkspace({
   return (
     <div id="known-errors" className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
-        <p className="m-0 text-sm text-body">Last reviewed: {formatInstant(lastViewedAt)}</p>
+        <p className="m-0 text-sm text-body leading-[22px]">Last reviewed: {formatInstant(lastViewedAt)}</p>
         <Button variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} loading={pending} onClick={markViewed}>
           {pending ? "Saving…" : "Mark logs reviewed"}
         </Button>
