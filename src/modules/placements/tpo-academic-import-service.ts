@@ -333,7 +333,7 @@ export async function previewTpoLegacyAcademicImport(
   // One canonical, strictly validated write payload for the verified importer.
   // This remains a preview: callers must explicitly confirm the import.
   const importRow=canImport?{
-   studentCode:match.id,
+   studentCode:match!.id,
    ...(row.cgpa!==null?{cgpa:row.cgpa}:{}),
    ...(row.activeBacklogs!==null?{activeBacklogs:row.activeBacklogs}:{}),
    ...(row.tenthPct!==null?{tenthPercentage:row.tenthPct}:{}),
@@ -345,7 +345,7 @@ export async function previewTpoLegacyAcademicImport(
    legacyOrigin:{rowNumber:row.rowNumber,rollNumber:row.rollNumber,
     batch:row.batch,gender:row.gender},
   }:null;
-  return {...row,studentCode:match?.id??row.studentCode,
+  return {...row,studentCode:match?.id??row.studentCode??"",
     name:match?.name??null,
     oldCgpa:match?.cgpa==null?null:match.cgpa/100,
     oldBacklogs:match?.backlogs??null,
