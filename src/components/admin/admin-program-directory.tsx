@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch} from "@/lib/api-fetch";
 import {deriveSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
@@ -14,6 +14,7 @@ import { Select } from "@/components/ui/select";
 import { Disclosure } from "@/components/ui/disclosure";
 import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { useToast } from "@/components/ui/toast";
+import { Alert } from "@/components/ui/alert";
 import {
   adminProgramsCsv,
   filterAdminPrograms,
@@ -31,8 +32,8 @@ function listenSize(fn: () => void) {
 function storedSize(): number {
   try {
     const size = Number(localStorage.getItem(PROGRAM_SIZE_KEY));
-    return [10,25,50,100].includes(size) ? size : 10;
-  } catch { return 10; }
+    return [10,25,50,100].includes(size) ? size : 25;
+  } catch { return 25; }
 }
 function rememberSize(size: number) {
   try { localStorage.setItem(PROGRAM_SIZE_KEY, String(size)); } catch { return; }
@@ -86,12 +87,16 @@ export function AdminProgramDirectory({
   departments: readonly { id: string; name: string }[];
 }) {
   const router = useRouter();
+  const pathname=usePathname();
+  const departmentHref=pathname.startsWith("/college/")?"/college/departments":"/admin/departments";
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [departmentId, setDepartmentId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [durationYears, setDurationYears] = useState("4");
+  const [fieldErrors,setFieldErrors]=useState<{department?:string;name?:string;duration?:string}>({});
+  const [createError,setCreateError]=useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = useSyncExternalStore(listenSize, storedSize, () => 10);
@@ -103,60 +108,76 @@ export function AdminProgramDirectory({
 
   function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!validLegacyProgramYears(durationYears)) {
-      showToast({tone:"error",title:"Check program details",description:"Duration must be a whole number from 1 to 10 years."});return;
-    }
-    const parsed = createCollegeProgramSchema.safeParse({
-      departmentId, name, code:code.trim() || deriveSuperAdminProgramCode(name), durationTerms: legacyDurationYearsToTerms(Number(durationYears)),
+    if(pending)return;
+    setCreateError("");
+    const errors:{department?:string;name?:string;duration?:string}={};
+    if(!departmentId)errors.department="Please select a department";
+    if(!name.trim())errors.name="Please enter program name";
+    else if(name.length>255)errors.name="Maximum 255 characters";
+    if(!durationYears.trim())errors.duration="Please enter program duration";
+    else if(!validLegacyProgramYears(durationYears))
+      errors.duration="Duration must be a whole number from 1 to 10 years.";
+    setFieldErrors(errors);
+    if(Object.keys(errors).length)return;
+    const parsed=createCollegeProgramSchema.safeParse({
+      departmentId,name,code:code.trim()||deriveSuperAdminProgramCode(name),
+      durationTerms:legacyDurationYearsToTerms(Number(durationYears)),
     });
-    if (!parsed.success) {
-      showToast({
-        tone: "error", title: "Check program details",
-        description: parsed.error.issues[0]?.message ?? "Enter a valid department, program, code and duration.",
-      });
+    if(!parsed.success){
+      const issue=parsed.error.issues[0],key=issue?.path[0];
+      const message=issue?.message??"Enter a valid department, program, code and duration.";
+      if(key==="departmentId")setFieldErrors({department:"Please select a department"});
+      else if(key==="name")setFieldErrors({name:"Program name cannot be empty"});
+      else if(key==="durationTerms")setFieldErrors({duration:message});
+      else setCreateError(message);
       return;
     }
     startTransition(async () => {
       try {
-        await apiFetch("/api/academics/programs", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(parsed.data),
+        await apiFetch("/api/academics/programs",{
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify(parsed.data),
         });
-        setName("");
-        setCode("");
-        showToast({ tone: "success", title: `Created program “${name.trim()}”. Next, create its semesters and batches.` });
+        setName("");setCode("");setFieldErrors({});setCreateError("");
+        showToast({tone:"success",title:`Created program “${name.trim()}”. Next, create its semesters and batches.`});
         router.refresh();
-      } catch (error) {
-        showToast({
-          tone: "error", title: "Program creation failed",
-          description: error instanceof Error ? error.message : "Try again.",
-        });
+      }catch(error){
+        const message=error instanceof Error?error.message:"Failed to create program.";
+        setCreateError(message);
+        if(/dept_id|departmentId|department/i.test(message))setFieldErrors({department:message});
+        else if(/duration_years|durationTerms|durationYears/i.test(message))setFieldErrors({duration:message});
+        else if(/(?:program )?name/i.test(message))setFieldErrors({name:message});
+        showToast({tone:"error",title:"Program was not created",description:message});
       }
     });
   }
 
   return (
-    <div className="min-w-0 space-y-6">
-      <details open={programs.length === 0} className="group border-b border-border pb-4 print:hidden">
-        <summary className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-3 font-semibold text-foreground marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
-          <span>Create New Program</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
-        </summary>
-        <form onSubmit={create} className="min-w-0 pt-3">
+    <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+      <section aria-label="Create New Program" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 print:hidden">
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)]">Create New Program</h2>
+        <form onSubmit={create} noValidate className="min-w-0 pt-3">
+        {createError?<Alert tone="error" role="alert">
+          <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+            <span><strong>Program was not created.</strong> {createError}</span>
+            <Button type="button" variant="secondary" size="sm" onClick={()=>setCreateError("")}>Dismiss</Button>
+          </div>
+        </Alert>:null}
         <p className="mt-1 text-sm text-muted-foreground">
           Programs belong to a department. Choose the usual academic years; two terms are stored per year.
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
-            No departments in this college yet. <Link href="/admin/departments" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
+            <strong>No departments in this college yet</strong> · Create a department before adding a program. <Link href={departmentHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
           </p>
         ) : null}
-        <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="mt-4 grid min-w-0 grid-cols-1 gap-4">
           <div>
             <label htmlFor="admin-program-department" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department</label>
             <Select
               className="min-h-11 md:min-h-9" id="admin-program-department" value={departmentId}
-              onChange={(event) => setDepartmentId(event.target.value)}
+              onChange={(event) => {setDepartmentId(event.target.value);setFieldErrors(old=>({...old,department:undefined}));}}
+              aria-invalid={Boolean(fieldErrors.department)} aria-describedby={fieldErrors.department?"admin-program-department-error":undefined}
               required
             >
               <option value="">Select department</option>
@@ -164,12 +185,15 @@ export function AdminProgramDirectory({
                 <option key={department.id} value={department.id}>{department.name}</option>
               ))}
             </Select>
+            {fieldErrors.department?<p id="admin-program-department-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.department}</p>:null}
           </div>
           <div>
             <label htmlFor="admin-program-name" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program Name</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-name" value={name} maxLength={255} required
-              onChange={(event) => setName(event.target.value)}
-              placeholder="e.g. Computer Science Engineering" />
+              onChange={(event) => {setName(event.target.value);setFieldErrors(old=>({...old,name:undefined}));}}
+              aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"admin-program-name-error":undefined}
+              placeholder="e.g., B.Tech Computer Science" />
+            {fieldErrors.name?<p id="admin-program-name-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.name}</p>:null}
           </div>
           <div>
             <label htmlFor="admin-program-code" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program code (optional)</label>
@@ -179,8 +203,10 @@ export function AdminProgramDirectory({
           <div>
             <label htmlFor="admin-program-duration" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (Years)</label>
             <Input className="min-h-11 md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
-              onChange={(event) => setDurationYears(event.target.value)}
+              onChange={(event) => {setDurationYears(event.target.value);setFieldErrors(old=>({...old,duration:undefined}));}}
+              aria-invalid={Boolean(fieldErrors.duration)} aria-describedby={fieldErrors.duration?"admin-program-duration-error":undefined}
               min={1} max={10} step={1} required />
+            {fieldErrors.duration?<p id="admin-program-duration-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.duration}</p>:null}
           </div>
         </div>
         <div className="mt-4 flex justify-stretch md:justify-end">
@@ -189,8 +215,8 @@ export function AdminProgramDirectory({
           </Button>
         </div>
         </form>
-      </details>
-      <section className="min-w-0 space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
+      </section>
+      <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
         <div className="flex min-w-0 flex-col gap-3 print:hidden sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full min-w-0 md:max-w-xl md:flex-1">
             <label htmlFor="admin-program-search" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search programs or departments</label>
