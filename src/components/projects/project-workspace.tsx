@@ -950,6 +950,27 @@ export function ProjectWorkspace({
             Review submission
           </Link> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
+          {mode==="ADMIN"&&show("sprints")?<section aria-label="Sprint plan summary"
+            className="mt-4 space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Delivery cadence</p>
+            <h3 className="text-base font-semibold text-foreground">Plan work in clear, release-bound increments</h3>
+            <p className="text-sm leading-6 text-body">
+              Keep sprint goals outcome-focused and attach every sprint to the release it contributes to.
+              The row summaries let you scan dates and task completion without expanding everything.
+            </p>
+            <dl className="grid grid-cols-2 gap-x-4 border-t border-[var(--lms-canvas-border)] sm:grid-cols-4">
+              {([
+                ["Total sprints",workspace.sprints.length],
+                ["Active",workspace.sprints.filter(sprint=>sprint.status==="ACTIVE").length],
+                ["Completed",workspace.sprints.filter(sprint=>sprint.status==="COMPLETED").length],
+                ["Releases available",workspace.releases.length],
+              ] as const).map(([name,count])=><div key={name}
+                className="min-w-0 border-b border-[var(--lms-canvas-border)] px-2 py-3">
+                <dt className="text-xs text-body">{name}</dt>
+                <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{count}</dd>
+              </div>)}
+            </dl>
+          </section>:null}
           {mode!=="LEARNER"&&!readOnly?
             <div id="mentor-project-add-release" className="scroll-mt-24">
               <MentorReleaseEditor projectId={workspace.project.id}/>
@@ -964,8 +985,10 @@ export function ProjectWorkspace({
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
           {mode!=="MENTOR"&&workspace.releases.length===0?
-            <EmptyState title="No sprints yet"
-              description="Add the sprints this project should be measured against."/>:null}
+            <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
+              description={mode==="ADMIN"
+                ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
+                :"Add the sprints this project should be measured against."}/>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
