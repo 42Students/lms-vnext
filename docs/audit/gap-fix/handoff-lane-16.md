@@ -11,3 +11,4 @@
 - G2-12-026-014 | `src/app/api/projects/[projectId]/route.ts` and project task/update UI: preserve exact `Project updated` and `Project tasks updated` success notices. Task POST now carries the latter message, but UI still must display it for visual parity.
 - G2-2-020-030 | Project restoration action client: display clear warning before restore and then success `Project restored` from API response; not safe for API to invent browser confirmation.
 - G2-2-021-027 | Template update/duplicate routes and UI: show distinct exact legacy toasts `Project template updated` and `Project template duplicated`; template POST now includes `Project template created`.
+- G2-7-036-013 | `src/components/projects/project-admin-at-risk-page.tsx`: when mapping rows for `ProjectAtRiskPageExport`, pass the actual persisted project display status and computed legacy risk severity. Export header is fixed but status column falls back to blank until caller wires the values.
