@@ -17,7 +17,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_db04-profile-education-images.staged.ts.md` (edit src/db/schema/db04-profile-education-images.staged.ts; 15 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_tpo-collaboration.ts.md` (edit src/db/schema/tpo-collaboration.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_projects.ts.md` (edit src/db/schema/projects.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_modules_auth_login-service.ts.md` (edit src/modules/auth/login-service.ts; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_modules_auth_login-service.ts.md` (edit src/modules/auth/login-service.ts; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_activity.ts.md` (edit src/db/schema/activity.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_courses.ts.md` (edit src/db/schema/courses.ts; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-14/W3_src_db_schema_college-branding.ts.md` (edit src/db/schema/college-branding.ts; 3 findings; best P1)

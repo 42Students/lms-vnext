@@ -270,6 +270,12 @@ export function normalizeEmail(raw: string): string | null {
   return parsed.success ? parsed.data : null;
 }
 
+/** Staff-only support contract. Contact never belongs in a URL or audit log. */
+export const adminOtpLockoutResetSchema = z.strictObject({
+  phone: z.string().trim().min(8).max(32),
+  reason: z.string().trim().min(10).max(500),
+});
+
 export type StartLoginInput = {
   channel: "PHONE" | "EMAIL";
   contact: string;
