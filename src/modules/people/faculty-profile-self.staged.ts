@@ -15,6 +15,38 @@ import {
   type FacultyProfileDocument,
 } from "./faculty-profile-document";
 
+export const FACULTY_SELF_DOCUMENT_SECTIONS=[
+ "about","personalDetails","contact","address","socialProfiles",
+ "languages","education","certifications","experiences","skills",
+ "publications","awards","metadata",
+] as const;
+
+/** Legacy profile sections remain independently discoverable without
+ * parallel network requests. This read-only status cannot authorize writes. */
+export function facultyStoredSectionStates(raw:unknown){
+ const source=raw&&typeof raw==="object"&&!Array.isArray(raw)
+  ? raw as Record<string,unknown> : {};
+ const parsed=facultyProfileDocumentSchema.safeParse(source);
+ const invalid=new Set(parsed.success?[]:parsed.error.issues.map(issue=>
+  String(issue.path[0]??"document")));
+ return FACULTY_SELF_DOCUMENT_SECTIONS.map(section=>({
+  section,status:invalid.has(section)?"INVALID" as const:
+    Object.prototype.hasOwnProperty.call(source,section)?"AVAILABLE" as const:
+      "NOT_PROVIDED" as const,
+ }));
+}
+
+/** An older DB migration may carry future/legacy JSON keys. When one known
+ * section is saved, keep untouched unknown persisted keys in the database;
+ * never accept new unknown data directly from a browser. */
+function preserveStoredUnknownFacultyKeys(raw:unknown, next:FacultyProfileDocument){
+ if(!raw||typeof raw!=="object"||Array.isArray(raw))return next;
+ const source=raw as Record<string,unknown>;
+ const preserved=Object.fromEntries(Object.entries(source).filter(
+  ([key])=>!Object.prototype.hasOwnProperty.call(next,key)));
+ return {...preserved,...next};
+}
+
 type FacultyProfileDocumentRow = {
   membership_id: string;
   profile_document: unknown;
@@ -105,7 +137,9 @@ export async function loadOwnFacultyProfileDocumentStaged(
         for share
       `);
 
-    return toView(result.rows[0]);
+    const row=result.rows[0];
+    const view=toView(row);
+    return {...view,sections:facultyStoredSectionStates(row?.profile_document)};
   });
 }
 
@@ -221,7 +255,7 @@ export async function saveOwnFacultyProfileDocumentStaged(
         update faculty_profiles
         set
           profile_document =
-            ${JSON.stringify(document)}::jsonb,
+            ${JSON.stringify(preserveStoredUnknownFacultyKeys(current.profile_document,document))}::jsonb,
           profile_document_version =
             profile_document_version + 1,
           updated_at = clock_timestamp()
