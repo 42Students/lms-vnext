@@ -141,10 +141,12 @@ export function SuperAdminHrAccounts({
   loadError,
   statusSummary,
   scopeDescription,
+  selectedCollegeId,
 }: {
   list: HrAccountsPageData | null;
   statusSummary: {accounts:number;active:number;archived:number;disabled:number}|null;
   scopeDescription:string;
+  selectedCollegeId?:string|null;
   filters: HrListFilters;
   loadError: string | null;
 }) {
@@ -899,6 +901,7 @@ export function SuperAdminHrAccounts({
           }
           relationships={relationships}
           colleges={colleges}
+          selectedCollegeId={selectedCollegeId}
           optionsLoading={optionsLoading}
           optionsError={optionsError}
           pending={saving}
