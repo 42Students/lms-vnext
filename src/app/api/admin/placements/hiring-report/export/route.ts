@@ -1,76 +1,51 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-hiring-report-service";
-import {superAdminHiringReportQuery,hiringCompanyRollups} from "@/modules/admin-ui/super-admin-hiring-report-model";
+import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {placementReportCsv} from "@/modules/placements/report-model";
 import {apiErrorResponse} from "@/lib/api-error";
+
 export const runtime="nodejs";
 
-/** Match the legacy four-section export while keeping the authenticated,
- * read-only server download and its bounded selected-college report scope. */
+/** Read-only selected-college export with the legacy summary, funnel,
+ * company/job rows and company totals as separate CSV sections. */
 export async function GET(request:Request){
  try{
-  const searchParams=new URL(request.url).searchParams;
-  const paramKeys=[...searchParams.keys()];
-  if(new Set(paramKeys).size!==paramKeys.length)
+  const params=new URL(request.url).searchParams;
+  const keys=[...params.keys()];
+  if(new Set(keys).size!==keys.length)
    return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
-  const parsed=superAdminHiringReportQuery.safeParse(Object.fromEntries(searchParams));
-  if(!parsed.success)return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
+  const parsed=superAdminHiringReportQuery.safeParse(Object.fromEntries(params));
+  if(!parsed.success)
+   return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
   const data=await getSuperAdminCompanyHiringReport(await getCurrentRequestContext(),parsed.data);
   const groups=hiringCompanyRollups(data.rows);
-  const rows:(string|number)[][]=[["Hiring Report Summary"],
-   ["Companies",groups.length],["Drives",data.rows.length]];
-  const summaryKeys=[
-   ["Total Applications","totalApplications"],
-   ["Applied","applied"],
-   ["Shortlisted","shortlisted"],
-   ["Assessment","assessment"],
-   ["Interview","interview"],
-   ["Offered","offered"],
-   ["Hired","hired"],
-   ["Rejected","rejected"],
-   ["Withdrawn","withdrawn"],
-   ["Waitlisted","waitlisted"],
-  ] as const;
-  for(const [label,key] of summaryKeys){
-   rows.push([label,data.rows.reduce((sum,row)=>sum+row[key],0)]);
-  }
-  rows.push([],["Hiring Funnel"],["Stage","Count"]);
-  const funnelLabels=[
-   ["Applied","applied"],
-   ["Shortlisted","shortlisted"],
-   ["Assessment","assessment"],
-   ["Interview","interview"],
-   ["Offered","offered"],
-   ["Hired","hired"],
-  ] as const;
-  for(const [label,key] of funnelLabels){
-   rows.push([label,data.funnelRows.reduce((sum,row)=>sum+row[key],0)]);
-  }
-  // Preserve the legacy exported status totals even when no funnel stage
-  // contains terminal applications. Reporting is read-only and server-side.
-  rows.push(
-   ["Rejected",data.rows.reduce((sum,row)=>sum+row.rejected,0)],
-   ["Withdrawn",data.rows.reduce((sum,row)=>sum+row.withdrawn,0)],
-   ["Waitlisted",data.rows.reduce((sum,row)=>sum+row.waitlisted,0)],
-  );
-  rows.push([],
-   ["Company-wise Report (per-job rows only; see Company Totals section below for rollups)"],
-   ["Company","Job","Applied","Shortlisted","Assessment","Interview","Offered","Hired","Rejected","Total Applications","Withdrawn","Waitlisted"]);
-  for(const row of data.rows){
-   rows.push([row.companyName,row.jobTitle,row.applied,row.shortlisted,row.assessment,
-    row.interview,row.offered,row.hired,row.rejected,row.totalApplications,row.withdrawn,row.waitlisted]);
-  }
-  if(groups.length){
-   rows.push([],["Company Totals"],
-    ["Company","Applied","Shortlisted","Assessment","Interview","Offered","Hired","Rejected","Total Applications","Withdrawn","Waitlisted"]);
-   for(const row of groups){
-    rows.push([row.companyName,row.applied,row.shortlisted,row.assessment,row.interview,
-     row.offered,row.hired,row.rejected,row.totalApplications,row.withdrawn,row.waitlisted]);
-   }
-  }
-  if(data.truncated)rows.push([],["TRUNCATED: report limited to 5000 drives"]);
+  const stages=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
+  const funnelStages=["applied","shortlisted","assessment","interview","offered","hired"] as const;
+  const summary:(string|number)[][]=[
+   ["Companies",groups.length],
+   ["Drives",data.rows.length],
+   ...stages.map(stage=>[stage,data.rows.reduce((total,row)=>total+row[stage],0)]),
+  ];
+  const funnel:(string|number)[][]=funnelStages.map(stage=>[
+   stage,data.funnelRows.reduce((total,row)=>total+row[stage],0),
+  ]);
+  const companyRows:(string|number)[][]=data.rows.map(row=>[
+   row.companyName,row.jobTitle,...stages.map(stage=>row[stage]),
+  ]);
+  const companyTotals:(string|number)[][]=groups.map(row=>[
+   row.companyName,"Company total",...stages.map(stage=>row[stage]),
+  ]);
+  const csv=[
+   placementReportCsv(["Hiring Report Summary","Value"],summary),
+   placementReportCsv(["Hiring Funnel","Count"],funnel),
+   placementReportCsv([...COMPANY_HIRING_COLUMNS],companyRows),
+   placementReportCsv([...COMPANY_HIRING_COLUMNS],companyTotals),
+   ...(data.truncated?[
+    placementReportCsv(["Report Note"],[["TRUNCATED: report limited to 5000 drives"]]),
+   ]:[]),
+  ].join("\r\n");
   const date=new Date().toISOString().slice(0,10);
-  return new Response("\uFEFF"+placementReportCsv(rows[0]!.map(String),rows.slice(1)),{
+  return new Response("\uFEFF"+csv,{
    headers:{
     "Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="hiring-report-'+date+'.csv"',
@@ -78,5 +53,7 @@ export async function GET(request:Request){
     "X-Export-Truncated":data.truncated?"true":"false",
    },
   });
- }catch(error){return apiErrorResponse(error);}
+ }catch(error){
+  return apiErrorResponse(error);
+ }
 }

@@ -111,6 +111,7 @@ export default async function CollegeReadinessPage({
     college,
     evaluation,
     supplemental,
+    legacyDomainReadiness,
   } = result;
   const shownChecks=visibleReadinessChecks(evaluation.checks,parsed.status,parsed.area);
   // SA-tenants-modules-23: distinguish measured blockers from optional
@@ -278,6 +279,33 @@ export default async function CollegeReadinessPage({
         </ol>
       </section>
 
+      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px]">Domain login readiness (legacy checks)</h2>}
+        className="min-w-0" contentClassName="space-y-3 pt-3 pb-4">
+        <p className="text-sm text-body">Read-only persisted domain evidence, separate from the stricter operational go-live checklist. DNS and actual login must still be tested.</p>
+        <dl className="grid gap-2 text-sm sm:grid-cols-2">
+          {[
+            ["College",legacyDomainReadiness.meta.collegeName],
+            ["College unique ID",legacyDomainReadiness.meta.uniqueId],
+            ["Organization ID",legacyDomainReadiness.meta.organizationId],
+            ["Domains",legacyDomainReadiness.meta.domainTotal],
+            ["Verified domains",legacyDomainReadiness.meta.domainVerified],
+            ["Primary domains",legacyDomainReadiness.meta.domainPrimary],
+            ["Verification required",legacyDomainReadiness.meta.requireVerifiedDomains?"Yes":"No"],
+          ].map(([label,value])=><div key={String(label)}>
+            <dt className="font-semibold text-muted-foreground">{label}</dt>
+            <dd className="break-words">{value===null?"Unknown — source unavailable":value}</dd>
+          </div>)}
+        </dl>
+        <p role="status" className="text-sm font-semibold">
+          {legacyDomainReadiness.readyForDomainLogin===null?"Unknown — domain source unavailable":
+           legacyDomainReadiness.readyForDomainLogin?"No stored domain blockers":"Domain login configuration has blockers"}
+        </p>
+        {legacyDomainReadiness.blockers.length?<p className="text-sm text-error">Blockers: {legacyDomainReadiness.blockers.join(", ")}</p>:null}
+        {legacyDomainReadiness.warnings.length?<p className="text-sm text-warning">Warnings: {legacyDomainReadiness.warnings.join(", ")}</p>:null}
+        {legacyDomainReadiness.recommendedActions.length?<ul className="list-disc space-y-1 pl-5 text-sm">
+          {legacyDomainReadiness.recommendedActions.map(action=><li key={action}>{action}</li>)}
+        </ul>:null}
+      </Disclosure>
       <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
           Additional setup evidence
         </h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">

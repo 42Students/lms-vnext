@@ -41,8 +41,8 @@ export default async function SuperAdminProjectSubmissionsRoute({
         />
         <ProjectAdminNav basePath="/admin/projects" active="submissions" />
         <EmptyState
-          title="Select a college scope"
-          description="Choose a college before reviewing project submissions."
+          title="No college selected"
+          description="Pick a college in the header to view its submissions."
         />
       </div>
     );
