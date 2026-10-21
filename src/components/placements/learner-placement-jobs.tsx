@@ -215,6 +215,75 @@ function formatApplicationReceiptTime(value:string){
  }).format(at):"Date unavailable";
 }
 
+type SignedOwnResume = {url:string;isPdf:boolean};
+/** Read grants are issued per active, authorized application and never cached. */
+function parseSignedOwnResume(value:unknown):SignedOwnResume|null{
+ if(!value||typeof value!=="object")return null;
+ const response=value as Record<string,unknown>;
+ if(response.ready!==true||typeof response.readUrl!=="string"||
+    typeof response.contentType!=="string"||typeof response.expiresAt!=="string")return null;
+ try{
+  const parsed=new URL(response.readUrl);
+  const expires=Date.parse(response.expiresAt);
+  if(parsed.protocol!=="https:"||parsed.username||parsed.password||
+     !Number.isFinite(expires)||expires<=Date.now())return null;
+  return {url:parsed.href,isPdf:response.contentType==="application/pdf"};
+ }catch{return null;}
+}
+function OwnResumePreview({applicationId}:{applicationId:string}){
+ const [pending,setPending]=useState(false);
+ const [grant,setGrant]=useState<SignedOwnResume|null>(null);
+ const [message,setMessage]=useState<string|null>(null);
+ const [open,setOpen]=useState(false);
+ async function openResume(){
+  if(pending)return;
+  setPending(true);setMessage(null);setGrant(null);
+  try{
+   const result=await fetch("/api/placements/learner/applications/"+
+     encodeURIComponent(applicationId)+"/resume",{
+      credentials:"same-origin",cache:"no-store",
+   });
+   if(!result.ok)throw new Error("Resume preview is currently unavailable.");
+   const payload:unknown=await result.json();
+   if(payload&&typeof payload==="object"&&"ready" in payload&&payload.ready===false){
+    setMessage("No resume has been attached to this application.");
+   }else{
+    const signed=parseSignedOwnResume(payload);
+    if(signed){setGrant(signed);setOpen(true);}
+    else setMessage("The resume read link is unavailable or expired. Try again.");
+   }
+  }catch{
+   setMessage("Resume preview could not be loaded. Try again.");
+  }finally{setPending(false);}
+ }
+ return <div className="mt-2 space-y-2">
+   <Button type="button" size="sm" variant="secondary"
+     disabled={pending} onClick={()=>void openResume()}>
+     {pending?"Opening resume…":"Preview resume"}
+   </Button>
+   {message?<p role="status" className="text-xs text-body">{message}</p>:null}
+   <Dialog open={open&&grant!==null} title="Resume preview"
+     description="This private file link is temporary and belongs to your application."
+     className="max-w-[860px]" bodyClassName="p-0"
+     onOpenChange={next=>{setOpen(next);if(!next)setGrant(null);}}
+     footer={<Button type="button" variant="secondary"
+       onClick={()=>{setOpen(false);setGrant(null);}}>Close preview</Button>}>
+     {grant?.isPdf?
+       <iframe title="Application resume PDF preview"
+         src={grant.url} referrerPolicy="no-referrer"
+         className="block h-[min(70dvh,620px)] min-h-64 w-full border-0"/>:
+       <p className="p-5 text-sm text-body">
+         A preview is not available for this file format. Open the authorized document instead.
+       </p>}
+     {grant?<a href={grant.url} target="_blank" rel="noopener noreferrer"
+       referrerPolicy="no-referrer"
+       className="inline-flex min-h-11 items-center px-5 text-sm font-semibold text-primary-text underline">
+       Open secure resume in a new tab →
+     </a>:null}
+   </Dialog>
+ </div>;
+}
+
 function JobActions({
   item,
 }: {
@@ -388,14 +457,15 @@ function JobActions({
       <>
         <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           <StatusBadge tone="success">
-            Applied · {humanize(receipt.channel)}
+            {learnerApplicationStageLabel(application?.stage ?? receipt.status)} · {humanize(receipt.channel)}
           </StatusBadge>
           <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-3 text-sm">
             <p className="font-semibold text-foreground">You're in — application sent</p>
             <p className="mt-1 break-all text-body">Application reference (APP): {receipt.id}</p>
             <p className="mt-1 text-body">Recorded: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
             <p className="mt-1 text-body">Resume: No resume is attached to this application.</p>
-            <p className="mt-1 text-xs text-muted-foreground">The application record does not include a downloadable resume; no unsupported preview link is shown.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Only a separately attached and authorized application resume can be previewed.</p>
+            <OwnResumePreview applicationId={receipt.id} />
             <Link href="/learn/my-placements/applications"
               className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
               View applications →
@@ -631,13 +701,18 @@ function JobActions({
   );
 }
 
-function postedAtLabel(value: string | null | undefined): string {
-  if (!value) return "Posted date not specified";
-  const date = new Date(value);
-  if (!Number.isFinite(date.getTime())) return "Posted date not specified";
-  return "Posted " + new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeZone: "Asia/Kolkata",
-  }).format(date);
+function postedAtLabel(value:string|null|undefined,snapshotNowIso:string|null):string{
+ if(!value||!Number.isFinite(Date.parse(value)))return "Posted date not specified";
+ const base=snapshotNowIso?Date.parse(snapshotNowIso):Date.now();
+ const elapsed=Math.floor((Number.isFinite(base)?base:Date.now())-Date.parse(value))/86_400_000;
+ const days=Math.floor(elapsed);
+ if(days<=0)return "Posted Today";
+ if(days===1)return "Posted Yesterday";
+ if(days<7)return "Posted "+days+" days ago";
+ if(days<30)return "Posted "+Math.floor(days/7)+" weeks ago";
+ return "Posted "+new Intl.DateTimeFormat("en-IN",{
+  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+ }).format(new Date(value));
 }
 
 /** Legacy chip stages are independent of application channel. */
@@ -667,7 +742,7 @@ export function LearnerPlacementJobs({
   if (items.length === 0) {
     return (
       <EmptyState
-        title="No live opportunities yet"
+        title="No open jobs right now"
         description="Published opportunities for your college will appear here with your eligibility and application state."
       />
     );
@@ -679,11 +754,19 @@ export function LearnerPlacementJobs({
     roles.push(item);
     byDrive.set(item.job.id,roles);
   }
-  const grouped=[...byDrive.values()].flatMap(roles=>
-    roles.map((item,index)=>({item,firstRole:index===0,roleCount:roles.length})));
+  // One semantic job card per published drive; roles are choices within it.
+  // Save, application status and receipt actions remain role-specific.
+  const grouped=[...byDrive.entries()];
   return (
     <div className="grid min-w-0 gap-4">
-      {grouped.map(({item,firstRole,roleCount}) => {
+      {grouped.map(([driveId,roles]) => (
+        <article key={driveId} className="relative min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-5 py-4 shadow-[var(--lms-elevation-1)]"
+          aria-label={roles[0]?.job.title ?? "Placement drive"}>
+          <span aria-hidden="true" className="absolute inset-y-0 left-0 w-[3px] bg-[var(--lms-primary)]" />
+          <div className="divide-y divide-border/60">
+          {roles.map((item,index) => {
+        const firstRole=index===0;
+        const roleCount=roles.length;
         const failedChecks =
           item.eligibility.checks.filter(
             (check) => check.status === "FAIL",
@@ -694,13 +777,16 @@ export function LearnerPlacementJobs({
           );
 
         return (
-          <article
+          <section
             key={item.roleOption.id}
-            className={"min-w-0 py-4 first:pt-0 last:pb-0 md:py-5 "+(firstRole?"border-t border-border":"border-t border-dashed border-border/60")}
-             aria-label={item.job.title+" · "+item.roleOption.title}
+            className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-5"
+            aria-label={item.job.title+" · "+item.roleOption.title}
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
+                {firstRole?<span aria-hidden="true" className="mb-3 inline-flex size-12 items-center justify-center rounded-lg border border-border bg-primary-subtle text-sm font-bold text-primary-text">
+                  {item.company.name.trim().split(/\s+/).slice(0,2).map(word=>word.charAt(0)).join("").toUpperCase()||"C"}
+                </span>:null}
                 <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                   {firstRole?item.company.name:item.job.title}
                 </p>
@@ -726,6 +812,7 @@ export function LearnerPlacementJobs({
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
+              {firstRole?<StatusBadge tone="info">{item.job.jobTypeLabel?.trim() || humanize(item.job.employmentType)}</StatusBadge>:null}
                {item.application ? (
                  <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
                    {learnerApplicationStageLabel(item.application.stage??item.application.status)}
@@ -741,61 +828,28 @@ export function LearnerPlacementJobs({
               </div>
             </div>
 
-            <div className="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 text-sm md:grid-cols-2 xl:grid-cols-4 [&>div]:min-w-0">
+            <dl className="mt-4 grid min-w-0 gap-x-5 gap-y-3 text-sm sm:grid-cols-3 [&>div]:min-w-0">
               <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Work
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {humanize(
-                    item.roleOption.employmentType,
-                  )}{" "}
-                  ·{" "}
-                  {humanize(
-                    item.roleOption.workMode,
-                  )}
-                </p>
+                <dt className="text-xs font-semibold text-muted-foreground">CTC</dt>
+                <dd className="mt-1 break-words font-semibold text-body">
+                  {formatCtc(item.roleOption.minimumAnnualCtcInr,item.roleOption.maximumAnnualCtcInr)}
+                </dd>
               </div>
               <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Location
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {item.roleOption.locations.length
-                    ? item.roleOption.locations.join(", ")
-                    : "Not specified"}
-                </p>
+                <dt className="text-xs font-semibold text-muted-foreground">Deadline</dt>
+                <dd className="mt-1 break-words font-semibold text-body">
+                  {learnerDriveDeadlineUrgency(item.job.applicationDeadline,item.deadlinePassed,snapshotNowIso).label}
+                </dd>
               </div>
               <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Compensation
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {formatCtc(
-                    item.roleOption
-                      .minimumAnnualCtcInr,
-                    item.roleOption
-                      .maximumAnnualCtcInr,
-                  )}
-                </p>
+                <dt className="text-xs font-semibold text-muted-foreground">Location</dt>
+                <dd className="mt-1 break-words font-semibold text-body">
+                  {item.roleOption.locations.length?item.roleOption.locations.join(", "):"Not specified"}
+                </dd>
               </div>
-              <div>
-                <p className="m-0 text-xs font-semibold text-muted-foreground">
-                  Deadline
-                </p>
-                <p className="mt-1 break-words font-semibold text-body">
-                  {formatDeadline(
-                    item.job.applicationDeadline,
-                  )}
-                </p>
-                <p className="mt-1 text-xs font-semibold text-body" role="status">
-                  {learnerDriveDeadlineUrgency(item.job.applicationDeadline,
-                    item.deadlinePassed,snapshotNowIso).label}
-                </p>
-              </div>
-            </div>
+            </dl>
 
-            <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt)}</p>
+            <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt,snapshotNowIso)}</p>
             {!item.canApply && !item.application ? (
               <div className="mt-3 min-w-0 border-t border-border pt-3 text-sm text-body"
                 aria-label="Why this role is not open to you">
@@ -836,9 +890,12 @@ export function LearnerPlacementJobs({
             <div className="mt-5 border-t border-border pt-4">
               <JobActions item={item} />
             </div>
-          </article>
+          </section>
         );
-      })}
+          })}
+          </div>
+        </article>
+      ))}
     </div>
   );
 }

@@ -11,6 +11,17 @@ export function closingSoonIstDayEndMs(snapshotNowMs:number):number{
 }
 export const learnerDriveAvailabilitySchema = z.enum(["all","open","not-open","closed"]);
 
+/** Legacy /search was a scoped typeahead endpoint, not the full learner feed.
+ * Always filter authorized, college-scoped rows before applying its limit.
+ */
+export const learnerLegacyTypeaheadSchema=z.strictObject({
+ q:z.string().trim().max(150).default(""),
+ limit:z.coerce.number().int().min(0).max(100).default(15),
+ departmentId:z.string().uuid().optional(),
+ programId:z.string().uuid().optional(),
+ jobType:z.string().trim().min(1).max(100).optional(),
+});
+
 /** Learner placement browse facets apply to the authorized published-job rows.
  * Filtering never re-evaluates eligibility or mutates application state.
  */
@@ -88,18 +99,39 @@ export function learnerDriveAvailabilityCounts(items:readonly BrowseJobShape[]) 
 }
 
 const synonyms:Readonly<Record<string,readonly string[]>>={
- "sde":["software engineer","software developer"],"wfh":["remote","work from home"],
- "software engineer":["sde","developer"],"work from home":["wfh","remote"],
+ "sde":["software engineer","software developer"],"swe":["software engineer","developer"],
+ "dev":["developer","software engineer"],"wfh":["remote","work from home"],
+ "ft":["full-time","full time"],"pt":["part-time","part time"],
+ "ai":["artificial intelligence"],"ml":["machine learning"],
+ "ux":["user experience"],"frontend":["front-end","front end"],
+ "backend":["back-end","back end"],
+ "software engineer":["sde","swe","developer"],"work from home":["wfh","remote"],
  "remote":["wfh","work from home"],"intern":["internship","trainee"],
  "internship":["intern","trainee"],"hybrid":["partly remote","hybrid work"],
 };
 function visibleJobType(row:BrowseJobShape){
  return row.job.jobTypeLabel?.trim()||row.roleOption.employmentType;
 }
+const legacyTypeOrder=["full-time","part-time","internship","contract","freelance","remote"];
+function legacyTypeRank(value:string){
+ const normalized=value.toLocaleLowerCase("en-IN").replace(/[ _]+/g,"-");
+ const found=legacyTypeOrder.indexOf(normalized);
+ return found>=0?found:legacyTypeOrder.length;
+}
+function searchCompensation(row:BrowseJobShape){
+ const values=[row.roleOption.minimumAnnualCtcInr,row.roleOption.maximumAnnualCtcInr]
+  .filter((v):v is number=>typeof v==="number"&&Number.isFinite(v)&&v>=0);
+ return values.flatMap(value=>[
+  String(value),Number(value/100_000).toLocaleString("en-IN",{maximumFractionDigits:2})+" lpa",
+  "₹"+value.toLocaleString("en-IN"),
+ ]).join(" ");
+}
 export function availableLearnerJobFacets<T extends BrowseJobShape>(items: readonly T[]) {
   return {
-    types: [...new Set(items.map(visibleJobType))]
-      .filter(Boolean).sort((a,b) => a.localeCompare(b)),
+    types: [...new Map(items.map(visibleJobType).filter(Boolean)
+      .map(value=>[value.toLocaleLowerCase("en-IN"),value] as const)).values()]
+      .sort((a,b) => legacyTypeRank(a)-legacyTypeRank(b)||
+        a.localeCompare(b,"en-IN",{sensitivity:"base"})),
     locations: [...new Map(items.flatMap(row=>row.roleOption.locations)
       .map(value=>value.trim()).filter(Boolean)
       .map(value=>[value.toLocaleLowerCase(),value] as const)).values()]
@@ -148,14 +180,16 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       }
     }
     if (filters.employmentType !== "all" &&
-        visibleJobType(row) !== filters.employmentType) return false;
+        visibleJobType(row).toLocaleLowerCase("en-IN") !==
+          filters.employmentType.toLocaleLowerCase("en-IN")) return false;
     if(filters.location!=="all"&&!(row.roleOption.locations??[]).some(place=>
       place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;
     const indexed=[
       row.company?.name,row.roleOption?.title,row.job?.title,row.job?.description,
       row.job?.responsibilities,row.job?.targetDepartmentName,row.job?.targetProgramName,
-      row.job?.jobTypeLabel,row.roleOption?.employmentType,...(row.roleOption?.locations??[]),
+      row.job?.jobTypeLabel,row.roleOption?.employmentType,searchCompensation(row),
+      ...(row.roleOption?.locations??[]),
     ].filter((field):field is string=>typeof field==="string")
      .join(" ").toLocaleLowerCase();
     return indexed.includes(search)||terms.every(term=>
@@ -190,4 +224,21 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       (a.roleOption.title??"").localeCompare(b.roleOption.title??"") ||
       a.roleOption.id.localeCompare(b.roleOption.id);
   });
+}
+
+/** Compatibility for the legacy scoped typeahead consumer only. It deliberately
+ * does not query an organization-wide global cache or reveal hidden jobs.
+ * Unlike the old first-1000 cache, it searches the supplied full permitted set.
+ */
+export function searchLegacyScopedLearnerJobs<T extends BrowseJobShape>(
+ authorizedJobs:readonly T[],raw:unknown,
+):T[]{
+ const input=learnerLegacyTypeaheadSchema.parse(raw);
+ if(input.limit===0)return [];
+ return filterLearnerPlacementJobs(authorizedJobs,{
+  ...DEFAULT_LEARNER_JOB_FILTERS,
+  search:input.q,
+  departmentId:input.departmentId,programId:input.programId,jobType:input.jobType,
+  sort:"title",
+ }).slice(0,input.limit);
 }
