@@ -12,6 +12,21 @@ export const superAdminHiringReportQuery=z.strictObject({
 });
 export type SuperAdminHiringReportQuery=z.infer<typeof superAdminHiringReportQuery>;
 export const SUPER_ADMIN_HIRING_EXPORT_CAP=5000;
+/** Stage count provenance: current-state snapshot counts and cumulative
+ * ever-reached funnel steps have different denominators. Only verified
+ * selected-college membership's application rows enter each aggregate.
+ * Withdrawn is application status; hired requires accepted offer plus
+ * persisted JOINED; stage history preserves cumulative earlier steps.
+ * Historical numeric legacy IDs are never inferred from UUIDs.
+ */
+export const SUPER_ADMIN_HIRING_STAGE_PROVENANCE={
+ scope:"SELECTED_COLLEGE_APPLICATIONS",
+ snapshot:"CURRENT_STAGE_OR_SCREENING_FALLBACK",
+ withdrawn:"PERSISTED_APPLICATION_STATUS",
+ hired:"ACCEPTED_OFFER_AND_RECORDED_JOINED",
+ funnel:"EVER_REACHED_HISTORY_OR_CURRENT",
+ legacyIntegerIdMapping:"NOT_APPLIED",
+} as const;
 export const COMPANY_HIRING_COLUMNS=["Company","Drive","Total Applications","Applied","Shortlisted","Assessment","Interview","Offered","Hired","Rejected","Withdrawn","Waitlisted"] as const;
 export type SuperAdminHiringRow={companyId:string;companyName:string;jobId:string;jobTitle:string;
  totalApplications:number;applied:number;shortlisted:number;assessment:number;interview:number;offered:number;hired:number;rejected:number;withdrawn:number;waitlisted:number};
