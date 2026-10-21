@@ -100,10 +100,21 @@ export function ProjectTemplateView({blueprint}:{blueprint:unknown}){
     {["delivery","meetings","activity"].map(key=>{
      const value=data[key];
      const entries=rowsFor(value);
-     return entries.length?<div key={key} className="space-y-2">
+     const fields=object(value);
+     if(!entries.length&&!Object.keys(fields).length)return null;
+     return <section key={key} aria-label={"Imported "+key} className="min-w-0 space-y-2">
       <h3 className="text-sm font-semibold">{key[0].toUpperCase()+key.slice(1)}</h3>
-      <div className="flex flex-wrap gap-2">{entries.map((item,i)=>tag(displayLabel(item),i))}</div>
-     </div>:null;
+      {entries.length?<div className="flex flex-wrap gap-2">
+       {entries.map((item,i)=>tag(displayLabel(item),i))}
+      </div>:<dl className="min-w-0 overflow-hidden rounded border border-border text-sm">
+       {Object.entries(fields).slice(0,40).map(([label,value])=><div key={label}
+        className="grid border-b border-border last:border-b-0 sm:grid-cols-[160px_minmax(0,1fr)]">
+        <dt className="bg-muted px-3 py-2 font-semibold">{label}</dt>
+        <dd className="break-words px-3 py-2">{typeof value==="string"?value:
+         value===null?"—":JSON.stringify(value)?.slice(0,400)??"—"}</dd>
+       </div>)}
+      </dl>}
+     </section>;
     })}
    </div>
   </details>:null}
