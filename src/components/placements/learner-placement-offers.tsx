@@ -45,6 +45,8 @@ export type LearnerPlacementOfferItem = {
   joiningDate: string | null;
   expiresAt: string | null;
   issuedAt: string;
+  /** Imported legacy respondedAt is presentation-only; server owns transitions. */
+  respondedAt?: string | null;
   acceptanceChannel?: string | null;
   acceptedDisputableUntil?: string | null;
   joining: {
@@ -217,7 +219,9 @@ export function LearnerPlacementOffers({
         description:
           error instanceof Error
             ? error.message
-            : "Could not record the offer response. Please retry.",
+            : action === "ACCEPT"
+              ? "Could not accept this offer. Please retry."
+              : "Could not decline this offer. Please retry.",
       });
     } finally {
       pendingRef.current = false;
@@ -360,6 +364,9 @@ export function LearnerPlacementOffers({
                   Offer letter
                 </a>
               ) : null}
+              {item.respondedAt && (item.status==="ACCEPTED" || item.status==="DECLINED") ? (
+                 <span>Responded: {formatWhen(item.respondedAt) ?? "Date unavailable"} (IST)</span>
+               ) : null}
               {item.countsAsPlaced===false ? (
                 <span>Counts as placed: No (internship or letter of intent)</span>
               ) : item.countsAsPlaced===true ? (
@@ -438,7 +445,6 @@ export function LearnerPlacementOffers({
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
                 The offer response deadline has passed
-                Contact your placement cell for clarification.
               </p>
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="SOON" ? (
               <p role="status" className={"mt-4 text-sm font-semibold "+(item.expiresAt && Date.parse(item.expiresAt)-Date.parse(snapshotNowIso)<=86400000?"text-error":"text-warning")}>
