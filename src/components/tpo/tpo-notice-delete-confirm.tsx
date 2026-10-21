@@ -16,11 +16,11 @@ export function TpoNoticeDeleteConfirm({id,version}:{id:string;version:number}){
  },[open]);
  function dismiss(){setOpen(false);trigger.current?.focus();}
  return <div className="min-w-0">
-  <Button ref={trigger} variant="secondary" type="button" className="min-h-11 min-[768px]:min-h-9" onClick={()=>setOpen(true)}>
+  <Button ref={trigger} variant="danger" type="button" className="min-h-9 px-3 text-xs font-semibold" onClick={()=>setOpen(true)}>
    Delete
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!pending.current){if(!next)dismiss();else setOpen(true);}}} dismissible={!pending.current}
-    role="alertdialog" className="max-w-md" bodyClassName="!p-0"
+    role="alertdialog" className="max-w-sm" bodyClassName="!p-0"
     title="Delete this announcement?" description="Students stop seeing it, and its notices are taken back."
     footer={<form method="post" action={"/api/placements/tpo/announcements/"+encodeURIComponent(id)+"/lifecycle"}
       className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end"

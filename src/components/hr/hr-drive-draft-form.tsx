@@ -389,9 +389,24 @@ export function HrDriveDraftForm({
             </Select>
           </label>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground">
-          Job-description file uploads are unavailable until private storage and signed helpers are enabled.
-        </p>
+        <div className="mt-3 grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          <label htmlFor="hr-jd-url">Job description link (optional)</label>
+          <Input id="hr-jd-url" type="url" inputMode="url" maxLength={2000}
+            data-draft-field="jdUrl" aria-invalid={Boolean(fieldErrors.jdUrl)}
+            aria-describedby={fieldErrors.jdUrl ? "hr-jd-url-error" : "hr-jd-url-help"}
+            value={draft.jdUrl??""} placeholder="https://example.com/job-description.pdf"
+            onChange={event=>{
+              setFieldErrors(current=>({...current,jdUrl:""}));
+              setDraft(current=>({...current,jdUrl:event.target.value}));
+            }}/>
+          {fieldErrors.jdUrl?<span id="hr-jd-url-error" role="alert" className="text-xs text-error">
+            {fieldErrors.jdUrl}
+          </span>:null}
+          <span id="hr-jd-url-help" className="text-xs font-normal text-muted-foreground">
+            Use an HTTPS link that applicants can open. Private PDF/Word uploads
+            require a verified signed-storage grant and are not enabled here.
+          </span>
+        </div>
       </section>
 
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
@@ -626,6 +641,13 @@ export function HrDriveDraftForm({
           <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
+            {result.success && result.data.jdUrl ?
+              <p>Job description: <a href={result.data.jdUrl} target="_blank"
+                rel="noopener noreferrer" referrerPolicy="no-referrer"
+                className="font-semibold text-primary-text underline underline-offset-2">
+                View linked job description
+              </a></p> : draft.jdUrl ?
+              <p className="text-xs text-error">Enter a valid public HTTPS job description link to preview it.</p> : null}
             <p>{draft.location || "Location not specified"} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
              <p>Eligible branches: {draft.branches?.length ? draft.branches.join(", ") : "All branches"} ·
                Passing year: {draft.passingYear || "Any year"}</p>
@@ -668,7 +690,7 @@ export function HrDriveDraftForm({
            tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"}
            message={notice} /> : null}
         <p className="mt-3 text-xs text-muted-foreground">
-          Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
+          Formal requests are persisted for placement-cell review. Linked job descriptions are shown in the review; private file uploads and automatic publication are not available here.
         </p>
       </section>
       </aside>
