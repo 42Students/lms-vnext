@@ -24,14 +24,23 @@ import {
 } from "./batch-registration-policy";
 import { resolvePlacementParticipation } from "./batch-eligibility-policy";
 
-const selfRegistrationInput = z.object({
+/** Accept legacy JSON consent and modern acceptedConsent, preserving strict
+ * validation after mapping. URL-encoded legacy posts normalize at the route. */
+const selfRegistrationInput = z.preprocess(value=>{
+ if(!value||typeof value!=="object"||Array.isArray(value))return value;
+ const fields=value as Record<string,unknown>;
+ if("acceptedConsent" in fields||!("consent" in fields))return value;
+ const {consent,...rest}=fields;
+ return {...rest,acceptedConsent:consent===true||consent==="true"||
+  consent==="on"||consent==="1"};
+},z.object({
   choice: z.enum(["PLACEMENTS", "HIGHER_STUDIES", "NOT_INTERESTED"], {
     error: issue => issue.input === undefined || issue.input === null || issue.input === ""
       ? "Choose Placements, Higher studies or Not interested"
       : "Unknown registration choice",
   }),
   acceptedConsent: z.boolean(),
-}).strict();
+}).strict());
 
 export class PlacementRegistrationError extends Error {
   constructor(public readonly code:
@@ -241,6 +250,9 @@ export async function registerOwnPlacementChoice(
       }).where(eq(placementBatchRegistrations.id, existing.id)).returning();
     }
     if (!registration) throw new Error("DB08 registration persistence failed");
+    // Legacy per-season registration maps to the current enrolled cohort
+    // and immutable consentAt; SELF records the actor. Invite notices belong
+    // to TPO batch-window opening, never the learner self-registration.
     // SQL AFTER INSERT/UPDATE trigger generates one immutable event, including
     // for a future writer that bypasses this application service.
     return registration;

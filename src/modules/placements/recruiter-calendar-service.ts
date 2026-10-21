@@ -37,6 +37,18 @@ import {
 } from "./recruiter-service";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
+/** Legacy recruiter Today/calendar default: thirty IST calendar days.
+ * Date-only input is interpreted in IST; offset instants remain exact.
+ * /recruiter/today is served by /hr/home, calendar remains a read-only grant.
+ */
+export function defaultRecruiterCalendarRange(now=new Date()){
+ const formatter=new Intl.DateTimeFormat("en-CA",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+ });
+ const from=formatter.format(now);
+ const start=parseActivityDateBoundary(from,"from");
+ return {from,to:formatter.format(new Date(start.getTime()+30*DAY_MS))};
+}
 
 export const recruiterCalendarQuerySchema = z
   .object({
@@ -114,7 +126,7 @@ export type RecruiterCalendarQuery = z.input<
  */
 export async function listRecruiterCalendarEvents(
   context: RequestContext,
-  rawInput: RecruiterCalendarQuery,
+  rawInput: RecruiterCalendarQuery = defaultRecruiterCalendarRange(),
   collegeId?: string,
 ) {
   const input =
