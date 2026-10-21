@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { hasMembershipRole } from "@/modules/identity/context";
 import {
   getOwnLearnerProfileWithRuntime,
 } from "@/modules/people/runtime";
@@ -10,10 +11,23 @@ import {updateOwnLearnerProfileDocument} from "@/modules/people/learner-profile-
 
 export const runtime = "nodejs";
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const context =
       await getCurrentRequestContext();
+    // Existing legacy section links resolve to the learner's OWN profile.
+    // Never re-interpret a legacy numeric student ID as an authorization grant.
+    const legacySection = new URL(request.url).searchParams.get("legacySection");
+    if (legacySection !== null) {
+      if (!hasMembershipRole(context, "LEARNER")) {
+        return NextResponse.json({error:"FORBIDDEN"},{status:403});
+      }
+      const validSections = new Set(["about","education","skills","projects","certifications","experiences","jobPreferences"]);
+      if (!validSections.has(legacySection)) {
+        return NextResponse.json({error:"INVALID_SECTION"},{status:400});
+      }
+      return NextResponse.redirect(new URL("/learn/profile?section="+encodeURIComponent(legacySection), request.url), 307);
+    }
     const result =
       await getOwnLearnerProfileWithRuntime(
         context,
@@ -77,5 +91,7 @@ export async function OPTIONS() {
   return NextResponse.json({
     version: 1, read: "GET /api/profile/me",
     sections: LEARNER_PROFILE_ROUTE_REPLACEMENTS,
+    legacySectionRedirect: "GET /api/profile/me?legacySection={section}",
+    administrativeProfile: "GET /api/college/students/{membershipId}/profile (requires authorized college context)",
   }, { headers: { Allow: "GET, PUT, OPTIONS", "Cache-Control": "no-store" } });
 }
