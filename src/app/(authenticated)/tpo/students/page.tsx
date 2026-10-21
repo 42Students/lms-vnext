@@ -434,8 +434,8 @@ export default async function TpoStudentsPage({
 
       <Dropdown mobileSheet align="start" label="Student roster tools" trigger="More student tools">
         <nav aria-label="Student roster tools" className="flex min-w-52 flex-col gap-2">
-        <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Student Requests</Link>
-        <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Preparation support</Link>
+        <Link href="/tpo/students/requests" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Student Requests</Link>
+        <Link href="/tpo/students/preparation-prep" className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="students.csv" label="Export filtered CSV" />
        </nav>
       </Dropdown>
@@ -1034,7 +1034,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Previous
               </Link>
@@ -1046,7 +1046,7 @@ export default async function TpoStudentsPage({
                   ...currentFilters,
                   page: roster.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Next
               </Link>

@@ -13,26 +13,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/app/(authenticated)/hr/conversations/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-archived-programs.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-archived-programs.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
 - [ ] `src/components/admin/admin-program-directory.tsx`
 - [ ] `src/components/admin/admin-scoped-read-page.tsx`
 - [ ] `src/components/admin/college-archive-button.tsx`
