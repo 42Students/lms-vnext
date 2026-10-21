@@ -1,0 +1,34 @@
+# Dimension 2 lane 1 — page headers, breadcrumbs, tabs, filter bars
+Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and shared components. Static checks at 375/768/1280; no CI.
+
+- `src/app/(authenticated)/account/security/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/activity/[eventId]/page.tsx` | instances H1/B1/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/activity/loading.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/activity/page.tsx` | instances H1/B0/T0/F1/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: 1 filter-bar gap(s) 12/16px→8px
+- `src/app/(authenticated)/admin/academics/page.tsx` | instances H2/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/admin/announcements/page.tsx` | instances H3/B0/T0/F1/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: 1 filter-bar gap(s) 12/16px→8px
+- `src/app/(authenticated)/admin/assignments/page.tsx` | instances H5/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/admin/attendance/error.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/admin/attendance/page.tsx` | instances H3/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- `src/app/(authenticated)/admin/audit/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 desktop 30px=shared 30px; title 600=600; ink #172033=var(--lms-heading); mobile 20px=20px | fixes: none
+- Shared adjustment: `page-header.tsx` subtitle 13px→legacy 14px (`pages___admin-list-pages.scss`); all headers retain single-line/stacked structure.
+- `src/app/(authenticated)/admin/batch-promotion/page.tsx` | instances H3/B0/T0/F1/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: filter field gap→8px ×1
+- `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx` | instances H1/B1/T0/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: none
+- `src/app/(authenticated)/admin/batches/page.tsx` | instances H1/B0/T1/F2/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: filter field gap→8px ×1
+- `src/app/(authenticated)/admin/classes/page.tsx` | instances H1/B0/T0/F2/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: filter field gap→8px ×1
+- `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx` | instances H2/B0/T0/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/branding/loading.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/branding/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: header action gap 12→8/16px
+- `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx` | instances H1/B0/T1/F0/rawH10 | legacy/code: h1 30px @≥768=shared 30px; weight 600=600; ink #172033=var(--lms-heading) | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/loading.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | instances H2/B0/T0/F1/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: filter gap 12/16→8px ×1; header actions gap 12→8px@375/16px@768
+- `src/app/(authenticated)/admin/colleges/[collegeId]/signin/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/colleges/page.tsx` | instances H2/B0/T0/F1/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: filter gap 12/16→8px ×1
+- `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx` | instances H1/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/companies/page.tsx` | instances H2/B0/T1/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/course-progress/page.tsx` | instances H3/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
+- `src/app/(authenticated)/admin/course-progress/students/page.tsx` | instances H3/B0/T0/F0/rawH10 | legacy/code: title 30px=shared 30px; title weight 600=600; title #172033=var(--lms-heading); 375 title20px=20px | fixes: none
