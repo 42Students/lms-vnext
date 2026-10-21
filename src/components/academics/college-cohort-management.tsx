@@ -90,7 +90,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
     });
   }
 
-  return <Disclosure ariaLabel="Create batch" title={<h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Create batch</h2>} className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+  return <Disclosure ariaLabel="Create Batch" title={<h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Create Batch</h2>} className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground leading-[22px]">
         {programs.length === 0 ? "Create a program before adding batches." : <>
@@ -148,7 +148,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending||dateInvalid} type="submit" className="w-full md:w-auto"
             >
-            {pending ? "Creating…" : "Create batch"}
+            {pending ? "Creating…" : "Create Batch"}
           </Button>
         </div>
       </form>}
@@ -279,7 +279,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       &quot;Archived batches cannot be edited.&quot;
     </p> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
-      title={"Edit batch " + row.name}>
+      title={"Edit Batch " + row.name}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation.</p>

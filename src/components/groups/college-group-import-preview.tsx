@@ -63,7 +63,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   return <div className="min-w-0 space-y-4">
     <form onSubmit={preview} className="min-w-0 space-y-3 border-b border-border pb-4">
       <p className="text-sm text-body leading-[22px]">
-        Upload a CSV with one column named <code>email</code>. Maximum 500 rows and 128 KiB.
+        Upload a CSV with one column named <code>Email</code>. Maximum 500 rows and 128 KiB.
         Only currently active learners in this college are eligible.
       </p>
       <FileUpload label="Select CSV file" accept=".csv,text/csv" maxBytes={131072}

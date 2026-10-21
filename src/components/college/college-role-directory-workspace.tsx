@@ -114,7 +114,7 @@ export async function CollegeRoleDirectoryWorkspace({
           </div>
         </details>
         <Link href="/college/people"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People directory</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People Directory</Link>
       </nav> : null}
       {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import faculty CSV</Link>
@@ -128,7 +128,7 @@ export async function CollegeRoleDirectoryWorkspace({
               className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export Faculty CSV (max 1,000)</Link>
           </div>
         </details>
-        <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People directory</Link>
+        <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People Directory</Link>
       </nav> : null}
       <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-2 gap-3 border-y border-border py-3 md:grid-cols-3">
         {[
@@ -310,8 +310,8 @@ export async function CollegeRoleDirectoryWorkspace({
               >
               <option value="ALL">Any role</option>
               <option value="PRIMARY">Primary</option>
-              <option value="CO_TEACHER">Co-teacher</option>
-              <option value="TA">Teaching assistant</option>
+              <option value="CO_TEACHER">Co-Teacher</option>
+              <option value="TA">Teaching Assistant</option>
             </Select>
           </label> : null}
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
