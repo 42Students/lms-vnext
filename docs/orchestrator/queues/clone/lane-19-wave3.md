@@ -22,4 +22,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_components_activity_notification-toolbar.tsx.md` (edit src/components/activity/notification-toolbar.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_app_api_projects_projectId_resources_route.ts.md` (edit src/app/api/projects/[projectId]/resources/route.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_app_authenticated_admin_placements_page.tsx.md` (edit src/app/(authenticated)/admin/placements/page.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_app_api_placements_company-share_token_export_route.ts.md` (edit src/app/api/placements/company-share/[token]/export/route.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-19/W3_src_app_api_placements_company-share_token_export_route.ts.md` (edit src/app/api/placements/company-share/[token]/export/route.ts; 1 findings; best P1)
