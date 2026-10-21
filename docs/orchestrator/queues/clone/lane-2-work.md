@@ -48,7 +48,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-drive-lifecycle-service.ts.md` (edit src/modules/placements/tpo-drive-lifecycle-service.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_round-service.ts.md` (edit src/modules/placements/round-service.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_placement-offer-expiry-sweep-service.ts.md` (edit src/modules/placements/placement-offer-expiry-sweep-service.ts; 7 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-students-service.ts.md` (edit src/modules/placements/tpo-students-service.ts; 7 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-students-service.ts.md` (edit src/modules/placements/tpo-students-service.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_college-hiring-funnel.tsx.md` (edit src/components/placements/college-hiring-funnel.tsx; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-general-request-model.ts.md` (edit src/modules/placements/tpo-general-request-model.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-application-detail-service.ts.md` (edit src/modules/placements/learner-application-detail-service.ts; 6 findings; best P1)

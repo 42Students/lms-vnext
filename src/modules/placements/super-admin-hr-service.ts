@@ -1073,7 +1073,7 @@ export async function grantSuperAdminHrCollegeAccess(
   // A date-only value means THROUGH that college-local day, not midnight UTC.
   const dateOnly=/^\d{4}-\d{2}-\d{2}$/.test(validUntilString);
   const expiration=validUntilString
-    ?dateOnly?new Date(Date.parse(validUntilString+"T00:00:00+05:30")+86_400_000)
+    ?dateOnly?new Date(validUntilString+"T23:59:59+05:30")
       :new Date(validUntilString)
     :defaultRecruiterGrantExpiry(now);
   if(!Number.isFinite(expiration.getTime())||expiration<=now||
