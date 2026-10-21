@@ -144,3 +144,6 @@
 
 - `src/app/api/auth/devices/route.ts` owner | G2-1-002-042 | Add explicit same-origin own-account revoke-ALL action calling `revokeAllOwnSessions(session.userId)` (not existing revokeOtherSessions), clear current opaque cookie and membership/role/admin scope cookies, prevent caller-controlled userId; admin target revocation already uses `revokeAllSessionsForUser`.
 - Placement drive-change service and lane-15 migration owner | G2-5-023-062/-063 | Apply 0230 after duplicate OPEN rows preflight; do NOT alter registered 0114. Keep source field/actor snapshots and transactionally reject same proposed/current field value; allow multiple OTHER.
+
+- Account lifecycle and password/reset owner | G2-1-001-046 | Verify global disable invalidates all identity_device_sessions immediately, college suspension only denies that membership/role across all endpoints, and credential rotation uses revokeAllSessionsForUser under lock; do not use retired legacy tokenVersion; never alter 0000 migration.
+- `src/modules/log-alerts/*`, lane 15 migration/replay owner | G2-14-018-051 | Replay 0133 on fresh and upgraded DB copies, map original Long log_alert_state IDs by `state_key` not UUID casting; checkpoint cursor + admin_last_viewed must persist through deploy, verify ADD COLUMN IF NOT EXISTS operational paths and no duplicate key.
