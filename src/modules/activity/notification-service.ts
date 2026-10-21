@@ -994,6 +994,33 @@ export async function listOwnNotifications(
   }));
 }
 
+/** Polling clients compare this data from an independently authorized,
+ * no-store endpoint. The stable timestamp+UUID key prevents duplicate
+ * announces after reconnect; counts never cross recipient boundaries. */
+export async function ownNotificationLiveSnapshot(
+ context:RequestContext,options:{collegeId?:string}={}){
+ const collegeId=options.collegeId?z.string().uuid().parse(options.collegeId):undefined;
+ const clauses=[
+  eq(inAppNotifications.userId,context.user.id),releasedNotificationEvent,
+  releasedNotificationReceipt,
+  collegeId?eq(activityEvents.collegeId,collegeId):undefined,
+ ];
+ const [unread,latest]=await Promise.all([
+  getDb().select({total:count()}).from(inAppNotifications)
+   .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
+   .where(and(...clauses,isNull(inAppNotifications.readAt))),
+  getDb().select({id:inAppNotifications.id,at:inAppNotifications.createdAt,
+   readAt:inAppNotifications.readAt}).from(inAppNotifications)
+   .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
+   .where(and(...clauses))
+   .orderBy(desc(inAppNotifications.createdAt),desc(inAppNotifications.id)).limit(1),
+ ]);
+ const newest=latest[0];
+ return {unread:Number(unread[0]?.total??0),
+  newestId:newest?.id??null,newestAt:newest?.at.toISOString()??null,
+  pollAfterMs:NOTIFICATION_POLL_INTERVAL_MS};
+}
+
 export async function countOwnUnreadNotifications(
   context: RequestContext,
   options: { collegeId?: string } = {},
@@ -1207,6 +1234,7 @@ export async function listOwnNotificationPage(
     eventType?: string;
     importance?: string;
     notificationType?: string;
+    category?: OwnNotificationCategory;
     query?: string;
   } = {},
 ) {
@@ -1229,7 +1257,7 @@ export async function listOwnNotificationPage(
   }
   if(options.query){
     const query=z.string().trim().max(100).parse(options.query);
-    const pattern="%"+query.replace(/[\\%_]/g,"\\  appendNotificationContextFilters(conditions, options);")+"%";
+    const pattern="%"+query.replace(/[\\%_]/g,"\\    const pattern="%"+query.replace(/[\\%_]/g,"\\  appendNotificationContextFilters(conditions, options);")+"%";")+"%";
     conditions.push(or(ilike(inAppNotifications.title,pattern),
       ilike(inAppNotifications.body,pattern))!);
   }
@@ -1291,6 +1319,35 @@ export async function listOwnNotificationPage(
  * Keep a safe rich-text representation for legacy-style detail views; inbox
  * previews remain short, escaped text.
  */
+/** Plain old LMS notices may contain literal HTML entities. Decode ONLY
+ * known entities once, then escape on output. This prevents double encoded
+ * text/links while still treating entity-escaped markup as TEXT, not markup. */
+function decodeLegacyNotificationEntities(input:string){
+ const named:Readonly<Record<string,string>>={
+  amp:"&",lt:"<",gt:">",quot:'"',apos:"'",nbsp:" ",
+ };
+ return input.replace(/&(#x[0-9a-f]{1,6}|#[0-9]{1,7}|amp|lt|gt|quot|apos|nbsp);/gi,
+  (match,value:string)=>{
+   const key=value.toLowerCase();
+   if(key in named)return named[key];
+   const code=key.startsWith("#x")?parseInt(key.slice(2),16):parseInt(key.slice(1),10);
+   if(!Number.isInteger(code)||code<32||code>0x10ffff||
+     code>=0xd800&&code<=0xdfff)return match;
+   try{return String.fromCodePoint(code);}catch{return match;}
+  });
+}
+/** Legacy HTML is rendered only through the allowed-tag sanitizer, NEVER
+ * unescaped through the notification preview or alert title. */
+export function legacyNotificationPlainText(html:string):string {
+ return decodeLegacyNotificationEntities(
+  html.replace(/<\s*br\s*\/?\s*>/gi,"\n")
+   .replace(/<\/\s*(?:p|li|div|h[1-6])\s*>/gi,"\n")
+   .replace(/<[^>]*>/g," ")).replace(/[\t ]+/g," ").replace(/\n\s*/g,"\n").trim();
+}
+/** UI can use bounded polling for inbox/bell freshness; read ownership and
+ * recipient deduplication remain on the server, not in browser memory. */
+export const NOTIFICATION_POLL_INTERVAL_MS=30_000;
+
 export function sanitizeStaffNotificationHtml(input: string): string {
   const source = input.replace(/<(script|style|iframe|object|svg)\b[^>]*>[\s\S]*?<\/\1\s*>/gi, "");
   const escapeText = (value: string) => value.replace(/&/g, "&amp;")
@@ -1300,7 +1357,7 @@ export function sanitizeStaffNotificationHtml(input: string): string {
     "p", "br", "strong", "b", "em", "i", "u", "s", "sub", "sup", "ul", "ol", "li",
   ]);
   return source.split(/(<[^>]*>)/g).map((part) => {
-    if (!part.startsWith("<") || !part.endsWith(">")) return escapeText(part);
+    if (!part.startsWith("<") || !part.endsWith(">")) return escapeText(decodeLegacyNotificationEntities(part));
     const tag = /^<\s*(\/?)\s*([a-z]+)\b([^>]*)>$/i.exec(part);
     if (!tag) return escapeText(part);
     const name = tag[2].toLowerCase();
@@ -1314,22 +1371,22 @@ export function sanitizeStaffNotificationHtml(input: string): string {
     const hrefMatch = /^href\s*=\s*(?:"([^"]*)"|'([^']*)')$/i.exec(attributes);
     const href = hrefMatch?.[1] ?? hrefMatch?.[2];
     if (!href) return "";
-    const safe = href.startsWith("/")
-      ? safeNotificationActionHref(href) : safeExternalAssessmentUrl(href);
+    const normalizedHref=decodeLegacyNotificationEntities(href);
+    const safe = normalizedHref.startsWith("/")
+      ? safeNotificationActionHref(normalizedHref) : safeExternalAssessmentUrl(normalizedHref);
     return safe ? '<a href="' + escapeText(safe) + '" rel="noopener noreferrer">' : "";
   }).join("").slice(0, 50_000);
 }
 
 function staffNotificationTitle(input: string): string {
-  const title = input.replace(/<[^>]*>/g, "").trim();
+  const title = legacyNotificationPlainText(input).trim();
   if (!title) throw new Error("Title is required");
   if (title.length > 200) throw new Error("Title cannot exceed 200 characters");
   return title;
 }
 
 function notificationPreviewFromHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
-    .slice(0, 2000) || "Notification";
+  return legacyNotificationPlainText(html).replace(/\s+/g, " ").slice(0, 2000) || "Notification";
 }
 
 export type StaffNoticeOperationResult = {
@@ -1384,6 +1441,8 @@ export async function createStaffNotification(
       metadata: {
         classId: audience.classId,
         courseId: audience.courseId,
+        audienceKind: "COURSE",
+        notificationType: "COURSE",
         title,
         htmlContent,
         assessmentUrl: safeAssessmentUrl,
@@ -1499,6 +1558,11 @@ export async function updateStaffNotification(
          !isSuperAdmin(context) && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
     }
+    // Legacy edit-to-new-class is a recall + new broadcast, NOT reassignment
+    // of recipients whose original notification/read state belongs to another
+    // class or course. Preserve original notice and fail closed; caller can
+    // recall it and compose a newly scoped notice as separate explicit acts.
+    if(!sameAudience)throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
     const status = event.metadata.deliveryStatus;
     if (status !== "SCHEDULED" && status !== "SENT") {
       throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
