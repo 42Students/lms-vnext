@@ -1,0 +1,44 @@
+# U019 — ImageEntry (gallery DTO, NOT a JPA entity)
+
+## Source closure
+
+Legacy `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ImageEntry.java:1-40`, `service/impl/StudentImageServiceImpl.java:1-149`, `controller/StudentImageController.java:1-159`, `dto/request/StudentImageRequestDTO.java`, `model/StudentImage.java`, `repository/StudentImageRepository.java`, `ContentUrlValidator`. vNext candidate `src/db/schema/db04-profile-education-images.staged.ts:1-235` expressly STAGED ONLY, profile-private receipts and signed file infrastructure, not a confirmed live route. Related source audit `docs/audit/gap2/lane-20/student-image.md` independently supports this mapping. No code/CI. Cells use these basenames, 1-based lines.
+
+| ID | Facet | Legacy (file:line) | vNext (file:line) | Verdict | Severity | Fix | Effort |
+|---|---|---|---|---|---|---|---|
+| G2-16-019-001 | F01 | ImageEntry.java:3-13 serializable value object, no table. | db04-profile-education-images.staged.ts:181-198 planned normalized gallery rows. | MISSING | P1 | Make real gallery API/read or record retirement. | L |
+| G2-16-019-002 | F01 | StudentImageController.java:21-23,93-150 GET/POST/PATCH /api/v1/learner-images. | db04-profile-education-images.staged.ts:1-8 explicitly not exported. | MISSING | P1 | Implement ownership scoped gallery endpoints. | L |
+| G2-16-019-003 | F02 | ImageEntry.java:5-7 three visible image fields: imageId, imageUrl, active. | db04-profile-education-images.staged.ts:184-198 UUID/receipt/isActive order. | GAP | P2 | Map fields and preserve image previews/order. | S |
+| G2-16-019-004 | F03 | StudentImageServiceImpl.java:82-87 active=1 by default, 12-char imageId. | db04-profile-education-images.staged.ts:184,192-198 UUID and boolean. | GAP | P2 | Return old public imageId alias or migrate references. | S |
+| G2-16-019-005 | F04 | ImageEntry.java:5-7 imageId String, imageUrl String, active int. | db04-profile-education-images.staged.ts:184-198 receipt ID/boolean no URL. | GAP | P2 | Build DTO adapter to authorized signed image URLs. | S |
+| G2-16-019-006 | F05 | StudentImageServiceImpl.java:66-89 JSON list follows input order. | db04-profile-education-images.staged.ts:192-198 displayOrder int proposed. | GAP | P2 | Persist index/order, deterministic tie-break. | S |
+| G2-16-019-007 | F05 | StudentImageServiceImpl.java:102-114 flattens rows into images array. | db04-profile-education-images.staged.ts:181-235 no runtime list method. | MISSING | P1 | Implement ordered learner gallery read. | L |
+| G2-16-019-008 | F06 | StudentImageServiceImpl.java:66-87 nonblank trimmed HTTPS URL check. | db04-profile-education-images.staged.ts:188-191 receipt references only. | GAP | P2 | Accept secure receipt token and reject external refs with clear errors. | S |
+| G2-16-019-009 | F06 | StudentImageRequestDTO.java:8-13 imageUrls up to10. | db04-profile-education-images.staged.ts:181-235 no max10 count. | GAP | P2 | Enforce max10 active per learner. | S |
+| G2-16-019-010 | F07 | StudentImageServiceImpl.java:70-80 errors `Image URL cannot be empty`, `must be valid https URL`. | db04-profile-education-images.staged.ts:1-8 no runtime validator. | MISSING | P2 | Return stable field errors for malformed refs. | S |
+| G2-16-019-011 | F07 | StudentImageController.java:71-89 allowed storage/learner folder error copy. | db04-profile-education-images.staged.ts:200-212 owner FK proposed. | GAP | P2 | Map illegal image owner errors before FK. | S |
+| G2-16-019-012 | F08 | StudentImageController.java:150-154 `Image deactivated successfully.`. | db04-profile-education-images.staged.ts:192-198 deactivatedAt only. | MISSING | P3 | Emit equivalent API result and UI success message. | S |
+| G2-16-019-013 | F09 | ImageEntry.java:3-38 backend value object no modal. | db04-profile-education-images.staged.ts:181-235 DB-only. | MATCH | P3 | Check gallery image preview dialog in consumer audit. | S |
+| G2-16-019-014 | F10 | StudentImageServiceImpl.java:33-40 creates new StudentImage aggregate. | db04-profile-education-images.staged.ts:181-235 normalized one row/image. | GAP | P2 | Decide append-vs-replace semantics transactionally. | S |
+| G2-16-019-015 | F10 | StudentImageServiceImpl.java:53-63,130-142 deactivate toggles active=0 in JSON. | db04-profile-education-images.staged.ts:192-198 proposed isActive/deactivatedAt. | MISSING | P1 | Implement idempotent deactivate, don't delete receipt. | L |
+| G2-16-019-016 | F11 | StudentImageController.java:56-60,93-104 learner self and authorized staff. | db04-profile-education-images.staged.ts:185-212 owner FK but no route auth. | MISSING | P1 | Implement self/staff read/write permissions before signed URLs. | L |
+| G2-16-019-017 | F12 | StudentImageServiceImpl.java:53-63 deactivation never deletes image. | db04-profile-education-images.staged.ts:192-198 soft inactive status. | MATCH | P3 | Preserve soft state. | S |
+| G2-16-019-018 | F12 | StudentImageController.java:86-89 learner folder bound by ID. | db04-profile-education-images.staged.ts:200-212 receipt ownership FK. | EXTRA | P3 | Keep stronger receipt ownership, no path substring trust. | S |
+| G2-16-019-019 | F13 | StudentImageServiceImpl.java:44-49 missing gallery returns null, controller 128-132 returns404. | db04-profile-education-images.staged.ts:1-8 no route/empty state. | MISSING | P2 | Return controlled 404/empty gallery with retry. | S |
+| G2-16-019-020 | F14 | StudentImageServiceImpl.java:66-90 stores URL refs no image binary. | db04-profile-education-images.staged.ts:188-191 receiptId. | GAP | P1 | Connect private upload completion and read signed URLs. | L |
+| G2-16-019-021 | F15 | StudentImageServiceImpl.java:33-63 has no email/send events. | db04-profile-education-images.staged.ts:181-235 model no mail. | MATCH | P3 | No notification on image change unless approved. | S |
+| G2-16-019-022 | F16 | ImageEntry.java:3-38 backend no breakpoints. | db04-profile-education-images.staged.ts:181-235 backend only. | MATCH | P3 | Gallery phone layout separate. | S |
+| G2-16-019-023 | F17 | ImageEntry.java:3-38 backend no keyboard. | db04-profile-education-images.staged.ts:181-235 backend only. | MATCH | P3 | Gallery focus/read preview in UI audit. | S |
+| G2-16-019-024 | F18 | ImageEntry.java:15-37 exact serialization getter `getImageId/getImageUrl/getActive`. | db04-profile-education-images.staged.ts:184-198 lower camel different fields. | GAP | P3 | Keep response camel-case imageId/imageUrl/active. | S |
+| G2-16-019-025 | F19 | StudentImageServiceImpl.java:102-114 aggregates all images into one array. | db04-profile-education-images.staged.ts:217-219 proposed owner/order index. | EXTRA | P3 | Use bounded indexed gallery rather than JSON reparsing. | S |
+| G2-16-019-026 | F20 | StudentImageServiceImpl.java:97-99 random 12-char ID collision unchecked. | db04-profile-education-images.staged.ts:184 UUID primary. | EXTRA | P3 | Keep UUID uniqueness but provide legacy ID translation. | S |
+| G2-16-019-027 | F20 | StudentImageServiceImpl.java:130-142 missing imageId leaves unchanged yet returns true. | db04-profile-education-images.staged.ts:192-198 no runtime handler. | GAP | P2 | Decide idempotent missing-image semantics with explicit result. | S |
+| G2-16-019-028 | F21 | StudentImageController.java:33-35,71-89 ContentUrlValidator allowlisted R2. | db04-profile-education-images.staged.ts:188-212 receipt-owned private storage. | GAP | P1 | Wire signed storage+receipt verification and scanning. | L |
+| G2-16-019-029 | F22 | ImageEntry.java:3-38 is not a JPA table; stored inside StudentImage JSON. | db04-profile-education-images.staged.ts:181-235 normalized table STAGED ONLY. | MISSING | P1 | Promote reconciled DB04 migration and JSON-to-row model or waive migration. | L |
+| G2-16-019-030 | F22 | StudentImageServiceImpl.java:82-90 stores active numeric1. | db04-profile-education-images.staged.ts:192-198 uses boolean. | GAP | P3 | Normalize 1/0 to true/false. | S |
+| G2-16-019-031 | F23 | ImageEntry.java:5-7 public URL in payload. | db04-profile-education-images.staged.ts:188-212 receiptId for private storage. | EXTRA | P3 | Keep private approach, map safe gallery DTO. | S |
+| G2-16-019-032 | F23 | StudentImageController.java:93-150 create/get/deactivate available. | db04-profile-education-images.staged.ts:1-8 only draft model. | MISSING | P1 | Complete profile-gallery lifecycle before parity sign-off. | L |
+
+## Unit summary
+
+32 rows, all F01–F23. Verdict {"MISSING":10,"GAP":13,"MATCH":5,"EXTRA":4}, severity {"P1":9,"P2":11,"P3":12}. Top gaps: production gallery CRUD unavailable in staged-only model; privacy-safe image upload/view integration missing; imageId/active/URL API compatibility and idempotent deactivation require mapping. UNKNOWN live whether other profile image routes replace this feature; check concrete image focus/mobile consumer before fixing.
