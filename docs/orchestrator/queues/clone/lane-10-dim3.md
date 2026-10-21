@@ -86,17 +86,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/components/projects/project-admin-audit-page.tsx`
 - [x] `src/components/shell/learner-notification-bell.tsx`
 - [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/components/academics/academics-overview.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/components/academics/academics-overview.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
 - [ ] `src/components/projects/mentor-lane-board.tsx`
 - [ ] `src/components/projects/project-delivery-reopen-control.tsx`
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
