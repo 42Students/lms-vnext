@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AcademicsOverview } from "@/components/academics/academics-overview";
-import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Dropdown } from "@/components/ui/dropdown";
 import { getAcademicsWorkspace } from "@/modules/academics/workspace";
@@ -37,20 +36,9 @@ export default async function SuperAdminAcademicsPage() {
   if (!isSuperAdmin(context)) redirect("/dashboard");
   const collegeId = context.adminScope?.collegeId ?? null;
 
-  if (!collegeId) {
-    return (
-      <div className="min-w-0 space-y-[var(--lms-space-6)]">
-        <PageHeader title="Academic Setup"
-          description="Academic administration requires a college safety scope."
-          actions={<AcademicPageActions scoped={false} />}
-        />
-        <EmptyState
-          title="Select a college scope"
-          description="Choose a college in the Super Admin scope selector before managing Programs, Periods, Cohorts or Sections."
-        />
-      </div>
-    );
-  }
+  // The unscoped platform landing is the global tenant directory, not a
+  // blocked college academic workspace. College-scoped setup remains here.
+  if (!collegeId) redirect("/admin/tenants");
 
   const workspace = await getAcademicsWorkspace(context, collegeId);
 

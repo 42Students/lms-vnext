@@ -19,7 +19,8 @@ export default async function LearnerPlacementRulesPage({
   // change authorization, learner identity or the data being read.
   const parsed = learnerPlacementRulesQuerySchema.safeParse(query);
   const context = await getCurrentRequestContext();
-  const { evidence, preferences, preparation, back, ruleApplicability, policyView } =
+  const { evidence, preferences, preparation, back, ruleApplicability, policyView,
+    effectivePolicySource, effectivePolicyUpdatedAt } =
     await getOwnLearnerPlacementRulesView(context, parsed.success ? parsed.data : {});
   return (
     <div className="min-w-0 space-y-6">
@@ -30,8 +31,17 @@ export default async function LearnerPlacementRulesPage({
       <PageHeader title="Placement rules"
         description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <section className="min-w-0 border-b border-border py-4" aria-label="College-wide placement policy">
-        <h2 className="font-semibold text-[var(--lms-heading)]">College-wide placement policy</h2>
-        <p className="mt-2 text-xs text-muted-foreground">These are the saved college-wide baseline rules. A drive may have additional eligibility conditions; the authoritative result for you is its scoped application check. A cohort override must not be inferred unless recorded.</p>
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="font-semibold text-[var(--lms-heading)]">Your effective placement policy</h2>
+          {policyView ? <Badge tone={effectivePolicySource==="BATCH_OVERRIDE"?"info":"neutral"}>
+            {effectivePolicySource==="BATCH_OVERRIDE"?"Batch override applies":"College-wide rules"}
+          </Badge> : null}
+        </div>
+        {effectivePolicySource==="BATCH_OVERRIDE" ? <p className="mt-2 text-xs text-muted-foreground">
+          Your active cohort overrides the college baseline where the placement cell has saved a value.
+          {effectivePolicyUpdatedAt ? " Override updated "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(effectivePolicyUpdatedAt))+" IST." : ""}
+        </p> : null}
+        <p className="mt-2 text-xs text-muted-foreground">These are the effective saved rules for your active cohort where an override exists, otherwise the college-wide baseline. Drive-specific eligibility and your scoped application check remain authoritative.</p>
         {policyView?<div className="mt-3 space-y-2">
           <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Where you stand:</h3>
           <p role="status" className="text-sm leading-6 text-body">{policyView.personal}</p>
@@ -104,7 +114,11 @@ export default async function LearnerPlacementRulesPage({
           <li><Link href="/learn/my-placements/jobs" className="text-primary-text underline">Drive list and eligibility checks</Link> — learner- and college-scoped checks before applying.</li>
           <li><Link href="/learn/my-placements/placement#rules" className="text-primary-text underline">Placement rules</Link> — recorded college rules and current registration.</li>
           <li><Link href="/learn/my-placements/calendar" className="text-primary-text underline">Placement calendar</Link> — published events; unavailable extras cannot be assumed.</li>
-          <li>Company preview and bulk-check shortcuts must respect the same per-drive authorization; use the published drive view when no separate preview is available.</li>
+          <li>Single-drive eligibility and apply-check: the authenticated drive detail and application action enforce your current membership and college scope.</li>
+          <li>Bulk apply-checks: each published drive is evaluated for the signed-in learner; the list is a preview, not permission to bypass a final application check.</li>
+          <li>Placement rules: this page reads the selected college's effective rules and any saved active-cohort override.</li>
+          <li>Company preview: use the published drive and associated company details; no private employer preview is implied.</li>
+          <li>Calendar extras: use published placement events; unavailable extras are not inferred.</li>
         </ul>
       </section>
       <section aria-labelledby="placement-how-eligibility-works" className="min-w-0 border-b border-border py-4">
