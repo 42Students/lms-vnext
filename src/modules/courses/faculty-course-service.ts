@@ -4,6 +4,7 @@ import {
   asc,
   desc,
   eq,
+  inArray,
   isNull,
   lte,
   sql,
@@ -226,22 +227,43 @@ export async function listFacultyCourseDeliveries(
  * historical course/class link. Numeric legacy IDs need an explicit migration
  * crosswalk and are intentionally not guessed from current UUID rows. */
 export async function resolveFacultyCourseDeliveryForLink(
- context:RequestContext, rawCourse:string, rawClass?:string|null,
+ context:RequestContext,rawCourse:string,rawClass?:string|null,
 ):Promise<string|null>{
  requireFacultyMembership(context);
  const course=rawCourse.trim().toLowerCase();
  const section=(rawClass??"").trim().toLowerCase();
- if(!course||/^\d+$/.test(course)||(section&&/^\d+$/.test(section))||course.length>160||section.length>160||
+ if(!course||course.length>160||section.length>160||
     !/^[a-z0-9_-]+$/.test(course)||
     (section&&!/^[a-z0-9_-]+$/.test(section)))return null;
+ // An old numeric identifier is not a UUID. Match only persisted legacy
+ // crosswalk IDs on assignments already authorized for this faculty actor.
  const rows=await listFacultyCourseDeliveries(context);
+ if(!rows.length)return null;
+ const knownCourses=await getDb().select({
+  id:courses.id,slug:courses.slug,legacyId:courses.legacyCourseId,
+ }).from(courses).where(inArray(courses.id,[...new Set(rows.map(row=>row.courseId))]));
+ const knownSections=await getDb().select({
+  id:sections.id,legacyId:sections.legacyClassId,
+ }).from(sections).where(inArray(sections.id,[...new Set(rows.map(row=>row.sectionId))]));
+ const courseMeta=new Map(knownCourses.map(row=>[row.id,row]));
+ const sectionMeta=new Map(knownSections.map(row=>[row.id,row]));
+ const legacyCourse=/^[1-9]\\d{0,9}$/.test(course)?Number(course):null;
+ const legacySection=/^[1-9]\\d{0,9}$/.test(section)?Number(section):null;
  const matches=rows.filter(row=>{
-  const knownCourse=[row.deliveryId,row.courseId,row.courseCode,
-   row.courseCode.toLowerCase().replace(/[^a-z0-9]+/g,"-")];
-  if(!knownCourse.some(key=>key.toLowerCase()===course))return false;
+  const metadata=courseMeta.get(row.courseId);
+  const keys=[row.deliveryId,row.courseId,row.courseCode,
+   row.courseCode.toLowerCase().replace(/[^a-z0-9]+/g,"-"),metadata?.slug]
+   .filter((key):key is string=>typeof key==="string");
+  if(!keys.some(key=>key.toLowerCase()===course)&&
+     !(legacyCourse!==null&&metadata?.legacyId===legacyCourse))return false;
   if(!section)return true;
-  return [row.sectionId,row.sectionCode].some(key=>key.toLowerCase()===section);
+  const sectionKeys=[row.sectionId,row.sectionCode,row.sectionName]
+   .map(value=>value.toLowerCase());
+  return sectionKeys.includes(section)||
+   (legacySection!==null&&sectionMeta.get(row.sectionId)?.legacyId===legacySection);
  });
+ // A slug might have more than one class/semester. Never silently route
+ // that bookmark into the wrong learner group.
  return matches.length===1?matches[0]!.deliveryId:null;
 }
 export async function getFacultyCourseWorkspace(
