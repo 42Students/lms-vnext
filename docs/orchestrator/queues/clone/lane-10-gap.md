@@ -49,12 +49,12 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/hiring-dashboard.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/inbound-mail.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/index.js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/applications.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/index.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/interviews.js`
-- [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/settings.js`
-- [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/shortlisted.js`
-- [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/all.js`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/applications.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/index.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/interviews.js`
+- [x] U014 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/settings.js`
+- [x] U015 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/[jobId]/shortlisted.js`
+- [x] U016 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/all.js`
 - [ ] U017 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/jobs/index.js`
 - [ ] U018 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/lecture-halls.js`
 - [ ] U019 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/module-access.js`
