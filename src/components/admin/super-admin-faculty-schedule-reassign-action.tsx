@@ -26,6 +26,41 @@ export function SuperAdminFacultyScheduleReassignAction({
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [replacementMembershipId,setReplacementMembershipId]=useState("");
   const [error,setError]=useState("");
+  const [retirementBusy,setRetirementBusy]=useState(false);
+  const [retirementOpen,setRetirementOpen]=useState(false);
+  const [retirementImpact,setRetirementImpact]=useState<{
+    canEnd:boolean;courses:number;schedules:number;projects:number;otherRoles:boolean;
+  }|null>(null);
+  const [retirementMessage,setRetirementMessage]=useState("");
+  const retirementUrl="/api/admin/faculty/memberships/"+encodeURIComponent(sourceMembershipId)+"/retire";
+  async function inspectRetirement(){
+    if(retirementBusy||pending)return;
+    setRetirementBusy(true);setRetirementMessage("");setRetirementImpact(null);
+    try{
+      const impact=await apiFetch<{canEnd:boolean;courses:number;schedules:number;projects:number;otherRoles:boolean}>(
+        retirementUrl,{cache:"no-store"});
+      setRetirementImpact(impact);setRetirementOpen(true);
+    }catch{
+      setRetirementMessage("Unable to check active teaching, sessions and projects. No faculty membership was changed.");
+    }finally{setRetirementBusy(false);}
+  }
+  async function retireFaculty(){
+    if(retirementBusy||!retirementImpact?.canEnd)return;
+    setRetirementBusy(true);setRetirementMessage("");
+    try{
+      const result=await apiFetch<{status:string}>(retirementUrl,{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({confirmed:true}),
+      });
+      if(result.status!=="ENDED")throw Error("No confirmed removal");
+      setRetirementOpen(false);setRetirementImpact(null);
+      setRetirementMessage("Faculty membership ended; historical identity, assignments and audit records were retained.");
+      router.refresh();
+    }catch{
+      setRetirementOpen(false);
+      setRetirementMessage("Faculty removal was not confirmed. Assignments may have changed; review again before retrying.");
+    }finally{setRetirementBusy(false);}
+  }
   const [report,setReport]=useState<{total:number;reassigned:number;skippedConflicts:number}|null>(null);
   const choices=candidates.filter(person=>person.membershipId!==sourceMembershipId);
   const target=choices.find(item=>item.membershipId===replacementMembershipId);
@@ -59,6 +94,26 @@ export function SuperAdminFacultyScheduleReassignAction({
         " "+report.skippedConflicts+" conflicting session(s) still belong to the original faculty. Do not remove or end that faculty membership until those sessions and any other active teaching assignments are reassigned.":
         " Schedule transfer recorded. Before removing a faculty membership, check its remaining teaching, project and course assignments and the audit history."}
     </Alert>:null}
+    <Button variant="danger" size="md" className="min-h-11 w-full md:min-h-9 md:w-auto"
+      disabled={pending||retirementBusy} onClick={()=>void inspectRetirement()}>
+      {retirementBusy?"Checking assignments…":"Remove faculty"}
+    </Button>
+    {retirementMessage?<Alert tone={retirementMessage.startsWith("Faculty membership ended")?"success":"warning"}>{retirementMessage}</Alert>:null}
+    <ConfirmDialog open={retirementOpen}
+      onOpenChange={next=>{if(!retirementBusy)setRetirementOpen(next);}}
+      title={"Remove "+sourceName+" from this college?"}
+      description={retirementImpact?
+        "Active course assignments: "+retirementImpact.courses+
+        ". Upcoming class sessions: "+retirementImpact.schedules+
+        ". Active project assignments: "+retirementImpact.projects+
+        (retirementImpact.otherRoles?". This membership also has other roles.":"")+
+        (retirementImpact.canEnd?
+          " Ending the college membership preserves their shared account and historical records; the change is audited.":
+          " Removal is blocked. Reassign or end every active assignment and other role first."):
+        "Checking active assignments…"}
+      confirmLabel="End faculty membership" confirmVariant="danger"
+      pending={retirementBusy} confirmDisabled={!retirementImpact?.canEnd}
+      onConfirm={()=>void retireFaculty()}/>
     {error?<Alert tone="error">{error}</Alert>:null}
     <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} dismissible={!pending}
       title="Reassign class schedules"

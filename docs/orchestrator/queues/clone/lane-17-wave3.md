@@ -21,4 +21,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_modules_placements_tpo-recruiter-thread-detail-service.ts.md` (edit src/modules/placements/tpo-recruiter-thread-detail-service.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_learn_courses_deliveryId_...courseTab_page.tsx.md` (edit src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_components_projects_template-metadata-edit-control.tsx.md` (edit src/components/projects/template-metadata-edit-control.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_components_admin_super-admin-faculty-schedule-reassign-action.tsx.md` (edit src/components/admin/super-admin-faculty-schedule-reassign-action.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_components_admin_super-admin-faculty-schedule-reassign-action.tsx.md` (edit src/components/admin/super-admin-faculty-schedule-reassign-action.tsx; 1 findings; best P1)
