@@ -18,10 +18,13 @@ export const runtime = "nodejs";
 
 const schema = z.strictObject({
   attemptId: z.string().uuid(),
-  code: z.string().regex(/^[0-9]{4,8}$/),
+  code: z.string({ error: "OTP is required" })
+    .trim()
+    .min(1, "OTP is required")
+    .regex(/^[0-9]{4,8}$/, "Enter the 4-8 digit OTP"),
   secondCode: z
     .string()
-    .regex(/^[0-9]{4,8}$/)
+    .regex(/^[0-9]{4,8}$/, "Enter the 4-8 digit second verification code")
     .optional(),
 });
 
@@ -91,6 +94,11 @@ export async function POST(request: Request) {
       // Return next-step hints, never the legacy auth token pair.
       // Discover roles and colleges only over the authenticated cookie.
       membershipSelectionRequired: !autoMembershipId,
+      // Migration hint for old clients that formerly received memberships,
+      // host policy flags and bearer tokens in the verify response.
+      // Clients must use the new cookie-scoped endpoints after verification.
+      nextAction: autoMembershipId ? "OPEN_DASHBOARD" : "SELECT_COLLEGE_AND_ROLE",
+      loginProtocol: "COOKIE_SESSION_V2",
       membershipsEndpoint: "/api/auth/memberships",
       sessionEndpoint: "/api/auth/session",
     });
