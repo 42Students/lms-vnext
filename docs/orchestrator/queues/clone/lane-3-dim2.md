@@ -451,7 +451,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [ ] `src/components/hr/recruiter-profile-access.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/placements/college-drive-pipeline-overview.tsx`
+- [x] `src/components/placements/college-drive-pipeline-overview.tsx`
 - [ ] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
 - [x] `src/components/placements/college-report-navigation.tsx`
@@ -484,18 +484,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [ ] `src/components/placements/public-recruiter-join-form.tsx`
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
 - [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/recruiter-result-review-grid.tsx`
+- [x] `src/components/placements/recruiter-result-review-grid.tsx`
 - [ ] `src/components/placements/report-interactive-table.tsx`
 - [ ] `src/components/placements/super-admin-drive-tabs.tsx`
-- [ ] `src/components/placements/super-admin-needs-attention.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-drawer.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/super-admin-needs-attention.tsx`
+- [x] `src/components/placements/tpo-applicant-review-drawer.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
 - [ ] `src/components/placements/tpo-drive-clone-action.tsx`
 - [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
 - [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
+- [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
 - [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
