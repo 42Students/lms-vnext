@@ -13,7 +13,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
-export function CollegeLearnerProgressReport({data}:{data:Result}){
+export function CollegeLearnerProgressReport({data,showHeading=true}:{data:Result;showHeading?:boolean}){
  const {choices,report,selectionError}=data;
  const [sectionId,setSectionId]=useState(report?.chosen.sectionId??"");
  const [offeringId,setOfferingId]=useState(report?.chosen.offeringId??"");
@@ -24,12 +24,12 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
  const courses=choices.filter(option=>option.sectionId===sectionId);
  const deliveryId=courses.find(option=>option.offeringId===offeringId)?.deliveryId??"";
  return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-  <div>
+  {showHeading?<div>
    <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Course Progress</h2>
    <p className="max-w-[75ch] text-sm leading-[22px] text-muted-foreground">
     See measured completion for a class and course, then focus on the students furthest behind.
    </p>
-  </div>
+  </div>:null}
   <form action="/college/course-progress" method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] print:hidden md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
    <label className="grid min-w-0 w-full flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48 md:w-auto">Class
     <Select value={sectionId} onChange={event=>{setSectionId(event.target.value);setOfferingId("");}}
