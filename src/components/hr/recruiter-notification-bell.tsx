@@ -59,7 +59,7 @@ export function RecruiterNotificationBell(){
   </Button>
   <Drawer open={isOpen} onOpenChange={setIsOpen} title="Notifications"
    footer={<Link href={href} onClick={()=>setIsOpen(false)}
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">See all notifications</Link>}>
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:w-auto">See all notifications</Link>}>
    {!data&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:null}
    {error?<ErrorState title="Notifications unavailable" description={error} action={<Button type="button" onClick={()=>void load()} variant="secondary" className="min-h-11 md:min-h-9">Retry</Button>}/>:null}
    {data?.status==="CHOOSE_COLLEGE"?
@@ -76,7 +76,7 @@ export function RecruiterNotificationBell(){
      {recruiterBellPreview(data.rows).map(item=><li key={item.id}>
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        onClick={()=>setIsOpen(false)}
-       className="block min-h-11 min-w-0 break-words border-b border-transparent px-2 py-3 text-sm font-semibold leading-[1.4] text-foreground transition-colors duration-200 hover:bg-[var(--lms-neutral-50)] active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
+       className="block min-h-11 min-w-0 break-words border-b border-transparent px-2 py-3 text-sm font-[650] leading-[1.4] text-foreground transition-colors duration-200 hover:bg-[var(--lms-neutral-50)] active:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none md:min-h-9 rounded-[var(--lms-control-radius)]">
        {item.label} · {item.title}{item.unread?" · New":""}
       </Link></li>)}
     </ul></ScrollCue>:null}
