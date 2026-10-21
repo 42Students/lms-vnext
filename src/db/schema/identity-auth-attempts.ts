@@ -269,3 +269,44 @@ export function identityAttemptPublicState(input:{
    attemptsRemaining:Math.max(0,5-input.verificationAttempts),
    mayRestart:expired&&!blocked};
 }
+
+/** Pre-user onboarding is a separate challenge: no placeholder users, no
+ * learnerId=0 foreign keys and no raw roll, email, phone or OTP at rest.
+ * A verified challenge is only contact ownership evidence, not enrollment. */
+export const identityPreuserChallenges=pgTable("identity_preuser_challenges",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+ channel:varchar("channel",{length:12}).notNull(),
+ source:varchar("source",{length:16}).notNull(),
+ contactFingerprint:varchar("contact_fingerprint",{length:64}).notNull(),
+ rollFingerprint:varchar("roll_fingerprint",{length:64}),
+ codeMac:varchar("code_mac",{length:64}).notNull(),
+ attempts:integer("attempts").notNull().default(0),
+ createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ expiresAt:timestamp("expires_at",{withTimezone:true}).notNull(),
+ verifiedAt:timestamp("verified_at",{withTimezone:true}),
+ consumedAt:timestamp("consumed_at",{withTimezone:true}),
+ revokedAt:timestamp("revoked_at",{withTimezone:true}),
+},t=>[
+ index("identity_preuser_contact_rate_idx").on(t.collegeId,t.contactFingerprint,t.createdAt),
+ index("identity_preuser_roll_rate_idx").on(t.collegeId,t.rollFingerprint,t.createdAt)
+   .where(sql`${t.rollFingerprint} is not null`),
+ index("identity_preuser_expiry_idx").on(t.expiresAt),
+ check("identity_preuser_channel_ck",sql`${t.channel} in ('EMAIL','PHONE')`),
+ check("identity_preuser_source_ck",sql`${t.source} in ('CONTACT','ROLL')`),
+ check("identity_preuser_roll_shape_ck",sql`(${t.source}='ROLL')=(${t.rollFingerprint} is not null)`),
+ check("identity_preuser_hash_ck",sql`
+   ${t.contactFingerprint} ~ '^[0-9a-f]{64}$' and
+   (${t.rollFingerprint} is null or ${t.rollFingerprint} ~ '^[0-9a-f]{64}$')
+   and ${t.codeMac} ~ '^[0-9a-f]{64}$'`),
+ check("identity_preuser_attempts_ck",sql`${t.attempts} between 0 and 5`),
+ check("identity_preuser_ttl_ck",sql`
+   ${t.expiresAt}>${t.createdAt} and
+   ${t.expiresAt}<=${t.createdAt}+interval '5 minutes'`),
+ check("identity_preuser_state_ck",sql`
+  (${t.verifiedAt} is null or
+    (${t.verifiedAt}>=${t.createdAt} and ${t.verifiedAt}<${t.expiresAt}))
+  and (${t.consumedAt} is null or
+    (${t.verifiedAt} is not null and ${t.consumedAt}>=${t.verifiedAt}))
+  and (${t.revokedAt} is null or ${t.revokedAt}>=${t.createdAt}`),
+]);
