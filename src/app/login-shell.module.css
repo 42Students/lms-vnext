@@ -329,3 +329,43 @@
   .footerLinks { gap: 4px 16px; }
   .card :global(.login-form[data-step="code"] form > div) { min-width: 0; }
 }
+
+/* Legacy phone input: country code stays part of the field group rather than
+   resembling user-editable digits. The actual value remains unchanged. */
+.card :global(.login-form[data-step="contact"] label:has(input[type="tel"])) {
+  position: relative;
+}
+.card :global(.login-form[data-step="contact"] label:has(input[type="tel"])::after) {
+  content: "+91";
+  position: absolute;
+  left: 12px;
+  bottom: 17px;
+  border-right: 1px solid var(--auth-border);
+  padding-right: 10px;
+  color: var(--auth-ink);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  pointer-events: none;
+}
+.card :global(.login-form[data-step="contact"] input[type="tel"][name="contact"]) {
+  padding-inline-start: 60px;
+  font-variant-numeric: tabular-nums;
+}
+/* The old login flap remains narrower than the main LMS canvas, even on
+   tablet. White space belongs to the illustrated backdrop, not nested cards. */
+@media (min-width: 768px) {
+  .viewport:has(.collegeBrand) .center { justify-content: flex-end; padding-inline: clamp(24px, 5vw, 72px); }
+  .viewport:has(.collegeBrand) .card { width: min(100%, 420px); }
+}
+@media (max-width: 767px) {
+  .card :global(.login-form[data-step="contact"] label:has(input[type="tel"])::after) { bottom: 17px; }
+  .viewport .center { width: 100%; }
+  .card { width: 100%; }
+}
+@media (max-width: 375px) {
+  .brandHeader { padding-inline: 16px; }
+  .center { padding-inline: 12px; }
+  .card { padding: 22px 16px; }
+  .footer { padding-inline: 16px; }
+}
