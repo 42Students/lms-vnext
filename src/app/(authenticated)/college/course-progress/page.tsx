@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
 import { collegeProgressCsvHref } from "@/modules/courses/college-progress-export-model";
+import {CollegeCourseRetakeAction} from "@/components/college/college-course-retake-action";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -73,6 +74,14 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
         </Link>
       </div>} />
     <CollegeLearnerProgressReport data={report}/>
+    {report.report?<CollegeCourseRetakeAction
+      learners={report.report.rows.map(learner=>({
+        membershipId:learner.membershipId,name:learner.name,rollNumber:learner.rollNumber,
+      }))}
+      offeringId={report.report.chosen.offeringId}
+      deliveryId={report.report.chosen.deliveryId}
+      courseName={report.report.chosen.courseName}
+    />:null}
     <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
   </div>;
 }
