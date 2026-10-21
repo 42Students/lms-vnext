@@ -229,17 +229,17 @@ export function AdminCourseCreatePanel({
     if (!courseDepartmentId) issues.department = "Select a department";
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
-    if (superAdmin && !shortTitle.trim()) issues.shortTitle = "Enter short display name";
-    else if (superAdmin && shortTitle.trim().length > 120)
+    if (!shortTitle.trim()) issues.shortTitle = "Enter short display name";
+    else if (shortTitle.trim().length > 120)
       issues.shortTitle = "Maximum 120 characters";
-    if (superAdmin && officialCode.trim().length > 40)
+    if (officialCode.trim().length > 40)
       issues.code = "Maximum 40 characters";
     if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
-    if (superAdmin && !introductionHeading.trim()) issues.heading = "Enter the heading";
-    else if (superAdmin && introductionHeading.trim().length > 255) issues.heading = "Maximum 255 characters";
-    if (superAdmin && !courseDescription.trim())
+    if (!introductionHeading.trim()) issues.heading = "Enter the heading";
+    else if (introductionHeading.trim().length > 255) issues.heading = "Maximum 255 characters";
+    if (!courseDescription.trim())
       issues.description = "Enter course description";
-    if (superAdmin && cardColor.trim() && !/^#[0-9a-fA-F]{6}$/.test(cardColor.trim()))
+    if (cardColor.trim() && !/^#[0-9a-fA-F]{6}$/.test(cardColor.trim()))
       issues.cardColor = "Enter a valid card colour (#RRGGBB).";
     if(coverUrl.trim()&&(!/^https:\/\/[^\s/@]+(?:\/[^\s]*)?$/i.test(coverUrl.trim())||
        /https:\/\/(?:localhost|127\.|0\.0\.0\.0)/i.test(coverUrl.trim())))
@@ -249,7 +249,7 @@ export function AdminCourseCreatePanel({
       const field = issues.department ? "course-department"
         : issues.name ? "course-name"
         : issues.shortTitle ? "course-short-title"
-        : issues.code ? (superAdmin ? "course-official-code" : "course-code")
+        : issues.code ? (!superAdmin&&!courseCode.trim() ? "course-code" : "course-official-code")
         : issues.heading ? "course-introduction-heading"
         : issues.description ? "course-description" : issues.coverUrl ? "course-cover-url" : "course-card-color";
       document.getElementById(field)?.focus();
@@ -260,12 +260,12 @@ export function AdminCourseCreatePanel({
         departmentId: courseDepartmentId,
         name: courseName,
         code:superAdmin?"SA-"+crypto.randomUUID().replaceAll("-","").slice(0,16):courseCode,
-        shortTitle:superAdmin?shortTitle.trim():undefined,
-        officialCode:superAdmin?officialCode.trim()||null:undefined,
-        cardColor:superAdmin?cardColor.trim()||null:null,
+        shortTitle:shortTitle.trim(),
+        officialCode:officialCode.trim()||null,
+        cardColor:cardColor.trim()||null,
         thumbnailUrl:coverUrl.trim()||null,
-        takeaways:superAdmin?takeaways.trim()||null:undefined,
-        introductionHeading:superAdmin?introductionHeading.trim():undefined,
+        takeaways:takeaways.trim()||null,
+        introductionHeading:introductionHeading.trim(),
         enabled:visibleToStudents,
         description: courseDescription.trim() || null,
       }),
@@ -380,7 +380,7 @@ export function AdminCourseCreatePanel({
             <Input id="course-name" value={courseName} onChange={(event) => { setCourseName(event.target.value);setCreateErrors(previous=>({...previous,name:undefined})); }} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
             {createErrors.name ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.name}</p> : null}
           </div>
-          {superAdmin?<div className="grid gap-3 md:col-span-2 md:grid-cols-2">
+          <div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
               <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={120} placeholder="e.g. DSA" required />
@@ -423,11 +423,12 @@ export function AdminCourseCreatePanel({
               </div>
               {createErrors.cardColor ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.cardColor}</p> : null}
             </div>
-          </div>:<div>
+          </div>
+          {!superAdmin?<div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
             <Input id="course-code" value={courseCode} onChange={(event) => {setCourseCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="CS201" maxLength={64} required />
             {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
-          </div>}
+          </div>:null}
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-cover-url">Course cover image (HTTPS)</FieldLabel>
             <Input id="course-cover-url" type="url" value={coverUrl} maxLength={2048}
@@ -445,17 +446,17 @@ export function AdminCourseCreatePanel({
               </a>:null}
             {createErrors.coverUrl?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.coverUrl}</p>:null}
           </div>
-          {superAdmin?<div className="md:col-span-2">
+          <div className="md:col-span-2">
             <FieldLabel htmlFor="course-introduction-heading">In this Course – Heading</FieldLabel>
             <Input id="course-introduction-heading" value={introductionHeading}
               onChange={event=>{setIntroductionHeading(event.target.value);setCreateErrors(old=>({...old,heading:undefined}));}}
               maxLength={255} required aria-invalid={Boolean(createErrors.heading)}
               placeholder="In this Course"/>
             {createErrors.heading?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.heading}</p>:null}
-          </div>:null}
+          </div>
           <div className="md:col-span-2">
-            <FieldLabel htmlFor="course-description">{superAdmin ? "In this Course – Description" : "Description"}</FieldLabel>
-            <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder={superAdmin?"Enter course description":"Optional Course description"} required={superAdmin} />
+            <FieldLabel htmlFor="course-description">In this Course – Description</FieldLabel>
+            <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder="Enter course description" required />
             {createErrors.description ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.description}</p> : null}
           </div>
           <label className="md:col-span-2 flex min-h-11 items-center gap-3 text-sm text-body">
