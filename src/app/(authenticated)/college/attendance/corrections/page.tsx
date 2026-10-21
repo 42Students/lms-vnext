@@ -24,7 +24,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
   const values=await searchParams;
   const raw=Object.fromEntries(Object.entries(values).filter(([,value])=>value!==undefined));
   const query=collegeCorrectionReadSchema.safeParse(raw);
-  if(!query.success) return <div className="space-y-4">
+  if(!query.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Attendance correction windows"/>
     <ErrorState title="Invalid date range"
       description="Enter both valid IST calendar dates, up to 31 days, without duplicate or unrelated filters."

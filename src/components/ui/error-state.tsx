@@ -6,6 +6,6 @@ export function ErrorState({ title = "Something went wrong", description, action
   return <section data-slot="error-state" role="alert" className="min-w-0 border-b border-border bg-transparent px-[var(--lms-space-1)] py-[var(--lms-space-5)] text-left shadow-none">
     <h2 className="m-0 text-balance break-words [overflow-wrap:anywhere] text-[var(--lms-font-lg)] font-semibold leading-[1.4] tracking-[-0.012em] text-[var(--lms-heading)]">{title}</h2>
     <p className="mt-[var(--lms-space-2)] max-w-2xl text-pretty break-words [overflow-wrap:anywhere] text-[var(--lms-font-base)] font-normal leading-[1.6] text-[var(--lms-body-text)]">{description}</p>
-    {action ? <div className="mt-[var(--lms-space-4)] flex min-w-0 max-w-full flex-wrap items-center gap-[var(--lms-space-2)]">{action}</div> : null}
+    {action ? <div className="mt-[var(--lms-space-4)] flex min-w-0 max-w-full flex-wrap items-center gap-[var(--lms-space-2)] max-[767px]:[&_a]:inline-flex max-[767px]:[&_a]:min-h-11 max-[767px]:[&_a]:min-w-11 max-[767px]:[&_a]:items-center">{action}</div> : null}
   </section>;
 }
