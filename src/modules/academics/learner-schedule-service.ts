@@ -33,6 +33,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AcademicsServiceError } from "./errors";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
+import { CoursesServiceError } from "@/modules/courses/errors";
 
 function requireLearnerMembership(
   context: RequestContext,
@@ -153,7 +154,21 @@ export async function getLearnerClassSchedule(
   // Delivery-scoped course options are intentionally narrower than the
   // full program catalog: primary classes and elective group rosters confer
   // access, but mere curriculum membership never exposes other classes.
-  const accessible = await listLearnerCourseDeliveries(context);
+  let accessible: Awaited<ReturnType<typeof listLearnerCourseDeliveries>> = [];
+  let courseLookupWarning: string | null = null;
+  try {
+    accessible = await listLearnerCourseDeliveries(context, {
+      includeHistorical: Boolean(visibleWindow),
+    });
+  } catch (error) {
+    // A course roster outage is not a reason to hide already-authorized,
+    // delivery-free section events. Never downgrade any access denial.
+    if (error instanceof AuthorizationError ||
+        error instanceof CoursesServiceError ||
+        error instanceof AcademicsServiceError) throw error;
+    courseLookupWarning =
+      "Could not load course choices. Your class timetable is still available; retry to load course-linked sessions.";
+  }
   const deliveryIds = [...new Set(accessible.map(course => course.deliveryId))];
   const coursesList = [...new Map(accessible.map(course => [
     course.deliveryId,
@@ -162,7 +177,7 @@ export async function getLearnerClassSchedule(
       courseCode: course.courseCode },
   ])).values()].sort((a, b) => a.courseName.localeCompare(b.courseName));
   if (placements.length === 0 && deliveryIds.length === 0)
-    return { sections: [], courses: [], events: [] };
+    return { sections: [], courses: [], events: [], courseLookupWarning };
 
   const primarySectionIds = [...new Set(placements.map(row => row.sectionId))];
   const authorizedLink = deliveryIds.length
@@ -217,5 +232,5 @@ export async function getLearnerClassSchedule(
     ))
     .orderBy(asc(sectionScheduleEvents.startsAt));
 
-  return { sections: placements, courses: coursesList, events };
+  return { sections: placements, courses: coursesList, events, courseLookupWarning };
 }
