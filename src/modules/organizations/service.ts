@@ -19,6 +19,20 @@ import {
   type RenameOrganizationInput,
 } from "./validation";
 
+/** DTO adapter: preserve the old soft-delete flag without exposing a
+ * fabricated numeric primary key. Consumers must treat id as a UUID.
+ */
+export function legacyOrganizationDto(row:{
+ id:string;name:string;status:"ACTIVE"|"ARCHIVED";createdAt?:Date;
+}){
+ return {id:row.id,name:row.name,isDeleted:row.status==="ARCHIVED",
+  createdAt:row.createdAt??null};
+}
+export const ORGANIZATION_SCOPE_GUIDANCE={
+ globalCreate:"Clear scope (GLOBAL mode) to create organizations.",
+ scopedEdit:"Scoped superadmin can only edit the selected organization.",
+} as const;
+
 export type OrganizationServiceErrorCode =
   | "ORGANIZATION_NOT_FOUND"
   | "ORGANIZATION_NAME_CONFLICT"
@@ -64,6 +78,10 @@ async function loadActiveOrganization(organizationId: string) {
   return organization;
 }
 
+/** Archived organizations retain their legacy name reservation (isDeleted did
+ * not remove the unique-name contract). The DB currently has a partial ACTIVE
+ * unique index; this explicit check also protects archived-name collisions.
+ */
 async function assertUniqueActiveName(
   name: string,
   excludeOrganizationId?: string,
@@ -71,7 +89,6 @@ async function assertUniqueActiveName(
   const db = getDb();
 
   const conditions = [
-    eq(organizations.status, "ACTIVE"),
     sql<boolean>`lower(${organizations.name}) = ${name.toLowerCase()}`,
   ];
 
@@ -90,7 +107,16 @@ async function assertUniqueActiveName(
   }
 }
 
-export async function listOrganizations(context: RequestContext) {
+/** Optional SQL pagination is for large global Super Admin directories. Existing
+ * callers still receive the full authorized list until migrated to the pager.
+ */
+export async function listOrganizations(
+ context: RequestContext,paging?:{limit:number;offset:number},
+) {
+ const page=paging?z.strictObject({
+  limit:z.number().int().min(1).max(100),
+  offset:z.number().int().min(0),
+ }).parse(paging):null;
  // Organization names are visible only while the current persisted actor
  // keeps organization.read. Hold live actor locks through the directory SELECT
  // instead of trusting the stale role captured at request startup.
@@ -128,11 +154,14 @@ export async function listOrganizations(context: RequestContext) {
      .where(and(eq(organizations.id,selectedOrganizationId),eq(organizations.status,"ACTIVE")))
      .orderBy(asc(organizations.name));
    }
-   return tx.select({
+   const globalList=tx.select({
     id:organizations.id,name:organizations.name,
     createdAt:organizations.createdAt,updatedAt:organizations.updatedAt,
    }).from(organizations)
-    .where(eq(organizations.status,"ACTIVE")).orderBy(asc(organizations.name));
+    .where(eq(organizations.status,"ACTIVE"))
+    // Legacy repository order follows the original creation order, not name.
+    .orderBy(asc(organizations.createdAt),asc(organizations.id));
+   return page?globalList.limit(page.limit).offset(page.offset):globalList;
   }
   if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))
    requirePermission(context,"organization.read");
@@ -169,6 +198,12 @@ export async function createOrganization(
   try {
     return await db.transaction(async tx=>{
       await assertPersistedPlatformPermission(tx,context,"organization.manage");
+      // Cooperating create and rename calls serialize on the normalized
+      // legacy name, including archived entries, without locking all tenants.
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(lower(${input.name}),0))`);
+      const [collision]=await tx.select({id:organizations.id}).from(organizations)
+       .where(sql`lower(${organizations.name}) = ${input.name.toLowerCase()}`).limit(1);
+      if(collision)throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
       const [created]=await tx.insert(organizations).values({name:input.name})
        .returning({id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
         updatedAt:organizations.updatedAt});
@@ -209,6 +244,11 @@ export async function renameOrganization(
   try {
     return await db.transaction(async tx=>{
       await assertPersistedPlatformPermission(tx,context,"organization.manage",{organizationId});
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(lower(${input.name}),0))`);
+      const [collision]=await tx.select({id:organizations.id}).from(organizations)
+       .where(and(ne(organizations.id,organizationId),
+         sql`lower(${organizations.name}) = ${input.name.toLowerCase()}`)).limit(1);
+      if(collision)throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
       const [locked]=await tx.select({id:organizations.id}).from(organizations)
         .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ACTIVE")))
         .for("update").limit(1);

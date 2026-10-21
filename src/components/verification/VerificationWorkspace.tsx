@@ -25,6 +25,32 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  decidedAt?:Date|null;decidedByName?:string|null;
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
+function istTimestamp(value:Date){
+ return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST";
+}
+function relativeTimestamp(value:Date,nowMs:number|null){
+ if(nowMs===null)return istTimestamp(value);
+ const seconds=Math.round((value.getTime()-nowMs)/1000);
+ const magnitude=Math.abs(seconds);
+ const unit: Intl.RelativeTimeFormatUnit = magnitude>=86400?"day":
+  magnitude>=3600?"hour":magnitude>=60?"minute":"second";
+ const divisor=unit==="day"?86400:unit==="hour"?3600:unit==="minute"?60:1;
+ return new Intl.RelativeTimeFormat("en-IN",{numeric:"auto"}).format(Math.round(seconds/divisor),unit);
+}
+function VerificationTimestamp({value,nowMs}:{value:Date;nowMs:number|null}){
+ return <time dateTime={value.toISOString()} title={istTimestamp(value)}>{relativeTimestamp(value,nowMs)}</time>;
+}
+function VerificationTableSkeleton(){
+ return <div role="status" aria-label="Loading verification requests" className="max-h-[calc(100vh-380px)] overflow-auto rounded-[var(--lms-control-radius)] border border-border">
+  <span className="sr-only">Loading verification requests…</span>
+  <table aria-hidden="true" className="min-w-[960px] w-full border-collapse">
+   <thead><tr>{["Student","Roll","Batch","Branch","Section","Status","Marksheets","Submitted","By","Review"].map(name=><th key={name} className="border-b border-border px-3 py-3 text-left text-xs">{name}</th>)}</tr></thead>
+   <tbody>{[0,1,2,3,4].map(n=><tr key={n}>{Array.from({length:10},(_,i)=>
+    <td key={i} className="border-b border-border px-3 py-3"><div className="h-4 w-20 animate-pulse rounded bg-border"/></td>)}</tr>)}</tbody>
+  </table>
+ </div>;
+}
+
 export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true,hideHeader=false,denseTable=true}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
@@ -34,12 +60,16 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
  const [query,setQuery]=useState("");
+ const [nowMs,setNowMs]=useState<number|null>(null);
+ useEffect(()=>{setNowMs(Date.now());},[]);
+ useEffect(()=>{setTab(initialTab);},[initialTab]);
+ useEffect(()=>{setKind(initialKind);},[initialKind]);
  const [tableSort,setTableSort]=useState<"OLDEST"|"NEWEST"|"NAME">(sort);
  useEffect(()=>{setTableSort(sort);},[sort]);
  const counts=useMemo(()=>authoritativeCounts??verificationTabCounts(rows),[authoritativeCounts,rows]);
  const visible=useMemo(()=>displayVerificationQueueOrder(rows.filter(row=>
   verificationTab(row)===tab&&(kind==="ALL"||row.section===kind)&&
-  [row.learnerName,row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
+  [row.learnerName,row.rollNumber??"",row.batchName??"",row.branchName??""].some(s=>s.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()))
  ),tableSort,preserveServerOrder&&tableSort===sort),[rows,tab,kind,query,tableSort,sort,preserveServerOrder]);
  return <section className="min-w-0 space-y-4" aria-label="Profile verification workspace">
   {hideHeader ? null : legacyTpoCopy ? <p className="text-sm text-body leading-[22px]">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p> :
@@ -64,7 +94,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
   <div className="flex flex-wrap gap-2">
    {!disableLocalSearch&&<label className="min-w-0 flex-1 text-sm">Search learners
     <Input aria-label="Search learners" className="mt-1 w-full"
-     value={query} onChange={e=>setQuery(e.target.value)} placeholder="Learner, batch or branch"/>
+     value={query} onChange={e=>setQuery(e.target.value)} placeholder="Student, roll, batch or branch"/>
    </label>}
    <label className="text-sm">Kind
     <Select aria-label="Kind" value={kind} onChange={e=>onKindChange?onKindChange(e.target.value as typeof kind):setKind(e.target.value as typeof kind)}
@@ -112,18 +142,18 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    }}>Export CSV (page)</Button>
    <span className="self-center text-xs text-muted-foreground">{visible.length} in this view</span>
   </div>:null}
-  {loading?<p role="status">Loading verification requests…</p>:
+  {loading?<VerificationTableSkeleton/>:
    error?<div role="alert" className="space-y-2"><p>Unable to load verification requests: {error}</p>
     {onRetry&&<Button variant="secondary" type="button" className="min-h-[var(--lms-control-height)] " onClick={onRetry}>Retry</Button>}</div>:
    visible.length===0?<div role="status" className="border-y border-border px-3 py-4">
-     {(legacyCollegeCopy||legacyTpoCopy) && counts[tab]===0
+     {counts[tab]===0
       ? <><p className="font-semibold">{tab==="WAITING"
-          ? (legacyTpoCopy?"Nobody is waiting":collegeVerificationLegacyCopy.emptyWaiting)
-          : (legacyTpoCopy?"Nothing here yet":collegeVerificationLegacyCopy.emptyDecided)}</p>
-         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{legacyTpoCopy?"Students appear here when they send their education or identity.":collegeVerificationLegacyCopy.emptyDescription}</p></>
+          ? (legacyCollegeCopy?collegeVerificationLegacyCopy.emptyWaiting:"Nobody is waiting")
+          : (legacyCollegeCopy?collegeVerificationLegacyCopy.emptyDecided:"Nothing here yet")}</p>
+         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{legacyCollegeCopy?collegeVerificationLegacyCopy.emptyDescription:"Students appear here when they send their education or identity."}</p></>
       : <p>No matching verification requests on this page.</p>}
     </div>:
-   denseTable?<DataTable caption="Verification requests" rows={visible}
+   denseTable?<div className="max-h-[calc(100vh-380px)] min-w-0 overflow-y-auto"><DataTable caption="Verification requests" rows={visible}
     getRowKey={row=>verificationSelectionKey(row)}
     empty={<p>No matching verification requests.</p>}
     columns={[
@@ -137,7 +167,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
       }]:[]),
       {key:"learner",header:"Student",mobilePriority:"primary" as const,
        cell:(row:VerificationQueueCard)=><div className="min-w-0">
-         <strong>{row.learnerName}</strong>
+         <strong>{row.learnerName.trim()||"Student"}</strong>
          <p className="text-xs text-muted-foreground">{row.rollNumber??"No roll number"} · {row.batchName??"No batch"}</p>
         </div>},
       {key:"roll",header:"Roll",mobilePriority:"secondary" as const,
@@ -151,27 +181,27 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
       {key:"state",header:"Status",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>
         {verificationQueueCardPresentation(row.status).state}</StatusBadge>},
-      {key:"date",header:"Submitted",mobilePriority:"secondary" as const,
-       cell:(row:VerificationQueueCard)=>new Intl.DateTimeFormat("en-IN",{
-         dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)+" IST"},
+      {key:"evidence",header:"Marksheets",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"
+        ?row.marksheets
+         ?row.marksheets.missing===0?"All uploaded":"Some missing"
+         :row.missingMarksheet?"Some missing":"All uploaded"
+        :"Not an Education check"},
+      {key:"date",header:tab==="VERIFIED"?"Verified":tab==="SENT_BACK"?"Sent back":"Sent",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=><VerificationTimestamp
+        value={row.decidedAt??row.submittedAt} nowMs={nowMs}/>},
       {key:"reviewHistory",header:"By / reason",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=>row.decidedByName
          ?row.decidedByName+(row.decisionNote?" · "+row.decisionNote:"")
          :row.decisionNote??"—"},
-      {key:"evidence",header:"Marksheets",mobilePriority:"secondary" as const,
-       cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"
-        ?row.marksheets
-         ?row.marksheets.uploaded+" / "+row.marksheets.expected+" uploaded"
-         :row.missingMarksheet?"Missing marksheet":"Marksheet available"
-        :row.missingIdentityProof?"Missing identity proof":"Identity proof available"},
-      {key:"actions",header:"Actions",mobilePriority:"action" as const,
+      {key:"actions",header:"Review / Open",mobilePriority:"action" as const,
        cell:(row:VerificationQueueCard)=><Button type="button" variant="secondary"
         disabled={!onReview} onClick={()=>onReview?.(row)}
         className="min-h-11 md:min-h-9">Review</Button>},
-    ]}/>:
+    ]}/></div>:
    <ul className="min-w-0 divide-y divide-border border-y border-border">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 py-4">
-     <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.learnerName}</h2>
+     <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.learnerName.trim()||"Student"}</h2>
      {row.rollNumber?<p className="text-xs text-muted-foreground leading-[20px]">Roll no.: {row.rollNumber}</p>:null}
      <StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>{verificationQueueCardPresentation(row.status).state}</StatusBadge>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
@@ -190,7 +220,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
      </p>:null}
      {row.decidedAt?<p className="mt-2 text-xs leading-[20px]">Decided by {row.decidedByName??"Placement team"} on {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.decidedAt)}</p>:null}
      {row.status==="SENT_BACK"&&row.decisionNote?<p className="mt-1 text-sm leading-[22px]">Reason sent back: {row.decisionNote}</p>:null}
-     <p className="mt-2 text-xs leading-[20px]">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
+     <p className="mt-2 text-xs leading-[20px]">Submitted <VerificationTimestamp value={row.submittedAt} nowMs={nowMs}/></p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm leading-[22px]" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
      <Button variant="secondary" type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
       className="mt-3 min-h-[var(--lms-control-height)] ">{verificationQueueCardPresentation(row.status).action}</Button>
