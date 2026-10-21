@@ -140,3 +140,6 @@
 - TPO profile data client G2-19-030-024: retain last successful profile in component state on refresh failure and show exact `Couldn't refresh profile. Showing the last profile we loaded.` only while cached card truly rendered; error.tsx cannot safely claim stale cached content by itself.
 
 - Project template catalogue loader G2-7-006-038: pass persisted template summary/overview into `TemplateCatalogueRow.summary` for exact three-column CSV; do not fabricate from section counts. Model/headers ready.
+
+- Faculty YouTube deletion component G2-12-008-022: consume `FACULTY_YOUTUBE_DELETE_FEEDBACK` in delete mutation handler after confirmed server success/failure, show accessible toast for durationMs=2000.
+- Shared `src/components/shell/sidebar-nav.tsx` G2-3-033-029: render blocked navigation feedback when route click fails/permission denies; mobile Drawer currently closes on link click and uses native focus recovery. Don't claim page opened until pathname changes; guard repeated pending link clicks.

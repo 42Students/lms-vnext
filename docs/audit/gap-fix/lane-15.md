@@ -293,3 +293,6 @@
 
 - work2 #25 `project-template-catalogue-model.ts` | G2-7-006-038: restores exact Title/Version/Summary CSV headers and filename remains caller-owned; optional summary field additive to avoid breaking existing consumers. Template loader must populate real summary, handed off.
 - work2 #26 `learner-application-detail-model.ts` | G2-5-015-025/037: immutable latest REJECTED transition uses prior recorded stage for exact Not shortlisted, Not cleared: Assessment/Interview, Waitlist ended labels; unknown stage neutral and no inferred rejection.
+
+- work2 #27 `faculty-content-edit-model.ts` | G2-12-008-022: exported exact historical YouTube deletion success/failure copy and 2-second toast duration; component must show only on verified API result, handed off.
+- work2 #28 `mobile-navigation.tsx` | G2-3-033-029: matched concise Open/Close menu accessible labels, disabled duplicate opening while native Drawer handles focus/Back/Escape/route close. Blocked link navigation feedback belongs shared SidebarNav handler; handed off rather than falsely claim success.
