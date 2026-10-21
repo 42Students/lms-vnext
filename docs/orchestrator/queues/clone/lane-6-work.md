@@ -71,7 +71,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_companies_detail_route.ts.md` (edit src/app/api/placements/tpo/companies/detail/route.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_offers_offerId_cascade-undo_route.ts.md` (edit src/app/api/placements/tpo/offers/[offerId]/cascade-undo/route.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_rounds_roundId_bulk-confirmed-results_route.ts.md` (edit src/app/api/placements/tpo/rounds/[roundId]/bulk-confirmed-results/route.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_team_threads_route.ts.md` (edit src/app/api/placements/tpo/team/threads/route.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_team_threads_route.ts.md` (edit src/app/api/placements/tpo/team/threads/route.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-20_job-service.md.md` (new; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_jobs_jobId_rounds_roundId_apply-all_route.ts.md` (edit src/app/api/placements/tpo/jobs/[jobId]/rounds/[roundId]/apply-all/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_drive-day_roundId_check-in_route.ts.md` (edit src/app/api/placements/tpo/drive-day/[roundId]/check-in/route.ts; 1 findings; best P1)
