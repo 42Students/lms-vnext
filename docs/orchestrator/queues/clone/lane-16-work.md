@@ -6,8 +6,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-share_access-service.ts.md` (edit src/modules/placements/company-share/access-service.ts; 1 findings; best P3)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-bulk-students-undo-service.ts.md` (edit src/modules/placements/tpo-bulk-students-undo-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-messaging-service.ts.md` (edit src/modules/placements/tpo-messaging-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-model.ts.md` (edit src/modules/placements/tpo-configuration-model.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-messaging-service.ts.md` (edit src/modules/placements/tpo-messaging-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-model.ts.md` (edit src/modules/placements/tpo-configuration-model.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_recruiter_drives_jobId_rounds_route.ts.md` (edit src/app/api/placements/recruiter/drives/[jobId]/rounds/route.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_company-preview-policy.ts.md` (edit src/modules/placements/public-join/company-preview-policy.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_placement-calendar-service.ts.md` (edit src/modules/placements/placement-calendar-service.ts; 1 findings; best P1)
