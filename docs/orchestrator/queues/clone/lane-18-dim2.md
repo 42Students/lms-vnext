@@ -58,11 +58,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
 - [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/review-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/page.tsx`
+- [x] `src/app/(authenticated)/mentor/review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/page.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
