@@ -76,7 +76,7 @@ export default async function HrMessagesPage({searchParams}:{
        placeholder="Search drive titles" className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
-   <p className="text-sm text-body leading-[22px]">{result.unread} unread · {result.total} matching authorized notifications</p>
+   <p className="text-sm text-body leading-[22px]">{result.unread.toLocaleString("en-IN")} unread · {result.total.toLocaleString("en-IN")} matching authorized notifications</p>
 
    {result.rows.length?<div className="space-y-6">
      <p className="text-xs text-muted-foreground leading-5">Grouped by drive within this page only. This is not a conversation thread.</p>
@@ -107,13 +107,13 @@ export default async function HrMessagesPage({searchParams}:{
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-xs text-muted-foreground leading-5">
        {result.first?result.first+"–"+result.last:"No rows on this page"}
-       {" of "+(query.data.unreadOnly==="true"?result.unread:result.total)}
+       {" of "+(query.data.unreadOnly==="true"?result.unread:result.total).toLocaleString("en-IN")}
       </p>
       <div className="flex flex-wrap gap-2">
        {result.page>1?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page-1)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
        {result.page<result.pages?<Link href={"/hr/notifications?collegeId="+result.collegeId+"&unreadOnly="+query.data.unreadOnly+"&q="+encodeURIComponent(query.data.q)+"&page="+(result.page+1)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+        className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
       </div>
     </nav>
    <p className="text-xs text-muted-foreground leading-5"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>

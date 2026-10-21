@@ -482,7 +482,7 @@ export default async function HrPlacementJobPage({
               className="mt-2 inline-flex min-h-9 max-[767px]:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open change requests →</Link>
           </div>:null}
         {threadMessages?<div className="space-y-3">
-          <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
+          <p className="text-xs text-muted-foreground">{threadMessages.total.toLocaleString("en-IN")} recorded messages</p>
           <ScrollCue axis="y" label="Drive discussion history" viewportClassName="max-h-[36rem]"><ol aria-label="Drive discussion history" className="space-y-2">
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
               className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
@@ -642,11 +642,11 @@ export default async function HrPlacementJobPage({
             <div className="flex flex-wrap gap-2">
               {filters.page > 1 ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page-1)+returnQuery}
-                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>
+                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>
               ) : null}
               {filters.page < applicantsPage.pages ? (
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+(filters.page+1)+returnQuery}
-                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>
+                  className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>
               ) : null}
             </div>
           </nav>
@@ -741,12 +741,12 @@ export default async function HrPlacementJobPage({
             <div className="flex flex-wrap gap-2">
               {filters.offerPage > 1 ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage-1)+returnQuery}
-                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Previous
               </Link> : null}
               {filters.offerPage < offersPage.pages ? <Link
                 href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(filters.offerPage+1)+returnQuery}
-                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                className="inline-flex min-h-9 max-[767px]:min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 text-sm text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Next
               </Link> : null}
             </div>
