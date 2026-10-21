@@ -186,7 +186,12 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  const page=Math.min(query.page,totalPages);
  // The old learner roster used numeric-aware roll ordering, while the
  // default faculty/learner directory is sorted by normalized full name.
- const rollSort=sql<string>`case when ${source.rollNumber} ~ '^[0-9]{1,15}
+ const rollSort=sql<string>`case when ${source.rollNumber} ~ '^[0-9]{1,15}$'
+    then lpad(${source.rollNumber},15,'0') else coalesce(${source.rollNumber},'') end`;
+ const sortKey=role==="LEARNER"&&sortBy==="roll"?rollSort:source.name;
+ const rows=await db.select().from(source)
+  .orderBy(sortDesc?desc(sortKey):asc(sortKey),asc(source.id))
+  .limit(query.pageSize).offset((page-1)*query.pageSize);
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:row.name||"-",subtitle:row.collegeName+" · "+role,
@@ -214,51 +219,6 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
      "Gender: "+(row.gender||"-"),
      "Email: "+(row.learnerContactEmail??"-"),
      "Mobile: "+(row.learnerContactMobile??"-")]),
-   "College ID: "+row.collegeId,
-   "Organization ID: "+row.organizationId,
-   "Membership ID: "+row.id,
-   "Platform account ID: "+row.userId,
-   "Legacy membership ID: "+(row.legacyMembershipId??"Not recorded"),
-   "Membership suspension: "+(row.suspendedAt?"Suspended":"Not suspended"),
-   "Platform account: "+row.platformStatus,"Joined: "+fmt.format(row.joinedAt)+" IST",
-   "Contact shown only within selected college administrative scope.",
-  ],
-  href:`/admin/people/directory/${encodeURIComponent(row.id)}`,
- }))};
-}
-
-    then lpad(${source.rollNumber},15,'0') else coalesce(${source.rollNumber},'') end`;
- const sortKey=role==="LEARNER"&&sortBy==="roll"?rollSort:source.name;
- const rows=await db.select().from(source)
-  .orderBy(sortDesc?desc(sortKey):asc(sortKey),asc(source.id))
-  .limit(query.pageSize).offset((page-1)*query.pageSize);
- const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
- return {query:{...query,page},total,totalPages,items:rows.map(row=>({
-  id:row.id,title:row.name||"Unnamed person",subtitle:row.collegeName+" · "+role,
-  // Legacy suspendedAt means this membership cannot act in the college;
-  // a platform block also prevents sign-in even if membership stayed ACTIVE.
-  status:row.status==="ACTIVE"&&(row.platformStatus!=="ACTIVE"||row.suspendedAt)
-    ?"SUSPENDED":row.status,
-  details:[
-   ...(role==="FACULTY"?[
-    "Department: "+(row.departmentName??"Not assigned"),
-    "Department ID: "+(row.facultyDepartmentId??"Not assigned"),
-    "Type: "+(row.employmentType??row.academicTitle??"Not set"),
-    "Faculty type: "+(row.employmentType??"Not set"),
-    "Mentor membership: "+(row.mentorRole?"Active":"Not assigned"),
-    "Academic title: "+(row.academicTitle??"Not set"),
-    "Faculty code: "+(row.legacyFacultyCode??"Not recorded"),
-    "Legacy faculty ID: "+(row.legacyFacultyId??"Not recorded"),
-    "Gender: "+(row.gender||"Not recorded"),
-    "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded"),
-   ]:["Roll number: "+(row.rollNumber??"Not recorded"),"Class: "+(row.className??"Not assigned"),
-     "Classes: "+(row.classNames??"Not assigned"),
-     "Student ID: "+(row.legacyUniqueId??"Not recorded"),
-     "Registration number: "+(row.registrationNumber??"Not recorded"),
-     "Legacy learner ID: "+(row.legacyLearnerId??"Not recorded"),
-     "Gender: "+(row.gender||"Not recorded"),
-     "Email: "+(row.learnerContactEmail??"Not recorded"),
-     "Mobile: "+(row.learnerContactMobile??"Not recorded")]),
    "College ID: "+row.collegeId,
    "Organization ID: "+row.organizationId,
    "Membership ID: "+row.id,
