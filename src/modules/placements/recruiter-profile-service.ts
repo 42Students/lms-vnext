@@ -103,16 +103,41 @@ export async function getRecruiterSelfProfile(context: RequestContext, selectedC
       membershipKey:null as string|null,
     }];
   });
+  if (selectedCollegeId && !grants.length) {
+    // The authenticated grant may have expired or been revoked since session resolution.
+    throw new AuthorizationError("placements.recruiter.read");
+  }
   const nameParts=row.displayName.trim().split(/\s+/).filter(Boolean);
+  const firstName=nameParts[0]??"";
+  const lastName=nameParts.slice(1).join(" ");
   return {...row,
-    firstName:nameParts[0]??"",lastName:nameParts.slice(1).join(" "),
+    firstName,lastName,
+    // Compatibility-shaped self identity is additive; contactMobile is the
+    // recruiter's public contact, never the private phone login factor.
+    user:{
+      id:row.userId,firstName,lastName,name:row.displayName,
+      contactMail:row.email,designation:row.title,
+      contactMobile:contact?.phone??null,
+      companyId:row.companyId,companyName:row.companyName,
+    },
+    accountStatus:"ACTIVE" as const,
     contactPhoneDigits:contact?.phone??null,contactReady,
     scope:selectedCollegeId?"COLLEGE" as const:"GLOBAL" as const,
     selectedCollegeId:selectedCollegeId??null,
-    capabilities:[...new Set(grants.flatMap(grant=>grant.capabilities))],
+    collegeId:selectedCollegeId??null,
+    // The legacy GLOBAL hub had no selected college capabilities. Each
+    // college's authorized capability list is still available in colleges[].
+    capabilities:selectedCollegeId
+      ? [...new Set(grants.flatMap(grant=>grant.capabilities))] : [],
+    // Legacy recruiter/global membership keys were deterministic strings;
+    // UUID grants and authenticated membership switching replace those keys.
+    globalMembershipKey:null as string|null,
     colleges:grants.map(grant=>({
       collegeId:grant.collegeId,collegeName:grant.collegeName,
-      code:grant.collegeCode,logoUrl:grant.logoUrl,
+      code:grant.collegeCode,collegeCode:grant.collegeCode,
+      // Object-store logos require signed reads. Do not disclose raw storage
+      // paths or untrusted old external logo URLs as public image src.
+      logoUrl:grant.logoUrl,logoAvailable:grant.logoAvailable,
       validUntil:grant.validUntil,membershipKey:grant.membershipKey,
       grantId:grant.id,capabilities:grant.capabilities,
     })),

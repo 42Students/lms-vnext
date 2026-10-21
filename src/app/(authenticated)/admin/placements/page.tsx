@@ -13,6 +13,7 @@ import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-s
 import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-drive-deadline";
 import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-drive-duplicate";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { AdminRetentionInlinePreview } from "@/components/placements/admin-retention-inline-preview";
 
 const secondaryActionClass =
   "inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
@@ -116,6 +117,13 @@ export default async function AdminPlacementsPage({ searchParams }: {
           </div>
         )}
       </Disclosure>
+      <PlacementOperationsWorkspace
+        context={context}
+        collegeId={collegeId}
+        basePath="/admin/placements"
+        staleDays={staleDays}
+      />
+      <AdminRetentionInlinePreview key={collegeId} collegeId={collegeId} />
       <section aria-label="Student placement lookup" className="min-w-0 border-b border-border pb-4">
         <h2 className="mb-2 font-semibold text-foreground">Find a student's placement status</h2>
         <form method="get" action="/admin/placements/student-lookup" role="search" className="flex min-w-0 flex-col items-end gap-2 sm:flex-row">
@@ -125,14 +133,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
           </label>
           <Button type="submit" className="min-h-11 w-full shrink-0 sm:w-auto">Search students</Button>
         </form>
-        <Link href="/admin/placements/retention" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Review stale placement records (read only)</Link>
       </section>
-      <PlacementOperationsWorkspace
-        context={context}
-        collegeId={collegeId}
-        basePath="/admin/placements"
-        staleDays={staleDays}
-      />
       <Disclosure title="Platform-wide placement policy" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
         <p className="text-sm text-body">
           Clear the college selection in the header to edit GLOBAL placement policy. This view does not edit college policy.
