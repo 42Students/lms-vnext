@@ -105,7 +105,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    creationSprints.find(item=>item.status==="PLANNED");
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-link underline">Back to project</Link>
+    className="text-sm font-semibold text-link underline focus-visible:underline">Back to project</Link>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Board</h2>
    <div className="flex flex-wrap items-center gap-2">
@@ -119,7 +119,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
          membershipId:member.membershipId,displayName:member.displayName,
        }))}/>:null}
      <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9">
+       className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:underline">
       Review submission</Link>
    </div>
   </div>
@@ -248,7 +248,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <div key={item.id} className="mt-1 text-xs">
           <span>{item.status} · version {item.version}</span>
           {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!} target="_blank"
-            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open submission link</a>:null}
+            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Open submission link</a>:null}
         </div>
        )}
        {!taskSubmissions.some(s=>s.taskId===task.id)?<p className="text-xs text-muted-foreground">No submission yet.</p>:null}
