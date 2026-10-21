@@ -1,4 +1,7 @@
 import {Button} from "@/components/ui/button";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import {Banner} from "@/components/ui/banner";
+import type {AdminCompanyRow} from "@/modules/placements/admin-company-directory-model";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
@@ -33,16 +36,70 @@ export default async function SuperAdminCompaniesPage({
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
       action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
-  const context = await getCurrentRequestContext();
-  const [data, availableColleges] = await Promise.all([
-    listSuperAdminCompanyDirectory(context, parsed.data), listColleges(context),
-  ]);
+  const context=await getCurrentRequestContext();
   const view=params.view==="GLOBAL"?"GLOBAL":context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
-  const candidates = findPossibleCompanyDuplicates(data.rows);
+  const scoped=Boolean(context.adminScope?.collegeId||context.adminScope?.organizationId);
+  if(view==="GLOBAL"&&scoped)return <div className="min-w-0 space-y-5">
+   <PageHeader title="Companies" description="Global company catalogue"/>
+   <Tabs ariaLabel="Company directory tabs" renderPanel={false} value="GLOBAL"
+    items={[{value:"GLOBAL",label:"42's company list",href:"/admin/companies?view=GLOBAL"},
+     ...(context.adminScope?.collegeId?[{value:"COLLEGE",label:"This college's companies",href:"/admin/companies?view=COLLEGE"}]:[])]}/>
+   <Banner tone="warning" role="alert">
+    Clear the selected organization and college scope in the Super Admin header before opening the platform-wide company catalogue. This Global tab never shows a college-only list under a global heading.
+   </Banner>
+   {context.adminScope?.collegeId?<Link href="/admin/companies?view=COLLEGE" className="font-semibold text-primary-text underline">
+     View this college&apos;s companies</Link>:null}
+  </div>;
+  const [directoryResult,collegesResult]=await Promise.allSettled([
+   listSuperAdminCompanyDirectory(context,parsed.data),listColleges(context),
+  ]);
+  if(directoryResult.status==="rejected"){
+   const retryQuery=new URLSearchParams(Object.entries(params).filter((v):v is [string,string]=>typeof v[1]==="string"));
+   const retry="/admin/companies"+(retryQuery.size?"?"+retryQuery.toString():"");
+   return <div className="min-w-0 space-y-5">
+    <PageHeader title="Companies"/>
+    <ErrorState title="Couldn't load companies" description="The authorized company directory could not be loaded. Existing filters are preserved, but no stale company rows from another scope are shown."
+     action={<Link href={retry} className="font-semibold text-primary-text underline">Retry companies</Link>}/>
+   </div>;
+  }
+  const data=directoryResult.value;
+  const availableColleges=collegesResult.status==="fulfilled"?collegesResult.value:[];
+  const candidates=findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
+  const globalCompanies=new Map<string,{row:AdminCompanyRow;collegeIds:Set<string>;drives:number}>();
+  if(view==="GLOBAL"){
+   for(const row of data.rows){
+    const prior=globalCompanies.get(row.companyId);
+    if(prior){prior.collegeIds.add(row.collegeId);prior.drives+=row.driveCount??0;}
+    else globalCompanies.set(row.companyId,{row,collegeIds:new Set([row.collegeId]),drives:row.driveCount??0});
+   }
+  }
+  const globalRows=[...globalCompanies.values()];
+  const globalColumns:DataTableColumn<(typeof globalRows)[number]>[]=[
+   {key:"name",header:"Company",mobilePriority:"primary",cell:group=><span className="font-semibold">{group.row.name}</span>},
+   {key:"domains",header:"Domains",cell:group=><span className="break-all">{group.row.domains?.length?group.row.domains.join(", "):"Not registered"}</span>},
+   {key:"colleges",header:"Added by Colleges",className:"w-[90px] tabular-nums",cell:group=>group.row.companyCollegeCount??group.collegeIds.size},
+   {key:"drives",header:"Drives",className:"w-[80px] tabular-nums",cell:group=><span>{group.drives}<span className="sr-only"> in this result page</span></span>},
+   {key:"actions",header:"Actions",mobilePriority:"action",cell:group=><div className="flex min-w-0 flex-col items-start gap-2">
+    {group.row.companyStatus==="ARCHIVED"?<SuperAdminCompanyRestore id={group.row.companyId} name={group.row.name}/>:<>
+     <SuperAdminCompanyVerification companyId={group.row.companyId} name={group.row.name} verified={Boolean(group.row.verifiedAt)}/>
+     {group.row.updatedAt?<SuperAdminCompanyEdit company={{
+      id:group.row.companyId,name:group.row.name,website:group.row.website,
+      industry:group.row.industry??null,about:group.row.about??null,
+      logoPublicUrl:group.row.logoPublicUrl??null,updatedAt:group.row.updatedAt.toISOString(),
+     }}/>:null}
+     <Disclosure title="Domains · Other names" className="min-w-0">
+      <SuperAdminCompanyIdentities companyId={group.row.companyId} name={group.row.name}
+       domains={group.row.domains??[]} aliases={group.row.aliases??[]}/>
+     </Disclosure>
+    </>}
+    <Link href={"/admin/companies/"+encodeURIComponent(group.row.companyId)+"/drives"}
+      className="text-sm font-semibold text-primary-text underline">Drive history</Link>
+   </div>},
+  ];
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Companies"
-      description="Read-only employer relationships within the selected Super Admin organization or college scope. Sensitive CRM contacts and sharing defaults are not displayed." />
+      description={view==="GLOBAL"?"Distinct company identities in the verified platform view; relationship counts are explicitly page-local unless marked otherwise.":"College-owned employer relationships. Sensitive CRM contact information is not shown without a scoped need-to-know read."} />
     <Tabs ariaLabel="Company directory tabs" renderPanel={false} value={view}
       items={[
         {value:"GLOBAL",label:"42's company list",href:"/admin/companies?view=GLOBAL"},
@@ -50,9 +107,9 @@ export default async function SuperAdminCompaniesPage({
           ? [{value:"COLLEGE",label:"This college's companies",href:"/admin/companies?view=COLLEGE"}]
           : []),
       ]} />
-    {view==="GLOBAL"&&context.adminScope?.collegeId?<Alert tone="warning">
-      A college is currently selected. The results below remain restricted to that college. Clear the college scope in the header to view 42&apos;s global company catalogue.
-    </Alert>:null}
+    {collegesResult.status==="rejected"?<Banner tone="warning" role="alert">
+     College dropdown choices could not be loaded. Verified company rows remain visible; retry this directory to restore the dropdown.
+    </Banner>:null}
     {data.query.companyId ? <Alert tone="info">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
       <Link href="/admin/companies" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show all employers</Link>
