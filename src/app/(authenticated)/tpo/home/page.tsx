@@ -16,7 +16,6 @@ import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-reg
 import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-requests-count-service";
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
-import { InlineNotice } from "@/components/ui/inline-notice";
 import { ErrorState } from "@/components/ui/error-state";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -45,7 +44,10 @@ function TpoHomeChevronRight(){
  return <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" className="shrink-0 text-[var(--lms-muted-text)]" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>;
 }
 export const dynamic="force-dynamic";
-export default async function TpoHome(){
+export default async function TpoHome({searchParams}:{searchParams:Promise<{seasonId?:string|string[];team?:string|string[]}>}){
+ const routeQuery=await searchParams;
+ const requestedSeason=Array.isArray(routeQuery.seasonId)?routeQuery.seasonId[0]:routeQuery.seasonId;
+ const teamFilter=Array.isArray(routeQuery.team)?routeQuery.team[0]:routeQuery.team;
  const ctx=await getCurrentRequestContext();
  if(!hasTpoTooling(ctx)) return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Home" description="Your college has no TPO account on this sign-in, so placement work is run from the college placements area."/>
@@ -94,7 +96,18 @@ export default async function TpoHome(){
  const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
  const pendingRequests=pendingRequestCount!==null?pendingTpoRequestsAction(pendingRequestCount):null;
  const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
- const optionalDataUnavailable=[batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads,weekEvents].some(value=>value===null)||!crmReady||(crmReady&&crmCounts===null);
+ const unavailableSources=[
+  ...(!batchResult?.ready?["Batches"]:[]),
+  ...(pendingRequestCount===null?["Requests"]:[]),
+  ...(studentStats===null?["Students"]:[]),
+  ...(unreadMessages===null?["Recruiter messages"]:[]),
+  ...(collegeRules===null?["Placement rules"]:[]),
+  ...(placementTeam===null?["Team"]:[]),
+  ...(teamThreads===null?["Team conversations"]:[]),
+  ...(weekEvents===null?["This week"]:[]),
+  ...(!crmReady||crmCounts===null?["Recruiter leads"]:[]),
+ ];
+ const optionalDataUnavailable=unavailableSources.length>0;
  const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())
@@ -198,7 +211,17 @@ export default async function TpoHome(){
  <TpoHomeReturnRefresh/>
  <p className="text-sm font-semibold text-muted-foreground leading-[22px]">{greeting.date}</p>
  <PageHeader title={greeting.title}/>
- {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
+ {optionalDataUnavailable?<div role="alert" className="space-y-2 rounded-[10px] border border-warning bg-warning-subtle p-3 text-sm">
+   <p className="font-semibold">Some Home indicators could not be loaded.</p>
+   <p>This is a partial view, not a saved snapshot. Unavailable counts are shown as unknown, not zero. Other placement information is available.</p>
+   <p className="text-xs">Unable to refresh: {unavailableSources.join(", ")}.</p>
+   <Link href="/tpo/home?retry=1" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry missing Home indicators</Link>
+  </div>:null}
+ {requestedSeason?<div role="note" className="flex flex-wrap items-center gap-2 text-sm text-body">
+   <span>Season-specific Home links now open the college&apos;s placement season selector.</span>
+   <Link className="font-semibold text-link underline" href={"/tpo/placements?seasonId="+encodeURIComponent(requestedSeason)}>Open selected season</Link>
+  </div>:null}
+ {teamFilter==="false"?<div role="note" className="text-sm text-muted-foreground">Team summary was hidden in the legacy link. The separate Team workspace remains available from the placement work list.</div>:null}
  <p aria-live="polite" data-testid="home.need-line" className="text-sm leading-[22px] text-[var(--lms-body-text)]">{tpoHomeNeedsLine(Array.from({length:Math.max(homeNeeds.length,
    rows.filter(row=>row.needsAttention).length)},()=>({needsAttention:true})))}</p>
  <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
