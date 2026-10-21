@@ -9,11 +9,11 @@ import { Dialog } from "@/components/ui/dialog";
 import { DataTable } from "@/components/ui/data-table";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 import {FacultyLessonVideoManager} from "./faculty-lesson-video-manager";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
-type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
+type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;contentType:Kind;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
 type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
 type Delivery={deliveryId:string;offeringId:string;sectionName:string;sectionCode:string};
@@ -52,7 +52,7 @@ function initialLiveSchedule(){
 }
 export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,existingPage=1,existingFilters,materialsEnabled=false}:{
  kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
- existingPage?:number;existingFilters?:{courseId:string;lessonId:string;sectionId:string;search:string};
+ existingPage?:number;existingFilters?:{courseId:string;lessonId:string;sectionId:string;search:string;allKindsForReorder?:boolean};
  materialsEnabled?:boolean;
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(kind!=="RESOURCE"&&lessons.length>0);
@@ -77,6 +77,37 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [videoMode,setVideoMode]=useState<"UPLOAD"|"YOUTUBE">("UPLOAD");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
+ const [allKindsForReorder,setAllKindsForReorder]=useState(
+  existingFilters?.allKindsForReorder??false);
+ const [remoteExisting,setRemoteExisting]=useState<{
+  items:Existing[];existingPage:number;existingTruncated:boolean;
+ }|null>(null);
+ const [existingBusy,setExistingBusy]=useState(false);
+ const [existingError,setExistingError]=useState("");
+ const scopedRequest=useRef<AbortController|null>(null);
+ useEffect(()=>()=>scopedRequest.current?.abort(),[]);
+ useEffect(()=>setRemoteExisting(null),[existing,existingPage,existingTruncated,kind]);
+ const listRows=remoteExisting?.items??existing;
+ const listPage=remoteExisting?.existingPage??existingPage;
+ const listMore=remoteExisting?.existingTruncated??existingTruncated;
+ function loadExisting(params:URLSearchParams){
+  scopedRequest.current?.abort();
+  const controller=new AbortController();scopedRequest.current=controller;
+  setExistingBusy(true);setExistingError("");
+  const url=new URLSearchParams(params);url.set("kind",kind);
+  void fetch("/api/courses/college-content-authoring?"+url.toString(),{
+   credentials:"same-origin",cache:"no-store",signal:controller.signal,
+  }).then(async response=>{
+   if(!response.ok)throw Error("Could not refresh the scoped content list.");
+   return response.json() as Promise<{
+    items:Existing[];existingPage:number;existingTruncated:boolean;
+   }>;
+  }).then(data=>{if(!controller.signal.aborted)setRemoteExisting(data);})
+    .catch(()=>{if(!controller.signal.aborted)setExistingError(
+      "Could not load this content page. Previous items are still shown; retry.");})
+    .finally(()=>{if(!controller.signal.aborted)setExistingBusy(false);});
+ }
+
  const [listCourseId,setListCourseId]=useState(existingFilters?.courseId??"");
  const [listLessonId,setListLessonId]=useState(existingFilters?.lessonId??"");
  const [listQuery,setListQuery]=useState(existingFilters?.search??"");
@@ -91,10 +122,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const authorCourseId=selectedLesson?.offeringId??"";
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
  const listOfferingId=lessons.find(lesson=>lesson.id===listLessonId)?.offeringId??
-   existing.find(item=>item.lessonId===listLessonId)?.offeringId;
+   listRows.find(item=>item.lessonId===listLessonId)?.offeringId;
  const listSections=deliveries.filter(row=>(!listCourseId||row.offeringId===listCourseId)&&
   (!listLessonId||listOfferingId===row.offeringId));
- const matching=existing.filter(item=>(!listCourseId||item.offeringId===listCourseId)&&(!listQuery.trim()||[item.title,item.lessonName,item.courseCode].some(value=>
+ const matching=listRows.filter(item=>(!listCourseId||item.offeringId===listCourseId)&&(!listQuery.trim()||[item.title,item.lessonName,item.courseCode].some(value=>
   value.toLocaleLowerCase().includes(listQuery.trim().toLocaleLowerCase())))&&
   (!listLessonId||item.lessonId===listLessonId)&&
   (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
@@ -104,12 +135,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   const current:Record<string,string>={
    existingCourse:listCourseId,existingLesson:listLessonId,
    existingSection:listSectionId,existingSearch:listQuery.trim(),
+   existingOrderAll:allKindsForReorder?"true":"",
   };
   for(const [key,value] of Object.entries({...current,...changes})){
    if(value)params.set(key,value);else params.delete(key);
   }
   if(!("existingPage" in changes))params.delete("existingPage");
-  router.replace(window.location.pathname+(params.size?"?"+params.toString():""));
+  loadExisting(params);
+  router.replace(window.location.pathname+(params.size?"?"+params.toString():""),{scroll:false});
  }
  const text=kind==="YOUTUBE"?"Add a video":kind==="RESOURCE"?"Add Resource":"Schedule a live class";
  const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents});
@@ -199,7 +232,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    }
    setMessage(kind==="RESOURCE"?(editing?"Resource updated":"Resource created"):
     editing?"Lesson content updated successfully!":"Content created.");
-   setOpen(false);router.refresh();
+   setOpen(false);
+   loadExisting(new URLSearchParams(window.location.search));router.refresh();
   }catch(cause){setError((editing?"Failed to update content: ":"Failed to create content: ")+
    (cause instanceof Error?cause.message:"Unable to save content"));}
   finally{setBusy(false);}
@@ -216,7 +250,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    });
    if(!response.ok){const result=await response.json().catch(()=>null);
     throw Error(result?.error??"Unable to save Order.");}
-   setMessage("Order saved.");router.refresh();
+   setMessage("Order saved.");
+   loadExisting(new URLSearchParams(window.location.search));router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save Order.");}
   finally{setBusy(false);}
  }
@@ -240,7 +275,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    if(editing===item.id){setOpen(false);setEditing(null);}
    setMessage(action==="PUBLISH"?"Content published.":kind==="RESOURCE"?
     "Resource deleted (archived; files retained).":"Lesson content deleted successfully! (archived; files retained)");
-   router.refresh();
+   loadExisting(new URLSearchParams(window.location.search));router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content");}
   finally{setBusy(false);}
  }
@@ -343,10 +378,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
     onClick={fresh} className="w-full md:w-auto">{text}</Button>
   </div>
-  {!lessons.length&&<p role="status" className="text-sm leading-[22px]">Create a course offering, learning path and lesson before adding content.
-    <Link href="/college/courses" className="ml-2 font-semibold text-link underline">Go to Courses</Link>
-  </p>}
-  {open && (kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
+  {!lessons.length&&<div role="status" className="space-y-2 text-sm leading-[22px]">
+    <p>Create a course offering, learning path and lesson before adding content.</p>
+    <p>Start from Course, then choose an active Offering and add a Lesson. The content editor becomes available as soon as a lesson exists.</p>
+    <Link href="/college/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Go to Courses</Link>
+    <button type="button" onClick={()=>router.refresh()} className="ml-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course and lesson options</button>
+  </div>}
+  {open ? kind==="RESOURCE"?
     <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
       title={editing?"Edit Content: "+title:"Add Resource"}
       description="Select a Course and Lesson to manage the resource."
@@ -418,14 +456,27 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </div>
    <LessonResourceMaterialsControl contentId={newResourceId} deliveryId={deliveryId||null} editable/>
   </section>:null}
-  {(existing.length>0||existingPage>1||existingTruncated||Boolean(existingFilters?.search))&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
+  {(listRows.length>0||listPage>1||listMore||Boolean(existingFilters?.search))&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
    {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground leading-5">
     Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
     You can still edit Resource notes and its saved HTTPS link.
    </p>:null}
-   {existingTruncated?<p role="status" className="text-xs text-muted-foreground leading-5">
-    Showing page {existingPage} of saved items. More content is available through the next page.
+   {listMore?<p role="status" className="text-xs text-muted-foreground leading-5">
+    Showing page {listPage} of saved items. More content is available through the next page.
    </p>:null}
+   <label className="flex min-h-11 items-center gap-2 text-sm">
+    <input type="checkbox" checked={allKindsForReorder} onChange={event=>{
+     const enabled=event.target.checked;setAllKindsForReorder(enabled);
+     applyExistingFilters({existingOrderAll:enabled?"true":""});
+    }}/>
+    Include all types when reordering this Lesson (other types cannot be edited here)
+   </label>
+   <button type="button" disabled={existingBusy} onClick={()=>
+     loadExisting(new URLSearchParams(window.location.search))}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+     {existingBusy?"Refreshing…":"Retry / Refresh content list"}
+   </button>
+   {existingError?<p role="alert" className="text-sm text-error">{existingError}</p>:null}
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search Existing Content
     <Input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}
      onBlur={()=>applyExistingFilters({existingSearch:listQuery.trim()})}
@@ -463,13 +514,13 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Showing shared offering items and content specific to the selected Section.
     The Order field below is the authored default order, not a Section-specific override.
    </p>:null}
-   <p className="text-xs text-muted-foreground leading-5">{matching.length} matching content items on page {existingPage}{existingTruncated?" · more available":""}.</p>
-   <div role="group" className="flex flex-wrap items-center gap-2" aria-label="Existing content pagination">
-    <Button type="button" variant="secondary" size="sm" disabled={existingPage<=1}
-     onClick={()=>applyExistingFilters({existingPage:String(existingPage-1)})}>Previous page</Button>
-    <span className="text-xs text-muted-foreground">Page {existingPage}</span>
-    <Button type="button" variant="secondary" size="sm" disabled={!existingTruncated}
-     onClick={()=>applyExistingFilters({existingPage:String(existingPage+1)})}>Next page</Button>
+   <p className="text-xs text-muted-foreground leading-5">{matching.length} matching content items on page {listPage}{listMore?" · more available":""}.</p>
+   <div className="flex flex-wrap items-center gap-2" aria-label="Existing content pagination">
+    <Button type="button" variant="secondary" size="sm" disabled={existingBusy||listPage<=1}
+     onClick={()=>applyExistingFilters({existingPage:String(listPage-1)})}>Previous page</Button>
+    <span className="text-xs text-muted-foreground">Page {listPage}</span>
+    <Button type="button" variant="secondary" size="sm" disabled={existingBusy||!listMore}
+     onClick={()=>applyExistingFilters({existingPage:String(listPage+1)})}>Next page</Button>
    </div>
    {matching.length===0?<p className="text-xs text-muted-foreground leading-5">No saved items match this Lesson and Section.</p>:null}
    <p id="content-order-help" className="sr-only">Use the arrow keys to adjust a numeric Order input, then select Save order to apply it.</p>
@@ -478,7 +529,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      getRowKey={item=>item.id} rows={matching}
      columns={[
       {key:"title",header:"Title",mobilePriority:"primary",cell:item=>item.title},
-      {key:"type",header:"Type",cell:()=>kind==="YOUTUBE"?"YouTube":kind==="RESOURCE"?"Resource":"Live class"},
+      {key:"type",header:"Type",cell:item=>item.contentType==="YOUTUBE"?"YouTube":item.contentType==="RESOURCE"?"Resource":item.contentType==="VIDEO"?"Video":item.contentType==="LIVE_CLASS"?"Live class":item.contentType},
       {key:"order",header:"Order",cell:item=>{
        return <div className="flex items-center gap-1">
         <Input type="number" aria-describedby="content-order-help"
@@ -497,17 +548,17 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        </a>:"—"},
       {key:"actions",header:"Action",mobilePriority:"action",cell:item=>
        <div className="flex flex-wrap gap-2">
-        {kind==="RESOURCE"&&materialsEnabled?<Button size="sm" type="button" variant="ghost"
+        {kind==="RESOURCE"&&materialsEnabled&&item.contentType===kind?<Button size="sm" type="button" variant="ghost"
          onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</Button>:null}
-        <Button size="sm" type="button" variant="ghost" disabled={busy} onClick={()=>select(item)}>Edit</Button>
+        <Button size="sm" type="button" variant="ghost" disabled={busy||item.contentType!==kind} onClick={()=>select(item)}>Edit</Button>
         {item.status==="DRAFT"?<Button size="sm" type="button" variant="primary"
-         disabled={busy} onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>:null}
-        <Button size="sm" type="button" variant="danger" disabled={busy}
+         disabled={busy||item.contentType!==kind} onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>:null}
+        <Button size="sm" type="button" variant="danger" disabled={busy||item.contentType!==kind}
          onClick={()=>void transition(item,"ARCHIVE")}>Delete</Button>
        </div>},
      ]}/>
    {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId? <LessonResourceMaterialsControl
-      contentId={openMaterialsId} deliveryId={existing.find(item=>item.id===openMaterialsId)?.deliveryId??null} editable/>:null}
+      contentId={openMaterialsId} deliveryId={listRows.find(item=>item.id===openMaterialsId)?.deliveryId??null} editable/>:null}
   </div></details>}
   {error&&<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>}
   {message&&<p role="status" className="text-sm leading-[22px]">{message}</p>}
