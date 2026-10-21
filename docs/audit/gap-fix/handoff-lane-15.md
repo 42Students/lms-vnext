@@ -102,3 +102,6 @@
 
 - Lesson importer/course content owner: G2-13-013-054/G2-18-002-120. Legacy lesson id, course id, active/enabled/isDeleted and LONG sequence/version require separate UUID path ancestry, visibility, archive and bounded integer mappings. Preflight course-wide casefold names & sequence clashes across learning paths; don't edit immutable 0004 or silently discard duplicates.
 - Saved job service/importer: G2-19-012-048/G2-3-019-042. Composite same-college FKs added in 0169 but no SQL run. For later historic import resolve learner/course college ownership and job UUID, preserve savedAt source timezone, quarantine cross-tenant duplicates before migration.
+
+- DB07 project meeting audit owner: G2-19-017-048. Do not export `project-audit-staged.ts` until its migration, tenant FK, handlers and producer land together; existing project_task_comments and project_delivery_events are live canonical tables. Bug tracker G2-3-021-041 requires audited integer ID crosswalk only for approved historic import; keep RESTRICT immutable activity.
+- Auth registration owner: G2-20-018-023/036. Existing OTP challenges require user UUID; if pre-registration flow required, implement separate expiring HMAC-only proof intent with rate limiting and account binding after verification. Do NOT store plaintext legacy learner OTP or create learnerId=0/placeholder fake users.
