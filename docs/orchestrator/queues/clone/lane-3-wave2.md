@@ -11,13 +11,13 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_learner-course-workspace.tsx.part1of3.md` (edit src/components/courses/learner-course-workspace.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_learner-course-workspace.tsx.part2of3.md` (edit src/components/courses/learner-course-workspace.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_learner-course-workspace.tsx.part3of3.md` (edit src/components/courses/learner-course-workspace.tsx; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_lessons_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/lessons/page.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_lessons_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/lessons/page.tsx; 30 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-course-overview.tsx.part1of2.md` (edit src/components/courses/admin-course-overview.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-course-overview.tsx.part2of2.md` (edit src/components/courses/admin-course-overview.tsx; 23 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_learner-course-workspace.tsx.part1of3.md` (edit src/components/courses/learner-course-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_learner-course-workspace.tsx.part2of3.md` (edit src/components/courses/learner-course-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_learner-course-workspace.tsx.part3of3.md` (edit src/components/courses/learner-course-workspace.tsx; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_lessons_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/lessons/page.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_lessons_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/lessons/page.tsx; 30 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-course-overview.tsx.part1of2.md` (edit src/components/courses/admin-course-overview.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-course-overview.tsx.part2of2.md` (edit src/components/courses/admin-course-overview.tsx; 23 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_placements_jobs_jobId_applications_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_placements_jobs_jobId_applications_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_faculty-assignment-review.tsx.part1of2.md` (edit src/components/courses/faculty-assignment-review.tsx; 40 findings; best P2)
