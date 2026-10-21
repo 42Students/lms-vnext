@@ -24,7 +24,7 @@ const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?new Intl.
 /** Convert an IANA wall time without silently accepting nonexistent or duplicated
  * local clock instants across daylight-saving transitions. No fixed offsets. */
 function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){
- if(!/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}$/.test(local))
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))
   throw Error("Enter date and time");
  try{new Intl.DateTimeFormat("en-US",{timeZone:zone}).format(new Date());}
  catch{throw Error("Enter a valid IANA Time Zone");}
@@ -248,8 +248,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        }catch{setError("Fix the Start and End dates before changing Time Zone.");}
       }}
       className="mt-1">
-      <option value="Asia/Kolkata">India Standard Time (IST)</option>
-      <option value="UTC">UTC</option>
+      {MEETING_ZONES.map(zone=><option key={zone} value={zone}>{zone}</option>)}
      </Select>
      <span className="mt-1 block text-xs text-muted-foreground">Changing Time Zone preserves the scheduled instant and converts the displayed dates.</span>
     </label>
