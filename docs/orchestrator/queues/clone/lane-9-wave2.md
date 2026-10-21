@@ -43,7 +43,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_learner-playback-settings.ts.md` (edit src/modules/courses/learner-playback-settings.ts; 20 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_college-assessment-aggregate-service.ts.md` (edit src/modules/courses/college-assessment-aggregate-service.ts; 19 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_verification_VerificationWorkspace.tsx.md` (edit src/components/verification/VerificationWorkspace.tsx; 18 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_organizations_service.ts.md` (edit src/modules/organizations/service.ts; 16 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_organizations_service.ts.md` (edit src/modules/organizations/service.ts; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-learning-directory.tsx.md` (edit src/components/courses/college-learning-directory.tsx; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_college-learning-directory-service.ts.md` (edit src/modules/courses/college-learning-directory-service.ts; 15 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-quiz-attempts.tsx.md` (edit src/components/courses/college-quiz-attempts.tsx; 14 findings; best P2)
