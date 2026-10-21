@@ -155,7 +155,7 @@ function newItem(section: CollectionKey) {
     item.currentlyWorking = false;
   }
   if (section === "languages") item.proficiency = "Intermediate";
-  if (section === "education") {item.examDetails = {};item.isCurrentlyPursuing = false;}
+  if (section === "education") {item.examDetails = {};item.isCurrentlyPursuing = false;item.isRecentEducation = false;}
   if (section === "metadata") item.type = "text";
   return item;
 }
@@ -203,11 +203,13 @@ export function LearnerProfileWorkspace(props: {
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
   const [itemBaseline,setItemBaseline]=useState<Record<string,unknown>>({});
   const [educationError,setEducationError] = useState<string|null>(null);
+  const [refreshError,setRefreshError] = useState(false);
   const [showcaseDraft,setShowcaseDraft]=useState<(LearnerShowcaseDetails & {id: string | null;kind:LearnerShowcaseKind})|null>(null);
   const [showcaseError,setShowcaseError]=useState<string|null>(null);
   const [showcaseBaseline,setShowcaseBaseline]=useState<string|null>(null);
   const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
+  const [rolePrefsInput,setRolePrefsInput]=useState(props.initialDocument.jobPreferences.rolePreferences.join("\n"));
   const {pending,run:guardedRun}=useGuardedAction();
 
   const checklist = useMemo(
@@ -255,14 +257,15 @@ export function LearnerProfileWorkspace(props: {
     const dirty=(detailsOpen&&JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline))||
       (contactOpen&&JSON.stringify(contactDraft)!==JSON.stringify(document.contacts))||
       (collection!==null&&JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline))||
-      (jobPrefsEditing&&JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences))||
+      (jobPrefsEditing&&(JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences)||
+        rolePrefsInput!==document.jobPreferences.rolePreferences.join("\n")))||
       (showcaseDraft!==null&&JSON.stringify(showcaseDraft)!==showcaseBaseline);
     if(!dirty)return;
     const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
     window.addEventListener("beforeunload",warn);
     return ()=>window.removeEventListener("beforeunload",warn);
   },[detailsOpen,detailsDraft,detailsBaseline,contactOpen,contactDraft,
-    collection,itemDraft,itemBaseline,jobPrefsEditing,jobPrefsDraft,document.contacts,document.jobPreferences,showcaseDraft,showcaseBaseline]);
+    collection,itemDraft,itemBaseline,jobPrefsEditing,jobPrefsDraft,rolePrefsInput,document.contacts,document.jobPreferences,showcaseDraft,showcaseBaseline]);
 
   useEffect(() => {
     if (!props.initialSection) return;
@@ -282,7 +285,8 @@ export function LearnerProfileWorkspace(props: {
     return ()=>window.cancelAnimationFrame(frame);
   },[detailsOpen,props.initialSection]);
 
-  function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document) {
+  function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document,
+    successTitle: "Added successfully" | "Updated successfully" | "Deleted successfully" = "Updated successfully") {
     void guardedRun(async () => {
       try {
         const payload=await apiFetch<{profile:{profileDocument:LearnerProfileDocument}}>("/api/profile/me",{
@@ -293,7 +297,7 @@ export function LearnerProfileWorkspace(props: {
           throw new Error("Could not confirm the saved profile. Reload before trying again.");
         setDocument(payload.profile.profileDocument);
         onDone?.();
-        showToast({ tone: "success", title: "Profile updated" });
+        showToast({ tone: "success", title: successTitle });
       } catch(error) {
         if(error instanceof FriendlyFetchError && error.status===409)router.refresh();
         const message=error instanceof FriendlyFetchError && error.status===409
@@ -337,7 +341,8 @@ export function LearnerProfileWorkspace(props: {
 
   async function closeJobPreferences(){
     if(pending)return;
-    if(JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences)&&
+    if((JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences)||
+      rolePrefsInput!==document.jobPreferences.rolePreferences.join("\n"))&&
        !(await askConfirm("Discard job preference changes?")))return;
     setJobPrefsEditing(false);
   }
@@ -379,7 +384,7 @@ export function LearnerProfileWorkspace(props: {
       setDocument(current => ({ ...current, contacts: savedContacts }));
       setDetailsDraft(current => ({ ...current, contacts: savedContacts }));
       setContactOpen(false);
-      showToast({ tone: "success", title: "Contact details saved" });
+      showToast({ tone: "success", title: "Saved" });
     } catch (error) {
       if(error instanceof FriendlyFetchError && error.status===409)router.refresh();
       const message=error instanceof FriendlyFetchError
@@ -399,6 +404,10 @@ export function LearnerProfileWorkspace(props: {
     const initial = item ? {...item} : newItem(section);
     setCollection(section);
     setEditingId(item ? String(item.id) : null);
+    if (section === "education" && !item && document.education.length === 0) {
+      initial.isRecentEducation = true;
+    }
+    setEducationError(null);
     setItemDraft(initial);
     setItemBaseline(initial);
   }
@@ -440,19 +449,21 @@ export function LearnerProfileWorkspace(props: {
     const next=id
       ?document.metadata.map(item=>item.id===id?record:item)
       :[...document.metadata,record];
-    saveDocument({...document,metadata:next},()=>{setShowcaseDraft(null);setShowcaseError(null);});
+    saveDocument({...document,metadata:next},()=>{setShowcaseDraft(null);setShowcaseError(null);},
+      document,id?"Updated successfully":"Added successfully");
   }
 
   async function deleteShowcase(kind:LearnerShowcaseKind,id:string) {
     if(pending||!(await askConfirm(kind==="award"?"Delete this award?":"Delete this publication?")))return;
     const next=document.metadata.filter(item=>item.id!==id);
-    saveDocument({...document,metadata:next});
+    saveDocument({...document,metadata:next},undefined,document,"Deleted successfully");
   }
 
   function saveOwnedSection(
     section: "education" | "skills" | "projects",
     items: LearnerProfileDocument[typeof section],
     onDone?: () => void,
+    successTitle: "Added" | "Saved" | "Removed" = "Saved",
   ) {
     void guardedRun(async () => {
       try {
@@ -464,7 +475,7 @@ export function LearnerProfileWorkspace(props: {
           throw new Error("Could not save this section; other profile details were not changed.");
         setDocument(current => ({ ...current, [section]: payload.items }));
         onDone?.();
-        showToast({ tone:"success",title:"Profile section saved" });
+        showToast({ tone:"success",title:successTitle });
       } catch (error) {
         if(error instanceof FriendlyFetchError && error.status===409)router.refresh();
         const message=error instanceof FriendlyFetchError && error.status===409
@@ -478,6 +489,11 @@ export function LearnerProfileWorkspace(props: {
   function saveCollection() {
     if (!collection) return;
     if(collection==="education"){
+      if (Boolean(itemDraft.isRecentEducation) && document.education.some(entry =>
+        entry.id !== editingId && entry.isRecentEducation)) {
+        setEducationError("Select only one recent education");
+        return;
+      }
       const issue=learnerEducationValidationProblem({
         educationType:String(itemDraft.educationType??""),
         institution:String(itemDraft.institution??""),
@@ -507,9 +523,11 @@ export function LearnerProfileWorkspace(props: {
 
     const finished = () => { setCollection(null); setEditingId(null); setItemDraft({}); };
     if (collection === "education" || collection === "skills" || collection === "projects") {
-      saveOwnedSection(collection, nextItems as LearnerProfileDocument[typeof collection], finished);
+      saveOwnedSection(collection, nextItems as LearnerProfileDocument[typeof collection], finished,
+        editingId ? "Saved" : "Added");
     } else {
-      saveDocument({ ...document, [collection]: nextItems } as LearnerProfileDocument, finished);
+      saveDocument({ ...document, [collection]: nextItems } as LearnerProfileDocument,
+        finished, document, editingId ? "Updated successfully" : "Added successfully");
     }
   }
 
@@ -521,9 +539,10 @@ export function LearnerProfileWorkspace(props: {
     if(!confirmation || !(await askConfirm(confirmation)))return;
     const items = current.filter((item) => String(item.id) !== id);
     if (section === "education" || section === "skills" || section === "projects") {
-      saveOwnedSection(section, items as LearnerProfileDocument[typeof section]);
+      saveOwnedSection(section, items as LearnerProfileDocument[typeof section], undefined, "Removed");
     } else {
-      saveDocument({ ...document, [section]: items } as LearnerProfileDocument);
+      saveDocument({ ...document, [section]: items } as LearnerProfileDocument,
+        undefined, document, "Deleted successfully");
     }
   }
 
@@ -544,10 +563,21 @@ export function LearnerProfileWorkspace(props: {
       <div className="flex flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-between">
         <p className="min-w-0 text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
         <Button className="w-full sm:w-auto" size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
-          onClick={()=>{lastRefreshAt.current=Date.now();router.refresh();}}>
+          onClick={async ()=>{
+            lastRefreshAt.current=Date.now();
+            try {
+              await apiFetch<unknown>("/api/profile/me");
+              setRefreshError(false);
+              router.refresh();
+            } catch {setRefreshError(true);}
+          }}>
           Refresh saved profile
         </Button>
       </div>
+      {refreshError ? <div role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
+        <p className="font-semibold">Couldn't refresh profile</p>
+        <p>Showing the last profile we loaded.</p>
+      </div> : null}
       <section id="profile-introduction" className="scroll-mt-24 border-b border-border pb-5">
         <div className="flex flex-col gap-5 md:flex-row md:items-center">
           <div aria-hidden="true" className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[50%] bg-primary-subtle text-2xl font-semibold text-primary-text">{initials(props.displayName)}</div>
@@ -657,10 +687,11 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Account email" value={props.primaryEmail} />
             <Value label="Contact email" value={document.contacts.contactEmail} />
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">Primary mobile is your verified sign-in number. To change it, contact your college administrator; you can update your alternate mobile here.</p>
         </Card>
         <Card id="job-preferences" title="Job Preferences"
           action={<Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
-            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setJobPrefsEditing(true);}}>
+            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setRolePrefsInput(document.jobPreferences.rolePreferences.join("\n"));setJobPrefsEditing(true);}}>
             Edit preferences
           </Button>}>
           <div className="grid gap-3 md:grid-cols-2">
@@ -923,17 +954,19 @@ export function LearnerProfileWorkspace(props: {
         title="Edit Job Preferences"
         footer={<>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:{...jobPrefsDraft,
+              rolePreferences:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).filter(Boolean)}},
+              ()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
         </>}>
         <div className="grid gap-4">
           <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Role Preference (multiple)
-            <Input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
-              placeholder="e.g. Software Engineer, Data Analyst"
-              onChange={event=>setJobPrefsDraft(current=>({...current,
-                rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
+            <Textarea value={rolePrefsInput} maxLength={800}
+              placeholder={"Software Engineer\nData Analyst"}
+              onChange={event=>setRolePrefsInput(event.target.value)}
               className="mt-1 min-h-11 md:min-h-9 w-full"/>
+            <span className="mt-1 block text-xs font-normal text-muted-foreground">One role per line; commas inside role titles are preserved.</span>
           </label>
           <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Specific Role Preference
             <Input className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.specificRolePreference} maxLength={200}
@@ -1001,6 +1034,11 @@ export function LearnerProfileWorkspace(props: {
                   ...(event.target.checked?{endYear:""}:{}),
                 }))}/>
               Currently Pursuing
+            </label>:null}
+            {collection==="education"?<label className="flex items-center gap-2 text-sm text-body md:col-span-2">
+              <Checkbox checked={Boolean(itemDraft.isRecentEducation)}
+                onChange={event=>{setEducationError(null);setItemDraft(current=>({...current,isRecentEducation:event.target.checked}));}}/>
+              Recent / primary education
             </label>:null}
             {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
               <fieldset className="grid gap-3 rounded-[var(--lms-control-radius,9px)] border border-border p-3 md:col-span-2 md:grid-cols-2">
