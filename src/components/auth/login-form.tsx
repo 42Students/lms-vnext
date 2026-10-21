@@ -158,10 +158,12 @@ export function LoginForm({
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [recruiterEntry, setRecruiterEntry] = useState(false);
+  const [retiredHandoff, setRetiredHandoff] = useState(false);
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
     setRecruiterEntry(query.get("recruiter") === "email");
     if (query.get("auth") === "handoff-retired") {
+      setRetiredHandoff(true);
       // Legacy handoff target labels are unauthenticated local hints. Never
       // reuse them after retiring cross-host raw-token handoff.
       window.localStorage.removeItem("lms_handoff_target_label");
@@ -382,6 +384,9 @@ export function LoginForm({
           recruiterEntry ? "Recruiter? Sign in with email." : "Use your registered email address."}
       </p>
 
+      {retiredHandoff ? <div role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-neutral-50)] p-3 text-sm leading-5 text-body">
+        For security, the previous cross-site sign-in link no longer works. Sign in again on this college's site using a fresh verification code. Your selected page will open after successful sign-in.
+      </div> : null}
       {error ? (
         <div
           role="alert" ref={errorSummaryRef} tabIndex={-1}

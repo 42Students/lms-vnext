@@ -6,6 +6,9 @@ import { safeReturnTo } from "@/lib/return-to";
  * Never read, validate, log, set cookies from, or forward old handoff tokens.
  * The target host must establish its own OTP session. Only a local safe
  * return path may survive this first-party reauthentication boundary.
+ * All target-host sessions are established with a fresh OTP; do not attempt
+ * cross-parent-domain cookie redemption or persist a refresh token. The
+ * destination login view displays a visible re-authentication explanation.
  */
 export default async function RetiredHandoffPage({
   searchParams,
