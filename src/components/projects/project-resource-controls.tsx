@@ -18,12 +18,13 @@ import { projectMutation } from "./project-api";
 
 type CanonicalResourceType="FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
 type LegacyResourceType="PDF"|"DOC"|"PPT"|"VIDEO";
-type ResourceTypeChoice=CanonicalResourceType|LegacyResourceType;
+type ResourceTypeChoice=CanonicalResourceType|LegacyResourceType|"";
 const legacyTypes:readonly LegacyResourceType[]=["PDF","DOC","PPT","VIDEO"];
 function isLegacy(value:ResourceTypeChoice):value is LegacyResourceType{
  return legacyTypes.some(kind=>kind===value);
 }
 function canonicalResourceType(value:ResourceTypeChoice):CanonicalResourceType{
+ if(!value)return "LINK";
  if(value==="PDF")return "FILE";
  if(value==="DOC"||value==="PPT")return "DOCUMENT";
  if(value==="VIDEO")return "LINK";
@@ -41,7 +42,7 @@ type ResourceMetadata={
   pinned:boolean;accessNotes:string;sprintId:string;taskId:string;
 };
 const defaultMetadata:ResourceMetadata={
-  resourceType:"LINK",status:"ACTIVE",pinned:false,accessNotes:"",sprintId:"",taskId:"",
+  resourceType:"",status:"ACTIVE",pinned:false,accessNotes:"",sprintId:"",taskId:"",
 };
 type RelatedOption={id:string;label:string};
 type Resource = {
@@ -119,9 +120,9 @@ function ResourceForm({
           Description
         </span>
         <Textarea
-          maxLength={4000}
+          rows={2} maxLength={4000}
           value={description}
-          placeholder="Use a description when there is no external link."
+          placeholder="What this resource is for"
           onChange={(event) =>
             onDescription(event.target.value)
           }
@@ -134,6 +135,7 @@ function ResourceForm({
           <Select value={metadata.resourceType}
             onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
             className="w-full">
+            <option value="">Select type (defaults to Link)</option>
             {(["LINK","PDF","DOC","PPT","VIDEO","FILE","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
               <option key={value} value={value}>{["DOC","PPT","PDF"].includes(value)?value:value[0]+value.slice(1).toLowerCase()}</option>)}
           </Select>
@@ -167,7 +169,7 @@ function ResourceForm({
             onChange={event=>onMetadata({...metadata,pinned:event.target.checked})}/> Pinned
         </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access notes
-          <Textarea maxLength={4000} placeholder="e.g. Requires college email to view" value={metadata.accessNotes}
+          <Input maxLength={4000} placeholder="e.g. Requires college email to view" value={metadata.accessNotes}
             onChange={event=>onMetadata({...metadata,accessNotes:event.target.value})}/>
         </label>
         </div>
@@ -353,7 +355,7 @@ export function CreateProjectResourceControl({
       </Dialog>
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard this resource?"
-        description="You have unsaved project changes. Leave this page and discard them?"
+        description="You have unsaved changes. Leave without saving them?"
         confirmLabel="Discard changes" pending={pending}
         onConfirm={()=>{setDiscardOpen(false);setOpen(false);
           setTitle("");setDescription("");setUrl("");setRequired(false);setVisibility("TEAM");setMetadata(defaultMetadata);}}/>
@@ -584,7 +586,7 @@ export function ProjectResourceActions({
 
       <ConfirmDialog open={editDiscardOpen} onOpenChange={setEditDiscardOpen}
         title="Discard resource changes?"
-        description="You have unsaved project changes. Leave this page and discard them?"
+        description="You have unsaved changes. Leave without saving them?"
         confirmLabel="Discard changes" pending={pending}
         onConfirm={()=>{setEditDiscardOpen(false);setEditOpen(false);}}/>
       <ConfirmDialog

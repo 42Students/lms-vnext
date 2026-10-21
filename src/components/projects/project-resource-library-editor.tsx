@@ -48,6 +48,8 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
  const baseline=()=>[...resources].sort((a,b)=>a.sequence-b.sequence).map(fromResource);
  const [open,setOpen]=useState(false);
  const [draft,setDraft]=useState<Draft[]>(baseline);
+ const [search,setSearch]=useState("");
+ const [expanded,setExpanded]=useState<string[]>([]);
  const [removedNew,setRemovedNew]=useState<{row:Draft;index:number}[]>([]);
  const [pending,setPending]=useState(false);
  const [error,setError]=useState("");
@@ -57,6 +59,12 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
   removedNew.length>0;
  const overLimit=initial.length>500;
  const shown=draft.filter(row=>row.status!=="ARCHIVED");
+ const large=shown.length>12;
+ const matching=shown.map((row,index)=>({row,index}))
+   .filter(({row,index})=>!search.trim()||
+    [row.title,row.key,row.legacyKind,row.url,row.description,row.accessNotes,
+      "Resource "+(index+1)].some(value=>
+      (value??"").toLowerCase().includes(search.trim().toLowerCase())));
  const newlyArchived=draft.filter(row=>row.id&&row.status==="ARCHIVED"&&
   initial.some(source=>source.id===row.id&&source.status!=="ARCHIVED"));
  const invalid=shown.some(row=>!row.title.trim()||!row.key.trim()||
@@ -65,7 +73,8 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
   (row.accessNotes?.length??0)>4000)||
   new Set(draft.map(row=>row.key.toLowerCase())).size!==draft.length;
  function reset(){
-  setDraft(baseline());setRemovedNew([]);setOpen(false);setError("");
+  setDraft(baseline());setRemovedNew([]);setSearch("");setExpanded([]);
+  setOpen(false);setError("");
  }
  const guard=useProjectEditorDiscardGuard(open,dirty,pending,reset);
  function edit<K extends keyof Draft>(localId:string,field:K,value:Draft[K]){
@@ -75,8 +84,17 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
   setDraft(old=>old.map(item=>{
    if(item.localId!==row.localId)return item;
    const source=initial.find(saved=>saved.id===row.id);
-   const key=!source&&(item.key.startsWith("resource-new-")||
-    item.key===makeResourceKey(item.title))?makeResourceKey(title):item.key;
+   const oldBase=makeResourceKey(item.title);
+   const hadGeneratedKey=item.key.startsWith("resource-new-")||
+     item.key===oldBase||new RegExp("^"+oldBase+"-[0-9]+$").test(item.key);
+   if(source||!hadGeneratedKey)return {...item,title};
+   const base=makeResourceKey(title);
+   let key=base,suffix=2;
+   while(old.some(other=>other.localId!==item.localId&&
+      other.key.toLowerCase()===key.toLowerCase())){
+    const ending="-"+suffix++;
+    key=base.slice(0,120-ending.length)+ending;
+   }
    return {...item,title,key};
   }));
  }
@@ -133,7 +151,11 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
   if(inFlight.current||pending||overLimit)return;
   if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
   const untitled=shown.findIndex(row=>!row.title.trim());
-  if(untitled>=0){setError("Item "+(untitled+1)+": Title required");return;}
+  if(untitled>=0){
+   setSearch("");
+   setExpanded(current=>[...new Set([...current,shown[untitled]!.localId])]);
+   setError("Item "+(untitled+1)+": Title required");return;
+  }
   if(invalid){setError("Check resource titles, keys and HTTP(S) URLs before saving.");return;}
   if(draft.length>500){setError("A resource library can contain at most 500 rows.");return;}
   inFlight.current=true;setPending(true);setError("");
@@ -192,22 +214,48 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
    {!shown.length?<p className="border-y border-border py-3 text-sm text-body">
     No resources yet. Add only the references the team will actually use.
    </p>:null}
-   {shown.map((row,index)=><fieldset key={row.localId} disabled={pending}
+   {large?<div className="space-y-2">
+    <label className="block text-xs font-semibold text-body">
+     Find an item in this section
+     <Input className="mt-1" type="search" value={search} maxLength={120}
+      placeholder="Find an item by title or content"
+      onChange={event=>setSearch(event.target.value)}/>
+    </label>
+    <p role="status" className="text-xs text-body">
+     Showing {matching.length} of {shown.length} items. Expand only the items you need to edit.
+    </p>
+   </div>:null}
+   {matching.length===0?<p role="status" className="text-sm text-body">
+    No resources match this search.
+   </p>:null}
+   {matching.map(({row,index})=><fieldset key={row.localId} disabled={pending}
     className="min-w-0 space-y-3 border-b border-border pb-4">
     <legend className="text-sm font-semibold text-foreground">
      {row.title||"Resource "+(index+1)}
     </legend>
     <div className="flex flex-wrap gap-2">
+     {large?<Button size="sm" variant="ghost"
+      aria-expanded={expanded.includes(row.localId)}
+      aria-controls={"resource-library-fields-"+row.localId}
+      onClick={()=>setExpanded(current=>current.includes(row.localId)?
+        current.filter(id=>id!==row.localId):[...current,row.localId])}>
+      {expanded.includes(row.localId)?"Collapse":"Expand"}
+     </Button>:null}
      <Button size="sm" variant="secondary" disabled={pending||index===0}
+      aria-label={"Move "+(row.title||"Resource "+(index+1))+" up"}
       onClick={()=>move(index,-1)}>Up</Button>
      <Button size="sm" variant="secondary" disabled={pending||index===shown.length-1}
+      aria-label={"Move "+(row.title||"Resource "+(index+1))+" down"}
       onClick={()=>move(index,1)}>Down</Button>
      <Button size="sm" variant="ghost" disabled={pending||!row.id}
+      aria-label={"Undo changes for "+(row.title||"Resource "+(index+1))}
       onClick={()=>undoRow(row)}>Undo row</Button>
      <Button size="sm" variant="ghost" disabled={pending}
+      aria-label={"Remove "+(row.title||"Resource "+(index+1))}
       onClick={()=>remove(row)}>Remove</Button>
     </div>
-    <div className="grid min-w-0 gap-3 md:grid-cols-2">
+    <div id={"resource-library-fields-"+row.localId}>
+    {(!large||expanded.includes(row.localId))?<div className="grid min-w-0 gap-3 md:grid-cols-2">
      <label className="text-xs font-semibold text-body">Key
       <Input className="mt-1" maxLength={120} required
        disabled={Boolean(row.id&&resources.some(resource=>resource.id===row.id&&
@@ -239,12 +287,13 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
        onChange={event=>edit(row.localId,"url",event.target.value||null)}/>
      </label>
      <label className="text-xs font-semibold text-body md:col-span-2">Access notes
-      <Textarea className="mt-1" rows={2} maxLength={4000} value={row.accessNotes??""}
+      <Input className="mt-1" maxLength={4000} value={row.accessNotes??""}
        placeholder="e.g. Requires college email to view"
        onChange={event=>edit(row.localId,"accessNotes",event.target.value||null)}/>
      </label>
      <label className="text-xs font-semibold text-body md:col-span-2">Description
       <Textarea className="mt-1" rows={2} maxLength={4000} value={row.description??""}
+       placeholder="What this resource is for"
        onChange={event=>edit(row.localId,"description",event.target.value||null)}/>
      </label>
      <label className="text-xs font-semibold text-body">Status
@@ -269,6 +318,7 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
       <Checkbox checked={row.required}
        onChange={event=>edit(row.localId,"required",event.target.checked)}/> Required resource
      </label>
+    </div>:null}
     </div>
    </fieldset>)}
    {newlyArchived.length+removedNew.length>0?<div className="space-y-2 border-y border-border py-3">
@@ -298,7 +348,7 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
   </div>:null}
   <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
    title="Discard unsaved changes?"
-   description="Leave the resource library without saving your edits?"
+   description="You have unsaved changes. Leave without saving them?"
    confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
  </section>;
 }
