@@ -232,9 +232,9 @@ export async function getCourseAssignmentForAdmin(context:RequestContext,assignm
   updatedAt:courseAssignments.updatedAt,
  }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
  if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
- const [submitted]=await getDb().select({id:assignmentSubmissions.id})
-  .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
- return {...row,hasSubmissions:Boolean(submitted)};
+ const submissions=await getDb().select({id:assignmentSubmissions.id})
+  .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId));
+ return {...row,hasSubmissions:submissions.length>0,submissionCount:submissions.length};
 }
 
 export async function createCourseAssignment(

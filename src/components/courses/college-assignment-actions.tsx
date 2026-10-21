@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -11,7 +12,8 @@ import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker"
 import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
-type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string};
+type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string;
+ courseName?:string;lessonName?:string;submissionCount?:number};
 function istInput(value:Date|string|null){
  if(!value)return "";
  return new Intl.DateTimeFormat("sv-SE",{
@@ -37,6 +39,23 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
  const [confirmTransition,setConfirmTransition]=useState<"PUBLISH"|"ARCHIVE"|null>(null);
+ const [liveSubmissionCount,setLiveSubmissionCount]=useState<number|null>(null);
+ const [confirmLoading,setConfirmLoading]=useState(false);
+ async function inspectDelete(){
+  if(requestLock.current||busy||confirmLoading)return;
+  setConfirmLoading(true);setError("");
+  try{
+   const response=await fetch("/api/courses/assignments/"+encodeURIComponent(assignment.id),
+    {cache:"no-store"});
+   const data=await response.json().catch(()=>null);
+   if(!response.ok||data?.assignment?.id!==assignment.id)throw Error("Couldn't load the latest submission count. Retry.");
+   const count=data.assignment.submissionCount;
+   if(!Number.isInteger(count)||count<0)throw Error("Submission count is unavailable. Reload before deleting.");
+   setLiveSubmissionCount(count);
+   setConfirmTransition("ARCHIVE");
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to check submissions.");}
+  finally{setConfirmLoading(false);}
+ }
  async function command(action:"SAVE"|"PUBLISH"|"ARCHIVE"){
   if(busy||requestLock.current)return;
   let path="/api/courses/assignments/"+encodeURIComponent(assignment.id);
@@ -107,19 +126,43 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     aria-label={"Publish "+assignment.title} onClick={()=>setConfirmTransition("PUBLISH")}>Publish</Button>:null}
    {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     variant="danger" className="min-h-11 md:min-h-9"
-    aria-label={"Delete "+assignment.title} onClick={()=>setConfirmTransition("ARCHIVE")}>Delete</Button>:null}
+    aria-label={"Delete "+assignment.title} loading={confirmLoading}
+    title={confirmLoading?"Checking submissions":undefined}
+    onClick={()=>void inspectDelete()}>Delete</Button>:null}
   </div>
   <ConfirmDialog open={confirmTransition!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmTransition(null);}}
-   title={confirmTransition==="ARCHIVE"?"Delete assignment?":"Publish assignment?"}
+   title={confirmTransition==="ARCHIVE"?"Delete this assignment?":"Publish assignment?"}
    description={confirmTransition==="ARCHIVE"?
-    "Delete this assignment? Existing submissions must be preserved and will block deletion.":
+    (liveSubmissionCount===null?"Submission count unavailable.":
+     liveSubmissionCount+" existing student submission"+(liveSubmissionCount===1?"":"s")+". ")+
+     "Existing submissions are preserved; deletion is unavailable when any exist.":
     "Publish this assignment to enrolled students?"}
    confirmLabel={confirmTransition==="ARCHIVE"?"Delete":"Publish"} confirmVariant={confirmTransition==="ARCHIVE"?"danger":"primary"}
    pending={busy} onConfirm={()=>{
     if(!confirmTransition)return;
     const next=confirmTransition;setConfirmTransition(null);void command(next);
    }}/>
-  {editing?<div className="grid gap-2 border-y border-border p-3">
+  <Dialog open={editing} onOpenChange={open=>{if(!open&&!busy)setEditing(false);}}
+   dismissible={!busy} className="max-w-[720px]"
+   title={"Edit assignment: "+assignment.title}
+   footer={<>
+    <Button type="button" variant="secondary" disabled={busy} onClick={()=>setEditing(false)}>Cancel</Button>
+    <Button type="button" loading={busy} disabled={busy||!methodsLoaded}
+     onClick={()=>void command("SAVE")}>Save changes</Button>
+   </>}>
+  <div className="grid min-w-0 gap-3">
+   <p className="text-xs text-muted-foreground">
+    Course and lesson are assigned at creation and cannot be moved.
+    Submitted work and student grades remain attached to the original lesson.
+   </p>
+   <div className="grid gap-3 sm:grid-cols-2">
+    <label className="grid gap-1 text-[13px] font-semibold text-muted-foreground">Course
+     <Input disabled value={assignment.courseName||"Assigned course (unchanged)"}/>
+    </label>
+    <label className="grid gap-1 text-[13px] font-semibold text-muted-foreground">Lesson
+     <Input disabled value={assignment.lessonName||"Assigned lesson (unchanged)"}/>
+    </label>
+   </div>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
     <Input maxLength={255} placeholder="e.g., Module 1 Project" disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 md:min-h-9"/></label>
@@ -136,9 +179,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    {resourceDeliveryId?<FacultyAssignmentMaterialLinks key={assignment.id+":"+resourceDeliveryId}
     assignmentId={assignment.id} deliveryId={resourceDeliveryId} disabled={busy}/>:
     <p role="status" className="text-xs text-muted-foreground">Shared assignments retain their original authoring scope. Add or remove secure resource links in a Section-specific assignment; unverified file keys cannot be attached.</p>}
-   <Button disabled={busy} loading={busy} className="min-h-11 md:min-h-9"
-    type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</Button>
-  </div>:null}
+  </div>
+  </Dialog>
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
  </div>;
