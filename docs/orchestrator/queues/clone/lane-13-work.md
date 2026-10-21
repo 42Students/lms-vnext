@@ -29,7 +29,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-8_attend.md.part2of2.md` (new; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_service.ts.md` (edit src/modules/announcements/service.ts; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/NEW_docs_audit_gap2_lane-5_u009-attendance-shared-component.md.md` (new; 16 findings; best P1)
-- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-role-directory-service.ts.md` (edit src/modules/people/college-role-directory-service.ts; 15 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-role-directory-service.ts.md` (edit src/modules/people/college-role-directory-service.ts; 15 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_components_announcements_announcement-admin-workspace.tsx.md` (edit src/components/announcements/announcement-admin-workspace.tsx; 15 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_components_profile_learner-profile-workspace.tsx.md` (edit src/components/profile/learner-profile-workspace.tsx; 15 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_learner-service.ts.md` (edit src/modules/attendance/learner-service.ts; 14 findings; best P1)
