@@ -59,10 +59,10 @@ function templateCard(title:string,body:unknown,isOverview=false){
  </section>;
 }
 
-/** Read-only legacy summary of the immutable published blueprint.
- * Render only Goal and Deliverables as Overview fields, consistent with
- * the central count, but retain vNext extras below the four legacy cards.
- * Legacy name/label/title array rows are descriptive, never executable.
+/** Authorized, read-only snapshot of one pinned template version.
+ * Super Admin editing uses the separate permission-gated, versioned
+ * Overview editor (goal, lists, submission type and instructions).
+ * Never mutate an immutable preview or allow college readers to edit.
  */
 type ProjectTemplateBlueprintView = {
   legacy?: {
@@ -159,7 +159,7 @@ export function ProjectTemplateView({
             </h3>
             {list(data.overview?.deliverables)}
             {(!data.overview?.deliverables?.some(value=>value.trim()))?
-              <p role="alert" className="mt-2 text-sm font-semibold text-warning-text">Add at least one deliverable.</p>:null}
+              <p className="mt-2 text-xs text-muted-foreground">No deliverables recorded in this version.</p>:null}
           </div>
           <div>
             <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">
@@ -183,16 +183,15 @@ export function ProjectTemplateView({
           <div><dt>Lifecycle</dt><dd>{data.legacy.lifecycleStatus||"Not recorded"}</dd></div>
         </dl>
       </section> : null}
-      {data.submission||data.overview?.submissionType||data.overview?.submissionInstructions?
-        <section className="border-b border-border pb-4" aria-label="Template submission settings">
+      <section className="border-b border-border pb-4" aria-label="Template submission settings">
           <h2 className="font-semibold">Submission settings</h2>
           <p className="mt-2 text-xs font-semibold text-body">
-            Type: {data.overview?.submissionType??"Not recorded"}</p>
+            Type: {data.overview?.submissionType==="LINK"?"Link":data.overview?.submissionType==="FILE"?"File upload":data.overview?.submissionType==="TEXT"?"Text":"Not recorded"}</p>
           <p className="mt-2 whitespace-pre-wrap break-words text-sm">
             {data.overview?.submissionInstructions??data.submission?.instructions??
               "No instructions recorded."}</p>
           {data.submission?.requiredEvidence?list(data.submission.requiredEvidence):null}
-        </section>:null}
+        </section>
       <section className="grid min-w-0 grid-cols-1 gap-4">
         <TemplateRows
           title="Releases"
