@@ -80,7 +80,7 @@ export default async function TpoByCompanyReportPage({
 
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/by-company" />
-      <form action="/tpo/reports/by-company" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end">
+      <form action="/tpo/reports/by-company" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto] lg:items-end" aria-label="Filter by company">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
         <label className="grid min-w-0 w-full flex-1 gap-[6px] min-[768px]:w-auto text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company name
