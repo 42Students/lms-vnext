@@ -42,7 +42,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U001 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/auditfindings/SuperAdminAuditFindingsController.java`
 - [x] U002 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/config/R2Condition.java`
 - [x] U003 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/config/ZeptoMailTemplateIdResolver.java`
-- [ ] U004 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/configuration/R2Config.java`
+- [x] U004 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/configuration/R2Config.java`
 - [ ] U005 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/configuration/TemporarySmsOutageRecovery.java`
 - [ ] U006 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAssignmentContentWriteController.java`
 - [ ] U007 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminAssignmentController.java`
