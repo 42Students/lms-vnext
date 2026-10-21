@@ -15,7 +15,7 @@ import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-te
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
 import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
-import {classTeamCreationOutcomeCsv} from "@/modules/projects/class-team-creation-outcome-export";
+import {classTeamCreationOutcomeCsv,type ClassTeamCreationResultRow} from "@/modules/projects/class-team-creation-outcome-export";
 import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
 import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
 import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
@@ -34,8 +34,9 @@ type CohortCreationOutcome={
 };
 
 
-export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialTemplateId}:{
- collegeId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];initialTemplateId?:string|null;
+export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,initialTemplateId}:{
+ collegeId:string;userId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];
+ initialTemplateId?:string|null;
 }) {
   const router=useRouter();
   const {showToast}=useToast();
@@ -70,11 +71,13 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
   items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[];scopeKey:string}|null>(null);
   const [outcome,setOutcome]=useState<CohortCreationOutcome|null>(null);
+  const [unconfirmedRows,setUnconfirmedRows]=useState<ClassTeamCreationResultRow[]>([]);
+  const [outcomeCheckedAt,setOutcomeCheckedAt]=useState<string|null>(null);
   const [preflightLoading,setPreflightLoading]=useState(false);
   const [preflightError,setPreflightError]=useState("");
   const [outcomeRestored,setOutcomeRestored]=useState(false);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
-  const reportKey="lms-project-cohort-report:"+collegeId;
+  const reportKey="lms-project-cohort-report:"+userId+":"+collegeId;
   // A cohort report is recoverable for seven days after navigating away, and
   // never shared with another college's selected workspace.
   useEffect(()=>{
@@ -82,12 +85,15 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     try{
       const raw=window.localStorage.getItem(reportKey);
       if(!raw)return;
-      const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome};
+      const saved=JSON.parse(raw) as {
+        expiresAt?:number;savedAt?:string;report?:CohortCreationOutcome;
+      };
       if(!saved.expiresAt||saved.expiresAt<Date.now()||!saved.report||
         !Array.isArray(saved.report.individualResults)){
         window.localStorage.removeItem(reportKey);return;
       }
       setOutcome(saved.report);setOutcomeRestored(true);
+      setOutcomeCheckedAt(saved.savedAt??null);
     }catch{
       // Storage can be disabled in private browsing; creation still works.
     }
@@ -249,11 +255,13 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
       }) as CohortCreationOutcome;
       setOutcome(result);
-      setOutcomeRestored(false);
+      setOutcomeRestored(false);setUnconfirmedRows([]);
+      setOutcomeCheckedAt(new Date().toISOString());
       if(mode==="INDIVIDUAL"){
         try{
           window.localStorage.setItem(reportKey,JSON.stringify({
-            expiresAt:Date.now()+7*24*60*60*1000,report:result,
+            expiresAt:Date.now()+7*24*60*60*1000,
+            savedAt:new Date().toISOString(),report:result,
           }));
         }catch{
           showToast({tone:"info",title:"Creation report could not be saved",
@@ -281,8 +289,20 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       router.refresh();
     } catch(e) {
       const failure=classTeamCreationFeedback(e);
-      setError("Nothing was created. "+failure);
-      showToast({tone:"error",title:"Nothing was created",description:failure});
+      // A connection failure may happen after a successful commit. Never
+      // label an unknown receipt as a failed learner or automatically retry it.
+      if(mode==="INDIVIDUAL"){
+        setUnconfirmedRows((currentPreflight?.items??[])
+          .filter(item=>item.status==="TO_CREATE")
+          .map(item=>({
+            membershipId:item.membershipId,status:"UNCONFIRMED" as const,
+            projectId:null,title:null,reason:failure,
+          })));
+      }
+      setError("Creation was not confirmed. "+failure+
+        " Refresh the current preflight and existing workspaces before retrying.");
+      showToast({tone:"error",title:"Creation not confirmed",
+        description:"Check existing workspaces before retrying to avoid duplicates."});
     } finally {
       setPreflightLoading(false);
       // After a successful POST, keep Create locked until navigation unmounts this form.
@@ -322,7 +342,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         </Select>
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace title
-        <Input value={title} disabled={!plannerEditable}
+        <Input aria-invalid={Boolean(classId&&!title.trim())} value={title} disabled={!plannerEditable}
           onChange={event=>{
             const next=event.target.value;
             setTitle(next);
@@ -332,6 +352,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           }}
           maxLength={160} placeholder="Campus Event Coordination" />
         <span className="text-xs text-body">{title.length}/160</span>
+        {classId&&!title.trim()?<span role="alert" className="text-xs text-error">Title is required</span>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Base slug
         <Input value={slug} disabled={!plannerEditable} onChange={e=>{setSlugEdited(true);setSlug(e.target.value.toLowerCase());}} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
@@ -463,6 +484,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         This report was kept for seven days on this device for the selected college.
       </p>:null}
       <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
+      {outcomeCheckedAt?<p className="text-xs text-body">Reported at {new Date(outcomeCheckedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
       <p role="status" className="text-sm leading-[22px]">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
@@ -502,6 +524,35 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
             if(disposableUrl)window.setTimeout(()=>URL.revokeObjectURL(disposableUrl),0);
           }
         }}>Export outcome CSV</Button>
+    </section>:null}
+    {mode==="INDIVIDUAL"&&unconfirmedRows.length>0?<section className="space-y-3 border-y border-warning-border py-4">
+      <h3 className="font-semibold text-foreground">Learner creation results not confirmed</h3>
+      <p role="alert" className="text-sm text-body">
+        These are not confirmed failures. The request may have succeeded before its response was lost.
+        Refresh the preflight and check existing workspaces before retrying.
+      </p>
+      <DataTable caption="Unconfirmed learner creation"
+        rows={unconfirmedRows} getRowKey={row=>row.membershipId}
+        columns={[
+          {key:"learner",header:"Learner",mobilePriority:"primary",
+            cell:row=>names.get(row.membershipId)?.displayName??row.membershipId},
+          {key:"status",header:"Result",mobilePriority:"secondary",
+            cell:()=> "Not confirmed"},
+          {key:"reason",header:"Reason",mobilePriority:"secondary",
+            cell:row=>row.reason??"Response unavailable"},
+        ]}/>
+      <Button type="button" variant="secondary" onClick={()=>{
+        try{
+          const csv=classTeamCreationOutcomeCsv(unconfirmedRows,names);
+          const url=URL.createObjectURL(new Blob(["\\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+          const link=document.createElement("a");
+          link.href=url;link.download="cohort-unconfirmed-outcome.csv";
+          document.body.appendChild(link);link.click();link.remove();
+          window.setTimeout(()=>URL.revokeObjectURL(url),0);
+        }catch{
+          setError("Could not export the unconfirmed outcome. Review the rows shown above.");
+        }
+      }}>Export unconfirmed results</Button>
     </section>:null}
     <div className="sticky bottom-0 z-10 flex min-w-0 flex-col-reverse gap-3 border-t border-border bg-surface py-3 md:flex-row md:flex-wrap md:justify-end">
       <Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto"
