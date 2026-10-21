@@ -20,6 +20,10 @@ export function projectTpoDriveHeader(facts:TpoDriveHeaderFacts,asOf:Date=new Da
    expiry.getTime()<asOf.getTime();
  const status=facts.needsReview?"Needs your review":
    expired?"Open · Expired":STATUS[facts.status]??"Status unavailable";
+ // Legacy posting hero keyline is green for open, neutral for draft or closed.
+ const heroAccent=facts.status==="PUBLISHED"?"#52c41a":"#8c8c8c";
+ const statusTone:"success"|"warning"|"neutral"=expired?"warning":
+  facts.status==="PUBLISHED"?"success":facts.status==="DRAFT"?"warning":"neutral";
  const parts=[APPLICATION_MODE[facts.applicationMode]??"Application mode unavailable"];
  const payLow=facts.minimumAnnualCtcInr;
  const payHigh=facts.maximumAnnualCtcInr;
@@ -37,6 +41,10 @@ export function projectTpoDriveHeader(facts:TpoDriveHeaderFacts,asOf:Date=new Da
   status,applicationMode:parts[0],workMode:facts.workMode.replaceAll("_"," ").toLowerCase(),
   employmentType:facts.employmentType.replaceAll("_"," ").toLowerCase(),
   ctc,deadline,category:facts.isDream?"Dream":"Regular",
+   heroAccent,statusTone,legacyFacts:[
+    {label:"Status",value:status},
+    {label:"Job type",value:facts.employmentType.replaceAll("_"," ").toLowerCase()},
+   ],
   recordedOutside:Boolean(facts.recordedOutside),
  };
 }

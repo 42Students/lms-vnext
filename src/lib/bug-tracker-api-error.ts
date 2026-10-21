@@ -13,7 +13,8 @@ export function bugTrackerApiError(error: unknown) {
       error.code === "FORBIDDEN" ? 403 :
       error.code === "ISSUE_NOT_FOUND" ? 404 :
       error.code === "STALE_VERSION" ? 409 : 400;
-    return NextResponse.json({ error: error.code }, { status });
+    return NextResponse.json({ error: error.code,
+      ...(error.code==="ISSUE_NOT_FOUND"?{message:"Issue not found"}:{}) }, { status });
   }
   if (error instanceof BugWorkflowError) {
     const status =

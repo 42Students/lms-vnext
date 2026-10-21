@@ -56,8 +56,10 @@ export default async function CollegeGroupDetailPage({
   const { groupId } = await params;
   // Legacy student-group bookmarks never loaded a group. Preserve the
   // history-replacing People redirect instead of treating numeric IDs as UUIDs.
-  if (process.env.COLLEGE_STUDY_GROUPS_RELEASED !== "true" ||
-      !z.uuid().safeParse(groupId).success) redirect("/college/people");
+  if (process.env.COLLEGE_STUDY_GROUPS_RELEASED !== "true") redirect("/college/people");
+  // Legacy aliases redirect separately. Canonical group IDs must be valid,
+  // and scoped reads preserve a non-enumerating 404 for inaccessible groups.
+  if (!z.uuid().safeParse(groupId).success) notFound();
 
   let detail: Detail;
   try {

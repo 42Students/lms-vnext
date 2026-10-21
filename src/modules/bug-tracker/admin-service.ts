@@ -1,6 +1,7 @@
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   gt,
@@ -445,4 +446,43 @@ export async function retestBugTrackerIssueForAdmin(
     );
     return updated;
   });
+}
+
+/** Legacy page-number adapter for authorised tracker table clients. Modern
+ * cursor listing remains unchanged and both paths enforce the same scope. */
+export async function listLegacyBugTrackerIssuesForAdmin(
+ context:RequestContext,input:{page:number;size:number;sort:"asc"|"desc";
+  status?:string;severity?:string;environment?:string;q?:string},
+){
+ requireTrackerAdmin(context);
+ const conditions:SQL[]=[];
+ const scope=adminScopeCondition(context);
+ if(scope)conditions.push(scope);
+ if(input.status)conditions.push(eq(db10BugReports.status,input.status));
+ if(input.severity)conditions.push(eq(db10BugReports.severity,input.severity));
+ if(input.environment)conditions.push(eq(db10BugReports.environment,input.environment));
+ if(input.q){
+  const term=input.q.toLowerCase();
+  conditions.push(or(
+   sql`position(${term}::text in lower(${db10BugReports.publicId})) > 0`,
+   sql`position(${term}::text in lower(${db10BugReports.description})) > 0`,
+  )!);
+ }
+ const where=conditions.length?and(...conditions):undefined;
+ const ordering=input.sort==="asc"?asc:desc;
+ const [totals,found]=await Promise.all([
+  getDb().select({total:count()}).from(db10BugReports)
+   .leftJoin(colleges,eq(colleges.id,db10BugReports.collegeId)).where(where),
+  getDb().select({report:db10BugReports}).from(db10BugReports)
+   .leftJoin(colleges,eq(colleges.id,db10BugReports.collegeId)).where(where)
+   .orderBy(ordering(db10BugReports.createdAt),ordering(db10BugReports.id))
+   .limit(input.size).offset(input.page*input.size),
+ ]);
+ const total=Number(totals[0]?.total??0);
+ const items=found.map(row=>serializeListRow(row.report));
+ return {items,content:items,page:input.page,size:input.size,total,
+  totalElements:total,totalPages:Math.ceil(total/input.size),
+  number:input.page,numberOfElements:items.length,
+  first:input.page===0,last:(input.page+1)*input.size>=total,
+  pageable:{pageNumber:input.page,pageSize:input.size,offset:input.page*input.size}};
 }
