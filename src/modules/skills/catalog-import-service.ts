@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Skills,db10SkillSynonyms} from "@/db/schema/db10-skills-catalog.draft";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
