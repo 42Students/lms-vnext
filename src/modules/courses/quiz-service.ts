@@ -384,6 +384,11 @@ export async function createCourseQuiz(
 ) {
   const input =
     createCourseQuizInputSchema.parse(rawInput);
+  if(input.publishNow){
+    if(!input.dueAt)throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+    if(new Date(input.dueAt).getTime()<=Date.now())
+      throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
+  }
   const lesson = await loadCourseLessonScope(
     input.lessonId,
   );
@@ -436,6 +441,7 @@ export async function createCourseQuiz(
             ),
             sequence: input.sequence,
             createdByUserId: context.user.id,
+            status: input.publishNow?"PUBLISHED":"DRAFT",
           })
           .returning();
 

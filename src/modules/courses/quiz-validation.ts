@@ -169,6 +169,9 @@ export const createCourseQuizInputSchema =
       .min(0)
       .max(10000),
     questions: questionsSchema,
+    // Atomic create-and-publish avoids a second browser request that might
+    // leave an unintended draft after creation succeeded.
+    publishNow: z.boolean().optional().default(false),
   });
 
 export const updateCourseQuizInputSchema =

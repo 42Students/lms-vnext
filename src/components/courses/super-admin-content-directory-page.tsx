@@ -100,7 +100,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
    className="font-semibold text-primary-text underline">Open Tenant Settings</Link>.
   </Banner>:null}
   {lessonsResult.status==="fulfilled"
-   ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
+   ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} sections={sections} allowVideoUpload/>
    :<Banner tone="warning">Course and lesson authoring choices could not be loaded.
     Existing content remains available. <Link href={adminContentHref(kind,parsed.data)}
       className="font-semibold underline">Retry loading course and lesson choices</Link>
