@@ -153,16 +153,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/academics/academics-create-panel.tsx`
 - [x] `src/components/academics/college-academic-directory.tsx`
 - [x] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
 - [ ] `src/components/admin/college-create-form.tsx`
 - [ ] `src/components/admin/college-edit-dialog.tsx`
 - [ ] `src/components/admin/descendant-feature-rule-editor.tsx`
