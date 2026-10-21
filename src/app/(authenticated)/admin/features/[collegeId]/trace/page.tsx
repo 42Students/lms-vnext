@@ -1,4 +1,3 @@
-import { FilterBar } from "@/components/ui/filter-bar";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
@@ -179,7 +178,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           </p>
         </div>
 
-        <FilterBar title="Filters"><form
+        <form
           action={basePath}
           method="get"
           className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:flex-row sm:flex-wrap sm:items-end"
@@ -226,7 +225,7 @@ export default async function SuperAdminLearnerAccessTracePage({
           >
             Clear
           </Link>
-        </form></FilterBar>
+        </form>
 
         <p className="m-0 text-sm text-muted-foreground">
           {total === 0

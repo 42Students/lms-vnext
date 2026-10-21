@@ -97,6 +97,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
     if (result.stateFilter !== "ALL") parts.set("storedState", result.stateFilter);
     if (result.scopeIdFilter) parts.set("scopeId", result.scopeIdFilter);
     if (page > 1) parts.set("page", String(page));
+    if (academicPage > 1) parts.set("academicPage", String(academicPage));
     return base + (parts.size ? "?" + parts.toString() : "");
   };
 
@@ -246,7 +247,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
         <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
-   baseHref={"/admin/features/"+encodeURIComponent(college.id)}/>
+   baseHref={pageHref(result.page)}/>
       </section>
       <section className="min-w-0 space-y-3">
         <div>
