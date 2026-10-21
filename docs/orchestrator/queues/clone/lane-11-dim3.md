@@ -100,11 +100,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
 - [x] `src/components/projects/project-resource-list.tsx`
 - [x] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/project-template-view.tsx`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-notice-audience-picker.tsx`
-- [ ] `src/components/ui/date-input.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/project-template-view.tsx`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-notice-audience-picker.tsx`
+- [x] `src/components/ui/date-input.tsx`
