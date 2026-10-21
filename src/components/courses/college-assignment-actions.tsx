@@ -38,8 +38,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   let method="POST";
   if(action==="SAVE"){
    const maxPoints=Number(points);
-   if(!title.trim()||!Number.isInteger(maxPoints)||maxPoints<1||maxPoints>10000){
-    setError("Enter a title and points from 1 to 10000.");return;
+   if(!title.trim()||title.trim().length>255||!points.trim()||!Number.isInteger(maxPoints)||maxPoints<0||maxPoints>10000){
+    setError("Enter an assignment title (1–255 characters) and points from 0 to 10000.");return;
    }
    const due=dueAt?new Date(dueAt+":00+05:30"):null;
    if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
@@ -62,7 +62,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
      data?.error==="ASSIGNMENT_HAS_SUBMISSIONS"?
       "Students have submitted this assignment. Refresh; editing is no longer allowed.":
      data?.error==="FACULTY_ASSIGNMENT_STALE_VERSION"?
-      "Another author edited the assignment. Close this form and reopen it before saving.":
+      "This assignment changed while you were editing. Reopen it to avoid overwriting someone else's changes.":
      "Could not update assignment. Check the form and try again.");
    setEditing(false);setNotice(action==="SAVE"?"Assignment updated.":action==="ARCHIVE"?
     "Assignment deleted.":"Assignment published.");
@@ -103,10 +103,10 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   </div>
   {editing?<div className="grid gap-2 border-y border-border p-3">
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
-    <Input maxLength={200} disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
+    <Input maxLength={255} placeholder="e.g., Module 1 Project" disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 md:min-h-9"/></label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Points
-    <Input type="number" min={1} max={10000} disabled={busy} value={points}
+    <Input type="number" min={0} max={10000} placeholder="Enter points" disabled={busy} value={points}
      onChange={e=>setPoints(e.target.value)} className="min-h-11 md:min-h-9"/></label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Deadline (IST)
     <Input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}
