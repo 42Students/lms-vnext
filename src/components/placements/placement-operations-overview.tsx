@@ -4,6 +4,8 @@ import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.modul
 import Link from "next/link";
 import { SuperAdminDriveQuickSearch } from "@/components/placements/super-admin-drive-quick-search";
 import {SuperAdminNeedsAttention} from "@/components/placements/super-admin-needs-attention";
+import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
+import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive-deadline";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Select } from "@/components/ui/select";
@@ -29,7 +31,56 @@ function conversion(value: number, previous: number) {
   }).format(value / previous);
 }
 export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false, staleDays=7 }: { operations: Operations; basePath: string; showDriveSearch?: boolean; staleDays?: number }) {
+  // Independent, college-wide aggregate counts: operations.jobs is only
+  // the latest 60 published + 20 other sampled cards, NOT the directory.
+  const activeSample=operations.jobs.filter(item=>item.job.status==="PUBLISHED");
+  const affected=operations.attention.categories.reduce((sum,item)=>sum+item.affected,0);
+  const attentionItems=operations.attention.categories.flatMap(item=>item.samples);
   return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
+    {showDriveSearch ? <div className="grid min-w-0 grid-cols-1 overflow-hidden border-y border-border sm:grid-cols-4">
+      <Metric label="Active drives" value={operations.summary.activeDrives} description="All non-archived, published drives in the college. Cards show only the latest 60." />
+      <Metric label="Closed / draft" value={operations.summary.closedJobs+operations.summary.draftJobs} description="Closed and draft drives; cancelled drives are counted separately." />
+      <Metric label="All drives" value={operations.summary.totalJobs} description="All non-archived college drives, not the bounded card sample." />
+      {operations.attention.available?<Metric label="Needs attention" value={affected} description="Affected records in all four legacy attention categories; not a distinct-drive count." />:
+        <p role="status" className="p-3 text-sm text-body">Couldn\u0027t check for anything that needs attention.</p>}
+    </div> : null}
+    <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
+      <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
+      <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
+      <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
+      <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
+    </div>
+    {showDriveSearch?(
+      operations.attention.available
+        ? <SuperAdminNeedsAttention items={attentionItems} basePath={basePath}/>
+        : <section role="status" className="border-b border-border py-4 text-sm text-body">
+            Couldn\u0027t check for anything that needs attention.
+            <Link href={basePath} className="ml-3 font-semibold text-link underline">Retry</Link>
+          </section>
+    ):
+    <section className="border-b border-border pb-6">
+      <div className="border-b border-border pb-3">
+        <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
+        <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
+        {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+          <label className="flex items-center gap-[6px]">Stale after
+            <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
+              {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
+            </Select></label>
+          <Button type="submit" variant="secondary">Apply</Button>
+        </form>:null}
+      </div>
+      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Drive lifecycle</Link>} /></div> :
+        <div className="min-w-0 divide-y divide-border">{operations.workQueue.map((item, index) =>
+          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={priorityTone(item.priority)}>{item.priority}</StatusBadge><span className="text-xs font-semibold text-muted-foreground">{item.count} {item.count === 1 ? "item" : "items"}</span></div>
+              <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
+              <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
+            </div>
+            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
+          </div>)}</div>}
+    </section>}
     {showDriveSearch?<section className="min-w-0 space-y-3" aria-label="Active placement drives">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
@@ -38,11 +89,12 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
         </div>
         <Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">View all drives</Link>
       </div>
-      {operations.jobs.some(item=>item.job.status==="PUBLISHED")?
+      {activeSample.length>0?
         <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-4">
-          {operations.jobs.filter(item=>item.job.status==="PUBLISHED").map(item=>{
+          {activeSample.map(item=>{
             const needs=operations.workQueue.filter(action=>action.jobId===item.job.id);
-            const work=needs.reduce((total,action)=>total+action.count,0);
+            const work=attentionItems.filter(action=>action.jobId===item.job.id)
+              .reduce((total,action)=>total+action.count,0);
             const deadline=item.job.applicationDeadline;
             const expired=Boolean(deadline&&deadline.getTime()<Date.now());
             const company=item.job.company.name;
@@ -74,50 +126,20 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
                 <Link href={basePath+"/jobs/"+item.job.id+"/applications"} className="font-semibold text-link underline">Applications</Link>
                 <span aria-hidden="true">·</span>
                 <Link href={basePath+"/jobs/"+item.job.id+"/settings"} className="font-semibold text-link underline">Manage</Link>
-                {needs.length?<span className="ml-auto text-[var(--lms-error)]">{needs.length} action type(s)</span>:null}
+                <details className="ml-auto min-w-[120px] text-left">
+                  <summary className="cursor-pointer font-semibold text-link underline underline-offset-4">More actions</summary>
+                  <div className="mt-2 space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3">
+                    <SuperAdminDriveDuplicate jobId={item.job.id} title={item.job.title}/>
+                    <SuperAdminDriveDeadline jobId={item.job.id} deadline={deadline?.toISOString()??null}/>
+                  </div>
+                </details>
               </div>
             </article>;
           })}
         </div>:
-        <EmptyState title="No active drives" description="Published placement drives will appear here." action={<Link href={basePath+"/drives"} className="text-sm font-semibold text-link underline">View all drives</Link>}/>
+        <EmptyState title="No active drives yet" description="Published placement drives will appear here." action={<Link href={basePath+"/drives"} className="text-sm font-semibold text-link underline">Create your first drive</Link>}/>
       }
     </section>:null}
-    {showDriveSearch ? <div className="grid min-w-0 grid-cols-1 overflow-hidden border-y border-border sm:grid-cols-4">
-      <Metric label="Active drives" value={operations.jobs.filter(r=>r.job.status==="PUBLISHED").length} description="Currently published opportunities." />
-      <Metric label="Closed / draft" value={operations.jobs.filter(r=>["CLOSED","DRAFT"].includes(r.job.status)).length} description="Closed and draft opportunities." />
-      <Metric label="All drives" value={operations.jobs.length} description="Non-archived drives in this college." />
-      <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Drives with outstanding operations." />
-    </div> : null}
-    <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
-      <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
-      <Metric label="Applications" value={operations.summary.submittedApplications} description="Active submitted applications across current jobs." />
-      <Metric label="Needs screening" value={operations.summary.pendingScreening} description="Candidates waiting for a placement-cell screening decision." />
-      <Metric label="Needs attention" value={operations.summary.jobsNeedingAttention} description="Jobs with an unresolved operational action." />
-    </div>
-    {showDriveSearch?<SuperAdminNeedsAttention items={operations.workQueue} basePath={basePath}/>:
-    <section className="border-b border-border pb-6">
-      <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
-        <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
-        {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-          <label className="flex items-center gap-[6px]">Stale after
-            <Select name="staleDays" defaultValue={staleDays} className="min-w-0">
-              {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
-            </Select></label>
-          <Button type="submit" variant="secondary">Apply</Button>
-        </form>:null}
-      </div>
-      {operations.workQueue.length === 0 ? <div className="pt-4"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." action={<Link href={basePath+"/drives"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Drive lifecycle</Link>} /></div> :
-        <div className="min-w-0 divide-y divide-border">{operations.workQueue.map((item, index) =>
-          <div key={item.jobId + item.code + index} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={priorityTone(item.priority)}>{item.priority}</StatusBadge><span className="text-xs font-semibold text-muted-foreground">{item.count} {item.count === 1 ? "item" : "items"}</span></div>
-              <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
-              <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
-            </div>
-            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-11 md:min-h-9 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
-          </div>)}</div>}
-    </section>}
     <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <div className="border-b border-border pb-3">
         <h2 className="m-0 text-base font-semibold text-foreground">Placement funnel</h2>
