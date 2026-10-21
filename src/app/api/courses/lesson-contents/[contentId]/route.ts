@@ -36,5 +36,6 @@ export async function PATCH(
     return apiErrorResponse(error);
   }
 }
-\n/** Legacy clients used PUT; share the same permission-checked update path. */
+
+/** Legacy clients used PUT; share the same permission-checked update path. */
 export const PUT = PATCH;
