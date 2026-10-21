@@ -3,6 +3,7 @@ import {
   asc,
   desc,
   eq,
+  inArray,
   isNull,
   sql,
 } from "drizzle-orm";
@@ -17,6 +18,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   assignmentSubmissions,
+  activityEvents,
   inAppNotifications,
   courseAssignments,
   courseTeachingAssignments,
@@ -232,6 +234,8 @@ export async function submitCourseAssignment(
           status: courseAssignments.status,
           deliveryId: courseAssignments.deliveryId,
           dueAt: courseAssignments.dueAt,
+          maxPoints: courseAssignments.maxPoints,
+          title: courseAssignments.title,
         })
         .from(courseAssignments)
         .where(eq(courseAssignments.id, assignmentId))
@@ -351,12 +355,21 @@ export async function submitCourseAssignment(
         }
       }
 
+      // Legacy submissions froze the points ceiling at submission time.
+      // Keep that historical cap even if faculty later edits the assignment.
+      const [learnerSnapshot] = await tx.select({displayName: users.displayName})
+        .from(users).where(eq(users.id, persistedMembership.userId)).limit(1);
       const [created] = await tx
         .insert(assignmentSubmissions)
         .values({
           assignmentId,
           deliveryId: input.deliveryId,
           membershipId: membership.id,
+          maxPointsAtSubmission: currentAssignment.maxPoints,
+          legacySubmissionSnapshot: {
+            assignmentName: currentAssignment.title,
+            learnerDisplayName: learnerSnapshot?.displayName ?? null,
+          },
           submissionType: input.submissionType,
           textContent: input.submissionType === "TEXT" || input.submissionType === "FILE"
             ? input.textContent ?? null
@@ -650,6 +663,10 @@ export async function listAssignmentSubmissions(
         assignmentSubmissions.submittedAt,
       pointsAwarded:
         assignmentSubmissions.pointsAwarded,
+      maxPointsAtSubmission:
+        assignmentSubmissions.maxPointsAtSubmission,
+      previousPoints:
+        assignmentSubmissions.previousPoints,
       feedback:
         assignmentSubmissions.feedback,
       gradingStatus:
@@ -735,6 +752,44 @@ export async function listAssignmentSubmissionsPage(
   };
 }
 
+/** Scoped grading activity history. DB06's detailed before/after grade audit is
+ * still staged; do not misrepresent this privacy-safe activity trail as that
+ * immutable points history or expose unpublished marks to a learner.
+ */
+export async function listAssignmentSubmissionGradeActivity(
+  context: RequestContext,
+  submissionIdInput: string,
+) {
+  const submissionId = assignmentSubmissionIdSchema.parse(submissionIdInput);
+  const submission = await loadAssignmentSubmissionScope(submissionId);
+  await requireAssignmentGradeAccess(context, submission);
+  const rows = await getDb().select({
+    id: activityEvents.id,
+    eventType: activityEvents.eventType,
+    actorUserId: activityEvents.actorUserId,
+    occurredAt: activityEvents.occurredAt,
+    metadata: activityEvents.metadata,
+  }).from(activityEvents).where(and(
+    eq(activityEvents.collegeId, submission.collegeId),
+    eq(activityEvents.organizationId, submission.organizationId),
+    eq(activityEvents.subjectType, "assignment_submission"),
+    eq(activityEvents.subjectId, submissionId),
+    inArray(activityEvents.eventType, [
+      ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADED,
+      ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,
+    ]),
+  )).orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id)).limit(100);
+  return {
+    historySource: "ACTIVITY_EVENTS" as const,
+    detailedPointsHistoryAvailable: false,
+    events: rows.map(row => ({
+      id: row.id, eventType: row.eventType, actorUserId: row.actorUserId,
+      occurredAt: row.occurredAt,
+      version: typeof row.metadata.version === "number" ? row.metadata.version : null,
+    })),
+  };
+}
+
 /** Confirm Faculty teaching scope inside the grading transaction, not merely
  * from a stale request context. Admin scoping remains centrally permissioned. */
 async function assertPersistedFacultyGrader(
@@ -804,8 +859,10 @@ export async function gradeAssignmentSubmission(
     throw new CoursesServiceError("ASSIGNMENT_GRADE_NO_CHANGE");
   if(!hideOnly&&!facultyRegradeFeedbackAllowed(current.gradePublished,input.feedback))
     throw new CoursesServiceError("ASSIGNMENT_REGRADE_FEEDBACK_REQUIRED");
+  // For historical submissions grade against the original points ceiling;
+  // imports without a snapshot retain the current authored maximum.
   if (
-    input.pointsAwarded > current.maxPoints
+    input.pointsAwarded > (current.maxPointsAtSubmission ?? current.maxPoints)
   ) {
     throw new CoursesServiceError(
       "ASSIGNMENT_GRADE_INVALID",
@@ -821,7 +878,8 @@ export async function gradeAssignmentSubmission(
       .from(courseAssignments).where(eq(courseAssignments.id,current.assignmentId))
       .for("share").limit(1);
     if(locked?.status!=="PUBLISHED")throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
-    if(!facultyAssignmentGradingAllowed(locked.status,input.pointsAwarded,locked.maxPoints))
+    if(!facultyAssignmentGradingAllowed(locked.status,input.pointsAwarded,
+      current.maxPointsAtSubmission ?? locked.maxPoints))
       throw new CoursesServiceError("ASSIGNMENT_GRADE_INVALID");
     const [updated] = await tx
       .update(assignmentSubmissions)
