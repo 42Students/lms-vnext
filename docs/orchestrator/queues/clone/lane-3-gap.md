@@ -45,8 +45,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/quizzes.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Quizzes.js`
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/allQuizzes.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/teacher/report/quiz/[quizId].js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/courses.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/teacher/report/quiz/[quizId].js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/courses.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Sudent/student.js`
 - [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypes.java`
