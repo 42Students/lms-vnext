@@ -77,7 +77,7 @@ export default async function LearnerProfilePage({
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </Banner>:null}
         </div>:<Banner tone="info" className="mt-2">Verification status is temporarily unavailable.</Banner>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Review verification status</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review verification status</Link>
       </section>
       {sectionNotice ? <Banner tone="warning">{sectionNotice}</Banner> : null}
       <section aria-label="Academic identity" className="min-w-0 border-b border-border pb-4">
@@ -141,7 +141,7 @@ export default async function LearnerProfilePage({
         </div>:<p role="status" className="mt-3 text-sm text-body">
           Verification requirements are temporarily unavailable. Open the verification page to retry.
         </p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View my verification status →</Link>
+        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View my verification status →</Link>
       </section>
       <section aria-label="Coding profiles" className="min-w-0 border-b border-border pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Coding platform profiles</h2>
@@ -159,8 +159,8 @@ export default async function LearnerProfilePage({
         )}
         <p className="mt-2 text-xs text-muted-foreground">Save GitHub under Social profiles; add other coding sites as URL-type entries under Additional information using the exact platform name.</p>
         <div className="flex flex-wrap gap-4">
-          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Edit GitHub →</Link>
-          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">Edit coding links →</Link>
+          <Link href="/learn/profile?section=social-profiles" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit GitHub →</Link>
+          <Link href="/learn/profile?section=metadata" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit coding links →</Link>
         </div>
       </section>
     </div>
