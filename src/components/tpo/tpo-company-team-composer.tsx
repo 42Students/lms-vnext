@@ -52,7 +52,7 @@ export function TpoCompanyTeamComposer({companyId,actorUserId}:{
   }finally{pending.current=false;setBusy(false);}
  }
  return <form className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] pt-4" onSubmit={event=>{event.preventDefault();void submit();}}>
-  <label className="grid gap-1 text-sm text-body">Message
+  <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
    <Textarea required maxLength={4000} rows={4} value={body} disabled={busy}
     onChange={event=>update(event.target.value)}
     />

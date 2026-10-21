@@ -19,11 +19,11 @@ export function TpoBatchInstantSearch({value}:{value:string}){
   },250);
   return ()=>window.clearTimeout(timer);
  },[draft,router,value]);
- return <label className="min-w-0 flex-1 text-sm">Search batches
+ return <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search batches
   <span className="mt-1 flex min-w-0 items-center gap-2">
    <Input type="search" name="q" value={draft} maxLength={100}
     onChange={event=>setDraft(event.target.value)} autoComplete="off"
-    className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 md:min-h-9"
+    className="min-h-11 w-full min-w-0 border px-3 md:min-h-9"
     aria-label="Search batches"/>
    {draft?<Button variant="secondary" type="button" onClick={()=>setDraft("")}
     
