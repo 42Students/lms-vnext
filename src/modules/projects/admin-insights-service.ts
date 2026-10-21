@@ -752,6 +752,7 @@ const projectSubmissionQueueQuerySchema =
         "DRAFT_REVISING",
       ])
       .optional(),
+    sort:z.enum(["SUBMITTED_DESC","PENDING_DESC","REVISIONS_DESC"]).default("SUBMITTED_DESC"),
   });
 
 /** COL-projects-13: whole-college cards reflect the latest delivery only. */
@@ -887,6 +888,18 @@ export async function listProjectAdminSubmissionQueue(
                )
             order by pm.created_at limit 1)`,
           version: projectSubmissions.version,
+          revisionCount:projectSubmissions.legacyRevisionCount,
+          submittedBy:sql<string|null>`(
+            select u.display_name from college_memberships cm
+              join users u on u.id=cm.user_id
+            where cm.id=${projectSubmissions.submittedByMembershipId}
+              and cm.college_id=${college.id} limit 1
+          )`,
+          isCurrentVersion:sql<boolean>`not exists (
+            select 1 from project_submissions newer
+            where newer.project_id=${projectSubmissions.projectId}
+              and newer.version > ${projectSubmissions.version}
+          )`,
           status: projectSubmissions.status,
           summary: projectSubmissions.summary,
           sourceUrl: projectSubmissions.sourceUrl,
@@ -894,6 +907,10 @@ export async function listProjectAdminSubmissionQueue(
           attachments: projectSubmissions.attachments,
           reviewedAt: projectSubmissionReviews.reviewedAt,
           reviewedBy: users.displayName,
+          reviewedByType:sql<string|null>`case
+            when ${projectSubmissionReviews.reviewedByUserId} is null then null
+            when ${projectSubmissionReviews.reviewedByMembershipId} is null then 'SUPER_ADMIN'
+            else 'ADMIN' end`,
           lockedAt: projectSubmissions.lockedAt,
           reopenedAt:projectSubmissions.reopenedAt,
           submittedAt: projectSubmissions.submittedAt,
@@ -908,8 +925,14 @@ export async function listProjectAdminSubmissionQueue(
         .leftJoin(users, eq(users.id, projectSubmissionReviews.reviewedByUserId))
         .where(where)
         .orderBy(
-          desc(projectSubmissions.updatedAt),
+          query.sort==="PENDING_DESC"
+            ? sql`case when ${projectSubmissions.status}='SUBMITTED'
+              then ${projectSubmissions.submittedAt} else null end asc nulls last`
+            : query.sort==="REVISIONS_DESC"
+              ? sql`${projectSubmissions.legacyRevisionCount} desc nulls last`
+              : desc(projectSubmissions.submittedAt),
           desc(projectSubmissions.version),
+          desc(projectSubmissions.updatedAt),
         )
         .limit(query.pageSize)
         .offset(

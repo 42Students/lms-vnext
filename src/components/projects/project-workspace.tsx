@@ -1256,7 +1256,10 @@ export function ProjectWorkspace({
                   <ProjectSprintPlanEditor projectId={workspace.project.id}
                     releaseId={release.id}
                     sprints={(sprintsByRelease.get(release.id)??[]).map(sprint=>({
-                      id:sprint.id,title:sprint.title,description:sprint.description,
+                      id:sprint.id,
+                      key:sprint.legacySprintKey??sprint.templateKey,
+                      dueLabel:sprint.dueLabel,
+                      title:sprint.title,description:sprint.description,
                       goal:sprint.goal,definitionOfDone:sprint.definitionOfDone,
                       startDate:sprint.startDate,endDate:sprint.endDate,dueDate:sprint.dueDate,
                       updatedAt:sprint.updatedAt.toISOString(),status:sprint.status,

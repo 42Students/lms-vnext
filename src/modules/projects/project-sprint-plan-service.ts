@@ -61,6 +61,17 @@ export async function saveProjectSprintPlan(
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     const reordered = input.sprints.some((sprint, index) => sprint.id !== current[index]?.id);
+    const keys=new Set<string>();
+    const allKeys=await tx.select({
+      id:projectSprints.id,templateKey:projectSprints.templateKey,
+      legacySprintKey:projectSprints.legacySprintKey,
+    }).from(projectSprints).where(eq(projectSprints.projectId,project.id));
+    const editsById=new Map(input.sprints.map(row=>[row.id,row.key]));
+    for(const item of allKeys){
+      const key=(editsById.get(item.id)??item.legacySprintKey??item.templateKey).toLowerCase();
+      if(keys.has(key))throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      keys.add(key);
+    }
     const changedIds = input.sprints.filter(row =>
       projectSprintPlanFieldsChanged(original.get(row.id)!, row)).map(row => row.id);
     // Retrying a request that reached its desired state is an authorized no-op,
@@ -97,7 +108,10 @@ export async function saveProjectSprintPlan(
         continue;
       }
       const [updated] = await tx.update(projectSprints).set({
-        title: next.title, description: next.description, goal: next.goal,
+        title: next.title,dueLabel:next.dueLabel,
+        legacySprintKey:next.key===previous.templateKey&&previous.legacySprintKey===null
+          ?null:next.key,
+        description: next.description, goal: next.goal,
         definitionOfDone: next.definitionOfDone, startDate: next.startDate,
         endDate: next.endDate, dueDate: next.dueDate,
         ...(reordered ? { sequence: index } : {}),

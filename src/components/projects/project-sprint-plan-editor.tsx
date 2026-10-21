@@ -12,6 +12,8 @@ import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 
 type SprintRow = {
   id: string;
+  key:string;
+  dueLabel:string|null;
   title: string;
   description: string | null;
   goal: string | null;
@@ -26,7 +28,8 @@ type SprintRow = {
 
 type Draft = Omit<SprintRow, "status" | "sequence">;
 const draftFrom = (row: SprintRow): Draft => ({
-  id: row.id, title: row.title, description: row.description,
+  id: row.id,key:row.key,dueLabel:row.dueLabel,
+  title: row.title, description: row.description,
   goal: row.goal, definitionOfDone: row.definitionOfDone,
   startDate: row.startDate, endDate: row.endDate, dueDate: row.dueDate,
   updatedAt: row.updatedAt,
@@ -46,13 +49,15 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
   const [draft, setDraft] = useState<Draft[]>(() => sprints.map(draftFrom));
   const baseline = sprints.map(draftFrom);
   const dirty = JSON.stringify(draft) !== JSON.stringify(baseline);
-  const editable = sprints.length > 0 && sprints.length <= 100 &&
+  const editable = sprints.length > 0 && sprints.length <= 500 &&
     sprints.every(sprint => sprint.status === "PLANNED");
   const datesValid = draft.every(sprint =>
     (!sprint.startDate || !sprint.endDate || sprint.endDate >= sprint.startDate) &&
     (!sprint.startDate || !sprint.dueDate || sprint.dueDate >= sprint.startDate));
   const textValid = draft.every(sprint =>
     sprint.title.trim().length > 0 && sprint.title.trim().length <= 200 &&
+    sprint.key.trim().length>0 && sprint.key.length<=120 &&
+    (sprint.dueLabel?.length??0)<=160 &&
     (sprint.description?.length ?? 0) <= 4000 &&
     (sprint.goal?.length ?? 0) <= 4000 &&
     (sprint.definitionOfDone?.length ?? 0) <= 4000);
@@ -63,7 +68,8 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
   }
   const guard = useProjectEditorDiscardGuard(open, dirty, pending, reset);
   function change(id: string, field: keyof Pick<Draft,
-    "title" | "description" | "goal" | "definitionOfDone" | "startDate" | "endDate" | "dueDate">,
+    "title" | "key" | "dueLabel" | "description" | "goal" | "definitionOfDone" |
+    "startDate" | "endDate" | "dueDate">,
     value: string) {
     setDraft(current => current.map(row => row.id === id
       ? { ...row, [field]: field === "title" ? value : value || null } : row));
@@ -100,6 +106,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
         releaseId,
         sprints: draft.map(row => ({
           id: row.id, expectedUpdatedAt: row.updatedAt,
+          key:row.key.trim(),dueLabel:row.dueLabel?.trim()||null,
           title: row.title.trim(), description: row.description?.trim() || null,
           goal: row.goal?.trim() || null,
           definitionOfDone: row.definitionOfDone?.trim() || null,
@@ -107,10 +114,10 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
         })),
       });
       setOpen(false);
-      showToast({ tone: "success", title: "Sprints saved" });
+      showToast({ tone: "success", title: "Sprints updated" });
       router.refresh();
     } catch (error) {
-      showToast({ tone: "error", title: "Failed to save sprints",
+      showToast({ tone: "error", title: "Failed to update sprints",
         description: error instanceof Error ? error.message : "Reload the current plan and try again." });
     } finally {
       saving.current = false;
@@ -118,7 +125,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
     }
   }
   if (!editable) return <p className="text-xs text-body">
-    {sprints.length > 100 ? "This release has more than 100 sprints. Edit them individually." :
+    {sprints.length > 500 ? "This release has more than 500 sprints. Edit them individually." :
       "Bulk sprint editing is available while every sprint in the release is Planned."}
   </p>;
 
@@ -150,8 +157,22 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
           </div>
           <label className="block text-[13px] font-semibold text-body">Sprint title
             <Input className="mt-1" required maxLength={200}
+              aria-invalid={!row.title.trim()}
               value={row.title} onChange={event => change(row.id, "title", event.target.value)} />
+            {!row.title.trim()?<span role="alert" className="text-xs text-error">
+              Item {index+1}: Title required
+            </span>:null}
           </label>
+          <div className="grid gap-3 md:grid-cols-2">
+            <label className="text-[13px] font-semibold text-body">Sprint key
+              <Input className="mt-1" maxLength={120} value={row.key}
+                onChange={event=>change(row.id,"key",event.target.value)}/>
+            </label>
+            <label className="text-[13px] font-semibold text-body">Due label
+              <Input className="mt-1" maxLength={160} value={row.dueLabel??""}
+                onChange={event=>change(row.id,"dueLabel",event.target.value)}/>
+            </label>
+          </div>
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
             {(["description", "goal", "definitionOfDone"] as const).map(field =>
               <label key={field} className="block text-[13px] font-semibold text-body">

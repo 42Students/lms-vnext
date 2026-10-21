@@ -17,6 +17,7 @@ export type ProjectAdminCollectionQuery = {
     | "ACTIVE"
     | "COMPLETED"
     | "ARCHIVED";
+  sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC";
   submissionStatus?:
     | "DRAFT"
     | "SUBMITTED"
@@ -135,6 +136,8 @@ export function ProjectAdminFilters({
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
+      {query.sort&&query.sort!=="SUBMITTED_DESC"?
+        <input type="hidden" name="sort" value={query.sort}/>:null}
       {includeRiskSort ? (
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
           Sort by
@@ -213,6 +216,7 @@ export function ProjectAdminPagination({
     if (query.status) {
       params.set("status", query.status);
     }
+    if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
     if (query.submissionStatus) {
       params.set(
         "submissionStatus",
