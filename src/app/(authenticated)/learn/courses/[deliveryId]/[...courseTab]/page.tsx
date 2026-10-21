@@ -1,4 +1,6 @@
 import { Banner } from "@/components/ui/banner";
+import { CoursesServiceError } from "@/modules/courses/errors";
+import { ZodError } from "zod";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 import type { ReactNode } from "react";
 import Link from "next/link";
@@ -74,24 +76,57 @@ export default async function LearnerCourseTabPage({
     redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+(suffix?"?"+suffix:""));
   }
 
-  const [workspace, deliveries, instructors] = await Promise.all([
+  const [workspaceResult, deliveriesResult, instructorsResult] = await Promise.allSettled([
     getLearnerCourseWorkspace(context, deliveryId),
-    listLearnerCourseDeliveries(
-      context,
-      { includeHistorical: true },
-    ),
-    activeTab === "home" ? listLearnerCourseInstructors(context, deliveryId) : Promise.resolve([]),
+    listLearnerCourseDeliveries(context, { includeHistorical: true }),
+    listLearnerCourseInstructors(context, deliveryId),
   ]);
+  if(workspaceResult.status==="rejected"){
+    const reason:unknown=workspaceResult.reason;
+    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+  }
+  if(deliveriesResult.status==="rejected"){
+    const reason:unknown=deliveriesResult.reason;
+    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+  }
+  if(instructorsResult.status==="rejected"){
+    const reason:unknown=instructorsResult.reason;
+    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+  }
+  if(workspaceResult.status!=="fulfilled" || deliveriesResult.status!=="fulfilled" ||
+      instructorsResult.status!=="fulfilled"){
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Could not load course lessons" />
+      <Banner tone="warning" role="alert">
+        Could not load course lessons. Content and completion counts may be incomplete.
+        <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/"+(activeTab??"home")}
+          className="ml-2 font-semibold text-primary-text underline">Retry</Link>
+      </Banner>
+      <Link href="/learn/courses" className="font-semibold text-primary-text underline">
+        Back to Courses
+      </Link>
+    </div>;
+  }
+  const workspace=workspaceResult.value;
+  const deliveries=deliveriesResult.value;
+  const instructors=instructorsResult.value;
 
   const courseMeta = deliveries.find(
     (delivery) => delivery.deliveryId === deliveryId,
   );
 
   if (!courseMeta) {
+    // The authorized workspace exists, but no active/historical class-to-course
+    // mapping appears in the learner's semester directory. Do not guess a class.
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Course unavailable" description="This course is not assigned to your current class or semester." />
-      <EmptyState title="Could not load course" description="This course is unavailable in your current learner workspace."
-        action={<Link href="/learn/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline">Back to courses</Link>} />
+      <PageHeader title="Not assigned to a class" />
+      <Banner tone="warning" role="alert">
+        Not assigned to a class. Please contact your administrator to check your
+        course and class assignment.
+      </Banner>
+      <Link href="/learn/courses" className="font-semibold text-primary-text underline">
+        Back to Courses
+      </Link>
     </div>;
   }
 

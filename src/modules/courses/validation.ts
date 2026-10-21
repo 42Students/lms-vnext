@@ -30,13 +30,21 @@ const courseCodeSchema = z
   );
 
 const courseShortTitleSchema=z.string().trim().min(1,"Enter short display name")
- .max(64,"Maximum 64 characters");
+ .max(120,"Maximum 120 characters");
 const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters").nullable();
 /** Immutable legacy/public course slug; the department-local code is separate. */
 export const courseSlugSchema=z.string().trim()
  .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
 const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable();
 
+/** Legacy CourseDTO crosswalk (IDs remain tenant-scoped UUIDs): course_name
+ * -> name, short_title -> shortTitle (120 DB chars), dept_id -> departmentId,
+ * parent_course_id -> parentCourseId, enabled -> enabled, and intro/takeaways
+ * metadata -> course-display fields. Legacy active maps to lifecycle transitions,
+ * allowed_for_display to persisted legacyAllowedForDisplay; neither flag is
+ * accepted from an untrusted creation request. The Super Admin form generates
+ * the vNext internal code; created_by_org_id is intentionally excluded because
+ * the service derives organization from the verified department/actor scope. */
 export const createCourseInputSchema = z.object({
   departmentId: z.string().uuid(),
   parentCourseId:z.string().uuid().nullable().optional(),

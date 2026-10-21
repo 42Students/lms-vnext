@@ -108,7 +108,7 @@ export function AdminCourseCreatePanel({
   const [courseName, setCourseName] = useState(copy?.name??"");
   const [courseCode, setCourseCode] = useState(copy?.code??"");
   const duplicated=courses.find(course=>course.id===duplicateCourseId);
-  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,64));
+  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,120));
   const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
@@ -198,8 +198,8 @@ export function AdminCourseCreatePanel({
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
     if (superAdmin && !shortTitle.trim()) issues.shortTitle = "Enter short display name";
-    else if (superAdmin && shortTitle.trim().length > 64)
-      issues.shortTitle = "Maximum 64 characters";
+    else if (superAdmin && shortTitle.trim().length > 120)
+      issues.shortTitle = "Maximum 120 characters";
     if (superAdmin && officialCode.trim().length > 40)
       issues.code = "Maximum 40 characters";
     if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
@@ -340,7 +340,7 @@ export function AdminCourseCreatePanel({
           {superAdmin?<div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
-              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={64} placeholder="e.g. DSA" required />
+              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={120} placeholder="e.g. DSA" required />
               {createErrors.shortTitle ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.shortTitle}</p> : null}
             </div>
             <div>
