@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/home.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/index.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/messages.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/offers.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/announcements.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/offers.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/announcements.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/students.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/attendance.js`
