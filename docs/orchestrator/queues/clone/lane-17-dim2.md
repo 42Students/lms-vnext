@@ -235,18 +235,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/placements/recruiter-result-controls.tsx`
 - [x] `src/components/placements/report-interactive-table.tsx`
 - [x] `src/components/placements/tpo-drive-cancel-form.tsx`
-- [ ] `src/components/placements/tpo-report-presentation.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meetings-calendar.tsx`
+- [x] `src/components/placements/tpo-report-presentation.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meetings-calendar.tsx`
 - [ ] `src/components/projects/mentor-product-backlog.tsx`
 - [ ] `src/components/projects/mentor-task-allocation.tsx`
 - [ ] `src/components/projects/project-activity-filtered-list.tsx`
