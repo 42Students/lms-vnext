@@ -91,7 +91,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-workspace.tsx.md` (edit src/components/courses/faculty-course-workspace.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-home-signals.tsx.md` (edit src/components/courses/faculty-course-home-signals.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_college-learner-progress-report.tsx.md` (edit src/components/courses/college-learner-progress-report.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_assignment-validation.ts.md` (edit src/modules/courses/assignment-validation.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_assignment-validation.ts.md` (edit src/modules/courses/assignment-validation.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_college-quiz-attempts.tsx.md` (edit src/components/courses/college-quiz-attempts.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-roster.tsx.md` (edit src/components/courses/faculty-course-roster.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-quiz-review.tsx.md` (edit src/components/courses/faculty-quiz-review.tsx; 3 findings; best P1)

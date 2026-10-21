@@ -296,6 +296,9 @@ export async function submitCourseAssignment(
       if (input.submissionType === "FILE") {
         if (preparedFiles.length !== fileReceiptIds.length ||
             preparedFiles.length === 0 || preparedFiles.length > 20) {
+          // The current database keeps a deferred FILE payload invariant:
+          // each mixed submission must include one verified file. A text-only
+          // or link-only single part uses its native TEXT/LINK type instead.
           throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
         }
         // Lock and verify ALL receipts before writing. Ordered locks avoid
