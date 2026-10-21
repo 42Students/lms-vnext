@@ -129,7 +129,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         {modules.map((decision) => (
           <article
             key={decision.module}
-            className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-5"
+            className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-4"
           >
             <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
               {decision.label}
