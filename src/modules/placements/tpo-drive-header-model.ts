@@ -7,7 +7,7 @@ export type TpoDriveHeaderFacts={
 };
 const STATUS:Record<string,string>={
  DRAFT:"Draft",PUBLISHED:"Open",CLOSED:"Closed",CANCELLED:"Cancelled",
- REJECTED:"Declined",REQUEST:"Needs your review",
+ REJECTED:"Declined",REQUEST:"Needs your review",SENT_BACK:"Sent back",
 };
 const APPLICATION_MODE:Record<string,string>={
  INTERNAL:"Apply here",HYBRID:"Apply here or with the company",
