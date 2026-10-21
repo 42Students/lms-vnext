@@ -65,8 +65,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminCompanyController.java`
 - [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterChangeRequestController.java`
 - [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/OrganizationController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyClassScheduleController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantsHub.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/FeatureControlsHub.js`
-- [ ] U031 (Cross-cutting area) `cross/16: Placements end to end: companies, drives, jobs, applications, rounds, offers, joining, verification, eligibility`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyClassScheduleController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/resources.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantsHub.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/FeatureControlsHub.js`
+- [x] U031 (Cross-cutting area) `cross/16: Placements end to end: companies, drives, jobs, applications, rounds, offers, joining, verification, eligibility`
