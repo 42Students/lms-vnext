@@ -11,6 +11,37 @@ export const OUTBOUND_TEMPLATE_KEYS = [
   "RECRUITER_INVITATION_REMINDER",
 ] as const;
 
+/**
+ * Legacy Exotel mapped these seven placement events to one intended TRAI
+ * job-update body. This is a producer-event inventory, NOT a send-template
+ * registry: the vNext job-update DLT template ID has not been verified.
+ * Keep every event outside OUTBOUND_TEMPLATE_KEYS until provider registration,
+ * scoped producer authorization, SMS opt-out and audited delivery are wired.
+ */
+export const LEGACY_JOB_SMS_EVENTS = [
+  "application-submitted",
+  "shortlisted",
+  "interview-round-update",
+  "selected",
+  "rejected",
+  "interview.reminder",
+  "interview.confirmed",
+] as const;
+
+export const LEGACY_SMS_ORIGINS = [
+  "otp",
+  "notification",
+  "job.update",
+  "attendance.parent",
+] as const;
+
+/** Never mistake an identified legacy event for authorization to send. */
+export function legacyJobSmsReadiness(event: string):
+  "DLT_UNVERIFIED" | "UNSUPPORTED_EVENT" {
+  return (LEGACY_JOB_SMS_EVENTS as readonly string[]).includes(event)
+    ? "DLT_UNVERIFIED" : "UNSUPPORTED_EVENT";
+}
+
 const privateInviteUrl = z.string().url().max(2048).refine((raw) => {
   try {
     const url = new URL(raw);
