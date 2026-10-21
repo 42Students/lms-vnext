@@ -4,6 +4,9 @@ import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
 import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases} from "@/modules/projects/college-readiness-releases-service";
 import {z} from "zod";
+import {and,eq,isNull} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {projectInstances} from "@/db/schema";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -89,26 +92,47 @@ export async function ProjectAdminReadinessPage({
       one(searchParams.pageSize) ?? 25,
     ),
   };
-  const read = await Promise.all([
+  const read = await Promise.allSettled([
     listProjectAdminSnapshots(context, collegeId, query),
     listCollegeActiveReadinessOverrides(context, collegeId),
     listCollegeReadinessWorkspaceChoices(context,collegeId),
-  ]).then(value => ({ ok: true as const, value }))
-    .catch(() => ({ ok: false as const }));
-  if (!read.ok) return <div className="min-w-0 space-y-4">
+  ]);
+  if (read.some(result=>result.status==="rejected")) return <div className="min-w-0 space-y-4">
     <PageHeader title="Submission readiness"
       description="Execution completion and final-delivery readiness across project workspaces."
       actions={<PageBackLink href={basePath} label="Project workspaces" />} />
     <ProjectAdminNav basePath={basePath} active="readiness" />
-    <ErrorState title="Submission readiness unavailable"
-      description="The readiness workspaces could not be loaded. Choose the selected college and retry."
+    <ErrorState title={read[2]?.status==="rejected"?"Couldn't load workspaces":"Submission readiness unavailable"}
+      description={read[2]?.status==="rejected"
+        ?"The workspace picker could not be loaded. Retry to select a workspace."
+        :"The readiness workspaces could not be loaded. Choose the selected college and retry."}
       action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry readiness</Link>} />
   </div>;
-  const [result, activeOverrides, workspaceChoices] = read.value;
-  const chosenId=z.string().uuid().safeParse(one(searchParams.projectId) ?? one(searchParams.workspaceId)).data;
-  const selected=chosenId && workspaceChoices.some(item=>item.id===chosenId)?chosenId:null;
-  const outsideScope=Boolean(chosenId&&!selected);
-  const releaseContext=selected?await listCollegeReadinessReleases(context,collegeId,selected):[];
+  // All reads succeeded; the settled tuple retains the individual results.
+  const result=(read[0] as PromiseFulfilledResult<Awaited<ReturnType<typeof listProjectAdminSnapshots>>>).value;
+  const activeOverrides=(read[1] as PromiseFulfilledResult<Awaited<ReturnType<typeof listCollegeActiveReadinessOverrides>>>).value;
+  const workspaceChoices=(read[2] as PromiseFulfilledResult<Awaited<ReturnType<typeof listCollegeReadinessWorkspaceChoices>>>).value;
+  const requested=one(searchParams.projectId) ?? one(searchParams.workspaceId);
+  const uuid=z.string().uuid().safeParse(requested);
+  // Old projectId bookmarks used a slug. Resolve it only inside the
+  // already-authorized selected-college scope. No global slug lookup.
+  const validSlug=typeof requested==="string"&&/^[a-z0-9][a-z0-9-]{0,95}$/i.test(requested);
+  const selectedProject=uuid.success||validSlug
+   ?(await getDb().select({id:projectInstances.id,title:projectInstances.title,
+      status:projectInstances.status,slug:projectInstances.slug})
+      .from(projectInstances).where(and(eq(projectInstances.collegeId,collegeId),
+       isNull(projectInstances.deletedAt),
+       uuid.success?eq(projectInstances.id,uuid.data):eq(projectInstances.slug,requested!)))
+      .limit(1))[0]??null:null;
+  const selected=selectedProject?.id??null;
+  const outsideScope=Boolean(requested&&!selected);
+  const releaseRead=selected
+   ?await listCollegeReadinessReleases(context,collegeId,selected)
+      .then(rows=>({rows,error:false})).catch(()=>({rows:[],error:true}))
+   :{rows:[],error:false};
+  const releaseContext=releaseRead.rows;
+  const selectedSummary=result.items.find(item=>item.id===selected);
+  const selectedOverride=activeOverrides.find(item=>item.projectId===selected);
   const readinessPath =
     basePath + "/readiness";
 
@@ -123,12 +147,21 @@ export async function ProjectAdminReadinessPage({
       <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen contentClassName="space-y-3 pt-3">
         {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
         <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
+        {!selected&&!outsideScope?<Banner tone="info" role="status">Select a workspace to view current readiness, releases, and manual overrides.</Banner>:null}
         {selected ? <>
+          {selectedProject?.status==="ARCHIVED"?<Banner tone="warning" role="status">This archived workspace is not in the active picker. You can still review its current manual override.</Banner>:null}
+          <section aria-label="Current readiness" className="space-y-2 border-b border-border pb-3">
+            <h3 className="text-sm font-semibold">Current readiness — {selectedProject?.title}</h3>
+            <p className="text-sm">Workspace status: <strong>{selectedProject?.status}</strong></p>
+            {selectedSummary?<p className="text-sm">Execution: {selectedSummary.executionComplete?"Complete":"Incomplete"} · Progress: {selectedSummary.progressPercent}% · Completed sprints: {selectedSummary.completedSprintCount}/{selectedSummary.sprintCount}</p>:null}
+            <p className="text-sm">Manual override: {selectedOverride?selectedOverride.direction:"None"}</p>
+          </section>
           <Link href={basePath+"/"+selected+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Manage override
           </Link>
           <h3 className="text-sm font-semibold">Releases</h3>
-          {!releaseContext.length ? <EmptyState title="No releases recorded" description="There are no releases for this workspace yet."/> :
+          {releaseRead.error?<Banner tone="warning" role="alert">Couldn't load releases. Retry this page to review release readiness.</Banner>:
+           !releaseContext.length ? <EmptyState title="No releases recorded" description="There are no releases for this workspace yet."/> :
             <DataTable<(typeof releaseContext)[number]>
               caption="Readiness releases"
               rows={releaseContext}
