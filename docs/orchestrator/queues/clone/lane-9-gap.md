@@ -63,8 +63,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U022 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/batch-promotion.js`
 - [x] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/batches.js`
 - [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/departments.js`
-- [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminResources.js`
-- [ ] U026 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditHub.js`
+- [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminResources.js`
+- [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditHub.js`
 - [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditLogs.js`
 - [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Batches.js`
