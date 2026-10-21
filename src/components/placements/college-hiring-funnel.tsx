@@ -73,7 +73,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   <details className="min-w-0 border-b border-border pb-3" aria-label="Placement status metrics">
     <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Placement status metrics</summary>
     <section className="grid min-w-0 grid-cols-2 gap-3 pt-3 md:grid-cols-3 min-[992px]:grid-cols-5">
-   {[["Total Applications",data.totalApplications],...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
+   {[[ "Total Applications",data.totalApplications] as const,...order.map(stage=>[label(stage),data.totals[stage]??0] as const)]
     .map(([name,value])=><StatTile key={name} label={name} value={value} />)}
    <StatTile label="Avg. time to shortlist"
     value={data.averageHoursToShortlist==null?"No recorded transitions":

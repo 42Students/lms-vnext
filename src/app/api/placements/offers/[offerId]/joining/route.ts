@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { recordPlacementJoiningOutcome } from "@/modules/placements/offer-service";
+import { placementJoiningOutcomeInputSchema } from "@/modules/placements/validation";
 
 export const runtime = "nodejs";
 
@@ -30,7 +31,7 @@ export async function PUT(
       await recordPlacementJoiningOutcome(
         context,
         offerId,
-        await readTpoBulkRequestBody(request),
+        placementJoiningOutcomeInputSchema.parse(await readTpoBulkRequestBody(request)),
       );
     return NextResponse.json({ joining });
   } catch (error) {
