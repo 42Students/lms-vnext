@@ -54,7 +54,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment type
         <Select name="kind" defaultValue={data.query.kind}
-          className="min-h-11 rounded-[var(--lms-control-radius)] md:min-h-[var(--lms-control-height)] border border-border bg-surface px-3 text-foreground text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="min-h-11 md:min-h-[var(--lms-control-height)]">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
