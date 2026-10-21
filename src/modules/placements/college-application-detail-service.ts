@@ -126,7 +126,7 @@ export async function getCollegeApplicationDetail(
  ctx:RequestContext,job:unknown,id:unknown,rawHistoryPage:unknown=0,
 ){
  const historyPage=z.coerce.number().int().min(0).max(100000).parse(rawHistoryPage);
- const {application,jobId}=await scoped(ctx,job,id);
+ const {application,jobId,collegeId}=await scoped(ctx,job,id);
  const learnerPortfolio=await getCollegeLearnerPlacementSummary(ctx,application.membershipId);
  const db=getDb();
  const [screening,history,stage,notes,rounds,offers]=await Promise.all([
@@ -182,7 +182,7 @@ export async function getCollegeApplicationDetail(
    .from(placementApplicationPrivateArtifacts)
    .where(eq(placementApplicationPrivateArtifacts.applicationId,application.id)).limit(1),
   db.select({posting:placementJobs.legacyPostingDetails}).from(placementJobs)
-   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,await requireCollegePlacementAdmin(ctx))))
+   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId)))
    .limit(1),
  ]);
  const jobAssessmentLink=jobAssessment[0]?.posting?.assessmentUrl??null;
