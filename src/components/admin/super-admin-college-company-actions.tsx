@@ -129,6 +129,9 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
      <label className={labelClass}>Website (HTTPS)
       <Input type="url" maxLength={500} placeholder="https://example.com" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)} className={fieldClass}/>
      </label>
+     <div className={labelClass}>Company logo
+      <p className="text-xs font-normal leading-5 text-muted-foreground">Logo belongs to the shared company identity. Create this college relationship first, then ask a platform administrator to edit its logo from the global company catalogue. A college-only logo cannot override other colleges&apos; records.</p>
+     </div>
     </fieldset>
     <fieldset className="min-w-0 space-y-3 border-t border-border pt-3" disabled={pending}>
      <legend className="font-semibold text-[var(--lms-heading)]">Contact</legend>
@@ -144,7 +147,10 @@ export function SuperAdminCollegeCompanyCreate({collegeId}:{collegeId:string}){
      </label>
     </fieldset>
     <fieldset className="min-w-0 space-y-2 border-t border-border pt-3" disabled={pending}>
-     <legend className="font-semibold text-[var(--lms-heading)]">Internal only</legend>
+     <legend className="flex items-center gap-2 font-semibold text-[var(--lms-heading)]">
+       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+       Internal only
+     </legend>
      <label className={labelClass}>Notes
       <Textarea rows={3} maxLength={2000} value={notes} onChange={e=>setNotes(e.target.value)} className={fieldClass}/>
       <span className="text-right text-xs font-normal text-muted-foreground">{notes.length}/2000</span>
