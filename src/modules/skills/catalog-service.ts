@@ -49,6 +49,18 @@ function editDistanceAtMostTwo(first:string,second:string):number {
  return Math.min(3,previous[b.length]??3);
 }
 
+/** A missing synonym relation during partial DB10 rollout is recoverable;
+ * ordinary database errors must still propagate to the caller. */
+function synonymTableNotInstalled(error: unknown) {
+  let current: unknown = error;
+  for (let depth=0;depth<5;depth++) {
+    if (!current || typeof current !== "object") break;
+    if ("code" in current && current.code === "42P01") return true;
+    current = "cause" in current ? current.cause : null;
+  }
+  return false;
+}
+
 const columns = {
   id: db10Skills.id,
   legacySkillId: db10Skills.legacySkillId,
