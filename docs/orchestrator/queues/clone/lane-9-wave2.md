@@ -71,7 +71,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_messaging_tpo-campaign-unsubscribe-service.ts.md` (edit src/modules/messaging/tpo-campaign-unsubscribe-service.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_verification_staff-queue-service.ts.md` (edit src/modules/verification/staff-queue-service.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_courses_lessons_route.ts.md` (edit src/app/api/courses/lessons/route.ts; 6 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_super-admin-content-directory-model.ts.md` (edit src/modules/courses/super-admin-content-directory-model.ts; 6 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_super-admin-content-directory-model.ts.md` (edit src/modules/courses/super-admin-content-directory-model.ts; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-course-tab-navigation.tsx.md` (edit src/components/courses/faculty-course-tab-navigation.tsx; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-quiz-review.tsx.md` (edit src/components/courses/faculty-quiz-review.tsx; 6 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_notifications_route.ts.md` (edit src/app/api/notifications/route.ts; 5 findings; best P2)

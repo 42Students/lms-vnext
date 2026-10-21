@@ -1,5 +1,12 @@
 import { z } from "zod";
-export const ADMIN_CONTENT_PAGE_SIZE = 25;
+/** Video/Live source tables default to 10; the old resources table to 15.
+ * Keep a bounded size changer rather than loading the entire lesson tree. */
+export const ADMIN_CONTENT_PAGE_SIZE = 10;
+export const ADMIN_RESOURCE_PAGE_SIZE = 15;
+export const ADMIN_CONTENT_PAGE_OPTIONS = [10,15,25,50,100] as const;
+export function adminContentDefaultPageSize(kind:AdminContentKind){
+ return kind==="RESOURCES"?ADMIN_RESOURCE_PAGE_SIZE:ADMIN_CONTENT_PAGE_SIZE;
+}
 export const adminContentKindSchema = z.enum(["VIDEOS","RESOURCES","LIVE_CLASSES"]);
 export type AdminContentKind = z.infer<typeof adminContentKindSchema>;
 export const adminContentQuerySchema = z.strictObject({
@@ -13,6 +20,9 @@ export const adminContentQuerySchema = z.strictObject({
   z.number().int().min(1).max(1000),
   z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(1).max(1000)),
  ]).default(1),
+ pageSize:z.coerce.number().int().refine(value=>
+  (ADMIN_CONTENT_PAGE_OPTIONS as readonly number[]).includes(value),
+  "Choose 10, 15, 25, 50 or 100 rows").optional(),
 });
 export function contentTypesForKind(kind:AdminContentKind) {
  return kind==="VIDEOS"?["VIDEO","YOUTUBE"] as const:
@@ -30,14 +40,19 @@ export function adminContentHref(kind:AdminContentKind,raw:unknown) {
  if(query.deliveryId)p.set("deliveryId",query.deliveryId);
  if(query.scope!=="ALL")p.set("scope",query.scope);
  if(query.page>1)p.set("page",String(query.page));
+ if(query.pageSize!==undefined)p.set("pageSize",String(query.pageSize));
  const base=kind==="VIDEOS"?"/admin/videos":kind==="RESOURCES"?"/admin/resources":"/admin/live-classes";
  return base+(p.size?"?"+p:"");
 }
-export function adminContentPages(total:number) {
- return Math.max(1,Math.ceil(total/ADMIN_CONTENT_PAGE_SIZE));
+export function adminContentPages(total:number,pageSize:number=ADMIN_CONTENT_PAGE_SIZE) {
+ return Math.max(1,Math.ceil(total/pageSize));
+}
+export function adminContentRange(total:number,page:number,size:number){
+ return {start:total===0?0:Math.min(total,(page-1)*size+1),
+  end:Math.min(total,page*size)};
 }
 export function adminContentTypeLabel(type:string) {
- return type==="YOUTUBE"?"YouTube Video":type==="VIDEO"?"Video (Upload)":
+ return type==="YOUTUBE"?"YouTube":type==="VIDEO"?"Video":
   type==="RESOURCE"?"Resource":type==="LIVE_CLASS"?"Live class":"Unknown content";
 }
 /** Effective visibility is the entire published ancestry, not just content's flag. */
@@ -61,6 +76,7 @@ export function legacySuperAdminLessonContentHref(raw:Record<string,string|strin
   q:typeof raw.q==="string"?raw.q:undefined,
   status:typeof raw.status==="string"?raw.status:undefined,
   page:typeof raw.page==="string"?raw.page:undefined,
+  pageSize:typeof raw.pageSize==="string"?raw.pageSize:undefined,
   offeringId:typeof raw.offeringId==="string"?raw.offeringId:undefined,
   lessonId:typeof raw.lessonId==="string"?raw.lessonId:undefined,
   deliveryId:typeof raw.deliveryId==="string"?raw.deliveryId:undefined,
@@ -79,4 +95,15 @@ export function legacyContentVisibilityBadge(row:{
  const effective=effectiveCourseContentVisibleToStudents(row);
  return {configured,effective,
   label:!configured?"Hidden":effective?"Visible":"Visible flag on · waiting for publication"};
+}
+
+/** Legacy AdminResources initialized active/enabled/visible to true.
+ * The actual publish mutation still verifies lesson and offering ancestry. */
+export function legacyAdminContentInitialFlags(input:{
+ active?:boolean;enabled?:boolean;visible?:boolean;
+}={}){
+ return {
+  publishNow:input.active!==false&&input.enabled!==false,
+  visibleToStudents:input.visible!==false&&input.enabled!==false,
+ };
 }

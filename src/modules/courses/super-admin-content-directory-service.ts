@@ -16,7 +16,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError,requirePermission } from "@/modules/permissions/policy";
 import {
- ADMIN_CONTENT_PAGE_SIZE,adminContentPages,adminContentQuerySchema,
+ adminContentDefaultPageSize,adminContentPages,adminContentQuerySchema,
  adminContentKindSchema,contentTypesForKind,
 } from "./super-admin-content-directory-model";
 const cohortDepartment=alias(departments,"admin_content_cohort_department");
@@ -24,7 +24,9 @@ function aliased<C extends Column>(column:C,name:string) {
  return sql<C["_"]["data"]>`${column}`.mapWith(column).as(name);
 }
 export async function listSuperAdminContentDirectory(context:RequestContext,rawKind:unknown,rawQuery:unknown) {
- const kind=adminContentKindSchema.parse(rawKind),query=adminContentQuerySchema.parse(rawQuery);
+ const kind=adminContentKindSchema.parse(rawKind),requested=adminContentQuerySchema.parse(rawQuery);
+ const pageSize=requested.pageSize??adminContentDefaultPageSize(kind);
+ const query={...requested,pageSize};
  const collegeId=context.adminScope?.collegeId;
  if(!isSuperAdmin(context)||!collegeId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{
@@ -96,7 +98,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
  const total=totalRow?.total??0;
  const items=await db.select().from(source)
   .orderBy(asc(source.courseName),asc(source.lessonName),asc(source.sequence),asc(source.id))
-  .limit(ADMIN_CONTENT_PAGE_SIZE).offset((query.page-1)*ADMIN_CONTENT_PAGE_SIZE);
+  .limit(pageSize).offset((query.page-1)*pageSize);
  // Resource metadata is safe to display; signed URLs and opaque object keys
  // must still come from the per-material authorization endpoint.
  const resourceIds=items.filter(item=>item.contentType==="RESOURCE").map(item=>item.id);
@@ -114,7 +116,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   const existing=byContent.get(material.lessonContentId)??[];
   existing.push(material);byContent.set(material.lessonContentId,existing);
  }
- return {kind,query,total,totalPages:adminContentPages(total),items:items.map(item=>({
+ return {kind,query,total,totalPages:adminContentPages(total,pageSize),items:items.map(item=>({
   ...item,materialCount:byContent.get(item.id)?.length??0,
   materials:byContent.get(item.id)??[],
  }))};
