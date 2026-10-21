@@ -60,7 +60,7 @@ function mapConflict(error: unknown): never {
 export async function listCollegeTermMappings(context: RequestContext) {
   const membership = await ownCollege(context);
   const db = getDb();
-  const [terms, courseChoices, mapped] = await Promise.all([
+  const [termsResult,courseChoicesResult,mappedResult] = await Promise.allSettled([
     db.select({
       id: programTerms.id, name: programTerms.name, termNumber: programTerms.termNumber,
       programName: programs.name, programId: programs.id, departmentId: departments.id,
@@ -102,6 +102,14 @@ export async function listCollegeTermMappings(context: RequestContext) {
       ))
       .orderBy(asc(programs.name), asc(programTerms.termNumber), asc(programTermCourses.displayOrder)),
   ]);
+  const lookupFailures = [
+    ...(termsResult.status==="rejected" ? ["semester terms"] : []),
+    ...(courseChoicesResult.status==="rejected" ? ["course choices"] : []),
+    ...(mappedResult.status==="rejected" ? ["saved mappings"] : []),
+  ];
+  const terms = termsResult.status==="fulfilled" ? termsResult.value : [];
+  const courseChoices = courseChoicesResult.status==="fulfilled" ? courseChoicesResult.value : [];
+  const mapped = mappedResult.status==="fulfilled" ? mappedResult.value : [];
   // Read curriculum and course choices independently from staffing. A failed
   // staffing query must not hide a valid mapping roster or an edit action.
   // These are ACTIVE DELIVERY counts, not the legacy all-program-class report.
@@ -139,7 +147,7 @@ export async function listCollegeTermMappings(context: RequestContext) {
     staffingAvailable = false;
   }
   const staffByCourse = new Map(staffingRows.map(row => [row.courseId, row]));
-  return { terms, courses: courseChoices, staffingAvailable,
+  return { terms, courses: courseChoices, staffingAvailable, lookupFailures,
     mapped: mapped.map(row => {
       const staffing = staffByCourse.get(row.courseId);
       const warning = !staffingAvailable ? "Faculty staffing warnings unavailable"
