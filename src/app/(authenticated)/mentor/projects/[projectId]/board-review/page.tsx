@@ -28,7 +28,7 @@ export default async function MentorBoardReviewPage({
   );
   if(!validated.success)return <section role="alert" className="space-y-3">
     <PageHeader title={"Invalid board filters"} />
-    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
+    <Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Projects</Link>
   </section>;
   const data=await getMentorBoardReview(await getCurrentRequestContext(),validated.data);
   const base="/mentor/projects/"+encodeURIComponent(projectId);
@@ -37,7 +37,7 @@ export default async function MentorBoardReviewPage({
     <PageHeader eyebrow="Mentor · Project" title="Task board status"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no tasks were loaded."}
       actions={<Link data-unskin="" href={base+"?tab=board"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Full task workspace
       </Link>}/>
     {!data.enabled?
@@ -74,13 +74,13 @@ export default async function MentorBoardReviewPage({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter
         </Button>
-        {filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center px-3 py-2 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form></FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-board-export"+
           (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
             "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Download filtered CSV (max 500)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -91,7 +91,7 @@ export default async function MentorBoardReviewPage({
         title={data.count===0?"No registered project tasks":"No tasks match these filters"}
         description={data.count===0?
           "This project has no stored tasks. No workload or assignment is inferred.":
-          "The stored tasks do not match your filters. Clear filters to view the whole board."} action={filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>:<Link href={base+"?tab=board"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Full task workspace</Link>} />:
+          "The stored tasks do not match your filters. Clear filters to view the whole board."} action={filtered?<Link href={base+"/board-review"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>:<Link href={base+"?tab=board"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Full task workspace</Link>} />:
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(row=><li key={row.id}
           className="py-[var(--lms-space-3)]">
           <h2 className="m-0 break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{row.title}</h2>
@@ -115,7 +115,7 @@ export default async function MentorBoardReviewPage({
           <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+"/mentor-sprint-summary-export"+
             (mentorBoardReviewHref({...data.query,page:1}).split("?")[1]?
               "?"+mentorBoardReviewHref({...data.query,page:1}).split("?")[1]:"")}
-            download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            download className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Download filtered Sprint summary CSV (max 100)
           </Link>
         </div>
