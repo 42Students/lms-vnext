@@ -293,18 +293,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/placements/tpo-drive-selection-manager.tsx`
 - [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
 - [x] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/learner-project-mobile-filters.tsx`
-- [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-history.tsx`
-- [ ] `src/components/projects/mentor-meetings-calendar.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/learner-project-mobile-filters.tsx`
+- [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meeting-history.tsx`
+- [x] `src/components/projects/mentor-meetings-calendar.tsx`
 - [ ] `src/components/projects/project-activity-filtered-list.tsx`
 - [ ] `src/components/projects/project-admin-at-risk-page.tsx`
 - [ ] `src/components/projects/project-admin-audit-page.tsx`
