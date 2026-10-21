@@ -791,3 +791,47 @@ Academic semester create/list visual layout and server fetch are shared Academic
 - G2-20-004-039 | `src/app/request-demo/page.tsx` | Replace subject-only mailto with exported MARKETING_DEMO_MAILTO, or use approved lead form after validation.
 
 Owned modules are partially implemented; dependent installation and route page updates are **not** claimed done. Keep vNext no-AI direction in marketing schema and avoid sending browser PII or credential details through telemetry.
+
+## TPO Requests — wave-1 lane-7 handoff (2026-10-21)
+
+- G2-11-023-005 | `src/app/(authenticated)/tpo/requests/page.tsx` | Make proof-missing chip actionable and backend-grounded rather than advisory.
+- G2-11-023-008 | `src/app/(authenticated)/tpo/requests/page.tsx` | Render typed payload fields and safe URL links with invalid URL fallback.
+- G2-11-023-009 | `src/app/(authenticated)/tpo/requests/page.tsx` | Evaluate proof per request and show exact missing-proof warning.
+- G2-11-023-018 | `src/app/(authenticated)/tpo/requests/page.tsx` | Restore discoverable selection controls and safe cross-page selection behavior.
+- G2-11-023-035 | `src/components/placements/tpo-request-bulk-decision.tsx + request proof read service` | Add proof missing flags and explicit skip/error handling to bulk preview.
+- G2-11-023-049 | `src/app/(authenticated)/tpo/requests/page.tsx` | Restore core request details and action discoverability, not only visual shell.
+
+Cross-college request proof links must remain signed/verified; blanket bulk decisions without proof gating are not safe. TPO owner needs typed backend proof flags, correct actionable chip and discoverable selection. **6/6 handed off, not fixed**.
+
+## Super Admin template sprints — wave-1 lane-7 handoff (2026-10-21)
+
+- G2-11-029-022 | `src/components/projects/super-admin-template-plan-editor.tsx` | Protect unsaved form across Back, tabs, sidebar, refresh and browser close.
+- G2-11-029-025 | `src/components/projects/super-admin-template-plan-editor.tsx` | Use merge/section PATCH or guarantee version conflict and no loss of concurrent edits.
+- G2-11-029-026 | `src/modules/projects/template-service.ts` | Verify acting-college scope and permission parity to prevent tenant edits.
+- G2-11-029-034 | `src/components/projects/super-admin-template-plan-editor.tsx` | Implement accessible non-destructive confirmation on navigation.
+- G2-11-029-019 | `src/components/projects/super-admin-template-plan-editor.tsx` | Restore exact error title and preserve retry.
+- G2-11-029-020 | `src/components/projects/super-admin-template-plan-editor.tsx` | Match toast/modal presentation and exact feedback.
+
+Template editor must not silently drop concurrent sprints or tasks. Projects owner must preserve optimistic CAS, add unsaved-change guard and align modal copy. **6/6 handed off, not fixed**.
+
+## Telegram alert callbacks — lane-7 handoff (2026-10-21)
+
+- G2-6-024-005 | `src/modules/log-alerts/telegram-webhook.ts` | Add editMessageText or equivalent visible acknowledgment state and remove active button to avoid repeated clicks.
+- G2-6-024-020 | `src/modules/log-alerts/telegram-webhook.ts` | Persist state AND edit original message, keeping provider update consistent with durable triage.
+- G2-6-024-049 | `src/modules/log-alerts/telegram-webhook.ts` | Restore durable visible original-message acknowledgment and answer unknown-but-authentic callbacks.
+- G2-6-024-015 | `src/app/api/webhooks/telegram/route.ts` | Align intended provider retry semantics and document intentionally stricter validation.
+- G2-6-024-016 | `src/modules/log-alerts/telegram-webhook.ts` | Clone both ephemeral acknowledgment and durable original-message text update.
+- G2-6-024-017 | `src/modules/log-alerts/telegram-webhook.ts` | Ensure Telegram confirmation remains visible after callback, not only transient popup.
+
+Telegram provider acknowledgments must be authentic and persisted before editing the provider's original message. Provider calls/retries are Notifications ownership. **6/6 handed off, not fixed**.
+
+## Job important-date DTO — lane-7 handoff (2026-10-21)
+
+- G2-18-021-057 | `src/modules/placements/placement-legacy-posting-model.ts` | Write migration for JSON `date`→`at` with type/dateType, preserving insertion order and malformed-row reports.
+- G2-18-021-058 | `src/modules/placements/placement-legacy-posting-model.ts` | Map old integer job identity and company display snapshot into UUID job and relationships.
+- G2-18-021-059 | `src/modules/placements/placement-legacy-posting-model.ts` | Add subtype migration/schema projection, never infer from free-text after migration.
+- G2-18-021-060 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Preserve applied-job history event visibility after deadline for learner career continuity.
+- G2-18-021-061 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Make calendar multi-source: job important dates, existing booked rounds, blocked college dates with consistent legend, ICS and event links.
+- G2-18-021-062 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Choose role-specific data providers and preserve tenant boundaries, not a single global job date query.
+
+Importing numeric legacy job date records and learner visible/applied event union belongs to Placements + schema, with strict college/role authorization. No migration performed. **6/6 handed off, not fixed**.
