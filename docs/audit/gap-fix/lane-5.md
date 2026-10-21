@@ -243,3 +243,13 @@
 ## Packet 49 — Tenant creation
 - Work: existing organization creation already forwards verified organizationId, and college creation already changes scope before opening setup. Clarified this behavior on-screen, indicated authorized prefill, and changed failed scope-selection message to legacy wording.
 - Existing typed create response and safe scope handoff retained. No code execution, tests, or CI. Reviewed JSX and imports.
+
+## Packet 50 — Super Admin placement drive overview
+- Completed scoped UUID check with legacy "Could not load this drive." recovery. Selected-college safety gate shows "Select a college to continue".
+- Split core job identity from pipeline metrics with settled reads; metrics failure presents "Could not load pipeline metrics." inside the existing drive workspace without hiding actions. Unauthorized errors propagate. Other optional workspace services remain a downstream handoff (G2-10-012-071).
+- G2-10-012-028/029/031/039/053 addressed on owned page; G2-10-012-071 partly addressed. No code, tests or CI run.
+
+## Packet 51 — Organization actions
+- Dirty Rename cancel, X and Escape request the exact discard confirmation and preserve unsaved field when declined (G2-6-018-020/032). Existing dynamic success "Updated organization X" was already parity-compliant.
+- Archive is intentionally non-destructive, so "Archived organization" is retained rather than falsely reporting legacy physical deletion. Archive currently blocks active colleges but not archived children; confirm legacy mapping and lifecycle with domain owner (G2-6-018-041/028). Read-only scope restriction remains service-driven, needs explicit parent access hint (G2-6-018-029).
+- No app execution, test or CI run.

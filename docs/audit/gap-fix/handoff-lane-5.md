@@ -121,3 +121,6 @@
 
 - College setup cross-section navigation: G2-5-030-009/024/025/028/039/058 require shared client-side dirty and busy registry, precise discard confirmation, and a guard for Back, section switches and college scope changes. Parent server page can only give accurate guidance.
 - Tenant creation scope transition: G2-10-023-004/029/030/052/061/102: verify existing typed create response, admin-scope POST, and next setup page read from persisted selected college. Existing flow already auto-selects when authorized; UI copy updated.
+
+- PlacementDriveWorkspace (G2-10-012-071) needs individual recovery for optional evaluation/eligibility/screening/role/options panels and a guaranteed authenticated drive header even when auxiliary backend fails. Packet 50 isolates overview metrics only.
+- Organization lifecycle and admin menu (G2-6-018-041/028/029): archive of organization with archived-but-owned colleges differs from legacy hard-delete rule. Clarify domain mapping before server behavioral change; show "Clear scope to manage organizations" for non-manageable entries without bypassing permissions.
