@@ -397,7 +397,7 @@ export function AdminOfferingLearningOverview({
       <section aria-label="In this course" className="min-w-0 border-b border-border pb-5">
         <h2 className="text-lg font-semibold text-foreground">In this course</h2>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
           {summarizeCollegeCourseContents(workspace.lessons).map(item=>(
             <StatTile key={item.key} label={item.label} value={item.count} className="p-3" />
           ))}

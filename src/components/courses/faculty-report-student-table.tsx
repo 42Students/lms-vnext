@@ -77,7 +77,7 @@ export function FacultyReportStudentTable({
       )}
 
       {result.pages > 1 ? (
-        <nav aria-label="Report student pages" className="mt-4 flex min-w-0 items-center justify-between gap-2">
+        <nav aria-label="Report student pages" className="mt-4 flex min-w-0 items-center justify-between gap-2 flex-wrap">
           <Button variant="secondary"
             type="button"
             disabled={result.page === 1}
