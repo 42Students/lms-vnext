@@ -16,7 +16,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_admin-company-merge-service.ts.md` (edit src/modules/placements/admin-company-merge-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_app_authenticated_tracker_audit-findings_page.tsx.md` (edit src/app/(authenticated)/tracker/audit-findings/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-workspace-page-export.tsx.md` (edit src/components/projects/project-admin-workspace-page-export.tsx; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_placements_jobs_jobId_selections_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_placements_jobs_jobId_selections_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_academics_program-service.ts.md` (edit src/modules/academics/program-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_recruiter_conversations_open_route.ts.md` (edit src/app/api/placements/recruiter/conversations/open/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_NEW_docs_audit_gap2_lane-16_u031-placements-end-to-end.md.md` (new; 1 findings; best P2)
