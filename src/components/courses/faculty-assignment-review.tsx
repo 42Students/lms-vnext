@@ -594,7 +594,8 @@ export function FacultyAssignmentReview({
           View submissions
         </Button>
       </div>
-      <Drawer
+      <ReviewOverlay
+        className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
         open={open}
         onOpenChange={(nextOpen)=>{
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
