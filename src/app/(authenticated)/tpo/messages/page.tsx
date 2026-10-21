@@ -17,6 +17,7 @@ import {TpoInboxSearch} from "@/components/tpo/tpo-inbox-search";
 import { listTpoMessageRecruiters } from "@/modules/placements/tpo-recruiter-message-recipients-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
+import { hasPlacementTeamMembership } from "@/modules/placements/placement-team-access-model";
 
 import {
   tpoMessagesHref,
@@ -34,6 +35,10 @@ type SearchParams = {
   to?: string | string[];
   q?: string | string[];
   about?: string | string[];
+  c?: string | string[];
+  m?: string | string[];
+  ask?: string | string[];
+  filter?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
 };
@@ -53,16 +58,15 @@ export default async function TpoMessagesPage({
 }) {
   const context = await getCurrentRequestContext();
 
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, "TPO")
-  ) {
+  const raw = await searchParams;
+  const selectedTab=first(raw.tab)?.toLowerCase()??"recruiters";
+  if (!context.membership ||
+      (selectedTab==="team" ? !hasPlacementTeamMembership(context) :
+       !hasMembershipRole(context,"TPO"))) {
     redirect("/dashboard");
   }
 
   const now = new Date();
-  const raw = await searchParams;
-  const selectedTab=first(raw.tab)?.toLowerCase()??"recruiters";
   const tabs=(selected:"recruiters"|"team")=><nav role="tablist" aria-label="Messages" className="flex gap-2 border-b border-border pb-2">
     {(["recruiters","team"] as const).map(value=><Link role="tab" key={value}
       aria-selected={selected===value} href={"/tpo/messages?tab="+value}
@@ -79,7 +83,8 @@ export default async function TpoMessagesPage({
     <PageHeader title="Messages" description="Your placement team's own conversations: who does what, and what you decided. Recruiters and students never see these."/>
     {tabs("team")}
     {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
-    <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}/>
+    <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
+      selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}/>
   </div>;
   if(selectedTab!=="recruiters")return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages"/>
