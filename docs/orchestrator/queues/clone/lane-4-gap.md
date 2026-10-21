@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/api/ai-grading/grade-booklet.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/api/ai-grading/health.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/assignments.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/faculty-assignment.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/submissions/index.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/faculty-assignment.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/submissions/index.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/assignments.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/faculty-assignment.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/submissions/index.js`
