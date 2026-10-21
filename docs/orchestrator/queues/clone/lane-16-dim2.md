@@ -166,9 +166,9 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx`
 - [x] `src/app/(authenticated)/tpo/requests/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/after-college/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/after-college/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/branding/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/job-types/error.tsx`
