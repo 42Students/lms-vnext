@@ -12,6 +12,26 @@ import {ACTIVE_FINDING_STATUSES,RELEASE_BLOCKER_FINDING_STATUSES,INDEPENDENT_AUD
 export function independentAuditFindingsReady(){
  return process.env.DB10_AUDIT_FINDINGS_READY==="DB10_VERIFIED";
 }
+/** The release flag records an operator approval, but cannot prove a
+ * partially replayed schema is ready. Query the canonical tables and indexed
+ * ID constraint before touching an audit record. Fail closed on DB errors.
+ * This is a read-only check; it never applies migrations at runtime. */
+export async function independentAuditFindingsStorageReady():Promise<boolean>{
+ if(!independentAuditFindingsReady())return false;
+ try{
+  const result=await getDb().execute<{ok:boolean}>(sql`
+   select (
+    to_regclass('public.audit_findings') is not null and
+    to_regclass('public.audit_finding_events') is not null and
+    to_regclass('public.audit_finding_syncs') is not null and
+    to_regclass('public.audit_finding_file') is not null and
+    to_regclass('public.db10_audit_findings_external_id_uq') is not null and
+    to_regclass('public.audit_finding_file_unique_attempt_uq') is not null
+   ) as ok
+  `);
+  return result.rows[0]?.ok===true;
+ }catch{return false;}
+}
 function requireIndependentFindingAccess(context:RequestContext){
  if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
   throw new AuthorizationError("admin-scope.select");
@@ -19,7 +39,7 @@ function requireIndependentFindingAccess(context:RequestContext){
 }
 export async function listIndependentAuditFindings(context:RequestContext,query:FindingFilters){
  requireIndependentFindingAccess(context);
- if(!independentAuditFindingsReady())throw new Error("Audit findings storage is not verified.");
+ if(!await independentAuditFindingsStorageReady())throw new Error("Audit findings storage is not verified.");
  const predicates:SQL[]=[];
  const pattern="%"+query.q.replace(/[\\%_]/g,"\\$&")+"%";
  const searchPredicate=query.q?or(
@@ -81,7 +101,7 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
 }
 export async function getIndependentAuditFinding(context:RequestContext,rawId:string){
  requireIndependentFindingAccess(context);
- if(!independentAuditFindingsReady())return null;
+ if(!await independentAuditFindingsStorageReady())return null;
  if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/.test(rawId))return null;
  const [item]=await getDb().select().from(db10AuditFindings)
   .where(eq(db10AuditFindings.externalId,rawId)).limit(1);
@@ -91,7 +111,7 @@ export async function getIndependentAuditFinding(context:RequestContext,rawId:st
 /** CAS-protected edits of the independent findings table; never mutate bug reports. */
 export async function mutateIndependentAuditFinding(context:RequestContext,externalId:string,raw:unknown){
  requireIndependentFindingAccess(context);
- if(!independentAuditFindingsReady())return {ok:false as const,reason:"NOT_READY"};
+ if(!await independentAuditFindingsStorageReady())return {ok:false as const,reason:"NOT_READY"};
  const input=independentFindingActionSchema.parse(raw);
  if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/.test(externalId))return {ok:false as const,reason:"NOT_FOUND"};
  return getDb().transaction(async tx=>{
@@ -153,7 +173,7 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
 }
 export async function listIndependentAuditFindingEvents(context:RequestContext,findingId:string){
  requireIndependentFindingAccess(context);
- if(!independentAuditFindingsReady())return [];
+ if(!await independentAuditFindingsStorageReady())return [];
  return getDb().select({id:db10AuditFindingEvents.id,action:db10AuditFindingEvents.action,
   note:db10AuditFindingEvents.note,createdAt:db10AuditFindingEvents.createdAt,
   actorUserId:db10AuditFindingEvents.actorUserId,
@@ -167,7 +187,7 @@ export async function listIndependentAuditFindingEvents(context:RequestContext,f
  */
 export async function readIndependentFindingSyncState(context:RequestContext){
  requireIndependentFindingAccess(context);
- if(!independentAuditFindingsReady())return null;
+ if(!await independentAuditFindingsStorageReady())return null;
  const [row]=await getDb().select({
   source:db10AuditFindingSyncs.source,lastSyncedAt:db10AuditFindingSyncs.lastSyncedAt,
   lastResult:db10AuditFindingSyncs.lastResult,importedCount:db10AuditFindingSyncs.importedCount,
