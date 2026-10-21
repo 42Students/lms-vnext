@@ -23,7 +23,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
-  <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{label}
    <Select className="min-h-11 min-[768px]:min-h-9" value={value}
     onChange={e=>change(e.target.value)}>
     <option value="ALL">All</option>{items.map(i=><option key={i} value={i}>{i}</option>)}
@@ -51,7 +51,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
      {choices("Mode",unique(events.map(calendarMode)),mode,setMode)}
      {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,setDepartment)}
      {choices("Sort",["DATE","COMPANY"],sort,setSort)}
-     <label className="flex min-h-11 items-center gap-[var(--lms-space-2)] text-sm text-body">
+     <label className="flex min-h-11 items-center gap-[6px] text-sm text-body">
       <Checkbox checked={conflictsOnly} onChange={e=>setConflictsOnly(e.target.checked)}/>
       Possible conflicts only
      </label>

@@ -142,7 +142,7 @@ export function OrganizationActions({
       >
         <label
           htmlFor={`organization-name-${organizationId}`}
-          className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Organization name
         </label>

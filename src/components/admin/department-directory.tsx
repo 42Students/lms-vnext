@@ -71,7 +71,7 @@ export function DepartmentDirectory({
       <h2 className="m-0 text-base font-semibold text-foreground">{DEPARTMENT_COPY.existingTitle}</h2>
       <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] print:hidden sm:grid-cols-[minmax(0,1fr)_auto]">
         <div className="min-w-0 flex-1">
-          <label htmlFor="department-directory-search" className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label htmlFor="department-directory-search" className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search departments
           </label>
           <Input id="department-directory-search" placeholder="Search departments"
@@ -83,7 +83,7 @@ export function DepartmentDirectory({
         <Disclosure title="View options" className="min-w-0 sm:self-end sm:col-start-2"
           contentClassName="flex min-w-0 flex-col gap-3 pb-3 pt-2 sm:min-w-48">
           <label htmlFor="department-directory-page-size"
-            className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Rows per page
             <Select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
