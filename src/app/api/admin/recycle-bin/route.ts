@@ -56,8 +56,11 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     if (url.searchParams.get("types") === "1") {
-      requirePermission(context,"admin-scope.select");
-      return NextResponse.json({status:"OK",types},{headers});
+      const visible = isSuperAdmin(context) ?
+        (requirePermission(context,"admin-scope.select"),types) :
+        (await resolveActingCollege(context,"academics.manage"),
+          types.filter(item=>!item.platformLevel));
+      return NextResponse.json({status:"OK",types:visible},{headers});
     }
     const parsed = typeSchema.safeParse(typeInput);
     if (!parsed.success) return typedError("Choose a valid deleted item type.",400);

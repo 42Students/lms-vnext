@@ -96,7 +96,7 @@ export async function listFutureElectiveLearnerOverlaps(
   const acting=await resolveActingCollege(context,"academics.manage");
   const section=z.string().uuid().parse(sectionId);
   if (!Number.isFinite(from.getTime()) || !Number.isFinite(to.getTime()) ||
-    from >= to) return [];
+    from.getTime() >= to.getTime()) return [];
   const db=getDb();
   const candidateGroups=await db.select({groupId:electiveOfferings.groupId})
     .from(electiveOfferings)
