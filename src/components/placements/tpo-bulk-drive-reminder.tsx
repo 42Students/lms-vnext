@@ -65,7 +65,7 @@ export function TpoBulkDriveReminder(){
   {error?<InlineNotice tone="error" message={error}/>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
    title="Send eligible non-applicant reminders?"
-   description={"Preview and send one daily reminder for eligible students who have not applied to these "+selectedIds.length+" drives?"}
+   description={"Preview and send one reminder per rolling 20-hour window for eligible students who have not applied to these "+selectedIds.length+" drives?"}
    confirmLabel="Preview and send" confirmVariant="primary" pending={busy}
    onConfirm={()=>void remind()}/>
  </div>;

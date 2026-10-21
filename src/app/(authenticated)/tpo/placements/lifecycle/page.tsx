@@ -7,6 +7,7 @@ import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-app
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
 import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
 import {TpoDriveActOnPanel} from "@/components/placements/tpo-drive-act-on-panel";
+import {TpoBulkDriveDeadline} from "@/components/placements/tpo-bulk-drive-deadline";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
@@ -472,6 +473,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             Export selected drives (CSV)
           </Button>
            <TpoDriveActOnPanel/>
+           <TpoBulkDriveDeadline totalMatching={data.totalMatching}/>
           </div>
         </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
