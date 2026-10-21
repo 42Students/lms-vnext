@@ -308,7 +308,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             description={data.view==="LIVE"?"Published opportunities appear here once ready.":
              data.view==="DRAFT"?"Create a drive to start planning the next hiring opportunity.":
              data.view==="CLOSED"?"Completed and cancelled opportunities appear here.":
-              "No non-archived jobs match the selected season and filters."} action={<Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Create drive</Link>} />
+              "No non-archived jobs match the selected season and filters."} action={<Link href="/tpo/placements/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">Create drive</Link>} />
 
         </div> :
         <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
@@ -350,7 +350,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                   ? new Date(job.applicationDeadline).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
                   +" IST": "Not recorded"}</p></div>
               <div className="flex flex-wrap items-center gap-2">
-                <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">Open drive</Link>
+                <Link href={"/tpo/placements/jobs/"+job.id} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9">Open drive</Link>
                 <Dropdown mobileSheet align="end" label={"More actions for "+job.company+" "+job.title} trigger="More ···">
                    <nav aria-label={"Drive links for "+job.title} className="min-w-48 space-y-1">
                     <Link className="block rounded-[var(--lms-control-radius)] px-3 py-2 text-sm text-primary-text hover:bg-primary-subtle inline-flex min-h-11 items-center md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]" href={"/tpo/placements/jobs/"+job.id+"/applicants"}>Applicants</Link>
@@ -384,8 +384,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           </div>
         </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
-       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:<span/>}
-       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+       {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
+       {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
       </nav>
     </>}
   </div>;
