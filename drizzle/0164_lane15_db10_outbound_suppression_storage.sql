@@ -69,7 +69,7 @@ CREATE INDEX db10_outbound_due_idx ON outbound_messages(status,next_attempt_at,n
 CREATE INDEX db10_outbound_scope_idx ON outbound_messages(organization_id,college_id,created_at);
 --> statement-breakpoint
 CREATE INDEX db10_outbound_claim_expiry_idx ON outbound_messages(claim_expires_at,status);
-
+--> statement-breakpoint
 CREATE TABLE outbound_suppressions (
   id uuid PRIMARY KEY NOT NULL DEFAULT gen_random_uuid(),
   organization_id uuid NOT NULL REFERENCES organizations(id) ON DELETE RESTRICT,
