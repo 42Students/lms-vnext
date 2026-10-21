@@ -2,8 +2,8 @@ import "server-only";
 import {and,asc,desc,eq,gt,inArray,lt,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
- placementJobs,placementJobRoleOptions,placementRecruiterCollegeGrants,users} from "@/db/schema";
-import {placementDriveChangeRequests,placementDriveChangeRequestMessages} from "@/db/schema/placement-drive-change-requests";
+ placementJobs,placementJobRoleOptions,placementJobEligibilityPolicies,placementRecruiterCollegeGrants,users} from "@/db/schema";
+import {placementDriveChangeRequests,placementDriveChangeRequestMessages,prepareSafeDriveChangeJobPatch} from "@/db/schema/placement-drive-change-requests";
 import {placementTpoMessageThreads,placementTpoMessages} from "@/db/schema/tpo-collaboration";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
@@ -102,6 +102,102 @@ const FIELD_LABELS:Record<string,string>={DEADLINE:"Application deadline",PAY:"P
  ELIGIBILITY:"Eligibility",LOCATION:"Location",ROUNDS:"Interview rounds",OTHER:"Other",
  ROLE_TITLE:"Role title",DESCRIPTION:"Description",JOB_TYPE:"Job type",WORK_MODE:"Mode",
  CTC:"CTC",STIPEND:"Stipend",MIN_CGPA:"Minimum CGPA",BRANCHES:"Branches"};
+/** Apply a field-specific answer/acceptance while the job and request are locked.
+ * Legacy answers change the drive too; the request must never say ACCEPTED
+ * without a committed job version and an applied receipt.
+ */
+async function applyDriveChangeField(
+ tx:Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0],
+ job:typeof placementJobs.$inferSelect,
+ field:string,valueInput:string,actorId:string,now:Date,
+){
+ const value=valueInput.trim();
+ const changes:Partial<typeof placementJobs.$inferInsert>={};
+ let roleChange:Partial<typeof placementJobRoleOptions.$inferInsert>|null=null;
+ let cgpaHundredths:number|null=null;
+ const roles=await tx.select().from(placementJobRoleOptions)
+  .where(and(eq(placementJobRoleOptions.jobId,job.id),
+   eq(placementJobRoleOptions.status,"ACTIVE"))).for("update");
+ const requireSingleRole=()=>{
+  if(roles.length!==1)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  return roles[0];
+ };
+ if(field==="DEADLINE"||field==="LOCATION"){
+  const patch=prepareSafeDriveChangeJobPatch({
+   mode:"SUGGEST",field,legacyField:null,proposedValue:value,
+  },now);
+  if(!patch)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  if(patch.field==="DEADLINE")changes.applicationDeadline=patch.changes.applicationDeadline;
+  else changes.locations=patch.changes.locations;
+ }else if(field==="ROLE_TITLE"){
+  if(value.length<3||value.length>255)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  changes.title=value;
+ }else if(field==="DESCRIPTION"){
+  if(value.length<2||value.length>2000)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  changes.description=value;
+ }else if(field==="JOB_TYPE"){
+  if(!["FULL_TIME","INTERNSHIP","CONTRACT"].includes(value))
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  requireSingleRole();
+  const normalized=value as "FULL_TIME"|"INTERNSHIP"|"CONTRACT";
+  changes.employmentType=normalized;
+  roleChange={employmentType:normalized};
+ }else if(field==="WORK_MODE"||field==="MODE"){
+  if(!["ONSITE","HYBRID","REMOTE"].includes(value))
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  requireSingleRole();
+  const normalized=value as "ONSITE"|"HYBRID"|"REMOTE";
+  changes.workMode=normalized;
+  roleChange={workMode:normalized};
+ }else if(field==="CTC"||field==="STIPEND"){
+  requireSingleRole();
+  if(!/^(?:0|[1-9]\\d*)(?:\\.\\d{1,2})?$/.test(value)||
+   !Number.isFinite(Number(value))||Number(value)<0||
+   (field==="CTC"&&Number(value)>1000)||
+   (field==="STIPEND"&&Number(value)>2147483647))
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  if(field==="CTC"){
+   changes.ctcLpa=Number(value).toFixed(2);
+   changes.minimumAnnualCtcInr=Math.round(Number(value)*100000);
+   roleChange={ctcLpa:Number(value).toFixed(4),
+    minimumAnnualCtcInr:Math.round(Number(value)*100000)};
+  }else{
+   changes.stipendPerMonthInr=Math.round(Number(value));
+   roleChange={stipendPerMonthInr:Number(value).toFixed(2)};
+  }
+ }else if(field==="MIN_CGPA"){
+  if(!/^(?:0|[1-9]\\d*)(?:\\.\\d{1,2})?$/.test(value)||
+   Number(value)>10)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  cgpaHundredths=Math.round(Number(value)*100);
+ }else if(field==="BRANCHES"){
+  const branches=value.split(",").map(x=>x.trim()).filter(Boolean);
+  if(!branches.length||branches.length>100||
+   branches.some(x=>x.length>100)||
+   new Set(branches.map(x=>x.toLowerCase())).size!==branches.length)
+   throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  changes.eligibleBranches=branches;
+ }else{
+  // Broad PAY/ELIGIBILITY, ROUNDS and OTHER have no unambiguous job patch.
+  // Never claim that an edit was applied when its backing policy cannot be changed.
+  throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+ }
+ if(roleChange)await tx.update(placementJobRoleOptions)
+  .set({...roleChange,updatedAt:now})
+  .where(eq(placementJobRoleOptions.id,requireSingleRole().id));
+ if(cgpaHundredths!==null){
+  await tx.insert(placementJobEligibilityPolicies).values({
+   jobId:job.id,minCgpaHundredths:cgpaHundredths,updatedByUserId:actorId,
+  }).onConflictDoUpdate({target:placementJobEligibilityPolicies.jobId,
+   set:{minCgpaHundredths:cgpaHundredths,updatedByUserId:actorId,updatedAt:now}});
+ }
+ const [patched]=await tx.update(placementJobs).set({
+  ...changes,version:sql`${placementJobs.version} + 1`,updatedAt:now,
+ }).where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,job.collegeId),
+  eq(placementJobs.version,job.version))).returning({version:placementJobs.version});
+ if(!patched)throw new PlacementsServiceError("PLACEMENT_REQUEST_STALE");
+ return patched.version;
+}
+
 export async function getDriveChangeRequests(context:RequestContext,jobId:unknown,cursor?:string|null){
  const {job,party}=await scoped(context,jobId);
  const storageReady=true; // registered in 0114
@@ -244,14 +340,27 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
     throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   }else if(request.targetParty!==party)
    throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+  const now=new Date();
+  const field=request.legacyField??request.field;
+  // A typed answer changes the backing job just like an accepted suggestion.
+  // OTHER asks for free text only; it is never a silent job mutation.
+  const shouldApply=input.action==="ACCEPT"||
+   (input.action==="ANSWER"&&field!=="OTHER");
+  const appliedVersion=shouldApply?await applyDriveChangeField(
+   tx,lockedJob,field,input.action==="ACCEPT"?request.proposedValue:input.note,
+   context.user.id,now,
+  ):null;
   const status=input.action==="ACCEPT"?"ACCEPTED":
    input.action==="ANSWER"?"ANSWERED":input.action==="DECLINE"?"DECLINED":"WITHDRAWN";
   const [updated]=await tx.update(placementDriveChangeRequests).set({
    status,decisionNote:input.note,
    ...(input.action==="ANSWER"?{answerValue:input.note}:{}),
+   ...(input.action==="ACCEPT"?{
+    appliedAt:now,appliedByUserId:context.user.id,appliedJobVersion:appliedVersion,
+   }:{}),
    ...(input.action==="DECLINE"?{replyText:input.note}:{}),
-   decidedByUserId:context.user.id,decidedAt:new Date(),resolvedAt:new Date(),
-   updatedAt:new Date(),
+   decidedByUserId:context.user.id,decidedAt:now,resolvedAt:now,
+   updatedAt:now,
   }).where(and(eq(placementDriveChangeRequests.id,request.id),
    eq(placementDriveChangeRequests.status,"OPEN"))).returning({id:placementDriveChangeRequests.id});
   if(!updated)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
