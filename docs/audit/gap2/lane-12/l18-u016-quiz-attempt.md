@@ -45,6 +45,6 @@ Source-only comparison; no tests or browser measurements. Legacy primary: `docs/
 
 ## Unit summary
 
-**38 rows; F01–F23 covered.** Verdicts: GAP 23, MISSING 2, MATCH 5, EXTRA 3, UNKNOWN 5. Severities: P1 13, P2 16, P3 9. Top gaps: (1) lost global learner attempt history / changed sort and scope, (2) incompatible all-questions-required/200-question/changed-quiz submit contract, (3) persisted model/response contract differences: user IDs, immutable snapshots, status, timestamps, score types, soft deletion. Result release additionally requires CLOSED in vNext.
+**38 rows; F01–F23 covered.** Verdicts: MISSING 2, GAP 24, MATCH 5, EXTRA 3, UNKNOWN 4. Severities: P1 13, P2 15, P3 10. Top gaps: (1) lost global learner attempt history / changed sort and scope, (2) incompatible all-questions-required/200-question/changed-quiz submit contract, (3) persisted model/response contract differences: user IDs, immutable snapshots, status, timestamps, score types, soft deletion. Result release additionally requires CLOSED in vNext.
 
 **Targeted follow-up before any MATCH certification:** read legacy Quiz frontend modal/components and legacy-copy catalog for exact presentation; inspect actual applied migration/indexes; browser-compare 360/768/1280px, keyboard/focus, answer key embargo; inspect indirect notifications; concurrency-test simultaneous submissions and re-enrolment; timezone-check authoring serialization. UNKNOWN rows are not proof of parity.
