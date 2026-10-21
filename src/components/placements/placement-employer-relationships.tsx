@@ -117,6 +117,7 @@ export function PlacementEmployerRelationships({
   const historyRequest = useRef(0);
   const [historyEditing, setHistoryEditing] = useState(false);
   const [historySaving, setHistorySaving] = useState(false);
+  const [historyDiscardConfirm, setHistoryDiscardConfirm] = useState(false);
   const [historySaveError, setHistorySaveError] = useState<string | null>(null);
   const [historyDraft, setHistoryDraft] = useState<HistoryContactDraft>(emptyHistoryDraft);
   const [drafts, setDrafts] = useState<
@@ -237,7 +238,23 @@ export function PlacementEmployerRelationships({
     setHistoryError(null);
     setHistorySaveError(null);
     setHistoryEditing(false);
+    setHistoryDiscardConfirm(false);
     setHistoryLoading(false);
+  }
+
+  function requestCloseHistory() {
+    if (historySaving) return;
+    const saved = historyData?.company;
+    if (historyEditing && saved && (
+      historyDraft.contactPersonName !== (saved.contactName ?? "") ||
+      historyDraft.contactEmail !== (saved.contactEmail ?? "") ||
+      historyDraft.contactPhone !== (saved.contactPhone ?? "") ||
+      historyDraft.internalNotes !== (saved.internalNotes ?? "")
+    )) {
+      setHistoryDiscardConfirm(true);
+      return;
+    }
+    closeHistory();
   }
 
   async function openHistory(relationshipId: string) {
@@ -518,7 +535,8 @@ export function PlacementEmployerRelationships({
       )}
       <Dialog
         open={Boolean(historyForId)}
-        onOpenChange={(next) => { if (!next) closeHistory(); }}
+        onOpenChange={(next) => { if (!next) requestCloseHistory(); }}
+        dismissible={!historySaving}
         title={activeHistoryName + " · Drive history"}
         description="Drives and outcomes recorded for this college only."
         className="max-w-[720px]"
@@ -696,6 +714,16 @@ export function PlacementEmployerRelationships({
           </div>
         ) : null}
       </Dialog>
+      <ConfirmDialog
+        open={historyDiscardConfirm}
+        onOpenChange={(next) => { if (!next) setHistoryDiscardConfirm(false); }}
+        title="Discard unsaved changes?"
+        description="You have unsaved changes in this form. Closing now will discard them."
+        cancelLabel="Keep editing"
+        confirmLabel="Discard"
+        confirmVariant="danger"
+        onConfirm={() => { setHistoryDiscardConfirm(false); closeHistory(); }}
+      />
       <ConfirmDialog open={Boolean(archiveConfirmId)}
         onOpenChange={next=>{if(!next&&!pendingId)setArchiveConfirmId(null);}}
         title="Archive this company?"
