@@ -85,7 +85,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_faculty-assignment_page.tsx.md` (edit src/app/(authenticated)/admin/faculty-assignment/page.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_components_admin_college-bulk-import.tsx.md` (edit src/components/admin/college-bulk-import.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_my-placements_rules_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/rules/page.tsx; 4 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_projects_page.tsx.md` (edit src/app/(authenticated)/learn/projects/page.tsx; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_projects_page.tsx.md` (edit src/app/(authenticated)/learn/projects/page.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_teacher_report_quiz_quizId_page.tsx.md` (edit src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_teacher_contacts_contactsTab_page.tsx.md` (edit src/app/(authenticated)/teacher/contacts/[contactsTab]/page.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_people_directory_page.tsx.md` (edit src/app/(authenticated)/admin/people/directory/page.tsx; 3 findings; best P1)
