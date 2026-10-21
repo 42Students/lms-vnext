@@ -255,16 +255,13 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     <div role="cell" className="min-w-0">
      <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Action</span>
      {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
-      <details className="min-w-0">
-       <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline md:min-h-9">Actions</summary>
-       <div className="min-w-0 space-y-2 pt-2">
-        <SuperAdminContentActions item={item}/>
-        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
-         Edit, publish or archive →
-        </Link>
-       </div>
-      </details>:<p className="text-xs text-muted-foreground">Unavailable on inactive offerings or lessons.</p>}
+      <div className="min-w-0 space-y-1">
+       <SuperAdminContentActions item={item}/>
+       <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+        className="inline-flex min-h-9 items-center text-xs text-primary-text underline">
+        Open course
+       </Link>
+      </div>:<p className="text-xs text-muted-foreground">Unavailable on inactive offerings or lessons.</p>}
     </div>
    </article>)}
   </div>:<div className="border border-border p-5 text-sm text-muted-foreground" role="status">

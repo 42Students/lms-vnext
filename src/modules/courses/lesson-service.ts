@@ -93,10 +93,8 @@ export async function listCourseLessons(
   }
 
   const conditions = [
-    eq(
-      courseLessons.learningPathId,
-      learningPathId,
-    ),
+    eq(courseLessons.learningPathId, learningPathId),
+    isNull(courseLessons.deletedAt),
   ];
 
   if (!includeArchived) {
@@ -114,7 +112,7 @@ export async function listCourseLessons(
     .where(and(...conditions))
     .orderBy(
       asc(courseLessons.sequence),
-      asc(courseLessons.name),
+      asc(courseLessons.id),
     );
 }
 
@@ -170,7 +168,8 @@ export async function createCourseLesson(
         subjectType: "course_lesson", subjectId: created.id,
         subjectLabel: created.name, summary: "Created lesson",
         metadata: { learningPathId: path.id, sequence: created.sequence,
-          active:created.status==="ACTIVE",enabled:created.visibleToStudents },
+          active:created.status==="ACTIVE",enabled:created.visibleToStudents,
+          legacyAuditAction:"LESSON_CREATE",legacyParentCourseId:path.offeringId },
       });
       return created;
     });
@@ -189,6 +188,8 @@ export async function updateCourseLesson(
     courseLessonIdSchema.parse(
       lessonIdInput,
     );
+  // The path is intentionally immutable: vNext lessons belong to an
+  // offering's learning path, not to a movable legacy course container.
   const input =
     updateCourseLessonInputSchema.parse(
       rawInput,
@@ -254,7 +255,8 @@ export async function updateCourseLesson(
         organizationId: path.organizationId,
         subjectType: "course_lesson", subjectId: updated.id,
         subjectLabel: updated.name, summary: "Updated lesson",
-        metadata: { learningPathId: path.id, previousSequence: current.sequence, sequence: updated.sequence },
+        metadata: { learningPathId: path.id, previousSequence: current.sequence, sequence: updated.sequence,
+          legacyAuditAction:"LESSON_UPDATE",parentImmutable:true },
       });
       return updated;
     });
@@ -305,6 +307,9 @@ export async function archiveCourseLesson(
       throw new CoursesServiceError("LESSON_NOT_FOUND");
     }
 
+    // Parent archival hides every descendant through the read-scope check,
+    // without overwriting independently DRAFT/ARCHIVED child statuses.
+    // Records, learner submissions/progress and private file references survive.
     await tx.update(lessonContents).set({
       deletedWithLesson:true,updatedAt:new Date(),
     }).where(and(eq(lessonContents.lessonId,lessonId),
@@ -315,7 +320,7 @@ export async function archiveCourseLesson(
       .set({
         status: "ARCHIVED",
         version:sql`${courseLessons.version}+1`,
-        updatedAt: new Date(),
+        updatedAt:sql<Date>`greatest(${courseLessons.updatedAt} + interval '1 millisecond',clock_timestamp())`,
       })
       .where(and(
         eq(courseLessons.id, lessonId),
@@ -327,7 +332,15 @@ export async function archiveCourseLesson(
     if (!updated) {
       throw new CoursesServiceError("LESSON_NOT_FOUND");
     }
-
+    await recordActivityEventInTransaction(tx, context, {
+      eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_UPDATED,
+      collegeId:path.collegeId,organizationId:path.organizationId,
+      subjectType:"course_lesson",subjectId:updated.id,
+      subjectLabel:updated.name,summary:"Archived lesson",
+      metadata:{learningPathId:path.id,legacyAuditAction:"LESSON_DELETE",
+        softArchive:true,filesRetained:true,progressRetained:true,
+        childPublicationPreserved:true},
+    });
     return updated;
   });
 }
@@ -351,7 +364,8 @@ export async function restoreCourseLesson(context: RequestContext, lessonIdInput
     return await getDb().transaction(async tx => {
       await lockLiveLessonWriteAncestry(tx, path);
       const [restored] = await tx.update(courseLessons)
-        .set({ status: "ACTIVE",version:sql`${courseLessons.version}+1`, updatedAt: new Date() })
+        .set({ status: "ACTIVE",version:sql`${courseLessons.version}+1`,
+          updatedAt:sql<Date>`greatest(${courseLessons.updatedAt} + interval '1 millisecond',clock_timestamp())` })
         .where(and(eq(courseLessons.id, lessonId),
           eq(courseLessons.learningPathId, path.id), eq(courseLessons.status, "ARCHIVED")))
         .returning();
@@ -367,7 +381,9 @@ export async function restoreCourseLesson(context: RequestContext, lessonIdInput
         organizationId: path.organizationId, collegeId: path.collegeId,
         subjectType: "course_lesson", subjectId: restored.id,
         subjectLabel: restored.name, summary: "Restored lesson",
-        metadata: {learningPathId: path.id, restoredFrom: "ARCHIVED"},
+        metadata: {learningPathId: path.id, restoredFrom: "ARCHIVED",
+          legacyAuditAction:"LESSON_RESTORE",childStatusPreserved:true,
+          filesRetained:true,progressRetained:true},
       });
       return restored;
     });
@@ -411,6 +427,7 @@ export async function moveCollegeCourseLesson(context: RequestContext, raw: unkn
       subjectType: "course_lesson", subjectId: input.lessonId,
       summary: "Reordered lesson", metadata: {
         learningPathId: path.id, from: first.previousSequence, to: second.previousSequence,
+        legacyAuditAction:"LESSON_REORDER",
       },
     });
     return { lessonId: input.lessonId, sequence: second.previousSequence };
@@ -458,7 +475,8 @@ export async function reorderCollegeCourseLessons(context:RequestContext,raw:unk
    collegeId:path.collegeId,organizationId:path.organizationId,
    subjectType:"course_learning_path",subjectId:path.id,
    summary:"Reordered shared lessons",
-   metadata:{before:live.map(row=>row.id),after:input.orderedIds},
+   metadata:{before:live.map(row=>row.id),after:input.orderedIds,
+     legacyAuditAction:"LESSON_REORDER",optimisticOrderChecked:true},
   });
   return {changed:true};
  });

@@ -6,6 +6,7 @@ import {
   desc,
   eq,
   gte,
+  ilike,
   inArray,
   isNull,
   lt,
@@ -1208,6 +1209,7 @@ export async function listOwnNotificationPage(
     importance?: string;
     notificationType?: string;
     query?: string;
+    category?: OwnNotificationCategory;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -1229,7 +1231,7 @@ export async function listOwnNotificationPage(
   }
   if(options.query){
     const query=z.string().trim().max(100).parse(options.query);
-    const pattern="%"+query.replace(/[\\%_]/g,"\\  appendNotificationContextFilters(conditions, options);")+"%";
+    const pattern="%"+query.replace(/[\\%_]/g,"\\$&")+"%";
     conditions.push(or(ilike(inAppNotifications.title,pattern),
       ilike(inAppNotifications.body,pattern))!);
   }

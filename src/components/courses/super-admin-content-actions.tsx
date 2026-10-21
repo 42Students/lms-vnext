@@ -1,5 +1,7 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
+import { Dialog } from "@/components/ui/dialog";
+import { LessonResourceMaterialsControl } from "@/components/courses/lesson-resource-materials-control";
 
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
@@ -12,7 +14,7 @@ import {facultyContentExternalHref} from "@/modules/courses/faculty-content-prev
 import {parseAdminContentLocalMoment,type AdminContentTimeZone} from "@/modules/courses/super-admin-content-datetime-model";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
- durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null};
+ durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null;deliveryId?:string|null};
 type MeetingZone=AdminContentTimeZone;
 function localDate(value:Date|null,zone:MeetingZone="Asia/Kolkata"){
  if(!value)return "";
@@ -25,6 +27,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const router=useRouter();
  const submissionLock=useRef(false);
  const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
+ const [pendingAction,setPendingAction]=useState<"PUBLISH"|"ARCHIVE"|null>(null);
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
  const [title,setTitle]=useState(item.title),[order,setOrder]=useState(String(item.sequence+1));
  const [duration,setDuration]=useState(item.durationSeconds===null?"":String(item.durationSeconds));
@@ -82,7 +85,6 @@ export function SuperAdminContentActions({item}:{item:Content}){
    if(Date.parse(end)<=Date.parse(start)){setError("End time must be after start time");return;}
    changes={...changes,startsAt:start,endsAt:end};
   }
-  if(!window.confirm("Save changes?"))return;
   submissionLock.current=true;setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
@@ -96,14 +98,12 @@ export function SuperAdminContentActions({item}:{item:Content}){
  }
  async function transition(action:"PUBLISH"|"ARCHIVE"){
   if(busy||submissionLock.current)return;
-  if(!window.confirm(action==="PUBLISH"?"Publish this content to enrolled students?":
-    item.contentType==="RESOURCE"?"Delete this resource? Students will no longer see it.":"Delete this content from student access? The record will be archived."))return;
   submissionLock.current=true;setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
    });
-   setEditing(false);setNotice(action==="PUBLISH"?"Content published":
+   setEditing(false);setPendingAction(null);setNotice(action==="PUBLISH"?"Content published":
     item.contentType==="RESOURCE"?"Resource deleted":"Lesson content archived. Uploaded files have been kept for restoration.");
    router.refresh();
   }catch(cause){setError(action==="ARCHIVE"&&item.contentType==="RESOURCE"?
@@ -117,72 +117,97 @@ export function SuperAdminContentActions({item}:{item:Content}){
     duration!==(item.durationSeconds===null?"":String(item.durationSeconds))||
     notes!==(item.notes??"")||replacementUrl.trim().length>0||
     startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone);
-   if(dirty&&!window.confirm(item.contentType==="RESOURCE"?"Discard resource changes?":"Discard content changes?"))return;
+   if(dirty&&!window.confirm(item.contentType==="RESOURCE"
+     ?"Discard the changes to this resource? Unsaved links and material changes will be lost."
+     :"Discard lesson-content edits? Any unsaved replacement file or link will be lost."))return;
    setTitle(item.title);setOrder(String(item.sequence+1));
    setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
    setNotes(item.notes??"");setReplacementUrl("");setTimeZone("Asia/Kolkata");
    setStartsAt(localDate(item.startsAt));setEndsAt(localDate(item.endsAt));
   }
   setEditing(!editing);
+  setError("");
  }
  if(item.status==="ARCHIVED")return <p className="text-xs text-muted-foreground">Archived content is read-only.</p>;
- return <div className="space-y-2">
-  <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
-   <Button variant="secondary" type="button" disabled={busy} onClick={toggleEditor}
-    className="min-h-11 w-full sm:w-auto md:min-h-9">Edit</Button>
-   {item.status==="DRAFT"?<Button variant="primary" type="button" disabled={busy} onClick={()=>void transition("PUBLISH")}
-    className="min-h-11 w-full sm:w-auto md:min-h-9">Publish</Button>:null}
-   <Button variant="danger" type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
-    className="min-h-11 w-full sm:w-auto md:min-h-9">Delete</Button>
+ return <div className="min-w-0 space-y-2">
+  <div className="flex min-w-0 flex-wrap items-center gap-1" aria-label={`Actions for ${item.title}`}>
+   <Button variant="secondary" size="icon-sm" type="button" disabled={busy}
+    aria-label={`Edit ${item.title}`} title={`Edit ${item.title}`} onClick={toggleEditor}>
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L9 17l-4 1 1-4z"/></svg>
+    <span className="sr-only">Edit</span>
+   </Button>
+   {item.status==="DRAFT"?<Button variant="secondary" size="sm" disabled={busy}
+    aria-label={`Publish ${item.title}`} onClick={()=>setPendingAction("PUBLISH")}>Publish</Button>:null}
+   <Button variant="danger" size="icon-sm" disabled={busy}
+    aria-label={`Delete ${item.title}`} title={`Delete ${item.title}`} onClick={()=>setPendingAction("ARCHIVE")}>
+    <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M5 6l1 14h12l1-14M10 10v6m4-6v6"/></svg>
+    <span className="sr-only">Delete</span>
+   </Button>
   </div>
-  {editing?<fieldset disabled={busy} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] sm:grid-cols-2">
-   <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
-    Existing uploaded media is retained. Private-file replacement must use a verified, lesson-bound upload; never reuse another content item&apos;s file or object key.</p>
-   <p className="text-xs text-muted-foreground sm:col-span-2">
-    Visibility is enabled by default, but a draft is hidden from learners until explicitly published.
-    Delete archives the content and preserves uploaded files for authorized recovery.
-   </p>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-    <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
-     className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
-    <Input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
-     className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
-   {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
-     <Input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
-      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-11 w-full sm:w-auto md:min-h-9"/>
+  <Dialog open={editing} onOpenChange={open=>{if(!open)toggleEditor();}}
+   title={item.contentType==="RESOURCE"?"Edit Resource":"Edit Content: "+item.title}
+   className={item.contentType==="RESOURCE"?"max-w-[700px]":"max-w-[600px]"}
+   dismissible={false}
+   footer={<>
+    <Button variant="secondary" disabled={busy} onClick={toggleEditor}>Cancel</Button>
+    <Button loading={busy} disabled={busy} onClick={()=>void save()}>{item.contentType==="RESOURCE"?"Save changes":"Save changes"}</Button>
+   </>}>
+   <fieldset disabled={busy} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
+    <p className="text-xs text-muted-foreground sm:col-span-2">Existing uploaded files and unrelated materials are retained. Replacing a private file requires a verified lesson-bound upload.</p>
+    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Title
+     <Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}/></label>
+    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Order
+     <Input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}/></label>
+    {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
+     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Link title (optional) / HTTPS link"}
+      <Input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
+       placeholder={item.contentType==="YOUTUBE"?"https://www.youtube.com/watch?v=...":item.contentType==="LIVE_CLASS"?"e.g., https://zoom.us/j/... or https://meet.google.com/...":"https://example.org/reading"}/>
+      <span className="text-xs font-normal text-muted-foreground">Leave blank to retain the saved link.</span>
+     </label>:null}
+    {item.contentType==="RESOURCE"?<label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Notes
+     <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}/>
     </label>:null}
-   {item.contentType==="RESOURCE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Notes
-    <Textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
-     className="w-full"/>
-   </label>:null}
-   {item.contentType==="YOUTUBE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Video length (seconds)
-    <Input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
-     className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>:null}
-   {item.contentType==="LIVE_CLASS"?<>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Time Zone
-     <Select className="min-h-11 w-full sm:w-auto md:min-h-9" value={timeZone}
-      onChange={e=>{
+    {item.contentType==="YOUTUBE"?<label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Video length (seconds)
+     <Input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}/></label>:null}
+    {item.contentType==="LIVE_CLASS"?<>
+     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Time Zone
+      <Select value={timeZone} onChange={e=>{
        const zone=e.target.value as MeetingZone;
        if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
-         !window.confirm("Changing Time Zone will reset unsaved date and time edits. Continue?"))return;
+          !window.confirm("Changing Time Zone will reset unsaved date and time edits. Continue?"))return;
        setTimeZone(zone);setStartsAt(localDate(item.startsAt,zone));setEndsAt(localDate(item.endsAt,zone));
       }}>
-      <option value="Asia/Kolkata">India Standard Time (IST)</option><option value="UTC">UTC</option>
-     </Select>
-    </label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date and Time
-     <Input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
-      className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date and Time
-     <Input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
-      className="min-h-11 w-full sm:w-auto md:min-h-9"/></label>
-   </>:null}
-   <Button type="button" loading={busy} disabled={busy} onClick={()=>void save()} className="min-h-11 w-full sm:w-auto md:min-h-9">
-    {busy?"Saving…":"Save"}</Button>
-  </fieldset>:null}
-  {error?<Alert tone="error">{error}</Alert>:null}
+       <option value="Asia/Kolkata">India Standard Time (IST)</option>
+       <option value="UTC">UTC</option>
+       <option value="America/New_York">America/New_York</option>
+       <option value="America/Los_Angeles">America/Los_Angeles</option>
+       <option value="Europe/London">Europe/London</option>
+      </Select>
+     </label>
+     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">Start Date and Time
+      <Input type="datetime-local" step={900} value={startsAt} onChange={e=>setStartsAt(e.target.value)}/></label>
+     <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold text-body">End Date and Time
+      <Input type="datetime-local" step={900} value={endsAt} onChange={e=>setEndsAt(e.target.value)}/></label>
+     <p className="text-xs text-muted-foreground sm:col-span-2">Times use the selected meeting time zone. Invalid and ambiguous daylight-saving times cannot be saved.</p>
+    </>:null}
+    {item.contentType==="RESOURCE"?<div className="sm:col-span-2">
+     <p className="text-xs text-muted-foreground">Visible to students when published. Update individual links without replacing other materials.</p>
+     <LessonResourceMaterialsControl contentId={item.id} deliveryId={item.deliveryId??null} editable/>
+    </div>:null}
+   </fieldset>
+   {error?<Alert tone="error">{error}</Alert>:null}
+  </Dialog>
+  <Dialog open={pendingAction!==null} onOpenChange={open=>{if(!open)setPendingAction(null);}}
+   title={pendingAction==="ARCHIVE"?(item.contentType==="RESOURCE"?"Delete this resource?":"Are you sure to delete this content?"):"Publish this content?"}
+   description={pendingAction==="ARCHIVE"?(item.contentType==="RESOURCE"?"Students will no longer see it. The record and private files are retained for authorized recovery.":"Students will no longer see this content. Its record is archived for authorized recovery."):"Published content becomes available to eligible students when its lesson and course are published."}
+   footer={<>
+    <Button variant="secondary" disabled={busy} onClick={()=>setPendingAction(null)}>No</Button>
+    <Button variant={pendingAction==="ARCHIVE"?"danger":"primary"} loading={busy} disabled={busy}
+     onClick={()=>{if(pendingAction)void transition(pendingAction);}}>{pendingAction==="ARCHIVE"?"Delete":"Yes"}</Button>
+   </>}>
+   <p className="text-sm text-body"> {pendingAction==="ARCHIVE"?"This action hides the content from students.":"Confirm publication for this content."}</p>
+  </Dialog>
+  {error&&!editing?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
  </div>;
 }
