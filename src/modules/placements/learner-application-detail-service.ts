@@ -44,6 +44,7 @@ async function loadOwnedApplication(
     .select({
       applicationId: placementApplications.id,
       publicRef: placementApplications.publicRef,
+      legacyApplicationId: placementApplications.legacyApplicationId,
       submittedAt: placementApplications.submittedAt,
       firstAppliedAt: placementApplications.firstAppliedAt,
       statusUpdatedAt: placementApplications.statusUpdatedAt,
@@ -145,6 +146,10 @@ export async function getOwnLearnerApplicationHistory(
   return {
     applicationId: application.applicationId,
     publicRef: application.publicRef,
+    // Employer/ATS identification uses the immutable, unique publicRef.
+    // Numeric legacy IDs and routing UUIDs are never applicant references.
+    externalAtsReference: application.publicRef,
+    legacyImportApplicationId: application.legacyApplicationId,
     roleTitle: application.roleTitle,
     companyName: application.companyName,
     currentStatus: application.applicationStatus,
@@ -197,11 +202,13 @@ export async function getOwnLearnerApplicationCompany(
   return {
     applicationId: application.applicationId,
     publicRef: application.publicRef,
+    externalAtsReference: application.publicRef,
     companySharePreview:{
       currentlyShared,
       fields:["Applicant reference","Learner","Email"] as const,
       // Never present the private routing UUID as an employer-facing ATS ref.
       applicationId:application.publicRef,
+      applicantReference:application.publicRef,
       learnerName:principal?.displayName??"Unnamed learner",
       email:principal?.email??null,
     },
@@ -214,3 +221,7 @@ export async function getOwnLearnerApplicationCompany(
     }),
   };
 }
+
+/** Keep unauthorized/non-applicant preview copy independent of internal IDs. */
+export const learnerCompanyPreviewNonApplicantMessage =
+  "Apply to this drive to see this preview";
