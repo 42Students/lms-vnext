@@ -8,7 +8,7 @@
   border: 1px solid rgba(38,186,199,.35) !important;
   border-radius: 8px !important;
   padding: 24px !important;
-  background: #eff8fa !important;
+  background: var(--lms-primary-subtle) !important;
   box-shadow: none !important;
 }
 .tile > p:first-child {
@@ -20,7 +20,7 @@
 }
 .tile > p:nth-child(2) {
   margin-top: 8px !important;
-  color: #1a1d21 !important;
+  color: var(--lms-neutral-900) !important;
   font-size: 16px !important;
   font-weight: 600 !important;
   line-height: 1.5 !important;
