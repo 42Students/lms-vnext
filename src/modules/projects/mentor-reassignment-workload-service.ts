@@ -121,6 +121,7 @@ export async function listCollegeReassignmentWorkspaces(
     title: projectInstances.title,
     status: projectInstances.status,
     mentorMembershipId: projectMembers.membershipId,
+    roleLabel:projectMembers.roleLabel,
     mentorName: users.displayName,
   }).from(projectInstances).leftJoin(projectMembers, and(
     eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
