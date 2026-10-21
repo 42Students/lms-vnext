@@ -65,11 +65,17 @@ export default async function SuperAdminAttendancePage({
         action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white w-full md:w-auto justify-center">Reset month filter</Link>}/>
     </div>;
   }
-  const options =
-    await getAdminAttendanceOptions(
-      context,
-      collegeId,
-    );
+  const optionsResult=await getAdminAttendanceOptions(context,collegeId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!optionsResult.ok)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Attendance"
+      description="Review monthly attendance by class and course, correct recent records and check the minimum attendance policy."/>
+    <ErrorState title="Could not load attendance options"
+     description="Class and course choices are temporarily unavailable. No attendance has been changed."
+     action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry class courses</Link>}/>
+   </div>;
+  const options=optionsResult.value;
   const requestedDelivery = options.deliveries.find(
     (entry) => entry.deliveryId === query.deliveryId,
   );
@@ -83,13 +89,13 @@ export default async function SuperAdminAttendancePage({
         entry.sectionId === selectedSectionId &&
         entry.courseId === selectedCourseId,
     ) ?? requestedDelivery ?? null;
-  const grid = delivery
-    ? await getAdminAttendanceGrid(context, {
-        collegeId,
-        deliveryId: delivery.deliveryId,
-        month,
-      })
-    : null;
+  const gridResult=delivery
+    ? await getAdminAttendanceGrid(context,{
+        collegeId,deliveryId:delivery.deliveryId,month,
+      }).then(value=>({ok:true as const,value}))
+       .catch(()=>({ok:false as const}))
+    :null;
+  const grid=gridResult?.ok?gridResult.value:null;
 
   const data: AdminAttendanceWorkspaceData = {
     collegeId,
@@ -133,17 +139,26 @@ export default async function SuperAdminAttendancePage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Attendance"
-        description={`Scoped attendance oversight for ${options.college.name}.`}
+        description="Review monthly attendance by class and course, correct recent records, and check attendance percentage."
       />
-      <AdminAttendanceWorkspace
-        data={data}
-        basePath="/admin/attendance"
-      />
-      <Disclosure title="Attendance policy" className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
-      <SuperAdminAttendanceSettingsEditor collegeId={collegeId}
-        correctionWindowHours={options.policy.correctionWindowHours}
-        eligibilityThresholdPercent={options.policy.eligibilityThresholdPercent} />
-      </Disclosure>
+      <section aria-label="Attendance policy" className="space-y-2 border-b border-border pb-4">
+        <h2 className="font-semibold text-foreground">Attendance policy</h2>
+        <p className="text-sm text-body">Late marking allowed for
+          <strong>{" "+options.policy.correctionWindowHours+" hours"}</strong>
+          {" · "}Minimum attendance
+          <strong>{" "+options.policy.eligibilityThresholdPercent+"%"}</strong>
+        </p>
+        <Disclosure title="Edit attendance policy" defaultOpen
+          className="min-w-0" contentClassName="pb-[var(--lms-space-4)]">
+          <SuperAdminAttendanceSettingsEditor collegeId={collegeId}
+            correctionWindowHours={options.policy.correctionWindowHours}
+            eligibilityThresholdPercent={options.policy.eligibilityThresholdPercent}/>
+        </Disclosure>
+      </section>
+      {gridResult&&!gridResult.ok?<ErrorState title="Could not load attendance"
+        description="The class and course choices remain available. Retry loading this month's records."
+        action={<Link href="/admin/attendance" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry class courses</Link>}/>:null}
+      <AdminAttendanceWorkspace data={data} basePath="/admin/attendance"/>
     </div>
   );
 }

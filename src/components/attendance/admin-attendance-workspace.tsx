@@ -337,7 +337,7 @@ export function AdminAttendanceWorkspace({
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `attendance-${data.grid.delivery.sectionCode}-${data.grid.delivery.courseCode}-${data.month}.csv`;
+    link.download = `attendance-class-${data.grid.delivery.sectionCode}-course-${data.grid.delivery.courseCode}-${data.month}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -457,7 +457,7 @@ export function AdminAttendanceWorkspace({
         />
       ) : data.grid.sessions.length === 0 ? (
         <EmptyState
-          title="No attendance data for this month"
+          title="No attendance data for this class, course and month"
           description="No class sessions are scheduled for the selected Course delivery in this month."
         />
       ) : (
