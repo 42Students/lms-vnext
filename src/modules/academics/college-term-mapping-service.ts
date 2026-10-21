@@ -79,7 +79,15 @@ export async function listCollegeTermMappings(context: RequestContext) {
       id: programTermCourses.id, termId: programTerms.id,
       courseId: programTermCourses.courseId,
       termNumber: programTerms.termNumber, termName: programTerms.name,
-      programName: programs.name, courseName: courses.name, courseCode: courses.code,
+      programName: programs.name,
+      // Keep a same-college mapping visible even if its linked course record is
+      // unavailable or no longer resolves in the scoped course directory.
+      // Never expose a different college's course name through this join.
+      courseName: sql<string>`case when ${courseDepartment.id} is null
+        then ('Course name unavailable (ID ' || ${programTermCourses.courseId}::text || ')')
+        else ${courses.name} end`,
+      courseCode: sql<string>`case when ${courseDepartment.id} is null
+        then '—' else ${courses.code} end`,
       type: programTermCourses.type, credits: programTermCourses.credits,
       displayOrder: programTermCourses.displayOrder,
     }).from(programTermCourses)
@@ -87,16 +95,22 @@ export async function listCollegeTermMappings(context: RequestContext) {
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, and(eq(departments.id, programs.departmentId),
         eq(departments.collegeId, membership.collegeId)))
-      .innerJoin(courses, eq(courses.id, programTermCourses.courseId))
-      .innerJoin(courseDepartment, and(
+      .leftJoin(courses, eq(courses.id, programTermCourses.courseId))
+      .leftJoin(courseDepartment, and(
         eq(courseDepartment.id, courses.departmentId),
         eq(courseDepartment.collegeId, membership.collegeId),
       ))
       .orderBy(asc(programs.name), asc(programTerms.termNumber), asc(programTermCourses.displayOrder)),
   ]);
-  // Current academic-period offerings give a genuine course-by-course staffing
-  // warning; a course without active deliveries has no assigned teacher.
-  const staffingRows = await db.select({
+  // Read curriculum and course choices independently from staffing. A failed
+  // staffing query must not hide a valid mapping roster or an edit action.
+  // These are ACTIVE DELIVERY counts, not the legacy all-program-class report.
+  let staffingAvailable = true;
+  let staffingRows: Array<{
+    courseId: string; deliveries: number; missing: number; uncoveredClasses: string | null;
+  }> = [];
+  try {
+    staffingRows = await db.select({
     courseId: courses.id,
     deliveries: sql<number>`count(distinct ${courseSectionDeliveries.id})::int`,
     missing: sql<number>`count(distinct case when ${courseTeachingAssignments.id}
@@ -119,17 +133,33 @@ export async function listCollegeTermMappings(context: RequestContext) {
       eq(academicPeriods.status, "ACTIVE"),
       eq(courseOfferings.status, "ACTIVE"), eq(courses.status, "ACTIVE")))
     .groupBy(courses.id);
+  } catch {
+    // Legacy also treats the staffing endpoint as a soft dependency. The
+    // unmapped curriculum still renders and can be corrected independently.
+    staffingAvailable = false;
+  }
   const staffByCourse = new Map(staffingRows.map(row => [row.courseId, row]));
-  return { terms, courses: courseChoices,
+  return { terms, courses: courseChoices, staffingAvailable,
     mapped: mapped.map(row => {
       const staffing = staffByCourse.get(row.courseId);
-      const warning = !staffing || staffing.deliveries === 0
-        ? "No faculty assigned"
+      const warning = !staffingAvailable ? "Faculty staffing warnings unavailable"
+        : !staffing || staffing.deliveries === 0 ? "No faculty assigned"
         : staffing.missing === 0 ? null
         : staffing.missing === staffing.deliveries ? "No faculty assigned"
         : `No faculty for ${staffing.missing} of ${staffing.deliveries} classes`;
       return { ...row, staffingWarning: warning,
-        staffingTooltip: staffing?.uncoveredClasses || (!staffing ? "No active class deliveries" : null) };
+        staffingTooltip: !staffingAvailable
+          ? "Staffing could not be loaded. Refresh to retry."
+          : staffing?.uncoveredClasses || (!staffing ? "No active class deliveries" : null),
+        // Supplement the legacy class-count report without conflating data
+        // sources: each number here covers CURRENT active course deliveries.
+        staffingSource: "ACTIVE_DELIVERIES" as const,
+        staffingAvailable,
+        totalClasses: staffingAvailable ? staffing?.deliveries ?? 0 : null,
+        unstaffedClassCount: staffingAvailable ? staffing?.missing ?? 0 : null,
+        unstaffedClasses: staffingAvailable ? staffing?.uncoveredClasses ?? null : null,
+        fullyUnstaffed: staffingAvailable ? (!staffing || staffing.missing === staffing.deliveries) : null,
+      };
     }),
   };
 }
@@ -161,7 +191,7 @@ export async function addCollegeTermMapping(context: RequestContext, raw: unknow
         collegeId: membership.collegeId, organizationId: membership.organizationId,
         subjectType: "program_term_course", subjectId: inserted.id,
         summary: "Course mapped to semester",
-        metadata: { termId: term.id, courseId: course.id, type: inserted.type,
+        metadata: { action: "SEMESTER_COURSE_ADD", termId: term.id, courseId: course.id, type: inserted.type,
           credits: inserted.credits, displayOrder: inserted.displayOrder },
       });
       return inserted;
@@ -224,6 +254,7 @@ export async function updateCollegeTermMapping(
         subjectType: "program_term_course", subjectId: mappingId,
         summary: "Semester course mapping updated",
         metadata: {
+          action: current.displayOrder !== input.position ? "SEMESTER_COURSE_REORDER" : "SEMESTER_COURSE_UPDATE",
           termId: subject.termId,
           fromCredits: current.credits,
           toCredits: input.credits,
@@ -269,6 +300,9 @@ export async function removeCollegeTermMapping(
         .where(and(eq(courseOfferings.courseId, row.courseId),
           eq(courseOfferings.status, "ACTIVE")))
         .limit(1);
+      // Legacy allowed deletion despite current usage. vNext deliberately
+      // preserves live batch offering integrity: reject before deletion and
+      // show TERM_COURSE_IN_USE in the caller's confirmation workflow.
       if (activeOffering) throw new CollegeTermMappingError("TERM_COURSE_IN_USE");
       const [removed] = await tx.delete(programTermCourses).where(eq(programTermCourses.id, row.id)).returning();
       await recordActivityEventInTransaction(tx, context, {
@@ -276,7 +310,7 @@ export async function removeCollegeTermMapping(
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term_course", subjectId: removed.id,
         summary: "Course unmapped from semester",
-        metadata: { termId: term.id, courseId: removed.courseId },
+        metadata: { action: "SEMESTER_COURSE_REMOVE", termId: term.id, courseId: removed.courseId },
       });
       return { id: removed.id };
     });
@@ -284,7 +318,11 @@ export async function removeCollegeTermMapping(
 }
 
 /** Atomically add several courses to one semester, preserving display order.
- * A failed eligibility or duplicate check rolls back all selected courses. */
+ * A failed eligibility or duplicate check rolls back all selected courses.
+ * This intentionally differs from old partial-success duplicate skipping:
+ * return a clear conflict rather than silently omitting selected courses.
+ * The UI/route must surface the all-or-nothing contract before confirmation.
+ */
 export async function addCollegeTermMappings(context: RequestContext, raw: unknown) {
   const inputs = z.array(collegeTermCourseAddSchema).min(1).max(100).parse(raw);
   const targetTerm = inputs[0]!.programTermId;
@@ -323,7 +361,7 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term", subjectId: term.id,
         summary: "Courses mapped to semester",
-        metadata: { courseIds, count: inserted.length },
+        metadata: { action: "SEMESTER_COURSE_ADD", courseIds, count: inserted.length, atomic: true },
       });
       return inserted;
     });
