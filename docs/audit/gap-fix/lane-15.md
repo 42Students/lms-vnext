@@ -266,3 +266,6 @@
 
 - work2 #7 `recruiter-calendar-model.ts` | G2-5-005-067: documented stable type/ID/start/end/where/status/authorization mapping ROUND/SLOT/DEADLINE/RESULTS_DUE to new calendar plus separate results reminders. No unintended change in event visibility.
 - work2 #8 `tpo-team-asks-service.ts` | G2-3-022-014: verified same-college ACTIVE assignee now yields typed ADD_PEOPLE conflict with only safe membership ID if absent from private thread; actor/nonmember remains 404. HTTP serialization of typed 409 to existing route handed off since route not in this packet.
+
+- work2 #9 `tpo-draft-drive-model.ts` | G2-3-011-033: constrained canonical label syntax; added scoped picker helper allowing all active configured labels and hidden saved historical choice only in its existing edit context. Employment category remains separate; createPlacementJob already verifies tenant status/built-ins. UI sourcing of all five choices handed off.
+- work2 #10 `public-page/publication-service.ts` | G2-17-022-026: added live publish eligibility signal requiring explicit enabled/published state and current >=5 consented active learners; historical snapshot not treated as live approval. 12-month metric aggregation remains in scoped public-read service and is handed off.

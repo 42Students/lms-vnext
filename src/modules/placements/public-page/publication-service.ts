@@ -110,5 +110,11 @@ export async function getTpoPublicPlacementPublication(context:RequestContext){
   }).from(placementPublicPageSettings).where(eq(placementPublicPageSettings.collegeId,college.id)).limit(1),
   registeredPublicPlacementCohort(getDb(),college.id),
  ]);
- return {ready:true as const,settings:settings[0]??null,populationCount};
+ // Publication is not inferred from an old snapshot alone: an explicit
+ // published opt-in and the CURRENT consented college population are required.
+ // Individual public metric values must additionally be calculated over the
+ // preceding 12 months in the public read service, never from this snapshot.
+ const active=settings[0];
+ const publicEligible=Boolean(active?.enabled&&active.publishedAt&&populationCount>=5);
+ return {ready:true as const,settings:active??null,populationCount,publicEligible};
 }

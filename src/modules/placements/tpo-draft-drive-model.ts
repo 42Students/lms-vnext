@@ -8,7 +8,9 @@ export const tpoDraftDriveStepOneSchema = z.object({
   title: z.string().trim().min(2).max(200),
   description: z.string().trim().min(1).max(20000),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),
-  jobTypeLabel: z.string().trim().min(2).max(40).optional(),
+  /** Canonical scoped label (all five built-ins and active custom types). */
+  jobTypeLabel: z.string().trim().min(2).max(40)
+   .regex(/^[\p{L}\p{N} +&/().,'-]+$/u,"Choose an available job type").optional(),
   workMode: z.enum(["ONSITE", "REMOTE", "HYBRID"]),
   applicationDeadline: z.iso.datetime({ offset: true }).nullable(),
 }).strict().superRefine((value, ctx) => {
@@ -27,4 +29,21 @@ export function normalizedTpoDraftDeadline(value: string | null): Date | null {
   const instant = new Date(value);
   if (!Number.isFinite(instant.getTime())) throw new Error("Invalid deadline");
   return instant;
+}
+
+/** Build the college's picker without exposing hidden choices on new drives.
+ * A previously saved hidden label remains selectable on that historical drive,
+ * but must not be offered when creating a new one. The service re-verifies it.
+ */
+export function tpoDraftAvailableJobTypeLabels(
+ rows: readonly {label:string;active:boolean}[],historicalLabel?:string|null,
+):string[]{
+ const normalized=new Set<string>(),result:string[]=[];
+ for(const item of rows){
+  const name=item.label.trim(),key=name.toLocaleLowerCase("en");
+  if((item.active||key===historicalLabel?.trim().toLocaleLowerCase("en"))&&!normalized.has(key)){
+   normalized.add(key);result.push(name);
+  }
+ }
+ return result;
 }
