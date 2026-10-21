@@ -5,6 +5,7 @@ import type {AdminCompanyRow} from "@/modules/placements/admin-company-directory
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
+import {redirect} from "next/navigation";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
 import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
@@ -66,6 +67,13 @@ export default async function SuperAdminCompaniesPage({
    </div>;
   }
   const data=directoryResult.value;
+  if(data.query.page>data.totalPages){
+   const corrected=new URLSearchParams(Object.entries(params)
+    .filter((entry):entry is [string,string]=>typeof entry[1]==="string"));
+   corrected.set("page",String(data.totalPages));
+   corrected.set("view","COLLEGE");
+   redirect("/admin/companies?"+corrected.toString());
+  }
   const availableColleges=collegesResult.status==="fulfilled"?collegesResult.value:[];
   const candidates=findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
@@ -228,6 +236,10 @@ export default async function SuperAdminCompaniesPage({
     </form>
     <p role="status" className="text-sm text-body">Showing {data.rows.length.toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} college-company relationships · page {data.query.page} of {data.totalPages}.</p>
 
+    {data.total>0?<Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
+      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+      ↓ Export CSV (matching filters; up to 2,000 rows)
+    </Link>:<Button type="button" variant="secondary" disabled>Export CSV</Button>}
     <DataTable caption="This college's companies" columns={collegeColumns} rows={collegeRows}
       getRowKey={row=>row.relationshipId}
       empty={<EmptyState title={data.query.q?"No matching companies":"No companies yet"}
@@ -266,10 +278,7 @@ export default async function SuperAdminCompaniesPage({
       {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}
     </section>
     </Disclosure>
-    <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
-      className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-      ↓ Export CSV (matching filters; up to 2,000 rows)
-    </Link>
+
     <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Placement operations</Link>
   </div>;
 }
