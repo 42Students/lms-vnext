@@ -260,7 +260,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   <SuperAdminQuizSubmissionsDialog title={item.title||"Untitled quiz"} count={item.activityCount}>
                     <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
                       specificDeliveryId={item.deliveryId}
-                      deliveries={data.reviewDeliveries} status={item.status}/>
+                      deliveries={data.reviewDeliveries} status={item.status} dueAt={item.dueAt?.toISOString()??null}/>
                   </SuperAdminQuizSubmissionsDialog>
                 </div>
               </div>},
