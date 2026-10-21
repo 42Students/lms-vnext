@@ -106,6 +106,15 @@ export function LearnerCourseDiscussion({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteTarget,setDeleteTarget]=useState<string|null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
+  const [operationToast,setOperationToast]=useState<string|null>(null);
+  const toastTimeout=useRef<ReturnType<typeof setTimeout>|null>(null);
+  useEffect(()=>()=>{if(toastTimeout.current!==null)window.clearTimeout(toastTimeout.current);},[]);
+  function showOperationError(message:string){
+    setModerationError(message);
+    setOperationToast(message);
+    if(toastTimeout.current!==null)window.clearTimeout(toastTimeout.current);
+    toastTimeout.current=window.setTimeout(()=>setOperationToast(null),2000);
+  }
   const [pinningId, setPinningId] = useState<string | null>(null);
   const [atBottom, setAtBottom] = useState(true);
   const [scrollEdges,setScrollEdges] = useState({top:false,bottom:false});
@@ -298,7 +307,7 @@ export function LearnerCourseDiscussion({
     postLocked.current = true;
     setPosting(true);
     try {
-      await apiFetch(
+      const sent=await apiFetch<{message?:{id:string}}>(
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`+
           (moderate&&replyTo?"/faculty-reply":""),
         {
@@ -310,17 +319,19 @@ export function LearnerCourseDiscussion({
           }:{})}),
         },
       );
+      if(!sent?.message?.id)throw new Error("UNCONFIRMED_POST");
       setDraft("");
       setReplyTo(null);
+      setModerationError(null);
       forceBottomOnNextLoad.current = true;
       await load(true);
       window.requestAnimationFrame(() =>
         focusComposer(),
       );
     } catch(e) {
-      setModerationError(e instanceof FriendlyFetchError&&e.status===409?
+      showOperationError(e instanceof FriendlyFetchError&&e.status===409?
         "The discussion changed while you were writing. Your message is still here. Refresh and retry.":
-        e instanceof Error?e.message:friendlyApiError({}));
+        "Failed to post message.");
     } finally {
       postLocked.current = false;
       setPosting(false);
@@ -345,7 +356,7 @@ export function LearnerCourseDiscussion({
       setDeleteTarget(null);
       await load(true);
     } catch(e) {
-      setModerationError(e instanceof Error?e.message:"Discussion deletion failed.");
+      showOperationError("Failed to delete message.");
     } finally {
       setDeletingId(null);
     }
@@ -386,7 +397,7 @@ export function LearnerCourseDiscussion({
       }
       await load(true);
     } catch(e) {
-      setModerationError(e instanceof Error?e.message:"Discussion moderation failed.");
+      showOperationError("Failed to update pin state.");
     } finally {
       setPinningId(null);
     }
@@ -394,6 +405,9 @@ export function LearnerCourseDiscussion({
 
   return (
     <div className="min-w-0 space-y-4">
+      {operationToast?<div role="alert" className="fixed bottom-5 left-1/2 z-50 w-[min(92vw,28rem)] -translate-x-1/2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 py-3 text-sm text-error shadow-lg">
+        {operationToast}
+      </div>:null}
       <div>
         <h2 className="sr-only">Discussions</h2>
         <p className="m-0 text-sm text-body">
@@ -406,11 +420,12 @@ export function LearnerCourseDiscussion({
 
       {loadError && messages.length > 0 && loadedOnce.current ? (
         <Alert tone="warning" role="alert" className="flex-row flex-wrap items-center gap-3">
-          <p className="m-0 flex-1 text-sm text-warning-text">
-            Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
-          </p>
+          <div className="flex-1 text-sm text-warning-text">
+            <p className="font-semibold">Could not refresh the discussion.</p>
+            <p>Showing the last messages we loaded.</p>
+          </div>
           <Button type="button" size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => void load(true)}>
-            Retry discussion refresh
+            Retry
           </Button>
         </Alert>
       ) : null}

@@ -14,6 +14,23 @@ import {
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
+/** Relational replacement for old ProjectWorkspaceDTO display fragments.
+ * This never fabricates review or mentor dates: only persisted submission
+ * reviewedAt and active project-member periods may populate those fields.
+ * The caller must load the tenant-authorized project and mentor row first.
+ */
+export function learnerLegacyProjectProgressProjection(input:{
+ projectId:string;status:string;progressPercent:number;
+ mentorName:string|null;mentorStartedAt:Date|null;
+ submittedAt:Date|null;reviewedAt:Date|null;
+ dueDate:string|null;reviewStatus:string|null;
+}){
+ return {projectId:input.projectId,status:input.status,
+  progressPercent:Math.max(0,Math.min(100,input.progressPercent)),
+  mentor:input.mentorName,mentorSince:input.mentorStartedAt,
+  deliveredAt:input.submittedAt,reviewedAt:input.reviewedAt,
+  dueDate:input.dueDate,reviewStatus:input.reviewStatus};
+}
 export type LearnerProjectAttention = {
   projectId: string;
   kind:

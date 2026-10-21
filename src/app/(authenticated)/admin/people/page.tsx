@@ -114,8 +114,8 @@ export default async function SuperAdminPeoplePage({
           description="People administration requires a college safety scope."
         />
         <EmptyState
-          title="Select a college scope"
-          description="Use the Super Admin scope selector in the top bar to choose a college before viewing membership data."
+          title="Select a college to continue"
+          description="Choose a college in the header above to see its people directory."
         />
         <Link href="/admin/people/directory"
           className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
