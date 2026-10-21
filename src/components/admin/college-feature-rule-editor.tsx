@@ -121,7 +121,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     setFeedbackTone("error");setFeedback("Write accepted but the latest stored rule was not verified. Recheck before editing again.");return;
    }
    setObserved(current);setChoice(collegeRuleSelection(current));setLocked(current?.locked??false);
-   showToast({tone:"success",title:lockChanged?(locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
+   showToast({tone:"success",title:lockChanged?(choice!=="INHERIT"&&locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
     :moduleLabel+" updated for "+collegeName});
    setFeedbackTone("success");setFeedback("Stored policy verified for "+collegeName+".");
    router.refresh();
@@ -133,6 +133,15 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  }
  return <section aria-label="College feature policy" aria-busy={busy||impactBusy} className="mt-3 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
   {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup.</Alert>:null}
+  <div role="group" aria-label="Quick college module override" className="flex flex-wrap items-center gap-2">
+   <span className="text-sm font-semibold text-body">Quick override</span>
+   <Button size="sm" variant={choice==="ON"?"primary":"secondary"} aria-pressed={choice==="ON"}
+    disabled={busy||impactBusy||confirm||ancestorLocked} onClick={()=>{setChoice("ON");setFeedback("");}}>Turn on</Button>
+   <Button size="sm" variant={choice==="OFF"?"primary":"secondary"} aria-pressed={choice==="OFF"}
+    disabled={busy||impactBusy||confirm||ancestorLocked} onClick={()=>{setChoice("OFF");setFeedback("");}}>Turn off</Button>
+   {choice==="INHERIT"?<span className="text-xs text-muted-foreground">Inherits broader policy</span>:null}
+  </div>
+  <Disclosure title="Advanced rule: inheritance and lock" contentClassName="pt-3">
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-end">
    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College stored value
     <Select className="min-h-11 w-full sm:min-h-9" value={choice} disabled={busy||impactBusy||confirm}
@@ -145,6 +154,8 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
      disabled={busy||impactBusy||confirm||ancestorLocked||choice==="INHERIT"} onChange={e=>{setLocked(e.target.checked);setFeedback("");}}/>
    </div>
   </div>
+  <p className="mt-2 text-xs text-muted-foreground">Quick actions store a college override; advanced controls manage Inherit and locks. Effective access still follows higher-level rules.</p>
+  </Disclosure>
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
    <Button size="sm" variant="primary" className="min-h-11 w-full sm:min-h-9 sm:w-auto"
     disabled={disabled} loading={impactBusy} onClick={()=>{void reviewChange();}}>
@@ -152,17 +163,37 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    </Button>
    <Button size="sm" variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto"
     disabled={busy||impactBusy||confirm} onClick={()=>{void recheck();}}>Recheck stored rule</Button>
+   {retryFailure?<Button size="sm" variant="secondary" disabled={disabled} onClick={()=>{void reviewChange();}}>
+    Retry failed change
+   </Button>:null}
   </div>
-  {impactBusy?<p role="status" className="m-0 text-xs leading-5 text-muted-foreground">Checking the active student population before confirmation…</p>:null}
-  {feedback?<Alert tone={feedbackTone}>{feedback}</Alert>:null}
+  {impactBusy?<p role="status" className="m-0 text-xs leading-5 text-muted-foreground">Checking the selected college, active learner population and module impact…</p>:null}
+  {feedback?<Alert tone={feedbackTone} role={feedbackTone==="error"?"alert":"status"}>{feedback}</Alert>:null}
   <ConfirmDialog open={confirm} onOpenChange={next=>{if(!busy)setConfirm(next);}}
-   title={lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
+   title={projectsOff?"Turn off Projects?":placementsOff?"Turn off Placements for "+collegeName+"?":lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
-   confirmLabel="Apply change" confirmVariant="danger" pending={busy}
-   confirmDisabled={busy||impactBusy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT")||students===null||(students>=100&&!acknowledgedPopulation)} onConfirm={()=>{void save();}}>
+   confirmLabel={projectsOff?"Turn off Projects":placementsOff?"Turn off Placements":"Apply change"} confirmVariant="danger" pending={busy}
+   confirmDisabled={busy||impactBusy||!dirty||(ancestorLocked&&choice!=="INHERIT")||!canSave} onConfirm={()=>{void save();}}>
    <div className="min-w-0 space-y-3">
-    <p className="m-0 break-words text-sm leading-5 text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
+    <p className="m-0 break-words text-sm leading-5 text-body">This affects {collegeName}. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
     {lockChanged?<Alert tone="warning">You are changing the policy lock. Descendant overrides may gain or lose the ability to take effect.</Alert>:null}
+    {projectsOff?<Alert tone="warning">
+     {impactCounts===null
+      ?"Mentor-impact data is unavailable. This does not mean disabling Projects is safe: check active workspaces, learner submissions and upcoming meetings before proceeding."
+      :impactCounts[0]===0
+       ?"No active primary mentors were found at "+collegeName+". This is not a safety check: review workspaces, learners, submissions and upcoming meetings before disabling Projects."
+       :impactCounts[0]+" primary mentor assignment(s) at "+collegeName+" are active. Learners, other members, pending submissions and meetings may also be affected."}
+    </Alert>:null}
+    {placementsOff?<div className="space-y-2">
+     <p className="m-0 text-sm text-body">This hides Placements for the placement cell, college admins, students and recruiters at {collegeName}. Nothing is deleted; turning it back on restores access.</p>
+     <dl className="grid grid-cols-2 gap-3 border-y border-border py-3 text-sm text-body">
+      {["Active drives","In-progress applications","Pending offers","Upcoming interviews"].map((label,index)=>
+       <div key={label}><dt className="text-muted-foreground">{label}</dt>
+        <dd className="font-semibold tabular-nums">{impactCounts?.[index]===undefined?"Unavailable":impactCounts[index].toLocaleString("en-IN")}</dd></div>)}
+     </dl>
+     <p className="text-xs text-muted-foreground">Counts can overlap; they are a blast-radius preview, not a deletion list.</p>
+     {impactCounts!==null&&impactCounts.length<4?<Alert tone="warning">Upcoming-interview counts are not returned by this API. Check scheduled interviews before disabling Placements.</Alert>:null}
+    </div>:null}
     {students!==null?<p className="m-0 break-words text-sm font-semibold leading-5 text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
      <Alert tone="warning">Student population could not be confirmed. The change will not be saved.</Alert>}
     {students!==null&&students>=100?<label className="flex min-h-11 min-w-0 items-start gap-3 py-2 text-sm leading-5 text-body">
@@ -170,7 +201,11 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
        onChange={e=>setAcknowledgedPopulation(e.target.checked)}/>
       <span className="min-w-0 break-words">I understand this may change access for {students.toLocaleString("en-IN")} active learners.</span>
     </label>:null}
-    {impact?<Alert tone={students===null?"warning":"info"}>{impact}</Alert>:null}
+    {impactCounts===null?<label className="flex min-h-11 min-w-0 items-start gap-3 py-2 text-sm leading-5 text-body">
+      <Checkbox checked={ackUnknown} disabled={busy} onChange={e=>setAckUnknown(e.target.checked)}/>
+      <span className="min-w-0 break-words">Impact counts are unavailable. I reviewed the live work that may be affected before proceeding.</span>
+    </label>:null}
+    {impact?<Alert tone={impactCounts===null?"warning":"info"}>{impact}</Alert>:null}
    </div>
   </ConfirmDialog>
  </section>;
