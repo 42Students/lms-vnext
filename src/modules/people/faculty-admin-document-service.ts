@@ -1,12 +1,12 @@
 import "server-only";
 
-import {and,eq,sql} from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {colleges,collegeMemberships,membershipRoles} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import {facultyProfileDocumentStorageReady} from "./faculty-profile-readiness";
 import {emptyFacultyProfileDocument,facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {facultySelfSectionPatchSchema,updateFacultyProfileSection} from "./faculty-self-section-model";
@@ -16,7 +16,7 @@ const targetSchema=z.string().uuid();
 type DocumentRow={profile_document:unknown;profile_document_version:number};
 
 async function requireFacultyTarget(
- tx:Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0],
+ tx:PermissionTransaction,
  context:RequestContext,membershipId:string,
 ) {
  const [target]=await tx.select({
