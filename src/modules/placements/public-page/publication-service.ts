@@ -10,6 +10,10 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { publicPlacementTableReady } from "./readiness";
+import {getPublicPlacementPageContent} from "./content-service";
+import {getPublicPlacementStatistics} from "./read-service";
+import {formatPublicPlacementMetric,PUBLIC_METRIC_LABELS,
+ type PublicPlacementMetricKey} from "./content-model";
 import { publicPlacementPublicationInput,publicPublicationDecision,
  publicPublicationTimestamp } from "./publication-policy";
 
@@ -117,4 +121,49 @@ export async function getTpoPublicPlacementPublication(context:RequestContext){
  const active=settings[0];
  const publicEligible=Boolean(active?.enabled&&active.publishedAt&&populationCount>=5);
  return {ready:true as const,settings:active??null,populationCount,publicEligible};
+}
+
+/** The old placements settings envelope is a display adapter only.
+ * It composes existing typed privacy-cleared services and does not turn
+ * unpublished snapshots into public statistics. */
+const LEGACY_PUBLIC_NUMBER_KEYS:Record<PublicPlacementMetricKey,string>={
+ STUDENTS:"STUDENTS",PLACED:"PLACED",PERCENT:"PLACED_PERCENT",
+ OFFERS:"OFFERS",HIRING_COMPANIES:"COMPANIES",
+ HIGHEST_CTC:"HIGHEST_CTC",MEDIAN_CTC:"MEDIAN_CTC",
+};
+export async function getTpoPublicPlacementLegacySettings(context:RequestContext){
+ const publication=await getTpoPublicPlacementPublication(context);
+ if(!publication.ready)return {ready:false as const};
+ const member=context.membership;
+ if(!member)throw new AuthorizationError("placements.manage");
+ const collegeId=member.collegeId;
+ const [content,stats]=await Promise.all([
+  getPublicPlacementPageContent(collegeId),
+  publication.publicEligible?getPublicPlacementStatistics(collegeId):Promise.resolve(null),
+ ]);
+ const keys=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
+ const data=stats?{
+  population:stats.population,placed:stats.placed,offers:stats.offers,
+  employers:stats.employers,highestCtcInr:stats.highestCtcInr,
+  medianCtcInr:stats.medianCtcInr,
+ }:null;
+ const preview=keys.flatMap(key=>{
+  if(!data)return [];
+  const value=formatPublicPlacementMetric(key,data);
+  return value==="(not enough data yet)"?[]:[{
+   key:LEGACY_PUBLIC_NUMBER_KEYS[key],label:PUBLIC_METRIC_LABELS[key],value,
+  }];
+ });
+ return {
+  ready:content.ready,enabled:Boolean(publication.settings?.enabled)&&publication.publicEligible,
+  about:content.about,
+  numbers:content.metricKeys.map(key=>LEGACY_PUBLIC_NUMBER_KEYS[key]),
+  available:keys.map(key=>({value:LEGACY_PUBLIC_NUMBER_KEYS[key],label:PUBLIC_METRIC_LABELS[key]})),
+  preview,populationCount:publication.populationCount,
+  // The service-level code sender verifies a corporate email and stores
+  // a short-lived challenge; recruit consumes that challenge into a lead
+  // and in-app TPO notice. No direct mail to an arbitrary address occurs.
+  enquiry:{sendCodePath:"/api/public/recruit-from-us/send-code",
+   recruitPath:"/api/public/recruit-from-us/recruit"},
+ };
 }

@@ -90,7 +90,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_placements_recruiter_profile_details_route.ts.md` (edit src/app/api/placements/recruiter/profile/details/route.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_placements_offers_offerId_actions_route.ts.md` (edit src/app/api/placements/offers/[offerId]/actions/route.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0004_courses_c2_learning.sql.md` (edit drizzle/0004_courses_c2_learning.sql; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_public-page_publication-service.ts.md` (edit src/modules/placements/public-page/publication-service.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_public-page_publication-service.ts.md` (edit src/modules/placements/public-page/publication-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_activity_learner-notification-membership-service.ts.md` (edit src/modules/activity/learner-notification-membership-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_attendance_parent-sms-provider.ts.md` (edit src/modules/attendance/parent-sms-provider.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-tpo-notice-audiences.ts.md` (edit src/db/schema/placement-tpo-notice-audiences.ts; 2 findings; best P2)
