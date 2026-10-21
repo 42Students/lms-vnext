@@ -46,6 +46,7 @@ import {
   getLearnerCourseWorkspace,
 } from "@/modules/courses/learner-course-service";
 import { learnerRoadmapMeasuredProgress } from "@/modules/courses/learner-roadmap-progress-availability-model";
+import { legacySyllabusKind,selectedLessonCompletion } from "@/modules/courses/legacy-syllabus-detail-model";
 import {learnerRoadmapMobileOutline} from "@/modules/courses/learner-roadmap-mobile-model";
 
 type Workspace = Awaited<
@@ -156,6 +157,12 @@ function ContentCard({
   });
   const scheduled = content.availability === "SCHEDULED";
   const ended = content.availability === "ENDED";
+  if(legacySyllabusKind(content.type)!=="CONTENT"||
+     !["RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"].includes(content.type))
+   return <div role="status" className="space-y-2 border-b border-border py-3">
+    <h3 className="font-semibold">{content.title}</h3>
+    <Alert tone="warning">This content type isn&apos;t supported yet. Contact your instructor if this looks wrong.</Alert>
+   </div>;
 
   return (
     <article
@@ -614,8 +621,9 @@ export function LearnerCourseWorkspace({
   readOnly?: boolean;
 }) {
   const summary = workspace.summary;
+  const progressUnknown=workspace.stateWarnings.length>0;
   const emptyState = learnerRoadmapEmptyState(Boolean(workspace.learningPath),workspace.lessons);
-  const measuredProgress = learnerRoadmapMeasuredProgress(summary);
+  const measuredProgress = progressUnknown?null:learnerRoadmapMeasuredProgress(summary);
   const filterNotice=learnerRoadmapFilterRecoveryNotice(filter);
   const activeFilter = resolveLearnerRoadmapFocusFilter(
     filter, focusLessonId, focusContentId, workspace.lessons,
@@ -690,9 +698,9 @@ export function LearnerCourseWorkspace({
 
   return (
     <div className="min-w-0 space-y-5">
-      {workspace.stateWarnings.length>0 ? (
-        <Alert tone="warning" role="alert" title="Some course state could not be loaded">
-          <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Your progress has not been changed.</p>
+      {progressUnknown ? (
+        <Alert tone="warning" role="alert" title="Lesson completion state could not be fully verified">
+          <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Content remains accessible; completion counts and Continue recommendations are unavailable until verification succeeds.</p>
           <LearnerCourseStateRetry/>
         </Alert>
       ) : null}
@@ -720,7 +728,7 @@ export function LearnerCourseWorkspace({
               {workspace.learningPath.title}
             </p>
             <h3 className="mt-2 text-xl font-semibold text-foreground">
-              {learnerRoadmapHeadline({
+              {progressUnknown?"Lesson content may be out of date":learnerRoadmapHeadline({
                 nextItemTitle:workspace.nextItem?.title??null,
                 itemsMissed:summary.itemsMissed,
                 itemsCompleted:summary.itemsCompleted,
@@ -731,7 +739,7 @@ export function LearnerCourseWorkspace({
               {workspace.learningPath.description ??
                 "Lessons and learning items are presented in the order defined for this course."}
             </p>
-            {workspace.nextItem ? (
+            {!progressUnknown&&workspace.nextItem ? (
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 <StatusBadge tone="info">
                   {kindLabel(workspace.nextItem.kind)}
@@ -742,11 +750,12 @@ export function LearnerCourseWorkspace({
               </div>
             ) : null}
           </div>
-          <ProgressBar value={measuredProgress} label="Overall Course progress" />
+          {progressUnknown?<p role="status" className="text-sm text-warning">Lesson completion state could not be fully verified. Retry state before using this progress estimate.</p>:
+           <ProgressBar value={measuredProgress} label="Overall Course progress" />}
         </div>
       </section>
 
-      <Disclosure title="Learning progress breakdown"
+      {!progressUnknown?<Disclosure title="Learning progress breakdown"
         className="border-b border-border pb-3" contentClassName="pt-3">
         <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
@@ -770,7 +779,7 @@ export function LearnerCourseWorkspace({
           detail="Closed quizzes remain visible in the learning path."
         />
         </div>
-      </Disclosure>
+      </Disclosure>:null}
 
       <Tabs
         ariaLabel="Learning path content filter"
@@ -816,8 +825,9 @@ export function LearnerCourseWorkspace({
 
           const lessonProgress = lessonProgressState(
             lesson.items.map((item) => item.progress.status),
-            workspace.nextItem?.lessonId === lesson.id,
+            !progressUnknown&&workspace.nextItem?.lessonId === lesson.id,
           );
+          const lessonCompletion=selectedLessonCompletion(lesson.items,!progressUnknown);
           const contentCounts = {
             lectures: lesson.contents.filter(
               (content) =>
@@ -861,7 +871,7 @@ export function LearnerCourseWorkspace({
                     ) : null}
                   </div>
                   <div className="flex max-w-xl flex-wrap items-center justify-end gap-2">
-                    {lessonProgress.complete ? (
+                    {progressUnknown?<StatusBadge tone="warning">Completion unverified</StatusBadge> : lessonProgress.complete ? (
                       <StatusBadge tone="success">
                         Completed
                       </StatusBadge>
@@ -877,7 +887,9 @@ export function LearnerCourseWorkspace({
                       <StatusBadge tone="neutral">Not started</StatusBadge>
                     )}
                     <Badge tone="neutral">
-                      {lessonProgress.completed} of {lessonProgress.total} complete
+                      {lessonCompletion.stateKnown
+                        ?lessonCompletion.completed+" of "+lessonCompletion.total+" complete"
+                        :"Completion unavailable"}
                     </Badge>
                     <span aria-hidden="true" className="text-primary-text group-open:rotate-90">
                       ›
@@ -889,6 +901,16 @@ export function LearnerCourseWorkspace({
               className="group min-w-0 border-b border-border bg-surface">
 
               <div className="border-t border-border bg-surface p-4 md:p-5">
+                {lessonCompletion.stateKnown? <div className="mb-4 space-y-2">
+                  <ProgressBar value={lessonCompletion.percent} label={lesson.name+" progress"}/>
+                  {lessonCompletion.nextIncomplete?<Link
+                    href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?lesson="+encodeURIComponent(lesson.id)+"&content="+encodeURIComponent(lessonCompletion.nextIncomplete.id)}
+                    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+                    Continue: {lessonCompletion.nextIncomplete.title??"Next incomplete item"}
+                  </Link>:null}
+                </div>:<p role="status" className="mb-4 text-sm text-warning">
+                  Lesson completion state could not be fully verified. Retry state before marking this lesson complete.
+                </p>}
                 <div className="mb-3 flex min-w-0 flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                   {contentCounts.lectures > 0 ? (
                     <span>{contentCounts.lectures} lecture{contentCounts.lectures === 1 ? "" : "s"}</span>
@@ -913,7 +935,9 @@ export function LearnerCourseWorkspace({
                   {workspace.lessons[lessonIndex+1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
                     "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
                     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Next lesson</Link>:null}
-                  <span>{lessonProgress.completed} of {lessonProgress.total} complete</span>
+                  <span>{lessonCompletion.stateKnown
+                    ?lessonCompletion.completed+" of "+lessonCompletion.total+" complete"
+                    :"Completion unavailable"}</span>
                 </nav>:null}
                 {visibleItems.length === 0 ? (
                   <div className="border-t border-border py-4 text-sm text-muted-foreground">
