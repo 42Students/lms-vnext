@@ -15,7 +15,8 @@ export function ProjectAuditPageExport({rows}:{rows:Row[]}){
   link.href=url;link.download="project-audit-log.csv";link.click();URL.revokeObjectURL(url);
  }
  return <Button variant="secondary" type="button" disabled={!rows.length} onClick={save}
+   title="Export the audit events currently loaded (not the full history)"
    className="">
-   Export shown audit events · CSV
+   <span aria-hidden="true">↓</span> Export CSV
  </Button>;
 }
