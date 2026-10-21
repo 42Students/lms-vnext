@@ -448,6 +448,8 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                 .filter(Boolean).join(" · ")||"Project workspace"
               : mode==="ADMIN"&&section==="sprints"?
                 "Plan sprint outcomes, release alignment and delivery cadence for this workspace.":
+                mode==="ADMIN"&&section==="resources"?
+                "Curate the references, files and access guidance this workspace team needs.":
                 mode==="ADMIN"&&section==="readiness"?
                 "Understand submission readiness, proof coverage and any manual override at a glance.":
                 mode==="ADMIN"&&section==="summary"?
@@ -2000,7 +2002,7 @@ export function ProjectWorkspace({
 
       <div className={activeSection ? "grid min-w-0 gap-6" : "grid min-w-0 gap-6 xl:grid-cols-2"}>
         {show("resources") ? <section className="space-y-3">
-          <div className="flex flex-wrap items-end justify-between gap-3">
+          {!(mode==="ADMIN"&&!readOnly)?<div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
                 Project references</p>:null}
@@ -2023,7 +2025,7 @@ export function ProjectWorkspace({
                 tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}
               />
             ) : null}
-          </div>
+          </div>:null}
           {mode==="ADMIN"&&!readOnly?<ProjectResourceLibraryEditor
             projectId={workspace.project.id}
             token={projectResourceLibraryToken(workspace.resources)}

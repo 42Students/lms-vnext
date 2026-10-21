@@ -64,8 +64,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      });
      setBaselineIds([...orderIds]);
      router.refresh();
-   }catch{
-     setReorderError("Resource order could not be saved. Try again.");
+   }catch(error){
+     setReorderError(error instanceof Error&&/conflict|stale|changed/i.test(error.message)?
+       "Resources changed since you started arranging. Discard changes to reload the latest order.":
+       "Resource order could not be saved. Try again.");
    }finally{setReordering(false);}
  }
  function discardOrder(){
@@ -177,6 +179,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
     {canReorder?"Drag resources to arrange a draft, then select Save order.":
+      activeRows.length>250?"Reorder up to 500 resources in Edit resource library; the directory only reorders complete lists of 250 or fewer.":
       "Resource reordering is available when no filters are active."}
   </p>:null}
   {mode!=="LEARNER"&&!readOnly&&unsaved?<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Unsaved resource order">
@@ -188,7 +191,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
-    :"Add the briefs, templates and reference links your team will need."}
+    :"Add only the references the team will actually use."}
   />:filtered.length===0?<EmptyState title="No matching resources"
     description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{[...filtered].sort((a,b)=>
       Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
@@ -228,10 +231,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
-         className="text-xs"
+         aria-label={"Move "+resource.title+" up"} className="text-xs"
          onClick={()=>moveRelative(resource.id,-1)}>Move up</Button>
        <Button variant="secondary" type="button" disabled={stableOrder.at(-1)===resource.id}
-         className="text-xs"
+         aria-label={"Move "+resource.title+" down"} className="text-xs"
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
      {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
