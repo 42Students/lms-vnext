@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {
   collegeMemberships,courseSectionDeliveries,courseTeachingAssignments,
   membershipRoles,courseOfferings,courses,departments,colleges,organizations,sections,academicPeriods,
+  cohorts,cohortProgressionState,programTerms,programTermCourses,programs,
 } from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
@@ -214,4 +215,131 @@ export async function createPartitionedCourseTeachingAssignments(
  }
  return {succeeded,failed,partial:failed.length>0,createdCount:succeeded.reduce(
   (total,batch)=>total+batch.createdIds.length,0)};
+}
+
+/**
+ * Companion to college-batch-promotion-execute's transaction-bound closure.
+ * That workflow ends old-only faculty assignments, retains shared courses,
+ * increments the cohort version and records endedTeachingAssignments in its
+ * immutable batch-promotion audit. A rollback of cohort progression must run
+ * FIRST, using the authorized promotion reversal workflow. This command only
+ * restores specifically selected teaching grants after their cohort is back
+ * in the old term; it NEVER rolls back academic progression itself.
+ *
+ * No unverified historical faculty links may be restored into another tenant
+ * or a program term that no longer contains the mapped course. All-or-nothing,
+ * row-locked and audit-recorded for the selected set.
+ */
+export async function restorePromotionEndedTeachingAssignments(
+ context:RequestContext,raw:unknown,
+){
+ const selected=requireTeachingAssignmentManager(context);
+ const input=z.strictObject({
+  cohortId:z.uuid(),
+  restoredTermNumber:z.number().int().min(1).max(30),
+  assignmentIds:z.array(z.uuid()).min(1).max(100),
+  reason:z.string().trim().min(10).max(900),
+  confirm:z.literal(true),
+ }).parse(raw);
+ if(new Set(input.assignmentIds).size!==input.assignmentIds.length)
+  throw new CoursesServiceError("TEACHING_ASSIGNMENT_CONFLICT");
+ const ids=[...input.assignmentIds].sort();
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+   collegeId:selected.collegeId,organizationId:selected.organizationId,
+  });
+  const [progress]=await tx.select({
+   programId:cohorts.programId,
+   currentTermNumber:cohortProgressionState.currentTermNumber,
+   organizationId:colleges.organizationId,
+  }).from(cohortProgressionState)
+   .innerJoin(cohorts,eq(cohorts.id,cohortProgressionState.cohortId))
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,eq(departments.id,programs.departmentId))
+   .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+   .where(and(eq(cohortProgressionState.cohortId,input.cohortId),
+    eq(departments.collegeId,selected.collegeId)))
+   .for("update",{of:cohortProgressionState}).limit(1);
+  if(!progress||progress.currentTermNumber!==input.restoredTermNumber||
+     (selected.organizationId&&progress.organizationId!==selected.organizationId))
+   throw new CoursesServiceError("OFFERING_COHORT_PERIOD_MISMATCH");
+  const mapped=await tx.select({courseId:programTermCourses.courseId})
+   .from(programTermCourses)
+   .innerJoin(programTerms,eq(programTerms.id,programTermCourses.programTermId))
+   .where(and(eq(programTerms.programId,progress.programId),
+    eq(programTerms.termNumber,input.restoredTermNumber)));
+  const mappedIds=new Set(mapped.map(row=>row.courseId));
+  const ended=await tx.select({
+   id:courseTeachingAssignments.id,
+   deliveryId:courseTeachingAssignments.deliveryId,
+   membershipId:courseTeachingAssignments.membershipId,
+   role:courseTeachingAssignments.role,
+   endedAt:courseTeachingAssignments.endedAt,
+   courseId:courseOfferings.courseId,
+   cohortId:courseOfferings.cohortId,
+   deliveryEndedAt:courseSectionDeliveries.endedAt,
+   offeringStatus:courseOfferings.status,
+   facultyStatus:collegeMemberships.status,
+   facultyCollegeId:collegeMemberships.collegeId,
+  }).from(courseTeachingAssignments)
+   .innerJoin(courseSectionDeliveries,
+    eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+   .innerJoin(collegeMemberships,
+    eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+   .where(inArray(courseTeachingAssignments.id,ids))
+   .orderBy(courseTeachingAssignments.id)
+   .for("update",{of:courseTeachingAssignments});
+  if(ended.length!==ids.length||ended.some(row=>
+   row.endedAt===null||row.cohortId!==input.cohortId||
+   row.deliveryEndedAt!==null||row.offeringStatus!=="ACTIVE"||
+   row.facultyStatus!=="ACTIVE"||row.facultyCollegeId!==selected.collegeId||
+   !mappedIds.has(row.courseId)))
+   throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+  const facultyIds=[...new Set(ended.map(row=>row.membershipId))];
+  const roles=await tx.select({membershipId:membershipRoles.membershipId})
+   .from(membershipRoles).where(and(
+    inArray(membershipRoles.membershipId,facultyIds),
+    eq(membershipRoles.role,"FACULTY"),
+   ));
+  if(new Set(roles.map(row=>row.membershipId)).size!==facultyIds.length)
+   throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
+  const deliveryIds=[...new Set(ended.map(row=>row.deliveryId))];
+  const active=await tx.select({
+   deliveryId:courseTeachingAssignments.deliveryId,
+   membershipId:courseTeachingAssignments.membershipId,
+   role:courseTeachingAssignments.role,
+  }).from(courseTeachingAssignments).where(and(
+   inArray(courseTeachingAssignments.deliveryId,deliveryIds),
+   isNull(courseTeachingAssignments.endedAt),
+  )).for("update");
+  for(const row of ended){
+   if(teachingAssignmentConflict({membershipId:row.membershipId,role:row.role},
+    active.filter(item=>item.deliveryId===row.deliveryId)))
+    throw new CoursesServiceError("TEACHING_ASSIGNMENT_CONFLICT");
+  }
+  const updatedAt=new Date();
+  const restored=[];
+  for(const row of ended){
+   const [saved]=await tx.update(courseTeachingAssignments).set({
+    endedAt:null,updatedAt,
+   }).where(and(eq(courseTeachingAssignments.id,row.id),
+    eq(courseTeachingAssignments.endedAt,row.endedAt!)))
+    .returning({id:courseTeachingAssignments.id});
+   if(!saved)throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+   restored.push(saved.id);
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.COURSES_TEACHING_ASSIGNED,
+    collegeId:selected.collegeId,organizationId:progress.organizationId,
+    subjectType:"course_teaching_assignment",subjectId:row.id,
+    subjectLabel:row.role,summary:"Faculty teaching assignment restored after batch promotion reversal",
+    metadata:{action:"RESTORE_AFTER_BATCH_PROMOTION",cohortId:input.cohortId,
+     restoredTermNumber:input.restoredTermNumber,reason:input.reason,
+     before:{endedAt:row.endedAt?.toISOString()},
+     after:{endedAt:null},deliveryId:row.deliveryId,membershipId:row.membershipId},
+   });
+  }
+  return {restoredAssignmentIds:restored,count:restored.length,
+   cohortId:input.cohortId,restoredTermNumber:input.restoredTermNumber};
+ });
 }
