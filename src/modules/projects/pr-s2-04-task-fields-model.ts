@@ -38,3 +38,13 @@ export function canonicalLegacyProjectCommentKind(input:string){
  return input==="PROGRESS"?"PROGRESS_UPDATE":
    input==="NEEDS_HELP"?"FLAG_FOR_MENTOR":input;
 }
+
+/** Immutable event kinds that represent system-generated task activity.
+ * Status/review/submission actions write these events atomically with the task
+ * mutation; the read service joins them to the human discussion stream. */
+export const PROJECT_TASK_ACTIVITY_EVENT_KINDS=[
+ "projects.task.created",
+ "projects.task.status_changed",
+ "projects.task.submitted",
+ "projects.task.reviewed",
+] as const;
