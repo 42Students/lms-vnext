@@ -114,7 +114,7 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
  }
 
  const panelFooter = <div role="group" aria-label="Notification inbox actions" className="flex w-full min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:order-last sm:w-auto" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
+   <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:order-last sm:w-auto hover:underline md:min-h-[var(--lms-control-height)]" href="/tpo/notifications" onClick={()=>setOpen(false)}>See all notifications</Link>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
     {unread>0?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto" onClick={()=>void markAll()} disabled={pending} loading={pending}>{pending?"Saving…":"Mark all read"}</Button>:null}
     <Button variant="ghost" type="button" disabled={refreshing||pending} loading={refreshing} onClick={()=>void refresh()} className="min-h-11 w-full sm:w-auto">Refresh</Button>
