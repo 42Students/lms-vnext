@@ -121,7 +121,7 @@ export default async function LearnerOffersPage({
       {invalidQuery ? <Banner tone="warning">Invalid offer filters were ignored. Check the selected status, search and dates before continuing.</Banner> : null}
       <Tabs ariaLabel="Offer status" renderPanel={false} value={view} items={tabs.map(tab=>({value:tab.id,label:tab.label,count:offers.counts[tab.id],href:learnerOfferStatusHref(tab.id,{searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry})}))}/>
       {view==="pending"&&expiredIssuedCount>0 ? (
-        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
+        <p role="status" className="min-w-0 rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-warning-text)]">
           {expiredIssuedCount} issued {expiredIssuedCount===1?"offer has":"offers have"} passed the recorded response deadline. They remain in issued history but cannot be accepted or declined after expiry.
           <Link href="/learn/my-placements/offers?status=pending&expiry=expired" className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             View expired issued offers
@@ -227,11 +227,11 @@ export default async function LearnerOffersPage({
         </Link>
       ) : null}
       {expiringSoon > 0 ? (
-        <div role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">
+        <div role="status" className="min-w-0 rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-warning-text)]">
           <strong>{expiringSoon} {expiringSoon === 1 ? "offer" : "offers"} awaiting response</strong> in this view have a recorded expiry within 24 hours. Check the official offer deadline before acting.
         </div>
       ) : null}
-      {!requestRead.available ? <p role="alert" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.5] text-body">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
+      {!requestRead.available ? <p role="alert" className="min-w-0 rounded-[8px] border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-warning-text)]">Offer extension-request history is temporarily unavailable. Review your recorded offers below; requesting a new extension is disabled until history can be loaded safely.</p> : null}
       {visibleOffers.length === 0 ? (
         <section role="status" className="flex min-h-44 min-w-0 flex-col items-center justify-center border-y border-border px-4 py-8 text-center text-sm leading-[1.5] text-body">
           <h2 className="text-base font-semibold text-foreground">{emptyState.title}</h2>
