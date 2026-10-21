@@ -12,6 +12,7 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   id:string;version:number;title:string};
  currentVersion:number;status:string;impact:{
   expectedTemplateVersion:number;assignedCollegeCount:number;pinnedWorkspaceCount:number;
+  sampleWorkspaces:readonly {id:string;title:string}[];
   existingWorkspacesRewritten:number;publishedVersionUnchanged:number|null;
   lifecycleUnchanged:string;
  }}){
@@ -67,6 +68,14 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
       <dd className="font-semibold tabular-nums">{value}</dd>
     </div>)}
   </dl>
+  {impact.sampleWorkspaces.length>0?<div aria-label="Pinned workspace examples" className="border-b border-border pb-3 text-sm">
+   <p className="font-semibold text-foreground">Example workspaces retaining their pinned versions</p>
+   <ul className="mt-2 list-disc space-y-1 pl-5">
+    {impact.sampleWorkspaces.map(workspace=><li key={workspace.id} className="break-words">{workspace.title}</li>)}
+   </ul>
+   {impact.pinnedWorkspaceCount>impact.sampleWorkspaces.length?<p className="mt-2 text-xs text-muted-foreground">
+    Showing {impact.sampleWorkspaces.length} of {impact.pinnedWorkspaceCount} workspaces.</p>:null}
+  </div>:null}
   <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
     <input type="checkbox" checked={reviewed} disabled={!enabled||busy}
       onChange={event=>setReviewed(event.target.checked)}
