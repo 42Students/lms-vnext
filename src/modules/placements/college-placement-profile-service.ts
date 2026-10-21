@@ -3,7 +3,7 @@ import {randomUUID} from "node:crypto";
 import {and,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,learnerProfiles,membershipRoles} from "@/db/schema";
+import {collegeMemberships,colleges,learnerProfiles,membershipRoles} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -41,7 +41,8 @@ export async function editCollegeStudentPlacementProfile(context:RequestContext,
  const input=profileEditSchema.parse(raw);
  const collegeId=await requireCollegePlacementAdmin(context);
  return getDb().transaction(async tx=>{
-  const [owner]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
+  const [owner]=await tx.select({id:collegeMemberships.id,organizationId:colleges.organizationId}).from(collegeMemberships)
+   .innerJoin(colleges,eq(colleges.id,collegeMemberships.collegeId))
    .innerJoin(membershipRoles,and(
     eq(membershipRoles.membershipId,collegeMemberships.id),
     eq(membershipRoles.role,"LEARNER")))
@@ -70,7 +71,7 @@ export async function editCollegeStudentPlacementProfile(context:RequestContext,
    nextSkills.push({id:randomUUID(),name:input.skill!.name,
     proficiency:input.skill!.proficiency});
   }else if(input.action==="EDIT_SKILL"){
-   if(input.index!>=nextSkills.length)throw new Error("Skill row changed. Refresh before retrying.");
+   if(input.index! >= nextSkills.length)throw new Error("Skill row changed. Refresh before retrying.");
    nextSkills[input.index!]={...nextSkills[input.index!]!,
     name:input.skill!.name,proficiency:input.skill!.proficiency};
   }else if(input.action==="DELETE_SKILL"){
@@ -94,7 +95,7 @@ export async function editCollegeStudentPlacementProfile(context:RequestContext,
   if(!saved)throw new Error("Learner profile changed. Reload before retrying.");
   await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.IDENTITY_LEARNER_PROFILE_SECTION_UPDATED,
-   collegeId,organizationId:context.adminScope?.organizationId??context.membership?.organizationId??"",
+   collegeId,organizationId:owner.organizationId,
    subjectType:"learner_profile",subjectId:input.membershipId,
    summary:"College placement administrator corrected learner profile "+key,
    metadata:{section:key,action:input.action,index:input.index??null,
