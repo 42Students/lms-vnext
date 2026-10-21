@@ -97,6 +97,9 @@ const paginationFields = {
 export const tpoStudentsQuerySchema = z
   .object({
     collegeId: uuid,
+    // Legacy /table?everyone=true includes all college learners, including
+    // those not enrolled for placements. Default remains the placement pool.
+    everyone:yesNo.optional(),
     journeyState: z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
@@ -878,6 +881,9 @@ export async function getTpoStudentsIntelligence(
           });
 
     const source: TpoStudentSource = {
+      // Legacy learnerId/uniqueId/rollNumber correspond to scoped UUID
+      // membershipId/registrationNumber/rollNumber; never expose raw
+      // phone or object-storage resume URLs in this broad roster.
       membershipId: learner.membershipId,
       displayName: learner.displayName,
       email: learner.email,
@@ -903,6 +909,9 @@ export async function getTpoStudentsIntelligence(
           `${learner.membershipId}:${learner.cohortId}`,
         ) ?? null,
       participation,
+      // Legacy cgpa/percentage decimal fields are stored as integer
+      // hundredths/basis points. deriveTpoStudent performs the exact /100
+      // display conversion and keeps verifiedAt/source separate from scores.
       academicEvidence: {
         cgpaHundredths: learner.cgpaHundredths,
         activeBacklogs: learner.activeBacklogs,
@@ -966,7 +975,9 @@ export async function getTpoStudentsIntelligence(
   const rowsWithDebarment=prepStudentRows.map(row=>({...row,
     debarred:debarmentAvailable?debarredIds.has(row.membershipId):null,
   }));
-  const workingRows=selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));
+  const workingRows=input.everyone
+    ? rowsWithDebarment
+    : selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));
   const outcomeMatches=input.afterCollege?await readTpoAfterCollegeMatches(college.id,input.afterCollege):null;
   const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
     workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||
