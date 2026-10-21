@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 type Impact={activeApplications:number;affectedLearners:number;openRounds:number;
  issuedOffers:number;acceptedOffers:number};
 type Preview={jobId:string;title:string;status:string;expectedUpdatedAt:string;
@@ -23,7 +24,10 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
  async function confirm(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(!preview||!preview.archivable||reason.trim().length<10)return;
-  await run(async()=>{setError("");
+  if(!beginDriveMutation(jobId)){
+   setError("Another action is changing this drive. Retry after it finishes.");return;
+  }
+  try{await run(async()=>{setError("");
    try{
     await apiFetch("/api/admin/placements/jobs/"+encodeURIComponent(jobId)+"/delete",{
      method:"POST",headers:{"content-type":"application/json"},
@@ -33,7 +37,7 @@ export function SuperAdminDriveArchive({jobId,title}:{jobId:string;title:string}
     router.push("/admin/placements/drives");router.refresh();
    }catch(e){setError(e instanceof Error?e.message:"Delete action failed. Refresh preview.");
     setPreview(null);}
-  });
+  });}finally{endDriveMutation(jobId);}
  }
  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Delete drive</h2>

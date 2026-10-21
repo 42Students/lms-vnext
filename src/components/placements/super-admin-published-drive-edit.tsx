@@ -11,6 +11,7 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {superAdminPublishedDriveEditFeedback} from "@/modules/placements/super-admin-published-drive-edit-feedback";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 type Job={id:string;title:string;description:string;locations:string[];
  applicationDeadline:string|null;openings:number|null;minCtc:number|null;maxCtc:number|null;updatedAt:string;
  jobTypeLabel:string;employmentType:"FULL_TIME"|"INTERNSHIP"|"CONTRACT";
@@ -95,7 +96,10 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
   const applicationDeadline=enteredDeadline===istLocal(job.applicationDeadline)
    ? job.applicationDeadline : driveDeadlineIstToIso(enteredDeadline);
   setConfirmSave(false);
-  await run(async()=>{
+  if(!beginDriveMutation(job.id)){
+   setError("Another action is changing this drive. Retry after it finishes.");return;
+  }
+  try{await run(async()=>{
    setError("");
    try{
     await apiFetch("/api/admin/placements/jobs/"+encodeURIComponent(job.id)+"/edit-published",{
@@ -126,7 +130,7 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
      setError(superAdminPublishedDriveEditFeedback(e instanceof FriendlyFetchError?e.code:null,fallback));
     }
    }
-  });
+  });}finally{endDriveMutation(job.id);}
  }
  const cls="min-h-11 w-full min-[768px]:min-h-9";
  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
