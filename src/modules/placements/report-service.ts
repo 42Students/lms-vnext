@@ -4,6 +4,7 @@ import {
   and,
   desc,
   eq,
+  inArray,
   isNull,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -53,12 +54,27 @@ export const placementReportQuerySchema = z
     collegeId: z.string().uuid(),
     seasonId: z.string().uuid().optional(),
     jobId: z.string().uuid().optional(),
+    batchId: z.string().uuid().optional(),
+    branch: z.string().trim().max(120).optional(),
+    company: z.string().trim().max(200).optional(),
+    mode: z.enum(["ON_CAMPUS", "POOL", "OFF_CAMPUS"]).optional(),
+    category: z.enum(["REGULAR", "DREAM", "SUPER_DREAM"]).optional(),
   })
   .strict();
 
 export type PlacementReportQuery = z.input<
   typeof placementReportQuerySchema
 >;
+
+function reportFilterKey(query: PlacementReportQuery): string {
+  return JSON.stringify([
+    query.batchId ?? null,
+    query.branch?.toLowerCase() ?? null,
+    query.company?.toLowerCase() ?? null,
+    query.mode ?? null,
+    query.category ?? null,
+  ]);
+}
 
 export async function getPlacementReportWorkspace(
   context: RequestContext,
@@ -134,6 +150,8 @@ export async function getPlacementReportWorkspace(
       seasons,
       selectedSeasonId: null,
       selectedJobId: null,
+      selectedReportJobIds: [] as string[],
+      reportFilterKey: reportFilterKey(query),
       jobs: [] as PlacementReportJob[],
       report: summarizePlacementReports(emptyFacts),
       noSeason: true,
@@ -197,9 +215,16 @@ export async function getPlacementReportWorkspace(
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   }
 
-  const jobs: PlacementReportJob[] = query.jobId
-    ? jobRows.filter((job) => job.id === query.jobId)
-    : jobRows;
+  // A company, mode or pay category filter changes drive facts, not the
+  // registered population. POOL/SUPER_DREAM are not persisted separately.
+  const jobs: PlacementReportJob[] = jobRows.filter((job) =>
+    (!query.jobId || job.id === query.jobId) &&
+    (!query.company || job.companyName.toLowerCase() === query.company.toLowerCase()) &&
+    (!query.mode || job.recruiterDriveMode === query.mode) &&
+    (!query.category ||
+      (query.category === "DREAM" && job.isDream) ||
+      (query.category === "REGULAR" && !job.isDream))
+  );
 
   if (jobs.length === 0) {
     return {
@@ -207,6 +232,8 @@ export async function getPlacementReportWorkspace(
       seasons,
       selectedSeasonId: selectedSeason.id,
       selectedJobId: query.jobId ?? null,
+      selectedReportJobIds: [] as string[],
+      reportFilterKey: reportFilterKey(query),
       jobs: jobRows,
       report: summarizePlacementReports(emptyFacts),
       noSeason: false,
@@ -227,6 +254,7 @@ export async function getPlacementReportWorkspace(
   const selectedJobFilters = and(
     ...jobConditions,
     selectedJobCondition,
+    inArray(placementJobs.id, jobs.map((job) => job.id)),
   );
 
   const registrationsAvailable = await placementTableExists(
@@ -328,6 +356,9 @@ export async function getPlacementReportWorkspace(
             and(
               eq(placementBatchRegistrations.collegeId, college.id),
               eq(placementBatchRegistrations.choice, "PLACEMENTS"),
+              query.batchId
+                ? eq(placementBatchRegistrations.cohortId, query.batchId)
+                : undefined,
             ),
           )
         : Promise.resolve([] as { membershipId: string }[]),
@@ -429,12 +460,19 @@ export async function getPlacementReportWorkspace(
     departmentName: row.departmentName,
   }));
 
+  const chosenBranch = query.branch?.toLowerCase();
+  const inBranch = (membershipId: string) => {
+    if (!chosenBranch) return true;
+    const branch = branchesByMembership.get(membershipId);
+    return branch?.departmentName.toLowerCase() === chosenBranch ||
+      branch?.departmentId.toLowerCase() === chosenBranch;
+  };
   const report = summarizePlacementReports({
     countsAsPlacedAt,
     jobs,
-    applications,
-    offers,
-    registrations,
+    applications: applications.filter((row) => inBranch(row.membershipId)),
+    offers: offers.filter((row) => inBranch(row.membershipId)),
+    registrations: registrations.filter((row) => inBranch(row.membershipId)),
     branches,
   });
 
@@ -443,6 +481,8 @@ export async function getPlacementReportWorkspace(
     seasons,
     selectedSeasonId: selectedSeason.id,
     selectedJobId: query.jobId ?? null,
+    selectedReportJobIds: jobs.map((job) => job.id),
+    reportFilterKey: reportFilterKey(query),
     jobs: jobRows,
     report,
     noSeason: false,
@@ -451,7 +491,12 @@ export async function getPlacementReportWorkspace(
       : "Registrations are current batch-level choices, not season snapshots. " +
       "The placement-rate denominator can therefore differ from historical " +
       "legacy season reports. A drive filter narrows outcomes, not the " +
-      "registered cohort denominator. " +
+      "registered cohort denominator. Accepted offers count offers; accepted " +
+      "and placed learners count distinct students. No registration data " +
+      "means an unknown rate, not zero. Annual CTC uses INR; legacy CTC " +
+      "in LPA maps at 1 LPA = 100,000 INR (two-decimal legacy precision). " +
+      "Readiness, academic marks and recruiter engagement need separate " +
+      "evidence rather than assumptions. " +
       (countsAsPlacedAt==="SELECTED"?"Placed means a selected learner.":countsAsPlacedAt==="OFFER_RELEASED"?
        "Placed means an offer has been released.":"Placed means an offer has been accepted.") ,
   };
@@ -483,7 +528,8 @@ export async function getPlacementReportDetails(
     workspace.collegeId !== query.collegeId ||
     (query.seasonId !== undefined &&
       workspace.selectedSeasonId !== query.seasonId) ||
-    workspace.selectedJobId !== (query.jobId ?? null)
+    workspace.selectedJobId !== (query.jobId ?? null) ||
+    workspace.reportFilterKey !== reportFilterKey(query)
   ) {
     throw new AuthorizationError("placements.manage");
   }
@@ -550,6 +596,9 @@ export async function getPlacementReportDetails(
             and(
               eq(placementBatchRegistrations.collegeId, query.collegeId),
               eq(placementBatchRegistrations.choice, "PLACEMENTS"),
+              query.batchId
+                ? eq(placementBatchRegistrations.cohortId, query.batchId)
+                : undefined,
             ),
           )
       : Promise.resolve(
@@ -652,9 +701,7 @@ export async function getPlacementReportDetails(
           eq(placementJobs.collegeId, query.collegeId),
           eq(placementJobs.seasonId, selectedSeasonId),
           isNull(placementJobs.archivedAt),
-          query.jobId
-            ? eq(placementJobs.id, query.jobId)
-            : undefined,
+          inArray(placementJobs.id, workspace.selectedReportJobIds),
         ),
       ),
   ]);
@@ -687,8 +734,15 @@ export async function getPlacementReportDetails(
     }
   }
 
+  const chosenBranch = query.branch?.toLowerCase();
+  const inBranch = (membershipId: string) => {
+    if (!chosenBranch) return true;
+    const branch = branches.get(membershipId);
+    return branch?.departmentName.toLowerCase() === chosenBranch ||
+      branch?.departmentId.toLowerCase() === chosenBranch;
+  };
   const registeredLearners: PlacementReportPoolLearner[] =
-    poolRows.map((row) => {
+    poolRows.filter((row) => inBranch(row.membershipId)).map((row) => {
       const branch = branches.get(row.membershipId);
       return {
         membershipId: row.membershipId,
@@ -698,7 +752,8 @@ export async function getPlacementReportDetails(
       };
     });
 
-  const offers: PlacementReportDetailedOffer[] = offerRows.map(
+  const offers: PlacementReportDetailedOffer[] = offerRows
+    .filter((row) => inBranch(row.membershipId)).map(
     (row) => ({
       id: row.id,
       membershipId: row.membershipId,
