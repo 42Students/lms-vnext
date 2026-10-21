@@ -335,3 +335,6 @@
 
 - work2 #53 `session-response-guard.tsx` | G2-1-037-028: root sign-in already shows session expired/revoked notice from validated auth query; replaced history entry to prevent Back loops after failed API auth and retained returnTo.
 - work2 #54 `mentor-notifications-service.ts` | G2-7-026-086: explicit legacy created_at/createdAt, type/title/message, receiverType, readAt projection into event plus authenticated recipient receipt; malformed timestamps and non-mentor audiences rejected. Persistence import/historical crosswalk requires authorized import service.
+
+- work2 #55 `admin-directory-query-model.ts` | G2-4-014-017: added strict legacy /search query/state/city/orgId/limit default15 validator without altering current admin directory default25; old numeric orgId requires verified scoped crosswalk.
+- work2 #56 `tracker/issues/[publicId]/retest/route.ts` | G2-17-024-020: still returns persisted refreshed issue envelope, now explicit status/version receipt and private no-store; UI must reread latest ticket on mutation completion.

@@ -174,3 +174,6 @@
 - Project readiness historical audit G2-7-032-078: query all persisted events to show CLEAR and transitions using readinessOverrideAuditProjection; active list intentionally filters latest FORCE states while archived projects with active overrides remain visible.
 
 - Mentor legacy notification migration G2-7-026-086: translate vetted records through projectLegacyMentorNotification then persist activityEvents and inAppNotifications under trusted member college/user grant, never accept receiverType or userId from client as authorization. Ensure historical audience and readAt preserved.
+
+- College legacy search endpoint G2-4-014-017: bind legacyCollegeDirectorySearchSchema to authorized college directory query; resolve historic numeric orgId through verified tenant crosswalk, apply city/state predicates and top-N limit15 without relaxing admin scope.
+- Bug tracker retest consumer G2-17-024-020: after success use returned fresh issue.version/status and refresh page instead of mutating stale local state; still no raw legacy BugReportResponse replacement.
