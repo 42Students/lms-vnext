@@ -1422,6 +1422,13 @@
       "when": 1792353491266,
       "tag": "0202_lane15_branding_signin_data_policy",
       "breakpoints": true
+    },
+    {
+      "idx": 203,
+      "version": "7",
+      "when": 1792353551266,
+      "tag": "0203_lane15_preuser_onboarding_challenges",
+      "breakpoints": true
     }
   ]
 }
