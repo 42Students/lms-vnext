@@ -18,6 +18,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Alert } from "@/components/ui/alert";
 import { LEGACY_FACULTY_TYPES } from "@/modules/people/college-faculty-type-model";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -60,6 +61,7 @@ export function PersonOnboardDialog({
   const [fieldError,setFieldError]=useState<{ field: string; message: string } | null>(null);
   const [discardOpen,setDiscardOpen]=useState(false);
   const [profileIncomplete,setProfileIncomplete]=useState(false);
+  const [onboardError,setOnboardError]=useState("");
   const [roles, setRoles] = useState<MembershipRole[]>(
     onboardingRoleSelection(forcedRole),
   );
@@ -71,7 +73,7 @@ export function PersonOnboardDialog({
     setPhoneE164("");
     setEmail("");setRegisterAsMentor(false);
     setDepartmentId("");setFacultyType("");setGender("");setDateOfBirth("");setAddress("");setBio("");
-    setFieldError(null);setDiscardOpen(false);setProfileIncomplete(false);
+    setFieldError(null);setDiscardOpen(false);setProfileIncomplete(false);setOnboardError("");
     setRoles(onboardingRoleSelection(forcedRole));
   }
 
@@ -107,7 +109,7 @@ export function PersonOnboardDialog({
     if(email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())){
       setFieldError({field:"email",message:"Enter a valid email"});return;
     }
-    setFieldError(null);
+    setFieldError(null);setOnboardError("");
     inFlightRef.current=true;
     startTransition(async () => {
       try {
@@ -125,18 +127,16 @@ export function PersonOnboardDialog({
       const payload = await response.json().catch(() => null);
 
       if (!response.ok) {
-        showToast({
-          tone: "error",
-          title: "Onboarding failed",
-          description:
+        const message=
             payload?.error === "IDENTITY_COLLISION"
               ? "Mobile or email is linked to another canonical identity. Check existing memberships before creating a duplicate."
               : payload?.error === "EMAIL_ALREADY_EXISTS"
               ? "Email already exists in this college. Check the linked user before creating a duplicate."
               : payload?.error === "PHONE_ALREADY_EXISTS" || payload?.error === "MOBILE_ALREADY_EXISTS_IN_COLLEGE"
               ? "Mobile number already belongs to a member of this college. Check the existing account."
-              : "The person could not be onboarded. Check the fields and try again.",
-        });
+              : "The person could not be onboarded. Check the fields and try again.";
+        setOnboardError(message);
+        showToast({tone:"error",title:"Onboarding failed",description:message});
         return;
       }
 
@@ -176,7 +176,10 @@ export function PersonOnboardDialog({
           "The canonical user and college membership are ready. No invitation or message was sent.",
       });
       router.refresh();
-      }catch{showToast({tone:"error",title:"Onboarding failed",description:"The person could not be onboarded. Check the fields and try again."});}
+      }catch{
+        setOnboardError("The person could not be onboarded. Check the fields and try again.");
+        showToast({tone:"error",title:"Onboarding failed",description:"The person could not be onboarded. Check the fields and try again."});
+      }
       finally{inFlightRef.current=false;}
     });
   }
@@ -217,6 +220,9 @@ export function PersonOnboardDialog({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          {onboardError?<Alert tone="error" className="md:col-span-2">
+            {forcedRole==="FACULTY"?"Faculty was not registered.":"Admin user was not created"} {onboardError}
+          </Alert>:null}
           {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-4)] md:col-span-2 md:grid-cols-2">
             <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
               <Input className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required
