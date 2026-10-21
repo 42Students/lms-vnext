@@ -101,6 +101,23 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   if(updated)setDecision(null);
  }
  const available=rounds.filter(r=>["SCHEDULED","PENDING"].includes(r.status));
+ // This is a preview of the visible drive only. The server checks the entire
+ // college and same-company interviewer under transaction resource locks.
+ const proposedStart=start?new Date(start+"+05:30"):null;
+ const proposedEnd=proposedStart&&Number.isFinite(proposedStart.getTime())
+  ? proposedStart.getTime()+duration*60_000 : null;
+ const bufferMs=15*60_000;
+ const proposedRoom=(mode==="VIRTUAL"?meetingUrl:venue).trim().toLowerCase();
+ const proposedPanel=interviewer.trim().toLowerCase();
+ const previewConflicts=proposedEnd===null||!proposedStart?[]:appointments.filter(row=>{
+  if(row.id===editing?.id||row.status!=="SCHEDULED")return false;
+  const otherStart=new Date(row.scheduledAt).getTime();
+  const otherEnd=otherStart+row.durationMinutes*60_000;
+  if(otherStart>=proposedEnd+bufferMs||otherEnd<=proposedStart.getTime()-bufferMs)return false;
+  return row.applicationId===applicationId ||
+   (Boolean(proposedRoom)&&(row.venue??row.meetingUrl??"").trim().toLowerCase()===proposedRoom) ||
+   (Boolean(proposedPanel)&&row.interviewer?.trim().toLowerCase()===proposedPanel);
+ });
  return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
@@ -180,6 +197,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       className="w-full"/></label>
     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Interviewer (optional)<Input value={interviewer}
      onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/></label>
+    {previewConflicts.length>0?<Banner tone="warning" role="alert">
+      Possible scheduling conflict with {previewConflicts.length} interview{previewConflicts.length===1?"":"s"} in this drive, including a 15-minute buffer. Check the candidate, room and interviewer. The server also checks other drives before saving.
+    </Banner>:null}
     {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason}
      onChange={e=>{setReason(e.target.value);setDirty(true);}} className="w-full"/></label>:null}
     {error?<Banner tone="error" action={<Button type="button" size="sm"

@@ -3,6 +3,7 @@
 import { Disclosure } from "@/components/ui/disclosure";
 import {
   useState,
+  useRef,
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -139,7 +140,9 @@ export function PlacementDraftEditForm({
   const router = useRouter();
   const availableJobTypes=jobTypes?.length?jobTypes:TPO_BUILTIN_JOB_TYPES;
   const { showToast } = useToast();
-  const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
+  const { dirty, markDirty, clearDirty, guardDialog } = useUnsavedDriveGuard();
+  const formRef=useRef<HTMLFormElement>(null);
+  const [cancelConfirm,setCancelConfirm]=useState(false);
   const {pending,run}=useGuardedAction();
   const [staleConflict,setStaleConflict]=useState(false);
   const [
@@ -177,6 +180,19 @@ export function PlacementDraftEditForm({
           )
         : [...current, value],
     );
+  }
+
+  function discardDraftChanges(){
+    const form=formRef.current;
+    form?.reset();
+    setApplicationMode(value.job.applicationMode);
+    setSelectedProgramIds([...value.policy.allowedProgramIds]);
+    setSelectedCohortIds([...value.policy.allowedCohortIds]);
+    clearDirty();
+    const disclosure=form?.closest("details");
+    const summary=disclosure?.querySelector("summary");
+    disclosure?.removeAttribute("open");
+    summary?.focus();
   }
 
   async function submit(
@@ -368,8 +384,10 @@ export function PlacementDraftEditForm({
   }
 
   return (
+    <>
     <Disclosure title="Edit draft opportunity" className="border-y border-[var(--lms-canvas-border)]">
       <form
+        ref={formRef}
         onSubmit={submit}
       onChange={markDirty}
         className="grid min-w-0 gap-4 py-4"
@@ -718,6 +736,12 @@ export function PlacementDraftEditForm({
               ? "Saving…"
               : "Save draft changes"}
           </Button>
+          <Button type="button" variant="secondary" size="sm"
+            className="mt-2 min-h-11 w-full sm:ml-2 sm:mt-0 sm:w-auto md:min-h-9"
+            disabled={pending}
+            onClick={()=>{if(dirty)setCancelConfirm(true);else discardDraftChanges();}}>
+            Cancel
+          </Button>
         </div>
         {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
       </form>
@@ -729,5 +753,12 @@ export function PlacementDraftEditForm({
           setStaleConflict(false);clearDirty();router.refresh();
         }}/>
     </Disclosure>
+    {guardDialog}
+    <ConfirmDialog open={cancelConfirm} onOpenChange={setCancelConfirm}
+      title="Discard unsaved draft changes?"
+      description="Your unsaved changes to this draft will be discarded."
+      confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
+      onConfirm={()=>{setCancelConfirm(false);discardDraftChanges();}}/>
+    </>
   );
 }
