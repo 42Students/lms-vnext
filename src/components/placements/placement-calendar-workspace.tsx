@@ -19,6 +19,7 @@ import { PlacementPanelErrorBoundary } from "@/components/admin/placement-panel-
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 import {
   initialCareerCalendarDay,
@@ -488,7 +489,12 @@ export async function PlacementCalendarWorkspace({
         roundKind: state.roundKind,
         tpoLegacyScope:audience==="TPO",
       },
-    ).catch(() => null);
+    ).catch((error: unknown) => {
+      // Permission failures must remain permission failures; only an
+      // unavailable calendar data source receives an inline Retry state.
+      if (error instanceof AuthorizationError) throw error;
+      return null;
+    });
   const response = loadedResponse ?? {
     from: window.from, to: window.to,
     events: [], days: [], summary: summarizePlacementCalendar([], now),
