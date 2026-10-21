@@ -8,7 +8,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  sections, cohorts, departments, programs, sectionEnrollments,
+  sections, cohorts, departments, programs, activityEvents, sectionEnrollments,
   sectionScheduleEvents,
 } from "@/db/schema";
 import { z } from "zod";
@@ -25,6 +25,7 @@ import {
   loadAcademicPeriodScope,
   loadCohortScope,
   loadSectionScope,
+  loadProgramScope,
 } from "./scope";
 import {
   academicPeriodIdSchema,
@@ -233,11 +234,23 @@ export async function searchSections(
     limit: z.number().int().min(1).max(100).default(20),
   }).strict().parse(raw);
   const acting = await resolveActingCollege(context, "academics.read");
+  if(input.programId){
+    const program=await loadProgramScope(input.programId);
+    requirePermission(context,"academics.read",{
+      organizationId:program.organizationId,collegeId:program.collegeId,
+    });
+    if(program.collegeId!==acting.collegeId)
+      throw new AcademicsServiceError("PROGRAM_NOT_FOUND");
+  }
   const pattern = "%" + input.q.replace(/[\\%_]/g, "\\$&") + "%";
   return getDb().select({
     id: sections.id, name: sections.name, code: sections.code,
+    legacyClassId: sections.legacyClassId,
+    description: sections.description,
+    startsOn: sections.startsOn, endsOn: sections.endsOn,
     cohortId: cohorts.id, cohortName: cohorts.name,
     programId: programs.id, programName: programs.name,
+    collegeId: departments.collegeId,
     academicPeriodId: sections.academicPeriodId,
   }).from(sections)
     .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
@@ -248,10 +261,78 @@ export async function searchSections(
       eq(sections.status, "ACTIVE"),
       input.programId ? eq(programs.id, input.programId) : undefined,
       input.q ? or(ilike(sections.name, pattern), ilike(sections.code, pattern),
-        ilike(cohorts.name, pattern), ilike(programs.name, pattern)) : undefined,
+        ilike(cohorts.name, pattern), ilike(programs.name, pattern),
+        sql<boolean>`${sections.legacyClassId}::text ilike ${pattern}`) : undefined,
     ))
-    .orderBy(asc(programs.name), asc(cohorts.name), asc(sections.name))
+    // Blank search is the legacy Popular classes picker. Track durable,
+    // college-owned usage rather than a process-global mutable counter.
+    .orderBy(input.q ? asc(programs.name) : sql`(
+      select count(*) from ${activityEvents} selections
+      where selections.event_type = 'academics.class.selected'
+        and selections.subject_id = ${sections.id}::text
+        and selections.college_id = ${acting.collegeId}::uuid
+    ) desc`,asc(cohorts.name), asc(sections.name), asc(sections.id))
     .limit(input.limit);
+}
+
+
+/** Legacy /getClassesByProgram and /v2/classes/program/{programId} reader.
+ * The DTO uses UUID values deliberately: numeric source IDs can only cross
+ * the boundary through a privileged migrated-ID adapter.
+ */
+export async function listClassesByProgram(
+  context:RequestContext,programIdInput:unknown,
+  raw:{q?:string;limit?:number}={},
+){
+  const programId=z.uuid().parse(programIdInput);
+  const rows=await searchSections(context,{
+    programId,q:raw.q??"",limit:raw.limit??50,
+  });
+  return rows.map(row=>({
+    value:row.id,label:row.name,id:row.id,name:row.name,
+    description:row.description,programId:row.programId,
+    programName:row.programName,batchId:row.cohortId,
+    batchName:row.cohortName,
+    startsOn:row.startsOn,endsOn:row.endsOn,
+    academicPeriodId:row.academicPeriodId,
+  }));
+}
+
+/** Popular classes are the same exact tenant-scoped directory search with
+ * blank q and a deterministic usage-based top ten, not an unscoped cache. */
+export async function listPopularClasses(
+  context:RequestContext,programId?:string,limit=10,
+){
+  return searchSections(context,{programId,q:"",
+    limit:Math.max(1,Math.min(Math.trunc(limit)||10,50))});
+}
+
+/** Increment the durable, per-college autocomplete usage signal ONLY after
+ * validating the class is still active in the selected college.
+ */
+export async function recordClassSearchSelection(
+  context:RequestContext,classIdInput:unknown,
+){
+  const id=z.uuid().parse(classIdInput);
+  const acting=await resolveActingCollege(context,"academics.read");
+  const [row]=await getDb().select({
+    id:sections.id,name:sections.name,
+  }).from(sections)
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,acting.collegeId)))
+    .where(and(eq(sections.id,id),eq(sections.status,"ACTIVE"))).limit(1);
+  if(!row)throw new AcademicsServiceError("SECTION_NOT_FOUND");
+  await getDb().insert(activityEvents).values({
+    organizationId:acting.organizationId,collegeId:acting.collegeId,
+    actorUserId:context.user.id,
+    module:"ACADEMICS",eventType:"academics.class.selected",
+    importance:"LOW",subjectType:"section",subjectId:row.id,
+    subjectLabel:row.name,summary:"Class selected from search",
+    metadata:{origin:"COLLEGE_CLASS_AUTOCOMPLETE"},
+  });
+  return {recorded:true as const};
 }
 
 export async function createSection(
