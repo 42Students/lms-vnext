@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, count, eq, exists, gte, ilike, isNull, lt, or, sql } from "drizzle-orm";
+import { and, asc, desc, count, eq, exists, gte, lte, ilike, isNull, lt, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -55,9 +55,10 @@ export async function listCollegeDriveApplications(
     membershipId: placementApplications.membershipId,
     submittedByUserId: placementApplications.submittedByUserId,
     submittedByName: sql<string | null>`(select actor.display_name from users actor where actor.id = ${placementApplications.submittedByUserId})`.as("submitted_by_name"),
-    // vNext has no persisted AUTOMATED_V1 screening score. Null is evidence
-    // unavailable, not a zero-score candidate for ranking or CSV output.
-    screeningScore: sql<number | null>`null::integer`.as("screening_score"),
+    // Use applied, unsuperseded round evidence rather than inventing an automated score.
+    screeningScore:sql<number|null>`(select max(rr.score_percent)::integer
+      from placement_round_results rr where rr.application_id=${placementApplications.id}
+      and rr.status='APPLIED' and rr.superseded_at is null)`.as("screening_score"),
     partialScore: sql<number | null>`null::integer`.as("partial_score"),
     screeningReason: placementApplicationScreenings.internalReason,
     name: users.displayName,
@@ -105,6 +106,11 @@ export async function listCollegeDriveApplications(
             query.programId?eq(programs.id,query.programId):undefined,
             query.cohortId?eq(cohorts.id,query.cohortId):undefined,
           ))) : undefined,
+      query.skills?sql`exists(select 1 from jsonb_array_elements(
+        case when jsonb_typeof(${learnerProfiles.profileDocument}->'skills')='array'
+          then ${learnerProfiles.profileDocument}->'skills' else '[]'::jsonb end
+        ) skill(value) where lower(coalesce(skill.value->>'name',
+          skill.value->>'skill',skill.value#>>'{}','')) like lower(${pattern(query.skills)}))`:undefined,
       query.screening === "ALL" ? undefined
         : query.screening === "UNRECORDED" ? isNull(placementApplicationScreenings.applicationId)
         : eq(placementApplicationScreenings.status, query.screening),
@@ -115,8 +121,11 @@ export async function listCollegeDriveApplications(
         ilike(placementJobRoleOptions.title, pattern(query.q)),
       ) : undefined,
     )).as("college_scoped_applicants_base");
-  const source = db.select().from(base).where(query.stage==="ALL"?
-    undefined:eq(base.stage,query.stage)).as("college_scoped_applicants");
+  const source=db.select().from(base).where(and(
+    query.stage==="ALL"?undefined:eq(base.stage,query.stage),
+    query.minScore===undefined?undefined:gte(base.screeningScore,query.minScore),
+    query.maxScore===undefined?undefined:lte(base.screeningScore,query.maxScore),
+  )).as("college_scoped_applicants");
 
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),

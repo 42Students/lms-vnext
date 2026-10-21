@@ -200,7 +200,25 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
           {(filters?.cohorts??[]).map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
         </Select>
       </label>
-
+      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Applied after (IST)
+       <Input name="appliedFrom" type="date" defaultValue={query.appliedFrom??""}/>
+      </label>
+      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Applied before (IST)
+       <Input name="appliedTo" type="date" defaultValue={query.appliedTo??""}/>
+      </label>
+      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Minimum assessment score (%)
+       <Input name="minScore" type="number" min={0} max={100} step={1} defaultValue={query.minScore??""}/>
+      </label>
+      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Maximum assessment score (%)
+       <Input name="maxScore" type="number" min={0} max={100} step={1} defaultValue={query.maxScore??""}/>
+      </label>
+      <label className="grid gap-1.5 text-[13px] font-semibold text-body">Skills
+       <Input name="skills" type="search" maxLength={100} defaultValue={query.skills} placeholder="Profile skill"/>
+      </label>
+      <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-3">
+       Score filters use applied round evidence, not unavailable automated screening scores.
+       Applicants without a recorded round score are excluded when a score range is set.
+      </p>
         </div>
       </details>
       <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
