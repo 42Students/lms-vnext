@@ -438,56 +438,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/projects/mentor-calendar-load-failure.tsx`
 - [x] `src/components/projects/mentor-lane-board.tsx`
 - [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-projects-unavailable.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
-- [ ] `src/components/projects/mentor-task-status-transition.tsx`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/projects/project-admin-submission-review.tsx`
-- [ ] `src/components/projects/project-admin-submissions-page.tsx`
-- [ ] `src/components/projects/project-archive-control.tsx`
-- [ ] `src/components/projects/project-create-control.tsx`
-- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-lifecycle-actions.tsx`
-- [ ] `src/components/projects/project-meeting-controls.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-open-link.tsx`
-- [ ] `src/components/projects/project-task-submission-control.tsx`
-- [ ] `src/components/projects/project-team-controls.tsx`
-- [ ] `src/components/projects/project-template-controls.tsx`
-- [ ] `src/components/projects/project-workspace-page-export.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-archive-control.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/projects/super-admin-template-create-form.tsx`
-- [ ] `src/components/projects/super-admin-template-overview-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-plan-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-resource-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-rollback-control.tsx`
-- [ ] `src/components/projects/template-metadata-edit-control.tsx`
-- [ ] `src/components/public/browser-support-notice.tsx`
-- [ ] `src/components/public/offline-banner.tsx`
-- [ ] `src/components/shell/account-actions.tsx`
-- [ ] `src/components/shell/app-shell.tsx`
-- [ ] `src/components/shell/learner-faculty-mobile-footer.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/shell/learner-topbar-tools.tsx`
-- [ ] `src/components/shell/membership-switcher.tsx`
-- [ ] `src/components/shell/shell-connectivity-notice.tsx`
-- [ ] `src/components/shell/shell-widget-boundary.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/grid/tpo-grid.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-projects-unavailable.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/projects/mentor-task-status-transition.tsx`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/projects/project-admin-submission-review.tsx`
+- [x] `src/components/projects/project-admin-submissions-page.tsx`
+- [x] `src/components/projects/project-archive-control.tsx`
+- [x] `src/components/projects/project-create-control.tsx`
+- [x] `src/components/projects/project-delivery-reopen-control.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-lifecycle-actions.tsx`
+- [x] `src/components/projects/project-meeting-controls.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-open-link.tsx`
+- [x] `src/components/projects/project-task-submission-control.tsx`
+- [x] `src/components/projects/project-team-controls.tsx`
+- [x] `src/components/projects/project-template-controls.tsx`
+- [x] `src/components/projects/project-workspace-page-export.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-archive-control.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/projects/super-admin-template-create-form.tsx`
+- [x] `src/components/projects/super-admin-template-overview-editor.tsx`
+- [x] `src/components/projects/super-admin-template-plan-editor.tsx`
+- [x] `src/components/projects/super-admin-template-resource-editor.tsx`
+- [x] `src/components/projects/super-admin-template-rollback-control.tsx`
+- [x] `src/components/projects/template-metadata-edit-control.tsx`
+- [x] `src/components/public/browser-support-notice.tsx`
+- [x] `src/components/public/offline-banner.tsx`
+- [x] `src/components/shell/account-actions.tsx`
+- [x] `src/components/shell/app-shell.tsx`
+- [x] `src/components/shell/learner-faculty-mobile-footer.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/shell/learner-topbar-tools.tsx`
+- [x] `src/components/shell/membership-switcher.tsx`
+- [x] `src/components/shell/shell-connectivity-notice.tsx`
+- [x] `src/components/shell/shell-widget-boundary.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/grid/tpo-grid.tsx`
+- [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
 - [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
 - [ ] `src/components/tpo/recruiter-invite-landing.tsx`
 - [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
