@@ -338,3 +338,6 @@
 
 - work2 #55 `admin-directory-query-model.ts` | G2-4-014-017: added strict legacy /search query/state/city/orgId/limit default15 validator without altering current admin directory default25; old numeric orgId requires verified scoped crosswalk.
 - work2 #56 `tracker/issues/[publicId]/retest/route.ts` | G2-17-024-020: still returns persisted refreshed issue envelope, now explicit status/version receipt and private no-store; UI must reread latest ticket on mutation completion.
+
+- work2 #57 `college-live-classes-directory.tsx` | G2-18-007-018: guarded Join rendering for validated HTTPS no-credentials meeting URL, Invalid link/No link when authorized data explicitly provides value, no guessing when aggregate intentionally omits links. Authorized source handoff required to populate meetingUrl.
+- work2 #58 `college-drive-bulk-actions.tsx` | G2-9-015-068/051/052: separated close from archival, documented scheduled-round and issued-offer consequences; exact single Job opened/closed success, verb-specific bulk result and failed selection retained for retry.

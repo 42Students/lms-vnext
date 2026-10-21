@@ -60,7 +60,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
       {row.companyName} · {row.status}</span></span>
     </label>)}
   </div>
-  <p className="text-xs text-muted-foreground">Open is available for closed drives; drafts must pass publish preflight in the drive workspace. Close withdraws still-issued offers.</p>
+  <p className="text-xs text-muted-foreground">Open is available for closed drives; drafts must pass publish preflight in the drive workspace. Closing stops scheduled rounds and withdraws still-issued offers. It does not archive or delete a drive; archive requires a separate impact preview.</p>
   {preview?<div className="space-y-3 rounded border border-border p-4 text-sm" role="group" aria-label="Bulk action impact">
    <p className="font-semibold">Review impact: {preview.eligible} eligible, {preview.ignored+preview.excluded} skipped.</p>
    {action==="CLOSE"?<p>{preview.pendingLettersWithdrawn} issued offers will be withdrawn across these drives.</p>:
@@ -70,7 +70,9 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
      {busy?"Processing…":"Confirm "+action.toLowerCase()}</Button>
   </div>:null}
   {result?<div role="status" className="space-y-2 text-sm">
-   <p>{result.updated} drive(s) updated; {result.skipped} skipped.</p>
+   <p>{result.updated===1&&result.skipped===0
+     ? action==="OPEN"?"Job opened successfully":"Job closed successfully"
+     : result.updated+" drive(s) "+(action==="OPEN"?"opened":"closed")+"; "+result.skipped+" skipped or failed."}</p>
    {result.results.filter(row=>row.status==="SKIPPED").map(row=><p key={row.jobId} className="text-warning-text">
     {drives.find(d=>d.id===row.jobId)?.title??row.jobId}: {row.reason}</p>)}
    {result.skipped>0?<Button variant="ghost" type="button" onClick={()=>void send("PREVIEW")} className="underline">

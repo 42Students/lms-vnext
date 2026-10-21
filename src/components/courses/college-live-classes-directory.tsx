@@ -12,6 +12,17 @@ import {collegeLiveClassHref} from "@/modules/courses/college-live-classes-model
 import {liveClassIstSchedule} from "@/modules/courses/college-live-classes-model";
 import type {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
 type Data=Awaited<ReturnType<typeof listCollegeContentAggregate>>;
+/** Authorized source must provide this URL; never reconstruct it from IDs.
+ * Treat invalid or credentialed URLs as unavailable.
+ */
+export function safeCollegeLiveMeetingUrl(raw:unknown):string|null{
+ if(typeof raw!=="string"||raw.length>2048||/\s/.test(raw))return null;
+ try{
+  const parsed=new URL(raw);
+  return parsed.protocol==="https:"&&!parsed.username&&!parsed.password
+    ? parsed.toString():null;
+ }catch{return null;}
+}
 export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;showHeader?:boolean}){
  return <div className="min-w-0 space-y-4">
   {showHeader?<PageHeader title="Live Classes"
@@ -92,6 +103,15 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
           <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="ARCHIVED"?"neutral":"warning"}>{item.status}</StatusBadge>
         </div>
         <p className="text-sm text-body">{liveClassIstSchedule(item.startsAt,item.endsAt)}</p>
+        {"meetingUrl" in item
+          ? safeCollegeLiveMeetingUrl(item.meetingUrl)
+            ? <a href={safeCollegeLiveMeetingUrl(item.meetingUrl)!} target="_blank"
+                rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                Join ↗</a>
+            : <p role="status" className="text-xs text-muted-foreground">
+                {item.meetingUrl?"Invalid link":"No link"}</p>
+          : <p className="text-xs text-muted-foreground">
+              Meeting link is available only in an authorized course workspace.</p>}
         <p className="text-xs text-muted-foreground">{item.deliveryId?"Section-specific session":"Shared offering session"}</p>
         <p className="break-words text-sm text-body">Lesson: {item.lessonName} · {item.cohortName} · {item.periodName}</p>
         <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
