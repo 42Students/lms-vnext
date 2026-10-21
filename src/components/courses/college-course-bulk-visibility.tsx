@@ -48,7 +48,22 @@ export function CollegeCourseBulkVisibility({courses,collegeId,collegeName="this
   if(!loaded)return;
   try{sessionStorage.setItem(key,JSON.stringify(selectedRows));}
   catch{/* The current session can still edit without persistence. */}
- },[key,loaded,selectedRows]);
+  window.dispatchEvent(new Event("course-bulk-visibility-update:"+collegeId));
+ },[key,loaded,selectedRows,collegeId]);
+ useEffect(()=>{
+  function onRowToggle(event:Event){
+   const detail=(event as CustomEvent<{course:Course;checked:boolean}>).detail;
+   if(!detail||busy||!loaded)return;
+   setFailedIds([]);setMessage("");
+   setSelectedRows(rows=>detail.checked
+    ? rows.some(item=>item.id===detail.course.id)?rows:
+      rows.length>=MAX_SELECTED?rows:[...rows,detail.course]
+    : rows.filter(item=>item.id!==detail.course.id));
+  }
+  const eventName="course-bulk-visibility-toggle:"+collegeId;
+  window.addEventListener(eventName,onRowToggle);
+  return ()=>window.removeEventListener(eventName,onRowToggle);
+ },[collegeId,busy,loaded]);
  const selectedSet=useMemo(()=>new Set(selectedRows.map(course=>course.id)),[selectedRows]);
  const candidates=(retryOnly?selectedRows.filter(course=>failedIds.includes(course.id)):selectedRows);
  const selectedNames=candidates.map(course=>course.name);
@@ -136,4 +151,32 @@ export function CollegeCourseBulkVisibility({courses,collegeId,collegeName="this
    pending={busy} confirmDisabled={!candidates.length}
    onConfirm={()=>void apply()}/>
  </div>;
+}
+
+/** Inline catalogue checkbox. The bulk toolbar owns the session-scoped
+ * selection, shared between row controls and toolbar actions in one college. */
+export function CollegeCourseBulkVisibilityCheckbox({course,collegeId}:{
+ course:Course;collegeId:string;
+}){
+ const key="course-bulk-visibility:"+collegeId;
+ const [checked,setChecked]=useState(false);
+ useEffect(()=>{
+  function sync(){
+   try{
+    const stored:unknown=JSON.parse(sessionStorage.getItem(key)??"[]");
+    setChecked(Array.isArray(stored)&&stored.some(
+     item=>item!==null&&typeof item==="object"&&"id" in item&&item.id===course.id));
+   }catch{setChecked(false);}
+  }
+  sync();
+  const eventName="course-bulk-visibility-update:"+collegeId;
+  window.addEventListener(eventName,sync);
+  return ()=>window.removeEventListener(eventName,sync);
+ },[key,course.id,collegeId]);
+ return <Checkbox aria-label={"Select "+course.name} checked={checked}
+  onChange={event=>{
+   window.dispatchEvent(new CustomEvent("course-bulk-visibility-toggle:"+collegeId,{
+    detail:{course,checked:event.target.checked},
+   }));
+  }}/>;
 }

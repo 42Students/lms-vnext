@@ -231,6 +231,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       {" "}of {data.total} · Page {data.query.page} of {data.totalPages}
     </p>
    <div className="flex flex-wrap items-center gap-2" aria-label="Existing Content toolbar">
+    <Link href="/admin/content-order" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Arrange class content</Link>
     <Link href={adminContentHref(kind,data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
     <a href={"/api/courses/admin-content-export?"+new URLSearchParams({
      kind,q:data.query.q,status:data.query.status,
@@ -244,6 +245,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     </a>
    </div>
   </div>
+  <p className="text-xs text-muted-foreground">Class syllabus order includes Videos, Resources, YouTube and Live Classes in one sequence per Lesson and Section. Choose a Section from a content row, then use the accessible Up/Down controls and Save lesson order. Keyboard users can tab to the move controls.</p>
   {data.items.length?<div role="table" aria-label={"Existing "+title}
     className="min-w-0 overflow-x-auto border-y border-border" tabIndex={0}>
    <div role="row" className="grid min-w-[680px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)] gap-3 border-b border-border py-3 text-xs font-semibold tracking-wide text-muted-foreground">
@@ -295,6 +297,12 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
      {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
       <div className="min-w-0 space-y-1">
        <SuperAdminContentActions item={item}/>
+       {sections.filter(section=>section.offeringId===item.offeringId).slice(0,3).map(section=><Link key={section.id}
+        href={"/admin/content-order?offeringId="+encodeURIComponent(item.offeringId)+"&deliveryId="+encodeURIComponent(section.id)}
+        className="block min-h-9 py-2 text-xs font-semibold text-primary-text underline"
+        aria-label={"Arrange "+item.lessonName+" content for "+section.sectionName}>
+        Arrange {section.sectionName} syllabus
+       </Link>)}
        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
         className="inline-flex min-h-9 items-center text-xs text-primary-text underline">
         Open course

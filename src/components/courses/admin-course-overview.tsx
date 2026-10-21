@@ -25,7 +25,7 @@ import type {
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
 import { SuperAdminCourseBulkVisibility } from "./super-admin-course-bulk-visibility";
 import {AdminCourseVisibilityControl} from "./admin-course-visibility-control";
-import {CollegeCourseBulkVisibility} from "./college-course-bulk-visibility";
+import {CollegeCourseBulkVisibility,CollegeCourseBulkVisibilityCheckbox} from "./college-course-bulk-visibility";
 import {
   CourseActions,
   DeliveryActions,
@@ -91,6 +91,12 @@ export function AdminCourseOverview({
   const courseColumns: DataTableColumn<
     Workspace["courses"][number]
   >[] = [
+    ...(!courseBasePath.startsWith("/admin/")?[{
+      key:"select",header:"Select",
+      cell:(course:Workspace["courses"][number])=><CollegeCourseBulkVisibilityCheckbox
+       collegeId={workspace.collegeId}
+       course={{id:course.id,name:course.name,enabled:course.enabled,updatedAt:course.updatedAt.toISOString()}}/>,
+    } satisfies DataTableColumn<Workspace["courses"][number]>]:[]),
     {
       key: "cover",
       header: "Image",
