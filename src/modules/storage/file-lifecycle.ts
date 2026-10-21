@@ -44,6 +44,9 @@ function mapStorageError(error: unknown): never {
     if (error.code === "PRIVATE_STORAGE_NOT_CONFIGURED" || error.code === "PRIVATE_STORAGE_BUCKET_UNSAFE") {
       throw new StorageFileError("STORAGE_NOT_CONFIGURED");
     }
+    if (error.code === "PRIVATE_STORAGE_PROVIDER_UNAVAILABLE") {
+      throw new StorageFileError("STORAGE_PROVIDER_UNAVAILABLE");
+    }
     throw new StorageFileError("STORAGE_SIZE_INVALID");
   }
   throw error;
