@@ -59,10 +59,12 @@ export function projectLegacyMentorNotification(input:{
  const rawDate=input.created_at??input.createdAt;
  // Naive MySQL DATETIME is not an ISO instant. The import must supply a
  // verified source zone and normalize before reaching this projection.
- if(!rawDate||!/(?:Z|[+-]\\d{2}:\\d{2})$/.test(rawDate))return null;
+ if(!rawDate||!/(?:Z|[+-]\d{2}:\d{2})$/.test(rawDate))return null;
  const occurredAt=new Date(rawDate);
  if(!occurredAt||!Number.isFinite(occurredAt.getTime()))return null;
- const readAt=input.readAt?new Date(input.readAt):null;
+ const readValue=input.readAt?.trim()??"";
+ if(readValue && !/(?:Z|[+-]\d{2}:\d{2})$/.test(readValue))return null;
+ const readAt=readValue?new Date(readValue):null;
  if(readAt&&!Number.isFinite(readAt.getTime()))return null;
  return {event:{
   occurredAt,type:input.type.slice(0,100),
