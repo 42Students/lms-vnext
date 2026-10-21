@@ -35,3 +35,28 @@ check. Run the non-CI operator checklist below before enabling file features.
 In a nonproduction private bucket only, verify a signed PUT followed by HEAD and a signed GET of matching content and MIME, then DELETE and confirm HEAD returns 404. Include keys containing spaces, non-ASCII and nested prefixes; exercise expected 403, 404 and provider-unavailable errors, expiration, clock skew, metadata handling, empty configuration and secret rotation. Confirm an unsigned request and old public URL cannot read the private object. Check redaction of errors, and that unrelated public/academic endpoints work while R2 is unconfigured. This is an **operator validation checklist**, not a claim that live interoperability was tested.
 
 No new legacy SDK bean, public bucket fallback or production-open seed path is introduced by the cutover.
+
+## Public original remediation before production cutover
+
+No historical data migration is in scope for the empty vNext deployment. If an
+approved migration is commissioned later, it must include **depublication**,
+not merely copy private bytes while leaving the old object world-readable:
+
+1. Inventory old publicly reachable keys, owner/college scopes and every URL
+   reference. Quarantine unknown-owner objects rather than assigning them to a
+   guessed membership or accepting user-supplied bucket keys.
+2. Copy each approved object into an isolated private namespace. Verify exact
+   size, SHA-256 checksum, MIME, owner-scoped metadata and malware-scan
+   attestation before switching an authorized database reference.
+3. Test signed owner-scoped access as the correct user; verify cross-college
+   denial and expiry. Do **not** copy the old public URL into a vNext record.
+4. Disable old public bucket/custom-domain access for migrated private objects,
+   then delete or quarantine the exposed originals under an approved retention
+   process. Test every prior unsigned public URL for 403/404, including cached
+   CDN/custom-domain links, before declaring completion.
+5. Record per-object migration, old-origin depublication and verification
+   evidence in a restricted operator ledger. Incomplete or unverified objects
+   remain unavailable; never restore a production public-bucket fallback.
+
+These are required operator actions, **not** evidence of a performed migration
+or deletion. The application never deletes an old public object automatically.
