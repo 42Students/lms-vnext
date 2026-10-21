@@ -88,18 +88,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/tpo/recruiter-leads-workspace.tsx`
 - [x] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [x] `src/components/ui/dropdown.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
 - [ ] `src/components/placements/tpo-general-requests-panel.tsx`
 - [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
 - [ ] `src/components/projects/mentor-release-editor.tsx`

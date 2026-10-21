@@ -64,7 +64,7 @@ export function CollegeDepartmentInsights({
     <section aria-label="Department filters" className="border-b border-border pb-4">
       <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,2fr)_auto_auto]">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Department name
+          Department Name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
             placeholder="Search your college"
             />
