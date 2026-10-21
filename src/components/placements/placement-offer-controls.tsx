@@ -88,7 +88,7 @@ function formatMoney(value: number | null) {
   }).format(value);
 }
 
-const inputClass = "min-h-11 w-full max-[767px]:min-h-11";
+const inputClass = "min-h-11 w-full md:min-h-9";
 
 export function PlacementOfferControls({
   jobId,

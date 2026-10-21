@@ -30,7 +30,7 @@ function conversion(value: number, previous: number) {
 }
 export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false, staleDays=7 }: { operations: Operations; basePath: string; showDriveSearch?: boolean; staleDays?: number }) {
   return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
-    {showDriveSearch ? <div className="grid min-w-0 grid-cols-2 overflow-hidden border-y border-border sm:grid-cols-4">
+    {showDriveSearch ? <div className="grid min-w-0 grid-cols-1 overflow-hidden border-y border-border sm:grid-cols-4">
       <Metric label="Active drives" value={operations.jobs.filter(r=>r.job.status==="PUBLISHED").length} description="Currently published opportunities." />
       <Metric label="Closed / draft" value={operations.jobs.filter(r=>["CLOSED","DRAFT"].includes(r.job.status)).length} description="Closed and draft opportunities." />
       <Metric label="All drives" value={operations.jobs.length} description="Non-archived drives in this college." />

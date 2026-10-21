@@ -45,7 +45,7 @@ const emptyDraft: RoleDraft = {
   maximumAnnualCtcInr: "",
 };
 
-const inputClass = "min-h-11 w-full max-[767px]:min-h-11";
+const inputClass = "min-h-11 w-full md:min-h-9";
 
 function humanize(value: string) {
   return value
