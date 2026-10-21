@@ -1,7 +1,25 @@
 import {z} from "zod";
 
 /** MEN-projects-meetings-27: structured notes are scoped to a single meeting. */
+/** Structured legacy meeting facts stay in the existing JSONB facilitation
+ * map; no additional table and no lossy text serialization are required.
+ * The original free-text actionItems remains for backward-compatible drafts.
+ */
+export const meetingAttendeeSchema=z.strictObject({
+ name:z.string().trim().min(1).max(160),
+ membershipId:z.string().uuid().nullable().default(null),
+ attended:z.boolean().default(true),
+});
+export const meetingActionRowSchema=z.strictObject({
+ text:z.string().trim().min(1).max(500),
+ owner:z.string().trim().max(160).nullable().default(null),
+ dueAt:z.iso.datetime({offset:true}).nullable().default(null),
+ complete:z.boolean().default(false),
+});
 export const mentorMeetingFacilitationSchema=z.object({
+ attendees:z.array(meetingAttendeeSchema).max(100).default([]),
+ actionItemRows:z.array(meetingActionRowSchema).max(100).default([]),
+ retroActions:z.array(meetingActionRowSchema).max(100).default([]),
  notes:z.string().trim().max(4000).default(""),
  actionItems:z.string().trim().max(4000).default(""),
  wentWell:z.string().trim().max(4000).default(""),
@@ -13,6 +31,7 @@ export const mentorMeetingFacilitationSchema=z.object({
 }).strict();
 export type MentorMeetingFacilitation=z.infer<typeof mentorMeetingFacilitationSchema>;
 export const emptyMentorMeetingFacilitation:MentorMeetingFacilitation={
+ attendees:[],actionItemRows:[],retroActions:[],
  notes:"",actionItems:"",wentWell:"",improve:"",nextTime:"",
  followUpAt:null,followUpStatus:"NOT_PLANNED",followUpNotes:"",
 };
