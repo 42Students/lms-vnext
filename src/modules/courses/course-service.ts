@@ -111,6 +111,29 @@ async function assertCourseUnique(
   }
 }
 
+/** Legacy parity: short titles are unique per active department, case-insensitively.
+ * The future DB unique index is tracked as a migration handoff; this service
+ * precheck also provides the legacy field-level conflict before INSERT. */
+async function assertCourseShortTitleUnique(
+  tx: CourseTx,
+  departmentId: string,
+  shortTitle: string,
+  excludeCourseId?: string,
+) {
+  const conditions = [
+    eq(courses.departmentId, departmentId),
+    eq(courses.status, "ACTIVE"),
+    sql<boolean>`lower(${courses.shortTitle}) = ${shortTitle.toLowerCase()}`,
+  ];
+  if (excludeCourseId) conditions.push(ne(courses.id, excludeCourseId));
+  const [collision] = await tx
+    .select({ id: courses.id })
+    .from(courses)
+    .where(and(...conditions))
+    .limit(1);
+  if (collision) throw new CoursesServiceError("COURSE_NAME_CONFLICT");
+}
+
 function mapCourseConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "courses_active_department_name_uq":
@@ -257,6 +280,9 @@ export async function createCourse(
         throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
       }
 
+      await assertCourseShortTitleUnique(
+        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 120),
+      );
       const [created] = await tx
         .insert(courses)
         .values({
@@ -309,6 +335,7 @@ export async function updateCourse(
     return await getDb().transaction(async (tx) => {
       const [locked] = await tx.select({
         id: courses.id, name: courses.name, code: courses.code,
+        shortTitle: courses.shortTitle,
         status: courses.status, departmentId: courses.departmentId,
         updatedAt: courses.updatedAt,
       }).from(courses).innerJoin(departments, and(
@@ -324,6 +351,11 @@ export async function updateCourse(
       if (locked.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime()) {
         throw new CoursesServiceError("COURSE_STALE_VERSION");
       }
+      await assertCourseShortTitleUnique(
+        tx, scope.departmentId,
+        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 120),
+        courseId,
+      );
       const { expectedUpdatedAt, ...changes } = input;
       const [updated] = await tx
       .update(courses)
