@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/StudentPlacementLookup.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/lessons.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/learn/projects/index.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/jobs/[jobId].js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/courses/index.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/jobs/[jobId].js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/courses/index.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/student-groups.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/syllabusDetail.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TakeAttendance.js`
