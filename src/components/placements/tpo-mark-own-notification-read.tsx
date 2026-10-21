@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { InlineNotice } from "@/components/ui/inline-notice";
@@ -9,10 +9,12 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
   const router = useRouter();
   const { showToast } = useToast();
   const [busy, setBusy] = useState(false);
+  const inFlight = useRef(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   async function markRead() {
-    if (busy) return;
+    if (busy || inFlight.current) return;
+    inFlight.current = true;
     setConfirmOpen(false);
     setBusy(true); setError(null);
     try {
@@ -26,7 +28,7 @@ export function TpoMarkOwnNotificationRead({ notificationId }: { notificationId:
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not mark notification read.");
-    } finally { setBusy(false); }
+    } finally { inFlight.current = false; setBusy(false); }
   }
   return <div className="flex min-w-0 flex-col gap-2">
     <Button type="button" disabled={busy} onClick={() => setConfirmOpen(true)}

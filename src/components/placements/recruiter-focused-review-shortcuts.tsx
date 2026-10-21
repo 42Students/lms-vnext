@@ -33,7 +33,7 @@ export function RecruiterFocusedReviewShortcuts({
 
       const target = e.target;
       if (target instanceof Element &&
-          target.closest('input,textarea,select,button,a,[role="button"],[role="combobox"],[contenteditable="true"]')) return;
+          target.closest('input,textarea,select,button,a,summary,[role="button"],[role="combobox"],[role="tab"],[contenteditable="true"]')) return;
 
       if (e.key.toLowerCase() === "n" && nextHref) {
         e.preventDefault();

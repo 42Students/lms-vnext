@@ -16,7 +16,6 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  const [error,setError]=useState("");const [busy,setBusy]=useState(false);const importRef=useRef(false);const [done,setDone]=useState("");
  const [reading,setReading]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
- const recordingRef=useRef(false);
  async function read(file:File|null){
   setEntries([]);setUnmatched([]);setError("");setDone("");
   if(!file)return;
@@ -49,13 +48,6 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
     if(!response.ok){
      throw Error("Import batch failed. Refresh before retrying.");
     }
-    const receipt:unknown=await response.json().catch(()=>null);
-    const saved=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
-      ?receipt as Record<string,unknown>:null;
-    if(!saved||saved.recorded!==chunk.length||!Array.isArray(saved.selectionIds)||
-       saved.selectionIds.length!==chunk.length||
-       !saved.selectionIds.every(id=>typeof id==="string"))
-      throw Error("Import receipt could not be verified. Refresh before retrying.");
     count+=chunk.length;
    }
    setDone(count+" selection(s) recorded. Students have not been notified; verify and release from the selection register.");
