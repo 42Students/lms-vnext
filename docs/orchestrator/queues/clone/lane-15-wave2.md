@@ -100,7 +100,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_auth_session-response-guard.tsx.md` (edit src/components/auth/session-response-guard.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0024_placements_p6c_results.sql.md` (edit drizzle/0024_placements_p6c_results.sql; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-college-application-stages.ts.md` (edit src/db/schema/placement-college-application-stages.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_courses_quiz-attempts_route.ts.md` (edit src/app/api/courses/quiz-attempts/route.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_courses_quiz-attempts_route.ts.md` (edit src/app/api/courses/quiz-attempts/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-registration.ts.md` (edit src/db/schema/placement-registration.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0119_platform_setting_overrides.sql.md` (edit drizzle/0119_platform_setting_overrides.sql; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_projects_learner-attention-service.ts.md` (edit src/modules/projects/learner-attention-service.ts; 1 findings; best P2)
