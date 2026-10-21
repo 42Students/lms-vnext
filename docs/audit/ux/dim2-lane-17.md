@@ -508,3 +508,25 @@ src/components/profile/learner-profile-workspace.tsx | none (no table/data-grid 
 src/components/projects/project-resource-files-section.tsx | none (no table/data-grid instance) | fixes: none
 src/components/shell/topbar/topbar.module.css | 5 table/grid instances (0 nodes, 0 roles, 5 CSS tokens) | header white #ffffff vs --lms-table-header; header 12px/600 vs shared; cells 12px/16px vs shared; hairline 1px #e5e9f0 vs shared; 375px ScrollCue | fixes: none
 src/components/tpo/tpo-bell-panel.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tracker/tracker-admin-nav.tsx | none (no table/data-grid instance) | fixes: none
+src/components/verification/CollegeVerificationPanel.tsx | none (no table/data-grid instance) | fixes: none
+src/app/(authenticated)/tpo/team/[threadId]/page.tsx | none (no table/data-grid instance) | fixes: none
+src/app/home/page.tsx | none (no table/data-grid instance) | fixes: none
+src/components/admin/admin-dashboard-actions.tsx | none (no table/data-grid instance) | fixes: none
+src/components/admin/person-profile-dialog.tsx | none (no table/data-grid instance) | fixes: none
+src/components/colleges/college-contact-profile-form.tsx | none (no table/data-grid instance) | fixes: none
+src/components/courses/faculty-contacts-table.tsx | 9 instances (9 nodes, 0 grid roles, 0 CSS) | legacy header #ffffff vs white shared header; font 12px/600 vs shared 12px/600; td inset 12px/16px vs shared 12px/16px; separators #e5e9f0 vs shared border; 375px ScrollCue | fixes: none
+src/components/groups/college-group-import-preview.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/learner-placement-offers.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-round-results-import.tsx | 4 instances (4 nodes, 0 grid roles, 0 CSS) | legacy header #ffffff vs white shared header; font 12px/600 vs shared 12px/600; td inset 12px/16px vs shared 12px/16px; separators #e5e9f0 vs shared border; 375px ScrollCue | fixes: none
+src/components/projects/mentor-sprint-write.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/recruiter-lead-detail-workspace.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-college-rules-control.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-public-placement-content-editor.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/learner-board-interactive.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/project-admin-missing-college.tsx | none (no table/data-grid instance) | fixes: none
+src/components/shell/learner-notification-bell.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/tpo-batch-inline-decision.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/tpo-find-shortcut.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/tpo-team-forms.tsx | none (no table/data-grid instance) | fixes: none
+src/components/verification/VerificationReviewDrawer.tsx | 1 table/grid instances (1 nodes, 0 grid roles, 0 CSS tokens) | legacy header bg #ffffff vs shared white; font 12px/600 vs shared; td 12px/16px vs shared; 1px #e5e9f0 border vs shared; ScrollCue at 375 | fixes: none
