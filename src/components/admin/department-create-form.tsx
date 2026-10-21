@@ -87,8 +87,8 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
       {error?<div role="alert" className="relative w-full min-w-0 space-y-1 border-l-2 border-error bg-error-subtle p-3 pr-10 text-sm text-error sm:col-span-2">
         <strong className="block">{DEPARTMENT_COPY.createFailed}</strong>
         <p className="break-words">{error}</p>
-        <button type="button" aria-label="Dismiss department error" onClick={()=>{setError(null);setFieldError("");}}
-          className="absolute right-2 top-2 inline-flex size-8 items-center justify-center font-semibold" title="Dismiss error">×</button>
+        <Button variant="ghost" type="button" aria-label="Dismiss department error" onClick={()=>{setError(null);setFieldError("");}}
+          className="absolute right-2 top-2" title="Dismiss error">×</Button>
       </div>:null}
     </form>
   );
