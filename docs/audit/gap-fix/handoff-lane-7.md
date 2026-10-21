@@ -947,3 +947,7 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 ## Admin scope selection copy — lane-7 follow-up (2026-10-21)
 
 - G2-1-002-029 | `src/app/api/auth/admin-scope/route.ts + src/lib/friendly-error.ts + scope selector UI` | Map known ADMIN_SCOPE_NOT_FOUND to non-revealing invalid-selection help. Schema intentionally selects one organization OR one college at a time; no mismatched two-ID payload is accepted. Preserve request-ID and private response headers.
+
+## Legacy class schedule date-range copy — lane-7 shared helper (2026-10-21)
+
+- G2-2-037-021 | `src/components/academics/college-class-schedule-editor.tsx + academic schedule API/UI` | Consume exported `validateClassScheduleDateRange` from `src/lib/safe-format.ts` for class-schedule-only start/end errors. Preserve `startDate`/`endDate` field names, do not replace generic date validation elsewhere. Existing helper is ready but not wired by this lane.
