@@ -31,6 +31,14 @@ const correctionRowSchema=tpoAcademicPreviewRowSchema.partial({
  gapYears:z.number().int().min(0).max(100).optional(),
  isLateralEntry:z.boolean().optional(),
  passingYear:z.number().int().min(1950).max(2200).optional(),
+ // Preserve the legacy CSV row's import provenance without pretending a
+ // spreadsheet batch or gender label is verified academic eligibility data.
+ legacyOrigin:z.object({
+  rowNumber:z.number().int().min(2).max(10001),
+  rollNumber:z.string().trim().max(120),
+  batch:z.string().trim().max(100).nullable(),
+  gender:z.string().trim().max(100).nullable(),
+ }).strict().optional(),
 }).refine(row=>Object.keys(row).some(key=>key!=="studentCode"),{
  message:"Enter at least one academic field to verify.",
 });
@@ -180,7 +188,9 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         // Direct correction is not an import batch, even if later reached
         // from a single-row form. Imported rows have a traceable timestamp.
         importedAt: input.mode==="SINGLE"?null:now,
-        sourceMetadata:{mode:input.mode,verifiedFields:Object.keys(row).filter(key=>key!=="studentCode")},
+        sourceMetadata:{mode:input.mode,
+         verifiedFields:Object.keys(row).filter(key=>key!=="studentCode"&&key!=="legacyOrigin"),
+         ...(row.legacyOrigin?{legacyOrigin:row.legacyOrigin}:{})},
         verifiedAt: now,
         verifiedByUserId: context.user.id,
         updatedAt: now,
@@ -315,14 +325,32 @@ export async function previewTpoLegacyAcademicImport(
       (!idMatch||idMatch.roll?.trim().toLowerCase()!==row.rollNumber.trim().toLowerCase())
     ?"Student ID and roll number do not match":null)??
    (!match?"No active learner matches this roll / Student ID":null);
-  const canImport=problem===null&&match!==null&&row.cgpa!==null&&row.activeBacklogs!==null &&
-   row.tenthPct===null&&row.twelfthPct===null&&row.diplomaPct===null&&row.ugPct===null&&
-   row.gapYears===null&&row.passingYear===null&&row.batch===null&&row.gender===null;
+  const hasAcademicValue=[
+   row.cgpa,row.activeBacklogs,row.tenthPct,row.twelfthPct,row.diplomaPct,
+   row.ugPct,row.gapYears,row.passingYear,
+  ].some(value=>value!==null);
+  const canImport=problem===null&&match!==null&&hasAcademicValue;
+  // One canonical, strictly validated write payload for the verified importer.
+  // This remains a preview: callers must explicitly confirm the import.
+  const importRow=canImport?{
+   studentCode:match.id,
+   ...(row.cgpa!==null?{cgpa:row.cgpa}:{}),
+   ...(row.activeBacklogs!==null?{activeBacklogs:row.activeBacklogs}:{}),
+   ...(row.tenthPct!==null?{tenthPercentage:row.tenthPct}:{}),
+   ...(row.twelfthPct!==null?{twelfthPercentage:row.twelfthPct}:{}),
+   ...(row.diplomaPct!==null?{diplomaPercentage:row.diplomaPct}:{}),
+   ...(row.ugPct!==null?{undergraduatePercentage:row.ugPct}:{}),
+   ...(row.gapYears!==null?{gapYears:row.gapYears}:{}),
+   ...(row.passingYear!==null?{passingYear:row.passingYear}:{}),
+   legacyOrigin:{rowNumber:row.rowNumber,rollNumber:row.rollNumber,
+    batch:row.batch,gender:row.gender},
+  }:null;
   return {...row,studentCode:match?.id??row.studentCode,
     name:match?.name??null,
     oldCgpa:match?.cgpa==null?null:match.cgpa/100,
     oldBacklogs:match?.backlogs??null,
     match:canImport?"WILL_UPDATE" as const:"CANT_MATCH" as const,
-    issue:problem??(!canImport?"Sparse or additional academic fields require the dedicated verified evidence import. Nothing was discarded.":null)};
+    importRow,
+    issue:problem??(!canImport?"This row contains no verified academic values. Nothing was discarded.":null)};
  })};
 }
