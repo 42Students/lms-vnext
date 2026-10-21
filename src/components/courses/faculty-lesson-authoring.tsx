@@ -85,6 +85,7 @@ export function FacultyLessonAuthoring({
   initialMode = null,
   availableModes,
   onSaved,
+  onBusyChange,
   enableAssignmentResources = false,
 }: {
   lessonId: string;
@@ -96,6 +97,8 @@ export function FacultyLessonAuthoring({
   initialMode?: Mode | null;
   availableModes?: readonly Mode[];
   onSaved?: () => void;
+  /** Lets enclosing legacy dialogs prevent discard/close during uploads. */
+  onBusyChange?: (busy:boolean) => void;
   enableAssignmentResources?: boolean;
 }) {
   const router = useRouter();
@@ -137,6 +140,7 @@ export function FacultyLessonAuthoring({
   }|null>(null);
   const [discardConfirm,setDiscardConfirm]=useState(false);
   const [externalLinkTitle,setExternalLinkTitle]=useState("");
+  useEffect(()=>{onBusyChange?.(resourceUploading||submitting);},[onBusyChange,resourceUploading,submitting]);
 
   function reset() {
     setTitle("");
