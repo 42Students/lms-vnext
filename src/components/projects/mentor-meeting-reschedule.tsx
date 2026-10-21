@@ -84,7 +84,7 @@ export function MentorMeetingReschedule(props:{
     </Dialog>
     <ConfirmDialog open={confirm} onOpenChange={next=>{if(pending)return;setConfirm(next);if(!next)setOpen(true);}}
       title="Confirm meeting reschedule?" confirmLabel="Confirm reschedule"
-      description="Your new IST time will be checked against this project's scheduled meetings. No external message is sent."
+      description="Your new IST time will be checked for conflicts. Project members are notified in-app after rescheduling; no calendar invitation or email is sent."
       pending={pending} onConfirm={save}>
       <p className="text-sm text-body leading-[22px]">{start.replace("T"," ")} – {end.replace("T"," ")} IST</p>
       {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}

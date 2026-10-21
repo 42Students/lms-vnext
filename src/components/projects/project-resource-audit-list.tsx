@@ -17,14 +17,16 @@ type ResourceEvent = {
   actorDisplayName: string | null;
   occurredAt: string;
 };
-type ResourceAction = "CREATE" | "UPDATE" | "UPSERT" | "DELETE";
-type ActionFilter = "ALL" | ResourceAction;
+type ResourceAction = "CREATE" | "UPDATE" | "UPSERT" | "DELETE" | "UNKNOWN";
+type ActionFilter = "ALL" | Exclude<ResourceAction,"UNKNOWN">;
 type ResourceRow = { event: ResourceEvent; action: ResourceAction; label: string };
 const labelByAction: Record<ResourceAction, string> = {
   CREATE: "Added", UPDATE: "Edited", UPSERT: "Saved", DELETE: "Removed",
+  UNKNOWN: "Unknown",
 };
 const toneByAction = {
   CREATE: "success", UPDATE: "warning", UPSERT: "info", DELETE: "error",
+  UNKNOWN: "neutral",
 } as const;
 
 function resourceLabel(event: ResourceEvent) {
@@ -34,12 +36,13 @@ function resourceLabel(event: ResourceEvent) {
     : original;
 }
 function actionFor(eventType: string): ResourceAction | null {
-  switch (projectResourceAuditAction(eventType)) {
+  const action=projectResourceAuditAction(eventType);
+  switch (action) {
     case "Added": return "CREATE";
     case "Edited": return "UPDATE";
     case "Saved": return "UPSERT";
     case "Removed": return "DELETE";
-    default: return null;
+    default: return action!==null?"UNKNOWN":null;
   }
 }
 function formatWhen(value: string) {
@@ -63,7 +66,7 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
     if (actionFilter !== "ALL" && row.action !== actionFilter) return false;
     if (!query) return true;
     return [row.label, row.event.summary, row.event.actorDisplayName,
-      labelByAction[row.action]].join(" ").toLocaleLowerCase("en").includes(query);
+      labelByAction[row.action],row.event.eventType].join(" ").toLocaleLowerCase("en").includes(query);
   });
   const pageCount = Math.max(1, Math.ceil(filtered.length / 10));
   const currentPage = Math.min(page, pageCount);
@@ -74,7 +77,9 @@ export function ProjectResourceAuditList({ events }: { events: readonly Resource
     { key: "resource", header: "Resource", mobilePriority: "primary",
       cell: row => <span className="break-words">{row.label}</span> },
     { key: "action", header: "Action", mobilePriority: "secondary",
-      cell: row => <StatusBadge tone={toneByAction[row.action]}>{labelByAction[row.action]}</StatusBadge> },
+      cell: row => <StatusBadge tone={toneByAction[row.action]}>
+        {row.action==="UNKNOWN"?row.event.eventType:labelByAction[row.action]}
+      </StatusBadge> },
     { key: "actor", header: "Actor", mobilePriority: "secondary",
       cell: row => row.event.actorDisplayName || "System" },
     { key: "when", header: "When", mobilePriority: "secondary",

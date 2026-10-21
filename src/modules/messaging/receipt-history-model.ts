@@ -59,5 +59,5 @@ export function legacyMessagingHistoryPaging(rawPage:unknown,rawSize:unknown){
   return Number.isFinite(number)?Math.trunc(number):fallback;
  };
  return {page:Math.max(0,Math.min(10000,numeric(rawPage,0))),
-  size:Math.max(1,Math.min(200,numeric(rawSize,25)))};
+  size:Math.max(1,Math.min(200,numeric(rawSize,50)))};
 }

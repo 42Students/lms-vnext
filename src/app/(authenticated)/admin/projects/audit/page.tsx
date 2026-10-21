@@ -42,6 +42,9 @@ export default async function SuperAdminProjectAuditPage({
           actions={<PageBackLink href="/admin/projects" label="Project workspaces" />}
         />
         <ProjectAdminNav basePath="/admin/projects" active="audit" />
+        <Banner tone="warning" role="status">
+          Select a college in the header to restore its project audit scope. The roster is not loading until a college is selected.
+        </Banner>
         <EmptyState
           title="Select a college to continue"
           description="Choose a college in the Super Admin scope selector before reviewing project activity. Global project audit is available only with explicit platform-wide audit permission."

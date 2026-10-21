@@ -10,6 +10,27 @@ import type {BulkReviewOutcome} from "./bulk-outcome";
 import {summarizeBulkReviews} from "./bulk-outcome";
 import {requireTpoVerificationActor} from "./tpo-staff-auth";
 
+/** Deliberate legacy route compatibility: a single authorized POST replaces
+ * the numeric /verify-many endpoint. Settings are managed separately, so this
+ * mapping never exposes a client-selected college or reviewer's privileges.
+ * Each item reports its own persisted result or actionable stale/denied status.
+ */
+export const TPO_VERIFICATION_LEGACY_ROUTE_MAP=[
+ {legacy:"POST /tpo/profile-verification/verify-many",
+  current:"POST /api/tpo/verification/bulk-review",
+  method:"POST",authorization:"TPO active college membership + row-level review permission",
+  scope:"UUID learner membership and verified section per item",
+  result:"200 with outcomes[] and summary {attempted,succeeded,failed}; partial failures are per item"},
+ {legacy:"GET /tpo/profile-verification/settings",
+  current:"GET /api/tpo/verification/settings",
+  method:"GET",authorization:"TPO active college membership",
+  scope:"server-selected college",result:"current settings or an explicit authorization error"},
+ {legacy:"PUT /tpo/profile-verification/settings",
+  current:"PUT /api/tpo/verification/settings",
+  method:"PUT",authorization:"TPO settings permission and same-origin request",
+  scope:"server-selected college",result:"saved settings or validation error"},
+] as const;
+
 /** TPO grants, receipt evidence, row versions, auditing and notifications are
  * revalidated by the locked verification writer for every learner section. */
 export async function reviewTpoVerificationBulk(context:RequestContext,raw:unknown){

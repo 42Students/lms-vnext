@@ -1,4 +1,6 @@
 import "server-only";
+import {recordApplicationStatusTransition} from "./application-status-history-writer";
+
 
 import { and, asc, eq, ilike, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -6,7 +8,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   activityEvents, collegeMemberships, membershipRoles, placementApplications, placementCompanies, placementCompanyRelationships,
-  placementApplicationScreenings, placementApplicationStatusHistory,
+  placementApplicationScreenings,
   placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
   placementJobs, placementSeasons, placementDebarments, placementEligibilityOverrides, inAppNotifications, users,
 } from "@/db/schema";
@@ -322,7 +324,7 @@ async function addOne(
     }).onConflictDoNothing().returning({ id: placementApplications.id });
     if (!created) throw new UnsafeForceInclude();
 
-    await tx.insert(placementApplicationStatusHistory).values({
+    await recordApplicationStatusTransition(tx,{
       applicationId: created.id, fromStatus: null,
       toStatus: "SUBMITTED", actorUserId: context.user.id,
       reason: "TPO bulk Add-to-Drive",

@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { EmptyState } from "@/components/ui/empty-state";
 import Link from "next/link";
 import {notFound,redirect} from "next/navigation";
@@ -41,14 +42,24 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
      <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
       <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open drive discussion</Button>
+      <label className="mb-3 grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+        Message about this drive
+        <Textarea name="message" rows={3} minLength={1} maxLength={4000} required
+          placeholder="Write your first message to the placement cell..." className="min-w-0"/>
+      </label>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
      </form>
     </details>
    </> : <EmptyState title="No drive conversation" description="No conversation has been started for this drive."
     action={<form method="post" action="/api/placements/recruiter/conversations/open" className="w-full md:w-auto">
      <Input type="hidden" name="collegeId" value={result.workspace.college.id}/>
      <Input type="hidden" name="jobId" value={result.workspace.job.id}/>
-     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open drive discussion</Button>
+     <label className="mb-3 grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+       Message about this drive
+       <Textarea name="message" rows={3} minLength={1} maxLength={4000} required
+         placeholder="Write your first message..." className="min-w-0"/>
+     </label>
+     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
     </form>} />}
   </section>
  </div>;

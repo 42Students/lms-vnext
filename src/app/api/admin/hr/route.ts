@@ -12,6 +12,14 @@ import {
 
 export const runtime = "nodejs";
 
+/** Old numeric recruiter account endpoints map to canonical user identities:
+ * GET /api/v1/superadmin/recruiters -> this college-aware GET listing;
+ * POST /api/v1/superadmin/recruiters -> this same-origin POST;
+ * legacy PUT /{numericId} -> PATCH /api/admin/hr/{userId}, after an
+ * explicitly verified legacy numeric-id → user UUID crosswalk.
+ * No numeric IDs are accepted as vNext user IDs or silently reused.
+ */
+
 export async function GET(request: Request) {
   try {
     const context =
@@ -33,7 +41,7 @@ export async function GET(request: Request) {
         },
       );
 
-    return NextResponse.json(result);
+    return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -74,8 +82,8 @@ export async function POST(request: Request) {
       );
 
     return NextResponse.json(
-      { account },
-      { status: 201 },
+      { account, idKind:"USER_UUID" },
+      { status: 201, headers:{"Cache-Control":"private, no-store"} },
     );
   } catch (error) {
     return apiErrorResponse(error);

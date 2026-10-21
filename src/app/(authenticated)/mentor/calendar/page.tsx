@@ -42,7 +42,7 @@ export default async function MentorCalendarPage({searchParams}:{
     }));
   if(calendarRead.items===null)return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Meetings" description="Every scheduled meeting across your assigned projects, in one place."/>
-    <MentorCalendarLoadFailure reason={calendarRead.reason}/>
+    <MentorCalendarLoadFailure reason={calendarRead.reason??"UNKNOWN"}/>
   </div>;
   const meetings=calendarRead.items;
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.

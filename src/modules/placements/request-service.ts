@@ -1,3 +1,4 @@
+import {recordApplicationStatusTransition} from "./application-status-history-writer";
 import {
   and,
   asc,
@@ -18,7 +19,6 @@ import {
   placementApplicationRoundExceptions,
   placementApplications,
   placementApplicationScreenings,
-  placementApplicationStatusHistory,
   placementCompanies,
   placementCompanyRelationships,
   placementJobRoleOptions,
@@ -761,15 +761,13 @@ async function applyApprovedEffect(
       );
     }
 
-    await db
-      .insert(placementApplicationStatusHistory)
-      .values({
-        applicationId: application.id,
-        fromStatus: "SUBMITTED",
-        toStatus: "WITHDRAWN",
-        actorUserId: context.user.id,
-        reason: request.reason,
-      });
+    await recordApplicationStatusTransition(db,{
+      applicationId: application.id,
+      fromStatus: "SUBMITTED",
+      toStatus: "WITHDRAWN",
+      actorUserId: context.user.id,
+      reason: request.reason,
+    });
 
     await recordActivityEventInTransaction(
       db,

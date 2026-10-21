@@ -1,5 +1,6 @@
 "use client";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import {Input} from "@/components/ui/input";
@@ -43,6 +44,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [noteError,setNoteError]=useState("");
  const [amendsNoteId,setAmendsNoteId]=useState<string|null>(null);
  const [letterInput,setLetterInput]=useState<Record<string,string>>({});
+ const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [saving,setSaving]=useState(false);
  const [savingLetter,setSavingLetter]=useState(false);
  const [rescreening,setRescreening]=useState(false);
@@ -60,6 +62,20 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const interviewFetchRef=useRef(false);
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
+ const letterDirty=Object.entries(letterInput).some(([id,url])=>
+  url.trim()!==(detail?.offers.find(o=>o.id===id)?.offerLetterUrl??""));
+ const dirty=Boolean(note.trim())||letterDirty;
+ useEffect(()=>{
+  if(!dirty)return;
+  const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",warn);
+  return ()=>window.removeEventListener("beforeunload",warn);
+ },[dirty]);
+ function requestClose(){
+  if(saving||savingLetter)return;
+  if(dirty)setConfirmDiscard(true);
+  else onClose();
+ }
  const endpoint="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
    encodeURIComponent(applicationId);
  async function reload(){
@@ -109,7 +125,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   try{
    await apiFetch(endpoint,{method:"PATCH",headers:{"content-type":"application/json"},
     body:JSON.stringify({offerId,url,confirmed:true})});
-   await reload();setSuccess("Offer letter attached");
+   await reload();setLetterInput(current=>({...current,[offerId]:url}));setSuccess("Offer letter attached");
    showToast({tone:"success",title:"Offer letter attached"});
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
   finally{setSavingLetter(false);}
@@ -158,7 +174,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   {label:"Application history",rows:detail?.history??[]},
  ];
  return <>
-  <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
+  <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)requestClose();}} title="Application Details">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
@@ -305,6 +321,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </Disclosure>)}
     </div>:null}
   </Dialog>
+  <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+    title="Discard unsaved application changes?"
+    description="Unsaved offer-letter links and internal notes will be lost."
+    confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
+    onConfirm={()=>{setConfirmDiscard(false);onClose();}}/>
   <Dialog open={interviewOpen} onOpenChange={next=>{if(!next){
     setInterviewOpen(false);void reload();
    }}} title={"Candidate interviews · "+(detail?.application.name??"Applicant")}

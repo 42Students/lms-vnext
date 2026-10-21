@@ -20,12 +20,17 @@ export async function previewTpoCollegeAnnouncementVisibility(context:RequestCon
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
   });
-  const [row]=await tx.select({total:sql<number>`count(*)::integer`})
+  const [row]=await tx.select({
+   total:sql<number>`count(*)::integer`,
+   withEmail:sql<number>`count(*) filter (where nullif(trim(${users.email}), '') is not null)::integer`,
+  })
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .where(and(eq(collegeMemberships.collegeId,college.id),
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
-  return {potentiallyVisibleMemberships:Number(row?.total??0),audience:"COLLEGE" as const};
+  return {potentiallyVisibleMemberships:Number(row?.total??0),
+    withEmail:Number(row?.withEmail??0),emailReady:false as const,
+    audience:"COLLEGE" as const};
  });
 }
 
@@ -82,6 +87,7 @@ export async function previewTpoPlacementAudience(context:RequestContext,raw:unk
   }
   const [counted]=await tx.select({
     total:sql<number>`count(distinct ${collegeMemberships.id})::integer`,
+    withEmail:sql<number>`count(distinct case when nullif(trim(${users.email}), '') is not null then ${collegeMemberships.id} end)::integer`,
   }).from(collegeMemberships)
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .where(and(
@@ -91,6 +97,7 @@ export async function previewTpoPlacementAudience(context:RequestContext,raw:unk
       audienceCondition,
     ));
   return {audience:audience.kind,potentiallyVisibleMemberships:Number(counted?.total??0),
+    withEmail:Number(counted?.withEmail??0),emailReady:false as const,
     previewOnly:true as const};
  });
 }

@@ -98,7 +98,15 @@ export function TpoAcademicImportWorkspace() {
             method:"POST",headers:{"content-type":"application/json"},
             body:JSON.stringify({action:"LEGACY_PREVIEW",rows:legacy}),
            })
-        :await send("PREVIEW",parsed);
+        :await (async()=>{
+          const rows:PreviewRow[]=[];
+          for(let index=0;index<parsed.length;index+=200){
+            const chunk=await send("PREVIEW",parsed.slice(index,index+200));
+            if(!Array.isArray(chunk.preview?.rows))throw new Error("Academic preview interrupted. No records were imported.");
+            rows.push(...chunk.preview.rows);
+          }
+          return {preview:{rows}};
+         })();
       if(!Array.isArray(result.preview?.rows))throw Error("Could not process the academic details. Please try again.");
       const rows = result.preview.rows as PreviewRow[];
       setPreview(rows);setPreviewTab("WILL_UPDATE");setSkipAcknowledged(false);
@@ -115,29 +123,36 @@ export function TpoAcademicImportWorkspace() {
     if(unmatched.length&&!skipAcknowledged){setError("Review and explicitly skip unmatched rows before importing.");return;}
     const selected = preview.filter(row => !excluded.includes(row.studentCode));
     const matched = selected.filter(row => row.match === "WILL_UPDATE");
-    if(matched.length>200){
-      setError("Select at most 200 verified rows in one import.");
-      return;
-    }
     if (!matched.length) { setError("Select at least one matched academic record."); return; }
     setBusy(true); setError("");
+    let completed=0;
+    const importedIds:string[]=[];
     try {
-      const result = await send("IMPORT", matched.map(row => row.importRow ?? ({
-        studentCode: row.studentCode,
-        ...(row.cgpa!==undefined&&row.cgpa!==null?{cgpa:row.cgpa}:{}),
-        ...(row.activeBacklogs!==undefined&&row.activeBacklogs!==null?{activeBacklogs:row.activeBacklogs}:{}),
-      })));
-      if(typeof result.result?.updated!=="number" || typeof result.result?.skipped!=="number")throw Error("Could not confirm the import results. Please check the records before retrying.");
-      const receipt = result.result as { updated: number; skipped: number };
+      for(let index=0;index<matched.length;index+=200){
+        const batch=matched.slice(index,index+200);
+        const result=await send("IMPORT",batch.map(row=>row.importRow??({
+          studentCode:row.studentCode,
+          ...(row.cgpa!==undefined&&row.cgpa!==null?{cgpa:row.cgpa}:{}),
+          ...(row.activeBacklogs!==undefined&&row.activeBacklogs!==null?{activeBacklogs:row.activeBacklogs}:{}),
+        })));
+        if(typeof result.result?.updated!=="number"||typeof result.result?.skipped!=="number")
+          throw new Error("Academic import acknowledgement missing.");
+        completed+=result.result.updated;
+        if(result.result.skipped>0)throw new Error("A batch skipped records. Recheck and re-preview the remaining rows.");
+        importedIds.push(...batch.map(row=>row.studentCode));
+        setExcluded(current=>[...new Set([...current,...importedIds])]);
+      }
       showToast({tone:"success",title:"Import saved"});
-      setNotice("Updated " + receipt.updated + " academic record(s). " +
-        (receipt.skipped ? receipt.skipped + " unmatched skipped." : "All selected rows saved."));
-      setPreview(null); setExcluded([]); router.refresh();
-    } catch (cause) {
-      setError(cause instanceof FriendlyFetchError && cause.status===409
-        ? "This changed while you were working. Your academic import choices are kept below. Preview again before importing."
-        : "Could not process the academic details. Review your selections and try again.");
-    } finally { setBusy(false); }
+      setNotice("Updated "+completed+" academic record(s) in "+
+        Math.ceil(matched.length/200)+" verified batch(es).");
+      setPreview(null);setExcluded([]);router.refresh();
+    }catch(cause){
+      setError((cause instanceof FriendlyFetchError&&cause.status===409
+        ?"These records changed while you were working. "
+        :"Import interrupted. ")+completed+
+        " academic record(s) were confirmed saved. Those rows are now unselected. Re-preview before retrying the remaining rows.");
+      router.refresh();
+    }finally{setBusy(false);}
   }
 
   const unresolved=Boolean(preview?.some(row=>row.match==="CANT_MATCH"));
@@ -163,7 +178,7 @@ export function TpoAcademicImportWorkspace() {
         Upload up to 5,000 rows of .xlsx or CSV for a scoped preview.
         Roll numbers are matched to active learners in this college, and
         ambiguous or duplicate rolls stay in Can't match. Verified imports
-        are committed in batches of at most 200 rows. All supported numeric academic columns are preserved through
+        are committed sequentially in batches of at most 200 rows. All supported numeric academic columns are preserved through
         preview and confirmation, with legacy batch and roll provenance.
         Nothing is silently discarded.
       </p></details>
@@ -180,7 +195,7 @@ export function TpoAcademicImportWorkspace() {
       <details className="border-t border-border pt-3 print:hidden"><summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">Or paste CSV rows</summary><label className="block min-w-0 text-[13px] font-semibold leading-4">Or paste CSV rows
         <Textarea value={csv} onChange={event => {
           setCsv(event.target.value); setPreview(null); setError(""); setNotice("");
-        }} rows={5} maxLength={200000}
+        }} rows={5} maxLength={5_000_000}
           className="mt-1.5 min-h-32 w-full min-w-0 font-mono text-sm" />
       </label></details>
       <Button variant="secondary" loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" disabled={busy} type="button" onClick={() => void validate()}

@@ -3,7 +3,7 @@ import { z, ZodError } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { listPrograms } from "@/modules/academics/program-service";
+import { listPrograms, listProgramsPage } from "@/modules/academics/program-service";
 import { scopedProgramPopularity } from "@/modules/academics/legacy-program-popularity";
 import {parseLegacyProgramPage,legacyProgramPage} from "@/modules/admin-ui/legacy-program-page-model";
 import {
@@ -136,7 +136,18 @@ export async function GET(request: Request) {
     // Calls without pagination still receive the existing vNext {programs}.
     const page=parseLegacyProgramPage(url.searchParams);
     if(page===false)return NextResponse.json({error:"INVALID_PAGINATION",message:"Page must be a non-negative integer and size must be between 1 and 100."},{status:400});
-    if(page)return NextResponse.json({programs:legacyProgramPage(programs,page)});
+    if(page){
+      const scoped=await listProgramsPage(context,url.searchParams.get("collegeId")??"",{
+        departmentId,page:page.page+1,pageSize:page.size,
+      });
+      const content=legacyProgramPage(scoped.programs,{page:0,size:page.size}).content;
+      const totalPages=Math.ceil(scoped.total/page.size);
+      return NextResponse.json({programs:{
+        content,totalElements:scoped.total,totalPages,number:page.page,size:page.size,
+        first:page.page===0,last:totalPages===0||page.page>=totalPages-1,
+        numberOfElements:content.length,empty:content.length===0,
+      }},{headers:{"Cache-Control":"private, no-store"}});
+    }
     return NextResponse.json({ programs });
   } catch (error) {
     return apiErrorResponse(error);

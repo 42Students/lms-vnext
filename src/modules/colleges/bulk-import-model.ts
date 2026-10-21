@@ -72,8 +72,8 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
   for(const [field,text] of [["city",v(2)],["state",v(3)],["country",v(4)]] as const){
     if(text.length>128)throw Error("Row "+line+": "+field+" must be 128 characters or fewer.");
   }
-  if(!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(code))
-    throw Error("Row "+line+": college code must use letters, numbers, underscores or hyphens.");
+  if(!/^[A-Za-z0-9-]{3,63}$/.test(code))
+    throw Error("Row "+line+": college code must use 3–63 letters, numbers or hyphens.");
   return {line,name,code,city:v(2)||null,state:v(3)||null,country:v(4)||null};
  });
 }

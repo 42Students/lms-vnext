@@ -1,9 +1,10 @@
-import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, count, countDistinct, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   cohorts, courseOfferings, courseSectionDeliveries, courses, sections,
-  departments, electiveOfferings, electiveSlots, groupBackedClassOfferings, lmsGroupMembers, lmsGroups, programs,
+  departments, electiveOfferings, electiveSlots, lmsGroupMembers, lmsGroups, programs,
+  collegeMemberships, courseTeachingAssignments, users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -172,6 +173,9 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
         .innerJoin(programs, eq(programs.id, cohorts.programId))
         .innerJoin(departments, eq(departments.id, programs.departmentId))
         .where(eq(courseSectionDeliveries.id, input.backedDeliveryId)).limit(1);
+      // Retain the backed delivery/section link as the canonical class,
+      // ensuring the old group/class/course/schedule associations point to
+      // the same active program, period and enrolled cohort.
       if (!delivery || delivery.courseId !== course.id || delivery.collegeId !== slot.collegeId ||
           delivery.offeringType !== "ELECTIVE" || delivery.offeringStatus !== "ACTIVE" ||
           delivery.sectionStatus !== "ACTIVE" || delivery.endedAt !== null ||
@@ -226,7 +230,8 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
     .where(eq(electiveSlots.id, slotId)).limit(1);
   if (!slot || slot.deletedAt) throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_FOUND");
   requirePermission(context, "academics.read", { collegeId: slot.collegeId });
-  return getDb().select({
+  const db=getDb();
+  const rows=await db.select({
     offeringId: electiveOfferings.id,
     courseId: electiveOfferings.courseId,
     groupId: electiveOfferings.groupId,
@@ -236,14 +241,116 @@ export async function listElectiveOfferings(context: RequestContext, slotIdInput
     courseName: courses.name,
     courseCode: courses.code,
     status: electiveOfferings.status,
+    backedClassId: sections.id,
+    backedClassName: sections.name,
+    legacyClassId: sections.legacyClassId,
+    sectionStatus: sections.status,
+    deliveryEndedAt: courseSectionDeliveries.endedAt,
+    groupStatus: lmsGroups.status,
     activeMembers: lmsGroups.activeCount,
     waitlistedCount: sql<number>`(select count(*)::int from lms_group_members gm
       where gm.group_id = "lms_groups"."id" and gm.state = 'WAITLISTED')`,
   }).from(electiveOfferings)
     .innerJoin(lmsGroups, eq(lmsGroups.id, electiveOfferings.groupId))
     .innerJoin(courses, eq(courses.id, electiveOfferings.courseId))
+    .innerJoin(courseSectionDeliveries,eq(courseSectionDeliveries.id,electiveOfferings.backedDeliveryId))
+    .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
     .where(and(eq(electiveOfferings.slotId, slotId),
-      isNull(electiveOfferings.deletedAt)));
+      isNull(electiveOfferings.deletedAt)))
+    .orderBy(asc(courses.name),asc(electiveOfferings.id));
+  if(!rows.length)return [];
+  const groupIds=[...new Set(rows.map(row=>row.groupId))];
+  const deliveryIds=[...new Set(rows.map(row=>row.backedDeliveryId))];
+  const [rosters,faculty]=await Promise.all([
+    db.select({groupId:lmsGroupMembers.groupId,total:countDistinct(lmsGroupMembers.membershipId)})
+      .from(lmsGroupMembers)
+      .innerJoin(collegeMemberships,and(
+        eq(collegeMemberships.id,lmsGroupMembers.membershipId),
+        eq(collegeMemberships.collegeId,slot.collegeId),
+        eq(collegeMemberships.status,"ACTIVE")))
+      .where(and(inArray(lmsGroupMembers.groupId,groupIds),
+        eq(lmsGroupMembers.state,"ACTIVE"),
+        eq(lmsGroupMembers.memberType,"LEARNER")))
+      .groupBy(lmsGroupMembers.groupId),
+    db.select({
+      deliveryId:courseTeachingAssignments.deliveryId,
+      role:courseTeachingAssignments.role,
+      membershipId:courseTeachingAssignments.membershipId,
+      facultyName:users.displayName,
+    }).from(courseTeachingAssignments)
+      .innerJoin(collegeMemberships,and(
+        eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+        eq(collegeMemberships.collegeId,slot.collegeId),
+        eq(collegeMemberships.status,"ACTIVE")))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(inArray(courseTeachingAssignments.deliveryId,deliveryIds),
+        isNull(courseTeachingAssignments.endedAt)))
+      .orderBy(asc(users.displayName),asc(courseTeachingAssignments.id)),
+  ]);
+  const learners=new Map(rosters.map(row=>[row.groupId,row.total]));
+  const facultyByDelivery=new Map<string,Array<{membershipId:string;name:string;role:string}>>();
+  for(const member of faculty){
+    const list=facultyByDelivery.get(member.deliveryId)??[];
+    if(!list.some(item=>item.membershipId===member.membershipId))
+      list.push({membershipId:member.membershipId,
+        name:member.facultyName?.trim()||"Unnamed faculty",role:member.role});
+    facultyByDelivery.set(member.deliveryId,list);
+  }
+  return rows.map(row=>{
+    const activeSeatCount=row.status==="ACTIVE"?(learners.get(row.groupId)??0):0;
+    const capacity=row.capacity??null;
+    const teachers=facultyByDelivery.get(row.backedDeliveryId)??[];
+    return {...row,
+      // A membership enrolled in more than one offering occupies one seat
+      // in each. A slot-level distinct learner count is a separate metric.
+      activeMembers:activeSeatCount,
+      activeSeatEnrollments:activeSeatCount,
+      seatsLeft:capacity===null?null:Math.max(0,capacity-activeSeatCount),
+      capacityLabel:capacity===null?"No limit":String(capacity),
+      faculty:teachers,facultyNames:teachers.map(item=>item.name),
+      facultyCount:teachers.length,
+      associatedClass:row.backedClassName,
+      classAssociationValid:row.sectionStatus==="ACTIVE" &&
+        row.deliveryEndedAt===null,
+    };
+  });
+}
+
+/** Legacy slot header distinguishes course seat enrollments from a learner
+ * headcount. Each ACTIVE membership across any offered course is counted once
+ * in uniqueLearners, while the sum of per-offering seats may be larger.
+ */
+export async function getElectiveSlotRosterSummary(
+  context:RequestContext,slotIdInput:string,
+) {
+  const slotId=uuid.parse(slotIdInput);
+  const [slot]=await getDb().select({
+    id:electiveSlots.id,collegeId:electiveSlots.collegeId,
+  }).from(electiveSlots).where(and(eq(electiveSlots.id,slotId),
+    isNull(electiveSlots.deletedAt))).limit(1);
+  if(!slot)throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_FOUND");
+  requirePermission(context,"academics.read",{collegeId:slot.collegeId});
+  const db=getDb();
+  const [summary]=await db.select({
+    uniqueLearners:countDistinct(lmsGroupMembers.membershipId),
+  }).from(lmsGroupMembers)
+    .innerJoin(electiveOfferings,and(
+      eq(electiveOfferings.groupId,lmsGroupMembers.groupId),
+      eq(electiveOfferings.slotId,slotId),
+      eq(electiveOfferings.status,"ACTIVE"),
+      isNull(electiveOfferings.deletedAt)))
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,lmsGroupMembers.membershipId),
+      eq(collegeMemberships.collegeId,slot.collegeId),
+      eq(collegeMemberships.status,"ACTIVE")))
+    .where(and(eq(lmsGroupMembers.state,"ACTIVE"),
+      eq(lmsGroupMembers.memberType,"LEARNER")));
+  const offerings=await listElectiveOfferings(context,slotId);
+  return {uniqueLearners:summary?.uniqueLearners??0,
+    seatEnrollments:offerings.reduce((n,row)=>n+row.activeSeatEnrollments,0),
+    offeringCount:offerings.filter(row=>row.status==="ACTIVE").length,
+    waitlistedRequests:offerings.reduce((n,row)=>n+
+      (row.status==="ACTIVE"?row.waitlistedCount:0),0)};
 }
 
 /** Same-slot administrative transfer is transactional in the group kernel. */
@@ -314,6 +421,8 @@ export async function updateCollegeElectiveOffering(
       .innerJoin(programs, eq(programs.id, cohorts.programId))
       .innerJoin(departments, eq(departments.id, programs.departmentId))
       .where(eq(courseSectionDeliveries.id, input.backedDeliveryId)).limit(1);
+    // A course switch is safe only when the new backed delivery and its
+    // section are in the same active college/program/academic period.
     if (!delivery || delivery.courseId !== input.courseId ||
         delivery.collegeId !== slot.collegeId || delivery.offeringProgramId !== slot.programId ||
         delivery.offeringType !== "ELECTIVE" || delivery.offeringStatus !== "ACTIVE" ||

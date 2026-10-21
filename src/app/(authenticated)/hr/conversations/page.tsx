@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -133,7 +134,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {!generalThread && (!generalLookup || generalLookup.ok)?<p className="mt-2 text-sm text-muted-foreground">Questions that are not about one drive go here.</p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <Input name="collegeId" type="hidden" value={result.collegeId}/>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open general conversation</Button>
+      <label className="mb-3 grid min-w-0 gap-1 text-sm font-semibold text-foreground">
+        Message to placement cell
+        <Textarea name="message" rows={3} minLength={1} maxLength={4000} required
+          placeholder="Write a message to begin this conversation..." className="min-w-0"/>
+      </label>
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Send message</Button>
     </form>:null}
    </section>
      </RecruiterGeneralDrawer>:null}
