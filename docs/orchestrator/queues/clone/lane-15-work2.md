@@ -68,6 +68,6 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_college_departments_departmentId_route.ts.md` (edit src/app/api/college/departments/[departmentId]/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_app_globals.css.md` (edit src/app/globals.css; 1 findings; best P3)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-admin-collection-controls.tsx.md` (edit src/components/projects/project-admin-collection-controls.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_reports_ctc_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/ctc/page.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_lessons_error.tsx.md` (edit src/app/(authenticated)/college/lessons/error.tsx; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_reports_ctc_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/ctc/page.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_lessons_error.tsx.md` (edit src/app/(authenticated)/college/lessons/error.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_app_api_academics_schedule-events_route.ts.md` (edit src/app/api/academics/schedule-events/route.ts; 1 findings; best P3)

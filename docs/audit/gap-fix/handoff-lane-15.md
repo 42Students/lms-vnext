@@ -186,3 +186,6 @@
 - Department archive legacy client G2-18-027-017: map DEPARTMENT_HAS_DEPENDENCIES 409+usage+safe message from current apiErrorResponse to old status ERROR conflict UI; do not reproduce raw server exception detail.
 
 - Legacy project workspace status filters G2-10-028-020/G2-7-019-027: build authorized five-state projection combining lifecycle and readiness/risk, extend URL parser & service before rendering noncanonical Select options. Never incorrectly alias Ready to COMPLETED or Blocked to ARCHIVED.
+
+- TPO CTC report model G2-13-031-087: change `src/modules/placements/report-model.ts` underlying knownCtc loop to boundaries 0/400000/600000/1000000/2000000 INR, labels below4/4-6/6-10/10-20/20+ LPA; regenerate CSV/metric tests. UI cannot accurately split existing 3–6 aggregate without raw offers.
+- College lessons partial load G2-17-007-033: maintain last valid rows in list component state when a subsequent partial scope fetch fails; show warning `Couldn't refresh lessons` plus Retry while retaining actual cached rows; error.tsx alone can't render the old list.

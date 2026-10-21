@@ -47,6 +47,12 @@ export default async function TpoCtcReportPage({
   });
 
   const ctc = workspace.details.ctc;
+  // The report model currently aggregates 0–3/3–6 LPA; those counts cannot
+  // be accurately split into legacy <4 and 4–6 without individual INR offers.
+  const legacyBoundaryStarts=[0,400_000,600_000,1_000_000,2_000_000];
+  const legacyBandParity=ctc.bands.length===legacyBoundaryStarts.length &&
+    ctc.bands.every((band,index)=>band.minimumInr===legacyBoundaryStarts[index] &&
+      band.maximumExclusiveInr===(legacyBoundaryStarts[index+1]??null));
 
   const metrics = [
     ["Students with a package", reportNumber(workspace.report.metrics.studentsWithPackage??0)],
@@ -100,6 +106,11 @@ export default async function TpoCtcReportPage({
         </div>
       </Disclosure>
       <ReportScopeNote note={workspace.detailScopeNote} />
+      {!legacyBandParity?<p role="status" className="text-sm text-warning-text">
+        These package totals use the current persisted reporting bands. The historical below 4,
+        4–6, 6–10, 10–20 and 20+ LPA bands require regrouping the original annual INR
+        offers; the existing aggregated 3–6 LPA count cannot be split reliably.
+      </p>:null}
       <ReportBarChart title="Accepted full-time offers by annual package band" units="offers"
        rows={ctc.bands.map(band=>({label:band.label,value:band.offers}))}/>
 
