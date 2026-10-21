@@ -69,11 +69,11 @@ export default async function CompanySharePage({
    <PageHeader title={"Shared with "+result.companyName} />
    <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-base font-medium leading-6 text-foreground">{result.title}</p>
    <p className="max-w-3xl break-words text-sm leading-6 text-body">
-    Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
+    Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
     {" "}for {result.companyName}. Please do not forward this page.
    </p>
    <p className="max-w-3xl break-words text-sm leading-6 text-body">
-    The link works until {new Intl.DateTimeFormat("en-GB",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
+    The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
    </p>
    <p className="max-w-3xl break-words text-xs leading-5 text-muted-foreground">
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
@@ -90,7 +90,7 @@ export default async function CompanySharePage({
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
   <p role="status" className="text-sm text-body">
-   {result.total} shortlisted applicants · Page {result.page} of {result.totalPages}
+   {result.total.toLocaleString("en-IN")} shortlisted applicants · Page {result.page} of {result.totalPages}
   </p>
   <DataTable columns={tableColumns} rows={result.rows}
    getRowKey={row=>row.applicationId} caption="Shared applicants"

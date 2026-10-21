@@ -142,7 +142,7 @@ export function ActivityCenter({
                     </StatusBadge>
                     {group.count > 1 ? (
                       <span className="text-xs font-semibold text-muted-foreground">
-                        {group.count} related events
+                        {group.count.toLocaleString("en-IN")} related events
                       </span>
                     ) : null}
                   </div>

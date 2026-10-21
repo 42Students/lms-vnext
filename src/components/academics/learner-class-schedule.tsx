@@ -160,7 +160,7 @@ function scheduleEventTooltip(event:LearnerScheduleEvent){
 }
 
 function learnerEventStartHour(event:LearnerScheduleEvent){
-  const value=new Intl.DateTimeFormat("en-GB",{
+  const value=new Intl.DateTimeFormat("en-IN",{
     timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
   }).format(new Date(event.startsAt));
   return Number(value);
