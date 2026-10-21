@@ -49,6 +49,7 @@ import {
 } from "@/modules/operations/outbound-delivery-contract";
 
 import {
+  PLATFORM_SMS_SUPPORT,
   buildPlatformSmsTemplateCatalog,
   collegePlatformSetting,
   fixedPlatformSetting,
@@ -389,7 +390,10 @@ export async function getSuperAdminPlatformSettings(
           "templates are not migrated and are NOT presented as persisted " +
           "values. Sender credentials, provider template IDs, DLT values, " +
           "phone numbers and environment configuration are never queried " +
-          "or displayed.",
+          "or displayed. Support users can inspect a masked, paginated " +
+          "provider-attempt ledger with a secure POST filter at " +
+          PLATFORM_SMS_SUPPORT.pageHref + ". SENT means the operator accepted " +
+          "the message. Handset delivery is not reported by the provider.",
       },
       {
         id: "operations",

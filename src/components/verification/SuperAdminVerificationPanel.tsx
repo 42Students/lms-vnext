@@ -7,7 +7,7 @@ import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
 import {useRef,useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
-import {Disclosure} from "@/components/ui/disclosure";
+import {Dialog} from "@/components/ui/dialog";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
 import {VerificationExportControl} from "./VerificationExportControl";
 import type {VerificationTab} from "@/modules/verification/queue-tabs";
@@ -28,6 +28,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const [sequenceIndex,setSequenceIndex]=useState(0);
  const [selectedKeys,setSelectedKeys]=useState<string[]>([]);
  const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
+ const [actionsOpen,setActionsOpen]=useState(false);
  const [sort,setSort]=useState<"OLDEST"|"NEWEST"|"NAME">("OLDEST");
  const [reason,setReason]=useState("");
  const [acknowledged,setAcknowledged]=useState(false);
@@ -63,14 +64,21 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    const response=await fetch("/api/admin/verification/bulk-review",{method:"POST",credentials:"same-origin",
     headers:{"Content-Type":"application/json"},body:JSON.stringify({collegeId,...payload})});
    if(!response.ok)throw Error(response.status===503?"Verification storage unavailable.":"Bulk review was not accepted.");
-   const result=await response.json() as {summary:{succeeded:number;failed:number;attempted:number}};
+   const result=await response.json() as {
+    summary:{succeeded:number;failed:number;attempted:number};
+    receipts?:readonly {section:string;status:string;success:boolean}[];
+   };
    const subject=bulkAction==="VERIFY"?"verified":"sent back";
+   const failures=(result.receipts??[]).filter(item=>!item.success);
+   const byReason=[...new Set(failures.map(item=>item.status))].slice(0,5).join(", ");
    setBulkMessage(result.summary.succeeded+" "+subject+"; "+
      result.summary.failed+" not applied. "+skipped.length+
-     " without supporting proof were excluded. Verified students are notified through the authorized workflow.");
+     " without supporting proof were excluded."+
+     (byReason?" Per-request failure reasons: "+byReason+".":"")+
+     " Every successful decision has its own audit receipt. Verified students are notified through the authorized workflow.");
    showToast({tone:result.summary.failed?"info":"success",title:
      result.summary.succeeded+" "+subject+"; "+result.summary.failed+" not applied."});
-   setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);router.refresh();
+   setSelectedKeys([]);setBulkAction(null);setActionsOpen(false);setAcknowledged(false);router.refresh();
   }catch(error){setBulkFailed(true);setBulkMessage(error instanceof Error?error.message:"Could not finish bulk review.");}
   finally{inFlightRef.current=false;setBulkBusy(false);}
  }
@@ -78,19 +86,25 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const base=`/admin/colleges/${encodeURIComponent(collegeId)}/verification`;
  const navigate=(changes:Record<string,string>)=>{
   if(bulkBusy||inFlightRef.current)return;
-  stopSequence(false);setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);
+  stopSequence(false);setSelectedKeys([]);setBulkAction(null);setActionsOpen(false);setAcknowledged(false);
   const params=new URLSearchParams(query);
   for(const [k,v] of Object.entries(changes)){if(v)params.set(k,v);else params.delete(k);}
   router.push(base+"?"+params.toString());
  };
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+  <section aria-label="Verification queue" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
   {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap gap-3">
    <Button variant="secondary" type="button" onClick={()=>{
-    const picks=candidates.slice(0,20);setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
+    const used=new Set<string>();
+    const picks=candidates.filter(item=>{
+      if(used.has(item.learnerMembershipId))return false;
+      used.add(item.learnerMembershipId);return true;
+    }).slice(0,20);
+    setSequence(picks);setSequenceIndex(0);setSelected(picks[0]??null);
    }} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
-    Review one by one ({Math.min(20,candidates.length)})
+    Review one by one ({Math.min(20,new Set(candidates.map(row=>row.learnerMembershipId)).size)})
    </Button>
-   <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
+   <p className="self-center text-xs text-muted-foreground">Review each learner once; any second section remains visible in the queue. Each decision keeps its own audit history.</p>
   </div>:null}
   {truncated?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-warning-text">
     Only the first 1,000 matching source records were inspected. Counts and pages below are lower bounds, not complete college totals.
@@ -128,16 +142,25 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    onTabChange={tab=>navigate({tab,page:"1"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
    onReview={row=>{setSequence([]);setSequenceIndex(0);setSelected(row);}}/>
-  {activeTab==="WAITING"&&candidates.length>0?<Disclosure ariaLabel="Super Admin bulk verification" title={<h2 className="font-semibold">Act on selected verification requests</h2>} className="min-w-0" contentClassName="space-y-[var(--lms-space-3)] pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+  {activeTab==="WAITING"&&candidates.length>0?<div className="flex flex-wrap items-center justify-between gap-2 border-t border-border pt-4">
+   <p className="text-sm text-muted-foreground">Actions apply only to selected requests on this page.</p>
+   <Button variant="primary" type="button" disabled={bulkBusy} onClick={()=>setActionsOpen(true)}>
+    Actions ({chosen.length} selected)
+   </Button>
+  </div>:null}
+  </section>
+  <Dialog open={actionsOpen} onOpenChange={setActionsOpen} title="Verification actions"
+    description="Choose the requests to review or verify without opening each submission.">
+   <div className="space-y-[var(--lms-space-3)]">
    <p role="status" className="text-sm">{chosen.length} of 20 requests selected on this page.</p>
    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] sm:grid-cols-2 lg:flex lg:flex-wrap [&>button]:w-full lg:[&>button]:w-auto">
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys(candidates.slice(0,20).map(verificationSelectionKey));setBulkAction(null);}}
      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Select first 20 waiting</Button>
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setSelectedKeys([]);setBulkAction(null);}}
      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Clear selection</Button>
-    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setBulkAction("VERIFY");setAcknowledged(false);}}
+    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("VERIFY");setAcknowledged(false);}}
      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Verify without opening</Button>
-    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>setBulkAction("SEND_BACK")}
+    <Button variant="secondary" type="button" disabled={bulkBusy||!chosen.length} onClick={()=>{setActionsOpen(false);setBulkAction("SEND_BACK");}}
      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Send back</Button>
    </div>
    <ul className="max-h-44 space-y-2 overflow-y-auto">
@@ -150,7 +173,12 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
       </label>
     </li>)}
    </ul>
-   {bulkAction?<div className="space-y-[var(--lms-space-2)] border-t border-border pt-[var(--lms-space-3)]">
+   </div>
+  </Dialog>
+  <Dialog open={bulkAction!==null} onOpenChange={open=>{if(!open&&!bulkBusy){setBulkAction(null);setAcknowledged(false);}}}
+   dismissible={!bulkBusy} title={bulkAction==="SEND_BACK"?"Send back verification requests":"Verify without opening"}
+   description="Decisions are individually rechecked against the latest saved request version.">
+   <div className="space-y-[var(--lms-space-2)]">
     <p className="text-sm">{applicable.length} ready, {skipped.length} left out because proof is missing. Decisions are individually rechecked by the server.</p>
     {skipped.length?<p className="text-xs text-warning-text">Skipped: {skipped.map(r=>r.learnerName).join(", ")}</p>:null}
     {bulkAction==="SEND_BACK"?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for sending back
@@ -164,11 +192,11 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
      onClick={()=>void submitBulk()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
      {bulkBusy?"Processing…":"Confirm "+applicable.length+" selected"}
     </Button>
-   </div>:null}
+   </div>
+  </Dialog>
    {bulkMessage?<p role={bulkFailed?"alert":"status"} className="text-sm">{bulkMessage}</p>:null}
-  </Disclosure>:null}
   <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)]">
-   <VerificationExportControl url="/api/admin/verification/export" filename="super-admin-profile-verification.csv" query={{...query,collegeId}}/>
+   <VerificationExportControl url="/api/admin/verification/export" filename={"verification-"+activeTab.toLowerCase()+".csv"} query={{...query,collegeId}}/>
    <Button variant="secondary" type="button" onClick={()=>router.refresh()} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">Refresh</Button>
   </div>
   <nav aria-label="Verification pages" className="flex flex-wrap items-center gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] text-sm">
