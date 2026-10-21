@@ -275,3 +275,45 @@
 - G2-16-014-033 — src/modules/placements/application-service.ts, company service and presentation: Add partial status/expiry and dispute-deadline indexes.
 - G2-16-014-035 — src/modules/placements/application-service.ts, company service and presentation: Implement strict DB-clock cutoff with idempotent cascade.
 - G2-16-014-037 — src/modules/placements/application-service.ts, company service and presentation: Record historical mapping or approved no-migration choice.
+
+## Wave 2 placements part 3 (authorized projection and migration handoffs)
+- G2-16-014-038 — src/modules/placements job, application and company read/write projections: Verify CTC conversion, null joins, lifecycle timelines.
+- G2-16-014-039 — src/modules/placements job, application and company read/write projections: Add partial due indexes and test query plan.
+- G2-16-015-007 — src/modules/placements job, application and company read/write projections: Document integer→UUID mapping for programs and legacy batch-to-cohort; avoid silently dropping cohort targeting.
+- G2-16-015-037 — src/modules/placements job, application and company read/write projections: Document migration schema correspondence and data preservation before cutover.
+- G2-17-014-008 — src/modules/placements job, application and company read/write projections: Map IDs, audit creator and timestamp to normalized history.
+- G2-17-014-045 — src/modules/placements job, application and company read/write projections: Backfill creator to service actor or sentinel carefully; convert IST if known.
+- G2-17-021-009 — src/modules/placements job, application and company read/write projections: Render in IST/local time without shifting calendar day.
+- G2-17-021-037 — src/modules/placements job, application and company read/write projections: Create stable legacy int/slug→UUID mapping if public deep links survive.
+- G2-18-011-007 — src/modules/placements job, application and company read/write projections: Compose same learner-readable round/date string from joined round/screening state.
+- G2-18-011-008 — src/modules/placements job, application and company read/write projections: Retrieve audited withdrawal reason from history/metadata and use exact UI copy.
+- G2-18-011-038 — src/modules/placements job, application and company read/write projections: Build action-to-table side effect matrix including withdrawn/declined offers.
+- G2-18-011-046 — src/modules/placements job, application and company read/write projections: Migrate withdrawn rows and support own history without resurrecting terminal stage.
+- G2-18-011-068 — src/modules/placements job, application and company read/write projections: Build event/topic routing matrix, ensure exactly-once post-commit observer behavior.
+- G2-2-016-007 — src/modules/placements job, application and company read/write projections: Document field-to-field read model and maintain company display from canonical source
+- G2-2-016-052 — src/modules/placements job, application and company read/write projections: Document IDs/fields/filters and import compatibility (migration explicitly not required)
+- G2-2-016-157 — src/modules/placements job, application and company read/write projections: Document field-by-field ID, ownership, status and version mapping
+- G2-2-016-158 — src/modules/placements job, application and company read/write projections: Preserve migrated historical statuses, source and version semantics in new columns
+- G2-19-022-137 — src/modules/placements job, application and company read/write projections: Produce field-level migration matrix for legacy settings, blocked dates, notification defaults, job types
+- G2-20-011-007 — src/modules/placements job, application and company read/write projections: Map status/actor/reason fields explicitly and adopt bounds or documented new schema
+- G2-20-011-023 — src/modules/placements job, application and company read/write projections: Use service/system identity for automated transitions or nullable audited actor with reason
+- G2-20-011-031 — src/modules/placements job, application and company read/write projections: Document APPLIED→SUBMITTED and display migration-compatible status label
+- G2-20-011-033 — src/modules/placements job, application and company read/write projections: Normalize status and implement idempotency for retrying same request
+- G2-20-011-036 — src/modules/placements job, application and company read/write projections: Document schema field/constraint/index mapping for all historical states
+- G2-20-012-009 — src/modules/placements job, application and company read/write projections: Map legacy APPLIED to SUBMITTED in UI/copy and history
+- G2-20-012-025 — src/modules/placements job, application and company read/write projections: Map state machine and initial status labels
+- G2-20-012-039 — src/modules/placements job, application and company read/write projections: Map active job/application identity and status fields, no migration if empty prod
+- G2-3-013-008 — src/modules/placements job, application and company read/write projections: Legacy fields applicationId INT, old/new status varchar50, changedAt local datetime, changedBy nullable INT, rejectionReason varchar500. vNext UUID parent/actor required UUID, from/to varchar24, reason text, occurredAt timestamptz and optional cascadeId. Map all fields/constraints.
+- G2-3-013-015 — src/modules/placements job, application and company read/write projections: Legacy writer trims statuses, normalizes blank oldStatus to null and caps rejectionReason at 500. VNext status history schema stores text reason without bound; add exact boundary validation.
+- G2-3-013-039 — src/modules/placements job, application and company read/write projections: Legacy repeated identical status case-insensitively no-op; vNext strict enum/history CHECK prevents duplicate but may surface DB failure for two concurrent writes. Add expected-state compare and typed conflict.
+- G2-3-013-045 — src/modules/placements job, application and company read/write projections: Legacy query excludes soft-deleted records; vNext history schema has no deleted flag and always returns rows. If deleted historic rows migrate, filter tombstones during import rather than exposing them.
+- G2-3-015-029 — src/modules/placements job, application and company read/write projections: Legacy active learner-visible job requires active=true,deleted=false,not draft,visibilityType != EXTERNAL_ONLY; vNext PUBLISHED + archivedAt null and related company status, but no external-only visibilityType. Define explicit ATS-only exclusion.
+- G2-3-015-040 — src/modules/placements job, application and company read/write projections: Legacy sorts IDs before fetching rows to avoid MySQL JSON sort buffer overflow and restores that order; vNext SQL sorts projected joined rows, small paginated slices. Keep indices/limits for JSON-heavy records.
+- G2-3-015-044 — src/modules/placements job, application and company read/write projections: Legacy slug existence COUNT includes deleted rows to prevent reuse; vNext UUID PK with no legacy jobSlug uniqueness check. Add compatibility slug reservation map if importing old links.
+- G2-3-015-048 — src/modules/placements job, application and company read/write projections: Legacy companyId index/group counts with legacy name fallback; vNext relationship_id index no equivalent name-linked history. Model company legacy alias and scoped usage aggregates.
+- G2-12-014-066 — src/modules/placements job, application and company read/write projections: Legacy only isDeleted=false records cached, vNext DB application status and lifecycle check no isDeleted column; historic deleted visibility contract differs.
+- G2-13-019-003 — src/modules/placements job, application and company read/write projections: Company name/logo duplicated on legacy job; vNext references normalized company relationship.
+- G2-13-019-004 — src/modules/placements job, application and company read/write projections: RoleOptions JSON replaced by normalized placementJobRoleOptions and eligibility-policy tables.
+- G2-13-019-006 — src/modules/placements job, application and company read/write projections: Responsibilities, string location and CTC range become legacyPostingDetails, locations text[] and min/max INR.
+- G2-13-019-008 — src/modules/placements job, application and company read/write projections: Legacy four target department/program/batch/class FKs replaced by other eligibility scopes.
+- G2-13-019-009 — src/modules/placements job, application and company read/write projections: postedDate + importantDates case-insensitive application deadline reconciliation differs from publishedAt/deadline and typed JSON.

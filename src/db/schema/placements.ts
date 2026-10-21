@@ -555,6 +555,17 @@ export const placementJobs = pgTable(
   "placement_jobs",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Source IDs/slugs are import locators, never tenant-independent grants. */
+    legacyJobId: integer("legacy_job_id"),
+    legacySlug: varchar("legacy_slug",{length:160}),
+    legacySeasonId: integer("legacy_season_id"),
+    legacyPostedAt: timestamp("legacy_posted_at",{withTimezone:true}),
+    legacyCreatorRole: varchar("legacy_creator_role",{length:24}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacyIsDraft: boolean("legacy_is_draft"),
+    legacyIsActive: boolean("legacy_is_active"),
+    legacyVisibilityType: varchar("legacy_visibility_type",{length:24}),
+    legacyTargeting: jsonb("legacy_targeting").$type<Record<string,unknown>>(),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -651,6 +662,14 @@ export const placementJobs = pgTable(
   },
   (table) => [
     uniqueIndex("placement_jobs_id_college_uq").on(table.id, table.collegeId),
+    uniqueIndex("placement_jobs_legacy_id_uq").on(table.legacyJobId)
+      .where(sql`${table.legacyJobId} is not null`),
+    uniqueIndex("placement_jobs_legacy_slug_uq").on(sql`lower(${table.legacySlug})`)
+      .where(sql`${table.legacySlug} is not null`),
+    check("placement_jobs_legacy_targeting_ck",sql`
+      ${table.legacyTargeting} is null or jsonb_typeof(${table.legacyTargeting}) = 'object'`),
+    check("placement_jobs_legacy_deleted_ck",sql`
+      ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     check("placement_jobs_version_ck", sql`${table.version} > 0`),
     index("placement_jobs_college_status_idx").on(
       table.collegeId,
