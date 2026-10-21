@@ -181,7 +181,7 @@ export function collegeStructureTotalPages(total: number, pageSize = COLLEGE_STR
 }
 
 export function classCapacityLabel(capacity: number | null) {
-  return capacity === null ? "Not configured" : String(capacity);
+  return capacity === 0 ? "No limit" : capacity === null ? "Not configured" : String(capacity);
 }
 
 export function electiveSelectionLabel(minPick: number, maxPick: number) {
