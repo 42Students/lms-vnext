@@ -434,14 +434,21 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         {detail.screening.internalReason?<p className="whitespace-pre-wrap">Internal screening reason: {detail.screening.internalReason}</p>:null}
         {detail.screening.decidedAt?<p>Last screening decision: {when(detail.screening.decidedAt)}</p>:null}
        </div>:<p className="mt-2 text-sm text-muted-foreground">No screening decision recorded.</p>}
-       {detail.scoring.available&&detail.scoring.score!==null&&detail.scoring.score!==undefined?
-         <p className="mt-2 text-sm">
-          Match Score: {Math.round(detail.scoring.score*100)}%
-          {detail.scoring.partial?<span title="Partial score: some matching evidence was unavailable."
-           className="ml-2 rounded-full border border-amber-400 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">Partial</span>:null}
-         </p>:
+       {detail.scoring.available&&typeof detail.scoring.scorePercent==="number"&&
+        Number.isFinite(detail.scoring.scorePercent)&&detail.scoring.scorePercent>=0&&
+        detail.scoring.scorePercent<=100?
+         <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+          <span className="font-semibold">Recorded assessment score</span>
+          <span className={"inline-flex rounded-full px-3 py-1 font-semibold tabular-nums "+
+           (detail.scoring.scorePercent>=70?"bg-violet-50 text-violet-700":
+             detail.scoring.scorePercent>=40?"bg-cyan-50 text-cyan-700":
+             "bg-slate-100 text-slate-700")}>
+            {Math.round(detail.scoring.scorePercent)}%
+            {detail.scoring.partial?" · Partial":""}
+          </span>
+         </div>:
          <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>}
-       <p className="mt-2 text-xs text-muted-foreground">
+        <p className="mt-2 text-xs text-muted-foreground">
         Historical screening scores are only displayed when backed by persisted evidence. Eligibility rechecks are separate from a hiring decision.
        </p>
        <Button variant="secondary" type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
