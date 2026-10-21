@@ -85,16 +85,17 @@ export async function searchOrganizationPlacementApplications(context:RequestCon
   input.search?or(ilike(users.displayName,pattern),ilike(placementJobs.title,pattern),
    ilike(placementCompanies.name,pattern),ilike(legacyStage,pattern),
    ilike(placementJobRoleOptions.title,pattern),ilike(users.email,pattern)):undefined);
- const [totalRow]=await getDb().select({totalApplications:sql<number>`count(*)::int`})
+ const db=getDb();
+ const {totalRow,countRows,records}=await db.transaction(async tx=>{
+ const [totalRow]=await tx.select({totalApplications:sql<number>`count(*)::int`})
   .from(placementApplications)
   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
    eq(collegeMemberships.collegeId,colleges.id)))
   .where(and(eq(colleges.organizationId,organizationId),activeApplication));
- const db=getDb();
  const [countRows,records]=await Promise.all([
-  db.select({total:sql<number>`count(*)::int`}).from(placementApplications)
+  tx.select({total:sql<number>`count(*)::int`}).from(placementApplications)
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
    .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
@@ -107,7 +108,7 @@ export async function searchOrganizationPlacementApplications(context:RequestCon
    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .where(filters),
-  db.select({id:placementApplications.id,legacyApplicationId:placementApplications.legacyApplicationId,
+  tx.select({id:placementApplications.id,legacyApplicationId:placementApplications.legacyApplicationId,
    learnerId:collegeMemberships.userId,learnerName:users.displayName,
    jobId:placementJobs.id,jobTitle:placementJobs.title,jobStatus:placementJobs.status,
    organizationId:colleges.organizationId,collegeId:colleges.id,
@@ -137,6 +138,8 @@ export async function searchOrganizationPlacementApplications(context:RequestCon
       desc(placementApplications.submittedAt),asc(placementApplications.id))
    .limit(input.pageSize).offset((input.page-1)*input.pageSize),
  ]);
+ return {totalRow,countRows,records};
+ },{isolationLevel:"repeatable read",accessMode:"read only"});
  const totalMatching=countRows[0]?.total??0;
  return {...input,organizationId,totalApplications:totalRow?.totalApplications??0,
   totalMatching,totalPages:Math.max(1,Math.ceil(totalMatching/input.pageSize)),

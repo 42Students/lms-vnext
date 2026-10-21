@@ -23,7 +23,7 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const input:unknown=await request.json();
+  const input:unknown=await request.json().catch(()=>({}));
   const stats=await getOrganizationApplicationStats(await getCurrentRequestContext(),input);
   return NextResponse.json({...stats,refreshed:false,
    reason:"Applications are read directly from the database; no refresh is required."},
