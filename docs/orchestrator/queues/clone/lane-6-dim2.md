@@ -363,13 +363,13 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/ui/data-table.tsx`
 - [x] `src/components/ui/file-dropzone.tsx`
 - [x] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/ui/pagination.tsx`
-- [ ] `src/components/ui/summary-strip.tsx`
-- [ ] `src/components/ui/tabs.tsx`
-- [ ] `src/components/ui/timeline.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/ui/pagination.tsx`
+- [x] `src/components/ui/summary-strip.tsx`
+- [x] `src/components/ui/tabs.tsx`
+- [x] `src/components/ui/timeline.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
 - [ ] `src/components/verification/VerificationReviewDrawer.tsx`
 - [ ] `src/components/verification/VerificationWorkspace.tsx`
