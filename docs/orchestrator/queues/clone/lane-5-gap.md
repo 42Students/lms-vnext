@@ -70,4 +70,4 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/new.js`
 - [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ManageCollegeDrawer.js`
 - [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminUsers.js`
-- [ ] U032 (Cross-cutting area) `cross/05: Scheduled jobs and background processing: every cron, retry, idempotency, time zones`
+- [x] U032 (Cross-cutting area) `cross/05: Scheduled jobs and background processing: every cron, retry, idempotency, time zones`
