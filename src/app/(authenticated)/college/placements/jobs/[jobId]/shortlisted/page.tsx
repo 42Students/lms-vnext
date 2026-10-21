@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { CollegeApplicationDependentFilters } from "@/components/placements/college-application-dependent-filters";
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
 import { CollegeAssessmentLinkCopy } from "@/components/placements/college-assessment-link-copy";
+import { CollegeShortlistedToolbar } from "@/components/placements/college-shortlisted-toolbar";
 import { getDb } from "@/db/client";
 import { placementJobs, placementCompanyRelationships, placementCompanies } from "@/db/schema";
 import { and, eq } from "drizzle-orm";
@@ -75,7 +76,9 @@ export default async function CollegeDriveShortlistedPage({
     company: placementCompanies.name,
     posting: placementJobs.legacyPostingDetails,
   }).from(placementJobs)
-    .innerJoin(placementCompanyRelationships, eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId))
+    .innerJoin(placementCompanyRelationships, and(
+      eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId),
+      eq(placementCompanyRelationships.collegeId,data.collegeId)))
     .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,data.collegeId)))
     .limit(1);
@@ -179,7 +182,6 @@ export default async function CollegeDriveShortlistedPage({
         departments={filters.departments} programs={filters.programs} cohorts={filters.cohorts}/> :
         <p role="alert" className="text-sm text-amber-700 lg:col-span-2">Department, program and batch options could not be loaded. <Link className="underline" href={href({...query,page:1})}>Retry options</Link></p>}
       <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filters</Button>
-      <Link href={href({...query,page:query.page})} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Refresh</Link>
       {filtered
         ? <Link href={href({ ...query, q: "", source: "ALL", departmentId:undefined, programId:undefined,cohortId:undefined, page: 1 })}
             className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
@@ -187,11 +189,9 @@ export default async function CollegeDriveShortlistedPage({
     </form>
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
       <span role="status">{data.total.toLocaleString("en-IN")} matching {stageName(query.stage).toLowerCase()} applications</span>
-      <a download href={"/api/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications/export" +
-        (driveApplicationsHref(jobId, query, true).split("/export")[1] ?? "")}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-        Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})
-      </a>
+      <CollegeShortlistedToolbar cap={DRIVE_APPLICATION_EXPORT_CAP}
+        exportHref={"/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
+          (driveApplicationsHref(jobId, query, true).split("/export")[1] ?? "")}/>
     </div>
     {query.stage === "ASSESSMENT" && !assessmentLink
       ? <Alert tone="info">Assessment candidates receive in-app notifications when their application stage is updated. No registered assessment link is available for this drive.</Alert>
