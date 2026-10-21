@@ -21,7 +21,7 @@ export function legacyAdminProjectStatus(status:string,blocker:string|null|undef
 
 const schema = z.strictObject({
   q: z.string().trim().max(120).optional(),
-  status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
+  status: z.enum(["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","COMPLETED","ARCHIVED"]).optional(),
   view: z.enum(["cards", "table"]).default("table"),
   page: positiveDecimal(1, 100000, 1),
   pageSize: positiveDecimal(10, 100, 10),
@@ -54,12 +54,11 @@ export function parseAdminProjectsQuery(
      legacySearch.trim()!==currentSearch.trim())return schema.safeParse(null);
   const search = legacySearch ?? currentSearch;
   const rawStatus=first(params.status);
-  // Only semantically equivalent old filters may become vNext filters.
-  // BLOCKED needs a separate persisted blocker predicate and cannot
-  // silently be treated as all ACTIVE workspaces.
+  // Preserve the legacy filter dimension. BLOCKED uses the scoped blocker
+  // predicate and READY uses authored readiness phase rather than silently
+  // falling through to all ACTIVE workspaces.
   const status=rawStatus==="NOT_STARTED"?"PLANNED":
-    rawStatus==="IN_PROGRESS"?"ACTIVE":rawStatus==="DONE"?"COMPLETED":rawStatus;
-  if(params.pageSize!==undefined&&params.size!==undefined&&params.pageSize!==params.size)return schema.safeParse(null);
+    rawStatus==="DONE"?"COMPLETED":rawStatus;
   const view = first(params.view);
   const page = first(params.page);
   const pageSize = first(params.pageSize)??first(params.size);

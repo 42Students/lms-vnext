@@ -16,6 +16,9 @@ export type ProjectAdminCollectionQuery = {
   status?:
     | "PLANNED"
     | "ACTIVE"
+    | "IN_PROGRESS"
+    | "READY"
+    | "BLOCKED"
     | "COMPLETED"
     | "ARCHIVED";
   sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC";
@@ -123,8 +126,10 @@ export function ProjectAdminFilters({
           onChange={event=>updateUrl("status",event.target.value)}
           className="w-full"
         >
-          <option value="">Status</option>
-          {PROJECT_STATUSES.map((status) => (
+          <option value="">All statuses</option>
+          {(legacyWorkspaces?
+            (["ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED"] as const):
+            PROJECT_STATUSES).map((status) => (
             <option key={status} value={status}>
               {label(status)}
             </option>
@@ -132,9 +137,9 @@ export function ProjectAdminFilters({
         </Select>
       </label>
       {legacyWorkspaces?<p className="text-xs text-muted-foreground">
-        In progress and Ready are workflow states, not database status filters.
+        Ready and Blocked use saved workspace phase and blocker signals.
         <Link href="/admin/projects/at-risk" className="ml-1 font-semibold text-primary-text underline">
-          View blocked workspaces</Link>
+          View all risk signals</Link>
       </p>:null}
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
