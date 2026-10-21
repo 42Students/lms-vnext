@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Faculty.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/teachers.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/teacher/contacts/[contactsTab].js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/teacher/contacts/index.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/fileExplorer.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/teacher/contacts/index.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/fileExplorer.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/teacher/index.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/teacher/notifications.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Home/HomeEditDrawer.js`
