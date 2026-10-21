@@ -25,3 +25,7 @@
 - Existing same-origin plus 32-byte bearer authentication is retained. The message-digest worker now claims `tpo.recruiterMessageEmails` for four minutes before its tenant-scoped, unread-only send service; a five-minute dev CronJob supplies an Origin matching the in-cluster host. Relevant partial rows G2-5-032-020/-062.
 - The source service's own provider and state checks remain authoritative. Warmup at 90 seconds after startup, durable message-provider acceptance reconciliation, and real deployment checks remain incomplete; do not tick the document.
 - Existing withdrawal, notice and recruiter endpoint response bodies remain unchanged on a successful run; lease contention returns an explicit `skipped` result.
+
+### Deployment/production gate
+
+- Added `docs/operations/tpo-scheduled-jobs-dev.md` with ten-job schedule inventory, explicit missing handlers, dev-secret and actor requirements, unchanged unsafe deployment gates, and a production **NOT READY** release hold (G2-5-032-068, -063). This documents the hold; it does not itself finish the missing implementation or verification rows.
