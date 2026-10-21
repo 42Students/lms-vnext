@@ -43,7 +43,7 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
       placeholder={kind==="domains"?"company.com or name@company.com":"e.g. TCS"}
       className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
      <Button type="submit" loading={pending} disabled={pending}
-      aria-label={kind==="domains"?"Add company domain":"Add company other name"} aria-label={kind==="domains"?"Add company domain":"Add company other name"} className="min-h-11 md:min-h-9">Add</Button>
+      aria-label={kind==="domains"?"Add company domain":"Add company other name"} className="min-h-11 md:min-h-9">Add</Button>
     </form>
     <ul className="space-y-1">{entries.map(value=><li key={value} className="flex items-center justify-between gap-2 flex-wrap">
      <span className="break-all">{value}</span>
