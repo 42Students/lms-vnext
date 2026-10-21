@@ -14,6 +14,7 @@ import { getDb } from "@/db/client";
 import {
   courseSectionDeliveries,
   lessonContents,
+  sections,
 } from "@/db/schema";
 import {
   lessonContentDeliverySequences,
@@ -24,6 +25,7 @@ import type {
 import {
   requireDeliveryContentMutation,
 } from "./learning-access";
+import {can} from "@/modules/permissions/policy";
 import {
   CoursesServiceError,
 } from "./errors";
@@ -261,4 +263,51 @@ export async function updateDeliveryLessonContentOrder(
       }),
     );
   });
+}
+
+
+/** Legacy class picker for course syllabus per-class ordering. The historical
+ * numeric classId -> UUID resolution must use the verified section crosswalk;
+ * a GROUP_BACKED elective class is never substituted for a section delivery.
+ * A historical chosen class remains visible as read-only, not a writable
+ * delivery masquerading as ACTIVE. No cross-college choices are returned. */
+export async function listDeliveryContentOrderClassChoices(
+ context:RequestContext,lessonId:string,
+ selectedHistoricalDeliveryId:string|null=null,
+){
+ const lesson=await loadCourseLessonScope(lessonId);
+ const rows=await getDb().select({
+  deliveryId:courseSectionDeliveries.id,
+  sectionId:sections.id,legacyClassId:sections.legacyClassId,
+  name:sections.name,code:sections.code,
+  sectionStatus:sections.status,deliveryEndedAt:courseSectionDeliveries.endedAt,
+ }).from(courseSectionDeliveries)
+  .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+  .where(eq(courseSectionDeliveries.offeringId,lesson.offeringId))
+  .orderBy(asc(sections.name),asc(sections.id),asc(courseSectionDeliveries.id))
+  .limit(501);
+ const admin=can(context,"courses.manage",{
+  organizationId:lesson.organizationId,collegeId:lesson.collegeId,
+ });
+ const visible: Array<{
+  deliveryId:string;sectionId:string;legacyClassId:number|null;
+  label:string;historical:boolean;readOnly:boolean;
+ }>=[];
+ for(const row of rows){
+  const historical=row.deliveryEndedAt!==null||row.sectionStatus!=="ACTIVE";
+  if(historical&&row.deliveryId!==selectedHistoricalDeliveryId)continue;
+  if(!admin){
+   // A teaching grant applies to an actual delivery, not all classes.
+   try{await requireDeliveryContentMutation(context,row.deliveryId);}
+   catch{continue;}
+  }
+  visible.push({
+   deliveryId:row.deliveryId,sectionId:row.sectionId,
+   legacyClassId:row.legacyClassId,label:row.name+(row.code?" ("+row.code+")":""),
+   historical,readOnly:historical,
+  });
+ }
+ return {allClassesLabel:"All classes" as const,choices:visible,
+  hasMore:rows.length>500,
+  historicalSelection:visible.find(row=>row.deliveryId===selectedHistoricalDeliveryId)??null};
 }

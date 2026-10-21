@@ -49,7 +49,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_module-access.ts.md` (edit src/db/schema/module-access.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_inbound-mail.ts.md` (edit src/db/schema/inbound-mail.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_tpo-crm-validation.ts.md` (edit src/modules/placements/tpo-crm-validation.ts; 6 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_lesson-content-order-service.ts.md` (edit src/modules/courses/lesson-content-order-service.ts; 6 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_lesson-content-order-service.ts.md` (edit src/modules/courses/lesson-content-order-service.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_departments.ts.md` (edit src/db/schema/departments.ts; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_topbar_legacy-topbar.tsx.md` (edit src/components/shell/topbar/legacy-topbar.tsx; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_college-drive-archive-action.tsx.md` (edit src/components/placements/college-drive-archive-action.tsx; 6 findings; best P2)
