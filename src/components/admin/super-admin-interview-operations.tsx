@@ -46,7 +46,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
     {choices("Status",unique(events.map(x=>x.status)),status,setStatus)}
    </div>
    <details className="min-w-0" open={mode!=="ALL"||department!=="ALL"||sort!=="DATE"||conflictsOnly}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
      {choices("Mode",unique(events.map(calendarMode)),mode,setMode)}
      {choices("Department",unique(events.map(x=>x.departmentName??"Not recorded")),department,setDepartment)}

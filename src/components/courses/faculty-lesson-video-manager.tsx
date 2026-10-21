@@ -269,7 +269,7 @@ export function FacultyLessonVideoManager({
             </Button>
           </div>
           <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
-            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">More video actions</summary>
+            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More video actions</summary>
             <div className="flex min-w-0 flex-wrap gap-2 pt-2">
               <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||(video.publishStatus==="DRAFT"&&(!facultyVideoMayPublish(video)||!video.lessonContentId))}
               onClick={()=>change(video,{publishStatus:facultyVideoPublishAction(video)})}>
