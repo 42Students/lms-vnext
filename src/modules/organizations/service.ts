@@ -1,4 +1,5 @@
 import { and, asc, eq, ne, sql } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -333,4 +334,20 @@ export async function listArchivedOrganizations(context:RequestContext){
    organizationId?eq(organizations.id,organizationId):undefined,
   )).orderBy(asc(organizations.name)).limit(200);
  });
+}
+
+/** Explicit legacy recycle-bin dispatch. Only supported tenant entities may be
+ * restored here; academic objects keep their own specialized guarded routes. */
+export async function restoreArchivedEntity(context:RequestContext,raw:unknown){
+ const input=z.strictObject({
+  entityType:z.enum(["ORGANIZATION","COLLEGE"]),id:z.string().uuid(),
+ }).parse(raw);
+ if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
+ if(input.entityType==="ORGANIZATION"){
+  const restored=await restoreOrganization(context,input.id);
+  return {entityType:input.entityType,restored};
+ }
+ const {restoreCollege}=await import("@/modules/colleges/service");
+ const restored=await restoreCollege(context,input.id);
+ return {entityType:input.entityType,restored};
 }

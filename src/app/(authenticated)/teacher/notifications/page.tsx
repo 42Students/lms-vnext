@@ -16,7 +16,7 @@ import {
   countOwnUnreadNotifications,
   listOwnNotificationPage,
 } from "@/modules/activity/notification-service";
-import { parseFacultyInboxQuery } from "@/modules/courses/faculty-inbox-query-model";
+import { parseFacultyInboxQuery,normalizeFacultyLegacyInboxTab } from "@/modules/courses/faculty-inbox-query-model";
 import { facultyNotificationActionHref } from "@/modules/courses/faculty-notification-link-model";
 import { requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 
@@ -36,14 +36,11 @@ export default async function FacultyNotificationsPage({
   const membership = requireFacultyNotificationsAccess(context);
 
   const { tab, ...query } = await searchParams;
-  const scopeTabs = ["all", "personal", "college", "department", "faculty"] as const;
-  // Keep the old ?tab= deep links without treating an invalid tab as a
-  // query for a foreign or unfiltered recipient.
-  if (tab !== undefined &&
-      (typeof tab !== "string" || !scopeTabs.includes(tab as typeof scopeTabs[number]))) {
-    redirect(FACULTY_INBOX + "?view=all");
-  }
-  const scopeTab = typeof tab === "string" ? tab : "all";
+  const legacyTab=normalizeFacultyLegacyInboxTab(tab);
+  // Historic invalid tabs canonicalize, but invalid cursor tuples still fail
+  // closed in parseFacultyInboxQuery rather than expanding a private inbox.
+  if(legacyTab.needsCanonicalRedirect)redirect(FACULTY_INBOX+"?view=all");
+  const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
   const [page, unreadCount, announcementRead] = await Promise.all([

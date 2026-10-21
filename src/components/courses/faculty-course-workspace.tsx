@@ -241,6 +241,7 @@ function AssignmentItem({
             assessment={{
               id: item.id,
               kind: "ASSIGNMENT",
+              deliveryId,
               title: item.title,
               description: item.description,
               dueAt: item.dueAt,

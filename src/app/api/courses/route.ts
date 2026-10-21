@@ -21,7 +21,7 @@ export const LEGACY_COURSE_API_CROSSWALK = {
  "PUT /update/{id}": "PATCH /api/courses/{courseId} (expectedUpdatedAt required)",
  "DELETE /delete/{id}": "DELETE /api/courses/{courseId} (soft archive)",
  "GET /deleted": "GET /api/courses?collegeId={uuid}&includeArchived=true",
- "POST /restore": "POST /api/courses/{courseId}/restore",
+ "POST /restore": "UNSUPPORTED: no vetted archived-course restore endpoint",
 } as const;
 
 
