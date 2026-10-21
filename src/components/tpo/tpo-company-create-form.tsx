@@ -88,7 +88,7 @@ export function TpoCompanyCreateForm() {
               Reuse an existing global employer when its identity matches; otherwise
               create a company and link it to your college.
             </p>
-            <label className="block text-sm font-semibold text-foreground">
+            <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Company name
               <Input className="mt-1 min-h-11 w-full md:min-h-9" required minLength={2} maxLength={200}
                 
@@ -96,7 +96,7 @@ export function TpoCompanyCreateForm() {
                 onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, name: event.target.value }));}}/>
             </label>
             <Disclosure title="Optional website and domain" className="border-t border-border" contentClassName="space-y-3 px-2 pb-2">
-            <label className="block min-w-0 text-sm font-semibold text-foreground">
+            <label className="block min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Website URL (optional)
               <Input className="mt-1 w-full min-w-0" type="url" maxLength={500}
                 placeholder="https://company.example"
@@ -104,7 +104,7 @@ export function TpoCompanyCreateForm() {
                 value={form.websiteUrl} disabled={pending}
                 onChange={(event) => {setReviewing(false);setError("");setForm((v) => ({ ...v, websiteUrl: event.target.value }));}}/>
             </label>
-            <label className="block text-sm font-semibold text-foreground">
+            <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Primary domain (optional)
               <Input className="mt-1 w-full min-w-0" maxLength={255} placeholder="company.example"
                 

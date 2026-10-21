@@ -87,10 +87,10 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
        className="min-h-11 w-full sm:w-auto md:min-h-9">{busy?"Sending…":"Send"}</Button>
    </div>}>
     <form id={formId} onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
-     <label className="block text-sm font-semibold text-body">Recruiter
+     <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recruiter
       <Select ref={selectRef} aria-label="Recruiter" required value={id}
        onChange={e=>{setId(e.target.value);setCreatedThreadId(null);setError("");}} disabled={busy}
-       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
+       className="mt-1 min-h-11 w-full border px-2">
        <option value="">Choose a recruiter</option>
        {recruiters.map(r=><option key={r.userId} value={r.userId}>
         {(r.displayName?.trim()||"Unnamed recruiter")+" · "+r.companyName}
@@ -105,9 +105,9 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
        className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-medium">{reply}</Button>)}
       </div>
      </Disclosure>
-     <label className="block text-sm font-semibold text-body">Message
+     <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Message
       <Textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
-       disabled={busy} className="mt-1 min-h-28 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-base md:text-sm"
+       disabled={busy} className="mt-1 min-h-28 w-full min-w-0 border p-3 text-base md:text-sm"
        value={message} onChange={event=>editMessage(event.target.value)}
        onKeyDown={event=>{
         if(event.key==="Enter"&&(event.ctrlKey||event.metaKey||!event.shiftKey)&&

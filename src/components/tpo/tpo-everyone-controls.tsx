@@ -74,7 +74,7 @@ export function TpoEveryoneControls({muted,actorUserId}:{muted:boolean;actorUser
   <form onSubmit={event=>{event.preventDefault();void post();}}
    className="min-w-0 space-y-3 border-y border-border py-4">
    <h2 className="font-semibold">Write to Everyone</h2>
-   <label className="block text-sm">Message
+   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
     <Textarea className="mt-2 min-h-32 w-full min-w-0" name="body" required maxLength={4000} rows={4} value={message}
      onChange={event=>updateMessage(event.target.value)} disabled={busy}
      

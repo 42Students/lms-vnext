@@ -37,7 +37,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false,title="Filter stude
     aria-label={"Remove "+chip.label}>{chip.label} ×</FilterChip>)}
   </div>:null}
   <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-  {fields.map(field=><label key={field.key} className="grid min-w-0 content-start gap-1 text-sm font-semibold text-body">{field.label}
+  {fields.map(field=><label key={field.key} className="grid min-w-0 content-start gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">{field.label}
    <Select className="min-h-11 w-full min-w-0 text-base md:min-h-9 md:text-sm" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
     <option value={field.allValue??""}>All</option>{field.options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
    </Select>
