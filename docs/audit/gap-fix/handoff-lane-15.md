@@ -114,3 +114,6 @@
 
 - College semester course model owner: G2-17-002-086. Curriculum DB allows legacy nullable/0..30 credits, but editable Zod currently 1..10. Preserve old read-only values or align approved write limits with legacy, warn on out-of-policy historic rows, and never reject reading existing semesters. Migration 0050 immutable.
 - Recruiter email provider/operations owner: G2-20-010-053. State and inbound hash tables already registered via 0135; before RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED=true, verify rollout guard against schema, signed inbound gateway, ZeptoMail credentials, reply expiry/replay and no plaintext token persistence. No duplicate migration.
+
+- Learner announcements/notification owner: G2-19-023-055. Historical student IDs must map to collegeMembershipId via same-tenant crosswalk; 0106 recipient snapshots scoped by announcement college, and user notifications only read for authenticated membership. Do not conflate a user's multiple college roles or invent historical read timestamps.
+- Identity/tenant sign-in settings owner: G2-4-031-072. Map explicit legacy EMAIL_PHONE→EMAIL_AND_PHONE, PHONE_EMAIL→PHONE_AND_EMAIL, EMAIL_ONLY/PHONE_ONLY direct, NULL→no saved override/inherited email-first. Reject unknown settings and verify integer college→UUID before writing, no placeholder policy for old NULL.
