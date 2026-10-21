@@ -1,6 +1,6 @@
 "use client";
 import {useRef,useState} from "react";
-import {useRouter} from "next/navigation";
+import {usePathname,useRouter} from "next/navigation";
 import {learnerSavedDriveCopy} from "@/modules/placements/learner-saved-drives-model";
 import {apiFetch} from "@/lib/api-fetch";
 import {FilterChip} from "@/components/ui/filter-chip";
@@ -11,12 +11,16 @@ import {useToast} from "@/components/ui/toast";
  * The parent withholds this control if the initial saved-IDs read failed.
  */
 export function LearnerSaveDriveButton({
- jobId,jobTitle,initialSaved,known=true,surface="LIST",
+ jobId,jobTitle,initialSaved,known=true,surface:explicitSurface,
 }:{
  jobId:string;jobTitle:string;initialSaved:boolean;
  known?:boolean;surface?:"LIST"|"DETAIL";
 }){
  const router=useRouter();
+ const pathname=usePathname();
+ const surface=explicitSurface??(
+  /\\/(?:jobs|drives)\\/[0-9a-f-]{36}(?:\\/|$)/i.test(pathname)?"DETAIL":"LIST"
+ );
  const {showToast}=useToast();
  const [saved,setSaved]=useState(initialSaved);
  const [busy,setBusy]=useState(false);
