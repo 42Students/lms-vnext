@@ -14,10 +14,15 @@ export const mentorProjectListQuerySchema = z.object({
   page: z.preprocess(value => value === "0" || value === 0 ? 1 : value,
     z.coerce.number().int().min(1).max(10000)).default(1),
   pageSize: z.coerce.number().int().refine(n => [10,25,50].includes(n)).default(25),
+  // Legacy vNext bookmarks use 1-based page; legacy frontend exports can
+  // supply explicit 0-based legacyPage to avoid ambiguous positive page=N.
+  legacyPage: z.coerce.number().int().min(0).max(9999).optional(),
   // Preserve legacy unknown-key tolerance, but explicitly reject supplied
   // tenant selectors rather than silently discarding forged scope fields.
   collegeId: z.never().optional(),
   organizationId: z.never().optional(),
   tenantId: z.never().optional(),
-}).strip(); // MEN-projects-meetings-R10: ignore obsolete legacy query keys safely.
+}).strip().transform(({legacyPage,...query})=>({
+ ...query,page:legacyPage===undefined?query.page:legacyPage+1,
+})); // Normalized output is always 1-based; legacyPage is never sent to SQL.
 export type MentorProjectListQuery = z.infer<typeof mentorProjectListQuerySchema>;

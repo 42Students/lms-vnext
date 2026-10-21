@@ -21,3 +21,17 @@ export function canTransitionIndependentFinding(
  if(from==="RELEASED_PROD")return to==="IN_PROGRESS"&&reason;
  return true;
 }
+
+/** Deliberately stricter vNext migration than the legacy free-form state
+ * updates. Existing FIXED_DEV, RELEASED_PROD, VERIFIED and duplicate rows
+ * remain readable unchanged; new writes must follow the gate above.
+ * Duplicate is a separate UUID-validated action, never a status shortcut. */
+export const INDEPENDENT_FINDING_TRANSITION_MIGRATION = {
+ fixedDevelopmentRequires:["CONFIRMED","IN_PROGRESS"],
+ releaseProductionRequires:["FIXED_DEV"],
+ verificationRequires:["RELEASED_PROD"],
+ terminalDispositionRequiresNote:true,
+ reopeningRequiresNote:true,
+ duplicateRequiresSeparateUuidAction:true,
+ minimumNoteCharacters:4,
+} as const;
