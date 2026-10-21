@@ -26,9 +26,14 @@ export function adminAssessmentHref(kind: AdminAssessmentKind, query: z.infer<ty
 export function adminAssessmentExportHref(
  kind: AdminAssessmentKind,
  query: z.infer<typeof adminAssessmentQuerySchema>,
+ exportMode:"ALL"|"PAGE"="ALL",
 ): string {
- const listing=adminAssessmentHref(kind,{...query,page:1});
+ const listing=adminAssessmentHref(kind,{...query,page:exportMode==="PAGE"?query.page:1});
  const filters=new URL(listing,"https://invalid.local").searchParams;
+ if(exportMode==="PAGE"){
+  filters.set("exportMode","PAGE");
+  filters.set("page",String(query.page));
+ }
  const path=kind==="ASSIGNMENT"?"/api/admin/assignments/export":"/api/admin/quizzes/export";
  return path+(filters.size?"?"+filters.toString():"");
 }
