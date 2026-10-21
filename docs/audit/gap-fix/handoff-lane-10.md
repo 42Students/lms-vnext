@@ -55,3 +55,7 @@
 
 - G2-9-008-077/035 | College hiring company-report read service | Return independent company report, failure state and six-card loading skeleton; do not reuse failed funnel rows as verified company data. Report season scope must stay identical.
 - G2-7-019-096/039 | Project retention/deletion data model and module error contract | Register college-scoped DELETED lifecycle, recovery permission and separate deleted-workspaces read. Current route explicitly reports unavailable rather than equating ARCHIVED and DELETED; distinguish FEATURE_DISABLED when policy supports it.
+
+- G2-9-010-054 | College placements module access/authorization service | Distinguish typed FEATURE_DISABLED for disabled tenant module from actual UNAUTHORIZED before rendering legacy "Placements is turned off for this college" on direct applicant links. Never infer from thrown authorization or leak scoped job information.
+- G2-6-001-039 | College Admin faculty lifecycle service, auth/OTP and session owner | Add separately permissioned hard-delete (with retention/audit safeguards) and Clear OTP service+API contracts before exposing destructive confirmed controls. No fake buttons or unverified global session-revocation promise.
+- G2-1-001-018/019/020 | Student lifecycle component and central authentication/session owner | Match student-specific success/error strings and reversible membership disclosure; check server revocation of existing college sessions separately from disabling one membership. Faculty action now limits disclosure to actual membership access.
