@@ -60,3 +60,14 @@
 - Legacy jdUrl → legacyJobDescriptionUrl for import evidence or signed URL from jobDescriptionObjectPath. Legacy assessmentUrl/evaluationConfig are sensitive and must remain outside recruiter or learner projections unless expressly authorized.
 - Legacy job_type/counts_as_placed → per-college jobTypeLabel and countsAsPlaced policy (other lane migration coordination unresolved); recordedOutside keeps external-job suppression independently of job type.
 - Role packages: name/title blank → `Default` through validation on create; per-package ctcLpa kept to 4 decimals, stipend INR/month + positive months; require at least one active primary pay package before publish, not through a row-level DB constraint. Existing bond amounts should not be reintroduced to form without owner approval.
+
+## Packet 11 — placements part 11/15
+- `src_db_schema_placements.ts.part11of15.md` | Added G2-13-020-015/047/049, G2-4-023-072 `placementCompanyMergeHistory` with immutable source→target references, one source redirect and actor/date audit (0148); 2000-char college-scoped note check (G2-13-020-012/033). Already fixed G2-12-015-040 stipend/duration in packet10; global domains/aliases remain existing `placement-company-identities.ts`. | G2-12-015-039, G2-13-020-007/034, G2-13-030-004/028/031/032/042/045 handed to UI/service; G2-13-021-009/010/011/012 legacy auto screening intentionally not added, no AI functionality per owner. 0148 NOT EXECUTED.
+
+## Packet 12 — placements part 12/15
+- `src_db_schema_placements.ts.part12of15.md` | Added G2-5-013-024 validated assessment URL DB length and HTTP(S) prefix for staff-private application artifact table (0149). Already present normalized application status, screening decisions, staff-private URL, offer letters and status history. | G2-13-021-019/020/031/032/034/049 auto scoring excluded by vNext no-AI decision; G2-5-013-009/010/038/048/053/059/085/086/087/089, G2-5-015-007/008/019 require service/UI join logic. 0149 NOT EXECUTED.
+
+### Redaction / legacy model crosswalk
+- Canonical Company merge: source company remains addressable through redirect chain; canonical target must be domain verified and acyclic by service policy. Private internalNotes/contact remain under college relationship only; merges must not expose another college's notes.
+- Legacy screeningStatus PENDING/COMPLETED/FAILED and 0..1 automated score/skills/exclusions were a distinct automated scoring subsystem. vNext retains explicit manual screening decisions and stage/round history; no AI scoring tables or enrichment are introduced.
+- Legacy assessmentUrl belongs in `placement_application_private_artifacts.assessment_url`, validated as http(s) max2048; offer letter in `placement_offers.offer_letter_url`; resume history in private object-path sidecar; application timeline is union of lifecycle, screening, rounds, stages, offers and joining sorted chronologically.

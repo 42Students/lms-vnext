@@ -74,6 +74,30 @@ export const placementCompanies = pgTable(
   ],
 );
 
+/** Canonical company redirects; redirects never delete historical drive references. */
+export const placementCompanyMergeHistory = pgTable(
+  "placement_company_merge_history",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    sourceCompanyId: uuid("source_company_id").notNull().references(
+      () => placementCompanies.id, { onDelete: "restrict" },
+    ),
+    targetCompanyId: uuid("target_company_id").notNull().references(
+      () => placementCompanies.id, { onDelete: "restrict" },
+    ),
+    reason: text("reason"),
+    mergedByUserId: uuid("merged_by_user_id").notNull().references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    mergedAt: timestamp("merged_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("placement_company_merge_source_uq").on(table.sourceCompanyId),
+    index("placement_company_merge_target_idx").on(table.targetCompanyId),
+    check("placement_company_merge_distinct_ck", sql`${table.sourceCompanyId} <> ${table.targetCompanyId}`),
+  ],
+);
+
 export const placementCompanyRelationships = pgTable(
   "placement_company_relationships",
   {
@@ -125,6 +149,10 @@ export const placementCompanyRelationships = pgTable(
     uniqueIndex("outside_drives_relationship_college_parent_uq").on(
       table.id,
       table.collegeId,
+    ),
+    check(
+      "placement_company_relationships_notes_len_ck",
+      sql`${table.internalNotes} is null or length(${table.internalNotes}) <= 2000`,
     ),
     uniqueIndex("placement_company_relationships_college_company_uq").on(
       table.collegeId,
@@ -1178,6 +1206,12 @@ export const placementApplicationPrivateArtifacts = pgTable(
       .defaultNow(),
   },
   (table) => [
+    check(
+      "placement_application_private_assessment_url_ck",
+      sql`${table.assessmentUrl} is null or
+        (length(${table.assessmentUrl}) <= 2048
+         and ${table.assessmentUrl} ~* '^https?://')`,
+    ),
     check(
       "placement_application_private_resume_history_ck",
       sql`jsonb_typeof(${table.resumeHistory}) = 'array'`,
