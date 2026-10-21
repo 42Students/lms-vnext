@@ -22,7 +22,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  // IST date, unlike 23:59:59 which incorrectly drops the final second.
  const toExclusive=query.to
   ?new Date(Date.parse(query.to+"T00:00:00+05:30")+86_400_000):null;
- const [departmentsList,programList,cohortList]=await Promise.all([
+ const [departmentsLookup,programLookup,cohortLookup]=await Promise.allSettled([
   db.select({id:departments.id,name:departments.name}).from(departments)
    .where(eq(departments.collegeId,collegeId)).orderBy(asc(departments.name)),
   db.select({id:programs.id,name:programs.name,departmentId:programs.departmentId})
@@ -33,6 +33,17 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    .innerJoin(departments,eq(departments.id,programs.departmentId))
    .where(eq(departments.collegeId,collegeId)).orderBy(asc(cohorts.name)),
  ]);
+ const departmentsList=departmentsLookup.status==="fulfilled"?departmentsLookup.value:[];
+ const programList=programLookup.status==="fulfilled"?programLookup.value:[];
+ const cohortList=cohortLookup.status==="fulfilled"?cohortLookup.value:[];
+ const filterErrors={
+  departments:departmentsLookup.status==="rejected"?
+   "Departments could not be loaded. Retry this report.":null,
+  programs:programLookup.status==="rejected"?
+   "Programs could not be loaded. Retry this report.":null,
+  cohorts:cohortLookup.status==="rejected"?
+   "Batches could not be loaded. Retry this report.":null,
+ };
  const academicFilter=query.departmentId||query.programId||query.cohortId;
  const base=db.select({
   applicationId:placementApplications.id,
@@ -113,6 +124,9 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  const companySubtotals=new Map<string,{
   companyId:string;company:string;total:number;byStage:Record<string,number>
  }>();
+ const normalizedSubtotals=new Map<string,{
+  company:string;total:number;byStage:Record<string,number>
+ }>();
  for(const row of groupRows){
   if(row.stage in totals)totals[row.stage]+=row.total;
   const current=companies.get(row.jobId)??{
@@ -129,6 +143,17 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
   subtotal.total+=row.total;
   if(row.stage in subtotal.byStage)subtotal.byStage[row.stage]+=row.total;
   companySubtotals.set(row.companyId,subtotal);
+  // The old report grouped aliases by a case-insensitive trimmed company
+  // display name. Keep stable company-ID subtotals too for vNext drill-downs.
+  const normalizedName=row.companyName.trim().replace(/\s+/g," ");
+  const normalizedKey=normalizedName.toLocaleLowerCase("en");
+  const named=normalizedSubtotals.get(normalizedKey)??{
+   company:normalizedName,total:0,
+   byStage:Object.fromEntries(stages.map(stage=>[stage,0])),
+  };
+  named.total+=row.total;
+  if(row.stage in named.byStage)named.byStage[row.stage]+=row.total;
+  normalizedSubtotals.set(normalizedKey,named);
  }
  const cumulativeTotals=Object.fromEntries(stages.map(stage=>
   [stage,Number(reachedRows[0]?.[stage]??0)])) as Record<(typeof stages)[number],number>;
@@ -138,6 +163,11 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
   companyRows:[...companies.values()],
   companySubtotals:[...companySubtotals.values()].sort((a,b)=>
    a.company.localeCompare(b.company)||a.companyId.localeCompare(b.companyId)),
+  normalizedCompanySubtotals:[...normalizedSubtotals.values()].sort((a,b)=>
+   a.company.localeCompare(b.company)),
+  companyRowsFirstPage:[...companies.values()].slice(0,10),
+  companyRowsPageSize:10,
   averageHoursToShortlist:averages[0]?.avgHours==null?null:Number(averages[0].avgHours),
-  availableStages:[...stages],filters:{departments:departmentsList,programs:programList,cohorts:cohortList}};
+  availableStages:[...stages],
+  filters:{departments:departmentsList,programs:programList,cohorts:cohortList,errors:filterErrors}};
 }

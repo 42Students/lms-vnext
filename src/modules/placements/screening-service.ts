@@ -36,6 +36,17 @@ type ScreeningStatus =
   | "SHORTLISTED"
   | "REJECTED";
 
+/** vNext keeps a human disposition separate from the legacy automatic
+ * numeric screening run. Never display an invented score or rank candidates
+ * without persisted evidence and explainable component scores. */
+export const PLACEMENT_SCREENING_PROVENANCE = {
+  mode: "MANUAL_REVIEW",
+  version: "human-v1",
+  scoreAvailable: false,
+  missingScoreLabel: "Not scored",
+  completionLabel: "Human review decision",
+} as const;
+
 async function loadScreeningDetails(
   applicationId: string,
 ) {
@@ -146,6 +157,8 @@ function learnerScreeningView(
         ? row.screening.decidedAt
         : null,
     updatedAt: row.screening.updatedAt,
+    screeningMode: PLACEMENT_SCREENING_PROVENANCE.mode,
+    screeningVersion: PLACEMENT_SCREENING_PROVENANCE.version,
   };
 }
 
@@ -249,6 +262,9 @@ export async function getPlacementScreening(
   );
   return {
     ...row,
+    screeningMode: PLACEMENT_SCREENING_PROVENANCE.mode,
+    screeningVersion: PLACEMENT_SCREENING_PROVENANCE.version,
+    screeningProvenance: PLACEMENT_SCREENING_PROVENANCE,
     history:
       await loadScreeningHistory(applicationId),
   };
@@ -453,4 +469,29 @@ export async function decidePlacementScreening(
 
     return updated;
   });
+}
+
+/** Repair an old submitted application with no screening row. This explicit
+ * manager-only action never marks screening complete and never manufactures
+ * a score: it restores the missing PENDING human-review queue record. */
+export async function ensurePlacementScreeningPending(
+  context: RequestContext,
+  applicationIdInput: string,
+) {
+  const applicationId = placementApplicationIdSchema.parse(applicationIdInput);
+  const [application] = await getDb().select({
+    id: placementApplications.id,
+    status: placementApplications.status,
+    collegeId: placementJobs.collegeId,
+  }).from(placementApplications)
+    .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .where(eq(placementApplications.id, applicationId)).limit(1);
+  if (!application) throw new PlacementsServiceError("PLACEMENT_SCREENING_NOT_FOUND");
+  await requirePlacementManageScope(context, application.collegeId);
+  if (application.status !== "SUBMITTED")
+    throw new PlacementsServiceError("PLACEMENT_SCREENING_APPLICATION_INACTIVE");
+  await getDb().insert(placementApplicationScreenings)
+    .values({applicationId, status: "PENDING"})
+    .onConflictDoNothing({target: placementApplicationScreenings.applicationId});
+  return loadScreeningDetails(applicationId);
 }
