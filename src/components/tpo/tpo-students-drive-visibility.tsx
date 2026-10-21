@@ -1,7 +1,7 @@
 "use client";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
-import {useState} from "react";
+import {useId,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -17,6 +17,7 @@ type Drive={id:string;name:string;status:string};
 type Outcome={id:string;name:string;status:"saved"|"failed";action:"INCLUDE"|"EXCLUDE"|"CLEAR";overrideId?:string};
 export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly Learner[];drives:readonly Drive[]}){
  const router=useRouter();
+ const clearWarningId=useId();
  const selection=useTpoStudentsSelection();
  const [jobId,setJobId]=useState("");
  const [decision,setDecision]=useState<"INCLUDE"|"EXCLUDE"|"CLEAR">("INCLUDE");
@@ -102,7 +103,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
     </Select>
    </label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
-    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" aria-describedby={decision==="CLEAR"?clearWarningId:undefined} value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
      >
      <option value="INCLUDE">Show / Include</option>
      <option value="EXCLUDE">Hide / Exclude</option>
@@ -114,8 +115,8 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    <Textarea className="w-full min-w-0" value={reason} disabled={pending} onChange={e=>setReason(e.target.value)} maxLength={500}
     />
   </label>
-  {decision==="CLEAR"?<p className="text-sm text-warning-text">Clearing an override returns to ordinary eligibility rules. It does not restore an older override or undo an application.</p>:null}
-  <Button variant="primary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!valid||pending} onClick={()=>setConfirm(true)}
+  {decision==="CLEAR"?<p id={clearWarningId} className="text-sm text-warning-text">Clearing an override returns to ordinary eligibility rules. It does not restore an older override or undo an application.</p>:null}
+  <Button variant="primary" type="button" aria-haspopup="dialog" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!valid||pending} onClick={()=>setConfirm(true)}
    >
    Review drive visibility for {picked.length} student(s)
   </Button>
@@ -123,8 +124,8 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
    title="Confirm drive eligibility overrides?"
    description={"This "+decision.toLowerCase()+" action is applied separately to "+picked.length+" selected learners. The server rechecks each college and learner."}
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
-    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||!valid} onClick={()=>void submit()}>{pending?"Saving…":"Confirm changes"}</Button>
+    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
+    <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||!valid} onClick={()=>void submit()}>{pending?"Saving…":"Confirm changes"}</Button>
    </div>}>
    <div className="min-w-0 space-y-2">
     <p className="break-words text-sm text-body">Reason: {reason.trim()}</p>
