@@ -664,3 +664,18 @@
 - G2-7-013-039 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Project normalized resource DTO onto legacy field identities
 - G2-7-015-045 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Avoid unrelated fetch blocking Summary load
 - G2-7-027-088 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Map every action request and notification into new typed API route/service
+
+
+## Wave 2 dependency contracts: recruiter, colleges, suppression and receipts
+- Recruiter search: HR request-list already owns SENT_BACK/REQUEST/DRAFT priority and request counts; drive SQL must count only canonical jobs, with valid recruiter grants, company joins and stable pagination. Map active/expired to status/deadline and only compute popularity from authorized application counts, not arbitrary initial 1000 rows. Program/department targeting needs scoped eligibility joins.
+- College: legacy numeric keys and casefolded historical uniqueId are import locators only, not access grants. Tenant-domain registry owns verified hosts, current code remains canonical. College detail needs chair/vice-chair + domain aliases; chair assignment must lock and validate an ACTIVE FACULTY membership in the same college. Migrate logos into verified object storage before signed preview.
+- Suppression: a null source reason becomes LEGACY_UNSPECIFIED and continues to suppress; old civil timestamps require documented IST conversion. Global email HMAC must derive from normalized bounded address with key rotation. Clear actions require privileged actor/audit checks; do not activate outbound dispatch without pre-send suppression fencing.
+- Course files: reconcile legacy receipt IDs and folder names through the membership/assignment mapping, never from public URL or numeric owner alone. Assignment folder maps to ASSIGNMENT_SUBMISSION and lesson-content folder to COURSE_RESOURCE. Only CLEAN scanned, nondeleted rows can generate 15-minute signed access grants. Record imported type/size exceptions.
+
+
+## Wave 2 shell, faculty authoring and grade audit follow-through
+- Shell model provides canonical legacy path aliases and active account portal filtering. Use the same URL normalization in mobile/desktop active indicator and deep-link redirects; selected recruiter college must have a persisted active grant before HR tabs are exposed. TPO role/delegation and college scope remain server-checked.
+- Youtube faculty authoring now has exact legacy drawer labels, initial values, role-specific action affordance, and Yes/No confirmation copy in its shared model. The faculty content row should render Edit/Delete outside the learner player; close after acknowledged mutation and refresh the authoring list only after success.
+- Grade audit staging has immutable legacy ID, actor-name and time provenance plus stable cursor index. Do not register it as live until the grading mutation producer and deferred trigger are promoted together. Never interpret an unavailable history store as a genuinely never-graded submission.
+- The active TPO job types page already uses the unified staged five-column TpoUnifiedJobTypesEditor with one Save changes action; the old built-in-only component is unused. Do not revive per-row PATCHes or fragment the single Settings panel.
+- Old identity migration 0056 remains DDL-stable; its header crosswalk explicitly retires raw tokens, password imports and old sessions, and separates 24-hour ownership proof from five-minute login OTP.

@@ -17,6 +17,7 @@ export type PrincipalShellModuleAccess = {
  projectsEnabled:boolean;
  placementsEnabled:boolean;
  tpoTeamActive?:boolean;
+ recruiterCollegeGrantActive?:boolean;
 };
 export const TPO_TEAM_NOT_ASSIGNED_MESSAGE =
  "No placement team assignment is available for this account.";
@@ -37,6 +38,7 @@ export function filterPrincipalShellNavigation(
    path==="/college/placements"||path.startsWith("/college/placements/")||
    path==="/hr/drives"||path.startsWith("/hr/drives/")))return false;
   if(access.tpoTeamActive===false&&path==="/tpo/team")return false;
+  if(access.recruiterCollegeGrantActive===false&&path.startsWith("/hr/")&&path!=="/hr/home")return false;
   return true;
  });
 }
@@ -113,6 +115,28 @@ export const SHELL_SECTION_LABELS:Readonly<Record<NonNullable<ShellNavItem["grou
  operate:"Operate",coordinate:"Coordinate",insights:"Insights",
  administration:"Administration",
 };
+/** Old account paths are only UI deep-link aliases; authorization always
+ * remains on their canonical route, not on the alias string. */
+export const SHELL_LEGACY_PATH_ALIASES:Readonly<Record<string,string>>={
+ "/tpo/drives":"/tpo/placements",
+ "/tpo/engage":"/tpo/recruiters",
+ "/hr/messages":"/hr/conversations",
+ "/recruiter/drives":"/hr/drives",
+ "/recruiter/messages":"/hr/conversations",
+ "/admin/jobs":"/admin/placements",
+ "/admin/teachers":"/admin/faculty",
+ "/admin/dashboard":"/dashboard",
+};
+export function canonicalShellPath(pathname:string):string{
+ const route=pathname.split("?")[0]||"/";
+ const exact=SHELL_LEGACY_PATH_ALIASES[route];
+ if(exact)return exact;
+ const prefix=Object.keys(SHELL_LEGACY_PATH_ALIASES)
+  .filter(item=>route.startsWith(item+"/"))
+  .sort((a,b)=>b.length-a.length)[0];
+ return prefix?SHELL_LEGACY_PATH_ALIASES[prefix]+route.slice(prefix.length):route;
+}
+
 /** Map a navigation destination to its owning legacy account portal. */
 function navPortal(href: string): string | null {
  if (href === "/dashboard") return null;
@@ -135,7 +159,7 @@ export function scopedShellNavigation(items: readonly ShellNavItem[], pathname: 
  if (portals.length <= 1) return [...items];
  // The legacy shell displays one account's navigation at a time. A single
  // stray row from another portal must not leak into the active icon rail.
- const pathPortal = navPortal(pathname);
+ const pathPortal = navPortal(canonicalShellPath(pathname));
  const tpoRows = items.filter(item => navPortal(item.href) === "tpo");
  // College Admin-only has one shortcut into Placement cell, not a separate
  // TPO role. Visiting it must not replace the entire college sidebar with

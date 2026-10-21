@@ -20,6 +20,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   check,
   foreignKey,
@@ -47,6 +48,11 @@ export const assignmentGradeEventsStaged = pgTable(
   "assignment_grade_events",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Source BIGINT/time/action are import provenance, never new actor IDs. */
+    legacyGradeAuditId: bigint("legacy_grade_audit_id",{mode:"bigint"}),
+    legacyAction: varchar("legacy_action",{length:40}),
+    legacyOccurredAtLocal: varchar("legacy_occurred_at_local",{length:40}),
+    actorNameSnapshot: varchar("actor_name_snapshot",{length:150}),
     assignmentSubmissionId: uuid("assignment_submission_id").notNull(),
     assignmentId: uuid("assignment_id").notNull(),
     deliveryId: uuid("delivery_id").notNull(),
@@ -108,6 +114,10 @@ export const assignmentGradeEventsStaged = pgTable(
       ],
     }).onDelete("restrict"),
 
+    uniqueIndex("assignment_grade_events_legacy_audit_uq")
+      .on(table.legacyGradeAuditId).where(sql`${table.legacyGradeAuditId} is not null`),
+    index("assignment_grade_events_submission_cursor_idx")
+      .on(table.assignmentSubmissionId,table.occurredAt,table.id),
     uniqueIndex("assignment_grade_events_submission_version_uq").on(
       table.assignmentSubmissionId,
       table.submissionVersionAfter,
@@ -285,3 +295,17 @@ export const attendanceRecordEventsStaged = pgTable(
 //   exact before/after current-row state
 // - append-only UPDATE/DELETE/TRUNCATE rejection for both history tables
 // - transactional producer cutover in grade/publish + Faculty/Admin attendance
+
+/** Legacy names are display aliases; canonical events keep typed actions.
+ * Absent events are "not graded" only when the history store is active.
+ * A staged/unavailable store must never be shown as an empty audit. */
+export const LEGACY_GRADE_AUDIT_ACTION_COPY={
+ GRADE:"Grade",
+ REGRADE:"Regrade",
+ PUBLISH_GRADE:"Publish grade",
+} as const;
+export function gradeAuditHistoryDisplayState(
+ enabled:boolean,rows:readonly unknown[],
+):"UNAVAILABLE"|"NEVER_GRADED"|"READY"{
+ return !enabled?"UNAVAILABLE":rows.length===0?"NEVER_GRADED":"READY";
+}
