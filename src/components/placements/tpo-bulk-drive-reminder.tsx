@@ -47,18 +47,18 @@ export function TpoBulkDriveReminder(){
  }
  return <div className="flex min-w-0 flex-col gap-3">
   <div className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 text-xs sm:flex-row sm:flex-wrap">
-   <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-semibold text-primary-text sm:w-auto md:min-h-9"
+   <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-[650] text-primary-text sm:w-auto md:min-h-9"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=true;});}}>
     Select all visible drives
    </Button>
-   <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-semibold text-primary-text sm:w-auto md:min-h-9"
+   <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full font-[650] text-primary-text sm:w-auto md:min-h-9"
     onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=false;});}}>
     Clear selection
    </Button>
   </div>
   <p className="text-xs leading-5 text-muted-foreground">Choose between 1 and 10 drives on this page.</p>
   <Button variant="secondary" type="button" disabled={busy} onClick={review}
-   className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
   </Button>
   {message?<InlineNotice tone={hadFailures?"error":"success"} message={message}/>:null}

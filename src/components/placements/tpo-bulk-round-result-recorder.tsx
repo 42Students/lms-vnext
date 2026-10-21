@@ -163,9 +163,9 @@ export function TpoBulkRoundResultRecorder({
             </label>
             <div className="flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
               <Button variant="secondary" type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
-                className="inline-flex min-h-11 w-full items-center justify-center px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked</Button>
+                className="inline-flex min-h-11 w-full items-center justify-center px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Select first 25 unmarked</Button>
               <Button variant="secondary" type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
-                className="min-h-11 w-full px-4 font-semibold text-primary-text sm:w-auto md:min-h-9">Clear selection</Button>
+                className="min-h-11 w-full px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Clear selection</Button>
             </div>
             <Disclosure title="Paste application IDs from a spreadsheet" className="min-w-0 border-y border-border py-3">
               <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
@@ -283,7 +283,7 @@ export function TpoBulkRoundResultRecorder({
             document.body.appendChild(link);
             try { link.click(); }
             finally { link.remove();window.setTimeout(()=>URL.revokeObjectURL(url),1000); }
-          }} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-primary-text sm:w-auto md:min-h-9 print:hidden">
+          }} className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 font-[650] text-primary-text sm:w-auto md:min-h-9 print:hidden">
             Export per-learner staging report (CSV)
           </Button>
           <p className="font-semibold">Per-learner outcomes</p>
