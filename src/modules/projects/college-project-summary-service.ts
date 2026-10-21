@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,isNull,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {projectInstances,projectMembers,projectSubmissions,sections,cohorts,programs,departments} from "@/db/schema";
+import {projectInstances,projectMembers,projectSubmissions,projectTasks,sections,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
@@ -32,6 +32,14 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
   if(collegeProjectSummaryMatchesCurrent(row,input))return row;
   if(row.title!==input.expectedTitle||row.summary!==input.expectedSummary||row.status!==input.expectedStatus||row.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
+  // Manual progress is a legacy fallback only while there are no live tasks.
+  // Once execution data exists, callers must preserve the stored fallback
+  // instead of overwriting a task-derived read-side progress percentage.
+  const [existingTask] = await tx.select({id:projectTasks.id}).from(projectTasks)
+   .where(and(eq(projectTasks.projectId,row.id),isNull(projectTasks.deletedAt)))
+   .limit(1);
+  if(existingTask && input.progressPercent !== row.progressPercent)
+   throw new ProjectsServiceError("PROJECT_SUBMISSION_INVALID_STATE");
   const [mentor]=await tx.select({id:projectMembers.id}).from(projectMembers)
    .where(and(eq(projectMembers.projectId,row.id),eq(projectMembers.role,"MENTOR"),
     isNull(projectMembers.endedAt))).limit(1);
