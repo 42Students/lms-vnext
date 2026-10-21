@@ -126,7 +126,7 @@ export async function ProjectAdminAtRiskPage({
                   >
                     {project.title}
                   </Link>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                     {project.mentorName
                       ? "Mentor: " +
                         project.mentorName
@@ -183,7 +183,7 @@ export async function ProjectAdminAtRiskPage({
         </div>
       )}
 
-      <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
+      <p className="text-xs text-muted-foreground leading-[20px]">CSV includes only the workspaces on this page.</p>
       <ProjectAdminPagination
         basePath={basePath + "/at-risk"}
         query={query}

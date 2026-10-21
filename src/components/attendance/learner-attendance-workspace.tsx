@@ -142,13 +142,13 @@ function Metric({
 }) {
   return (
     <section className="min-w-0 border-b border-border py-3">
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground leading-[20px]">
         {label}
       </p>
       <p className="mt-2 text-2xl font-semibold text-foreground">
         {value}
       </p>
-      <p className="mt-1 text-xs leading-5 text-body">
+      <p className="mt-1 text-xs text-body leading-[20px]">
         {detail}
       </p>
       {history?.length?<Disclosure title={`Recent dates (${history.length})`} className="mt-2">
@@ -274,7 +274,7 @@ export function LearnerAttendanceWorkspace({
 
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
-      {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{urlNotice}</p> : null}
+      {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body leading-[22px]">{urlNotice}</p> : null}
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
           <label className="w-full max-w-sm font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -350,7 +350,7 @@ export function LearnerAttendanceWorkspace({
 
         {course ? (
           <div className="mt-3 flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground leading-[20px]">
               {course.sectionName} ·{" "}{course.academicPeriodName}
             </p>
             {learnerAttendanceCourseHistoryHref(course.deliveryId,filters.month) ? (
@@ -403,10 +403,10 @@ export function LearnerAttendanceWorkspace({
       <section className="min-w-0 border-b border-border pb-4 pt-4 md:pb-6 md:pt-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="m-0 text-sm font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
               Eligibility signal
             </h2>
-            <p className="mt-1 text-xs leading-5 text-body">
+            <p className="mt-1 text-xs text-body leading-[20px]">
               Your College attendance threshold is{" "}
               <strong>{threshold}%</strong>.
               This is an informational attendance signal;
@@ -433,7 +433,7 @@ export function LearnerAttendanceWorkspace({
       </section>
 
       {recovery !== null ? (
-        <p className="max-w-prose border-l-2 border-border bg-surface-subtle py-3 pl-4 pr-2 text-sm leading-[22px] text-body" role="note">
+        <p className="max-w-prose border-l-2 border-border bg-surface-subtle py-3 pl-4 pr-2 text-sm text-body leading-[22px]" role="note">
           {recovery === Infinity
             ? "At a 100% threshold, prior non-present marks cannot be offset by future attendance alone."
             : recovery === 0
@@ -493,8 +493,8 @@ export function LearnerAttendanceWorkspace({
 
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="text-sm font-semibold text-foreground">Session history</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Session history</h2>
+          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Status filters affect only the session list, not attendance totals.</p>
         </div>
         <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
         <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Order
