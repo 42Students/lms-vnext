@@ -27,7 +27,7 @@ export default async function SuperAdminCourseProgressPage({
   if (!parsed) return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
-      action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+      action={<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress" />
