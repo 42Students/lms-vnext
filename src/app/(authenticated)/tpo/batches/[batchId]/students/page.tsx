@@ -53,7 +53,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const pageSummary=summarizeBatchStudentEvidence(result.students);
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <div className="min-w-0 space-y-4"><PageHeader title={result.batch.name+" — Students"} description="Eligibility, registration and student evidence."/>
- <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
+ <TpoBatchWorkspaceTabs batchId={batchId} active="students" students={registrationCounts.activeLearners}/>
  <form role="search" aria-label="students filters" action={"/tpo/batches/"+encodeURIComponent(batchId)+"/students"} method="get"
   className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] py-4 sm:grid-cols-2 xl:grid-cols-3">
   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class (on this page)
@@ -140,10 +140,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <p className="text-xs text-muted-foreground leading-5">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
  <a href={tpoEligibilityImportScaffoldHref(batchId,result.page)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Download blank eligibility import CSV (this page)</a>
  {finished?<Alert tone="info">This batch is finished. Eligibility decisions and import actions are read-only.</Alert>:<TpoBatchEligibilityImport batchId={batchId}/>}
- {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
-   target="STUDENTS" rows={visible.map(student=>({
-    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
-   }))} />:null}
+
  <section aria-label="Batch student follow-up actions" className="grid gap-2 lg:grid-cols-2">
   <TpoStudentNudgePanel rows={visible.map(student=>({
    id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
@@ -154,6 +151,12 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   }))}/>
  </section>
  </Disclosure>
+<div id="batch-student-bulk-actions" data-testid="batch.act" className="min-w-0 border-b border-border py-3">
+ {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
+   target="STUDENTS" rows={visible.map(student=>({
+    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
+   }))} />:null}
+ </div>
  <div id="batch-student-decisions" className="min-w-0">
   <DataTable rows={visible} getRowKey={student=>student.membershipId}
    caption={"Batch students · page "+result.page}

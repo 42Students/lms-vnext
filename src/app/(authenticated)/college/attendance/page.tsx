@@ -7,6 +7,8 @@ import {
   type AdminAttendanceWorkspaceData,
 } from "@/components/attendance/admin-attendance-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import {getCollegeAttendancePolicy} from "@/modules/attendance/policy-service";
+import {AttendancePolicySummaryCard} from "@/components/attendance/attendance-policy-summary-card";
 import { Tabs } from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -62,6 +64,9 @@ export default async function CollegeAttendancePage({
     </div>;
   }
   const options = optionsResult[0].value;
+  const policyRead=await getCollegeAttendancePolicy(context,collegeId)
+    .then(value=>({ok:true as const,hasOverride:value.hasCollegeOverride,maxCorrectionHours:value.maxCorrectionHours}))
+    .catch(()=>({ok:false as const}));
   const requestedDelivery = options.deliveries.find(
     (entry) => entry.deliveryId === query.deliveryId,
   );
@@ -143,6 +148,12 @@ export default async function CollegeAttendancePage({
           { value: "/college/attendance/settings", label: "Attendance policy", href: "/college/attendance/settings" },
         ]}
       />
+      <AttendancePolicySummaryCard
+        correctionWindowHours={options.policy.correctionWindowHours}
+        eligibilityThresholdPercent={options.policy.eligibilityThresholdPercent}
+        hasCollegeOverride={policyRead.ok?policyRead.hasOverride:null}
+        retryHref="/college/attendance"
+        settingsHref="/college/attendance/settings"/>
       {gridFailed ? <ErrorState title="Unable to load monthly attendance"
         description="The attendance grid could not be refreshed. Retry with the same filters."
         action={<Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}

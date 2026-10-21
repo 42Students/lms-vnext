@@ -38,7 +38,7 @@ export default async function BatchHistory({params,searchParams}:{params:Promise
  <p className="text-xs text-muted-foreground">Showing {visible.length} of the latest {recentEvents.length} batch, class and learner events.</p>
  {!ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Decision history migration has not been applied.</p>:visible.length===0?<EmptyState title={events.length===0?"No decisions yet":"No decisions match these filters."} action={<Link href={"/tpo/batches/"+encodeURIComponent(batchId)+"/history"} className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset</Link>}/>:<ol aria-label="history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{visible.map(e=><li className="min-w-0 space-y-2 break-words py-4 text-sm" key={e.id}>
  <strong>Decision: {batchDecisionLabel(e.before)} → {batchDecisionLabel(e.after)}{e.undone?" · Undone":""}</strong>
- <p className="mt-1 text-xs text-muted-foreground">{batchHistoryDate(e.occurredAt)} · {e.actorName??"Unknown actor"} · {e.scopeType==="MEMBERSHIP"?"Learner":e.scopeType==="SECTION"?"Class":"Batch"} · {e.scopeId}</p>
+ <p className="mt-1 text-xs text-muted-foreground">{batchHistoryDate(e.occurredAt)} · {e.actorName??"Someone"} · {e.scopeType==="MEMBERSHIP"?"Learner":e.scopeType==="SECTION"?"Class":"Batch"} · {e.scopeId}</p>
  <p className="text-xs text-body">{e.afterReason??e.beforeReason??"No reason recorded"}</p>
  {e.canRequestUndo?<TpoBatchUndoControl batchId={batchId} actionId={e.actionId}/>:null}
  </li>)}</ol>}
