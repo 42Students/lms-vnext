@@ -16,6 +16,16 @@ import {z} from "zod";
 import {recruiterDriveApprovalPolicy,recruiterAutoApprovalExplanation} from "./recruiter-drive-autoapproval-policy";
 import {createRecruiterApprovedDraftJob,RecruiterDraftApprovalError} from "./recruiter-approved-draft-job-service";
 
+/** Each vNext request is intentionally scoped to one college, rather than
+ * creating jobs for several colleges from one legacy drive-group request.
+ * Preserve a stable single-college group receipt for historical UIs without
+ * claiming that an unapproved REQUEST already has an approved job. */
+function driveRequestReceipt(request:typeof placementRecruiterDriveRequests.$inferSelect){
+ return {driveGroupId:request.id,requestId:request.id,
+  colleges:[{collegeId:request.collegeId,jobId:request.approvedJobId,
+   status:request.status,skippedReason:null as string|null}],
+ };
+}
 export class RecruiterDriveRequestError extends Error{
  constructor(public readonly code:"FORBIDDEN"|"NOT_FOUND"|"STALE"|"INVALID_STATE"|"IDEMPOTENCY_CONFLICT"|"STORAGE_NOT_READY"){
   super(code);this.name="RecruiterDriveRequestError";
@@ -108,7 +118,7 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
    if(existing.sourceJobId!==(input.sourceJobId??null)||
       !stored.success||JSON.stringify(stored.data)!==JSON.stringify(input.draft))
     throw new RecruiterDriveRequestError("IDEMPOTENCY_CONFLICT");
-   return {request:existing,replayed:true};
+   return {request:existing,replayed:true,...driveRequestReceipt(existing)};
   }
   if(input.sourceJobId){
     const [source]=await tx.select({id:placementJobs.id}).from(placementJobs)
@@ -161,7 +171,7 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
   await informPlacementCell(tx,context,{collegeId:input.collegeId,organizationId:scope.organizationId},
    created.id,input.draft.title,approvedJobId?"AUTO_APPROVED":"NEW",undefined,undefined,
    approvedJobId?{reason:policy.reason,jobId:approvedJobId}:undefined);
-  return {request:finalRequest,replayed:false};
+  return {request:finalRequest,replayed:false,...driveRequestReceipt(finalRequest)};
  });
 }
 export async function listOwnRecruiterDriveRequests(context:RequestContext,collegeId:string){
