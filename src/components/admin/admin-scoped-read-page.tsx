@@ -71,6 +71,22 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  </div>;
  const data=directory.value;
  const humanStatus=(status:string)=>status.toLowerCase().replace(/_/g," ").replace(/\b\w/g,letter=>letter.toUpperCase());
+ const facultyTypes=[
+  ["ADMIN","College admin"],["TPO","Placement officer"],["PROFESSOR","Professor"],
+  ["ASSOCIATE_PROFESSOR","Associate professor"],["ASSISTANT_PROFESSOR","Assistant professor"],
+  ["LECTURER","Lecturer"],["HEAD","Head of department"],["COORDINATOR","Coordinator"],
+  ["MENTOR","Mentor"],["PERMANENT","Permanent"],["VISITING","Visiting"],
+  ["GUEST","Guest"],["CONTRACT","Contract"],["ADJUNCT","Adjunct"],
+ ] as const;
+ const facultyTypeLabel=(raw:string)=>{
+  const match=facultyTypes.find(([code])=>code===raw.toUpperCase().replace(/ /g,"_"));
+  return match?.[1]??humanStatus(raw);
+ };
+ const filtersActive=Boolean(data.query.status!=="ALL"||data.query.departmentId||
+  data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType);
+ const clearFilterHref=superAdminReadHref(path,{...data.query,status:"ALL",page:1,
+  departmentId:undefined,programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined});
+ const clearSearchHref=superAdminReadHref(path,{...data.query,q:"",page:1});
  const emptyRosterTitle=peopleFilters?.kind==="LEARNER"?
   (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.sectionId||data.query.cohortId||data.query.programId?"No students match these filters.":"No students found. Register students to get started."):
   peopleFilters?.kind==="FACULTY"?
@@ -100,7 +116,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"department",header:"Department",mobilePriority:"secondary",cell:row=>detailValue(row,"Department")},
   {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:row=>detailValue(row,"Mobile")},
   {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>detailValue(row,"Email")},
-  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>detailValue(row,"Faculty type")!=="—"?detailValue(row,"Faculty type"):detailValue(row,"Employment type")},
+  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>facultyTypeLabel(detailValue(row,"Faculty type")!=="—"?detailValue(row,"Faculty type"):detailValue(row,"Employment type"))},
   {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
   {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
   {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
@@ -119,9 +135,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   peopleFilters?.kind==="FACULTY"?facultyColumns:
   title==="Faculty Assignments"?assignmentColumns:null;
  const summaries=peopleFilters?await Promise.allSettled([
-  loader({...parsed.data,status:"ALL",page:1}),
-  loader({...parsed.data,status:"ACTIVE",page:1}),
-  loader({...parsed.data,status:"SUSPENDED",page:1}),
+  loader({...parsed.data,q:"",status:"ALL",page:1,departmentId:undefined,
+   programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined}),
+  loader({...parsed.data,q:"",status:"ACTIVE",page:1,departmentId:undefined,
+   programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined}),
+  loader({...parsed.data,q:"",status:"SUSPENDED",page:1,departmentId:undefined,
+   programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined}),
  ]):null;
  const peopleSummary=summaries&&summaries[0].status==="fulfilled"&&
   summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
@@ -214,8 +233,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      </Select>
     </label>
     {peopleFilters.kind==="FACULTY"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
-      <Input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
-       className="min-h-11 w-full md:min-h-9"/>
+      <Select name="employmentType" aria-label="Filter by faculty type" defaultValue={data.query.employmentType??""} className="min-h-11 w-full md:min-h-9">
+       <option value="">All types</option>
+       {facultyTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+       {data.query.employmentType&&!facultyTypes.some(([code])=>code===data.query.employmentType)?
+        <option value={data.query.employmentType}>{facultyTypeLabel(data.query.employmentType)}</option>:null}
+      </Select>
      </label>:<>
       {(["programId","cohortId","sectionId"] as const).map((key)=>{
         const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
@@ -229,7 +252,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      </>}
     </div>
    </details>:null}
-   {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+   {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter by class
      <Select name="sectionId" defaultValue={data.query.sectionId??""}
       className="min-h-11 w-full md:min-h-9">
       <option value="">All classes</option>
@@ -251,6 +274,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      </div>
    </details>:null}
   </form>
+  {peopleFilters&&filtersActive?<div className="flex flex-wrap items-center gap-3 print:hidden">
+    <span className="text-xs text-muted-foreground">Filters applied within your selected college</span>
+    <Link href={clearFilterHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear filters</Link>
+    {data.query.q?<Link href={clearSearchHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear Search</Link>:null}
+   </div>:null}
 
   {applicationFilters?<p role="status" className="text-sm text-body leading-[22px]">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
