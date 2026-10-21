@@ -1,6 +1,6 @@
 import "server-only";
-import {eq,sql} from "drizzle-orm";
-import {colleges} from "@/db/schema";
+import {and,eq,sql} from "drizzle-orm";
+import {colleges,courses,courseOfferings,courseSectionDeliveries,departments,sections} from "@/db/schema";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
 import {getDb} from "@/db/client";
@@ -18,15 +18,15 @@ export const superAdminStudentProgressQuery=z.strictObject({
  sort:z.enum(["percent-asc","percent-desc"]).optional(),
 });
 export type StudentCourseProgressRow={
- membershipId:string;studentName:string;rollNumber:string|null;videos:number;assignments:number;quizzes:number;
- totalVideos:number;totalAssignments:number;totalQuizzes:number;
+ membershipId:string;learnerId:string;studentName:string;rollNumber:string;videos:number;assignments:number;quizzes:number;
+ totalVideos:number;totalAssignments:number;totalQuizzes:number;completed:number;percent:number;
 };
 export type StudentCourseProgressTotals={videos:number;assignments:number;quizzes:number};
 
 /** SA-academics-people-67: authorized scoped roster and factual persisted completions,
  * not an aggregate offering content count mislabelled as student progress. */
 export async function getSuperAdminStudentCourseProgress(context:RequestContext,raw:unknown){
- const {offeringId,deliveryId:requestedDeliveryId,page=1,pageSize=500,sort="percent-asc"}=
+ const {offeringId,deliveryId:requestedDeliveryId,page=1,pageSize=20,sort="percent-asc"}=
   superAdminStudentProgressQuery.parse(raw);
  const deliveryId=requestedDeliveryId??null;
  const offset=(page-1)*pageSize;
@@ -46,7 +46,6 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
     select 1 from course_section_deliveries cd
     join sections s on s.id=cd.section_id
      and s.cohort_id=o.cohort_id and s.academic_period_id=o.academic_period_id
-    join course_teaching_assignments ta on ta.delivery_id=cd.id
     where cd.offering_id=o.id and cd.id=${deliveryId}::uuid
    ))
   )
@@ -57,7 +56,7 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  const result=await getDb().execute(sql`
  with eligible_deliveries as (
   select distinct m.id as membership_id, d.id as delivery_id,
-   coalesce(nullif(btrim(u.display_name),''),'Student') as student_name
+   coalesce(nullif(btrim(u.display_name),''),'Student #'||coalesce(m.legacy_membership_id::text,left(m.id::text,8))) as student_name
   from course_section_deliveries d
    join course_offerings o on o.id=d.offering_id
    join sections s on s.id=d.section_id and s.status='ACTIVE'
@@ -162,10 +161,16 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  const received=result.rows as unknown as DbRow[];
  const first=received[0];
  const rows=received.slice(0,pageSize).map(row=>({
-  membershipId:row.membershipId,studentName:row.studentName,rollNumber:row.rollNumber,
+  membershipId:row.membershipId,learnerId:row.membershipId,
+  studentName:row.studentName||"Student #"+row.membershipId.slice(0,8),
+  rollNumber:row.rollNumber?.trim()||"—",
   videos:Number(row.videos),assignments:Number(row.assignments),quizzes:Number(row.quizzes),
   totalVideos:Number(row.totalVideos),totalAssignments:Number(row.totalAssignments),
   totalQuizzes:Number(row.totalQuizzes),
+  completed:Number(row.videos)+Number(row.assignments)+Number(row.quizzes),
+  percent:(Number(row.totalVideos)+Number(row.totalAssignments)+Number(row.totalQuizzes))>0?
+   Math.round(100*(Number(row.videos)+Number(row.assignments)+Number(row.quizzes))/
+    (Number(row.totalVideos)+Number(row.totalAssignments)+Number(row.totalQuizzes))):0,
  }));
  // Student names and progress may be private. A stale request snapshot
  // must not disclose them if a Super Admin role is revoked while SQL runs.
@@ -188,4 +193,45 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   hasMore:received.length>pageSize,
   truncated:received.length>pageSize || page>1,
  };
+}
+
+/** Resolves a bookmarked legacy course/class report to vNext UUID scope.
+ * IDs are NEVER global lookup keys: both course and section must belong to
+ * the persisted acting college. When no class is given, multiple eligible
+ * offerings are ambiguous and the caller must ask for a term/section.
+ */
+export async function resolveLegacyCourseProgressScope(
+ context:RequestContext,raw:{courseId:string|number;classId?:string|number|null},
+){
+ if(!isSuperAdmin(context)||!context.adminScope?.collegeId)
+  throw new AuthorizationError("courses.read");
+ const collegeId=context.adminScope.collegeId;
+ requirePermission(context,"courses.read",{collegeId,
+  organizationId:context.adminScope.organizationId});
+ const id=z.union([z.uuid(),z.coerce.number().int().positive()]);
+ const courseId=id.parse(raw.courseId);
+ const classId=raw.classId==null?null:id.parse(raw.classId);
+ const filter=and(eq(departments.collegeId,collegeId),
+  typeof courseId==="number"?eq(courses.legacyCourseId,courseId):eq(courses.id,courseId),
+  eq(courseOfferings.status,"ACTIVE"));
+ if(classId===null){
+  const matches=await getDb().selectDistinct({offeringId:courseOfferings.id})
+   .from(courseOfferings)
+   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+   .innerJoin(departments,eq(departments.id,courses.departmentId))
+   .where(filter).limit(2);
+  return matches.length===1?{offeringId:matches[0]!.offeringId,deliveryId:null}:null;
+ }
+ const matches=await getDb().selectDistinct({
+  offeringId:courseOfferings.id,deliveryId:courseSectionDeliveries.id,
+ }).from(courseOfferings)
+ .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+ .innerJoin(departments,eq(departments.id,courses.departmentId))
+ .innerJoin(courseSectionDeliveries,
+  eq(courseSectionDeliveries.offeringId,courseOfferings.id))
+ .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+ .where(and(filter,typeof classId==="number"
+  ?eq(sections.legacyClassId,classId):eq(sections.id,classId)))
+ .limit(2);
+ return matches.length===1?matches[0]!:null;
 }
