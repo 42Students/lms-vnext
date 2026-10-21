@@ -1,14 +1,14 @@
 import "server-only";
-import {and,asc,eq,isNull,sql} from "drizzle-orm";
+import {and,asc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {projectInstances,projectTaskComments,projectTasks,projectMembers,collegeMemberships,users} from "@/db/schema";
+import {activityEvents,projectInstances,projectTaskComments,projectTasks,projectMembers,collegeMemberships,users} from "@/db/schema";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
-import {projectTaskCommentInputSchema} from "./pr-s2-04-task-fields-model";
+import {projectTaskCommentInputSchema,PROJECT_TASK_ACTIVITY_EVENT_KINDS} from "./pr-s2-04-task-fields-model";
 import {projectTaskIdSchema} from "./validation";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 
@@ -18,7 +18,7 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
  const [task]=await getDb().select({id:projectTasks.id}).from(projectTasks)
   .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,taskId))).limit(1);
  if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
- return getDb().select({
+ const comments=await getDb().select({
    id:projectTaskComments.id,
    // Legacy nullable bodies were normalized during import; preserve their
    // historical absence as a display-only null without accepting new nulls.
@@ -64,6 +64,48 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
    isNull(projectTaskComments.deletedAt),
    sql`${projectTaskComments.legacyWasDeleted} is distinct from true`,
  )).orderBy(asc(projectTaskComments.createdAt),asc(projectTaskComments.id));
+ // Task mutations already persist PROJECTS activity events in the same DB
+ // transaction. Join that immutable stream at read time: this preserves
+ // status/review/submission history without accepting spoofed system comments
+ // from the human POST endpoint or duplicating audit rows on retries.
+ const events=await getDb().select({
+  id:activityEvents.id,eventType:activityEvents.eventType,
+  summary:activityEvents.summary,metadata:activityEvents.metadata,
+  actorMembershipId:activityEvents.actorMembershipId,
+  actorNameSnapshot:activityEvents.actorNameSnapshot,
+  actorRoleSnapshot:activityEvents.actorRoleSnapshot,
+  createdAt:activityEvents.occurredAt,
+ }).from(activityEvents).where(and(
+  eq(activityEvents.collegeId,scope.collegeId),
+  eq(activityEvents.module,"PROJECTS"),
+  eq(activityEvents.subjectType,"project_task"),
+  eq(activityEvents.subjectId,taskId),
+  inArray(activityEvents.eventType,[...PROJECT_TASK_ACTIVITY_EVENT_KINDS]),
+  sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+ )).orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id));
+ const systemComments=events.map(event=>{
+  const nextStatus=typeof event.metadata.nextStatus==="string"
+    ?event.metadata.nextStatus:null;
+  const oldStatus=typeof event.metadata.previousStatus==="string"
+    ?event.metadata.previousStatus:null;
+  const progress=event.metadata.progressValue;
+  const progressValue=typeof progress==="number"&&Number.isInteger(progress)
+    &&progress>=0&&progress<=100?progress:null;
+  const commentKind=event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_TASK_REVIEWED
+    ?"REVIEW":event.eventType===ACTIVITY_EVENT_TYPES.PROJECTS_TASK_STATUS_CHANGED
+    &&nextStatus==="BLOCKED"?"BLOCKED":"STATUS_UPDATE";
+  return {
+   id:event.id,body:oldStatus&&nextStatus
+    ?oldStatus.replaceAll("_"," ")+" → "+nextStatus.replaceAll("_"," ")
+    :event.summary,
+   commentKind,authorMembershipId:event.actorMembershipId??"",
+   authorName:event.actorNameSnapshot??"Project team",
+   authorRole:event.actorRoleSnapshot??null,createdAt:event.createdAt,
+   taskStatusSnapshot:nextStatus,progressValue,
+  };
+ });
+ return [...comments,...systemComments].sort((a,b)=>
+  a.createdAt.getTime()-b.createdAt.getTime()||a.id.localeCompare(b.id));
 }
 export async function postProjectTaskComment(context:RequestContext,projectId:string,taskIdInput:string,raw:unknown){
  const scope=await requireProjectReadAccess(context,projectId);
