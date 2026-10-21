@@ -9,9 +9,14 @@ import {createPlacementRequest,getLearnerPlacementRequestWorkspace} from "./requ
 import {learnerInterviewWithdrawalInputSchema,type LearnerInterviewWithdrawalTarget} from "./learner-interview-withdrawal-model";
 import {isCareerRoundVisible} from "./learner-round-visibility-policy";
 
-export async function getOwnInterviewWithdrawalTargets(context:RequestContext){
+/** Use the page's already-authorized request workspace when available.
+ * Without it, mutation callers still load their own scoped snapshot. */
+export async function getOwnInterviewWithdrawalTargets(
+ context:RequestContext,
+ sharedWorkspace?:Awaited<ReturnType<typeof getLearnerPlacementRequestWorkspace>>,
+){
   const member=await requireLearnerPlacementAccess(context);
-  const workspace=await getLearnerPlacementRequestWorkspace(context);
+  const workspace=sharedWorkspace??await getLearnerPlacementRequestWorkspace(context);
   const applications=await getDb().select({id:placementApplications.id,updatedAt:placementApplications.updatedAt})
     .from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
     .where(and(eq(placementApplications.membershipId,member.id),eq(placementJobs.collegeId,member.collegeId),eq(placementApplications.status,"SUBMITTED")));
