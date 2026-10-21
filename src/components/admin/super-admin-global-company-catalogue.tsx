@@ -64,7 +64,7 @@ export async function SuperAdminGlobalCompanyCatalogue({context,filters}:{
    </div>
   </div>},
   {key:"domains",header:"Domains",mobilePriority:"secondary",cell:row=><span className="break-all">{row.domains.length?row.domains.join(", "):"None"}</span>},
-  {key:"added",header:"Added by",cell:row=><span>{row.companyCollegeCount?"college":"-"}</span>},
+  {key:"added",header:"Added by",cell:row=><span>{row.addedByLabel??"-"}</span>},
   {key:"drives",header:"Drives",cell:row=><span className="tabular-nums">{row.driveCount}</span>},
   {key:"last",header:"Last active",cell:row=><span>{formatLast(row.lastActiveAt)}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex flex-wrap items-center gap-2">
