@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne,asc,sql,gt,lt} from "drizzle-orm";
+import {and,eq,ne,asc,desc,sql,gt,lt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,learnerProfiles,placementApplications,
  placementApplicationScreenings,placementApplicationRoundExceptions,placementLearnerRequests,placementJobRounds,placementJobs,users} from "@/db/schema";
@@ -435,10 +435,19 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     status:"BOOKED",applicationId:slot.applicationId,confirmedAt:new Date(),
     updatedAt:new Date(),version:target.version+1,
    }).where(eq(placementRoundCandidateSlots.id,target.id));
-   // A first-time booking has no override. Every move creates or replaces
-   // its learner-specific schedule so calendar and slot state agree.
+   // An exception must retain the approved reschedule request that authorizes
+   // its schedule override. Never invent an ID for a required foreign key.
+   const [sourceRequest]=await tx.select({id:placementLearnerRequests.id})
+    .from(placementLearnerRequests).where(and(
+     eq(placementLearnerRequests.applicationId,slot.applicationId),
+     eq(placementLearnerRequests.roundId,info.round.id),
+     eq(placementLearnerRequests.requestType,"ROUND_RESCHEDULE"),
+     eq(placementLearnerRequests.status,"APPROVED"),
+    )).orderBy(desc(placementLearnerRequests.requestedAt)).limit(1);
+   if(!sourceRequest)throw new PlacementsServiceError("PLACEMENT_REQUEST_NOT_FOUND");
    await tx.insert(placementApplicationRoundExceptions).values({
     applicationId:slot.applicationId,roundId:info.round.id,
+    requestId:sourceRequest.id,
     scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
     mode:info.round.mode==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS",
     venue:info.round.mode==="VIRTUAL"?null:target.room,
