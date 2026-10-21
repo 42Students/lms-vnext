@@ -3,6 +3,15 @@
  * Do not export from the schema barrel or treat as migrated until the migration
  * integrator reconciles DB-016 overlap, producer/read cutover and PostgreSQL
  * acceptance.
+ * Legacy owner_user_id and owner_user_type cannot be cast directly to a UUID:
+ * resolve verified collegeMembership and ACTIVE role in the same college,
+ * with an actor/ownership crosswalk before accepting a receipt. Never infer a
+ * membership from name or numeric ID alone. This separate staging contract
+ * must not duplicate the live assignment_submission_files relations.
+ * Multi-file submissions are already modeled by per-submission sequence and
+ * uniqueness here; the producer/UI must authorize each CLEAN scanned receipt,
+ * atomically consume distinct receipts and preserve per-file order, rather
+ * than hard-code sequence 0. No scan bypass or unsigned download allowed.
  */
 import { sql } from "drizzle-orm";
 import { boolean, check, foreignKey, index, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
