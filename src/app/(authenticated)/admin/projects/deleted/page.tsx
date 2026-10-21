@@ -2,15 +2,22 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
 import { listSoftDeletedProjectWorkspaces } from "@/modules/projects/project-soft-delete-service";
 
 export default async function DeletedAdminProjectsPage() {
   const context = await getCurrentRequestContext();
   const collegeId = getProjectAdminCollegeId(context);
-  const projects = collegeId
+  const deletedResult = collegeId
     ? await listSoftDeletedProjectWorkspaces(context, collegeId)
-    : [];
+      .then(value => ({ok:true as const,value}))
+      .catch(error => {
+        if (error instanceof AuthorizationError) throw error;
+        return {ok:false as const,value:[]};
+      })
+    : null;
   return <div className="min-w-0 space-y-5">
     <PageHeader title="Deleted workspaces"
       description="Soft-deleted Project workspaces are retained and can be recovered by an authorized administrator."
@@ -20,10 +27,17 @@ export default async function DeletedAdminProjectsPage() {
       </Link>} />
     {!collegeId
       ? <EmptyState title="No college selected" description="Choose a college from the account switcher to view deleted workspaces." />
-      : projects.length === 0
-        ? <EmptyState title="No deleted workspaces" description="Workspaces moved to Deleted workspaces will appear here for recovery." />
-        : <div className="min-w-0 divide-y divide-border border-y border-border">
-          {projects.map(project => <article key={project.id}
+      : !deletedResult?.ok
+        ? <ErrorState title="Deleted workspaces could not be loaded"
+            description="Failed to load deleted workspaces. The selected college and its workspaces were not changed."
+            action={<Link href="/admin/projects/deleted"
+              className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+              Retry
+            </Link>}/>
+        : deletedResult.value.length === 0
+          ? <EmptyState title="No deleted workspaces" description="Workspaces moved to Deleted workspaces will appear here for recovery." />
+          : <div className="min-w-0 divide-y divide-border border-y border-border">
+          {deletedResult.value.map(project => <article key={project.id}
             className="flex min-w-0 flex-wrap items-start justify-between gap-3 py-4">
             <div className="min-w-0">
               <p className="m-0 break-words font-semibold text-foreground">{project.title}</p>
@@ -39,7 +53,7 @@ export default async function DeletedAdminProjectsPage() {
             </Link>
           </article>)}
         </div>}
-    {projects.length === 200
+    {deletedResult?.ok && deletedResult.value.length === 200
       ? <p role="status" className="text-sm text-body">Showing the first 200 deleted workspaces.</p>
       : null}
   </div>;

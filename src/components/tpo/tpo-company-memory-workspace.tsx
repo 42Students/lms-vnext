@@ -131,8 +131,8 @@ export function TpoCompanyMemoryWorkspace({
       };
       if (signal?.aborted) return null;
       if (!response.ok) {
-        if (response.status === 503 && (payload.error === "DATABASE_NOT_READY" || payload.error === "DB09_MIGRATIONS_PENDING"))
-          return { company: null, phase: "migration-pending", message: "Company details are unavailable right now. Try again." };
+        if (response.status === 503 && (payload.error === "DATABASE_NOT_READY" || payload.error === "DB09_MIGRATIONS_PENDING" || payload.error === "TPO_CRM_SCHEMA_NOT_REGISTERED"))
+          return { company: null, phase: "migration-pending", message: "Company details are temporarily unavailable while placement data storage is being prepared. Try again." };
         if (response.status === 404)
           return { company: null, phase: "not-found", message: "Company not found" };
         return { company: null, phase: "error", message: "Company Memory could not be loaded." };

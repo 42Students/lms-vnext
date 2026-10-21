@@ -47,11 +47,7 @@ export function OrganizationActions({
       if (!response.ok) {
         showToast({
           tone: "error",
-          title: "Rename failed",
-          description:
-            payload?.error === "ORGANIZATION_NAME_CONFLICT"
-              ? "Another active organization already uses that name."
-              : "The organization could not be renamed.",
+          title: "Failed to update organization: "+(payload?.error === "ORGANIZATION_NAME_CONFLICT" ? "Organization name already exists" : "The organization could not be renamed."),
         });
         return;
       }
@@ -59,10 +55,10 @@ export function OrganizationActions({
       setRenameOpen(false);
       showToast({
         tone: "success",
-        title: "Organization renamed",
+        title: "Updated organization “"+nextName.trim()+"”.",
       });
       router.refresh();
-      }catch{showToast({tone:"error",title:"Rename failed",description:"The organization could not be renamed."});}
+      }catch{showToast({tone:"error",title:"Failed to update organization: The organization could not be renamed."});}
       finally{inFlightRef.current=false;}
     });
   }
@@ -81,11 +77,9 @@ export function OrganizationActions({
       if (!response.ok) {
         showToast({
           tone: "error",
-          title: "Archive blocked",
-          description:
-            payload?.error === "ORGANIZATION_HAS_COLLEGES"
-              ? "Archive or move active colleges before archiving this organization."
-              : "The organization could not be archived.",
+          title: "Failed to delete organization: "+(payload?.error === "ORGANIZATION_HAS_COLLEGES"
+            ? "Cannot delete organization: colleges exist under this organization"
+            : "The organization could not be archived."),
         });
         return;
       }
@@ -93,10 +87,10 @@ export function OrganizationActions({
       setArchiveOpen(false);
       showToast({
         tone: "success",
-        title: "Organization archived",
+        title: "Archived organization “"+name+"”.",
       });
       router.refresh();
-      }catch{showToast({tone:"error",title:"Archive blocked",description:"The organization could not be archived."});}
+      }catch{showToast({tone:"error",title:"Failed to delete organization: The organization could not be archived."});}
       finally{inFlightRef.current=false;}
     });
   }
@@ -161,7 +155,7 @@ export function OrganizationActions({
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         title={`Archive ${name}?`}
-        description="This is allowed only when the organization has no active colleges."
+        description="This archives rather than permanently deletes the organization. It is allowed only when no active colleges exist."
         confirmLabel="Archive organization" confirmVariant="danger"
         pending={pending}
         onConfirm={archive}

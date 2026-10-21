@@ -52,6 +52,18 @@ export async function getFacultyScheduleReassignOptions(ctx:RequestContext,rawId
  return{faculty:people,upcoming:Math.min(slots.length,200),truncated:slots.length>200};
  });
 }
+/** The legacy success count is about actual writes, not matching sessions. */
+export function facultyScheduleReassignmentReceipt(
+ results:readonly {id:string;title:string;status:"REASSIGNED"|"SKIPPED";reason:string}[],
+) {
+ const reassigned=results.filter(item=>item.status==="REASSIGNED").length;
+ const total=results.length;
+ return {
+  summary:`Reassigned ${reassigned} of ${total} upcoming session(s)`,
+  warnings:results.filter(item=>item.status==="SKIPPED")
+   .map(item=>({sessionId:item.id,title:item.title,reason:item.reason})),
+ };
+}
 export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:unknown,raw:unknown){
  const m=college(ctx),old=ids.parse(rawId),input=scheduleReassignInput.parse(raw);
  if(old===input.replacementMembershipId)throw Error("Choose a different faculty member.");
@@ -116,7 +128,8 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
   // Replayed forms and collision-only attempts should return the same status
   // without emitting a second "reassigned" audit entry for zero writes.
   if(!results.some(row=>row.status==="REASSIGNED"))
-   return {total:results.length,reassigned:0,skipped:results.length,results};
+   return {total:results.length,reassigned:0,skipped:results.length,results,
+    ...facultyScheduleReassignmentReceipt(results)};
   await tx.insert(activityEvents).values({
    organizationId:m.organizationId,collegeId:m.collegeId,
    actorUserId:ctx.user.id,actorMembershipId:m.id,
@@ -128,6 +141,7 @@ export async function reassignFacultyUpcomingSchedules(ctx:RequestContext,rawId:
     skipped:results.filter(r=>r.status==="SKIPPED").length},
   });
   return{total:results.length,reassigned:results.filter(r=>r.status==="REASSIGNED").length,
-   skipped:results.filter(r=>r.status==="SKIPPED").length,results};
+   skipped:results.filter(r=>r.status==="SKIPPED").length,results,
+   ...facultyScheduleReassignmentReceipt(results)};
  });
 }

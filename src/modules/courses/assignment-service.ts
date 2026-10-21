@@ -48,6 +48,39 @@ import {
   courseSectionDeliveryIdSchema,
 } from "./validation";
 
+/** Legacy LessonContents(ASSIGNMENT) crosswalk into a distinct,
+ * college-scoped courseAssignments row. Never accept a raw numeric lesson ID
+ * as a UUID, and retain historical ordering within the resolved lesson.
+ */
+export function legacyAssignmentContentCrosswalk(
+ source:{lessonContentId:number;lessonId:number;courseId:number;
+  contentType:string;contentTitle:string;sequence:number;points:number;
+  active:boolean|null;enabled:boolean|null;deadline:string|null},
+ scoped:{lessonId:string;offeringId:string;resolvedCourseId:number;
+  resolvedLegacyLessonId:number},
+) {
+ if(source.contentType.toUpperCase()!=="ASSIGNMENT" ||
+    !Number.isSafeInteger(source.lessonContentId)||source.lessonContentId<1||
+    source.lessonId!==scoped.resolvedLegacyLessonId||
+    source.courseId!==scoped.resolvedCourseId||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(scoped.lessonId)||
+    !Number.isSafeInteger(source.sequence)||source.sequence<0||
+    !Number.isFinite(source.points)||source.points<0||
+    !source.contentTitle.trim())return null;
+ const due=source.deadline?new Date(source.deadline):null;
+ if(due&& !Number.isFinite(due.getTime()))return null;
+ return {
+  historicalContentId:source.lessonContentId,
+  lessonId:scoped.lessonId,offeringId:scoped.offeringId,
+  title:source.contentTitle.trim(),sequence:source.sequence,
+  maxPoints:source.points,dueAt:due,
+  status:source.active===false?"ARCHIVED" as const:"DRAFT" as const,
+  visibleToStudents:source.enabled!==false,
+  // Publication and submission policy must be reviewed separately.
+  requiresPublicationReview:true,
+ };
+}
+
 function mapAssignmentConstraint(
   error: unknown,
 ) {

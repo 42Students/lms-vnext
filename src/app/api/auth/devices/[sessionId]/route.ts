@@ -25,7 +25,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     const sessionId = z.string().uuid().parse((await params).sessionId);
 
     if (!(await revokeOwnSession(sessionId, session.userId))) {
-      return privateAuthResponse(NextResponse.json({ error: "SESSION_NOT_FOUND" }, { status: 404 }));
+      return privateAuthResponse(NextResponse.json({ error: "SESSION_NOT_FOUND", message: "Session not found" }, { status: 404 }));
     }
 
     return NextResponse.json({ ok: true }, { headers: { "Cache-Control": "private, no-store" } });

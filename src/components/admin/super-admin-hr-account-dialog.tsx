@@ -17,6 +17,7 @@ export function SuperAdminHrAccountDialog({
   account,
   relationships,
   colleges,
+  selectedCollegeId,
   optionsLoading,
   optionsError,
   pending,
@@ -28,6 +29,7 @@ export function SuperAdminHrAccountDialog({
   account: HrAccount | null;
   relationships: readonly HrRelationshipOption[];
   colleges:readonly HrCollegeOption[];
+  selectedCollegeId?:string|null;
   optionsLoading: boolean;
   optionsError: string | null;
   pending: boolean;
@@ -40,12 +42,18 @@ export function SuperAdminHrAccountDialog({
   const formId = `${id}-form`;
   const creating = account === null;
 
+  const scopedRelationships=selectedCollegeId
+    ? relationships.filter(option=>option.collegeId===selectedCollegeId)
+    : [];
   const [companyRelationshipId, setRelationshipId] =
-    useState("");
+    useState(()=>creating&&scopedRelationships.length===1
+      ? scopedRelationships[0]!.companyRelationshipId:"");
   const [additionalRelationshipIds,setAdditionalRelationshipIds]=useState<string[]>([]);
   const [createCompany,setCreateCompany]=useState(false);
   const [newCompanyName,setNewCompanyName]=useState("");
-  const [newCompanyCollegeId,setNewCompanyCollegeId]=useState("");
+  const [newCompanyCollegeId,setNewCompanyCollegeId]=useState(()=>
+    selectedCollegeId&&colleges.some(item=>item.collegeId===selectedCollegeId)
+      ? selectedCollegeId:"");
   const [newCompanyDomain,setNewCompanyDomain]=useState("");
   const [firstName,setFirstName] = useState(()=>account?.displayName?.trim().split(/\s+/)[0]??"");
   const [lastName,setLastName] = useState(()=>account?.displayName?.trim().split(/\s+/).slice(1).join(" ")??"");
@@ -59,6 +67,7 @@ export function SuperAdminHrAccountDialog({
   const [title, setTitle] = useState(
     account?.title ?? "",
   );
+  const [fieldError,setFieldError]=useState<{field:"firstName"|"phone"|"email";message:string}|null>(null);
   const [status, setStatus] = useState<
     "ACTIVE" | "ARCHIVED"
   >(
@@ -77,10 +86,14 @@ export function SuperAdminHrAccountDialog({
   ) {
     event.preventDefault();
 
-    if (pending || !eligible || (creating && (optionsLoading || Boolean(optionsError)))) {
-      return;
+    if(pending||optionsLoading&&creating||Boolean(optionsError)&&creating)return;
+    if(!firstName.trim()){setFieldError({field:"firstName",message:"First name is required"});return;}
+    if(creating&&!phoneE164.trim()){setFieldError({field:"phone",message:"Mobile is required"});return;}
+    if(email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())){
+      setFieldError({field:"email",message:"Enter a valid email"});return;
     }
-
+    if(!eligible)return;
+    setFieldError(null);
     onSubmit({
       companyRelationshipId,
       companyRelationshipIds:createCompany?[]:[companyRelationshipId,...additionalRelationshipIds],
@@ -140,9 +153,73 @@ export function SuperAdminHrAccountDialog({
     >
       <form
         id={formId}
+        noValidate
         onSubmit={submit}
         className="space-y-4"
       >
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">First Name
+            <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
+              minLength={1} maxLength={100} required disabled={pending}
+              aria-invalid={fieldError?.field==="firstName"}
+              onChange={event=>{setFirstName(event.target.value);setFieldError(null);}}
+              onBlur={()=>{if(!firstName.trim())setFieldError({field:"firstName",message:"First name is required"});}}/>
+            {fieldError?.field==="firstName"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
+          </label>
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Last Name
+            <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
+              maxLength={100} disabled={pending}
+              onChange={event=>setLastName(event.target.value)}/>
+          </label>
+        </div>
+
+        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+          <div>
+            <label
+              htmlFor={`${id}-phone`}
+              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+            >
+              Mobile number
+            </label>
+            <Input className="min-h-11 md:min-h-9"
+              id={`${id}-phone`}
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              value={phoneE164}
+              required={creating || Boolean(account?.phoneE164)}
+              maxLength={32}
+              placeholder="+919876543210"
+              disabled={pending}
+              aria-invalid={fieldError?.field==="phone"}
+              onChange={(event) => {setPhoneE164(event.target.value);setFieldError(null);}}
+              onBlur={()=>{if(creating&&!phoneE164.trim())setFieldError({field:"phone",message:"Mobile is required"});}}
+            />
+            {fieldError?.field==="phone"?<p role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
+          </div>
+
+          <div>
+            <label
+              htmlFor={`${id}-email`}
+              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
+            >
+              Email · optional
+            </label>
+            <Input className="min-h-11 md:min-h-9"
+              id={`${id}-email`}
+              type="email"
+              autoComplete="email"
+              value={email}
+              maxLength={320}
+              placeholder="name@company.com"
+              disabled={pending}
+              aria-invalid={fieldError?.field==="email"}
+              onChange={(event) => {setEmail(event.target.value);setFieldError(null);}}
+            />
+            {fieldError?.field==="email"?<p role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
+          </div>
+        </div>
+
         {creating ? (
           <div>
             <label className="mb-3 flex min-h-11 items-center gap-2 text-sm text-body">
@@ -190,9 +267,9 @@ export function SuperAdminHrAccountDialog({
               }}
             >
               <option value="">
-                Select an active relationship
+                {selectedCollegeId?"Select a company relationship in this college":"Select an active relationship"}
               </option>
-              {relationships.map((relationship) => (
+              {[...relationships].sort((a,b)=>Number(b.collegeId===selectedCollegeId)-Number(a.collegeId===selectedCollegeId)).map((relationship) => (
                 <option
                   key={relationship.companyRelationshipId}
                   value={relationship.companyRelationshipId}
@@ -279,65 +356,6 @@ export function SuperAdminHrAccountDialog({
             </p>
           </div>
         )}
-
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">First Name
-            <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
-              minLength={1} maxLength={120} required disabled={pending}
-              onChange={event=>setFirstName(event.target.value)}/>
-          </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Last Name
-            <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
-              maxLength={120} disabled={pending}
-              onChange={event=>setLastName(event.target.value)}/>
-          </label>
-        </div>
-
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <div>
-            <label
-              htmlFor={`${id}-phone`}
-              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
-            >
-              Mobile number
-            </label>
-            <Input className="min-h-11 md:min-h-9"
-              id={`${id}-phone`}
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel"
-              value={phoneE164}
-              required={creating || Boolean(account?.phoneE164)}
-              maxLength={32}
-              placeholder="+919876543210"
-              disabled={pending}
-              onChange={(event) =>
-                setPhoneE164(event.target.value)
-              }
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor={`${id}-email`}
-              className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
-            >
-              Email · optional
-            </label>
-            <Input className="min-h-11 md:min-h-9"
-              id={`${id}-email`}
-              type="email"
-              autoComplete="email"
-              value={email}
-              maxLength={320}
-              placeholder="name@company.com"
-              disabled={pending}
-              onChange={(event) =>
-                setEmail(event.target.value)
-              }
-            />
-          </div>
-        </div>
 
         <div>
           <label

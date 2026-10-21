@@ -7,12 +7,13 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {closePlacementJob} from "./job-service";
 import {reopenCollegeDrive} from "./college-drive-reopen-service";
+import {PlacementsServiceError} from "./errors";
 
 export const collegeBulkDriveInput=z.strictObject({
  action:z.enum(["OPEN","CLOSE"]),
- jobIds:z.array(z.uuid()).min(1).max(25).refine(ids=>new Set(ids).size===ids.length,
+ jobIds:z.array(z.uuid()).min(1,"Select at least one drive").max(25,"Select 25 drives or fewer per batch").refine(ids=>new Set(ids).size===ids.length,
   "Duplicate drive IDs are not allowed"),
- confirmed:z.literal(true),
+ confirmed:z.literal(true,{error:"Confirm these drive changes before continuing"}),
 });
 export async function previewCollegeBulkDrives(ctx:RequestContext,raw:unknown){
  const input=collegeBulkDriveInput.omit({confirmed:true}).parse(raw);
@@ -30,7 +31,8 @@ export async function previewCollegeBulkDrives(ctx:RequestContext,raw:unknown){
     eq(placementOffers.status,"ISSUED"))):[];
  return {requested:input.jobIds.length,eligible:eligible.length,ignored:ignored.length,
   excluded:input.jobIds.length-rows.length,
-  pendingLettersWithdrawn:offers.length,rows};
+  pendingLettersWithdrawn:offers.length,selectionLimit:25,
+  confirmationMessage:"Review and confirm up to 25 drives per batch. Closing a drive keeps its applications and interview history; issued offers may be withdrawn.",rows};
 }
 /** Per-drive operations intentionally return partial failures, not false all-or-nothing claims. */
 export async function updateCollegeBulkDrives(ctx:RequestContext,raw:unknown){
@@ -49,9 +51,17 @@ export async function updateCollegeBulkDrives(ctx:RequestContext,raw:unknown){
    if(input.action==="CLOSE")await closePlacementJob(ctx,jobId);
    else await reopenCollegeDrive(ctx,jobId,{confirmed:true});
    results.push({jobId,status:"UPDATED",reason:input.action==="CLOSE"?"Drive closed":"Drive opened"});
-  }catch(error){results.push({jobId,status:"SKIPPED",
-   reason:error instanceof Error?error.message:"Drive change failed"});}
+  }catch(error){
+    const reason=error instanceof PlacementsServiceError
+      ?error.code==="PLACEMENT_JOB_NOT_CLOSABLE"
+        ?"Drive status changed or unreleased selections remain. Review this drive before retrying."
+        :"Drive validation failed. Review the current status and retry."
+      :"Drive change failed. Refresh this drive and retry.";
+    results.push({jobId,status:"SKIPPED",reason});
+  }
  }
- return {updated:results.filter(r=>r.status==="UPDATED").length,
-  skipped:results.filter(r=>r.status==="SKIPPED").length,results};
+ const updated=results.filter(r=>r.status==="UPDATED").length;
+ const skipped=results.length-updated;
+ return {updated,skipped,results,message:"Drives updated",
+  warning:skipped? "Failed to update drives: "+skipped+" drive(s) need review.":null};
 }

@@ -32,7 +32,12 @@ export async function PATCH(
     const issue = await updateBugTrackerWorkflowForAdmin(
       context, publicId, body,
     );
-    return NextResponse.json({ issue });
+    // Return the persisted post-CAS workflow snapshot, never the request body.
+    // UI must replace stale status/version with this receipt and re-fetch
+    // related activities; no intermediate cached envelope may be reused.
+    return NextResponse.json({ issue, currentVersion: issue.version }, {
+      headers: { "Cache-Control": "private, no-store" },
+    });
   } catch (error) {
     return bugTrackerApiError(error);
   }

@@ -60,7 +60,7 @@ function errorText(payload: {
   error?: string;
   upcomingClasses?: number;
   issues?: { message?: string }[];
-} | null) {
+} | null, fallback = "Something went wrong. Please try again.") {
   switch (payload?.error) {
     case "HALL_NAME_TAKEN":
       return "Another active hall in this college already has that name.";
@@ -73,7 +73,7 @@ function errorText(payload: {
     case "INVALID_REQUEST":
       return payload.issues?.[0]?.message ?? "Check the fields and try again.";
     default:
-      return "Something went wrong. Please try again.";
+      return fallback;
   }
 }
 
@@ -172,8 +172,10 @@ export function LectureHallManager({
       if (!response.ok) {
         const payload = await response.json().catch(() => null);
         setError(payload?.error === "HALL_NAME_TAKEN"
-          ? `A lecture hall named “${values.name.trim()}” already exists among active halls.`
-          : errorText(payload));
+          ? `A lecture hall named "${values.name.trim()}" already exists in this college`
+          : errorText(payload,isNew
+            ? "Could not create the room. Try again."
+            : "Could not save the room. Try again."));
         return;
       }
 
@@ -205,7 +207,10 @@ export function LectureHallManager({
         showToast({
           tone: "error",
           title: status === "ARCHIVED" ? "Archive blocked" : "Restore failed",
-          description: errorText(await response.json().catch(() => null)),
+          description: errorText(await response.json().catch(() => null),
+            status === "ARCHIVED"
+              ? "Could not archive the room. Try again."
+              : "Could not restore the room. Try again."),
         });
         setArchiving(null);
         return;
@@ -343,7 +348,7 @@ export function LectureHallManager({
         onOpenChange={(value) => { if (!value) requestClose(); }}
         dismissible={!pending}
         title="Edit Lecture Hall"
-        description="Hall names stay unique among the college's active halls."
+        description="Names must be unique among active halls in this college. Archived rooms retain historical scheduling references and may be restored when no active name conflicts exist."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending} onClick={requestClose}>

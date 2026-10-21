@@ -30,6 +30,34 @@ export const TPO_AUDIT_KIND_LABELS: Record<
   SHARE: "Shares and downloads",
 };
 
+/** About tab uses an entity-category vocabulary independent of event kind.
+ * Keep current event-kind filters intact for existing URLs and counters. */
+export const TPO_AUDIT_ABOUT_CATEGORIES=[
+ {value:"DRIVE",label:"Drives"},
+ {value:"RECRUITER_LEAD",label:"Recruiters"},
+ {value:"STUDENT",label:"Students"},
+ {value:"OFFER",label:"Offers"},
+ {value:"ROUND",label:"Rounds"},
+ {value:"SHARE",label:"Shares and downloads"},
+ {value:"SETTINGS",label:"Settings"},
+ {value:"BULK",label:"Bulk actions"},
+ {value:"GENERAL",label:"General"},
+] as const;
+export type TpoAuditAboutCategory=(typeof TPO_AUDIT_ABOUT_CATEGORIES)[number]["value"];
+/** Stable fallback keeps unknown event names in General; it never drops them. */
+export function tpoAuditAboutCategory(eventType:string,subjectType?:string|null):TpoAuditAboutCategory{
+ const value=(eventType+" "+(subjectType??"")).toUpperCase();
+ if(value.includes("BULK"))return "BULK";
+ if(value.includes("SETTINGS")||value.includes("RULES")||value.includes("CONFIG"))return "SETTINGS";
+ if(value.includes("SHARE")||value.includes("DOWNLOAD"))return "SHARE";
+ if(value.includes("RECRUITER")||value.includes("LEAD"))return "RECRUITER_LEAD";
+ if(value.includes("STUDENT")||value.includes("LEARNER"))return "STUDENT";
+ if(value.includes("OFFER"))return "OFFER";
+ if(value.includes("ROUND")||value.includes("RESULT")||value.includes("ATTENDANCE"))return "ROUND";
+ if(value.includes("DRIVE")||value.includes("JOB")||value.includes("APPLICATION"))return "DRIVE";
+ return "GENERAL";
+}
+
 export type TpoAuditUrlFilters = {
   kind?: TpoAuditKindFilter;
   from?: string;

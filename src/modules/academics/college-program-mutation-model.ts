@@ -1,12 +1,14 @@
 import { z } from "zod";
 
-const name = z.string().trim().min(1, "Program name is required").max(255);
+const name = z.string().trim()
+  .min(1, "Please enter program name")
+  .max(255, "Maximum 255 characters");
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid program code");
 const durationTerms = z.number().int().min(1).max(24);
 
 export const createCollegeProgramSchema = z.object({
-  departmentId: z.string().uuid(),
+  departmentId: z.string().uuid("Please select a department"),
   name,
   code,
   durationTerms,
@@ -46,4 +48,25 @@ export function canReduceProgramDuration(
   return Number.isInteger(nextDurationTerms) &&
     nextDurationTerms >= 1 && nextDurationTerms <= 24 &&
     nextDurationTerms >= highestReferencedTerm;
+}
+
+/**
+ * Read/import-only legacy ProgramDTO: an optional 0-year duration and absent
+ * code are historical source facts, not valid inputs to the live UUID-first
+ * program create/update endpoints. Map numeric IDs in a trusted college-scoped
+ * migration and choose a real program duration before enabling instruction.
+ */
+export const legacyProgramSourceSchema = z.object({
+  id: z.number().int().positive().optional(),
+  departmentId: z.number().int().positive().optional(),
+  name: z.string().trim().min(1, "Program name cannot be empty")
+    .max(255, "Maximum 255 characters"),
+  code: z.string().trim().max(64).nullish(),
+  durationYears: z.number().int().min(0).default(0),
+}).passthrough();
+
+/** A zero-year imported program needs explicit owner remediation, not a fake
+ * one-term default or a silent conversion during editing. */
+export function isLegacyProgramDurationUnresolved(durationYears: number) {
+  return !Number.isInteger(durationYears) || durationYears <= 0;
 }

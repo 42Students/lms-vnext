@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -53,6 +54,10 @@ export default async function CollegeGroupDetailPage({
 }) {
   const context = await getCurrentRequestContext();
   const { groupId } = await params;
+  // Legacy student-group bookmarks never loaded a group. Preserve the
+  // history-replacing People redirect instead of treating numeric IDs as UUIDs.
+  if (process.env.COLLEGE_STUDY_GROUPS_RELEASED !== "true" ||
+      !z.uuid().safeParse(groupId).success) redirect("/college/people");
 
   let detail: Detail;
   try {
@@ -103,13 +108,20 @@ export default async function CollegeGroupDetailPage({
           title="Members"
           value={
             group.capacity === null
-              ? counts.active
-              : `${counts.active} / ${group.capacity}`
+              ? group.activeCount
+              : `${group.activeCount} / ${group.capacity}`
           }
         />
         <Stat title="Waitlisted" value={counts.waitlisted} />
         <Stat title="Requested" value={counts.requested} />
       </section>
+
+      <p className="text-xs text-muted-foreground">
+        Group ID: <code className="select-all break-all">{group.id}</code>
+        {" · "}Stored active member count: {group.activeCount}. Member edits and count
+        reconciliation are different operations; reconciliation requires a
+        separately authorized support action and is not offered here.
+      </p>
 
       {group.selfJoinOpenFrom || rule ? (
         <details className="min-w-0 border-b border-border pb-3">

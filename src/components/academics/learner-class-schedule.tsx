@@ -7,6 +7,8 @@ import styles from "./learner-class-schedule.module.css";
 
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Dialog } from "@/components/ui/dialog";
 import { eventsForLearnerIstScheduleDay, learnerIstScheduleToday, learnerScheduleDateFromDay } from "@/modules/academics/learner-ist-schedule-model";
 import { filterLearnerScheduleSections } from "@/modules/academics/learner-schedule-section-filter-model";
 import { filterLearnerScheduleBySearch } from "@/modules/academics/learner-schedule-search-model";
@@ -26,6 +28,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  useTransition,
 } from "react";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
@@ -323,6 +326,9 @@ export function LearnerClassSchedule({
   calendarMode?: "LOCAL" | "IST";
   initialSelectedDeliveryIds?: readonly string[];
 }) {
+  const router = useRouter();
+  const [navigationPending, startNavigation] = useTransition();
+  const [overflowDay, setOverflowDay] = useState<string | null>(null);
   const [view, setView] =
     useState<LearnerScheduleView>(initialView);
   const [chosenDay, setChosenDay] = useState(() => initialAnchorDay ?? istCalendarDay(initialAnchor ?? new Date()));
@@ -339,6 +345,18 @@ export function LearnerClassSchedule({
   const [anchor, setAnchor] = useState(
     () => initialAnchorDay ? learnerScheduleDateFromDay(initialAnchorDay) : initialAnchor ?? new Date(),
   );
+  // A navigation to a new month remounts the server's authorized event window
+  // without duplicating its identity and college access checks in the browser.
+  useEffect(() => {
+    if (!initialAnchorDay || courseBasePath !== "/learn/courses") return;
+    setAnchor(learnerScheduleDateFromDay(initialAnchorDay));
+    setChosenDay(initialAnchorDay);
+  }, [initialAnchorDay, courseBasePath]);
+  const loadedMonth = initialAnchorDay?.slice(0, 7) ??
+    localDayKey(initialAnchor ?? new Date()).slice(0, 7);
+  const visibleMonth = localDayKey(anchor).slice(0, 7);
+  const waitingForMonth = courseBasePath === "/learn/courses" &&
+    visibleMonth !== loadedMonth;
   const [sectionId, setSectionId] = useState("");
   const [sessionSearch,setSessionSearch]=useState("");
   const [sessionKind,setSessionKind]=useState<LearnerScheduleKind>("ALL");
@@ -363,6 +381,9 @@ export function LearnerClassSchedule({
     () => calendarDays(anchor, view),
     [anchor, view],
   );
+  // Do not render events from the previous fetched month as if they belonged
+  // to the new selected period while Next is replacing its server payload.
+  const visibleEvents = waitingForMonth ? [] : filteredEvents;
   // One scheduled clock drives upcoming-only, Today and Next summaries.
   const now = learnerScheduleClock(filterNowMs);
   const calendarToday = calendarMode === "IST" ? learnerIstScheduleToday(now) : now;
@@ -384,12 +405,28 @@ export function LearnerClassSchedule({
     selectedDeliveryIds,
   );
   const monthKeys=useMemo(()=>istMonthGridKeys(anchor.getFullYear(),anchor.getMonth()+1),[anchor]);
-  const agenda=useMemo(()=>istDayAgenda(filteredEvents,chosenDay),[filteredEvents,chosenDay]);
+  const agenda=useMemo(()=>istDayAgenda(visibleEvents,chosenDay),[visibleEvents,chosenDay]);
+  const overflowEvents=useMemo(()=>overflowDay?istDayAgenda(visibleEvents,overflowDay):[],
+    [visibleEvents,overflowDay]);
   const dayIcs=useMemo(()=>learnerScheduleDayIcs(agenda,chosenDay),[agenda,chosenDay]);
+  function navigateCalendarWindow(next: Date, nextView: LearnerScheduleView = view) {
+    if (courseBasePath !== "/learn/courses") return;
+    const nextMonth = localDayKey(next).slice(0, 7);
+    if (nextMonth === loadedMonth || nextMonth < "2000-01" || nextMonth > "2199-12") return;
+    const search = new URLSearchParams(window.location.search);
+    search.set("month", nextMonth);
+    search.set("view", nextView);
+    startNavigation(() => {
+      router.replace(window.location.pathname + "?" + search.toString(), { scroll: false });
+    });
+  }
   function movePeriod(direction:-1|1) {
     const next=shiftCalendarAnchor(anchor,view,direction);
+    const nextMonth=localDayKey(next).slice(0,7);
+    if(nextMonth<"2000-01"||nextMonth>"2199-12")return;
     setAnchor(next);
     setChosenDay(learnerScheduleDayAfterShift(next,view));
+    navigateCalendarWindow(next);
   }
 
 
@@ -417,6 +454,16 @@ export function LearnerClassSchedule({
 
   return (
     <div data-learner-schedule={courseBasePath === "/learn/courses" ? "true" : undefined} className={"min-w-0 space-y-4 md:space-y-6 "+styles.root}>
+      <Dialog open={overflowDay !== null} onOpenChange={open=>{if(!open)setOverflowDay(null);}}
+        title={overflowDay ? "Classes on " + overflowDay : "Classes"}
+        description="All authorized sessions on the selected day">
+        <div className="min-w-0 space-y-3">
+          {overflowEvents.map(event=><EventCard key={event.id}
+            event={event} courseBasePath={courseBasePath} />)}
+          {!overflowEvents.length ? <p className="text-sm text-muted-foreground">
+            No sessions found for this day.</p> : null}
+        </div>
+      </Dialog>
       <div className={styles.summary} aria-label="Class schedule overview">
         <Metric
           label="Today"
@@ -460,6 +507,10 @@ export function LearnerClassSchedule({
       ) : null}
 
       <section className={styles.calendarCard}>
+        {navigationPending || waitingForMonth ? <p role="status" aria-live="polite"
+          className="border-b border-border px-4 py-2 text-sm text-muted-foreground">
+          Loading the selected schedule period…
+        </p> : null}
         <div className={styles.toolbar}>
           <div className={styles.nav}>
             <Button
@@ -475,9 +526,13 @@ export function LearnerClassSchedule({
               className={styles.today}
               size="sm"
               variant="secondary"
-              onClick={() =>
-                { const instant=new Date(); const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant; setAnchor(next); setChosenDay(learnerScheduleTodayDay(instant,calendarMode)); }
-              }
+              onClick={() => {
+                const instant=new Date();
+                const next=calendarMode === "IST" ? learnerIstScheduleToday(instant) : instant;
+                setAnchor(next);
+                setChosenDay(learnerScheduleTodayDay(instant,calendarMode));
+                navigateCalendarWindow(next);
+              }}
             >
               Today
             </Button>
@@ -500,8 +555,11 @@ export function LearnerClassSchedule({
             <Select
               value={view}
               onChange={(event) => {
-                setAnchor(learnerScheduleAnchorForView(chosenDay,anchor));
-                setView(event.target.value as LearnerScheduleView);
+                const next = learnerScheduleAnchorForView(chosenDay,anchor);
+                const nextView = event.target.value as LearnerScheduleView;
+                setAnchor(next);
+                setView(nextView);
+                navigateCalendarWindow(next,nextView);
               }}
               className={styles.viewSelect}
             >
@@ -607,7 +665,7 @@ export function LearnerClassSchedule({
           </div>
         ) : null}
 
-        {filteredEvents.length === 0 && view !== "month" ? (
+        {visibleEvents.length === 0 && view !== "month" && !waitingForMonth ? (
           <div className="mt-5">
             <EmptyState
               title={view==="week"?"No scheduled classes this week.":"No scheduled classes in this view"}
@@ -626,7 +684,7 @@ export function LearnerClassSchedule({
                     </span>
                   ))}
                   {monthKeys.map(day=>{
-                    const dayItems=istDayAgenda(filteredEvents,day);
+                    const dayItems=istDayAgenda(visibleEvents,day);
                     const inside=day.slice(0,7)===
                       anchor.getFullYear()+"-"+String(anchor.getMonth()+1).padStart(2,"0");
                     const selected=chosenDay===day;
@@ -634,7 +692,7 @@ export function LearnerClassSchedule({
                       data-outside={!inside}
                       aria-label={day+", "+dayItems.length+" classes"}
                       aria-pressed={selected}
-                      onClick={()=>setChosenDay(day)}
+                      onClick={()=>{setChosenDay(day);if(dayItems.length>3)setOverflowDay(day);}}
                       className={styles.monthDay+" !block !w-full !min-h-16 md:!min-h-24 !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
@@ -645,6 +703,9 @@ export function LearnerClassSchedule({
                       </span>:null}
                       {dayItems.length ? <span className="mt-1 block break-words text-xs font-semibold text-primary-text">
                         {dayItems.length} {dayItems.length===1?"class":"classes"}
+                      </span> : null}
+                      {dayItems.length>3 ? <span className="mt-1 block text-xs font-semibold text-primary-text underline">
+                        +{dayItems.length-3} more · view all
                       </span> : null}
                     </Button>;
                   })}
@@ -703,7 +764,7 @@ export function LearnerClassSchedule({
                     {days.map((day) => {
                       const dayEvents =
                         scheduleEventsForDay(
-                          filteredEvents,
+                          visibleEvents,
                           day,
                         );
                       const inMonth =
@@ -742,12 +803,11 @@ export function LearnerClassSchedule({
                                 />
                               ))}
                             {dayEvents.length > 3 ? (
-                              <p className="m-0 text-xs font-semibold text-muted-foreground">
-                                +
-                                {dayEvents.length -
-                                  3}{" "}
-                                more
-                              </p>
+                              <Button type="button" variant="ghost"
+                                className="min-h-9 text-xs font-semibold text-primary-text underline"
+                                onClick={()=>setOverflowDay(localDayKey(day))}>
+                                +{dayEvents.length-3} more
+                              </Button>
                             ) : null}
                           </div>
                         </div>
@@ -757,7 +817,7 @@ export function LearnerClassSchedule({
                 </>
               ) : (
                 <LearnerHourlyGrid days={days}
-                  eventsForDay={day=>scheduleEventsForDay(filteredEvents,day)}
+                  eventsForDay={day=>scheduleEventsForDay(visibleEvents,day)}
                   courseBasePath={courseBasePath}
                   onSelectDay={day=>{
                     setView("day");setAnchor(day);setChosenDay(localDayKey(day));
@@ -771,7 +831,7 @@ export function LearnerClassSchedule({
                 .map((day) => ({
                   day,
                   events: scheduleEventsForDay(
-                    filteredEvents,
+                    visibleEvents,
                     day,
                   ),
                 }))

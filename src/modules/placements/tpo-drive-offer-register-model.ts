@@ -14,6 +14,38 @@ export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(
   ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
 });
 export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;fixedLpa?:string|null;variableLpa?:string|null;joiningBonusLpa?:string|null;bondMonths?:number|null;bondAmount?:string|null;acceptanceChannel?:string|null;acceptedDisputableUntil?:Date|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
+/** Legacy TPO offer rows defaulted to SELECTED even before a letter was
+ * released. Only RELEASED establishes learner response eligibility. Do not
+ * transform SELECTED to ISSUED while migrating historical offers. */
+export function legacyOfferReleaseMapping(
+ status:string,
+):"SELECTED_NOT_RELEASED"|"ISSUED"|"ACCEPTED"|"DECLINED"|"EXPIRED"|"REVIEW_REQUIRED"{
+ switch(status){
+  case "SELECTED":return "SELECTED_NOT_RELEASED";
+  case "RELEASED":return "ISSUED";
+  case "ACCEPTED":return "ACCEPTED";
+  case "DECLINED":return "DECLINED";
+  case "EXPIRED":return "EXPIRED";
+  default:return "REVIEW_REQUIRED";
+ }
+}
+
+/** A badge computed from respondBy never updates persisted state. The
+ * expiry worker must lock the offer and linked application, then reconcile
+ * an already answered application BEFORE expiring a RELEASED/ISSUED letter. */
+export function offerExpiryWriteDecision(input:{
+ offerStatus:string;respondedAt:Date|null;respondBy:Date|null;
+ applicationDecision:"ACCEPTED"|"DECLINED"|null;now:Date;
+}):"NO_CHANGE"|"MARK_EXPIRED"|"RECONCILE_ACCEPTED"|"RECONCILE_DECLINED"{
+ if(input.offerStatus!=="RELEASED"&&input.offerStatus!=="ISSUED")return "NO_CHANGE";
+ if(input.applicationDecision==="ACCEPTED")return "RECONCILE_ACCEPTED";
+ if(input.applicationDecision==="DECLINED")return "RECONCILE_DECLINED";
+ if(input.respondedAt!==null||input.respondBy===null||
+    !Number.isFinite(input.respondBy.getTime())||!Number.isFinite(input.now.getTime()))
+  return "NO_CHANGE";
+ return input.respondBy.getTime()<=input.now.getTime()?"MARK_EXPIRED":"NO_CHANGE";
+}
+
 /** Offer-level states only; campus held-offer policy is intentionally not inferred here. */
 export function offerRulesCheck(status:string,kind:string){
  if(kind==="LOI")return "Letter of intent · placement count not established";

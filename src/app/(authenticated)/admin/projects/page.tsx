@@ -18,7 +18,6 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { Banner } from "@/components/ui/banner";
-import { Dropdown } from "@/components/ui/dropdown";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -62,7 +61,11 @@ export default async function SuperAdminProjectsPage({
         />
         <EmptyState
           title="No college selected"
-          description="Pick a college in the header to manage its project workspaces."
+          description="Pick a college in the header to manage its project workspaces. The Super Admin template catalogue remains available without a selected college."
+          action={<Link href="/admin/projects/templates"
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+            Browse project templates
+          </Link>}
         />
       </div>
     );
@@ -122,8 +125,8 @@ export default async function SuperAdminProjectsPage({
         description="Live projects, each run by a mentor with a team of students."
         actions={<PageBackLink href="/admin/projects" label="Projects" />} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
-      <ErrorState title="Project workspaces unavailable"
-        description="The workspace list could not be loaded. Your search and filters were not changed."
+      <ErrorState title="Failed to load project workspaces"
+        description="Couldn't refresh workspaces. The workspace list could not be loaded. Your search and filters were not changed; retry to load the current scoped results."
         action={<Link href={"/admin/projects"+(suffix?"?"+suffix:"")}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading workspaces</Link>}
       />
@@ -143,27 +146,29 @@ export default async function SuperAdminProjectsPage({
             templateId:template.templateId,title:template.title,
             version:template.version,summary:template.summary,
           }))} />
-        <Dropdown trigger="More" label="Project workspace actions" align="end" mobileSheet>
-          <div className="grid min-w-0 gap-2">
-            <Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Create workspace</Link>
-            <Link href="/admin/projects/reassign-mentor" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Bulk reassign mentor</Link>
-          </div>
-        </Dropdown>
+        <Link href="/admin/projects/workspaces/new"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          Create workspace
+        </Link>
+        <Link href="/admin/projects/reassign-mentor"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
+          Bulk reassign mentor
+        </Link>
+        <Link href="/admin/projects/deleted"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
+          Deleted workspaces
+        </Link>
       </div>
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
 
       {!templatesResult.ok ? <Banner tone="warning">
         Project templates are temporarily unavailable. Your workspaces are still visible; refresh to try again.
       </Banner> : null}
-      <Tabs ariaLabel="Workspace display mode" renderPanel={false} value={view??"cards"}
+      <Tabs ariaLabel="Workspace display mode" renderPanel={false} value={view??"table"}
         items={[
           {value:"table",label:"Table",href:viewHref("table"),count:result.total},
           {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
         ]} />
-      <Link href="/admin/projects/deleted"
-        className="inline-flex min-h-9 items-center font-semibold text-link underline">
-        Deleted workspaces
-      </Link>
       <FilterBar title="Project workspace filters"><ProjectAdminFilters query={query} legacyWorkspaces /></FilterBar>
       <ListToolbar label="Project workspaces" viewCount={result.total}
         exportAction={<ProjectWorkspacePageExport items={result.items.map(item=>({

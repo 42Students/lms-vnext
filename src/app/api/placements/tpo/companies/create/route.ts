@@ -7,6 +7,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { createPlacementCompany } from "@/modules/placements/company-service";
 import { tpoCreateCompanySchema } from "@/modules/placements/tpo-company-create-model";
+import { matchesCompanyDomain } from "@/modules/placements/public-join/domain-model";
 
 export const runtime = "nodejs";
 
@@ -25,9 +26,35 @@ export async function POST(request: Request) {
     }
     requirePermission(context, "placements.manage", { collegeId });
     await requirePlacementManageScope(context, collegeId);
-    const { confirmed: _confirmed, ...input } =
-      tpoCreateCompanySchema.parse(await request.json());
+    const body: unknown = await request.json();
+    const raw = body && typeof body === "object" && !Array.isArray(body)
+      ? body as Record<string, unknown> : {};
+    // A validated work email can provide the domain for a new employer.
+    // Never infer a domain from an unvalidated, personal or disposable address.
+    const email = typeof raw.recruiterEmail === "string" ? raw.recruiterEmail.trim().toLowerCase() : "";
+    const derivedDomain = email.includes("@") ? email.split("@")[1] : undefined;
+    const parsed = tpoCreateCompanySchema.parse({
+      ...raw,
+      ...(!raw.primaryDomain && derivedDomain ? { primaryDomain: derivedDomain } : {}),
+    });
+    const { confirmed: _confirmed, recruiterEmail, notTheSame, ...input } = parsed;
     void _confirmed;
+    const claimedDomain = input.primaryDomain ??
+      (input.websiteUrl ? new URL(input.websiteUrl).hostname.replace(/^www\./i, "") : "");
+    if (recruiterEmail && !matchesCompanyDomain(recruiterEmail, claimedDomain)) {
+      return NextResponse.json({
+        error: "RECRUITER_EMAIL_DOMAIN_MISMATCH",
+        message: "Use a recruiter email from the company domain.",
+      }, { status: 422 });
+    }
+    // A differing-company override needs an approved reviewed-company identity,
+    // not just a client-supplied boolean that bypasses global identity checks.
+    if (notTheSame) {
+      return NextResponse.json({
+        error: "DISTINCT_COMPANY_REVIEW_REQUIRED",
+        message: "Confirm the matching company before creating a different one.",
+      }, { status: 409 });
+    }
     const result = await createPlacementCompany(context, {
       ...input, collegeId, isTrusted: false,
     });
@@ -35,7 +62,12 @@ export async function POST(request: Request) {
       companyId: result.company.id,
       relationshipId: result.relationship.id,
       companyName: result.company.name,
-    }, { status: 201 });
+      name: result.company.name,
+      logoUrl: result.company.logoPublicUrl ?? null,
+      verifiedBy42: Boolean(result.company.verifiedAt),
+      existed: result.existed,
+      nameLocked: result.existed || Boolean(result.company.verifiedAt),
+    }, { status: result.existed ? 200 : 201 });
   } catch (error) {
     return apiErrorResponse(error);
   }

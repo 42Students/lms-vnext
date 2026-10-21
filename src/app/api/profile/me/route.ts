@@ -47,3 +47,35 @@ export async function PUT(request: Request) {
     return apiErrorResponse(error);
   }
 }
+
+/** Stable route replacement directory for legacy LearnerProfileController consumers. */
+export const LEARNER_PROFILE_ROUTE_REPLACEMENTS = {
+  header: "PUT /api/profile/me",
+  about: "PUT /api/profile/me",
+  personalDetails: "PUT /api/profile/me",
+  identity: "PUT /api/profile/me",
+  contact: "PUT /api/profile/me",
+  address: "PUT /api/profile/me",
+  socialProfiles: "PUT /api/profile/me",
+  languages: "PATCH /api/profile/me/sections",
+  education: "PATCH /api/profile/me/sections",
+  certifications: "PATCH /api/profile/me/sections",
+  experiences: "PATCH /api/profile/me/sections",
+  skills: "PATCH /api/profile/me/sections",
+  projects: "PATCH /api/profile/me/sections",
+  publications: "PATCH /api/profile/me/sections",
+  awards: "PATCH /api/profile/me/sections",
+  metadata: "PUT /api/profile/me",
+  resume: "PUT /api/profile/me",
+  jobPreferences: "PUT /api/profile/me",
+  qualifications: "PATCH /api/profile/me/sections",
+  achievements: "PATCH /api/profile/me/sections",
+} as const;
+
+/** Read-only discovery. Existing GET/PUT and section PATCH contracts are unchanged. */
+export async function OPTIONS() {
+  return NextResponse.json({
+    version: 1, read: "GET /api/profile/me",
+    sections: LEARNER_PROFILE_ROUTE_REPLACEMENTS,
+  }, { headers: { Allow: "GET, PUT, OPTIONS", "Cache-Control": "no-store" } });
+}

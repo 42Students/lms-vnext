@@ -11,6 +11,7 @@ import { useRef, useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
+import {useToast} from "@/components/ui/toast";
 import { FACULTY_CSV_COLUMNS } from "@/modules/people/college-faculty-csv-columns";
 import { neutralStudentCsvCell } from "@/modules/people/college-student-csv-model";
 import {facultyCsvResponseBelongsToDraft} from "@/modules/people/college-faculty-csv-draft-model";
@@ -20,6 +21,7 @@ type Report={preview:boolean;valid:number;invalid:number;structuralErrors:string
 const header=FACULTY_CSV_COLUMNS.join(",");
 export function CollegeFacultyCsvImport(){
   const router=useRouter();
+  const {showToast}=useToast();
   const csvRevision=useRef(0);
   const [csv,setCsv]=useState(header+"\n");
   const [report,setReport]=useState<Report|null>(null);
@@ -38,6 +40,10 @@ export function CollegeFacultyCsvImport(){
     // A validation response for a replaced draft must never re-enable import.
     if(action==="PREVIEW" && !facultyCsvResponseBelongsToDraft(revision,csvRevision.current))return;
     setReport(payload.report as Report);
+    if(action==="PREVIEW"){
+      const rowCount=payload.report.valid+payload.report.invalid;
+      showToast({tone:"success",title:`Parsed ${rowCount} row(s). Review validation results below.`});
+    }
     if(action==="IMPORT"){setConfirmed(false);router.refresh();}
   }
   const run=(action:"PREVIEW"|"IMPORT")=>void guardRun(async()=>{

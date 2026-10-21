@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import {apiFetch} from "@/lib/api-fetch";
+import { useToast } from "@/components/ui/toast";
 
 type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
 type Group = { id: string; name: string; capacity: number | null };
@@ -18,6 +19,7 @@ type Load = { deliveries: Delivery[]; groups: Group[]; offerings: Offering[] };
 
 export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [opened, setOpened] = useState(false);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<Load | null>(null);
@@ -50,15 +52,22 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
   function startEdit(offering: Offering) {
     setEditing(offering);
     setDeliveryId(offering.backedDeliveryId);
-    setCapacity(String(offering.capacity ?? 30));
+    // Null is legacy unlimited; never silently replace it with 30 seats.
+    setCapacity(offering.capacity === null ? "" : String(offering.capacity));
     setError(""); setMessage("");
   }
 
   async function save() {
     const delivery = data?.deliveries.find(row => row.id === deliveryId);
     const number = Number(capacity);
+    if (!capacity.trim()) {
+      setError(editing?.capacity === null
+        ? "This offering has unlimited seats. Enter a seat limit to change it; keeping unlimited requires the college capacity policy to be enabled."
+        : "Enter a capacity from 1 to 100000. Unlimited seats are not yet supported when saving.");
+      return;
+    }
     if (!delivery || !Number.isInteger(number) || number < 1 || number > 100000) {
-      setError("Select an eligible course and enter a valid capacity.");
+      setError("Select an eligible course and enter a capacity from 1 to 100000.");
       return;
     }
     if (editing && number < editing.activeMembers) {
@@ -78,7 +87,12 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           ...(editing ? { expectedVersion: editing.version } : { groupId: groupId || undefined }),
         }),
       });
-      setMessage(editing ? "Offering updated." : "Offering added.");
+      const message = editing
+        ? editing.capacity !== number && editing.backedDeliveryId === delivery.id
+          ? "Capacity updated" : "Offering updated"
+        : "Offering added";
+      setMessage(message);
+      showToast({ tone: "success", title: message });
       setEditing(null); setGroupId("");
       await load(); router.refresh();
     } catch (cause) {
@@ -94,7 +108,8 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         method: "DELETE", headers: { "content-type": "application/json" },
         body: JSON.stringify({ expectedVersion: offering.version }),
       });
-      setMessage("Offering archived.");
+      setMessage("Offering archived");
+      showToast({ tone: "success", title: "Offering archived" });
       await load(); router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Unable to archive offering");
@@ -123,7 +138,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
-              Roster
+              Roster & faculty
             </Link>
             {offering.status === "ACTIVE" && <>
               <Button variant="secondary" type="button" onClick={() => startEdit(offering)}
@@ -134,6 +149,10 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
         </div>)}
         <div className="border-t border-border pt-3">
           <h4 className="text-sm font-semibold">{editing ? "Edit offering" : "Add offering"}</h4>
+          <p className="mt-2 text-xs leading-5 text-muted-foreground">
+            An active course delivery is required for learner access. Faculty assignments and learner allocations
+            are managed on the offering&apos;s Roster & faculty page.
+          </p>
           <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
             <Select className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9"
               value={deliveryId} onChange={event => setDeliveryId(event.target.value)}>
@@ -152,7 +171,11 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           <label className="mt-2 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity
             <Input type="number" min="1" max="100000" required
               value={capacity} onChange={event => setCapacity(event.target.value)}
+              placeholder={editing?.capacity===null?"Unlimited (existing)": "Enter seat limit"}
               className="mt-[var(--lms-space-2)] min-h-11 w-full md:min-h-9" />
+            {editing?.capacity===null && capacity==="" ? <span role="status" className="mt-1 block text-xs text-muted-foreground">
+              Existing capacity is unlimited. A seat limit is required for changes in this editor; do not save to retain unlimited.
+            </span> : null}
           </label>
           {selectable.length === 0 && <p role="status" className="mt-2 text-sm leading-[22px]">
             Create an active elective course delivery for this program before adding an offering.</p>}
@@ -167,7 +190,10 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           </div>
         </div>
       </>}
-      {error && <p role="alert" className="text-sm text-error leading-[22px]">{error}</p>}
+      {error && <div role="alert" className="flex min-w-0 flex-wrap items-start justify-between gap-2 border border-error rounded-[var(--lms-control-radius)] p-3 text-sm text-error leading-[22px]">
+        <p>{error}</p>
+        <Button type="button" variant="secondary" size="sm" onClick={() => setError("")}>Dismiss</Button>
+      </div>}
       {message && <p role="status" className="text-sm leading-[22px]">{message}</p>}
     </section>}
   </div>;

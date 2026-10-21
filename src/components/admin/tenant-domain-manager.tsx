@@ -56,6 +56,8 @@ export function TenantDomainManager({
   const [host, setHost] = useState("");
   const [deleteHostConfirmation, setDeleteHostConfirmation] = useState("");
   const [primaryTarget, setPrimaryTarget] = useState<TenantDomainClientRow | null>(null);
+  const [editTarget,setEditTarget]=useState<TenantDomainClientRow|null>(null);
+  const [editedHost,setEditedHost]=useState("");
   const [deleteTarget, setDeleteTarget] =
     useState<TenantDomainClientRow | null>(null);
   const [pendingAction, setPendingAction] =
@@ -111,7 +113,7 @@ export function TenantDomainManager({
 
   async function runAction(
     domain: TenantDomainClientRow,
-    action: "verify" | "primary" | "delete",
+    action: "verify" | "primary" | "delete" | "edit",
   ) {
     if (actionInFlightRef.current) return;
     actionInFlightRef.current = true;
@@ -131,15 +133,18 @@ export function TenantDomainManager({
                 `/api/tenant-domains/${domain.id}`,
                 {
                   method: "PATCH",
-                  headers: {
-                    "content-type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    action: "SET_PRIMARY",
-                  }),
+                  headers: {"content-type": "application/json"},
+                  body: JSON.stringify({action:"SET_PRIMARY"}),
                 },
               )
-            : fetch(
+            : action==="edit"
+              ? fetch(`/api/tenant-domains/${domain.id}`,{
+                  method:"PATCH",headers:{"content-type":"application/json"},
+                  body:JSON.stringify({
+                    action:"EDIT_HOST",expectedHost:domain.host,host:editedHost.trim(),
+                  }),
+                })
+              : fetch(
                 `/api/tenant-domains/${domain.id}`,
                 { method: "DELETE", headers: { "content-type": "application/json" },
                   body: JSON.stringify({ ...(domain.isPrimary ? { confirmationHost: deleteHostConfirmation } : {}) }) },
@@ -153,12 +158,19 @@ export function TenantDomainManager({
           ? "Only a verified domain can become primary."
           : payload?.error === "PRIMARY_HOST_CONFIRMATION_REQUIRED"
             ? "The primary hostname confirmation is missing or stale. Reload and confirm the current primary address."
-            : "The domain action could not be completed.";
+            : payload?.error==="DOMAIN_HOST_STALE"
+              ? "This domain changed in another session. Refresh its hostname before editing."
+              : payload?.error==="HOST_CONFLICT"
+                ? "This hostname is already claimed by another active college."
+                : payload?.error==="MANAGED_HOST_EDIT_UNSUPPORTED"
+                  ? "Manage wildcard college addresses in the dedicated managed subdomain section."
+                  : "The domain action could not be completed.";
         if (action !== "verify") setModalError(failure);
         showToast({
           tone: "error",
           title: action === "verify" ? "Verification failed"
-            : action === "primary" ? "Primary domain not changed" : "Domain not deleted",
+            : action === "primary" ? "Primary domain not changed"
+            : action === "edit" ? "Domain not changed" : "Domain not deleted",
           description: failure,
         });
         return;
@@ -171,6 +183,10 @@ export function TenantDomainManager({
       if (action === "primary") {
         setPrimaryTarget(null);
       }
+      if(action==="edit"){
+        setEditTarget(null);
+        setEditedHost("");
+      }
 
       showToast({
         tone: "success",
@@ -181,7 +197,9 @@ export function TenantDomainManager({
               : "DNS record not found yet"
             : action === "primary"
               ? "Primary domain updated"
-              : "Domain deleted",
+              : action === "edit"
+                ? "Domain changed · verify DNS"
+                : "Domain deleted",
         description:
           action === "verify" &&
           !payload?.domain?.isVerified
@@ -195,7 +213,8 @@ export function TenantDomainManager({
       showToast({
         tone: "error",
         title: action === "verify" ? "Verification failed" :
-          action === "primary" ? "Primary domain not changed" : "Domain not deleted",
+          action === "primary" ? "Primary domain not changed" :
+          action === "edit" ? "Domain not changed" : "Domain not deleted",
         description: "The domain action could not be completed.",
       });
     } finally {
@@ -293,6 +312,11 @@ export function TenantDomainManager({
                         ? ` · ${domain.lastCheckResult}`
                         : ""}
                     </p>
+                    {domain.lastCheckResult==="TXT_RECORD_MISSING"?<p className="mt-1 text-xs text-warning-text">
+                      Required ownership TXT was not found. Check the record name and value below, then verify again.
+                    </p>:domain.lastCheckResult==="DNS_LOOKUP_FAILED"?<p className="mt-1 text-xs text-warning-text">
+                      DNS lookup failed. Check propagation and try another verification. Raw TXT values and challenge secrets are never shown in diagnostics.
+                    </p>:null}
                   </div>
 
                   <div className="flex min-w-0 w-full flex-col items-stretch gap-[var(--lms-space-2)] print:hidden sm:w-auto sm:flex-row sm:flex-wrap md:justify-end">
@@ -329,6 +353,12 @@ export function TenantDomainManager({
                       </Button>
                     ) : null}
                     <Dropdown trigger="More" label="Domain actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+                    <Button role="menuitem" variant="secondary" size="sm"
+                      className="min-h-11 w-full sm:w-auto md:min-h-9"
+                      disabled={busy}
+                      onClick={()=>{setModalError("");setEditedHost(domain.host);setEditTarget(domain);}}>
+                      {pendingAction===`${domain.id}:edit`?"Updating…":"Edit hostname"}
+                    </Button>
                     <Button role="menuitem"
                       variant="danger"
                       size="sm"
@@ -350,7 +380,9 @@ export function TenantDomainManager({
                     <p className="text-xs leading-5 text-body">
                       Publish this TXT record with your DNS
                       provider. Verification requires an exact
-                      match.
+                      match. If upgrading from the old LMS, keep the old DNS TXT
+                      record until this new challenge verifies; the old root
+                      record cannot validate the vNext host.
                     </p>
                     <dl className="mt-4 grid gap-3">
                       <div>
@@ -402,6 +434,28 @@ export function TenantDomainManager({
         onConfirm={() => { if (primaryTarget) void runAction(primaryTarget, "primary"); }}
       >
         {modalError ? <p role="alert" className="break-words rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        open={Boolean(editTarget)}
+        onOpenChange={next=>{if(!next&&!pendingAction){setEditTarget(null);setEditedHost("");setModalError("");}}}
+        title={editTarget?`Change ${editTarget.host}?`:"Edit college hostname"}
+        description="Changing a hostname immediately removes its verified and primary states. It will not route college logins again until the new DNS ownership TXT record is published and verified. Use the separate managed-subdomain workflow for wildcard addresses."
+        confirmLabel="Change hostname"
+        confirmVariant="danger"
+        confirmDisabled={!editedHost.trim()||editedHost.trim().toLowerCase()===editTarget?.host.toLowerCase()}
+        pending={Boolean(pendingAction)}
+        onConfirm={()=>{if(editTarget)void runAction(editTarget,"edit");}}
+      >
+        <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-body">
+          Replacement hostname
+          <Input value={editedHost} autoComplete="off" autoCapitalize="none"
+            autoCorrect="off" spellCheck={false} maxLength={255}
+            disabled={Boolean(pendingAction)}
+            onChange={event=>{setEditedHost(event.target.value);setModalError("");}}
+            className="min-h-11 w-full md:min-h-9" />
+        </label>
+        {modalError?<p role="alert" className="mt-2 text-sm text-error">{modalError}</p>:null}
       </ConfirmDialog>
 
       <ConfirmDialog

@@ -14,18 +14,13 @@ export function validatePublicJoinClient(input:{
  if(emailIssue)return publicWorkEmailIssueCopy(emailIssue);
  if(!publicRecruiterWorkEmailSchema.safeParse(email).success)
   return "Enter a valid company work email address.";
- const domain=email.split("@")[1];
- const approvedDomain=input.companyDomain.trim().toLowerCase().replace(/^@/,"");
- // Keep browser preflight in sync with the server: subdomains of the exact
- // registered company domain are valid, but unrelated lookalike domains are not.
- if(input.scope==="COMPANY"&&approvedDomain&&domain!==approvedDomain&&
-    !domain.endsWith("."+approvedDomain))
-  return "Use your "+input.companyDomain+" email address for this link.";
- if(!input.name.trim())return "Enter your name";
+ // The server validates every verified domain belonging to the linked company.
+ // The primary display domain alone cannot reject an approved secondary domain.
+ if(input.stage!=="SEND"&&!input.name.trim())return "Enter your name";
  if(input.scope==="COLLEGE"&&input.stage!=="SEND"&&input.companyName.trim().length<2)
   return "Enter your company name";
  const digits=input.phone.replace(/[^0-9]/g,"");
- if(input.phone.trim()&&(!/^[+0-9() .-]+$/.test(input.phone)||!(digits.length===10||(digits.length===12&&digits.startsWith("91")))))return "Enter a valid 10-digit mobile number, or leave it blank.";
+ if(input.stage!=="SEND"&&input.phone.trim()&&(!/^[+0-9() .-]+$/.test(input.phone)||!(digits.length===10||(digits.length===12&&digits.startsWith("91")))))return "Enter a valid 10-digit mobile number, or leave it blank.";
  return null;
 }
 export function publicJoinErrorCopy(stage:"SEND"|"JOIN",status:number,code:string,

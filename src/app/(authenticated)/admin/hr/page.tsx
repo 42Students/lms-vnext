@@ -184,6 +184,7 @@ export default async function SuperAdminHrPage({
       loadError={loadError}
       statusSummary={statusSummary}
       scopeDescription={scopeDescription}
+      selectedCollegeId={context.adminScope?.collegeId??null}
     />
   );
 }

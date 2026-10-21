@@ -459,6 +459,7 @@ export async function listProjectAdminSnapshots(
       lastActivityAt,
       inactiveDays: ageDays,
       riskReasons,
+      riskSeverity: riskReasons.length >= 2 ? "RISK" : riskReasons.length === 1 ? "WATCH" : "NONE",
     };
   });
 
@@ -609,6 +610,7 @@ export async function listProjectAdminRiskQueue(
           title: projectInstances.title,
           summary: projectInstances.summary,
           status: projectInstances.status,
+          legacyStatus: projectInstances.legacyStatus,
           updatedAt: projectInstances.updatedAt,
           lastActivityAt,
           pendingReview,
@@ -697,7 +699,7 @@ export async function listProjectAdminRiskQueue(
             project.pendingReview
               ? "SUBMITTED"
               : null,
-          hasBlockedTask: project.blockedTask,
+          hasBlockedTask: project.blockedTask || project.legacyStatus === "BLOCKED",
         });
       const projectMentors = mentorsByProject.get(project.id) ?? [];
       const mentor =
@@ -712,6 +714,7 @@ export async function listProjectAdminRiskQueue(
         ...project,
         inactiveDays: inactivityDays,
         riskReasons: reasons,
+        riskSeverity: reasons.length >= 2 ? "RISK" : reasons.length === 1 ? "WATCH" : "NONE",
         blockerReason: project.blockerSummary,
         mentorName:
           mentor?.displayName ?? null,
@@ -921,5 +924,52 @@ export async function listProjectAdminSubmissionQueue(
       Math.ceil(total / query.pageSize),
     ),
   };
+  });
+}
+
+// Soft-deleted projects are not the same as user-archived projects.
+export async function listProjectAdminDeletedWorkspaces(
+  context: RequestContext, collegeIdInput: string,
+  rawQuery: Pick<ProjectAdminQuery, "page" | "pageSize" | "q"> = {},
+) {
+  const query = projectAdminQuerySchema.parse(rawQuery);
+  if (getProjectAdminCollegeId(context) !== collegeIdInput)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const college = await loadProjectCollegeScope(collegeIdInput);
+  requirePermission(context, "projects.manage", {
+    organizationId: college.organizationId, collegeId: college.id,
+  });
+  return getDb().transaction(async (db) => {
+    await assertPersistedPlatformPermission(db, context, "projects.manage", {
+      organizationId: college.organizationId, collegeId: college.id,
+    });
+    const oldId = query.q && /^[0-9]+$/.test(query.q) && Number.isSafeInteger(Number(query.q))
+      ? Number(query.q) : null;
+    const where = and(
+      eq(projectInstances.collegeId, college.id),
+      isNotNull(projectInstances.deletedAt),
+      query.q ? or(
+        ilike(projectInstances.title, adminUnsubmittedLiteralSearchPattern(query.q)),
+        ilike(projectInstances.slug, adminUnsubmittedLiteralSearchPattern(query.q)),
+        oldId === null ? undefined : eq(projectInstances.legacyProjectId, oldId),
+      ) : undefined,
+    );
+    const [totals, items] = await Promise.all([
+      db.select({ value: count() }).from(projectInstances).where(where),
+      db.select({
+        id: projectInstances.id,
+        slug: projectInstances.slug,
+        legacyProjectId: projectInstances.legacyProjectId,
+        title: projectInstances.title,
+        status: projectInstances.status,
+        deletedAt: projectInstances.deletedAt,
+        archivedAt: projectInstances.archivedAt,
+      }).from(projectInstances).where(where)
+        .orderBy(desc(projectInstances.deletedAt), asc(projectInstances.id))
+        .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
+    ]);
+    const total = Number(totals[0]?.value ?? 0);
+    return { items, total, page: query.page, pageSize: query.pageSize,
+      totalPages: Math.max(1, Math.ceil(total / query.pageSize)) };
   });
 }

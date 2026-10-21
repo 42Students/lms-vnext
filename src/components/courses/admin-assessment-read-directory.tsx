@@ -45,6 +45,9 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
           <option value="ARCHIVED">Archived</option>
         </Select>
       </label>
+      {/* The controlled course datalist and Section selector are populated from
+          the tenant-authorized full directory, not this paginated page.
+          Changing course clears the Section selector without a forged ID. */}
       <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
         sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
         initialDeliveryId={data.query.deliveryId??""}/>
@@ -77,7 +80,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         {assignment?<div className="mt-3 space-y-2">
           <CollegeAssignmentActions assignment={{id:item.id,title:item.title,
             points:item.points,dueAt:item.dueAt,status:item.status}}/>
-          <Disclosure title="Submissions" className="mt-[var(--lms-space-3)]"
+          <Disclosure title={`Submissions · ${item.activityCount}`} className="mt-[var(--lms-space-3)]"
             contentClassName="pb-[var(--lms-space-3)]">
             <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
               specificDeliveryId={item.deliveryId} maxPoints={item.points}
@@ -85,6 +88,9 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
           </Disclosure>
         </div>:<div className="mt-3 space-y-2">
           <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
+          {item.activityCount > 0 ? <p className="text-xs leading-5 text-muted-foreground">
+            {item.activityCount} recorded attempt(s). Questions and attempt settings must remain immutable; edit metadata only after the server preflight.
+          </p> : null}
           <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
             specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries}
             status={item.status}/>
@@ -95,11 +101,17 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
             actions={item.status==="DRAFT"?["PUBLISH","ARCHIVE"]:
               item.status==="PUBLISHED"&&!assignment?["CLOSE","ARCHIVE"]:
               item.status==="PUBLISHED"?["ARCHIVE"]:[]}/>
-          {!assignment&&["DRAFT","PUBLISHED","CLOSED","ARCHIVED"].includes(item.status)?
+          {!assignment && (item.resultsReleaseReady || item.resultsPublished) &&
+            (item.status==="PUBLISHED" || item.status==="CLOSED") ?
             <AdminQuizResultsActions quizId={item.id}
-              status={item.status as "DRAFT"|"PUBLISHED"|"CLOSED"|"ARCHIVED"}
+              status={item.status as "PUBLISHED"|"CLOSED"}
               resultsPublished={Boolean(item.resultsPublished)}
               deadlineReached={item.resultsReleaseReady}/>:null}
+          {!assignment && !item.resultsReleaseReady && !item.resultsPublished &&
+            (item.status==="PUBLISHED" || item.status==="CLOSED") ?
+            <p role="status" className="text-xs text-muted-foreground">
+              Results may be released only after the quiz deadline and authorized review.
+            </p> : null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
           className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -113,7 +125,13 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}
         label={title + " pages"} showBoundaryLinks={false} />
     </div>
-    <p className="text-xs text-muted-foreground leading-[20px]">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
+    <p className="text-xs text-muted-foreground leading-[20px]">
+      Search and Section filters use authorized College options. Quiz mutation uses a preflight
+      editor and the service enforces result-release and attempt-history rules. Submissions
+      are reviewed in the selected Section; the shared review control uses an accessible
+      confirmation before publishing grades. No answers, submission body, learner contacts
+      or stored attachments are fetched by this directory.
+    </p>
     <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }

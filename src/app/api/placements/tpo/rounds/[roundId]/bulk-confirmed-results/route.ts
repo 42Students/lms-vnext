@@ -15,9 +15,21 @@ export async function POST(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { roundId } = await params;
-    return NextResponse.json(await confirmTpoBulkRoundResults(
+    // This endpoint saves STAGED results only. A separate scoped Apply whole
+    // round action notifies learners; never infer "applied" from staging.
+    const result=await confirmTpoBulkRoundResults(
       context, roundId, await request.json(),
-    ));
+    );
+    return NextResponse.json({
+      ...result,
+      phase:"STAGED",
+      applied:0,
+      staged:result.counts.staged,
+      skipped:result.counts.ineligible,
+      skippedRows:result.results.filter(item=>item.status==="ineligible")
+        .map(item=>({applicationId:item.applicationId,reason:item.reason??"NOT_ELIGIBLE"})),
+      nextAction:"Review pending results and apply the whole round separately.",
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

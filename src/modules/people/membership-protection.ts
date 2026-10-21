@@ -21,3 +21,14 @@ export function assertMutableMembershipTarget(
  if(target.roles.includes("COLLEGE_ADMIN")||target.roles.includes("TPO"))
   throw new PeopleServiceError("MEMBERSHIP_PROTECTED");
 }
+
+/** Preserve typed error codes in the API but offer exact actor remediation to
+ * the caller: protected College Admin/TPO membership edits are Super Admin-only.
+ */
+export function protectedMembershipErrorMessage(
+ code:"MEMBERSHIP_PROTECTED"|"MEMBERSHIP_SELF_LOCKOUT",
+):string {
+ return code==="MEMBERSHIP_PROTECTED"
+  ?"Only a super admin can manage ADMIN/TPO accounts"
+  :"You cannot suspend, end or remove your own required administrator role.";
+}

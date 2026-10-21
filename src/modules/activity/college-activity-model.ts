@@ -10,6 +10,7 @@ const dateOnly = z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine(value => {
 export const collegeActivityQuerySchema = z.strictObject({
   view: z.enum(["IMPORTANT", "EVERYTHING"]).optional(),
   category: z.enum(["ACADEMIC_SETUP", "PEOPLE_ACCESS", "TEACHING", "PROJECTS"]).optional(),
+  range: z.enum(["ALL"]).optional(),
   module: z.enum(ACTIVITY_MODULES).optional(),
   importance: z.enum(ACTIVITY_IMPORTANCE).optional(),
   eventType: z.string().trim().min(1).max(120).optional(),
@@ -45,6 +46,7 @@ export function collegeActivityHref(
 ) {
   const params = new URLSearchParams();
   if (filter.view) params.set("view", filter.view);
+  if (filter.range) params.set("range", filter.range);
   if (filter.category) params.set("category", filter.category);
   if (filter.module) params.set("module", filter.module);
   if (filter.importance) params.set("importance", filter.importance);
@@ -84,7 +86,14 @@ export function activitySearchParams(
   raw: Record<string, string | string[] | undefined>,
 ): unknown {
   // Keep unknown/duplicate parameters so strict Zod can reject them.
-  return Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined && value !== ""));
+  const entries: Record<string, string | string[] | undefined> =
+    Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined && value !== ""));
+  if (!entries.from && !entries.to && entries.range !== "ALL") {
+    const query = new URL(collegeActivityRecentHref({}, 30, new Date()), "https://local.invalid").searchParams;
+    entries.from = query.get("from") ?? undefined;
+    entries.to = query.get("to") ?? undefined;
+  }
+  return entries;
 }
 
 /** COL-verification-misc-12: today follows the user's IST calendar, not UTC midnight. */
@@ -93,5 +102,12 @@ export function collegeActivityTodayHref(filter:CollegeActivityQuery,asOf:Date){
  return collegeActivityHref({...filter,from:day,to:day});
 }
 export function collegeActivityAllTimeHref(filter:CollegeActivityQuery){
- return collegeActivityHref({...filter,from:undefined,to:undefined});
+ return collegeActivityHref({...filter,from:undefined,to:undefined,range:"ALL"});
+}
+
+// Legacy category validation is explicit rather than a generic filter error.
+export function invalidCollegeActivityCategory(raw: unknown): string | null {
+  if (typeof raw !== "string" || raw.length > 80) return null;
+  return ["ACADEMIC_SETUP", "PEOPLE_ACCESS", "TEACHING", "PROJECTS"].includes(raw)
+    ? null : "Unknown activity category: " + raw;
 }

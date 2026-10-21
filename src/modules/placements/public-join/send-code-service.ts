@@ -6,7 +6,7 @@ import { and, count, eq, gte, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges, organizations, placementPublicJoinLinks, placementPublicJoinChallenges,
-  placementCompanies,
+  placementCompanies, placementCompanyDomains,
 } from "@/db/schema";
 import { publicJoinTablesReady } from "./readiness";
 import { publicJoinSendCodeSchema, publicJoinCodeDigest,
@@ -58,6 +58,7 @@ export async function requestPublicJoinCode(
   // between preflight and the durable rate/OTP write still fails closed.
   const [availableLink] = await getDb().select({
     id: placementPublicJoinLinks.id, domain: placementPublicJoinLinks.companyDomain,
+    companyId: placementPublicJoinLinks.companyId,
   }).from(placementPublicJoinLinks)
     .innerJoin(colleges, eq(placementPublicJoinLinks.collegeId, colleges.id))
     .innerJoin(organizations, eq(colleges.organizationId, organizations.id))
@@ -69,8 +70,17 @@ export async function requestPublicJoinCode(
       gt(placementPublicJoinLinks.expiresAt,new Date()),
       eq(colleges.status,"ACTIVE"), eq(organizations.status,"ACTIVE"),
     )).limit(1);
-  if(!availableLink || (scope==="COMPANY" &&
-      !companyJoinEmailCandidate(email,availableLink.domain??"")))
+  if(!availableLink)throw new PublicJoinCodeError("INVALID_LINK");
+  const preflightVerified=scope==="COMPANY"&&availableLink.companyId
+    ?await getDb().select({domain:placementCompanyDomains.domain})
+      .from(placementCompanyDomains).where(and(
+        eq(placementCompanyDomains.companyId,availableLink.companyId),
+        eq(placementCompanyDomains.verifiedBy42,true)))
+    :[];
+  // Bind each allowed domain to this token's company, never a broad suffix.
+  if(scope==="COMPANY"&&(!availableLink.companyId||
+    !companyJoinEmailCandidate(email,[availableLink.domain??"",
+      ...preflightVerified.map(item=>item.domain)])))
     throw new PublicJoinCodeError("INVALID_LINK");
   // The token is checked before DNS to avoid an anonymous domain oracle.
   // Legacy company-domain checks query the registrable company domain and
@@ -93,6 +103,7 @@ export async function requestPublicJoinCode(
     const now = new Date();
     const [link] = await tx.select({
       id: placementPublicJoinLinks.id, domain: placementPublicJoinLinks.companyDomain,
+    companyId: placementPublicJoinLinks.companyId,
     }).from(placementPublicJoinLinks)
       .innerJoin(colleges, eq(placementPublicJoinLinks.collegeId, colleges.id))
       .innerJoin(organizations, eq(colleges.organizationId, organizations.id))
@@ -103,9 +114,17 @@ export async function requestPublicJoinCode(
         gt(placementPublicJoinLinks.expiresAt, now),
         eq(colleges.status, "ACTIVE"), eq(organizations.status, "ACTIVE")))
       .for("update").limit(1);
-    if (!link || (scope === "COMPANY" && !companyJoinEmailCandidate(email, link.domain ?? ""))) {
+    if(!link)throw new PublicJoinCodeError("INVALID_LINK");
+    const verified=scope==="COMPANY"&&link.companyId
+      ?await tx.select({domain:placementCompanyDomains.domain})
+        .from(placementCompanyDomains).where(and(
+          eq(placementCompanyDomains.companyId,link.companyId),
+          eq(placementCompanyDomains.verifiedBy42,true)))
+      :[];
+    if(scope==="COMPANY"&&(!link.companyId||
+      !companyJoinEmailCandidate(email,[link.domain??"",
+        ...verified.map(item=>item.domain)])))
       throw new PublicJoinCodeError("INVALID_LINK");
-    }
     const hourAgo = new Date(now.getTime() - 60 * 60_000);
     const [emailCount] = await tx.select({ n: count() }).from(placementPublicJoinChallenges)
       .where(and(eq(placementPublicJoinChallenges.linkId, link.id),
