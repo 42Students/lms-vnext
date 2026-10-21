@@ -36,14 +36,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/projects/project-participant-list-controls.tsx`
 - [x] `src/components/shell/account-actions.tsx`
 - [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/styles/college-admin-north-star.css`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/styles/college-admin-north-star.css`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
 - [ ] `src/components/admin/college-at-glance-panel.tsx`
 - [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
 - [ ] `src/components/college/college-faculty-csv-import.tsx`
