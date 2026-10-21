@@ -93,11 +93,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/projects/college-project-student-roster-dialog.tsx`
 - [x] `src/components/projects/project-admin-submission-review.tsx`
 - [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
-- [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-report-record-links.tsx`
-- [ ] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/projects/project-archive-control.tsx`
-- [ ] `src/components/shell/topbar/notification-actions.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
-- [ ] `src/components/tracker/independent-finding-actions.tsx`
+- [x] `src/components/placements/tpo-drive-edit-form.tsx`
+- [x] `src/components/placements/tpo-report-record-links.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/projects/project-archive-control.tsx`
+- [x] `src/components/shell/topbar/notification-actions.tsx`
+- [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
+- [x] `src/components/tracker/independent-finding-actions.tsx`
