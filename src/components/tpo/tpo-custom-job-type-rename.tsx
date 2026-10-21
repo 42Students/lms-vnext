@@ -12,7 +12,7 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
  const changed=name.trim()!==label;
  async function save(){
   if(busy||!changed||name.trim().length<2||name.trim().length>40)return;
-  if(!(await askConfirm("Rename this custom job type? Existing drives are not rewritten by this change.")))return;
+  if(!(await askConfirm("Rename this custom job type? All linked drives, including archived drives, will be renamed. Historical reports can change.")))return;
   setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/settings/job-types/"+encodeURIComponent(id),{
