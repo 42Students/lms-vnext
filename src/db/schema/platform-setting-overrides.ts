@@ -1,6 +1,6 @@
 /** Registered in 0119: typed Super Admin setting overrides. No credentials stored. */
 import {sql} from "drizzle-orm";
-import {check,integer,pgTable,primaryKey,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
+import {check,integer,pgTable,primaryKey,timestamp,uuid,varchar,uniqueIndex,index} from "drizzle-orm/pg-core";
 import {users} from "./users";
 export const platformSettingOverrides=pgTable("platform_setting_overrides",{
  scopeType:varchar("scope_type",{length:8}).notNull(),
@@ -54,4 +54,54 @@ export function legacyOverrideWinner<T extends {updatedAt:string;legacyId:number
     ordered[0].legacyId===ordered[1].legacyId)
   throw new Error("Ambiguous legacy override winner");
  return ordered[0];
+}
+
+/** Source-only ORG keys cannot become runtime overrides: the canonical table
+ * deliberately supports GLOBAL and COLLEGE scopes exclusively. A restricted,
+ * append-only keyed digest proves the explicit disposition of an old ORG row,
+ * without copying retired plaintext setting values or activating its scope. */
+export const platformLegacyOrgOverrideArchives=pgTable("platform_legacy_org_override_archives",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ sourceRowId:varchar("source_row_id",{length:40}).notNull(),
+ legacyOrganizationId:varchar("legacy_organization_id",{length:40}).notNull(),
+ key:varchar("key",{length:120}).notNull(),
+ valueSha256:varchar("value_sha256",{length:64}).notNull(),
+ sourceUpdatedAt:timestamp("source_updated_at",{withTimezone:true}).notNull(),
+ decision:varchar("decision",{length:24}).notNull(),
+ reason:varchar("reason",{length:500}).notNull(),
+ archivedByUserId:uuid("archived_by_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
+ archivedAt:timestamp("archived_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ uniqueIndex("platform_legacy_org_source_id_uq").on(t.sourceRowId),
+ index("platform_legacy_org_scope_key_idx").on(t.legacyOrganizationId,t.key),
+ check("platform_legacy_org_source_id_ck",sql`${t.sourceRowId} ~ '^[1-9][0-9]{0,18}$'`),
+ check("platform_legacy_org_value_sha_ck",sql`${t.valueSha256} ~ '^[a-f0-9]{64}$'`),
+ check("platform_legacy_org_decision_ck",sql`${t.decision} in ('ARCHIVED','REVIEW_REQUIRED')`),
+ check("platform_legacy_org_reason_ck",sql`length(trim(${t.reason})) between 8 and 500`),
+]);
+export function planLegacyOrgOverrideDisposition<T extends {
+ sourceRowId:string;organizationId:string;key:string;
+ valueSha256:string;updatedAt:string;
+}>(rows:readonly T[]){
+ const groups=new Map<string,T[]>();
+ for(const row of rows){
+  if(!/^[1-9][0-9]{0,18}$/.test(row.sourceRowId)||
+    !/^[a-f0-9]{64}$/.test(row.valueSha256)||
+    !row.key.trim()||row.key.trim().length>120||
+    !row.organizationId.trim()||!Number.isFinite(Date.parse(row.updatedAt)))
+   throw new Error("Legacy ORG override requires manual source verification");
+  const key=row.organizationId+":"+row.key.trim();
+  groups.set(key,[...(groups.get(key)??[]),row]);
+ }
+ return [...groups.entries()].map(([key,versions])=>{
+  const ordered=[...versions].sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt)||
+    (BigInt(b.sourceRowId)>BigInt(a.sourceRowId)?1:-1));
+  const newest=ordered[0];
+  const ambiguous=ordered.length>1&&ordered[0].updatedAt===ordered[1].updatedAt&&
+   ordered[0].valueSha256!==ordered[1].valueSha256;
+  return {scopeKey:key,sourceRowId:newest.sourceRowId,
+   decision:ambiguous?"REVIEW_REQUIRED" as const:"ARCHIVED" as const,
+   suppressedSourceRowIds:ordered.slice(1).map(item=>item.sourceRowId),
+   runtimeOverrideCreated:false as const};
+ });
 }
