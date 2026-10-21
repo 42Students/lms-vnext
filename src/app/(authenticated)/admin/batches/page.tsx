@@ -93,7 +93,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           </Disclosure>
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
           <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Refresh</Button>
-          <Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>
+          {data.query.q||data.query.programId||data.query.status!=="ALL"||data.query.pageSize!==25?<Link href="/admin/batches" className="lms-inline-link inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">Clear filters</Link>:null}
         </form>
       </section>
 
@@ -115,7 +115,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           columns={[
             {key:"batch",header:"Batch",mobilePriority:"primary",cell:row=><div className="min-w-0">
               <span className="font-semibold">{row.name} ({row.code})</span>
-              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage students →</Link>
+              <Link href={`/admin/batches/${encodeURIComponent(row.id)}/students`} aria-label={`Manage students in ${row.name}`} className="mt-1 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage students →</Link>
             </div>},
             {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
             {key:"years",header:"Years",mobilePriority:"secondary",cell:row=>row.startDate||row.endDate?`${row.startDate?.slice(0,4)??"?"} – ${row.endDate?.slice(0,4)??"?"}`:"—"},
