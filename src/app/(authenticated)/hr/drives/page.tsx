@@ -106,17 +106,26 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   ] as const;
   const deadlineBase={...query.data,collegeId:selectedCollege,view:"LIVE" as const,
     q:"",employment:"ALL" as const,mode:"ALL" as const,page:1,sort:"DEADLINE" as const};
-  const [soon,past]=await Promise.all([
+  // Auxiliary attention cards/counts are nonblocking. The authoritative
+  // drive page remains visible if a secondary counter temporarily fails.
+  const [soon,past]=await Promise.allSettled([
     searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"SOON"},now,{pageSize:5,previewOnly:true}),
     searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"PAST"},now,{
       pageSize:5,descendingDeadline:true,previewOnly:true,
     }),
   ]);
-  const attention={soon:soon.rows,past:past.rows};
-  const [visibleCounts,unansweredRequests]=await Promise.all([
+  const attention={
+    soon:soon.status==="fulfilled"?soon.value.rows:[],
+    past:past.status==="fulfilled"?past.value.rows:[],
+  };
+  const [countsResult,answerableResult]=await Promise.allSettled([
     recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id)),
     countRecruiterAnswerableDriveRequests(selectedCollege,pageResult.rows.map(row=>row.job.id)),
   ]);
+  const visibleCounts=countsResult.status==="fulfilled"?countsResult.value:{};
+  const unansweredRequests=answerableResult.status==="fulfilled"?answerableResult.value:{};
+  const partialLoadFailure=soon.status==="rejected"||past.status==="rejected"||
+    countsResult.status==="rejected"||answerableResult.status==="rejected";
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
@@ -124,6 +133,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
         Request a drive
       </Link>} />
+    {partialLoadFailure ? <Alert tone="warning">
+      Some drive details could not be refreshed. Your current drive list is still available. <Link href={returnTo} className="font-semibold text-primary-text underline">Retry</Link>
+    </Alert> : null}
     <details className="min-w-0 border-t border-border pt-2">
       <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Sent discussion proposals</summary>
       <nav aria-label="Recruiter proposal history" className="flex min-w-0 flex-col items-start gap-2 py-2 md:flex-row md:items-center md:gap-3">
