@@ -20,16 +20,25 @@ export async function POST(request:Request,{params}:{
   const {offerId}=await params;
   const ctx=await getCurrentRequestContext();
   const result=await undoPlacementOfferCascade(ctx,offerId,input.data.cascadeId);
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+  // Offer cascade compensation and applicant-move undo have different safety
+  // windows. Do not imply that this endpoint reverses a notified applicant move.
+  return NextResponse.json({...result,undoType:"OFFER_CASCADE"},{
+   headers:{"Cache-Control":"private, no-store"},
+  });
  }catch(err){
   if(err instanceof TpoBulkBodyError)return NextResponse.json({error:err.message},{
     status:err.status,headers:{"Cache-Control":"private, no-store"},
   });
   if(err instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(err instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
-  if(err instanceof PlacementsServiceError)return NextResponse.json({
-   error:err.code==="PLACEMENT_OFFER_NOT_FOUND"?"NOT_FOUND":"INVALID_TRANSITION",
-  },{status:err.code==="PLACEMENT_OFFER_NOT_FOUND"?404:409});
+  if(err instanceof PlacementsServiceError){
+   const missing=err.code==="PLACEMENT_OFFER_NOT_FOUND";
+   return NextResponse.json({
+    error:missing?"NOT_FOUND":"OFFER_CASCADE_NO_LONGER_UNDOABLE",
+    message:missing?"Offer not found.":"This offer cascade can no longer be undone after dependent application, offer or joining records have changed.",
+    undoType:"OFFER_CASCADE",
+   },{status:missing?404:409,headers:{"Cache-Control":"private, no-store"}});
+  }
   throw err;
  }
 }
