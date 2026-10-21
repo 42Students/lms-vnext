@@ -1,5 +1,8 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
+import { ErrorState } from "@/components/ui/error-state";
+import { PageBackLink } from "@/components/ui/page-back-link";
+import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getDb } from "@/db/client";
 import { projectInstances, projectTemplates } from "@/db/schema";
@@ -20,15 +23,17 @@ async function resolveTemplateBookmark(context: RequestContext, token: string) {
   requirePermission(context, "project-template.read");
   if (token.length > 96 || !token || token === "." || token === ".." ||
       NUMERIC_LEGACY_ID.test(token)) return null;
+  if (!UUID.test(token) && !/^[a-z0-9-]+$/i.test(token)) return null;
   const match = UUID.test(token)
     ? eq(projectTemplates.id, token)
-    : eq(projectTemplates.slug, token);
-  const [template] = await getDb()
+    : eq(sql<string>`lower(${projectTemplates.slug})`, token.toLowerCase());
+  const matches = await getDb()
     .select({ id: projectTemplates.id })
     .from(projectTemplates)
     .where(match)
-    .limit(1);
-  return template?.id ?? null;
+    .limit(2);
+  // No arbitrary redirect if an old slug matches more than one imported row.
+  return matches.length === 1 ? matches[0]!.id : null;
 }
 
 /**
@@ -45,7 +50,7 @@ async function resolveWorkspaceBookmark(context: RequestContext, token: string) 
     if (!Number.isSafeInteger(legacyId) || legacyId > 2_147_483_647) return null;
     lookup = eq(projectInstances.legacyProjectId, legacyId);
   } else if (/^[a-z0-9-]+$/i.test(token)) {
-    lookup = eq(projectInstances.slug, token);
+    lookup = eq(sql<string>`lower(${projectInstances.slug})`, token.toLowerCase());
   } else return null;
 
   const matches = await getDb().select({ id: projectInstances.id })
@@ -67,6 +72,7 @@ async function nestedProjectDestination(
   if (segments.length === 1) return "/admin/projects/templates";
 
   const route = segments[1]?.toLowerCase();
+  const subroute = segments[3]?.toLowerCase();
   if (segments.length === 2) {
     if (route === "at-risk") return "/admin/projects/at-risk";
     if (route === "audit") return "/admin/projects/audit";
@@ -76,18 +82,18 @@ async function nestedProjectDestination(
 
   if (route === "templates" &&
       (segments.length === 3 ||
-       (segments.length === 4 && (segments[3] === "overview" || segments[3] === "colleges")))) {
+       (segments.length === 4 && (subroute === "overview" || subroute === "colleges")))) {
     const id = await resolveTemplateBookmark(context, segments[2]!);
     if (!id) return null;
-    return segments[3] === "colleges"
+    return subroute === "colleges"
       ? `/admin/projects/templates/${id}/colleges`
       : `/admin/projects/templates/${id}`;
   }
 
   if (route === "workspaces" && segments.length === 4 &&
-      (segments[3] === "overview" || segments[3] === "resources")) {
+      (subroute === "overview" || subroute === "resources")) {
     const id = await resolveWorkspaceBookmark(context, segments[2]!);
-    return id ? `/admin/projects/${id}/${segments[3]}` : null;
+    return id ? `/admin/projects/${id}/${subroute}` : null;
   }
   return null;
 }
@@ -105,7 +111,28 @@ export default async function LegacySuperAdminRedirect({
   const type = typeof query.type === "string" ? query.type : undefined;
   const destination = await nestedProjectDestination(context, legacy) ??
     legacySuperAdminDestination(legacy, type);
-  if (!destination) notFound();
+  if (!destination) {
+    // This installation has no trusted numeric legacy-template ID -> UUID
+    // mapping. A helpful link is safer than inventing an unrelated template.
+    if (legacy[0]?.toLowerCase() === "projects" &&
+        legacy[1]?.toLowerCase() === "templates" &&
+        legacy[2] && NUMERIC_LEGACY_ID.test(legacy[2]) &&
+        (legacy.length === 3 ||
+         (legacy.length === 4 &&
+          ["overview", "colleges"].includes(legacy[3]!.toLowerCase())))) {
+      return (
+        <div className="min-w-0 space-y-5">
+          <PageHeader title="Project template" />
+          <ErrorState
+            title="No template in this link"
+            description="This legacy template link cannot be matched to a current template. Choose a template from the directory."
+            action={<PageBackLink href="/admin/projects/templates" label="Back to templates" />}
+          />
+        </div>
+      );
+    }
+    notFound();
+  }
 
   // Pass only supported, bounded navigation state. A forged query college may
   // not switch the signed-in user's selected college (or global Admin scope).
