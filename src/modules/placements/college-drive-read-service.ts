@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, desc, count, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, count, eq, gte, ilike, lte, or, sql, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
@@ -61,7 +61,13 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
     .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .where(and(
       eq(placementJobs.collegeId, collegeId),
-      query.status === "ALL" ? undefined : eq(placementJobs.status, query.status),
+      // Deletion is an explicit history view, never implicitly mixed with
+      // operational "All" or published/draft/closed drives.
+      query.status === "ARCHIVED"
+        ? eq(placementJobs.status, "ARCHIVED")
+        : isNull(placementJobs.archivedAt),
+      query.status === "ALL" || query.status === "ARCHIVED"
+        ? undefined : eq(placementJobs.status, query.status),
       query.seasonId ? eq(placementJobs.seasonId, query.seasonId) : undefined,
       query.relationshipId ? eq(placementJobs.companyRelationshipId, query.relationshipId) : undefined,
       query.deadlineBefore
