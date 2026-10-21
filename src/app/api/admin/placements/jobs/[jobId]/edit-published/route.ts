@@ -11,7 +11,7 @@ export async function PATCH(request:Request,{params}:Ctx){
  try{
   // A published edit can contain a 15,000-character description plus
   // locations/reason. Deny a larger stream before loading selected scope.
-  const body=await readAdminPlacementJson(request,32768);
+  const body=await readAdminPlacementJson(request,49152);
   if(!body.ok)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
   const {jobId}=await params;
   return NextResponse.json(await editSuperAdminPublishedDrive(

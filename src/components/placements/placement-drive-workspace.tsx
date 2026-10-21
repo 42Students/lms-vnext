@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
 import { Alert } from "@/components/ui/alert";
 import { listCohorts } from "@/modules/academics/cohort-service";
+import {listSections} from "@/modules/academics/section-service";
 import { listPrograms } from "@/modules/academics/program-service";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
@@ -136,6 +137,12 @@ export async function PlacementDriveWorkspace({
           })),
         )
       : [];
+
+  const sectionGroups=job.status==="DRAFT"?await Promise.all(
+    cohortGroups.flatMap(({program,cohorts})=>cohorts
+      .filter(cohort=>cohort.status!=="ARCHIVED")
+      .map(async cohort=>({program,cohort,
+       sections:await listSections(context,cohort.id)})))):[];
 
   const controlData: PlacementDriveControlData = {
     jobId,
@@ -623,6 +630,9 @@ export async function PlacementDriveWorkspace({
                     status: cohort.status,
                   })),
             ),
+            sections:sectionGroups.flatMap(({program,cohort,sections})=>
+              sections.map(section=>({id:section.id,name:section.name,code:section.code,
+                cohortId:cohort.id,cohortName:cohort.name,programId:program.id}))),
           }}
           value={{
             job: {
@@ -656,12 +666,14 @@ export async function PlacementDriveWorkspace({
               applicationDeadline:
                 job.applicationDeadline?.toISOString() ??
                 null,
+              legacyPostingDetails:job.legacyPostingDetails,
             },
             policy: {
               allowedProgramIds:
                 eligibilityPolicy.allowedProgramIds,
               allowedCohortIds:
                 eligibilityPolicy.allowedCohortIds,
+              allowedSectionIds:eligibilityPolicy.allowedSectionIds,
               minCgpa:
                 eligibilityPolicy.minCgpa,
               maxActiveBacklogs:

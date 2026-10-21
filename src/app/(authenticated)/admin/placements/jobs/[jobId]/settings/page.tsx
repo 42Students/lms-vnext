@@ -51,7 +51,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  ]):[null,null];
  const publishedPolicy=policyRead?.status==="fulfilled"?policyRead.value:null;
  const publishedJobTypes=typesRead?.status==="fulfilled"?typesRead.value:[];
- const publishedEditReady=publishedPolicy!==null&&typesRead?.status==="fulfilled";
+ const publishedEditReady=publishedPolicy?.updatedAt!=null&&typesRead?.status==="fulfilled";
  return <div className="min-w-0 space-y-4 md:space-y-6">
     
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
