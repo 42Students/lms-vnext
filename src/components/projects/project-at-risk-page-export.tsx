@@ -22,7 +22,7 @@ export function ProjectAtRiskPageExport({rows}:{rows:Row[];collegeId:string}){
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob);
   const anchor=document.createElement("a");
-  anchor.href=url;anchor.download="at-risk-projects-college-"+collegeId+"-"+new Date().toISOString().slice(0,10)+".csv";
+  anchor.href=url;anchor.download="at-risk-projects.csv";
   document.body.appendChild(anchor);anchor.click();anchor.remove();
   window.setTimeout(()=>URL.revokeObjectURL(url),0);
  }

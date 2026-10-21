@@ -45,19 +45,14 @@ export function deriveProjectRiskReasons({
   latestSubmissionStatus,
   hasBlockedTask = false,
 }: ProjectRiskSignalInput): string[] {
-  if (
-    projectStatus === "ARCHIVED" ||
-    projectStatus === "COMPLETED"
-  ) {
-    return [];
-  }
+  if(projectStatus==="ARCHIVED")return [];
 
   const reasons: string[] = [];
 
   // Corrupt/partial activity projections must never produce "Infinity days",
   // "NaN days" or a fractional inactivity duration in customer-facing copy.
   // Retain other independent risk signals if the age is unusable.
-  if (Number.isSafeInteger(inactiveDays) && inactiveDays >= 7) {
+  if(projectStatus!=="COMPLETED" && Number.isSafeInteger(inactiveDays) && inactiveDays >= 7) {
     reasons.push(
       `No activity in ${inactiveDays} day${
         inactiveDays === 1 ? "" : "s"
@@ -73,7 +68,7 @@ export function deriveProjectRiskReasons({
   // not-yet-started PLANNED project can retain historical submissions but
   // must not advertise an operation the review state machine forbids.
   const currentReviewStatus = latestSubmissionStatus?.trim().toUpperCase().replace(/[ -]/g,"_");
-  if (projectStatus === "ACTIVE" && (
+  if ((projectStatus === "ACTIVE" || projectStatus === "COMPLETED") && (
     currentReviewStatus === "SUBMITTED" ||
     currentReviewStatus === "UNDER_REVIEW" ||
     currentReviewStatus === "IN_REVIEW"
