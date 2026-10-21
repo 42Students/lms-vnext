@@ -13,6 +13,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
  const [search,setSearch]=useState("");
  const [choice,setChoice]=useState(selected??"");
  const [page,setPage]=useState(1);
+ const [retryTick,setRetryTick]=useState(0);
  const [result,setResult]=useState({items:items.slice(0,25),total:initialTotal,
    page:1,pageSize:25,totalPages:Math.max(1,Math.ceil(initialTotal/25))});
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -40,7 +41,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
    });
   },250);
   return()=>{window.clearTimeout(timer);controller.abort();};
- },[collegeId,page,search]);
+ },[collegeId,page,search,retryTick]);
  const current=result.page,total=result.total,count=result.totalPages;
  const selectedRow=items.find(item=>item.id===choice);
  const rows=selectedRow&&!result.items.some(item=>item.id===selectedRow.id)
@@ -72,7 +73,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,i
      onClick={()=>setPage(x=>Math.min(count,x+1))}
       >Next</Button>
     {error?<Button type="button" variant="secondary" onClick={()=>{
-       setSearch(value=>value+" ");setError("");
+       setRetryTick(n=>n+1);setError("");
      }}>Retry</Button>:null}
    </div>
   </div>
