@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { programs } from "@/db/schema";
+import { programs, departments } from "@/db/schema";
 import { requirePermission } from "@/modules/permissions/policy";
 import { loadProgramScope } from "@/modules/academics/scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -20,7 +20,7 @@ type RouteContext = { params: Promise<{ programId: string }> };
 
 function handledError(error: unknown) {
   if (error instanceof CollegeProgramMutationError) {
-    return NextResponse.json({ error: error.code }, {
+    return NextResponse.json({ error: error.code, message:error.message }, {
       status: error.code === "PROGRAM_NOT_FOUND" ? 404 : 409,
     });
   }
@@ -31,9 +31,14 @@ function handledError(error: unknown) {
 export async function GET(_request: Request, { params }: RouteContext) {
   try {
     const { programId: rawId } = await params;
-    const programId = z.string().uuid().parse(rawId);
+    const programId=z.string().uuid().safeParse(rawId);
+    // Numeric imported IDs are never read as UUIDs; a scoped migration
+    // crosswalk must explicitly resolve any legacy bookmark first.
+    if(!programId.success)return NextResponse.json({
+      error:"PROGRAM_NOT_FOUND",message:"Program not found.",
+    },{status:404});
     const context = await getCurrentRequestContext();
-    const scope = await loadProgramScope(programId, true);
+    const scope = await loadProgramScope(programId.data, true);
     requirePermission(context, "academics.read", {
       organizationId: scope.organizationId,
       collegeId: scope.collegeId,
@@ -42,9 +47,18 @@ export async function GET(_request: Request, { params }: RouteContext) {
       id: programs.id, departmentId: programs.departmentId,
       name: programs.name, code: programs.code,
       durationTerms: programs.durationTerms, status: programs.status,
-    }).from(programs).where(eq(programs.id, programId)).limit(1);
+      legacyProgramId:programs.legacyProgramId,
+      departmentName:departments.name,
+    }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(eq(programs.id,programId.data)).limit(1);
     if (!program) return NextResponse.json({ error: "PROGRAM_NOT_FOUND" }, { status: 404 });
-    return NextResponse.json({ program, message: "OK" });
+    return NextResponse.json({
+      status:"OK",message:"OK",program,
+      data:{...program, durationYears:program.durationTerms%2===0?
+        program.durationTerms/2:null,
+        // Old model used numeric program IDs; UUID is authoritative.
+        id:program.id,departmentId:program.departmentId},
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return handledError(error); }
 }
 

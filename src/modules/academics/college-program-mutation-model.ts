@@ -36,9 +36,37 @@ export function hasUnsavedCollegeProgramEdit(
   saved: { name: string; code: string; durationTerms: number },
   draft: { name: string; code: string; durationTerms: string },
 ): boolean {
-  return draft.name !== saved.name ||
-    draft.code !== saved.code ||
+  return draft.name.trim() !== saved.name.trim() ||
+    draft.code.trim() !== saved.code.trim() ||
     draft.durationTerms !== String(saved.durationTerms);
+}
+
+/** Old programs record years; default conversion is two semesters/year.
+ * Imported zero-year source rows remain unresolved until an owner supplies a
+ * duration, not silently transformed into a one-semester program.
+ */
+export function programDurationYearsToTerms(years:number,termsPerYear=2):number|null{
+  if(!Number.isInteger(years)||years<1||years>10||
+    !Number.isInteger(termsPerYear)||termsPerYear<1||termsPerYear>3)
+    return null;
+  const result=years*termsPerYear;
+  return result>=1&&result<=24?result:null;
+}
+
+/** Permit legacy department/name/duration presentation while preserving
+ * UUID+code on vNext mutation. Numeric IDs are never resolved from client
+ * input; an authorized college-scoped crosswalk must supply the UUIDs. */
+export function parseLegacyProgramCreateFields(raw:{
+  name:string;dept_id:number;duration_years:number;
+},lookups:{departmentId:string;code:string}){
+  const duration=programDurationYearsToTerms(raw.duration_years);
+  if(!duration)throw new Error("Duration must be between 1 and 10 years");
+  if(!Number.isInteger(raw.dept_id)||raw.dept_id<1)
+    throw new Error("Please select a department");
+  return createCollegeProgramSchema.parse({
+    departmentId:lookups.departmentId,
+    name:raw.name,code:lookups.code,durationTerms:duration,
+  });
 }
 
 export function canReduceProgramDuration(

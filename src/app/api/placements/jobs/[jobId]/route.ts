@@ -7,7 +7,7 @@ import {
   getPlacementJob,
   updatePlacementJob,
 } from "@/modules/placements/job-service";
-import {updatePlacementJobInputSchema} from "@/modules/placements/validation";
+import {updatePlacementJobInputSchema,placementJobIdSchema} from "@/modules/placements/validation";
 
 export const runtime = "nodejs";
 
@@ -57,8 +57,17 @@ export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { jobId } = await params;
+    if(!placementJobIdSchema.safeParse(jobId).success)
+      return NextResponse.json({error:"PLACEMENT_JOB_NOT_FOUND",
+        message:"The drive link is invalid or the drive no longer exists."},{status:404});
+    // Legacy organization-wide job records allowed a null college. VNext's
+    // placement_jobs.college_id is intentionally NOT NULL; allowing a query
+    // argument to stand in for a nonexistent organization-wide tenant would
+    // bypass the existing college membership authorization. Archive the
+    // persisted job in its actual college using the service's policy/CAS.
+    // A future org-wide model needs explicit schema and permission support.
     const job = await archivePlacementJob(context, jobId);
-    return NextResponse.json(job);
+    return NextResponse.json(job,{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

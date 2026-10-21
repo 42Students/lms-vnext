@@ -10,7 +10,7 @@
  * Exactly-once delivery still requires an outbox / recipient idempotency keys.
  */
 import type { JobLease } from "./scheduled-job-lease";
-import {randomUUID} from "node:crypto";
+import {createHmac,randomUUID} from "node:crypto";
 import {TPO_SCHEDULED_JOBS,TPO_JOB_TIME_ZONE} from "./tpo-scheduled-job-registry";
 
 export interface ScheduledJobLeaseStore {
@@ -216,6 +216,37 @@ export async function processFencedNotificationBatch<T>(
     processed += 1;
   }
   return { processed, failed, remaining: Math.max(0, due.length - processed) };
+}
+
+/**
+ * Durable notification dedupe identity. A lease prevents concurrent runners;
+ * it does NOT prevent a duplicate after crash/retry or lease expiry. Every
+ * producer must store this key in the UNIQUE notification_delivery_outbox
+ * dedupe_key column in the SAME transaction that queues the recipient.
+ * The key deliberately contains no raw email/phone/PII.
+ */
+export function scheduledRecipientIdempotencyKey(input: {
+  organizationId: string;
+  collegeId: string;
+  sourceEventId: string;
+  recipientUserId: string;
+  kind: string;
+  windowKey: string;
+}, secretBase64: string): string {
+  const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (![input.organizationId, input.collegeId, input.sourceEventId,
+         input.recipientUserId].every(id => uuid.test(id)) ||
+      !/^[A-Z][A-Z0-9_]{1,63}$/.test(input.kind) ||
+      !/^\d{4}-\d{2}-\d{2}(?:T\d{2})?$/.test(input.windowKey) ||
+      !/^[A-Za-z0-9+/]{42,}={0,2}$/.test(secretBase64)) {
+    throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+  }
+  const secret = Buffer.from(secretBase64, "base64");
+  if (secret.length < 32) throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+  const canonical = [input.organizationId, input.collegeId, input.sourceEventId,
+    input.recipientUserId, input.kind, input.windowKey].join(":").toLowerCase();
+  return createHmac("sha256", secret).update("notification:v1:").update(canonical)
+    .digest("hex");
 }
 
 export type ScheduledJobObservation = {

@@ -21,7 +21,14 @@ export const internalMessageSchema=z.object({
  threadId:z.string().uuid(),body:z.string().trim().min(1).max(4000),
  idempotencyKey:z.string().uuid().optional(),
  markDecision:z.boolean().optional(),
-}).strict();
+ mentionMembershipIds:z.array(z.string().uuid()).max(20).default([]),
+ addMentionedMembers:z.boolean().default(false),
+}).strict().superRefine((data,ctx)=>{
+ if(new Set(data.mentionMembershipIds).size!==data.mentionMembershipIds.length)
+  ctx.addIssue({code:"custom",path:["mentionMembershipIds"],message:"Choose each teammate once"});
+ if(data.addMentionedMembers&&!data.mentionMembershipIds.length)
+  ctx.addIssue({code:"custom",path:["addMentionedMembers"],message:"Choose a teammate before sending"});
+});
 export function canReadInternalThread(input:{actorMembershipId:string;startedByMembershipId:string;invitedMembershipId:string}){
  return input.actorMembershipId===input.startedByMembershipId||input.actorMembershipId===input.invitedMembershipId;
 }

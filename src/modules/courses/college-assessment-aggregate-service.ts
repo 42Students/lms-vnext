@@ -49,7 +49,22 @@ export async function listCollegeAssessmentAggregate(
   kind: CollegeAssessmentKind,
   rawQuery: unknown,
 ) {
-  const query = parseCollegeAssessmentQuery(kind, rawQuery);
+  // A legacy administrator may supply an integer legacy course ID or a
+  // native UUID. Resolve it only inside the persisted college-scoped JOIN;
+  // neither caller-provided courseId nor collegeId is an authorization grant.
+  const raw=rawQuery&&typeof rawQuery==="object"&&!Array.isArray(rawQuery)?
+   rawQuery as Record<string,unknown>:{};
+  const {courseId:rawCourseId,...modernQuery}=raw;
+  const query=parseCollegeAssessmentQuery(kind,modernQuery);
+  let courseUuid:string|null=null,legacyCourseId:number|null=null;
+  if(rawCourseId!==undefined){
+   const id=String(rawCourseId);
+   if(/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(id)){
+    courseUuid=id;
+   }else if(/^[1-9][0-9]{0,9}$/.test(id)&&Number.isSafeInteger(Number(id))){
+    legacyCourseId=Number(id);
+   }else throw new Error("Invalid course ID");
+  }
   let collegeId: string;
   if (isSuperAdmin(context) && !context.adminScope?.collegeId)
     throw new AuthorizationError("courses.read");
@@ -111,6 +126,8 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      courseUuid?eq(courses.id,courseUuid):undefined,
+      legacyCourseId!==null?eq(courses.legacyCourseId,legacyCourseId):undefined,
       query.deliveryId ? or(
         eq(courseAssignments.deliveryId,query.deliveryId),
         and(isNull(courseAssignments.deliveryId),exists(
@@ -143,6 +160,9 @@ export async function listCollegeAssessmentAggregate(
       dueAt: courseAssignments.dueAt,
       deliveryId: courseAssignments.deliveryId,
       points: courseAssignments.maxPoints,
+      facultyId:courseAssignments.createdByUserId,
+      updatedAt:courseAssignments.updatedAt,
+      courseId:courses.id,
     }).from(courseAssignments)
       .innerJoin(courseLessons, eq(courseLessons.id, courseAssignments.lessonId))
       .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
@@ -169,6 +189,8 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      courseUuid?eq(courses.id,courseUuid):undefined,
+      legacyCourseId!==null?eq(courses.legacyCourseId,legacyCourseId):undefined,
       query.deliveryId ? or(
         eq(courseQuizzes.deliveryId,query.deliveryId),
         and(isNull(courseQuizzes.deliveryId),exists(
@@ -202,6 +224,9 @@ export async function listCollegeAssessmentAggregate(
       dueAt: courseQuizzes.dueAt,
       deliveryId: courseQuizzes.deliveryId,
       points: courseQuizzes.totalPoints,
+      facultyId:courseQuizzes.createdByUserId,
+      updatedAt:courseQuizzes.updatedAt,
+      courseId:courses.id,
       resultsPublished: courseQuizzes.resultsPublished,
       createdAt: courseQuizzes.createdAt,
     }).from(courseQuizzes)
@@ -229,6 +254,10 @@ export async function listCollegeAssessmentAggregate(
   // The only IDs used for counting come from the authorized, paginated
   // college-filtered result. Quiz counts are attempts (not unique learners).
   const ids = rows.map((row) => row.id);
+  // Query costs are bounded by one 20-item scope page, plus one grouped
+  // activity count, eligible-roster and submission-aggregate batch each.
+  // Never N+1 query individual assignment/quiz statistics.
+  const statisticsStatus:"READY"|"UNAVAILABLE"="READY";
   const counts = ids.length === 0 ? [] :
     kind === "ASSIGNMENT" ?
       await db.select({
@@ -395,6 +424,8 @@ export async function listCollegeAssessmentAggregate(
     courseCode: row.courseCode,
     lessonName: row.lessonName,
     lessonId:row.lessonId,
+    facultyId:row.facultyId,
+    updatedAt:row.updatedAt,
     sectionName:row.deliveryId?reviewDeliveries.find(item=>item.deliveryId===row.deliveryId)?.sectionName??null:null,
     offeringId: row.offeringId,
     status: row.status,
@@ -421,6 +452,8 @@ export async function listCollegeAssessmentAggregate(
     kind,
     collegeId,
     query,
+    // The resolved IDs are filters only, never part of the acting role.
+    courseIdFilter:courseUuid??legacyCourseId,
     items,
     reviewDeliveries,
     directoryCourses,
@@ -428,6 +461,24 @@ export async function listCollegeAssessmentAggregate(
     total,
     page: query.page,
     pageSize: COLLEGE_ASSESSMENT_PAGE_SIZE,
+    statisticsStatus,
+    legacyPage: {
+      success:true,
+      message:kind==="QUIZ"?"Quizzes retrieved successfully":"Assignments retrieved successfully",
+      data:{
+        content:items.map(item=>({
+          id:item.id,title:item.title,courseName:item.courseName,
+          lessonId:item.lessonId,facultyId:item.facultyId,updatedAt:item.updatedAt,
+          sectionName:item.sectionName,deliveryId:item.deliveryId,
+          status:item.status,dueAt:item.dueAt,
+          totalPoints:item.points,resultsPublished:item.resultsPublished,
+        })),
+        page:query.page-1,
+        size:COLLEGE_ASSESSMENT_PAGE_SIZE,
+        totalElements:total,
+        totalPages:Math.max(1,Math.ceil(total/COLLEGE_ASSESSMENT_PAGE_SIZE)),
+      },
+    },
     totalPages: Math.max(1, Math.ceil(total / COLLEGE_ASSESSMENT_PAGE_SIZE)),
   };
 }

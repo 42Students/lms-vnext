@@ -32,7 +32,6 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       {showHeader ? <PageHeader
-        eyebrow="College Admin · Courses & Content"
         title={title}
         description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
         actions={
@@ -42,15 +41,24 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           </Link>
         }
       /> : null}
-      {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
+      <div className={lessons&&prepend?"grid min-w-0 grid-cols-1 gap-5 min-[992px]:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]":"min-w-0"}>
+        {prepend ? <aside data-slot="page-tools" aria-label={lessons?"Create New Lesson":"Page tools"} className="min-w-0">
+          {lessons?<h2 className="mb-3 text-base font-semibold text-[var(--lms-heading)]">Create New Lesson</h2>:null}
+          {prepend}
+        </aside> : null}
+        <div className="min-w-0 space-y-4">
+      {lessons?<h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Lessons</h2>:null}
       <section aria-label={title + " filters"} className="min-w-0 pb-[var(--lms-space-4)]">
         <form method="get" action={href} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_auto_auto]">
           <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Course or {lessons ? "lesson" : "cohort"}
             <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
-              placeholder="Search registered records"
+              placeholder={lessons?"Search lessons":"Search course progress"}
               className="min-h-11 md:min-h-9" />
           </label>
+          <p className="text-xs text-muted-foreground md:col-span-3">
+            Search {lessons?"lesson names or course details":"courses or cohorts"} within the selected college.
+          </p>
           <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)] md:col-span-3" open={activeAdvanced || undefined}>
             <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Advanced filters</summary>
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
@@ -193,13 +201,18 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             <label className="grid min-w-36 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
               <Select name="courseCode" defaultValue={data.query.courseCode??""}
                 className="min-h-11 md:min-h-9">
-                <option value="">All courses</option>
+                <option value="">View all courses (server paginated)</option>
                 {courseChoices.map(option=><option key={option.code} value={option.code}>
                   {option.name} ({option.code})
                 </option>)}
                 {data.query.courseCode&&!courseChoices.some(option=>option.code===data.query.courseCode)?
-                  <option value={data.query.courseCode}>{data.query.courseCode} (not in current authoring list)</option>:null}
+                  <option value={data.query.courseCode}>{data.query.courseCode} (unavailable in current college)</option>:null}
               </Select>
+              <p className="text-xs text-muted-foreground">
+                All-courses view is explicit and uses server pagination; it does not make four concurrent requests per course.
+              </p>
+              {data.query.courseCode&&!courseChoices.some(option=>option.code===data.query.courseCode)?
+                <p role="alert" className="text-xs text-warning-text">Selected course is unavailable here. Clear or change the course filter.</p>:null}
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
@@ -562,50 +575,12 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           <p className="p-6 text-sm text-body">
             {data.total === 0
               ? lessons
-                ? "No persisted lessons match these filters. Learning paths and lessons may not have been authored."
+                ? "No lessons match these filters. Choose a course, or opt in to all-courses view."
                 : "No course offerings match these filters. No completion or learner activity is inferred."
               : "No records exist on this page. Return to an earlier page."}
           </p>
         ) : (<>
-          <div className="divide-y divide-border px-2 md:hidden" aria-label={title+" mobile records"}>
-           {data.kind==="LESSONS" ? (
-            <>
-            {data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-4">
-             <h3 className="break-words font-semibold">{item.name}</h3>
-             <Link className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
-              {item.courseName} ({item.courseCode})
-             </Link>
-             <p className="text-xs text-body">{item.cohortName} · {item.periodName} · Lesson #{item.sequence+1}</p>
-             <StatusBadge tone={item.status==="ARCHIVED"?"neutral":item.visibleToStudents?"success":"warning"}>{collegeLessonVisibilityLabel(item)}</StatusBadge>
-             {item.status==="ARCHIVED"?
-              <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
-              <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
-               visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
-             <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View recorded course activity</Link>
-             {item.status!=="ARCHIVED"?
-               <div aria-label="Lesson actions" className="flex min-w-0 flex-wrap gap-2">
-                 <LessonActions lesson={{id:item.id,name:item.name,description:item.description,sequence:item.sequence}}/>
-               </div>:null}
-            </article>)}
-            </>
-           ) : (
-            <>
-            {data.items.map(item=><article key={item.offeringId} className="min-w-0 space-y-2 py-4">
-             <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
-              {item.courseName} ({item.courseCode})
-             </Link>
-             <p className="text-xs text-body">{item.cohortName} · {item.periodName}</p>
-             <p className="flex flex-wrap items-center gap-2 text-xs text-body">Offering state: <StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge></p>
-             <p className="text-xs text-body">{collegeProgressDescription(item)}</p>
-             <Link href={collegeOfferingLessonsHref(item.offeringId)}
-              className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View authored lessons</Link>
-            </article>)}
-            </>
-           )}
-          </div>
-          <div className="hidden min-w-0 md:block">
+          <div className="min-w-0">
             {data.kind === "LESSONS" ? <DataTable
               caption="Lesson directory"
               rows={data.items}
@@ -613,7 +588,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               empty={<p className="text-sm text-body">No lessons found for the selected filters.</p>}
               columns={[
                 {key:"lesson",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.name,
-                  mobilePriority:"primary" as const,cell:item=><strong className="break-words text-foreground">{item.name}</strong>},
+                  mobilePriority:"primary" as const,cell:item=><strong className="break-words text-foreground">{item.name.trim()||"Untitled lesson"}</strong>},
                 {key:"course",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.course,mobilePriority:"secondary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
@@ -693,6 +668,8 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           : "Counts use recorded learner-content progress rows only. Learners without activity are absent from counts. Completion flags reflect individual content records, not finished courses, distinct eligible learners, assignments, quizzes or attendance. Historic records may remain after enrollment changes."}
         Exact legacy reports, exports and browser parity remain unverified.
       </p>
+        </div>
+      </div>
     </div>
   );
 }

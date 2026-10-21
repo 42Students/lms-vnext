@@ -12,7 +12,6 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
-import { Tabs } from "@/components/ui/tabs";
 import { ListToolbar } from "@/components/ui/list-toolbar";
 import { FilterBar } from "@/components/ui/filter-bar";
 import { Banner } from "@/components/ui/banner";
@@ -36,7 +35,8 @@ export default async function CollegeProjectsPage({
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Workspaces" description="Select a college to continue."/>
+      <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
+      <PageHeader title="Project workspaces" description="Select a college to continue."/>
       <ErrorState title="No college selected"
         description="Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page."
         action={<Link href="/dashboard" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>}/>
@@ -46,7 +46,8 @@ export default async function CollegeProjectsPage({
   const parsed = parseCollegeProjectsQuery(await searchParams);
   if (!parsed.success) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
+      <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
+      <PageHeader title="Project workspaces" description="Live projects, each run by a mentor with a team of students." />
       <ErrorState title="Invalid project filters"
         description="Check the search, status, page and rows filters, or clear them to continue."
         action={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
@@ -79,7 +80,8 @@ export default async function CollegeProjectsPage({
     if(query.view)retry.set("view",query.view);
     const suffix=retry.toString();
     return <div className="min-w-0 space-y-6">
-      <PageHeader title="Workspaces"
+      <ProjectAdminNav basePath="/college/projects" active="workspaces"/>
+      <PageHeader title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."/>
       <ErrorState title="Workspaces could not be loaded"
         description="Failed to load project workspaces. Your search and filters were not changed."
@@ -102,10 +104,6 @@ export default async function CollegeProjectsPage({
    progressPercent:project.progressPercent,
    riskReasons:project.riskReasons,
   }));
-  const viewHref=(view:"cards"|"table")=>"/college/projects?"+new URLSearchParams({
-   ...(query.q?{q:query.q}:{}),...(query.status?{status:query.status}:{}),
-   ...(query.pageSize?{pageSize:String(query.pageSize)}:{}),view,
-  }).toString();
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
       <ProjectAdminNav
@@ -113,7 +111,7 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        title="Workspaces"
+        title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
           <Link href="/college/projects/create" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">Create workspace</Link>
@@ -122,41 +120,27 @@ export default async function CollegeProjectsPage({
         </div>}
       />
 
-      <details className="group min-w-0 border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9 flex-wrap">
-          <span>Project workspace tools</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
-        </summary>
-        <nav aria-label="Project workspace tools" className="flex min-w-0 flex-col items-stretch gap-2 pt-3 md:flex-row md:flex-wrap md:items-center">
-      <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold hover:bg-primary-subtle md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold hover:bg-primary-subtle md:min-h-9 focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/deleted">Deleted workspaces</Link>
-</nav>
-      </details>
-
-      <div className="min-w-0 space-y-2">
-       <Tabs ariaLabel="Workspace display and archive" renderPanel={false}
-        value={query.status==="ARCHIVED"?"archived":query.view==="table"?"table":"cards"}
-        items={[
-         {value:"cards",label:"Cards",href:viewHref("cards")},
-         {value:"table",label:"List",href:viewHref("table")},
-         {value:"archived",label:"Archived workspaces",href:"/college/projects?status=ARCHIVED"},
-        ]}/>
-        <Link href="/college/projects/deleted"
-          className="inline-flex min-h-9 items-center font-semibold text-link underline">
-          Deleted workspaces
-        </Link>
-      </div>
       {!templatesResult.ok && <Banner tone="warning">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</Banner>}
       <FilterBar title="Filters"><ProjectAdminFilters query={query} legacyWorkspaces
         searchParamName="q" atRiskHref="/college/projects/at-risk" /></FilterBar>
-      <ListToolbar label="College project workspaces" viewCount={result.total}
+      <section aria-label="Project workspaces directory" className="min-w-0 space-y-3">
+       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Project workspaces</h2>
+        <div className="flex min-w-0 items-center gap-3 text-sm">
+         <Link href="/college/projects/at-risk" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Needs attention</Link>
+         {query.view==="cards"?<Link href="/college/projects?view=table" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View list</Link>:null}
+        </div>
+       </div>
+       <ListToolbar label="College project workspaces" viewCount={result.total}
         exportAction={<ProjectAdminWorkspacePageExport items={items}/>} />
+      </section>
 
       <ProjectAdminWorkspaceList
         items={items}
         view={query.view}
         basePath="/college/projects"
-        emptyTitle="No Projects match these filters"
-        emptyDescription="Clear the filters, or create a Project from an assigned published template."
+        emptyTitle={query.q||query.status?"No workspaces match your search/filter":"No workspaces available for this college"}
+        emptyDescription={query.q||query.status?"Clear the search and filters to see all workspaces.":"Start by creating a workspace or assigning a published project template."}
       />
 
       <ProjectAdminPagination

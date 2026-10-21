@@ -12,15 +12,38 @@ export const createCollegeSemesterSchema = z.object({
     .max(12, "Semester number must be between 1 and 12"),
   name: semesterName,
   totalCredits: credits.optional(),
+  isActive: z.boolean().optional(),
 }).strict();
 
+/** Full and partial legacy editors both supply a CAS token and an explicit
+ * confirmation. Omitted fields retain persisted values inside the lock; an
+ * intentional null totalCredits removes the optional credit target. */
 export const updateCollegeSemesterSchema = z.object({
-  name: semesterName,
-  totalCredits: credits,
-  isActive: z.boolean(),
+  name: semesterName.optional(),
+  totalCredits: credits.optional(),
+  isActive: z.boolean().optional(),
   expectedUpdatedAt: z.iso.datetime({offset:true}),
   confirm: z.literal(true),
+}).strict().refine(input=>
+  input.name!==undefined || input.totalCredits!==undefined ||
+  input.isActive!==undefined,
+  {message:"Select at least one semester field to update"},
+);
+
+/** Legacy NewProgramStructureDTO allows null status/dates. Translate those
+ * at a trusted source adapter only; untrusted numeric program IDs never flow
+ * into UUID first-party CRUD routes. */
+export const legacySemesterEditFieldsSchema=z.object({
+  name:semesterName.optional(),
+  totalCredits:credits.optional(),
+  active:z.boolean().optional(),
+  isActive:z.boolean().optional(),
 }).strict();
+export function legacySemesterEditFields(input:unknown){
+  const parsed=legacySemesterEditFieldsSchema.parse(input);
+  return {name:parsed.name,totalCredits:parsed.totalCredits,
+    isActive:parsed.isActive??parsed.active};
+}
 
 export const deleteCollegeSemesterSchema = z.object({
   confirm: z.literal(true),

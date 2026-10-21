@@ -21,7 +21,15 @@ async function optionalPublicBranding(collegeId: string) {
   }
 }
 
-export async function generateMetadata():Promise<Metadata> {
+export async function generateMetadata({searchParams}:{
+ searchParams:Promise<{legacy?:string|string[]}>;
+}):Promise<Metadata> {
+ const query=await searchParams;
+ const legacy=Array.isArray(query.legacy)?query.legacy[0]:query.legacy;
+ if(legacy==="superadmin")return {
+  title:{absolute:"Superadmin - 42 LMS"},description:"Superadmin Login",
+  icons:{icon:"/favicon.svg"},
+ };
  const tenant=await resolveRequestTenant((await headers()).get("host"));
  const brand=tenant.kind==="college"?await optionalPublicBranding(tenant.collegeId):null;
  // On the public root, the historic browser tab reads simply 42 LMS.
@@ -99,10 +107,12 @@ export default async function HomePage({
     auth?: string | string[];
     recruiter?: string | string[];
     returnTo?: string | string[];
+    legacy?: string | string[];
   }>;
 }) {
   const params = await searchParams;
   const recruiterValue=Array.isArray(params.recruiter)?params.recruiter[0]:params.recruiter;
+  const legacySuperAdmin=(Array.isArray(params.legacy)?params.legacy[0]:params.legacy)==="superadmin";
   const authValue = Array.isArray(params.auth)
     ? params.auth[0]
     : params.auth;
@@ -145,9 +155,8 @@ export default async function HomePage({
     tenant.kind === "college" ? tenant.collegeId : null
   ).catch(() => null);
   const returnTo = safeReturnTo(requested);
-  const restartHref = returnTo
-    ? "/login?returnTo=" + encodeURIComponent(returnTo)
-    : "/login";
+  const restartHref = "/login" + (legacySuperAdmin?"?legacy=superadmin":"") +
+    (returnTo?(legacySuperAdmin?"&":"?")+"returnTo="+encodeURIComponent(returnTo):"");
   const themeStyle = brandStyleVariables(
     branding?.primaryColor,
   ) as React.CSSProperties;
@@ -158,6 +167,7 @@ export default async function HomePage({
 
   return (
     <main
+      data-legacy-superadmin={legacySuperAdmin||undefined}
       style={{ ...themeStyle, "--auth-primary": authPrimary } as React.CSSProperties}
       className={styles.viewport}
     >
@@ -245,7 +255,8 @@ export default async function HomePage({
             </div>
           ) : (
             <LoginForm collegeName={branding?.collegeName ?? null}
-              defaultChannel={recruiterValue === "email" && signin.email ? "EMAIL" : signin.primary}
+              legacySuperAdmin={legacySuperAdmin&&signin.phone}
+               defaultChannel={legacySuperAdmin&&signin.phone?"PHONE":recruiterValue === "email" && signin.email ? "EMAIL" : signin.primary}
               allowedChannels={signin.email && signin.phone ? ["EMAIL", "PHONE"] :
                 signin.email ? ["EMAIL"] : ["PHONE"]} />
           )}
@@ -254,12 +265,12 @@ export default async function HomePage({
       </div>
 
       <footer className={styles.footer}>
-        <span>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.{tenant.kind === "college" ? " · Powered by 42LMS" : ""}</span>
+        <span>{legacySuperAdmin?"JRSPF Technologies Pvt. Ltd. All rights reserved.":<>© {new Date().getFullYear()} 42LMS · JRSPF Technologies Pvt. Ltd.{tenant.kind === "college" ? " · Powered by 42LMS" : ""}</>}</span>
         <nav className={styles.footerLinks} aria-label="Sign-in footer">
           {branding?.supportEmail ? <a href={`mailto:${branding.supportEmail}`}>{branding.supportEmail}</a> : null}
           {branding?.supportPhone ? <a href={`tel:${branding.supportPhone.replace(/[^+0-9]/g, "")}`}>{branding.supportPhone}</a> : null}
-          <a href={branding?.privacyUrl ?? "/privacy-policy"} rel="noopener noreferrer">Privacy</a>
-          <a href={branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"} rel="noopener noreferrer">Terms</a>
+          <a href={legacySuperAdmin?"/assets/static/privacy-policy-view.html":branding?.privacyUrl ?? "/privacy-policy"} rel="noopener noreferrer">{legacySuperAdmin?"Privacy Policy":"Privacy"}</a>
+          <a href={legacySuperAdmin?"/assets/static/terms-and-conditions-view.html":branding?.termsUrl ?? "/assets/static/terms-and-conditions-view.html"} rel="noopener noreferrer">{legacySuperAdmin?"Terms & Conditions":"Terms"}</a>
         </nav>
       </footer>
     </main>

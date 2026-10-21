@@ -40,7 +40,18 @@ export type CollegeProgramMutationErrorCode =
 
 export class CollegeProgramMutationError extends Error {
   constructor(public readonly code: CollegeProgramMutationErrorCode) {
-    super(code);
+    const copy:Partial<Record<CollegeProgramMutationErrorCode,string>>={
+      PROGRAM_NAME_CONFLICT:"A program with this name already exists in this department.",
+      PROGRAM_CODE_CONFLICT:"A program with this code already exists in this department.",
+      PROGRAM_NOT_FOUND:"Program not found.",
+      DEPARTMENT_NOT_FOUND:"Select an active department in your college.",
+      PROGRAM_DEPENDENCY_CONFLICT:"This program has existing academic records. Move or archive the linked records before changing departments.",
+      PROGRAM_DURATION_HAS_DEPENDENCIES:"The duration cannot be shorter than an existing semester or batch progression.",
+      PROGRAM_HAS_COHORTS:"This program has batches and cannot be archived.",
+      PROGRAM_HAS_ENROLLMENTS:"This program has learner enrollments and cannot be archived.",
+      PROGRAM_HAS_SEMESTERS:"This program has semesters and cannot be archived.",
+    };
+    super(copy[code]??code);
     this.name = "CollegeProgramMutationError";
   }
 }
@@ -111,14 +122,17 @@ async function ensureUnique(
     .where(and(
       eq(programs.departmentId, departmentId),
       eq(programs.status, "ACTIVE"),
-      sql`(lower(${programs.name}) = ${name.toLowerCase()} or lower(${programs.code}) = ${code.toLowerCase()})`,
+      // PostgreSQL lower() and explicit en-US folding provide predictable
+      // ASCII legacy comparison; the active-name/code uniqueness is still
+      // ultimately enforced by DB indexes for concurrent create/restore.
+      sql`(lower(${programs.name}) = ${name.toLocaleLowerCase("en-US")} or lower(${programs.code}) = ${code.toLocaleLowerCase("en-US")})`,
     ));
   for (const row of matches) {
     if (row.id === excludeId) continue;
-    if (row.name.toLowerCase() === name.toLowerCase()) {
+    if (row.name.toLocaleLowerCase("en-US") === name.toLocaleLowerCase("en-US")) {
       throw new CollegeProgramMutationError("PROGRAM_NAME_CONFLICT");
     }
-    if (row.code.toLowerCase() === code.toLowerCase()) {
+    if (row.code.toLocaleLowerCase("en-US") === code.toLocaleLowerCase("en-US")) {
       throw new CollegeProgramMutationError("PROGRAM_CODE_CONFLICT");
     }
   }
@@ -159,7 +173,9 @@ export async function createCollegeProgram(context: RequestContext, raw: unknown
         collegeId: member.collegeId,
         subjectType: "program", subjectId: created.id,
         subjectLabel: created.name, summary: "Program created",
-        metadata: { departmentId: created.departmentId, code: created.code, durationTerms: created.durationTerms },
+        metadata: {departmentId:created.departmentId,code:created.code,
+          durationTerms:created.durationTerms,legacyProgramId:created.legacyProgramId,
+          origin:"COLLEGE_PROGRAM_CREATE",visibility:"ACADEMIC_ADMIN_ONLY"},
       });
       return created;
     });
@@ -217,6 +233,7 @@ export async function updateCollegeProgram(
           fromName: current.name, fromCode: current.code,
           fromDurationTerms: current.durationTerms,
           toCode: updated.code, toDurationTerms: updated.durationTerms,
+          legacyProgramId:updated.legacyProgramId,departmentMoveGuarded:true,
         },
       });
       return updated;
@@ -293,6 +310,8 @@ export async function restoreCollegeProgram(
         .for("update", { of: programs }).limit(1);
       if (!current || current.status !== "ARCHIVED")
         throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
+      // Archived rows do not reserve their old name/code, unlike hard-delete
+      // era uniqueness. Restore is revalidated against every ACTIVE row.
       await ensureUnique(tx, current.departmentId, current.name, current.code, current.id);
       const [restored] = await tx.update(programs).set({
         status: "ACTIVE", updatedAt: new Date(),

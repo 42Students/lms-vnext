@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,inArray,gt,sql} from "drizzle-orm";
+import {and,eq,inArray,gt,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
- placementJobs,placementRecruiterCollegeGrants,placementCompanyRelationships,
+ placementJobs,placementJobRounds,placementRoundResults,placementRecruiterCollegeGrants,placementCompanyRelationships,
  users,activityEvents} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {getRecruiterPlacementWorkspace} from "./recruiter-workspace-service";
@@ -75,6 +75,32 @@ export async function submitRecruiterSelectionList(
    .for("share");
   if(allowed.length!==input.applicationIds.length)
    throw new Error("SELECTION_AUDIENCE_CHANGED");
+  const rounds=await tx.select({id:placementJobRounds.id,status:placementJobRounds.status})
+   .from(placementJobRounds).where(and(
+    eq(placementJobRounds.jobId,job.id),
+    ne(placementJobRounds.kind,"TALK"),
+    ne(placementJobRounds.status,"CANCELLED")))
+   .for("share");
+  if(rounds.length===0||rounds.some(round=>round.status!=="COMPLETED"))
+   throw new Error("SELECTION_RESULTS_CHANGED");
+  const passed=await tx.select({
+   roundId:placementRoundResults.roundId,
+   applicationId:placementRoundResults.applicationId,
+   status:placementRoundResults.status,outcome:placementRoundResults.outcome,
+  }).from(placementRoundResults).where(and(
+   inArray(placementRoundResults.roundId,rounds.map(round=>round.id)),
+   inArray(placementRoundResults.applicationId,input.applicationIds),
+   ne(placementRoundResults.status,"SUPERSEDED"))).for("share");
+  const passCount=new Map<string,number>();
+  for(const result of passed){
+   if(result.status!=="APPLIED"||result.outcome!=="PASS")
+    throw new Error("SELECTION_RESULTS_CHANGED");
+   const key=result.roundId+":"+result.applicationId;
+   passCount.set(key,(passCount.get(key)??0)+1);
+  }
+  if(rounds.some(round=>input.applicationIds.some(applicationId=>
+    passCount.get(round.id+":"+applicationId)!==1)))
+   throw new Error("SELECTION_RESULTS_CHANGED");
 
   // Stable client submission ID makes network retries idempotent. A different
   // payload cannot silently reuse a previous selection proposal.

@@ -18,7 +18,7 @@ const deliveryQuerySchema=z.strictObject({deliveryId:z.string().uuid().optional(
 const fileGrantQuerySchema=z.strictObject({
  deliveryId:z.string().uuid().optional(),
  openMaterialId:z.string().uuid().optional(),
- legacyMaterialIndex:z.coerce.number().int().min(0).max(19).optional(),
+ legacyMaterialIndex:z.coerce.number().int().min(0).max(2147483647).optional(),
 }).refine(query => !(query.openMaterialId && query.legacyMaterialIndex !== undefined),{
  message:"Choose one material reference",
 });

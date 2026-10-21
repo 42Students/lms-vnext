@@ -88,6 +88,9 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     offeringStatus: aliased(courseOfferings.status, "offering_status_alias"),
     courseName: aliased(courses.name, "course_name_alias"),
     courseCode: courses.code,
+    // Imported legacy courses sort by their source numeric ID; native courses
+    // follow in code order. Lesson sequence and UUID break ties deterministically.
+    legacyCourseSort:sql<number>`coalesce(${courses.legacyCourseId},2147483647)`.as("legacy_course_sort"),
     cohortName: aliased(cohorts.name, "cohort_name_alias"),
     periodName: aliased(academicPeriods.name, "period_name_alias"),
   }).from(courseLessons)
@@ -110,6 +113,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     ))
     .where(and(
       query.status === "ALL" ? undefined : eq(courseLessons.status, query.status),
+      query.status === "ACTIVE" ? isNull(courseLessons.deletedAt) : undefined,
       query.liveEvidence==="HAS_LIVE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS")))):query.liveEvidence==="NO_LIVE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"LIVE_CLASS"))))):undefined,
       query.resourceEvidence==="HAS_RESOURCE"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE")))):query.resourceEvidence==="NO_RESOURCE"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),eq(lessonContents.contentType,"RESOURCE"))))):undefined,
       query.videoEvidence==="HAS_VIDEO"?exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])))):query.videoEvidence==="NO_VIDEO"?not(exists(db.select({id:lessonContents.id}).from(lessonContents).where(and(eq(lessonContents.lessonId,courseLessons.id),inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]))))):undefined,
@@ -165,13 +169,15 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
         ${courses.code} ilike ${searchLike(query.q)})` : undefined,
     )).as("college_lessons");
 
-  const [countRows, baseRows] = await Promise.all([
-    db.select({ total: count() }).from(scoped),
-    db.select().from(scoped)
-      .orderBy(asc(scoped.courseName), asc(scoped.cohortName), asc(scoped.sequence), asc(scoped.id))
+  // Count and page share one repeatable-read snapshot; concurrent lesson
+  // authoring cannot make the displayed page disagree with its total.
+  const [countRows, baseRows] = await db.transaction(async tx=>Promise.all([
+    tx.select({ total: count() }).from(scoped),
+    tx.select().from(scoped)
+      .orderBy(asc(scoped.legacyCourseSort),asc(scoped.courseCode),asc(scoped.sequence),asc(scoped.id))
       .limit(query.pageSize)
       .offset((query.page - 1) * query.pageSize),
-  ]);
+  ]),{isolationLevel:"repeatable read",readOnly:true});
   const ids = baseRows.map(r => r.id);
   const counts = ids.length === 0 ? [] : await db.select({
     id: lessonContents.lessonId,
@@ -189,7 +195,12 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     publishedAndVisibleFlagCount: byLesson.get(row.id)?.publishedVisible ?? 0,
   }));
   const total = countRows[0]?.total ?? 0;
-  return { kind: "LESSONS" as const, query, items, total, totalPages: collegeLearningPageCount(total,query.pageSize) };
+  return { kind: "LESSONS" as const, query, items, total,
+    // A single tenant-scoped SQL query fails as one operation. Unlike the
+    // legacy per-course fan-out, it cannot silently omit failed sources.
+    partial:false as const,
+    sortPolicy:"LEGACY_COURSE_THEN_SEQUENCE" as const,
+    totalPages: collegeLearningPageCount(total,query.pageSize) };
 }
 
 /** Recorded *content events* per offering, never attendance/quiz completion,
@@ -604,8 +615,28 @@ export async function searchCollegeLessons(
   };
 }
 
-/** Selected-college Super Admin stats only. There is no cross-tenant
- * unscoped GLOBAL mode and no lesson-search cache to refresh. */
+/** The old global cache /stats endpoint corresponds to all ACTIVE lessons
+ * only for a truly global Super Admin. A selected college or organization
+ * scope cannot enumerate tenants outside its authorization boundary.
+ */
+export async function getGlobalLessonSearchStats(context:RequestContext){
+ if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
+  throw new AuthorizationError("courses.read");
+ requirePermission(context,"courses.read",{});
+ const db=getDb();
+ const [result]=await db.select({totalLessons:count()}).from(courseLessons)
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(eq(courseLessons.status,"ACTIVE"),isNull(courseLessons.deletedAt),
+   eq(courses.status,"ACTIVE"),isNull(courses.deletedAt),
+   eq(courseOfferings.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED")));
+ return {totalLessons:result?.totalLessons??0};
+}
+
+/** Selected-college Super Admin stats. A global stats request must use the
+ * explicitly global endpoint above; there is no ambient cache. */
 export async function getCollegeLessonSearchStats(context: RequestContext) {
   if (!isSuperAdmin(context) || !context.adminScope?.collegeId)
     throw new AuthorizationError("courses.read");

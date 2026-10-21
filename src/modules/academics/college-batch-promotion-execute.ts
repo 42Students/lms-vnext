@@ -19,7 +19,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError } from "@/modules/permissions/policy";
-import { collegePromotionExecuteSchema, promotionPreviewMatches, promotionReady } from "./college-batch-promotion-model";
+import { collegePromotionExecuteSchema, promotionPreviewMatches, promotionReady, promotionSuccessLabel, formatPromotionAcademicYear } from "./college-batch-promotion-model";
 import { previewCollegeBatchPromotionInTransaction } from "./college-batch-promotion-service";
 
 export class CollegePromotionExecuteError extends Error {
@@ -175,10 +175,16 @@ export async function executeCollegeBatchPromotion(
       collegeId: member.collegeId,
       subjectType: "cohort",
       subjectId: batch.id,
-      summary: "Batch promoted to next registered term",
+      summary: promotionSuccessLabel(updated.currentTermNumber),
       metadata: {
         previousTerm: previous.currentTermNumber,
         newTerm: updated.currentTermNumber,
+        action:"PROMOTE_BATCH",
+        previousAcademicYearStart:previous.currentAcademicYearStart,
+        academicYear:formatPromotionAcademicYear(updated.currentAcademicYearStart!),
+        calendarTimeZone:"Asia/Kolkata",
+        targetMappedCourses,targetCourseCount:targetCourseSet.size,
+        oldOnlyCourseCount:oldOnly.length,
         version: updated.version,
         academicYearStart: updated.currentAcademicYearStart,
         learnerCount: preview.checkedLearners,
@@ -196,7 +202,7 @@ export async function executeCollegeBatchPromotion(
       endedTeachingAssignments,
       retainedSharedTeachingAssignments: retainedSharedTeaching.length,
       facultySetupIncomplete,
-      message: `Batch promoted to semester ${updated.currentTermNumber}`,
+      message: promotionSuccessLabel(updated.currentTermNumber),
     };
     });
   } catch (error) {

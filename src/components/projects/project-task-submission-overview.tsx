@@ -44,7 +44,7 @@ export function ProjectTaskSubmissionOverview({rows,metrics}:{
     </div>)}
    </dl>
    {rows.length===0?<EmptyState title="No task submissions"
-      description="No task evidence has been submitted yet. Learners can submit evidence from their Tasks tab."/>:
+      description="No tasks have a submission link yet."/>:
     <div className="max-w-full overflow-x-auto">
      <table className="w-full min-w-[660px] border-collapse text-left text-sm">
       <caption className="sr-only">Recorded task submissions, ten per page</caption>

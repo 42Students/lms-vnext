@@ -5,7 +5,6 @@ import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file
 import Link from "next/link";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { EmptyState } from "@/components/ui/empty-state";
-import { PageHeader } from "@/components/ui/page-header";
 import { Tabs } from "@/components/ui/tabs";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
@@ -70,6 +69,24 @@ function audienceLabel(
     : "All classes";
 }
 
+function ContentGlyph({kind}:{kind:string}) {
+  const circle=kind==="QUIZ";
+  return <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24"
+    fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"
+    className="h-5 w-5 shrink-0 text-primary-text">
+    {circle?<><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2.2-2.5 4"/><path d="M12 17h.01"/></>:
+     kind==="VIDEO"||kind==="YOUTUBE"?<><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></>:
+     kind==="LIVE_CLASS"?<><rect x="2.5" y="6" width="14" height="12" rx="2"/><path d="m17 10 4-2v8l-4-2"/></>:
+     kind==="ASSIGNMENT"?<><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h5"/></>:
+     <><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></>}
+  </svg>;
+}
+
+function istDueLabel(value:Date|null|undefined){
+ if(!value)return "No deadline";
+ return "Due "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(value);
+}
+
 function Metric({
   label,
   value,
@@ -106,7 +123,7 @@ function ContentItem({
   ];
 
   return (
-    <article id={"course-item-"+item.id} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+    <article id={"course-item-"+item.id} aria-label={item.contentType.replaceAll("_"," ")+" "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
       {focused?<StatusBadge tone="info">Selected content</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind={item.contentType}
         notes={item.notes} externalHref={externalHref} youtubeEmbed={youtubeEmbed}
@@ -115,6 +132,7 @@ function ContentItem({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
+            <ContentGlyph kind={item.contentType}/>
             <StatusBadge tone="info">
               {item.contentType.replaceAll(
                 "_",
@@ -133,7 +151,7 @@ function ContentItem({
           <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
             {item.title}
           </h3>
-          <p className="mt-1 text-xs text-muted-foreground">{item.points} points</p>
+          <p className="mt-1 text-xs text-muted-foreground">{item.points} points{item.contentType==="LIVE_CLASS"&&item.startsAt?" · Starts "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.startsAt):""}{item.contentType==="LIVE_CLASS"&&item.endsAt?" · Ends "+new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(item.endsAt):""}</p>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           #{item.sequence + 1}
@@ -155,7 +173,7 @@ function ContentItem({
       {item.contentType==="RESOURCE"&&materialsEnabled?<LessonResourceMaterialsControl
         contentId={item.id} deliveryId={item.deliveryId} editable={Boolean(item.deliveryId)}/>:null}
       {item.deliveryId ? (
-        <div className="mt-3 flex flex-wrap items-start gap-2">
+        <div aria-label={"Edit or remove "+item.title} className="mt-3 flex flex-wrap items-start gap-2">
           {(
             <FacultyContentEditor
               item={{
@@ -194,13 +212,14 @@ function AssignmentItem({
 }) {
 
   return (
-    <article id={"course-item-"+item.id} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+    <article id={"course-item-"+item.id} aria-label={"Assignment "+item.title} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
       {focused?<StatusBadge tone="info">Selected assignment</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind="ASSIGNMENT" notes={item.description}
         dueAt={item.dueAt?.toISOString()??null}/>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
+            <ContentGlyph kind="ASSIGNMENT"/>
             <StatusBadge tone="warning">
               Assignment
             </StatusBadge>
@@ -226,17 +245,7 @@ function AssignmentItem({
           {item.description}
         </p>
       ) : null}
-      <p className="mt-3 text-xs text-muted-foreground">
-        {item.dueAt
-          ? `Due ${new Intl.DateTimeFormat(
-              "en-IN",
-              {
-                dateStyle: "medium",
-                timeStyle: "short",
-              },
-            ).format(item.dueAt)}`
-          : "No deadline"}
-      </p>
+      <p className="mt-3 text-xs text-muted-foreground">{istDueLabel(item.dueAt)}</p>
       {item.deliveryId ? (
         <div className="mt-3 flex flex-wrap items-start gap-2">
           <FacultyAssessmentEditor
@@ -297,13 +306,14 @@ function QuizItem({
 }) {
 
   return (
-    <article id={"course-item-"+item.id} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+    <article id={"course-item-"+item.id} aria-label={"Quiz "+item.title+(item.status==="DRAFT"?", draft, hidden from students":"")} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
       {focused?<StatusBadge tone="info">Selected quiz</StatusBadge>:null}
       <FacultyCourseItemViewer title={item.title} kind="QUIZ" notes={item.description}
         dueAt={item.dueAt?.toISOString()??null}/>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
+            <ContentGlyph kind="QUIZ"/>
             <StatusBadge tone="info">
               Quiz
             </StatusBadge>
@@ -315,6 +325,7 @@ function QuizItem({
             <StatusBadge tone="neutral">
               {audienceLabel(item.deliveryId)}
             </StatusBadge>
+            {item.status==="DRAFT"?<StatusBadge tone="warning">Draft · hidden from students</StatusBadge>:null}
           </div>
           <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
             {item.title}
@@ -330,6 +341,7 @@ function QuizItem({
         </p>
       ) : null}
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
+        <span>{istDueLabel(item.dueAt)}</span>
         <span>
           {item.maxAttempts} attempt
           {item.maxAttempts === 1 ? "" : "s"}
@@ -412,12 +424,11 @@ export function FacultyCourseWorkspace({
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-      <PageHeader
-        eyebrow="Faculty · Course"
-        title={course.courseName}
-        description={`${course.courseCode} · ${course.sectionName} · ${course.academicPeriodName}`}
-        actions={view !== "BLUEPRINT" ? (
-      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
+      <div aria-label="Course context" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+        <p className="m-0 text-sm text-muted-foreground">
+          {course.courseCode} · {course.sectionName} · {course.academicPeriodName}
+        </p>
+        {view!=="BLUEPRINT"?(      <nav aria-label="Overview actions" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
         <Link
           href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/reports"}
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-body-text)] min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
@@ -430,12 +441,23 @@ export function FacultyCourseWorkspace({
         >
           Current Section students
         </Link>
-      </nav>
-        ) : undefined}
-      />
+      </nav>):null}
+      </div>
 
       {view !== "BLUEPRINT" ? (
         <>
+
+      <CourseDisplayReadOnly
+        introductionText={
+          display?.introductionText ?? null
+        }
+        bodyHtml={display?.bodyHtml ?? null}
+        takeaways={display?.takeaways ?? []}
+        fallbackDescription={
+          course.courseDescription
+        }
+      />
+
 
       {homeSignals?<FacultyCourseHomeSignals
         signals={homeSignals}
@@ -454,16 +476,6 @@ export function FacultyCourseWorkspace({
           Instructor: You · {course.teachingRole.replaceAll("_"," ").toLowerCase()}
         </span>
       </section>
-      <CourseDisplayReadOnly
-        introductionText={
-          display?.introductionText ?? null
-        }
-        bodyHtml={display?.bodyHtml ?? null}
-        takeaways={display?.takeaways ?? []}
-        fallbackDescription={
-          course.courseDescription
-        }
-      />
 
       <section className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -535,7 +547,7 @@ export function FacultyCourseWorkspace({
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                  Learning path
+                  Course Blueprint
                 </p>
                 <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
                   {learningPath.title}
@@ -557,7 +569,7 @@ export function FacultyCourseWorkspace({
           </section>
 
           <Tabs
-            ariaLabel="Blueprint content filters"
+            ariaLabel="Course Blueprint content filters"
             value={contentFilter}
             renderPanel={false}
             items={([
@@ -593,7 +605,7 @@ export function FacultyCourseWorkspace({
           {workspace.lessons.length === 0 ? (
             <EmptyState
               title="No lessons yet"
-              description="The current learning path has no active lessons."
+              description="Lessons are managed by the admin team. Once lessons are available, faculty can add lectures, resources, assessments, and live classes here."
             />
           ) : (
             <div className="space-y-6">
@@ -652,7 +664,7 @@ export function FacultyCourseWorkspace({
                         </Badge>
                       
                       </div>}
-                      className="group min-w-0 border-b border-border bg-transparent py-4">
+                      className="group min-w-0 border-b border-border bg-transparent py-3">
 
                       {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
                         className="mb-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
@@ -668,6 +680,14 @@ export function FacultyCourseWorkspace({
                           {lesson.quizzes.length} quizzes
                         </Badge>
                       </div>}
+                      <details className="mb-3 rounded-[var(--lms-control-radius)] border border-border bg-surface">
+                        <summary className="min-h-11 cursor-pointer select-none px-3 py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">
+                          + Add content
+                        </summary>
+                        <div className="border-t border-border p-3">
+                          <p className="mb-3 text-xs text-muted-foreground" aria-label="Add content types">
+                            Video · Resources · Quiz · Assignment · Live Session
+                          </p>
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
@@ -688,6 +708,10 @@ export function FacultyCourseWorkspace({
                         deliveryId={course.deliveryId}
                         nextContentSequence={nextSequence}
                       />
+
+
+                        </div>
+                      </details>
 
                       <FacultyContentOrderEditor
                         lessonId={lesson.id}

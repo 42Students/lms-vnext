@@ -6,7 +6,6 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
-import {Disclosure} from "@/components/ui/disclosure";
 import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
 import {TpoCustomJobTypePlaced} from "./tpo-custom-job-type-placed";
 import {useRouter} from "next/navigation";
@@ -102,10 +101,10 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
   {visible.length===0?<EmptyState title={tpoJobTypesEmptyMessage(types.length,search,status)}/>:
    <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"} · Drives: {item.drives??0}</span>
-     <Disclosure title="Edit job type" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-2)] pt-[var(--lms-space-2)]">
-      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
-      <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
-     </Disclosure>
+     <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+       <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
+       <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
+      </div>
     </div>
     <div className="flex flex-wrap gap-2">
       <Button type="button" variant="secondary" disabled={busy} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{

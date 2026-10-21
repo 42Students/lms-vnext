@@ -13,7 +13,7 @@ const positivePageNumber = (max: number, defaultValue: number) =>
 const schema = z.object({
   q: z.string().trim().max(120).optional(),
   status: z.enum(statuses).optional(),
-  view: z.enum(["cards", "table"]).default("cards"),
+  view: z.enum(["cards", "table"]).default("table"),
   page: positivePageNumber(100000, 1),
   pageSize: z.union([
     z.number().int().refine(value=>COLLEGE_PROJECTS_PAGE_SIZES.some(size=>size===value)),
@@ -74,7 +74,7 @@ export function canonicalCollegeProjectsPageHref(
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.status) params.set("status", query.status);
-  if (query.view !== "cards") params.set("view", query.view);
+  if (query.view !== "table") params.set("view", query.view);
   if (query.pageSize !== DEFAULT_COLLEGE_PROJECTS_PAGE_SIZE) params.set("pageSize", String(query.pageSize));
   if (lastPage > 1) params.set("page", String(lastPage));
   const suffix = params.toString();

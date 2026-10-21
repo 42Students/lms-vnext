@@ -21,6 +21,24 @@ import {collegeInterviewActionSchema} from "./college-interview-action-model";
  * Unlike legacy, appointment and round result/attendance facts are distinct:
  * never synthesize an applied result or restore an arbitrary external link.
  */
+/** Legacy one-record Interview was a combined appointment + panel + response +
+ * feedback form. vNext composes these in this order without merging their
+ * independently versioned sources or hiding the interviewer in a room label.
+ * A round PASS/FAIL remains distinct from the candidate appointment status.
+ */
+export const COLLEGE_INTERVIEW_DETAIL_SECTIONS=[
+ "Appointment","Interviewers","Candidate response","Feedback","History",
+] as const;
+
+/** Current durable delivery: in-app notification + activity in the same TX.
+ * The old Spring afterCommit email/SMS fan-out has no equivalent outbound
+ * provider/outbox in this service; report that gap, never claim email or SMS
+ * delivery merely because the in-app transaction committed.
+ */
+export const COLLEGE_INTERVIEW_DELIVERY={
+ inApp:"QUEUED_IN_TRANSACTION",email:"NOT_SENT",sms:"NOT_SENT",
+} as const;
+
 async function jobScope(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
  const [job]=await getDb().select({
@@ -54,8 +72,10 @@ export async function getCollegeInterviewAppointments(context:RequestContext,raw
     .orderBy(asc(placementCollegeInterviews.scheduledAt))
     .limit(2000):Promise.resolve([]),
  ]);
- return {job,storageReady,rounds,candidates,interviews:interviews.map(row=>({
-  ...row,scheduledAt:row.scheduledAt.toISOString(),createdAt:row.createdAt.toISOString(),
+ return {job,storageReady,rounds,candidates,sectionOrder:COLLEGE_INTERVIEW_DETAIL_SECTIONS,
+  delivery:COLLEGE_INTERVIEW_DELIVERY,interviews:interviews.map(row=>({
+  ...row,panelLabel:row.interviewer,feedback:row.outcomeNote,
+  scheduledAt:row.scheduledAt.toISOString(),createdAt:row.createdAt.toISOString(),
   updatedAt:row.updatedAt.toISOString(),
   completedAt:row.completedAt?.toISOString()??null,
   cancelledAt:row.cancelledAt?.toISOString()??null,
@@ -129,7 +149,8 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
     if(!saved)throw Error("This candidate already has an active interview in the round.");
     appointment=saved;
     eventType="PLACEMENTS_COLLEGE_INTERVIEW_SCHEDULED";
-    message="Interview scheduled for "+job.title+" at "+saved.scheduledAt.toISOString()+".";
+    message="Interview scheduled for "+job.title+" at "+saved.scheduledAt.toISOString()+
+     (saved.interviewer?" · Interviewers: "+saved.interviewer:"")+".";
    }else{
     const [old]=await tx.select().from(placementCollegeInterviews)
      .where(and(eq(placementCollegeInterviews.id,input.interviewId),
@@ -145,7 +166,7 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
     appointment=saved;
     eventType="PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED";
     message="Interview rescheduled for "+job.title+" to "+saved.scheduledAt.toISOString()+
-     ". "+input.reason;
+     (saved.interviewer?" · Interviewers: "+saved.interviewer:"")+". "+input.reason;
    }
    applicationId=proposed.applicationId;
   }else{
@@ -194,6 +215,8 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
    userId:actor.userId,eventId:audit.id,title:"Interview update",body:message,
    actionHref:"/learn/my-placements/interviews",
   }).onConflictDoNothing();
-  return {id:appointment.id,status:appointment.status,version:appointment.version};
+  return {id:appointment.id,status:appointment.status,version:appointment.version,
+   interviewer:appointment.interviewer,venue:appointment.venue,
+   delivery:COLLEGE_INTERVIEW_DELIVERY};
  });
 }

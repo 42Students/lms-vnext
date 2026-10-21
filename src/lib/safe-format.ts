@@ -3,6 +3,8 @@
  * Usage: formatDateIST(value), formatCurrencyINR(amount), formatCount(count),
  * and safeDisplayText(name). Never interpolate nullable values directly.
  */
+import { formatDateIst } from "@/lib/format-date";
+
 const EMPTY = "—";
 export function safeDisplayText(value: unknown, fallback = EMPTY): string {
   if (typeof value === "string") return value.trim() || fallback;
@@ -11,11 +13,10 @@ export function safeDisplayText(value: unknown, fallback = EMPTY): string {
 }
 export function formatDateIST(value: string | number | Date | null | undefined): string {
   if (value === null || value === undefined || value === "") return EMPTY;
-  const date = value instanceof Date ? value : new Date(value);
-  if (!Number.isFinite(date.getTime())) return EMPTY;
-  return `${new Intl.DateTimeFormat("en-IN", {
-    day: "2-digit", month: "short", year: "numeric", timeZone: "Asia/Kolkata",
-  }).format(date)} (IST)`;
+  // All date-only labels share the same en-IN/Asia-Kolkata formatter.
+  // Keep an explicit IST suffix for customer-facing safe-table exports.
+  const label = formatDateIst(value);
+  return label === EMPTY ? EMPTY : `${label} (IST)`;
 }
 export function formatCount(value: number | null | undefined): string {
   return typeof value === "number" && Number.isFinite(value)

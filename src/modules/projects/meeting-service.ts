@@ -452,7 +452,11 @@ export async function scheduleProjectMeeting(
       scheduledByMembershipId:targetStatus==="DRAFT"?null:(existing?.scheduledByMembershipId??context.membership?.id??null),
       linkedSprintId: effectiveSprintId, linkedTaskId: effectiveTaskId,
       outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
-      facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
+      // Keep structured attendee/action/retro keys when an older client
+      // submits just free-text facilitation fields. No flattening into notes.
+      facilitation:mentorMeetingFacilitationSchema.parse({
+       ...(existing?.facilitation??{}),...(input.facilitation??{}),
+      }),
       cancellationNote: null, updatedAt: new Date(),
     };
     if (!existing) {

@@ -48,6 +48,9 @@ export function tpoVerificationWaitingDateRange(
  }).format(now);
  const start=new Date(parts+"T00:00:00+05:30");
  if(waitingSince==="TODAY")return {after:start};
- if(waitingSince==="WEEK")return {after:new Date(start.getTime()-6*86400000)};
- return {before:new Date(start.getTime()-7*86400000)};
+ // Use one IST midnight boundary for both ranges: no unclassified seventh
+ // calendar day between WEEK and OVER_WEEK. The repository uses >= / <=.
+ const sevenDayBoundary=new Date(start.getTime()-7*86400000);
+ if(waitingSince==="WEEK")return {after:sevenDayBoundary};
+ return {before:new Date(sevenDayBoundary.getTime()-1)};
 }

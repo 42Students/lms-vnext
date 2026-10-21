@@ -3,7 +3,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-reply-service";
+import {postTpoInternalMessage,TeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-internal-reply-service";
 import {internalMessageSchema} from "@/modules/placements/tpo-team-internal-model";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{threadId:string}>}){
@@ -12,7 +12,9 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  const form=await request.formData().catch(()=>null);
  const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body"),
   idempotencyKey:form?.get("idempotencyKey")||undefined,
-  markDecision:form?.get("markDecision")==="true"});
+  markDecision:form?.get("markDecision")==="true",
+  mentionMembershipIds:String(form?.get("mentionMembershipIds")??"").split(",").filter(Boolean),
+  addMentionedMembers:form?.get("addMentionedMembers")==="true"});
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const result=await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);
@@ -24,6 +26,13 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
   if(error instanceof Error&&error.message==="TEAM_THREAD_NOT_FOUND")
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
+  if(error instanceof TeamAddPeopleRequiredError)
+   return NextResponse.json({
+    error:"ADD_PEOPLE",message:"Add the mentioned people to this private topic and send?",
+    people:error.people,
+   },{status:409,headers:{"Cache-Control":"private, no-store"}});
+  if(error instanceof Error&&["TEAM_MENTION_NOT_FOUND","TEAM_MENTION_NOT_ALLOWED"].includes(error.message))
+   return NextResponse.json({error:error.message},{status:409});
   if(error instanceof Error&&error.message==="TEAM_PARTICIPANT_INACTIVE")
    return NextResponse.json({error:"TEAM_PARTICIPANT_INACTIVE"},{status:409});
   if(error instanceof Error&&error.message==="TEAM_IDEMPOTENCY_CONFLICT")

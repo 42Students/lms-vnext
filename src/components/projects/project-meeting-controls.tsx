@@ -675,6 +675,41 @@ export function ScheduleProjectMeetingControl({
                   onChange={event=>setFacilitation(prev=>({...prev,[field]:event.target.value}))}/>
               </label>)}
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Attendees (one name per line)
+              <Textarea rows={3} maxLength={16000}
+                value={facilitation.attendees.map(item=>item.name).join("\n")}
+                onChange={event=>{
+                 const names=event.target.value.split(/\r?\n/).map(line=>line.trim())
+                  .filter(Boolean).slice(0,100);
+                 setFacilitation(prev=>({...prev,attendees:names.map(name=>
+                  prev.attendees.find(item=>item.name===name)??{name,membershipId:null,attended:true})}));
+                }}/>
+            </label>
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Action items (one per line)
+              <Textarea rows={3} maxLength={40000}
+                value={facilitation.actionItemRows.map(item=>item.text).join("\n")}
+                onChange={event=>{
+                 const values=event.target.value.split(/\r?\n/).map(line=>line.trim())
+                  .filter(Boolean).slice(0,100);
+                 setFacilitation(prev=>({...prev,actionItemRows:values.map(text=>
+                  prev.actionItemRows.find(item=>item.text===text)??
+                  {text,owner:null,dueAt:null,complete:false})}));
+                }}/>
+            </label>
+            {meetingType==="RETRO"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Retrospective actions (one per line)
+              <Textarea rows={3} maxLength={40000}
+                value={facilitation.retroActions.map(item=>item.text).join("\n")}
+                onChange={event=>{
+                 const actions=event.target.value.split(/\r?\n/).map(line=>line.trim())
+                  .filter(Boolean).slice(0,100);
+                 setFacilitation(prev=>({...prev,retroActions:actions.map(text=>
+                  prev.retroActions.find(item=>item.text===text)??
+                  {text,owner:null,dueAt:null,complete:false})}));
+                }}/>
+            </label>:null}
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Outcome
               <Textarea value={outcome} maxLength={4000} onChange={event=>setOutcome(event.target.value)}/>
             </label>

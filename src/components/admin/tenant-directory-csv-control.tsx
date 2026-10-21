@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
-export function TenantDirectoryCsvControl({ href }: { href: string }) {
+import { CollegeBulkImport } from "@/components/admin/college-bulk-import";
+export function TenantDirectoryCsvControl({ href,organizations }: { href: string; organizations:readonly {id:string;name:string}[] }) {
   const [pending, setPending] = useState(false), [error, setError] = useState<string | null>(null);
   async function download() {
     if (pending) return;
@@ -22,5 +23,6 @@ export function TenantDirectoryCsvControl({ href }: { href: string }) {
   return <div className="space-y-2 print:hidden"><Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" loading={pending} disabled={pending} onClick={() => void download()}>
     {pending ? "Preparing CSV…" : "Export filtered CSV (max 1,000)"}</Button>
     {error ? <Alert tone="error" className="max-w-sm">{error}</Alert> : null}
+    <CollegeBulkImport organizations={organizations}/>
   </div>;
 }

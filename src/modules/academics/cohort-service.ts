@@ -1,6 +1,8 @@
 import {
   and,
   asc,
+  desc,
+  count,
   eq,
   sql,
 } from "drizzle-orm";
@@ -8,11 +10,16 @@ import { getDb } from "@/db/client";
 import { z } from "zod";
 import {
   cohorts,
+  cohortProgressionState,
+  programs,
+  departments,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import { batchAcademicYearWithStartMonth } from "./college-cohort-mutation-model";
 import {
   AcademicsServiceError,
   postgresConstraintName,
@@ -36,7 +43,7 @@ import {
 async function assertCohortNameUnique(programId: string, name: string, excludeId?: string) {
   const conditions = [
     eq(cohorts.programId, programId),
-    sql<boolean>`lower(${cohorts.name}) = ${name.toLowerCase()}`,
+    sql<boolean>`lower(${cohorts.name}) = ${name.toLocaleLowerCase("en-IN")}`,
     sql<boolean>`${cohorts.status} <> 'ARCHIVED'`,
     ...(excludeId ? [sql<boolean>`${cohorts.id} <> ${excludeId}`] : []),
   ];
@@ -56,7 +63,7 @@ async function assertCohortCodeUnique(
   const db = getDb();
   const conditions = [
     eq(cohorts.programId, programId),
-    sql<boolean>`lower(${cohorts.code}) = ${code.toLowerCase()}`,
+    sql<boolean>`lower(${cohorts.code}) = ${code.toLocaleLowerCase("en-IN")}`,
   ];
 
   if (excludeId) {
@@ -166,9 +173,70 @@ export async function listCohorts(
     .from(cohorts)
     .where(eq(cohorts.programId, programId))
     .orderBy(
-      asc(cohorts.createdAt),
+      desc(cohorts.createdAt),
       asc(cohorts.name),
+      asc(cohorts.id),
     );
+}
+
+/** Authenticated batch-detail read for old /batches/{id} deep links.
+ * Numeric imported IDs must be resolved via a trusted college-scoped map. */
+export async function getCohortDetails(context:RequestContext,rawId:unknown){
+  const id=cohortIdSchema.parse(rawId);
+  const scope=await loadCohortScope(id);
+  requirePermission(context,"academics.read",{
+    organizationId:scope.organizationId,collegeId:scope.collegeId,
+  });
+  const [row]=await getDb().select({
+    id:cohorts.id,legacyBatchId:cohorts.legacyBatchId,
+    name:cohorts.name,code:cohorts.code,status:cohorts.status,
+    academicYear:cohorts.academicYear,startDate:cohorts.startDate,endDate:cohorts.endDate,
+    programId:cohorts.programId,programName:programs.name,
+    startPeriodId:cohorts.startPeriodId,
+    expectedEndPeriodId:cohorts.expectedEndPeriodId,
+    currentTerm:cohortProgressionState.currentTermNumber,
+    currentAcademicYearStart:cohortProgressionState.currentAcademicYearStart,
+  }).from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .leftJoin(cohortProgressionState,eq(cohortProgressionState.cohortId,cohorts.id))
+    .where(and(eq(cohorts.id,id),eq(departments.collegeId,scope.collegeId)))
+    .limit(1);
+  if(!row)throw new AcademicsServiceError("COHORT_NOT_FOUND");
+  return row;
+}
+
+/** Super Admin and College Admin share the explicit acting-college directory.
+ * Do not infer a target from any untrusted legacy organization/college ID. */
+export async function listCollegeCohortsPage(
+  context:RequestContext,raw:{programId?:string;page?:number;pageSize?:number}={},
+){
+  const input=z.strictObject({
+    programId:z.uuid().optional(),
+    page:z.number().int().min(1).max(10000).default(1),
+    pageSize:z.number().int().refine(v=>[10,25,50,100].includes(v)).default(25),
+  }).parse(raw);
+  const acting=await resolveActingCollege(context,"academics.read");
+  const where=and(eq(departments.collegeId,acting.collegeId),
+    input.programId?eq(cohorts.programId,input.programId):undefined);
+  const db=getDb();
+  const [rows,totals]=await Promise.all([
+    db.select({
+      id:cohorts.id,name:cohorts.name,code:cohorts.code,
+      status:cohorts.status,academicYear:cohorts.academicYear,
+      programId:programs.id,programName:programs.name,
+      legacyBatchId:cohorts.legacyBatchId,createdAt:cohorts.createdAt,
+    }).from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
+      .innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(where).orderBy(desc(cohorts.createdAt),asc(cohorts.name),asc(cohorts.id))
+      .limit(input.pageSize).offset((input.page-1)*input.pageSize),
+    db.select({total:count()}).from(cohorts)
+      .innerJoin(programs,eq(programs.id,cohorts.programId))
+      .innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(where),
+  ]);
+  return {data:rows,batches:rows,total:totals[0]?.total??0,
+    page:input.page,pageSize:input.pageSize,
+    totalPages:Math.max(1,Math.ceil((totals[0]?.total??0)/input.pageSize))};
 }
 
 export async function createCohort(
@@ -179,7 +247,7 @@ export async function createCohort(
   // These optional historical fields preserve the legacy BatchDTO data without
   // pretending an academic period and a calendar year are the same identity.
   const legacy = z.object({
-    academicYear: z.string().trim().regex(/^\\d{4}-\\d{2}$/).optional(),
+    academicYear: z.string().trim().regex(/^\d{4}-\d{2}$/).optional(),
     startDate: z.iso.date().nullable().optional(),
     endDate: z.iso.date().nullable().optional(),
     status: z.enum(["PLANNED","ACTIVE"]).optional(),
@@ -238,12 +306,22 @@ export async function createCohort(
       .returning();
 
     if(!created)throw new Error("Unable to persist cohort mutation.");
+    const yearLabel=legacy.academicYear??
+      batchAcademicYearWithStartMonth(periodWindow.start.startDate,7);
+    await tx.insert(cohortProgressionState).values({
+      cohortId:created.id,currentTermNumber:1,
+      currentAcademicYearStart:Number(yearLabel.slice(0,4)),
+      currentPeriodId:input.startPeriodId,
+      version:0,updatedByUserId:context.user.id,
+    });
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_CREATED,
       organizationId:program.organizationId,collegeId:program.collegeId,
       subjectType:"cohort",subjectId:created.id,subjectLabel:created.name,
       summary:"Cohort created",
-      metadata:{code:created.code,status:created.status},
+      metadata:{code:created.code,status:created.status,
+        initialTerm:1,currentAcademicYearStart:Number(yearLabel.slice(0,4)),
+        legacyBatchId:created.legacyBatchId,academicPeriodId:input.startPeriodId},
     });
     return created;
    });
@@ -319,7 +397,6 @@ export async function updateCohort(
       );
     }
 
-    if(!updated)throw new Error("Unable to persist cohort mutation.");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_UPDATED,
       organizationId:current.organizationId,collegeId:current.collegeId,
@@ -415,7 +492,6 @@ export async function transitionCohort(
     );
   }
 
-  if(!updated)throw new Error("Unable to persist cohort mutation.");
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_STATUS_CHANGED,
       organizationId:current.organizationId,collegeId:current.collegeId,

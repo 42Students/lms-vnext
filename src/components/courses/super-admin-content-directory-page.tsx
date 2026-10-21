@@ -115,6 +115,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
       {label:"Videos",href:"/admin/videos"},
       {label:"Resources",href:"/admin/resources"},
       {label:"Live classes",href:"/admin/live-classes"},
+      {label:"Class syllabus order",href:"/admin/content-order"},
     ].map(tab=><Link href={tab.href} key={tab.label}
       aria-current={tab.label===title?"page":undefined}
       className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold md:min-h-9 "+

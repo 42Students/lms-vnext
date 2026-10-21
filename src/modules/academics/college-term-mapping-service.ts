@@ -65,6 +65,12 @@ export async function listCollegeTermMappings(context: RequestContext) {
       id: programTerms.id, name: programTerms.name, termNumber: programTerms.termNumber,
       programName: programs.name, programId: programs.id, departmentId: departments.id,
       isActive: programTerms.isActive,
+      legacySemesterId: programTerms.legacySemesterId,
+      legacyStructureId: programTerms.legacyStructureId,
+      legacyStructureStatus: programTerms.legacyStructureStatus,
+      startDate: programTerms.startDate,
+      endDate: programTerms.endDate,
+      totalCredits: programTerms.totalCredits,
     }).from(programTerms)
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, and(eq(departments.id, programs.departmentId),
@@ -170,6 +176,98 @@ export async function listCollegeTermMappings(context: RequestContext) {
       };
     }),
   };
+}
+
+
+/** Legacy semester details are a scoped view, not a global by-id lookup.
+ * This keeps inactive and completed imported structures visible for review,
+ * while the write-side lockTerm continues to prohibit inactive term changes.
+ */
+export async function getCollegeTermMappingDetails(
+  context: RequestContext, rawTermId: unknown,
+) {
+  const termId=z.uuid().parse(rawTermId);
+  const member=await resolveActingCollege(context,"academics.read");
+  const db=getDb();
+  const [term]=await db.select({
+    id:programTerms.id,programId:programTerms.programId,
+    name:programTerms.name,semesterNumber:programTerms.termNumber,
+    isActive:programTerms.isActive,legacyStructureStatus:programTerms.legacyStructureStatus,
+    legacySemesterId:programTerms.legacySemesterId,
+    legacyStructureId:programTerms.legacyStructureId,
+    startDate:programTerms.startDate,endDate:programTerms.endDate,
+    totalCredits:programTerms.totalCredits,
+    programName:programs.name,
+  }).from(programTerms)
+    .innerJoin(programs,eq(programs.id,programTerms.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,member.collegeId)))
+    .where(eq(programTerms.id,termId)).limit(1);
+  if(!term)throw new CollegeTermMappingError("TERM_NOT_FOUND");
+  const mapped=await db.select({
+    id:programTermCourses.id,courseId:courses.id,
+    courseName:courses.name,courseCode:courses.code,
+    credits:programTermCourses.credits,type:programTermCourses.type,
+    isMandatory:programTermCourses.legacyIsMandatory,
+    displayOrder:programTermCourses.displayOrder,
+  }).from(programTermCourses)
+    .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+    .innerJoin(courseDepartment,and(eq(courseDepartment.id,courses.departmentId),
+      eq(courseDepartment.collegeId,member.collegeId)))
+    .where(eq(programTermCourses.programTermId,term.id))
+    .orderBy(asc(programTermCourses.displayOrder),asc(programTermCourses.id));
+  return {term,courses:mapped,source:"REGISTERED_PROGRAM_TERM" as const,
+    canEdit:term.isActive&&term.legacyStructureStatus!=="COMPLETED"};
+}
+
+/** The legacy reorder form sends the COMPLETE ordered list. Validate set
+ * equality under the same parent row lock as single-course reorders;
+ * no partial reorder can commit on stale/foreign/duplicate IDs.
+ */
+export async function reorderCollegeTermMappings(
+  context: RequestContext, raw: unknown,
+) {
+  const input=z.strictObject({
+    programTermId:z.uuid(),
+    mappingIds:z.array(z.uuid()).max(100),
+  }).parse(raw);
+  if(new Set(input.mappingIds).size!==input.mappingIds.length)
+    throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+  const member=await ownCollege(context);
+  try{
+    return await getDb().transaction(async tx=>{
+      const term=await lockTerm(tx,input.programTermId,member.collegeId);
+      const current=await tx.select({
+        id:programTermCourses.id,displayOrder:programTermCourses.displayOrder,
+      }).from(programTermCourses)
+        .where(eq(programTermCourses.programTermId,term.id))
+        .orderBy(asc(programTermCourses.displayOrder),asc(programTermCourses.id))
+        .for("update");
+      const currentIds=new Set(current.map(row=>row.id));
+      if(currentIds.size!==input.mappingIds.length ||
+        input.mappingIds.some(id=>!currentIds.has(id)))
+        throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
+      let changed=0;
+      for(const [index,id] of input.mappingIds.entries()){
+        const expected=index+1;
+        if(current.find(row=>row.id===id)?.displayOrder===expected)continue;
+        await tx.update(programTermCourses).set({
+          displayOrder:expected,updatedAt:new Date(),
+        }).where(and(eq(programTermCourses.id,id),
+          eq(programTermCourses.programTermId,term.id)));
+        changed++;
+      }
+      if(changed)await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
+        collegeId:member.collegeId,organizationId:member.organizationId,
+        subjectType:"program_term",subjectId:term.id,
+        summary:"Semester course order updated",
+        metadata:{action:"SEMESTER_COURSE_REORDER",mappingIds:input.mappingIds,
+          count:input.mappingIds.length,changed,atomic:true},
+      });
+      return {termId:term.id,orderedMappingIds:input.mappingIds,changed};
+    });
+  }catch(error){return mapConflict(error);}
 }
 
 export async function addCollegeTermMapping(context: RequestContext, raw: unknown) {
@@ -396,7 +494,7 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term", subjectId: term.id,
         summary: "Courses mapped to semester",
-        metadata: { action: "SEMESTER_COURSE_ADD", courseIds:inserted.map(row=>row.courseId), count:inserted.length, skipped:inputs.length-inserted.length, atomic:true },
+        metadata: { action: "SEMESTER_COURSE_BULK_ADD", courseIds:inserted.map(row=>row.courseId), count:inserted.length, skipped:inputs.length-inserted.length, atomic:true },
       });
       return inserted;
     });

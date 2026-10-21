@@ -31,25 +31,29 @@ export function CollegeProjectSummaryEditorFull({
  const {showToast}=useToast();
  const [open,setOpen]=useState(true),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [classes,setClasses]=useState<Choice[]>([]);
+ const [classQuery,setClassQuery]=useState("");
+ const [classesLoading,setClassesLoading]=useState(false);
+ const [classesError,setClassesError]=useState("");
  const sourceForm={
   title:p.title,summary:p.summary??"",status:p.status,progressPercent:p.progressPercent,
   phase:p.phase??"",dueLabel:p.dueLabel??"",courseLabel:p.courseLabel??"",
   sectionId:p.sectionId??"",blocker:p.blocker??"",nextAction:p.nextAction??"",
-  startDate:p.startDate??"",endDate:p.endDate??"",sprintLengthWeeks:p.sprintLengthWeeks?.toString()??"",
+  startDate:p.startDate??"",endDate:p.endDate??"",sprintLengthWeeks:p.sprintLengthWeeks?.toString()??"4",
   estimationUnit:p.estimationUnit??"POINTS",
  };
  const [form,setForm]=useState(sourceForm);
  const [stale,setStale]=useState(false);
- const baselineRef=useRef({version:new Date(p.updatedAt).toISOString(),form:sourceForm});
+ const baselineRef=useRef({projectId:p.id,version:new Date(p.updatedAt).toISOString(),form:sourceForm});
  const dirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
  useEffect(()=>{
   const incoming=new Date(p.updatedAt).toISOString();
-  if(incoming===baselineRef.current.version)return;
-  const wasDirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
+  if(p.id===baselineRef.current.projectId&&incoming===baselineRef.current.version)return;
+  const wasDirty=p.id===baselineRef.current.projectId&&
+    JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
   if(wasDirty){setStale(true);return;}
-  baselineRef.current={version:incoming,form:sourceForm};
+  baselineRef.current={projectId:p.id,version:incoming,form:sourceForm};
   setForm(sourceForm);setStale(false);setError("");
- },[p.updatedAt]);
+ },[p.id,p.updatedAt]);
  const discard=useProjectEditorDiscardGuard(open,dirty,busy,()=>{
   setForm(baselineRef.current.form);setOpen(false);setError("");setStale(false);
  });
@@ -66,12 +70,24 @@ export function CollegeProjectSummaryEditorFull({
  useEffect(()=>{
   if(!open)return;
   const ctrl=new AbortController();
-  void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(p.collegeId),{signal:ctrl.signal})
-   .then(r=>r.ok?r.json():Promise.reject(Error("Class choices unavailable")))
-   .then((data:{classes:Choice[]})=>{if(!ctrl.signal.aborted)setClasses(data.classes)})
-   .catch(()=>{if(!ctrl.signal.aborted)setError("Class choices unavailable; retry to load.")});
-  return ()=>ctrl.abort();
- },[open,p.collegeId]);
+  setClassesLoading(true);setClassesError("");
+  const timer=window.setTimeout(()=>{
+    void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(p.collegeId)+
+      "&q="+encodeURIComponent(classQuery.trim())+"&limit=100",
+      {signal:ctrl.signal,cache:"no-store"})
+      .then(r=>r.ok?r.json():Promise.reject(Error("Class choices unavailable")))
+      .then((data:{classes:Choice[]})=>{if(!ctrl.signal.aborted){
+        setClasses(previous=>{
+          const old=previous.find(row=>row.id===form.sectionId);
+          return old&&!data.classes.some(row=>row.id===old.id)?
+            [old,...data.classes]:data.classes;
+        });
+      }})
+      .catch(()=>{if(!ctrl.signal.aborted)setClassesError("Class choices unavailable; retry to load.");})
+      .finally(()=>{if(!ctrl.signal.aborted)setClassesLoading(false);});
+  },400);
+  return ()=>{window.clearTimeout(timer);ctrl.abort();};
+ },[open,p.collegeId,classQuery,form.sectionId]);
  async function save(){
   if(busy)return;
   if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
@@ -82,7 +98,12 @@ export function CollegeProjectSummaryEditorFull({
   if(!form.title.trim()){setError("Title is required");return;}
   if(form.title.trim().length>160){setError("Title must be 160 characters or fewer");return;}
   if(form.startDate&&form.endDate&&form.endDate<form.startDate){
-    setError("End date must be on or after the start date");return;
+    setError("End date must be on or after the start date.");return;
+  }
+  if((["summary","blocker","nextAction"] as const)
+    .some(key=>form[key].length>4000)){
+    setError("Historic summary or action text exceeds 4000 characters. Shorten that field before saving; existing text has not been truncated.");
+    return;
   }
   if(form.estimationUnit!==sourceForm.estimationUnit&&estimatedTaskCount>0){
     setError("Estimation unit cannot change while "+estimatedTaskCount+
@@ -118,7 +139,12 @@ export function CollegeProjectSummaryEditorFull({
   }finally{setBusy(false);}
  }
  const field=(label:string,key:keyof typeof form,max:number)=><label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-  {label}<Input className={style} maxLength={max} value={form[key]} onChange={e=>change(key,e.target.value)}/>
+  {label}{key==="title"?<span aria-hidden="true"> *</span>:null}
+  <Input className={style} maxLength={max} required={key==="title"}
+    placeholder={key==="title"?"Campus Event Coordination":key==="phase"?"e.g. In progress":
+      key==="dueLabel"?"e.g. Week 2":key==="courseLabel"?"e.g. Software engineering":undefined}
+    aria-invalid={key==="title"&&!String(form.title).trim()}
+    value={form[key]} onChange={e=>change(key,e.target.value)}/>
  </label>;
  return <section className="border-b border-border pb-5">
   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -134,6 +160,7 @@ export function CollegeProjectSummaryEditorFull({
    <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",160)}
     <p className="col-span-full text-xs text-muted-foreground" aria-live="polite">{form.title.length}/160 characters</p>
+    <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Status</h3>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style}
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
@@ -145,13 +172,22 @@ export function CollegeProjectSummaryEditorFull({
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
      {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
+    <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Schedule &amp; setup</h3>
     {field("Phase","phase",80)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class<Select className={style} value={form.sectionId}
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class
+     <Input className={style} type="search" value={classQuery}
+       aria-label="Search classes" placeholder="Search by class name or code"
+       maxLength={120} onChange={e=>setClassQuery(e.target.value)}/>
+     <Select className={style} value={form.sectionId} disabled={classesLoading}
+
      onChange={e=>change("sectionId",e.target.value)}>
       <option value="">No class</option>
       {form.sectionId&&!classes.some(v=>v.id===form.sectionId)?<option value={form.sectionId}>Current class</option>:null}
       {classes.map(v=><option key={v.id} value={v.id}>{v.name} · {v.code}</option>)}
-    </Select></label>
+     </Select>
+     {classesLoading?<span className="block text-xs text-body" role="status">Loading classes…</span>:null}
+     {classesError?<span className="block text-xs text-error" role="alert">{classesError}</span>:null}
+    </label>
     {(["startDate","endDate"] as const).map(key=><label key={key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
      {key==="startDate"?"Start date":"End date"}
      <Input className={style} type="date" value={form[key]} onChange={e=>change(key,e.target.value)}/>
@@ -170,10 +206,15 @@ export function CollegeProjectSummaryEditorFull({
       </span>:null}
     </label>
    </div>
+   <h3 className="border-t border-border pt-3 font-semibold text-foreground">Content</h3>
    {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
-    <Textarea className={style+" min-h-24"} maxLength={4000} value={form[k]}
-     onChange={e=>change(k,e.target.value)}/>
+    <Textarea className={style+" min-h-24"} maxLength={Math.max(4000,form[k].length)}
+     rows={k==="summary"?3:4} placeholder={k==="summary"?"Short live workspace summary":undefined}
+     value={form[k]} onChange={e=>change(k,e.target.value)}/>
+    {form[k].length>4000?<span className="mt-1 block text-xs text-warning-text" role="status">
+      Historic field has {form[k].length} characters. It will not be shortened automatically; edit it to 4000 or fewer before saving.
+    </span>:null}
    </label>)}
    <p className="text-xs text-muted-foreground">
      Activating requires a Mentor; completing requires an approved final submission.
@@ -199,7 +240,7 @@ export function CollegeProjectSummaryEditorFull({
   {dialog}
   <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
     title="Discard unsaved changes?"
-    description="Leave this workspace settings form without saving?"
+    description="You have unsaved changes. Leave without saving them?"
     confirmLabel="Discard changes" pending={busy} onConfirm={discard.confirmDiscard} />
  </section>;
 }

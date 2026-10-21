@@ -127,6 +127,8 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
       topic: placementTpoInternalThreads.topic,
       startedByMembershipId: placementTpoInternalThreads.startedByMembershipId,
       invitedMembershipId: placementTpoInternalThreads.invitedMembershipId,
+      kind:groupsReady?placementTpoInternalThreads.kind:sql<"DIRECT">`'DIRECT'`,
+      isPrivate:placementTpoInternalThreads.isPrivate,
       createdAt: placementTpoInternalThreads.createdAt,
       counterpartName: sql<string>`coalesce((
         select nullif(btrim(u.display_name),'')

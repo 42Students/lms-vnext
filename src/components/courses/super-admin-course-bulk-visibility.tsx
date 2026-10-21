@@ -9,7 +9,8 @@ import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 type Course={id:string;name:string};
 type Report={
  selectedCourses:number;matchedLessons:number;matchedContents:number;
- changed:number;unchanged:number;
+ changed:number;unchanged:number;changedCourses:number;
+ operation:"COURSE_AND_PUBLISHED_CONTENT_VISIBILITY";
  failures:{id:string;reason:string}[];failedCourseIds:string[];
 };
 /** Selection is browser-session scoped to one UUID college, never to the
@@ -68,7 +69,8 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({courseIds:ids,visibleToStudents:visibility,confirmed:true}),
    });
-   if(data.selectedCourses>ids.length||!Array.isArray(data.failedCourseIds))
+   if(data.operation!=="COURSE_AND_PUBLISHED_CONTENT_VISIBILITY"||
+    data.selectedCourses>ids.length||!Array.isArray(data.failedCourseIds))
     throw Error("Bulk response could not be verified. Refresh before retrying.");
    setReport(data);
    changeSelection(data.failedCourseIds);
@@ -91,8 +93,8 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
    <div>
     <h3 className="font-semibold text-heading">Published lesson content visibility</h3>
     <p className="mt-1 text-xs text-muted-foreground">
-     Select courses on the catalogue pages, then Show or Hide published content.
-     This does not archive courses or change unpublished and future lessons.
+     Select courses on the catalogue pages, then Show or Hide them for students.
+     Hiding keeps course records active for staff, but removes access for learners.
     </p>
    </div>
    <span role="status" className="text-xs font-semibold tabular-nums text-body">
@@ -138,14 +140,15 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
   </p>:null}
   <ConfirmDialog open={action!==null}
    onOpenChange={next=>{if(!next&&!pending)setAction(null);}}
-   title={action?"Show published course content?":"Hide published course content?"}
-   description={(action?"Show":"Hide")+" published lesson content in "+selected.length+
-    " selected course(s). This does not hide/archive the course itself or change future lessons."}
+   title={action?"Show courses to students?":"Hide courses from students?"}
+   description={(action?"Show":"Hide")+" "+selected.length+
+    " selected course(s) in the learner catalogue and their published lessons. No course records are archived or deleted."}
    confirmLabel={action?"Show to students":"Hide from students"}
    confirmVariant={action?"primary":"danger"} pending={pending}
    onConfirm={()=>void apply()}>
    <ul className="max-h-48 space-y-1 overflow-y-auto text-sm" aria-label="Selected courses">
-    {selectedHere.map(id=><li key={id}>{courses.find(row=>row.id===id)?.name??"Course"}</li>)}
+    {selectedHere.slice(0,5).map(id=><li key={id}>{courses.find(row=>row.id===id)?.name??"Course"}</li>)}
+    {selectedHere.length>5?<li>Plus {selectedHere.length-5} more on this page</li>:null}
     {offPage.length?<li>Plus {offPage.length} previously loaded course(s) on other pages</li>:null}
    </ul>
   </ConfirmDialog>
@@ -154,7 +157,7 @@ export function SuperAdminCourseBulkVisibility({courses,collegeId,maxSelection=1
    <p>Updated {report.selectedCourses-report.failedCourseIds.length} of {report.selectedCourses} course(s)</p>
    <p className="text-xs">{report.changed} published item(s) changed;
     {report.unchanged} unchanged; {report.failures.length} failure(s).
-    The course lifecycle was not changed.</p>
+    {report.changedCourses} course visibility flag(s) changed; no records were archived.</p>
    {report.failures.length?<ul className="mt-2 list-disc pl-4 text-xs">
     {report.failures.slice(0,20).map((failure,index)=>
      <li key={failure.id+":"+index}>{failure.reason}</li>)}

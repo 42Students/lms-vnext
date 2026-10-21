@@ -13,7 +13,7 @@ type LessonChoice=Awaited<ReturnType<typeof getFacultyAssessmentOverview>>["less
 
 /** Same course → lesson entry sequence as the legacy Faculty create dialog.
  * The authoritative ownership check still runs when saving the assessment. */
-export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{kind:"ASSIGNMENT"|"QUIZ";lessons:readonly LessonChoice[];lessonsLoadError?:string|null}){
+export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null,toolbar=false}:{kind:"ASSIGNMENT"|"QUIZ";lessons:readonly LessonChoice[];lessonsLoadError?:string|null;toolbar?:boolean}){
  const router=useRouter();
  const [open,setOpen]=useState(false),[courseKey,setCourseKey]=useState("");
  const [lessonKey,setLessonKey]=useState(""),[continued,setContinued]=useState(false);
@@ -43,12 +43,20 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{ki
   setContinued(true);setError(null);
  }
  return <>
-  <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-   <div><h2 className="font-semibold text-[var(--lms-heading)]">Create {name}</h2>
-    <p className="mt-1 text-sm text-body leading-[22px]">Quizzes and assignments are attached to lessons in your assigned courses.</p>
-   </div>
-   <Button className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
-  </div>
+  {toolbar?
+    <Button className="min-h-11 w-full gap-2 sm:w-auto md:min-h-[var(--lms-control-height)]"
+      onClick={()=>setOpen(true)} disabled={!lessons.length}>
+      <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" className="size-4 shrink-0">
+        <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+      Create {name}
+    </Button>:
+    <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
+     <div><h2 className="font-semibold text-[var(--lms-heading)]">Create {name}</h2>
+      <p className="mt-1 text-sm text-body leading-[22px]">Quizzes and assignments are attached to lessons in your assigned courses.</p>
+     </div>
+     <Button className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
+    </div>}
   {lessonsLoadError?<div className="flex flex-wrap items-center gap-2">
     <Alert tone="error">{lessonsLoadError==="SESSION_EXPIRED"?"Session expired. Please sign in again.":"Assigned courses could not be loaded"}</Alert>
     <Button type="button" size="sm" variant="secondary" onClick={()=>router.refresh()}>Retry</Button>

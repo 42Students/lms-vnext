@@ -7,10 +7,11 @@ import {CollegeTermMappingManager} from "@/components/academics/college-term-map
 import {listCollegeTermMappings} from "@/modules/academics/college-term-mapping-service";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {PageHeader} from "@/components/ui/page-header";
-import {EmptyState} from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import {Banner} from "@/components/ui/banner";
 import {listAdminTermCourseMappings} from "@/modules/admin-ui/super-admin-term-mapping-service";
 const statuses=["ALL","ACTIVE","INACTIVE"] as const;
+const legacySubtitle="Define the curriculum for each semester and spot courses that still need faculty coverage.";
 export default async function SuperAdminSemesterCourseMappingPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
@@ -22,8 +23,15 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
    action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Back to dashboard</Link>}/>
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
-  <PageHeader title="Semester–Course Mapping" />
-  <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its semester-course mapping." />
+  <PageHeader title="Semester–Course Mapping" description={legacySubtitle}/>
+  <AcademicSetupSteps step={4} showRefresh={false}/>
+  <Alert tone="warning">
+   <div className="flex items-start gap-3">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" className="mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6m0 4h.01"/></svg>
+    <p><strong>Select a college to manage Semester–Course Mapping.</strong> Choose an Organization + College in the header above.</p>
+   </div>
+  </Alert>
+  <p className="text-sm text-body">The mapping editor is disabled until a college is selected.</p>
  </div>;
  // Editing options are optional to the separately authorized directory:
  // an editor outage must not suppress valid course-mapping results.
@@ -36,7 +44,20 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   intro={<section aria-label="Semester curriculum tools" className="min-w-0 space-y-3">
    <AcademicSetupSteps step={4} showRefresh={false}/>
    {!curriculumResult.ok?<Banner tone="warning">
-    Semester mapping editor is temporarily unavailable. The directory remains accessible.
+    <div className="flex flex-wrap items-center gap-3">
+     <span>Semester mapping editor is temporarily unavailable. The directory remains accessible.</span>
+     <Link href="/admin/semester-courses" className="font-semibold text-primary-text underline">Retry semester mappings</Link>
+    </div>
+   </Banner>:null}
+   {curriculum?.lookupFailures.map(name=><Banner key={name} tone="warning">
+    <div className="flex flex-wrap items-center gap-3">
+     <span>Could not load {name}. Other semester mapping information remains available.</span>
+     <Link href="/admin/semester-courses" className="font-semibold text-primary-text underline">Retry {name}</Link>
+    </div>
+   </Banner>)}
+   {curriculum&&!curriculum.staffingAvailable?<Banner tone="warning">
+    Faculty staffing coverage could not be loaded. Course mappings remain available.
+    <Link href="/admin/semester-courses" className="ml-2 font-semibold text-primary-text underline">Retry staffing</Link>
    </Banner>:null}
    {curriculum?<div aria-label="Manage semester course mappings" className="grid min-w-0 gap-4 border-b border-[var(--lms-canvas-border)] pb-5 lg:grid-cols-[minmax(0,10fr)_minmax(240px,4fr)]">
     <section className="min-w-0 space-y-3">
@@ -53,7 +74,7 @@ export default async function SuperAdminSemesterCourseMappingPage({searchParams}
   </section>}
   title="Semester–Course Mapping" path="/admin/semester-courses" statuses={statuses}
   exportPath="/api/admin/semester-courses/export" exportFilename="super-admin-semester-courses-ist.csv"
-  description="Registered semester curriculum, course credits and order in your selected college."
+  description={legacySubtitle}
   searchParams={searchParams} loader={query=>listAdminTermCourseMappings(context,query)}/>
  </div>;
 }

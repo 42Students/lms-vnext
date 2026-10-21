@@ -1,9 +1,10 @@
 import {z} from "zod";
 import {isIP} from "node:net";
-import {availableSubdomainLabel,subdomainLabelSchema} from "./college-subdomain-model";
+import {availableSubdomainLabel} from "./college-subdomain-model";
 import {normalizeTenantHost} from "./validation";
 /** Legacy managed college labels are 3–30 characters, not arbitrary DNS 63. */
-export const managedSubdomainLabelSchema=subdomainLabelSchema.refine(label=>label.length<=30,{
+export const managedSubdomainLabelSchema=z.string().trim().toLowerCase().refine(
+ label=>/^[a-z0-9](?:[a-z0-9-]{1,28}[a-z0-9])$/.test(label),{
  message:"Use 3–30 lowercase letters, numbers or hyphens (no leading or trailing hyphen).",
 });
 export const managedSubdomainRequest=z.strictObject({

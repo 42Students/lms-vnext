@@ -110,7 +110,7 @@ export async function ProjectAdminSubmissionsPage({
         description="Final project deliverables across all workspaces."
         actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="submissions"/>
-      <ErrorState title="Submissions unavailable"
+      <ErrorState title="Submissions could not be loaded"
         description="The submissions list could not be loaded. Your filters have not changed."
         action={<Link href={queuePath+(suffix?"?"+suffix:"")}
           className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry loading submissions</Link>}/>
@@ -145,7 +145,7 @@ export async function ProjectAdminSubmissionsPage({
         renderPanel={false}
         value={view}
         items={[
-          {value:"ALL",label:"All submissions",href:projectAdminSubmissionHref(queuePath,query),count:result?.total},
+          {value:"ALL",label:"Submitted",href:projectAdminSubmissionHref(queuePath,query),count:result?.total},
           {value:"NOT_SUBMITTED",label:"Not submitted",href:projectAdminUnsubmittedHref(queuePath,query),count:unsubmitted?.total},
         ]}
       />
@@ -178,7 +178,8 @@ export async function ProjectAdminSubmissionsPage({
               <Link href={basePath+"/"+row.id+"/delivery"}
                 className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open</Link>},
           ]}
-          empty={<EmptyState title="No pending submissions" description="All matching workspaces have a submission." />}
+          empty={<EmptyState title={basePath.startsWith("/admin/")?"Every active workspace has submitted":"No matching workspace has an outstanding submission"}
+            description={query.q?"No matching workspaces on this page.":"All matching workspaces have a submission."} />}
         />
         <Pagination page={unsubmitted.page} pageCount={unsubmitted.totalPages}
           hrefForPage={page=>projectAdminUnsubmittedHref(queuePath,query,page)}
@@ -238,12 +239,14 @@ export async function ProjectAdminSubmissionsPage({
         demoUrl:safeProjectExternalHref(submission.demoUrl),
       }))}/>} />
 
-      <div className="min-w-0 space-y-3">
+      <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <h2 className="font-semibold text-foreground">Submissions</h2>
         <p className="text-xs text-body">
           Showing current and historical final-delivery versions. Historical versions
           are read only; review actions target only the latest active version.
         </p>
-        <DataTable caption="Project submission versions" rows={result.items}
+        <DataTable caption="Project submission versions" mobileMode="scroll"
+          className="min-w-0 [&_table]:min-w-[1200px]" rows={result.items}
           getRowKey={submission=>submission.id}
           sortHref={(column)=>{
             const next=column==="pending"?"PENDING_DESC":
@@ -288,7 +291,8 @@ export async function ProjectAdminSubmissionsPage({
               cell:row=>row.reviewedBy?<div className="space-y-1 text-xs">
                 <p>{row.reviewedBy}</p>
                 <p>{formatDate(row.reviewedAt)}</p>
-                <StatusBadge tone="warning">{row.reviewedByType??"Reviewer"}</StatusBadge>
+                {row.reviewedByType==="ADMIN"?<StatusBadge tone="warning">Admin</StatusBadge>:
+                  <StatusBadge tone="neutral">{row.reviewedByType??"Reviewer"}</StatusBadge>}
               </div>:"—"},
             {key:"evidence",header:"Files / Links",mobilePriority:"secondary",
               cell:row=><div className="flex min-w-0 flex-col gap-1">
@@ -322,14 +326,17 @@ export async function ProjectAdminSubmissionsPage({
                   allowLock={allowLock}/>:null}
                 <Link href={basePath+"/"+row.projectId+"/delivery?from=submissions"}
                   className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-                  Open · Review submission</Link>
+                  Open</Link>
               </div>},
           ]}
-          empty={<EmptyState title="No matching deliveries"
-            description="No final-delivery versions match these filters."
+          empty={<EmptyState
+            title={query.q||query.submissionStatus||query.status?"No submissions match this search":"No submissions yet"}
+            description={query.q||query.submissionStatus||query.status?
+              "Clear the filters to view all available submissions.":
+              "Final project deliveries will appear when learners submit their work."}
             action={<Link href={queuePath} className="text-link underline">Clear filters</Link>}/>}
         />
-      </div>
+      </section>
 
       <ProjectAdminPagination
         basePath={queuePath}

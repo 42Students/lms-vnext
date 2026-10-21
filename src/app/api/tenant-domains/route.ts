@@ -13,14 +13,29 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const collegeId =
-      new URL(request.url).searchParams.get("collegeId") ?? "";
-    const domains = await listTenantDomainsWithRuntime(
-      context,
-      collegeId,
-    );
-
-    return NextResponse.json({ domains });
+    const params=new URL(request.url).searchParams;
+    const names=[...params.keys()];
+    if(new Set(names).size!==names.length||
+       names.some(name=>!["collegeId","page","size"].includes(name)))
+      return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const collegeId=params.get("collegeId")??"";
+    const rawPage=params.get("page");
+    const rawSize=params.get("size");
+    if((rawPage!==null&&!/^[1-9]\d{0,4}$/.test(rawPage))||
+       (rawSize!==null&&!/^[1-9]\d{0,2}$/.test(rawSize))||
+       (rawSize!==null&&Number(rawSize)>100))
+      return NextResponse.json({error:"INVALID_PAGINATION"},{status:400});
+    const domains=await listTenantDomainsWithRuntime(context,collegeId);
+    // Older clients deliberately keep the complete scoped domain list.
+    if(rawPage===null&&rawSize===null)return NextResponse.json({domains});
+    const page=rawPage===null?1:Number(rawPage);
+    const size=rawSize===null?50:Number(rawSize);
+    const total=domains.length;
+    return NextResponse.json({
+      domains:domains.slice((page-1)*size,page*size),
+      pagination:{page,size,total,pageCount:Math.max(1,Math.ceil(total/size)),
+        hasNext:page*size<total},
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }

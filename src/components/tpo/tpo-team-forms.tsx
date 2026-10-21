@@ -5,6 +5,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
@@ -170,17 +171,30 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   </Button>
  </form>;
 }
-export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;actorUserId:string}){
+export function TpoTeamReplyComposer({threadId,actorUserId,kind,mentionMembers=[]}:{
+ threadId:string;actorUserId:string;kind:string;mentionMembers?:readonly Member[];
+}){
  const router=useRouter();
  const pending=useRef(false);
  const sendKey=useRef<string|null>(null);
  const draftKey="tpo-team-reply:"+actorUserId+":"+threadId;
- const [body,setBody]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [body,setBody]=useState("");
+ const [busy,setBusy]=useState(false);
+ const [error,setError]=useState("");
  const [markDecision,setMarkDecision]=useState(false);
+ const [success,setSuccess]=useState("");
+ const [mentioned,setMentioned]=useState<string[]>([]);
+ const [memberSearch,setMemberSearch]=useState("");
+ const [confirmAdd,setConfirmAdd]=useState(false);
+ const matchingMembers=mentionMembers.filter(person=>person.displayName.toLowerCase()
+  .includes(memberSearch.trim().toLowerCase()));
  useEffect(()=>{
   const task=window.setTimeout(()=>{
-   try{const saved=sessionStorage.getItem(draftKey);if(saved&&saved.length<=4000)setBody(saved);
-    sendKey.current=sessionStorage.getItem(draftKey+":sendKey");}catch{/* Optional. */}
+   try{
+    const saved=sessionStorage.getItem(draftKey);
+    if(saved&&saved.length<=4000)setBody(saved);
+    sendKey.current=sessionStorage.getItem(draftKey+":sendKey");
+   }catch{/* Optional per-tab draft. */}
   },0);
   return ()=>window.clearTimeout(task);
  },[draftKey]);
@@ -190,29 +204,50 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
   window.addEventListener("beforeunload",protect);
   return ()=>window.removeEventListener("beforeunload",protect);
  },[body]);
- function changeBody(next:string){setBody(next);sendKey.current=null;
-  try{if(next)sessionStorage.setItem(draftKey,next);else sessionStorage.removeItem(draftKey);
-   sessionStorage.removeItem(draftKey+":sendKey");}catch{/* Optional. */}
+ function changeBody(next:string){
+  setBody(next);sendKey.current=null;setConfirmAdd(false);
+  try{
+   if(next)sessionStorage.setItem(draftKey,next);
+   else sessionStorage.removeItem(draftKey);
+   sessionStorage.removeItem(draftKey+":sendKey");
+  }catch{/* Optional per-tab draft. */}
  }
- const [success,setSuccess]=useState("");
- async function send(){
+ function toggleMention(id:string,checked:boolean){
+  setMentioned(previous=>checked?[...new Set([...previous,id])]:previous.filter(value=>value!==id));
+  sendKey.current=null;setError("");setConfirmAdd(false);
+ }
+ async function send(addPeople=false){
   if(pending.current||busy||!body.trim())return;
   pending.current=true;setBusy(true);setError("");setSuccess("");
   try{
-   if(!sendKey.current){sendKey.current=crypto.randomUUID();
-    try{sessionStorage.setItem(draftKey+":sendKey",sendKey.current);}catch{/* Optional. */}}
-   const result=await postForm("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{
-    body:body.trim(),idempotencyKey:sendKey.current,markDecision:String(markDecision),
-   });
-   if(!result.ok){setError(result.code==="TEAM_PARTICIPANT_INACTIVE"||result.code==="STALE_MESSAGE"||result.code==="SESSION_EXPIRED"?
-    tpoTeamFormErrorMessage(result.code,"REPLY"):
-    result.message??tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));return;}
-   changeBody("");setMarkDecision(false);setSuccess("Sent");router.refresh();
+   if(!sendKey.current){
+    sendKey.current=crypto.randomUUID();
+    try{sessionStorage.setItem(draftKey+":sendKey",sendKey.current);}catch{/* Optional. */}
+   }
+   const result=await postForm(
+    "/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{
+     body:body.trim(),idempotencyKey:sendKey.current,
+     markDecision:String(markDecision),
+     mentionMembershipIds:mentioned.join(","),
+     addMentionedMembers:String(addPeople),
+    });
+   if(!result.ok){
+    if(result.code==="ADD_PEOPLE"){setConfirmAdd(true);return;}
+    setError(result.code==="TEAM_PARTICIPANT_INACTIVE"||
+     result.code==="STALE_MESSAGE"||result.code==="SESSION_EXPIRED"?
+      tpoTeamFormErrorMessage(result.code,"REPLY"):
+     result.code==="TEAM_MENTION_NOT_FOUND"?
+      "A mentioned teammate is no longer active. Review your selection.":
+     result.message??tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));
+    return;
+   }
+   changeBody("");setMarkDecision(false);setMentioned([]);setConfirmAdd(false);
+   setSuccess("Sent");router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","REPLY"));}
   finally{pending.current=false;setBusy(false);}
  }
  return <form onSubmit={event=>{event.preventDefault();void send();}}
-   className="space-y-3 border-b border-border py-4">
+  className="space-y-3 border-b border-border py-4">
   <h2 className="font-semibold text-foreground">Reply privately</h2>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea required value={body} maxLength={4000} rows={4} disabled={busy}
@@ -224,6 +259,23 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
     }}
     className="w-full" placeholder="Share a private team update"/>
   </label>
+  {kind!=="DIRECT"&&mentionMembers.length>0?<details className="border-b border-border pb-3">
+   <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold">Mention teammates ({mentioned.length})</summary>
+   <p className="mb-2 text-xs text-body">Adding a person outside this private conversation requires confirmation. They can then read its history.</p>
+   <label className="grid gap-1 text-sm">Find teammate
+    <Input type="search" value={memberSearch} disabled={busy} maxLength={100}
+     onChange={event=>setMemberSearch(event.target.value)}
+     placeholder="Search your placement team"/>
+   </label>
+   <div className="mt-2 max-h-48 overflow-y-auto" role="group" aria-label="People to mention">
+    {matchingMembers.map(member=><label key={member.membershipId}
+     className="flex min-h-11 items-center gap-2 border-b border-border px-2 text-sm">
+     <Checkbox checked={mentioned.includes(member.membershipId)} disabled={busy}
+      onChange={event=>toggleMention(member.membershipId,event.target.checked)}/>
+     {member.displayName}
+    </label>)}
+   </div>
+  </details>:null}
   <label className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-3 py-2 text-sm transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary "+(markDecision?"bg-primary-subtle":"hover:bg-[var(--lms-neutral-50)]")}>
    <Checkbox checked={markDecision} disabled={busy}
     onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
@@ -234,8 +286,15 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
   {error?<InlineNotice tone="error" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
   <Button type="submit" disabled={busy||!body.trim()}
-   className="min-h-11 md:min-h-9">
-   {busy?"Sending…":"Send"}
-  </Button>
+   className="min-h-11 md:min-h-9">{busy?"Sending…":"Send"}</Button>
+  <ConfirmDialog open={confirmAdd}
+   onOpenChange={next=>{if(!busy)setConfirmAdd(next);}}
+   title="Add mentioned people and send?"
+   description={"These selected teammates may gain access to the private conversation and its history: "+
+    mentioned.map(id=>mentionMembers.find(member=>member.membershipId===id)?.displayName||"Team member").join(", ")}
+   confirmLabel="Add and send" pending={busy} confirmDisabled={!body.trim()}
+   onConfirm={()=>{void send(true);}}>
+   <p className="text-sm text-body">Only active same-college placement-team members may be added. Confirm before sharing existing messages.</p>
+  </ConfirmDialog>
  </form>;
 }

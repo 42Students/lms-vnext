@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,isNull} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementDriveChangeRequests} from "@/db/schema/placement-drive-change-requests";
 import {placementJobs} from "@/db/schema";
@@ -11,6 +11,9 @@ export async function listRecruiterTodayChangeRequests(collegeId:string,allowedJ
  if(ids.length===0)return [];
  return getDb().select({
   id:placementDriveChangeRequests.id,jobId:placementJobs.id,
+  // Window count covers every authorized OPEN company-facing request, not
+  // only the 20 newest cards rendered in Today.
+  totalOpen:sql<number>`count(*) over()::integer`.mapWith(Number),
   jobTitle:placementJobs.title,field:placementDriveChangeRequests.field,
   createdAt:placementDriveChangeRequests.createdAt,
  }).from(placementDriveChangeRequests)

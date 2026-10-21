@@ -11,6 +11,7 @@ import {ScrollCue} from "@/components/ui/scroll-cue";
 import {useCallback,useEffect,useRef,useState,type FormEvent} from "react";
 import Link from "next/link";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {parseTpoCompanyTeamDraft,tpoCompanyTeamDraftSendKey,type TpoCompanyTeamDraft} from "@/modules/placements/tpo-company-team-draft-model";
 
@@ -201,13 +202,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
              disabled={busy} onClick={()=>setDeleting(m.id)}>Delete</Button>
          </>:null}
        </div>:null}
-       {editing===m.id?<form className="mt-2 min-w-0 space-y-2 border-t border-[var(--lms-canvas-border)] pt-3" onSubmit={event=>{event.preventDefault();
-          void mutate({action:"EDIT",messageId:m.id,body:editBody}).then(ok=>{if(ok)setEditing(null);});}}>
-        <Textarea className="min-h-24 min-w-0 w-full" required maxLength={4000} rows={3} disabled={busy} 
-          value={editBody} onChange={event=>setEditBody(event.target.value)}/>
-        <Button variant="primary" type="submit" loading={busy} disabled={busy||!editBody.trim()} className="min-h-11 w-full sm:w-auto md:min-h-9">Save edit</Button>
-        <Button variant="ghost" type="button" disabled={busy} className="lms-inline-link inline-flex min-h-11 w-full items-center justify-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9" onClick={()=>setEditing(null)}>Cancel</Button>
-       </form>:null}
+       
     </li>)}
    </ol></ScrollCue>
    <form onSubmit={event=>void send(event)} className="grid min-w-0 gap-3 border-t border-border pt-4">
@@ -262,6 +257,26 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      </Button>
     </div>
    </form>
+   <Dialog open={editing!==null} onOpenChange={open=>{if(!open&&!busy)setEditing(null);}}
+     title="Edit message" description="You can edit your own message within 15 minutes."
+     dismissible={!busy} className="max-w-[34rem]">
+     <form className="min-w-0 space-y-3" onSubmit={event=>{
+       event.preventDefault();
+       const messageId=editing;
+       if(messageId&&editBody.trim())
+         void mutate({action:"EDIT",messageId,body:editBody}).then(ok=>{if(ok)setEditing(null);});
+     }}>
+       <label className="grid gap-2 text-sm font-semibold">Message
+         <Textarea className="min-h-24 min-w-0 w-full" required maxLength={4000} rows={4}
+           disabled={busy} value={editBody} onChange={event=>setEditBody(event.target.value)}/>
+       </label>
+       <div className="flex flex-wrap justify-end gap-2">
+         <Button variant="ghost" type="button" disabled={busy} onClick={()=>setEditing(null)}>Cancel</Button>
+         <Button variant="primary" type="submit" loading={busy}
+           disabled={busy||!editBody.trim()} className="min-h-11 md:min-h-9">Save edit</Button>
+       </div>
+     </form>
+   </Dialog>
    <ConfirmDialog open={deleting!==null} onOpenChange={open=>{if(!open&&!busy)setDeleting(null);}}
      title="Delete this message?" description="Its ask is cancelled too. It shows as Message removed."
      pending={busy} confirmLabel="Delete message" confirmVariant="danger" onConfirm={()=>{

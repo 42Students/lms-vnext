@@ -12,6 +12,16 @@ import {internalMessageSchema} from "./tpo-team-internal-model";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
+/** Private groups require explicit Add and send consent before an external
+ * teammate gains access to history. Names are resolved only inside the actor's
+ * scoped college and never returned as an unscoped directory search.
+ */
+export class TeamAddPeopleRequiredError extends Error {
+ constructor(public readonly people:readonly string[]){
+  super("TEAM_ADD_PEOPLE_REQUIRED");
+ }
+}
+
 /** Persist and audit one internal message; participant and both users rechecked inside transaction. */
 export async function postTpoInternalMessage(context:RequestContext,raw:unknown){
  const input=internalMessageSchema.parse(raw);
@@ -29,6 +39,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    id:placementTpoInternalThreads.id,
    startedByMembershipId:placementTpoInternalThreads.startedByMembershipId,
    invitedMembershipId:placementTpoInternalThreads.invitedMembershipId,
+   isPrivate:placementTpoInternalThreads.isPrivate,
    kind:groupReady?placementTpoInternalThreads.kind:sql<"DIRECT">`'DIRECT'`,
   }).from(placementTpoInternalThreads).where(and(
    eq(placementTpoInternalThreads.id,input.threadId),
@@ -58,6 +69,32 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     eq(users.platformStatus,"ACTIVE"),
    )).for("share");
   if(new Set(active.map(member=>member.id)).size!==memberIds.length)throw new Error("TEAM_PARTICIPANT_INACTIVE");
+  const requestedMentions=input.mentionMembershipIds;
+  const validMentioned=requestedMentions.length?await tx.select({
+    id:collegeMemberships.id,userId:collegeMemberships.userId,
+    displayName:users.displayName,
+  }).from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,and(
+     eq(membershipRoles.membershipId,collegeMemberships.id),
+     inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+   .where(and(
+    inArray(collegeMemberships.id,requestedMentions),
+    eq(collegeMemberships.collegeId,college.id),
+    eq(collegeMemberships.status,"ACTIVE"),
+    eq(users.platformStatus,"ACTIVE"),
+   )).for("share"):[];
+  const mentionNames=new Map(validMentioned.map(row=>[row.id,row.displayName]));
+  if(requestedMentions.some(id=>!mentionNames.has(id)))
+   throw new Error("TEAM_MENTION_NOT_FOUND");
+  const newcomers=requestedMentions.filter(id=>!memberIds.includes(id));
+  if(newcomers.length){
+   if(thread.kind==="DIRECT"||!thread.isPrivate)
+    throw new Error("TEAM_MENTION_NOT_ALLOWED");
+   if(!input.addMentionedMembers)
+    throw new TeamAddPeopleRequiredError(newcomers.map(id=>
+     mentionNames.get(id)?.trim()||"Placement team member"));
+  }
   // Repeating the same keyed POST reuses its committed message, even after
   // a client timeout; the thread row lock serializes competing retries.
   const key=input.idempotencyKey?
@@ -73,10 +110,28 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    if(existing){
     const saved=existing.metadata.messageId;
     if(existing.metadata.bodyHash!==bodyHash||
-     Boolean(existing.metadata.markDecision)!==Boolean(input.markDecision)||typeof saved!=="string")
+     Boolean(existing.metadata.markDecision)!==Boolean(input.markDecision)||
+     JSON.stringify(existing.metadata.mentionMembershipIds??[])!==
+       JSON.stringify(requestedMentions)||typeof saved!=="string")
      throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
     return {id:saved,threadId:thread.id,notified:memberIds.length-1};
    }
+  }
+  if(newcomers.length){
+   // The thread lock serializes two concurrent invite confirmations, and the
+   // composite FK keeps all memberships in the same college as this thread.
+   await tx.insert(placementTpoInternalThreadParticipants)
+    .values(newcomers.map(id=>({
+      threadId:thread.id,collegeId:college.id,membershipId:id,leftAt:null,
+    })))
+    .onConflictDoUpdate({
+      target:[placementTpoInternalThreadParticipants.threadId,
+        placementTpoInternalThreadParticipants.membershipId],
+      set:{leftAt:null,joinedAt:new Date()},
+    });
+   const fresh=validMentioned.filter(person=>newcomers.includes(person.id));
+   active.push(...fresh.map(person=>({id:person.id,userId:person.userId})));
+   memberIds.push(...newcomers);
   }
   const [message]=await tx.insert(placementTpoInternalMessages).values({
    threadId:thread.id,collegeId:college.id,
@@ -90,7 +145,8 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    subjectType:"team_thread",subjectId:thread.id,
    summary:"Private team message created",
    metadata:{messageId:message.id,bodyLength:input.body.length,bodyHash,
-    markDecision:Boolean(input.markDecision)},
+    markDecision:Boolean(input.markDecision),mentionMembershipIds:requestedMentions,
+    addedMembershipIds:newcomers},
    dedupeKey:key,
   }).returning({id:activityEvents.id});
   if(input.markDecision){

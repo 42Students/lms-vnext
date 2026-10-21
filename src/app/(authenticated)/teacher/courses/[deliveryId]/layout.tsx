@@ -7,6 +7,7 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseTabNavigation } from "@/components/courses/faculty-course-tab-navigation";
 import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
+import { legacyFacultyCourseRouteIntent } from "@/modules/courses/faculty-course-navigation";
 
 export default async function FacultyCourseTabLayout({
   children,
@@ -45,7 +46,15 @@ export default async function FacultyCourseTabLayout({
     </div>;
   }
   const active = assignments.find((assignment) => assignment.deliveryId === deliveryId);
-  if (!active) notFound();
+  if (!active) {
+    // The page below owns the persisted, assignment-scoped slug/numeric ID
+    // resolution and the query's legacy class hint. Rendering that child
+    // without a course header reveals nothing; it must redirect or 404.
+    // Reject arbitrary path fragments before they reach the resolver.
+    if (legacyFacultyCourseRouteIntent(deliveryId, {}) !== null)
+      return <>{children}</>;
+    notFound();
+  }
   const sections=assignments.filter(a=>a.courseId===active.courseId)
    .sort((a,b)=>a.sectionName.localeCompare(b.sectionName,undefined,{numeric:true})||a.deliveryId.localeCompare(b.deliveryId))
    .map(a=>({deliveryId:a.deliveryId,label:a.sectionName.trim()||"Class "+a.deliveryId.slice(0,8)}));
