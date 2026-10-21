@@ -72,7 +72,7 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
    </label>
    <Button type="submit" className="min-h-11 w-full rounded-[var(--lms-control-radius)] bg-primary px-4 text-primary-foreground sm:w-auto md:min-h-9">Filter</Button>
   </form>
-  <p role="status" className="text-sm text-body leading-[22px]">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
+  <p role="status" className="text-sm text-body leading-[1.6]">{visibleRows.length} of {data.rows.length} eligible applications match these filters. Totals above describe the full round.</p>
   {visibleRows.length===0?<EmptyState title="No eligible shortlisted submitted applicants match this round result filter."/>:
    <section className="min-w-0 divide-y divide-border border-y border-border" aria-label="Round result entries">
     {visibleRows.map(row=><article key={row.applicationId} className="min-w-0 py-[var(--lms-space-4)]">
