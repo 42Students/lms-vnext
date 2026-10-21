@@ -263,6 +263,45 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    </div>
   </div>
   {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
+  <div className="grid min-w-0 gap-3 min-[768px]:hidden" aria-label="Candidate interview cards">
+   {visibleAppointments.map(row=>{
+    const person=applicant(row.applicationId);
+    const round=rounds.find(item=>item.id===row.roundId);
+    return <article key={row.id} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+     <div className="flex flex-wrap items-start justify-between gap-2">
+      <div className="min-w-0 flex-1">
+       {companyName?<p className="text-xs font-semibold text-muted-foreground">{companyName}</p>:null}
+       {jobTitle?<p className="text-xs text-body">{jobTitle}</p>:null}
+       <h3 className="mt-1 break-words text-base font-semibold">{person?.name??"Candidate"}</h3>
+       {person?.departmentName?<p className="text-xs text-body">{person.departmentName}</p>:null}
+      </div>
+      <div className="flex flex-wrap gap-1">
+       <StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status.replaceAll("_"," ")}</StatusBadge>
+       {hasConflict(row)?<StatusBadge tone="error">Conflict</StatusBadge>:null}
+      </div>
+     </div>
+     <p className="mt-3 text-sm font-semibold">{row.interviewType?.replaceAll("_"," ")??"Interview"} · {round?.name??"Interview round"}</p>
+     <dl className="mt-3 grid gap-2 border-t border-border pt-3 text-sm text-body">
+      <div><dt className="font-semibold">Date & time (IST)</dt><dd>{display(row.scheduledAt)} · {row.durationMinutes} min</dd></div>
+      <div><dt className="font-semibold">Mode</dt><dd>{row.mode==="VIRTUAL"?"Online":"Offline"} · {row.venue??row.meetingUrl??"Not recorded"}</dd></div>
+      <div><dt className="font-semibold">Interviewer</dt><dd>{row.interviewer??"Not recorded"}</dd></div>
+     </dl>
+     <div className="mt-3 flex flex-wrap gap-2">
+      <Link href={applicationHref(row.applicationId)} aria-label={"View application for "+(person?.name??"candidate")+" in "+(jobTitle??"this placement drive")}
+       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline">View application</Link>
+      {row.status!=="CANCELLED"?<a href={eventIcsHref(row)} download={"interview-"+row.id+".ics"}
+       aria-label={"Download calendar file for "+eventTitle(row)}
+       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">↓ Download .ics</a>:null}
+      {row.status==="SCHEDULED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>open(row)}>Edit</Button>:null}
+      {row.status==="COMPLETED"?<Button type="button" variant="secondary" disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
+     </div>
+    </article>;
+   })}
+   {!visibleAppointments.length?(showConflictsOnly?
+    <EmptyState title="No conflicting candidate interviews" description="No scheduling conflicts were found in the current filtered interview rows."/>:
+    <EmptyState title="No candidate interviews" description="No interviews scheduled for this drive yet."/>):null}
+  </div>
+  <div className="hidden min-[768px]:block">
   <DataTable<(typeof appointments)[number]>
     caption="Candidate interviews"
     rows={visibleAppointments}
@@ -326,6 +365,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     empty={showConflictsOnly?<EmptyState title="No conflicting candidate interviews" description="No scheduling conflicts were found in the current filtered interview rows."/>:
       <EmptyState title="No candidate interviews" description="No interviews scheduled for this drive yet."/>}
   />
+  </div>
   {success?<Banner tone="success">{success}</Banner>:null}
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
