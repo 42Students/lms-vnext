@@ -85,7 +85,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_template-subview-service.ts.md` (edit src/modules/projects/template-subview-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-admin-nav.tsx.md` (edit src/components/projects/project-admin-nav.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-sprint-details-service.ts.md` (edit src/modules/projects/mentor-sprint-details-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-closeout-service.ts.md` (edit src/modules/projects/mentor-closeout-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-closeout-service.ts.md` (edit src/modules/projects/mentor-closeout-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_NEW_docs_audit_gap2_lane-17_project-release-entity.md.md` (new; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_app_api_projects_cohort-preflight_route.ts.md` (edit src/app/api/projects/cohort-preflight/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_app_api_projects_projectId_members_route.ts.md` (edit src/app/api/projects/[projectId]/members/route.ts; 1 findings; best P2)
