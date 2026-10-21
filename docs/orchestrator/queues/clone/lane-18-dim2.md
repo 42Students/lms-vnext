@@ -3,11 +3,11 @@
 279 files (557 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: label size/weight/colour, input height 36 radius 10 border colour, placeholder colour, focus ring, error text and red border, helper text, required marker, disabled look, field gaps.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/activity/page.tsx`
-- [ ] `src/app/(authenticated)/admin/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/page.tsx`
-- [ ] `src/app/(authenticated)/admin/classes/page.tsx`
+- [x] `src/app/(authenticated)/activity/page.tsx`
+- [x] `src/app/(authenticated)/admin/announcements/page.tsx`
+- [x] `src/app/(authenticated)/admin/batch-promotion/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/classes/page.tsx`
 - [ ] `src/app/(authenticated)/admin/companies/page.tsx`
 - [ ] `src/app/(authenticated)/admin/electives/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
