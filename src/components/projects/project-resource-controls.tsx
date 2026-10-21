@@ -66,10 +66,10 @@ function ResourceForm({
   isLearner?: boolean;
 }) {
   return (
-    <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-      <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+      <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Title
+          Title <span aria-hidden="true" className="text-error">*</span>
         </span>
         <Input
           required
@@ -89,13 +89,13 @@ function ResourceForm({
           inputMode="url"
           maxLength={2048}
           value={url}
-          placeholder="https://…"
+          placeholder="https://..."
           onChange={(event) =>
             onUrl(event.target.value)
           }
         />
       </label>
-      <label>
+      <label className="md:col-span-2">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Description
         </span>
@@ -108,7 +108,7 @@ function ResourceForm({
           }
         />
       </label>
-      {!isLearner ? <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" open={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
+      {!isLearner ? <details className="min-w-0 md:col-span-2 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]" open={metadata.status!=="ACTIVE"||metadata.resourceType!=="LINK"||metadata.pinned||Boolean(metadata.accessNotes||metadata.sprintId||metadata.taskId)}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Resource details</summary>
         <div className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-4)]">
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
@@ -152,12 +152,12 @@ function ResourceForm({
             onChange={event=>onMetadata({...metadata,pinned:event.target.checked})}/> Pinned
         </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Access notes
-          <Textarea maxLength={4000} value={metadata.accessNotes}
+          <Textarea maxLength={4000} placeholder="e.g. Requires college email to view" value={metadata.accessNotes}
             onChange={event=>onMetadata({...metadata,accessNotes:event.target.value})}/>
         </label>
         </div>
       </details> : null}
-      {!isLearner ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      {!isLearner ? <label className="grid min-w-0 md:col-span-2 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Visible to
         <Select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
           className="w-full">
@@ -165,7 +165,7 @@ function ResourceForm({
           <option value="MENTOR_ONLY">Mentors only</option>
         </Select>
       </label> : null}
-      {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body">
+      {!isLearner ? <label className="flex items-center gap-2 text-sm font-semibold text-body md:col-span-2">
         <Checkbox
           checked={required}
           onChange={(event) =>
@@ -280,7 +280,7 @@ export function CreateProjectResourceControl({
         open={open && !discardOpen}
         onOpenChange={next=>{if(next)setOpen(true);else requestClose();}}
         title={isLearner ? "Share a resource" : "Add resource"}
-        description="Share a safe HTTP(S) link or an internal text resource with the Project team."
+        description={isLearner?"Share a safe HTTP(S) link or an internal text resource with the Project team.":"For section-wide edits, use Edit resource library. Individual resources can be added here without replacing the full library."}
       >
         <form
           onSubmit={submit}
