@@ -53,14 +53,16 @@ export function SuperAdminFacultyScheduleReassignAction({
       onClick={()=>{setOpen(true);setError("");setReport(null);}}>
       Reassign class schedules
     </Button>
-    {report?<Alert tone="success" className="max-w-prose">
+    {report?<Alert tone={report.skippedConflicts>0?"warning":"success"} className="max-w-prose">
       Reassigned {report.reassigned} of {report.total} upcoming session(s).
-      {report.skippedConflicts>0?" "+report.skippedConflicts+" conflicting session(s) kept with the original faculty.":""}
+      {report.skippedConflicts>0?
+        " "+report.skippedConflicts+" conflicting session(s) still belong to the original faculty. Do not remove or end that faculty membership until those sessions and any other active teaching assignments are reassigned.":
+        " Schedule transfer recorded. Before removing a faculty membership, check its remaining teaching, project and course assignments and the audit history."}
     </Alert>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
     <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} dismissible={!pending}
       title="Reassign class schedules"
-      description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked."}
+      description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked. The original faculty remains assigned to any skipped session; schedule transfer does not delete or end a membership."}
       footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
         <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>

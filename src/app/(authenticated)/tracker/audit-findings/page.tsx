@@ -18,6 +18,8 @@ import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {ErrorState} from "@/components/ui/error-state";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
+import {IndependentFindingsSyncControl} from "@/components/tracker/independent-findings-sync-control";
+import {independentAuditImporterReady} from "@/modules/bug-tracker/independent-audit-inbox-importer";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
 export const dynamic="force-dynamic";
@@ -86,9 +88,11 @@ export default async function IndependentFindingsPage({searchParams}:{
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
-   <Banner tone="warning">
-    Sync now is unavailable because an authenticated, credential-verified repository importer and durable job receipt have not been configured. No import is performed when this page loads.
-   </Banner>
+   <IndependentFindingsSyncControl ready={independentAuditImporterReady()}/>
+   {!independentAuditImporterReady()?<Banner tone="warning">
+    Sync is disabled until the privileged repository credentials and the durable
+    per-file ledger have been deployed and verified. Viewing this page does not import files.
+   </Banner>:null}
    {syncResult.status==="rejected" ? <Banner tone="warning">
     Import history could not be refreshed. Findings remain available.
     {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
@@ -159,7 +163,10 @@ export default async function IndependentFindingsPage({searchParams}:{
    </p>
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
-   <p className="mt-1 text-xs text-muted-foreground">Manual sync is intentionally deferred pending a verified importer, repository credentials, same-origin Super Admin POST and durable job receipt. Viewing this page never triggers a sync.</p>
+   <p className="mt-1 text-xs text-muted-foreground">
+    Only a verified Super Admin may trigger a manual sync. The scheduled worker uses a separate
+    bearer credential and keeps an immutable file ledger. Viewing this page never triggers import.
+   </p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
