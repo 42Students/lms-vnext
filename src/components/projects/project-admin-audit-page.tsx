@@ -371,6 +371,9 @@ export async function ProjectAdminAuditPage({
         id:item.event.id,action:item.event.eventType,
         summary:item.event.summary,entity:item.event.subjectLabel??"",
         importance:item.event.importance,
+        entityType:item.event.subjectType,
+        entityId:item.event.subjectId,
+        actorName:item.actor.displayName??"System",
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       </div>
