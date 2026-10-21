@@ -45,7 +45,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   const [search,setSearch]=useState("");
   const { askConfirm, dialog } = useConfirmFlow();
   const [removeTarget,setRemoveTarget]=useState<string|null>(null);
-  const [collapsedIds,setCollapsedIds]=useState<string[]>(()=>initial.map(row=>row.id));
+  const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
     facultyProfileRecordMatches(row,fields.map(field=>field.name),facultyProfileActiveSearch(search,rows.length)));
   const sectionIssue=facultyProfileRepeatableIssue(section,rows);
@@ -60,9 +60,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (changed && !pending && !missingRequired && !sectionIssue) {
-      void onSave(section,rows).then(()=>setChanged(false)).catch(()=>undefined);
-    }
+    if (changed && !pending && !missingRequired && !sectionIssue) void onSave(section, rows);
   }
   return (
     <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
@@ -71,12 +69,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)] md:text-lg">{title}</h2>
         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{description}</p>
       </div>
-      {rows.length === 0 ? <p className="text-sm text-muted-foreground leading-[22px]">Nothing on file yet.</p> : null}
-      {changed?<div role="status" className="flex items-center gap-2 text-sm text-warning-text">
-        <span aria-hidden="true">⚠</span><strong>Unsaved changes</strong>
-        <span>Draft entries and deletions are not on file until saved.</span>
-      </div>:null}
-      {pending?<p role="status" aria-live="polite" className="text-sm text-body">Saving section changes…</p>:null}
+      {rows.length === 0 ? <p className="text-sm text-muted-foreground leading-[22px]">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
           className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
@@ -90,22 +83,13 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-            <legend className="px-1 text-xs font-semibold text-muted-foreground">
-              Record {index + 1}{changed?" · Unsaved draft":""}
-            </legend>
+            <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
             <Button variant="secondary" type="button" className="mb-3 min-h-11 min-[768px]:min-h-9 px-3"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
-              {collapsedIds.includes(row.id)?"Edit record "+(index+1):"Done editing record "+(index+1)}
+              {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
             </Button>
-            {collapsedIds.includes(row.id)?
-              <dl className="grid min-w-0 grid-cols-1 gap-2 text-sm text-body sm:grid-cols-2">
-                {fields.map(field=><div key={field.name} className="min-w-0">
-                  <dt className="font-semibold text-muted-foreground">{field.label}</dt>
-                  <dd className="break-words">{row[field.name]===true?"Yes":
-                    row[field.name]===false?"No":String(row[field.name]??"").trim()||"—"}</dd>
-                </div>)}
-              </dl>:<div className="grid min-w-0 gap-3 sm:grid-cols-2">
+            {!collapsedIds.includes(row.id)?<div className="grid min-w-0 gap-3 sm:grid-cols-2">
               {fields.map(field => {
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
@@ -168,7 +152,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits
       </Button> : null}
-      {changed ? <p role="status" className="text-xs text-muted-foreground leading-5">
+      {changed ? <p className="text-xs text-muted-foreground leading-5">
         Draft changes, including removals, remain unsaved until you choose Save.
       </p> : null}
     {dialog}
