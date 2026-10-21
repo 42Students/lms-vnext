@@ -5,6 +5,7 @@ import {getTpoRecruiterThreadDetail} from "@/modules/placements/tpo-recruiter-th
 import bubbleStyles from "@/components/tpo/tpo-conversation-bubble.module.css";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { redirect } from "next/navigation";
+import { AuthorizationError } from "@/modules/permissions/policy";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { formatTpoInboxTime } from "@/modules/placements/tpo-inbox-date-model";
@@ -121,7 +122,10 @@ export default async function TpoMessagesPage({
   const result = await getTpoMessagesInbox(
     context,
     parsed.data,
-  ).catch(()=>null);
+  ).catch(error=>{
+    if(error instanceof AuthorizationError)throw error;
+    return null;
+  });
   if (!result) return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     {tabs("recruiters")}
@@ -268,7 +272,7 @@ export default async function TpoMessagesPage({
           </nav>:null}
         </aside>
         <section aria-label="Conversation" className="min-w-0 p-4 md:p-5">
-          {!active?<EmptyState title="No conversations yet" description="Select a conversation or start a new message."/>:
+          {!active?<EmptyState title={requested?"Conversation not on this page":"No conversations yet"} description={requested?"Clear the thread selection or change filters to find this conversation.":"Select a conversation or start a new message."}/>:
             !detail?<ErrorState title="Could not load this conversation"
               description="This refresh failed. Retry. No messages were acknowledged."
               action={<Link href={threadHref(active.id)} className="font-semibold text-link underline">Retry</Link>}/>:

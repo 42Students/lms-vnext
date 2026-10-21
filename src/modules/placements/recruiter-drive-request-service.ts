@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
  placementCompanies,placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,placementRecruiterDriveRequests,
@@ -179,11 +179,25 @@ export async function listOwnRecruiterDriveRequests(context:RequestContext,colle
  const id=z.string().uuid().parse(collegeId);
  return getDb().transaction(async tx=>{
   const scope=await lockedRelationship(tx,context,id);
-  return tx.select().from(placementRecruiterDriveRequests).where(and(
+  const requests=await tx.select().from(placementRecruiterDriveRequests).where(and(
    eq(placementRecruiterDriveRequests.collegeId,id),
    eq(placementRecruiterDriveRequests.recruiterUserId,context.user.id),
    eq(placementRecruiterDriveRequests.companyRelationshipId,scope.relationshipId)))
    .orderBy(desc(placementRecruiterDriveRequests.createdAt));
+  const approvedIds=requests.flatMap(request=>request.approvedJobId?[request.approvedJobId]:[]);
+  const jobs=approvedIds.length?await tx.select({
+   id:placementJobs.id,status:placementJobs.status,
+  }).from(placementJobs).where(and(
+   eq(placementJobs.collegeId,id),
+   eq(placementJobs.companyRelationshipId,scope.relationshipId),
+   inArray(placementJobs.id,approvedIds),
+  )):[];
+  const statuses=new Map(jobs.map(job=>[job.id,job.status]));
+  return requests.map(request=>({
+   ...request,
+   approvedJobStatus:request.approvedJobId?
+    statuses.get(request.approvedJobId)??null:null,
+  }));
  });
 }
 export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:unknown){

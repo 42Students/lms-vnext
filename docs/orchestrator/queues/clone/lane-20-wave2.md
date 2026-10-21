@@ -25,7 +25,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_NEW_docs_audit_gap2_lane-5_u002-college-admin-calendar.md.md` (new; 15 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_tpo_tpo-students-spreadsheet.tsx.md` (edit src/components/tpo/tpo-students-spreadsheet.tsx; 14 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_NEW_docs_audit_gap2_lane-6_telegram-webhook-controller.md.md` (new; 14 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_NEW_docs_audit_gap2_lane-7_l15-u025-recruiter-college-controller.md.md` (new; 14 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_NEW_docs_audit_gap2_lane-7_l15-u025-recruiter-college-controller.md.md` (new; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_college_placements_interviews_page.tsx.md` (edit src/app/(authenticated)/college/placements/interviews/page.tsx; 12 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_shell_page-titles.ts.md` (edit src/components/shell/page-titles.ts; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_NEW_docs_audit_gap2_lane-8_resource-file-controller.md.md` (new; 10 findings; best P2)

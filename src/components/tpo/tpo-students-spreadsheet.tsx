@@ -89,8 +89,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
  {key:"best",label:"Best so far",tooltip:row=>row.bestDriveResults?.join("\n"),read:row=>(row.bestCompany?row.bestCompany+": ":"")+tpoStudentDisplayLabel(row.bestSoFar)+
   ((row.interviewedCompanies?.length??0)>1?" · +"+((row.interviewedCompanies?.length??1)-1)+" more":"")},
- {key:"applications",label:"Applications",read:row=>row.applicationCount},
- {key:"offers",label:"Offers",read:row=>row.offerCount},
+ {key:"applications",label:"Applications",read:row=>row.applicationCount,sortKind:"number",sortValue:row=>row.applicationCount},
+ {key:"offers",label:"Offers",read:row=>row.offerCount,sortKind:"number",sortValue:row=>row.offerCount},
  {key:"offersAwaiting",label:"Offers waiting on their answer",read:row=>row.offersAwaitingAnswer},
  {key:"journey",label:"Journey",read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
@@ -110,7 +110,11 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
    pageSort.startsWith("OFFERS")?a.offerCount-b.offerCount:0;
-  const byName=a.displayName.localeCompare(b.displayName,"en-IN",{sensitivity:"base",numeric:true})||a.membershipId.localeCompare(b.membershipId);
+  const [firstA,...lastA]=a.displayName.trim().split(/\s+/);
+  const [firstB,...lastB]=b.displayName.trim().split(/\s+/);
+  const byName=(firstA??"").localeCompare(firstB??"","en-IN",{sensitivity:"base",numeric:true})||
+   lastA.join(" ").localeCompare(lastB.join(" "),"en-IN",{sensitivity:"base",numeric:true})||
+   a.membershipId.localeCompare(b.membershipId);
   return pageSort==="NAME"?byName:(pageSort.endsWith("_DESC")?-diff:diff)||byName;
  });
  // Translate historic numeric roll/registration bookmarks only inside
