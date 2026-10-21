@@ -136,7 +136,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [x] `src/components/placements/college-application-pipeline-controls.tsx`
 - [x] `src/components/placements/college-company-create.tsx`
-- [ ] `src/components/placements/college-drive-archive-action.tsx`
+- [x] `src/components/placements/college-drive-archive-action.tsx`
 - [ ] `src/components/placements/college-drive-bulk-actions.tsx`
 - [ ] `src/components/placements/college-drive-deadline-action.tsx`
 - [ ] `src/components/placements/college-drive-row-lifecycle-action.tsx`
