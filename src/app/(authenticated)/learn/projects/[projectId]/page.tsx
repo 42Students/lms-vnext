@@ -168,7 +168,7 @@ export default async function LearnerProjectPage({
         <Banner tone="info">
           <span>{selectionNotice}</span>
           <Link href={learnerBoardTaskHref(projectId, boardFilters)}
-            className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Return to Board</Link>
+            className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Return to Board</Link>
         </Banner>
       ) : null}
       {selectedTask ? (
