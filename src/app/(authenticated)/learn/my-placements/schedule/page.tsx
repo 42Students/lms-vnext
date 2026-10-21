@@ -8,8 +8,8 @@ import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
-import { initialCareerCalendarDay,shiftCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
-import {getLearnerCalendarExtras} from "@/modules/placements/learner-calendar-extras-service";
+import { initialCareerCalendarDay,type CareerCalendarSupplement } from "@/modules/placements/learner-career-calendar-model";
+import {listLearnerCareerCalendarSupplements} from "@/modules/placements/learner-career-supplement-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
@@ -30,7 +30,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const [workspaceResult,resultsResult,extrasResult]=await Promise.allSettled([
     getLearnerPlacementRequestWorkspace(context),
     listOwnAppliedPlacementResults(context),
-    getLearnerCalendarExtras(context,extraStart,extraEnd),
+    view==="calendar"?listLearnerCareerCalendarSupplements(context):
+      Promise.resolve([] as CareerCalendarSupplement[]),
   ]);
   if(workspaceResult.status==="rejected"){
     if(workspaceResult.reason instanceof AuthorizationError)throw workspaceResult.reason;
