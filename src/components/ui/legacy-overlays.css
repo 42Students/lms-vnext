@@ -17,7 +17,7 @@
 [data-slot="dialog-header"] {
   border-bottom: 1px solid var(--lms-canvas-border);
   padding: 16px 24px;
-  background: #fff;
+  background: var(--lms-white);
 }
 [data-slot="dialog-header"] {
   position: relative;
@@ -32,10 +32,10 @@
   z-index: 1;
 }
 [data-slot="dialog-header"] > button[aria-label="Close dialog"]:hover {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
 }
 [data-slot="dialog-footer"] {
-  background: #fff;
+  background: var(--lms-white);
 }
 @media (max-width: 767px) {
   [data-slot="dialog-footer"] {
@@ -96,11 +96,11 @@
   background: var(--lms-neutral-50);
 }
 [data-slot="info-popover"] [role="tooltip"] {
-  background: #1a1d21;
+  background: var(--lms-neutral-900);
   border-radius: 8px;
   min-height: 27px;
   padding: 6px 16px;
-  color: #fff;
+  color: var(--lms-white);
   font-size: 12px;
   line-height: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
@@ -110,7 +110,7 @@
   right: -2px;
   width: 10px;
   height: 10px;
-  background: #1a1d21;
+  background: var(--lms-neutral-900);
 }
 /* docs/design/legacy-styles/components___antddesign.scss:66-79 */
 @media (max-width: 767px) {
@@ -239,7 +239,7 @@
 [data-slot="toast-action"] {
   --lms-toast-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
 }
-[data-slot="toast-stack"] > section { border-radius: 12px; background: #fff; }
+[data-slot="toast-stack"] > section { border-radius: 12px; background: var(--lms-white); }
 [data-slot="toast-stack"] > section { overflow-wrap: anywhere; }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:hover { background: rgba(0,0,0,.035); }
 [data-slot="toast-stack"] button[aria-label^="Dismiss"]:active { background: rgba(0,0,0,.06); }
@@ -297,13 +297,13 @@
   max-height: min(520px, calc(100dvh - 120px));
   border: 1px solid var(--lms-neutral-200);
   border-radius: 12px;
-  background: #fff;
+  background: var(--lms-white);
   box-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
 }
 [role="dialog"][aria-modal="false"]:not([data-slot]) {
   border: 1px solid var(--lms-canvas-border);
   border-radius: 12px;
-  background: #fff;
+  background: var(--lms-white);
   box-shadow: 0 4px 24px rgba(0, 0, 0, .06), 0 1px 3px rgba(0, 0, 0, .04);
 }
 @keyframes lms-legacy-dialog-enter {
