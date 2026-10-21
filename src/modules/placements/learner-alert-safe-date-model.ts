@@ -11,10 +11,14 @@ export function learnerAlertSafeDate(value:Date):{iso:string|null;label:string}{
 export function learnerAlertRelativeDay(value:Date,now:Date=new Date()):string{
  if(!Number.isFinite(value.getTime())||!Number.isFinite(now.getTime()))
   return "Date unavailable";
- const day=(date:Date)=>date.toLocaleDateString("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"});
- const [year,month,date]=day(value).split("-").map(Number);
- const [nowYear,nowMonth,nowDate]=day(now).split("-").map(Number);
- const days=Math.round((Date.UTC(year!,month!-1,date!)-Date.UTC(nowYear!,nowMonth!-1,nowDate!))/86_400_000);
+ const day=(date:Date)=>{
+  const parts=new Intl.DateTimeFormat("en-GB",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).formatToParts(date);
+  const valueFor=(type:"year"|"month"|"day")=>Number(parts.find(part=>part.type===type)?.value);
+  return Date.UTC(valueFor("year"),valueFor("month")-1,valueFor("day"));
+ };
+ const days=Math.round((day(value)-day(now))/86_400_000);
  if(days===0)return "Today";
  if(days===1)return "Tomorrow";
  if(days===-1)return "Yesterday";
