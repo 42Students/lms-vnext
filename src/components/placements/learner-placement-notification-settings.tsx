@@ -40,8 +40,7 @@ export function LearnerPlacementNotificationSettings({initial}:{
         ? "Your saved choices changed in another tab. Reload saved choices before trying again."
         : result?.error??"Preference update failed");
       setConfirm(false);
-      showToast({tone:"success",title:"Placement notification choices saved",
-        description:"Only your placement notification choices were updated."});
+      showToast({tone:"success",title:"Updated successfully"});
       router.refresh();
     }catch(error){
       showToast({tone:"error",title:"Could not save notification choices",
