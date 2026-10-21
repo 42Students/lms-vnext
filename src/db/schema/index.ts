@@ -104,3 +104,6 @@ export { db10OutboundMessages, db10OutboundSuppressions, db10GlobalEmailSuppress
 
 // Registered lineage only; no mass import rollback/delete endpoint is activated.
 export { learnerImportBatches, learnerImportBatchMembers } from "./db02-learner-import-batches.staged";
+
+// Audit storage registered; sync worker remains activation-gated.
+export { db10AuditFindings, db10AuditFindingEvents, db10AuditFindingSyncs } from "./db10-audit-findings.draft";
