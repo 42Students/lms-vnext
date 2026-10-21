@@ -33,7 +33,7 @@ function ActionLink({
   return (
     <Link
       href={href}
-      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+      className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
     >
       <p className="m-0 text-sm font-semibold text-foreground">{label}</p>
       <p className="mt-1 text-xs text-muted-foreground">
@@ -62,7 +62,7 @@ export function CollegeAdminDashboardActions() {
     <div className="space-y-6">
       <CollegeAdminQuickActions />
       <details className="min-w-0 space-y-4 border-t border-border pt-4">
-          <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          <summary className="flex min-h-11 cursor-pointer items-center text-lg font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             {COLLEGE_SETUP_GUIDE_COPY.heading}
           </summary>
           <p className="mt-1 text-sm text-body">
@@ -123,7 +123,7 @@ export function SuperAdminCollegeDashboardActions() {
       {SUPER_ADMIN_COLLEGE_QUICK_ACTIONS.map(item=><ActionLink key={"quick:"+item.label} label={item.label} href={item.href}/>)}
     </div>
     <details className="min-w-0 border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Other college workspaces</summary>
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Other college workspaces</summary>
       <div className="grid min-w-0 gap-3 pt-3 min-[768px]:grid-cols-2 lg:grid-cols-3">
         {SUPER_ADMIN_COLLEGE_LINKS.map(item => <ActionLink key={item.label} label={item.label} href={item.href} />)}
       </div>

@@ -172,9 +172,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     </label>)}
     <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
      <Button variant="ghost" type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
-      className="min-h-11 w-full text-sm font-[650] text-primary-text disabled:opacity-40 sm:w-auto md:min-h-9">Move question up</Button>
+      className="min-h-11 w-full text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question up</Button>
      <Button variant="ghost" type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
-      className="min-h-11 w-full text-sm font-[650] text-primary-text disabled:opacity-40 sm:w-auto md:min-h-9">Move question down</Button>
+      className="min-h-11 w-full text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9">Move question down</Button>
      <Button variant="ghost" type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
       className="min-h-11 w-full text-sm font-[650] text-primary-text sm:w-auto md:min-h-9">+ Add option</Button>

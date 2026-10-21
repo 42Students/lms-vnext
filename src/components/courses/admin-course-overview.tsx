@@ -239,7 +239,7 @@ export function AdminCourseOverview({
               "/" +
               offering.id
             }
-            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary motion-reduce:transition-none"
+            className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none"
           >
             Open learning
           </Link> : null}
@@ -507,7 +507,7 @@ export function AdminCourseOverview({
             <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap md:col-span-2">
               <Button type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
               <a href={courseBasePath.startsWith("/admin/") ? "/api/admin/courses/catalogue/export" + collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export", "") : collegeCourseCatalogueExportHref(catalogueQuery)} download
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-[var(--lms-space-3)] text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
                 Export CSV
               </a>
               {courseBasePath.startsWith("/admin/") ? <Link href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses", courseBasePath)}

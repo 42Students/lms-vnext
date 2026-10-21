@@ -28,7 +28,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
     <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
       <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
     <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Course code (exact)

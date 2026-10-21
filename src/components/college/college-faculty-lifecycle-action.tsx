@@ -68,7 +68,7 @@ export function CollegeFacultyLifecycleAction({ membershipId, name, status }: {
         {action === "DEACTIVATE" ? "Suspend Faculty" : "Reactivate Faculty"}
       </Button>
       <Link href={`/college/activity?subjectType=college_membership&subjectId=${encodeURIComponent(membershipId)}`}
-        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Audit history</Link>
+        className="inline-flex min-h-11 w-full items-center justify-center text-xs font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Audit history</Link>
     </div>
     {success?<Alert tone="success">{success}</Alert>:null}
     {!editing && error?<Alert tone="error">{error}</Alert>:null}
