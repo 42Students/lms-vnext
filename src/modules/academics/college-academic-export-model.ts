@@ -39,17 +39,26 @@ export function academicExportHref(kind:AcademicCsvKind,query:{
   (p.size?"?"+p.toString():"");
 }
 export {exportParams};
+/** Legacy downstream CSV contract: preserve the original first nine fields.
+ * IDs remain scoped UUIDs; never synthesize legacy numeric IDs. Dates and
+ * recorded academic year come from the actual cohort, not a guessed term.
+ */
 export function renderBatchCsv(rows:readonly {
- name:string;code:string;status:string;programName:string;programCode:string;
+ id:string;name:string;code:string;status:string;programId:string;
+ programName:string;programCode:string;academicYear:string|null;
+ startDate:string|null;endDate:string|null;
  currentTermNumber:number|null;currentAcademicYearStart:number|null;
  activeSections:number;activeEnrolledLearners:number;
 }[],truncated:boolean){
- return buildCollegeDirectoryCsv(["Batch","Batch code","Program","Program code","State","Recorded term",
-  "Academic year start","Active classes","Active learner enrollments"],rows.map(r=>[
-  r.name,r.code,r.programName,r.programCode,r.status,
+ return buildCollegeDirectoryCsv([
+  "id","batchName","programId","currentSemester","academicYear",
+  "students","status","startDate","endDate",
+ ],rows.map(r=>[
+  r.id,r.name,r.programId,
   r.currentTermNumber===null?"":String(r.currentTermNumber),
-  r.currentAcademicYearStart===null?"":String(r.currentAcademicYearStart),
-  String(r.activeSections),String(r.activeEnrolledLearners),
+  r.academicYear??(r.currentAcademicYearStart===null?"":String(r.currentAcademicYearStart)),
+  String(r.activeEnrolledLearners),r.status,
+  r.startDate??"",r.endDate??"",
  ]),truncated,ACADEMIC_EXPORT_CAP);
 }
 export function renderSemesterCsv(rows:readonly {

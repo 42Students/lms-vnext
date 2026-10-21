@@ -134,8 +134,9 @@ export function upcomingScheduleEvents<
     .slice()
     .sort(
       (a, b) =>
-        new Date(a.startsAt).getTime() -
-        new Date(b.startsAt).getTime(),
+        new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime() ||
+        new Date(a.endsAt).getTime() - new Date(b.endsAt).getTime(),
+        // Equal starts/ends retain source order (stable JS array sort).
     )
     .slice(0, limit);
 }
