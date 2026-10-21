@@ -1,5 +1,6 @@
 "use client";
 import { Select } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
@@ -46,6 +47,7 @@ export function CollegeFacultyAssignmentCreate({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageWarning, setMessageWarning] = useState(false);
   const programs = Array.from(new Map(deliveries.map(item =>
     [item.programId, item.programName])).entries());
   const batches = Array.from(new Map(deliveries.filter(item => item.programId === programId)
@@ -57,6 +59,13 @@ export function CollegeFacultyAssignmentCreate({
   const semesters = [...new Set(scoped.map(item => item.semesterNumber).filter(
     (item): item is number => item !== null))].sort((a, b) => a - b);
   const years = [...new Set(scoped.map(item => item.academicYear))].sort();
+  // Preserve legacy custom-year entry without falsely creating an academic
+  // offering that does not exist in the authoritative vNext delivery catalog.
+  const yearSuggestions = [...new Set([
+    ...years,
+    ...Array.from({length:27},(_,index)=>String(new Date().getFullYear()-13+index)),
+  ])].sort();
+  const yearFormat = /^[0-9]{4}(?:-(?:[0-9]{2}|[0-9]{4}))?$/;
   const choices = scoped.filter(item =>
     (semesterNumber === "" || String(item.semesterNumber) === semesterNumber) &&
     (academicYear === "" || item.academicYear === academicYear));
@@ -68,9 +77,23 @@ export function CollegeFacultyAssignmentCreate({
     setSemesterNumber(""); setAcademicYear(""); setSelected([]); setError(null);
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setError(null); setMessage(null);
-    if (!membershipId || selected.length === 0) {
-      setError("Select a faculty member and at least one course to assign."); return;
+    event.preventDefault(); setError(null); setMessage(null);setMessageWarning(false);
+    if (!programId) { setError("Select a program");return; }
+    if (!cohortId) { setError("Select a batch");return; }
+    if (!sectionId) { setError("Select a class");return; }
+    if (!semesterNumber) { setError("Select a semester");return; }
+    if (!academicYear || !yearFormat.test(academicYear)) {
+      setError("Use YYYY-YY, YYYY-YYYY or YYYY.");return;
+    }
+    if(!scoped.some(item=>String(item.semesterNumber)===semesterNumber &&
+      item.academicYear===academicYear)){
+      setError("No course delivery exists for that semester and academic year. Create the period and course delivery first.");return;
+    }
+    if (!membershipId) {setError("Select faculty");return;}
+    if (!selected.length) {setError("Select one or more courses");return;}
+    const allowed = new Set(choices.map(item=>item.id));
+    if(selected.some(id=>!allowed.has(id))){
+      setError("Selected courses changed with the semester/year. Choose them again.");return;
     }
     const teacher = faculty.find(item => item.id === membershipId)?.label ?? "Faculty";
     if (!(await ask(`Assign ${teacher} to ${selected.length} selected course(s)? Existing assignments and duplicate primary lecturers will be refused.`))) return;
@@ -82,7 +105,10 @@ export function CollegeFacultyAssignmentCreate({
       });
       const successes = data?.created?.length ?? 0;
       const failures = data?.failed ?? [];
-      setMessage(`Created ${successes} teaching assignments for this class.` +
+      setMessageWarning(failures.length>0||successes===0);
+      const successCopy=successes===1?"Created teaching assignment for this class.":
+        successes>1?"Bulk associations created successfully.":"No teaching assignments were created.";
+      setMessage(successCopy +
         (failures.length ? " " + failures.map(item => {
           const option = deliveries.find(row => row.id === item.deliveryId);
           return (option?.courseName ?? "Selected course") + ": could not be assigned; review and retry.";
@@ -120,18 +146,23 @@ export function CollegeFacultyAssignmentCreate({
         </Select>
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
-        <Select className={fieldClass} value={semesterNumber}
+        <Select required className={fieldClass} value={semesterNumber}
           onChange={event => { setSemesterNumber(event.target.value); setSelected([]); }}>
-          <option value="">All semesters</option>
+          <option value="">Select a semester</option>
           {semesters.map(term => <option key={term} value={term}>Semester {term}</option>)}
         </Select>
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
-        <Select className={fieldClass} value={academicYear}
-          onChange={event => { setAcademicYear(event.target.value); setSelected([]); }}>
-          <option value="">All years</option>
-          {years.map(year => <option key={year} value={year}>{year}</option>)}
-        </Select>
+        <Input required className={fieldClass} value={academicYear} list="faculty-assignment-year-options"
+          placeholder="YYYY-YY, YYYY-YYYY or YYYY"
+          maxLength={9}
+          onChange={event => { setAcademicYear(event.target.value.trim()); setSelected([]); }}/>
+        <datalist id="faculty-assignment-year-options">
+          {yearSuggestions.map(year=><option key={year} value={year}/>)}
+        </datalist>
+        <span className="text-xs font-normal text-muted-foreground">
+          Historic and future years can be entered, but assigning requires a matching saved course delivery.
+        </span>
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
         <Select required className={fieldClass} value={membershipId}
@@ -161,14 +192,20 @@ export function CollegeFacultyAssignmentCreate({
         </div>
       </fieldset>
       <div className="min-w-0 md:col-span-2 xl:col-span-4">
-        <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={saving} disabled={saving || !selected.length || !membershipId}>
+        <Button variant="primary" type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={saving} disabled={saving}>
           {saving ? "Assigning…" : `Assign to ${selected.length} course(s)`}
         </Button>
       </div>
     </form>
     {(deliveriesTruncated || facultyTruncated) && <Alert tone="warning" className="mt-[var(--lms-space-3)]">Only the first 200 active delivery or faculty records are listed. Narrow the selection or use its own course workspace.</Alert>}
     {error && <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>}
-    {message && <Alert tone="success" className="mt-[var(--lms-space-3)]">{message}</Alert>}
+    {message && <Alert tone={messageWarning?"warning":"success"} className="mt-[var(--lms-space-3)]">{message}</Alert>}
+    <p className="mt-3 text-xs text-muted-foreground">
+      vNext bulk selection assigns multiple courses to one faculty member at a time.
+      Use a separate confirmed operation per faculty member. Assignments reference saved
+      course deliveries, preserving the enrolled class, academic period and semester;
+      ending an assignment retains teaching history rather than hard-deleting it.
+    </p>
   </section></>;
 }
 
@@ -194,7 +231,7 @@ export function CollegeFacultyAssignmentEnd({
         "/api/courses/teaching-assignments/" + encodeURIComponent(assignmentId),
         {method:"DELETE"},
       );
-      setSuccess("Deleted assignment. Teaching history is retained.");setConfirming(false);
+      setSuccess("Association deactivated successfully. Teaching history is retained.");setConfirming(false);
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Assignment could not be ended.");
