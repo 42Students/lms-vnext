@@ -1,10 +1,12 @@
 "use client";
 import { Button } from "@/components/ui/button";
 
-import { useState, useTransition, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, useTransition, type FormEvent } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { Alert } from "@/components/ui/alert";
+import { useToast } from "@/components/ui/toast";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Dropdown} from "@/components/ui/dropdown";
@@ -34,6 +36,40 @@ type Batch = {
   durationTerms?: number;
 };
 
+const MONTHS = ["January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"];
+
+function academicYearFor(date: string, startMonth: number): string {
+  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)) return "";
+  const year = Number(date.slice(0, 4));
+  const first = Number(date.slice(5, 7)) >= startMonth ? year : year - 1;
+  return `${first}-${String((first + 1) % 100).padStart(2, "0")}`;
+}
+
+function validAcademicYear(value: string): boolean {
+  if (!value.trim()) return true;
+  const result = /^(\\d{4})-(\\d{2})$/.exec(value.trim());
+  return Boolean(result && Number(result[2]) === (Number(result[1]) + 1) % 100);
+}
+
+function cohortErrors(error: unknown): Record<string, string> {
+  if (!(error instanceof FriendlyFetchError)) return {};
+  const fields: Record<string, string> = {};
+  const aliases: Record<string, string> = {
+    batch_name: "name", batchName: "name", name: "name", batch_code: "code",
+    program_id: "programId", academic_year: "academicYear",
+    start_date: "startDate", end_date: "endDate",
+    start_period_id: "startPeriodId", expected_end_period_id: "expectedEndPeriodId",
+  };
+  for (const [key, value] of Object.entries(error.fieldErrors)) {
+    fields[aliases[key] ?? key] = value;
+  }
+  if (error.code === "BATCH_NAME_CONFLICT") fields.name = "A batch with this name already exists.";
+  if (error.code === "BATCH_CODE_CONFLICT") fields.code = "A batch with this code already exists.";
+  if (error.code === "BATCH_PERIOD_INVALID") fields.endDate = "End date cannot be before start date";
+  return fields;
+}
+
 async function send(method: "POST" | "PATCH", url: string, body: unknown) {
   await apiFetch(url, {
     method,
@@ -46,6 +82,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
   programs: Option[]; periods: Option[]; academicSetupHref?: string;
 }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [programId, setProgramId] = useState("");
   const [startPeriodId, setStartPeriodId] = useState("");
@@ -56,23 +93,55 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
   const [startDate,setStartDate]=useState("");
   const [endDate,setEndDate]=useState("");
   const [notice, setNotice] = useState("");
+  const [noticeIsError, setNoticeIsError] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [startMonth, setStartMonth] = useState(7);
+  useEffect(() => {
+    if (!programId) { setStartMonth(7); return; }
+    try {
+      const stored = Number(localStorage.getItem("batch-academic-year-start-month:" + programId));
+      setStartMonth(Number.isInteger(stored) && stored >= 1 && stored <= 12 ? stored : 7);
+    } catch { setStartMonth(7); }
+  }, [programId]);
   const start=periods.find(period=>period.id===startPeriodId);
   const end=periods.find(period=>period.id===expectedEndPeriodId);
   const dateInvalid=Boolean((startDate||start?.startDate)&&(endDate||end?.endDate)&&
     (endDate||end?.endDate||"")<(startDate||start?.startDate||""));
-  const year=start?.startDate?Number(start.startDate.slice(0,4)):null;
+  const yearSource = startDate || start?.startDate || "";
+  const suggestedYear = academicYearFor(yearSource, startMonth);
+  function startDateChanged(value: string) {
+    setStartDate(value);
+    if (!academicYear) setAcademicYear(academicYearFor(value || start?.startDate || "", startMonth));
+    setFieldErrors(current => ({ ...current, startDate: "", endDate: "" }));
+  }
+  function startPeriodChanged(value: string) {
+    setStartPeriodId(value);
+    const next = periods.find(period => period.id === value);
+    if (!academicYear) setAcademicYear(academicYearFor(startDate || next?.startDate || "", startMonth));
+    setFieldErrors(current => ({ ...current, startPeriodId: "" }));
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(pending)return;
-    setNotice("");
-    if(dateInvalid){setNotice("End date cannot be before start date.");return;}
+    setNotice(""); setNoticeIsError(false); setFieldErrors({});
+    if (!programId) { setFieldErrors({ programId: "Select a program" }); return; }
+    if (!name.trim()) { setFieldErrors({ name: "Enter a batch name" }); return; }
+    if (name.length > 255) { setFieldErrors({ name: "Maximum 255 characters" }); return; }
+    if (!validAcademicYear(academicYear)) {
+      setFieldErrors({ academicYear: "Use consecutive years, e.g., 2026-27" }); return;
+    }
+    if (dateInvalid) { setFieldErrors({ endDate: "End date cannot be before start date" }); return; }
     const parsed = createCollegeCohortSchema.safeParse({
       programId, startPeriodId, expectedEndPeriodId: expectedEndPeriodId || null,
       name, code,academicYear:academicYear||null,startDate:startDate||null,endDate:endDate||null,
     });
     if (!parsed.success) {
-      setNotice(parsed.error.issues[0]?.message ?? "Enter valid batch details.");
+      const fields: Record<string, string> = {};
+      for (const issue of parsed.error.issues) fields[String(issue.path[0] ?? "form")] = issue.message;
+      setFieldErrors(fields);
+      setNotice("Batch was not created. Check the highlighted fields.");
+      setNoticeIsError(true);
       return;
     }
     startTransition(async () => {
@@ -80,12 +149,15 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
         await send("POST", "/api/college/batches", parsed.data);
         setName("");
         setCode("");
-        setAcademicYear("");setStartDate("");setEndDate("");
+        setAcademicYear("");setStartDate("");setEndDate(""); setFieldErrors({});
         setExpectedEndPeriodId("");
         setNotice(`Created batch “${parsed.data.name}”. Next, create its classes/sections.`);
+        showToast({ tone: "success", title: `Created batch “${parsed.data.name}”. Next, create its classes/sections.` });
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, "Batch creation failed."));
+        setFieldErrors(cohortErrors(error));
+        setNotice(academicSetupErrorMessage(error, "Batch was not created."));
+        setNoticeIsError(true);
       }
     });
   }
@@ -100,26 +172,34 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
       </p>
       : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-          <Select required value={programId} onChange={e => setProgramId(e.target.value)}
+          <Select value={programId} error={Boolean(fieldErrors.programId)}
+            onChange={e => { setProgramId(e.target.value); setFieldErrors(current => ({ ...current, programId: "" })); }}
             className="min-h-11 md:min-h-9 ">
-            <option value="">Choose program</option>
+            <option value="">Select program</option>
             {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
+          {fieldErrors.programId ? <span role="alert" className="text-xs text-error">{fieldErrors.programId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
-          <Select required value={startPeriodId} onChange={e => setStartPeriodId(e.target.value)}
+          <Select required value={startPeriodId} error={Boolean(fieldErrors.startPeriodId)}
+            onChange={e => startPeriodChanged(e.target.value)}
             className="min-h-11 md:min-h-9 ">
             <option value="">Choose period</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
+          {fieldErrors.startPeriodId ? <span role="alert" className="text-xs text-error">{fieldErrors.startPeriodId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
-          <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+          <Input maxLength={255} value={name} error={Boolean(fieldErrors.name)}
+            onChange={e => { setName(e.target.value); setFieldErrors(current => ({ ...current, name: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
+          {fieldErrors.name ? <span role="alert" className="text-xs text-error">{fieldErrors.name}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch code
-          <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
+          <Input required maxLength={64} value={code} error={Boolean(fieldErrors.code)}
+            onChange={e => { setCode(e.target.value); setFieldErrors(current => ({ ...current, code: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
+          {fieldErrors.code ? <span role="alert" className="text-xs text-error">{fieldErrors.code}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
@@ -129,21 +209,46 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           </Select>
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic Year
-          <Input maxLength={16} value={academicYear} onChange={e=>setAcademicYear(e.target.value)}
-            placeholder="2026–2027" className="min-h-11 min-w-0 md:min-h-9"/>
+          <Input maxLength={7} value={academicYear} error={Boolean(fieldErrors.academicYear)}
+            onChange={e => { setAcademicYear(e.target.value); setFieldErrors(current => ({ ...current, academicYear: "" })); }}
+            placeholder="e.g., 2024-25" className="min-h-11 min-w-0 md:min-h-9"/>
+          {fieldErrors.academicYear ? <span role="alert" className="text-xs text-error">{fieldErrors.academicYear}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
-          <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}
+          <Input type="date" value={startDate} error={Boolean(fieldErrors.startDate)}
+            onChange={e=>startDateChanged(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9"/>
+          {fieldErrors.startDate ? <span role="alert" className="text-xs text-error">{fieldErrors.startDate}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
-          <Input type="date" value={endDate} min={startDate||undefined} onChange={e=>setEndDate(e.target.value)}
+          <Input type="date" value={endDate} min={startDate||start?.startDate||undefined}
+            error={Boolean(fieldErrors.endDate)}
+            onChange={e => { setEndDate(e.target.value); setFieldErrors(current => ({ ...current, endDate: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9"/>
+          {fieldErrors.endDate ? <span role="alert" className="text-xs text-error">{fieldErrors.endDate}</span> : null}
         </label>
         <div className="min-w-0 space-y-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm text-body md:col-span-2">
           <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
-          <p>Academic Year: {year?`${year}–${year+1}`:"Select a start period to see the academic year."}</p>
-          {dateInvalid?<p role="alert" className="text-error">End date cannot be before start date.</p>:null}
+          <div className="flex flex-wrap items-end gap-[var(--lms-space-2)]">
+            <label className="grid min-w-0 gap-[var(--lms-space-1)] text-xs font-semibold">
+              Academic year starts in
+              <Select value={startMonth} onChange={e => {
+                const value = Number(e.target.value);
+                setStartMonth(value);
+                if (programId) {
+                  try { localStorage.setItem("batch-academic-year-start-month:" + programId, String(value)); }
+                  catch { /* Preference is optional. */ }
+                }
+              }} className="min-h-11 md:min-h-9">
+                {MONTHS.map((month, index) => <option key={month} value={index + 1}>{month}</option>)}
+              </Select>
+            </label>
+            <Button type="button" variant="secondary" disabled={!yearSource}
+              onClick={() => setAcademicYear(suggestedYear)}>Recalculate</Button>
+          </div>
+          <p>Academic Year: {suggestedYear || "Select a start period to see the academic year."}</p>
+          <p>New batches start as Planned in vNext. Batch code and starting period are required to track progression.</p>
+          {dateInvalid?<p role="alert" className="text-error">End date cannot be before start date</p>:null}
         </div>
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending||dateInvalid} type="submit" className="w-full md:w-auto"
@@ -152,7 +257,11 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           </Button>
         </div>
       </form>}
-    {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body leading-[22px]">{notice}</p> : null}
+    {notice ? <Alert tone={noticeIsError ? "error" : "success"} className="mt-[var(--lms-space-3)]">
+      <span>{notice}</span>
+      <Button variant="ghost" type="button" className="self-start"
+        onClick={() => { setNotice(""); setNoticeIsError(false); }}>Dismiss</Button>
+    </Alert> : null}
   </Disclosure>;
 }
 
@@ -160,6 +269,10 @@ export function CollegeCohortRowActions({ row, periods }: {
   row: Batch; periods: Option[];
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const studentsHref = (pathname?.startsWith("/admin/") ? "/admin/batches/" : "/college/batches/") +
+    encodeURIComponent(row.id) + "/students";
+  const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [discardConfirm,setDiscardConfirm]=useState(false);
@@ -171,6 +284,7 @@ export function CollegeCohortRowActions({ row, periods }: {
   const [startDate,setStartDate]=useState(row.startDate??"");
   const [endDate,setEndDate]=useState(row.endDate??"");
   const [notice, setNotice] = useState("");
+  const [removeError, setRemoveError] = useState(false);
   const original = {
     name: row.name, code: row.code,
     expectedEndPeriodId: row.expectedEndPeriodId,
@@ -208,9 +322,14 @@ export function CollegeCohortRowActions({ row, periods }: {
           method:"DELETE",headers:{"content-type":"application/json"},
           body:JSON.stringify({expectedUpdatedAt:new Date(row.updatedAt).toISOString(),confirm:true}),
         });
-        setNotice("Batch archived; historical identity preserved.");
+        setNotice(`Archived batch “${row.name}”. Historical records are preserved.`);
+        setRemoveError(false);
+        showToast({ tone: "success", title: `Archived batch “${row.name}”.` });
         router.refresh();
-      }catch(error){setNotice(academicSetupErrorMessage(error, "Batch removal failed."));}
+      }catch(error){
+        setRemoveError(true);
+        setNotice(academicSetupErrorMessage(error, "Batch was not archived."));
+      }
     });
   }
   function close() {
@@ -234,6 +353,7 @@ export function CollegeCohortRowActions({ row, periods }: {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false);setDiscardConfirm(false);
         setNotice(`Updated batch “${parsed.data.name}”.`);
+        showToast({ tone: "success", title: `Updated batch “${parsed.data.name}”.` });
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Batch update failed."));
@@ -248,6 +368,9 @@ export function CollegeCohortRowActions({ row, periods }: {
       >
       Edit
     </Button>
+    <Link href={studentsHref} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      Students
+    </Link>
     <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
       <Menu className="w-full min-w-0">
     {row.status === "ACTIVE" && <MenuItem type="button"
@@ -259,22 +382,27 @@ export function CollegeCohortRowActions({ row, periods }: {
     <MenuItem type="button" disabled={pending || row.status!=="PLANNED" ||
         row.activeSections>0 || row.activeEnrolledLearners>0} onClick={retire}
       title={row.activeSections>0 || row.activeEnrolledLearners>0
-        ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
-        : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
+        ? `Cannot archive while ${row.activeSections} classes and ${row.activeEnrolledLearners} students are linked.`
+        : row.status!=="PLANNED" ? "Only unlinked planned batches may be archived; historical batches remain retained."
+          : "Archive this unlinked planned batch. Records are not physically deleted."}
       >
-      Remove
+      Archive
     </MenuItem>
       </Menu>
     </Dropdown>
     </div>
     <ConfirmDialog open={Boolean(pendingLifecycleAction)}
       onOpenChange={next=>{if(!next)setPendingLifecycleAction(null);}}
-      title={pendingLifecycleAction==="GRADUATE"?"Mark this batch graduated?":"Remove this planned batch?"}
+      title={pendingLifecycleAction==="GRADUATE"?"Mark this batch graduated?":"Archive this planned batch?"}
       description={pendingLifecycleAction==="GRADUATE"
         ? `Mark "${row.name}" graduated? This completes the batch after its final registered semester.`
         : `Remove planned batch "${row.name}"? It will be archived, not physically deleted.`}
-      confirmLabel={pendingLifecycleAction==="GRADUATE"?"Mark graduated":"Remove batch"}
+      confirmLabel={pendingLifecycleAction==="GRADUATE"?"Mark graduated":"Archive batch"}
       pending={pending} onConfirm={pendingLifecycleAction==="GRADUATE"?graduate:retire}/>
+    {removeError ? <Alert tone="error" className="mt-2">
+      <span>{notice || "Batch was not archived."}</span>
+      <Button type="button" variant="secondary" disabled={pending} onClick={retire}>Retry archive</Button>
+    </Alert> : null}
     {blocked ? <p className="mt-1 text-xs text-muted-foreground leading-5">
       &quot;Archived batches cannot be edited.&quot;
     </p> : null}
@@ -282,7 +410,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       title={"Edit Batch " + row.name}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
-        <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation.</p>
+        <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation. Status: {row.status}. Planned batches can be archived only before class or student records exist; active batches may be marked Completed after their final term. The legacy Inactive transition is not supported by this progression model.</p>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
@@ -330,6 +458,6 @@ export function CollegeCohortRowActions({ row, periods }: {
       description="The changes to this batch will be lost."
       confirmLabel="Discard changes" pending={pending}
       onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");}}/>
-    {!editing && notice ? <p role="status" className="mt-1 text-xs text-body leading-5">{notice}</p> : null}
+    {!editing && notice && !removeError ? <p role="status" className="mt-1 text-xs text-body leading-5">{notice}</p> : null}
   </div>;
 }
