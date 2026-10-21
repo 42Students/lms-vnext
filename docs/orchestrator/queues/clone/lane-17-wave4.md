@@ -8,7 +8,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_modules_placements_tpo-offer-lifecycle-service.ts.md` (edit src/modules/placements/tpo-offer-lifecycle-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-4/W3_src_components_placements_super-admin-published-drive-edit.tsx.md` (edit src/components/placements/super-admin-published-drive-edit.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_college-legacy-drive-settings-model.ts.md` (edit src/modules/placements/college-legacy-drive-settings-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_components_tpo_tpo-job-types-editor.tsx.md` (edit src/components/tpo/tpo-job-types-editor.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_components_tpo_tpo-job-types-editor.tsx.md` (edit src/components/tpo/tpo-job-types-editor.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-remind-not-applied-model.ts.md` (edit src/modules/placements/tpo-remind-not-applied-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_components_tpo_recruiter-invite-landing.tsx.md` (edit src/components/tpo/recruiter-invite-landing.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-request-decision-service.ts.md` (edit src/modules/placements/tpo-request-decision-service.ts; 1 findings; best P2)
