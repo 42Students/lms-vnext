@@ -53,21 +53,21 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/BulkSmsAppsServiceImpl.java`
 - [x] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/semesters/SemesterSearchController.java`
 - [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/batches/BatchSearchController.java`
-- [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobApplicationRepository.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Skill.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTemplateCollege.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Organization.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/JobPreferences.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Department.java`
-- [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BaseModel.java`
-- [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoSettingsController.java`
-- [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoBatchesController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TelegramWebhookController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ResourceUploadController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCompanyJoinController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/JobController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/reassign-mentor.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/index.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/LectureHalls.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin-login.js`
-- [ ] U032 (Cross-cutting area) `cross/06: Files, uploads, media, documents, storage rules, size and type limits, virus scanning, signed URLs`
+- [x] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobApplicationRepository.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Skill.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTemplateCollege.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Organization.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/JobPreferences.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Department.java`
+- [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BaseModel.java`
+- [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoSettingsController.java`
+- [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoBatchesController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/TelegramWebhookController.java`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ResourceUploadController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCompanyJoinController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/JobController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/reassign-mentor.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/index.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/LectureHalls.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin-login.js`
+- [x] U032 (Cross-cutting area) `cross/06: Files, uploads, media, documents, storage rules, size and type limits, virus scanning, signed URLs`
