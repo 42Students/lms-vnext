@@ -1,5 +1,7 @@
 import Link from "next/link";
 import {TrackerIssueCopyActions} from "@/components/tracker/tracker-issue-copy-actions";
+import {TrackerReporterIssueDetail} from "@/components/tracker/tracker-reporter-issue-detail";
+import {Alert} from "@/components/ui/alert";
 import {TrackerIssueLogsPanel} from "@/components/tracker/tracker-issue-logs-panel";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -9,7 +11,7 @@ import {
   type TrackerWorkflowIssue,
 } from "@/components/tracker/tracker-workflow-panel";
 import { PageHeader } from "@/components/ui/page-header";
-import { PageBackLink } from "@/components/ui/page-back-link";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ThirdPartyLink } from "@/components/ui/third-party-link";
@@ -43,29 +45,39 @@ export default async function TrackerIssueDetailPage({
   auditMode?: boolean;
 }) {
   const context = await getCurrentRequestContext();
-  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
+  if (context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   const { publicId } = await params;
   if (!trackerPublicIdSchema.safeParse(publicId).success) notFound();
-  const cursor = parseTrackerActivityCursorParams(searchParams ? await searchParams : {});
-  if (!cursor) notFound();
-
   if (!trackerAdminRuntimeEnabled()) {
     return (
       <div className="min-w-0 space-y-4">
         <PageHeader title={publicId} description="The tracker is temporarily unavailable." />
-        <TrackerAdminNav />
+        {isSuperAdmin(context)?<TrackerAdminNav/>:null}
         <ErrorState title="Issue details unavailable"
           description="We could not load tracker details right now. Please try again later." />
       </div>
     );
   }
 
+  if (!isSuperAdmin(context)) {
+    return <TrackerReporterIssueDetail context={context} publicId={publicId}/>;
+  }
+  const cursor = parseTrackerActivityCursorParams(searchParams ? await searchParams : {});
+  if (!cursor) notFound();
+
   let detail;
   try {
     detail = await getBugTrackerIssueForAdmin(context, publicId, cursor);
   } catch (error) {
     if (error instanceof TrackerAdminError && error.code === "ISSUE_NOT_FOUND") notFound();
-    throw error;
+    if (error instanceof AuthorizationError || (error instanceof TrackerAdminError && error.code==="FORBIDDEN")) throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title={publicId} description="Issue could not be loaded." />
+      <TrackerAdminNav />
+      <ErrorState title="Issue could not be loaded."
+        description="The issue details could not be refreshed. The report was not modified."
+        action={<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="font-semibold text-link underline underline-offset-4">Retry issue</Link>} />
+    </div>;
   }
 
   const issue = detail.report;
@@ -136,12 +148,13 @@ export default async function TrackerIssueDetailPage({
       <TrackerWorkflowPanel issue={workflow} />
       <TrackerIssueLogsPanel publicId={issue.publicId}/>
 
-      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+      {detail.activityUnavailable ? <Alert tone="warning" title="Activity could not be loaded">
+        Workflow events are temporarily unavailable; the issue details are still visible.
+        {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="font-semibold underline underline-offset-4">Retry activity</Link>
+      </Alert> : null}
+      {!detail.activityUnavailable && detail.activities.length>0 ? <details open className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-foreground md:min-h-9">Activity</summary>
-        {detail.activities.length === 0 ? (
-          <p className="border-y border-border py-4 text-sm text-muted-foreground">No workflow history yet.</p>
-        ) : (
-          <ol className="divide-y divide-border border-y border-border">
+        <ol className="divide-y divide-border border-y border-border">
             {detail.activities.map((activity) => (
               <li key={activity.id} className="py-4">
                 <p className="m-0 text-sm font-semibold text-foreground">{activity.type}</p>
@@ -154,8 +167,7 @@ export default async function TrackerIssueDetailPage({
                 </p>
               </li>
             ))}
-          </ol>
-        )}
+        </ol>
         {detail.nextActivityCursor ? (
           <Link href={(auditMode ? "/tracker/audit-findings/" : "/tracker/issues/") + encodeURIComponent(publicId) + "?" + new URLSearchParams({
             ...detail.nextActivityCursor,
@@ -167,8 +179,12 @@ export default async function TrackerIssueDetailPage({
             Older audit events
           </Link>
         ) : null}
-      </details>
-      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+      </details> : null}
+      {detail.attachmentsUnavailable ? <Alert tone="warning" title="Screenshots could not be loaded right now.">
+        Screenshot metadata could not be refreshed. The issue and activity remain available.
+        {" "}<Link href={"/tracker/issues/"+encodeURIComponent(publicId)} className="font-semibold underline underline-offset-4">Retry screenshots</Link>
+      </Alert> : null}
+      {!detail.attachmentsUnavailable ? <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-foreground md:min-h-9">Screenshots</summary>
         {detail.attachments.length === 0 ? (
           <p className="border-y border-border py-4 text-sm text-muted-foreground">No screenshot metadata.</p>
@@ -195,7 +211,7 @@ export default async function TrackerIssueDetailPage({
             Older screenshot metadata
           </Link>
         ) : null}
-      </details>
+      </details> : null}
 
     </div>
   );
