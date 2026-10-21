@@ -523,18 +523,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/tpo/tpo-my-notification-preferences-editor.tsx`
 - [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-acknowledge.tsx`
+- [x] `src/components/tpo/tpo-notice-acknowledge.tsx`
 - [ ] `src/components/tpo/tpo-notice-audience-picker.tsx`
-- [ ] `src/components/tpo/tpo-notice-composer-dialog.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-notice-draft-guard.tsx`
-- [ ] `src/components/tpo/tpo-notice-read-progress.tsx`
-- [ ] `src/components/tpo/tpo-notice-schedule-controls.tsx`
-- [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`
-- [ ] `src/components/tpo/tpo-notification-refresh.tsx`
-- [ ] `src/components/tpo/tpo-optional-emails-editor.tsx`
-- [ ] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-placement-cell-read-action.tsx`
+- [x] `src/components/tpo/tpo-notice-composer-dialog.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-notice-draft-guard.tsx`
+- [x] `src/components/tpo/tpo-notice-read-progress.tsx`
+- [x] `src/components/tpo/tpo-notice-schedule-controls.tsx`
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
+- [x] `src/components/tpo/tpo-notification-refresh.tsx`
+- [x] `src/components/tpo/tpo-optional-emails-editor.tsx`
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- [x] `src/components/tpo/tpo-placement-cell-read-action.tsx`
 - [ ] `src/components/tpo/tpo-prep-percentage-editor.tsx`
 - [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
 - [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`

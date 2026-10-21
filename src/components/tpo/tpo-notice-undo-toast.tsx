@@ -24,7 +24,7 @@ export function TpoNoticeUndoToast({id,version,createdAt}:{
  },[]);
  const createdMs=Date.parse(createdAt);
  if(!Number.isFinite(createdMs))return null;
- if(now===null)return <p role="status" className="min-w-0 border-l-4 border-primary bg-surface px-4 py-3 text-sm leading-5 text-body">Announcement saved. Undo is available for 30 seconds.</p>;
+ if(now===null)return <p role="status" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-l-4 border-info bg-surface px-4 py-3 text-[14px] leading-5 text-body shadow-[var(--lms-toast-shadow)]">Announcement saved. Undo is available for 30 seconds.</p>;
  const remaining=Math.max(0,30000-(now-createdMs));
  if(!Number.isFinite(remaining)||remaining<=0)return null;
  return <ToastAction tone="info" title={"Announcement saved. Undo send ("+Math.ceil(remaining/1000)+"s remaining)."}>
