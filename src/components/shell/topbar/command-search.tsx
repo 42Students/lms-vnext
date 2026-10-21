@@ -7,7 +7,7 @@ import {PopoverListbox} from "@/components/ui/popover";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ShellNavItem } from "../shell-model";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 
 type LearnerCourse = { deliveryId: string; courseName: string; courseCode: string; sectionName: string };
 import { topbarCommands, topbarConfigForPath, topbarSearchDestinations } from "./portal-config";
@@ -21,7 +21,8 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   const config = topbarConfigForPath(pathname);
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
-  const [courseError, setCourseError] = useState(false);
+  const [courseError, setCourseError] = useState<string | null>(null);
+  const [queryError, setQueryError] = useState("");
   const [courseLoading, setCourseLoading] = useState(config.portal === "learn");
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -45,10 +46,17 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           typeof row.courseCode === "string" &&
           typeof row.sectionName === "string",
         ));
-        setCourseError(false);
+        setCourseError(null);
         setCourseLoading(false);
       })
-      .catch(() => { if (!cancelled) { setCourseError(true); setCourseLoading(false); } });
+      .catch(error => {
+        if (!cancelled) {
+          setCourseError(error instanceof FriendlyFetchError && error.status===401
+            ? "Authentication required"
+            : "Could not load courses. Search shortcuts remain available.");
+          setCourseLoading(false);
+        }
+      });
     return () => { cancelled = true; };
   }, [config.portal]);
   const courseMatches = useMemo(() => {
@@ -97,6 +105,11 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
   }, [open]);
 
   function submit() {
+    if (query.trim().length > 200) {
+      setQueryError("Query length must not exceed 200");
+      setOpen(true);
+      return;
+    }
     if (query.trim() && courseMatches[0]) {
       router.push("/learn/courses/" + encodeURIComponent(courseMatches[0].deliveryId) + "/home");
     } else if (matches[0]) {
@@ -125,12 +138,20 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           <SearchIcon />
         </Button>
         <label className="sr-only" htmlFor="lms-topbar-command-search">Search workspace</label>
-        <Input id="lms-topbar-command-search" ref={input} type="search" value={query}
+        <Input id="lms-topbar-command-search" ref={input} type="search" value={query} maxLength={200}
           autoComplete="off" role="combobox" aria-haspopup="listbox" aria-keyshortcuts="Control+K Meta+K"
           aria-controls={open ? "lms-topbar-command-results" : undefined} aria-expanded={open} aria-describedby="lms-topbar-command-key-help"
           placeholder={config.placeholder} className={style.searchInput}
           onFocus={() => { setOpen(true); setMobileOpen(true); }}
-          onChange={event => { setQuery(event.target.value); setOpen(true); }}
+          onChange={event => {
+            if (event.target.value.length>200) {
+              setQueryError("Query length must not exceed 200");
+            } else {
+              setQueryError("");
+              setQuery(event.target.value);
+            }
+            setOpen(true);
+          }}
           onKeyDown={event => {
             if (event.key === "Enter") { event.preventDefault(); submit(); }
             if ((event.key === "ArrowDown" || event.key === "ArrowUp") && open) {
@@ -164,7 +185,7 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
           if (!event.ctrlKey && !event.metaKey && !event.altKey &&
               event.key.length === 1) {
             event.preventDefault();
-            setQuery(value => (value + event.key).slice(0, 100));
+            setQuery(value => (value + event.key).slice(0, 200));
             input.current?.focus();
             return;
           }
@@ -182,8 +203,9 @@ export function TopbarCommandSearch({ items }: { items: readonly ShellNavItem[] 
         }}>
                 {config.portal === "learn" && courseLoading ?
           <p role="status" className="px-2 py-2 text-xs text-muted-foreground leading-[20px]">Loading your courses…</p> : null}
+        {queryError ? <p role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">{queryError}</p> : null}
         {config.portal === "learn" && courseError ?
-          <p role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">Could not load courses. Search shortcuts remain available.</p> : null}
+          <p role="alert" className="px-2 py-2 text-xs text-error leading-[20px]">{courseError}</p> : null}
         {courseMatches.length > 0 ? <p className="border-t border-[var(--lms-canvas-border)] px-2 pt-2 text-[length:var(--lms-topbar-caption-size,11px)] font-semibold uppercase tracking-wide text-muted-foreground">Courses</p> : null}
         {courseMatches.map(course => <Link key={course.deliveryId}
           role="option" aria-selected={false}
