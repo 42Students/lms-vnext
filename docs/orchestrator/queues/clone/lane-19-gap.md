@@ -46,8 +46,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/calendar.js`
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/attendance.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/courses/[id].js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/PdfViewerModal.jsx`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/AbsentPresntBtnCol.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/PdfViewerModal.jsx`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/AbsentPresntBtnCol.js`
 - [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoEmailCampaignService.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/JobAutoExpiryService.java`
 - [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/LearnerSavedJobService.java`
