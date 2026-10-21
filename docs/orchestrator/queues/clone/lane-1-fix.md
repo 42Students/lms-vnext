@@ -1,0 +1,78 @@
+# Gap FIX queue: lane chat-1
+
+64 audit documents, 2335 open items (GAP/MISSING). Documents are sorted so the ones with the most P0/P1 items come first.
+
+This is a CODE job now. For EACH document below, read it (facet table rows whose Verdict is GAP or MISSING) and implement every fix so vNext matches the old LMS, strictly one document at a time:
+1. Work P0 rows first, then P1, then P2, then P3, but finish the whole document before moving on.
+2. Make the change in vNext code (src/app, src/modules, src/components, src/db schema plus a drizzle migration where a table or column is needed). Match old LMS wording, layout, validation, permissions and behaviour exactly; wording parity is mandatory (docs/audit/legacy-copy-A.md and B.md).
+3. Keep intentional vNext decisions: one workspace per role, college x role switcher, membership model (rows marked EXTRA or described as intentional are NOT to be undone). When a row is UNKNOWN or the fix would break the membership model, write a one-line note in the proof file and skip it.
+4. Rows touching shared components or shared files may conflict with other lanes: keep edits small and local, never reformat files, never rename shared exports.
+5. TypeScript strict, valid syntax (you cannot run code, so re-read every edited file for matching tags and imports), no new packages, no CI.
+6. After each document: tick [x] here, append to docs/audit/gap-fix/lane-1.md one entry per document (document | rows fixed | rows skipped and why | files changed), and push to chatgpt/chat-1-b with [chat-1] after every 2 documents (git fetch first; on conflict keep the other lane's lines and re-apply yours).
+
+Documents:
+
+- [ ] `docs/audit/gap2/lane-11/recruiter-drives-jobid.md` (P0:6 P1:12 P2:48 P3:2 open:68)
+- [ ] `docs/audit/gap2/lane-11/recruiter-drives-new.md` (P0:4 P1:23 P2:62 P3:2 open:91)
+- [ ] `docs/audit/gap2/lane-11/l17-u026-notification-controller.md` (P0:2 P1:21 P2:13 P3:0 open:36)
+- [ ] `docs/audit/gap2/lane-11/l17-u030-drives-landing.md` (P0:2 P1:18 P2:29 P3:1 open:50)
+- [ ] `docs/audit/gap2/lane-11/l15-u022-tpo-recruiter-access-controller.md` (P0:2 P1:6 P2:25 P3:1 open:34)
+- [ ] `docs/audit/gap2/lane-11/l19-u027-course-controller.md` (P0:1 P1:26 P2:22 P3:0 open:49)
+- [ ] `docs/audit/gap2/lane-11/l18-u023-learner-eligibility-controller.md` (P0:1 P1:21 P2:13 P3:0 open:35)
+- [ ] `docs/audit/gap2/lane-11/l19-u024-super-admin-announcement-controller.md` (P0:1 P1:14 P2:23 P3:0 open:38)
+- [ ] `docs/audit/gap2/lane-1/l18-u025-public-tracker-logs-access.md` (P0:1 P1:4 P2:11 P3:5 open:21)
+- [ ] `docs/audit/gap2/lane-11/tpo-drives-jobid-edit.md` (P0:0 P1:41 P2:63 P3:2 open:106)
+- [ ] `docs/audit/gap2/lane-11/tpo-drive-day-roundid.md` (P0:0 P1:31 P2:43 P3:2 open:76)
+- [ ] `docs/audit/gap2/lane-11/tpo-drives-jobid.md` (P0:0 P1:23 P2:59 P3:0 open:82)
+- [ ] `docs/audit/gap2/lane-1/l19-u031-cross-messaging.md` (P0:0 P1:25 P2:29 P3:22 open:76)
+- [ ] `docs/audit/gap2/lane-11/tpo-announcements.md` (P0:0 P1:19 P2:74 P3:1 open:94)
+- [ ] `docs/audit/gap2/lane-11/tpo-drives-new.md` (P0:0 P1:21 P2:46 P3:2 open:69)
+- [ ] `docs/audit/gap2/lane-1/l12-u030-interview-form.md` (P0:0 P1:18 P2:23 P3:8 open:49)
+- [ ] `docs/audit/gap2/lane-11/tpo-audit.md` (P0:0 P1:16 P2:36 P3:2 open:54)
+- [ ] `docs/audit/gap2/lane-1/learner-placement-profile-controller.md` (P0:0 P1:17 P2:18 P3:0 open:35)
+- [ ] `docs/audit/gap2/lane-1/college-admin-profile.md` (P0:0 P1:15 P2:30 P3:9 open:54)
+- [ ] `docs/audit/gap2/lane-1/auth-controller.md` (P0:0 P1:14 P2:31 P3:0 open:45)
+- [ ] `docs/audit/gap2/lane-11/tpo-companies.md` (P0:0 P1:13 P2:41 P3:4 open:58)
+- [ ] `docs/audit/gap2/lane-1/learner-profile-controller.md` (P0:0 P1:12 P2:38 P3:1 open:51)
+- [ ] `docs/audit/gap2/lane-1/l12-u022-tpo-results-controller.md` (P0:0 P1:13 P2:25 P3:4 open:42)
+- [ ] `docs/audit/gap2/lane-1/company-share-token.md` (P0:0 P1:13 P2:23 P3:6 open:42)
+- [ ] `docs/audit/gap2/lane-1/recruiter-invite-token.md` (P0:0 P1:14 P2:12 P3:3 open:29)
+- [ ] `docs/audit/gap2/lane-1/faculty-profile-controller.md` (P0:0 P1:11 P2:37 P3:2 open:50)
+- [ ] `docs/audit/gap2/lane-1/user-controller.md` (P0:0 P1:9 P2:49 P3:7 open:65)
+- [ ] `docs/audit/gap2/lane-1/login.md` (P0:0 P1:11 P2:25 P3:5 open:41)
+- [ ] `docs/audit/gap2/lane-1/job-preferences-dto.md` (P0:0 P1:11 P2:20 P3:2 open:33)
+- [ ] `docs/audit/gap2/lane-1/recruiter-email-login-start-request.md` (P0:0 P1:11 P2:18 P3:5 open:34)
+- [ ] `docs/audit/gap2/lane-1/public-mobile-auth-controller.md` (P0:0 P1:9 P2:27 P3:0 open:36)
+- [ ] `docs/audit/gap2/lane-1/l18-u015-class-entity.md` (P0:0 P1:10 P2:15 P3:1 open:26)
+- [ ] `docs/audit/gap2/lane-1/admin-user-lifecycle-controller.md` (P0:0 P1:9 P2:22 P3:0 open:31)
+- [ ] `docs/audit/gap2/lane-1/profile-verification-controller.md` (P0:0 P1:8 P2:28 P3:0 open:36)
+- [ ] `docs/audit/gap2/lane-1/l19-u021-apply-to-job-request.md` (P0:0 P1:9 P2:16 P3:6 open:31)
+- [ ] `docs/audit/gap2/lane-1/l17-u025-quiz-controller.md` (P0:0 P1:7 P2:20 P3:6 open:33)
+- [ ] `docs/audit/gap2/lane-1/l13-u027-faculty-lesson-content-controller.md` (P0:0 P1:7 P2:18 P3:6 open:31)
+- [ ] `docs/audit/gap2/lane-1/cross-auth.md` (P0:0 P1:7 P2:14 P3:3 open:24)
+- [ ] `docs/audit/gap2/lane-1/l14-u024-superadmin-feature-controller.md` (P0:0 P1:7 P2:13 P3:4 open:24)
+- [ ] `docs/audit/gap2/lane-1/l11-u031-cross-forms.md` (P0:0 P1:6 P2:17 P3:3 open:26)
+- [ ] `docs/audit/gap2/lane-1/learner-profile.md` (P0:0 P1:5 P2:19 P3:2 open:26)
+- [ ] `docs/audit/gap2/lane-1/recruiter-profile.md` (P0:0 P1:4 P2:26 P3:5 open:35)
+- [ ] `docs/audit/gap2/lane-1/super-admin-user-admin-controller.md` (P0:0 P1:3 P2:29 P3:0 open:32)
+- [ ] `docs/audit/gap2/lane-1/auth-handoff-page.md` (P0:0 P1:3 P2:20 P3:9 open:32)
+- [ ] `docs/audit/gap2/lane-1/auth-handoff-token.md` (P0:0 P1:3 P2:18 P3:0 open:21)
+- [ ] `docs/audit/gap2/lane-1/log-alert-signature-account.md` (P0:0 P1:4 P2:8 P3:0 open:12)
+- [ ] `docs/audit/gap2/lane-1/l15-u019-industry-company.md` (P0:0 P1:3 P2:16 P3:2 open:21)
+- [ ] `docs/audit/gap2/lane-1/l12-u013-notification-search.md` (P0:0 P1:3 P2:12 P3:5 open:20)
+- [ ] `docs/audit/gap2/lane-1/company-join-token.md` (P0:0 P1:1 P2:15 P3:4 open:20)
+- [ ] `docs/audit/gap2/lane-1/cross-graceful-states.md` (P0:0 P1:0 P2:25 P3:10 open:35)
+- [ ] `docs/audit/gap2/lane-1/mobile-auth-email-fallback-send-request.md` (P0:0 P1:1 P2:15 P3:1 open:17)
+- [ ] `docs/audit/gap2/lane-1/college-join-token.md` (P0:0 P1:1 P2:12 P3:4 open:17)
+- [ ] `docs/audit/gap2/lane-1/mobile-login-attempt.md` (P0:0 P1:1 P2:12 P3:1 open:14)
+- [ ] `docs/audit/gap2/lane-1/l15-u029-superadmin-semesters.md` (P0:0 P1:0 P2:19 P3:7 open:26)
+- [ ] `docs/audit/gap2/lane-1/user.md` (P0:0 P1:0 P2:14 P3:1 open:15)
+- [ ] `docs/audit/gap2/lane-1/email-verification-token-repository.md` (P0:0 P1:0 P2:12 P3:3 open:15)
+- [ ] `docs/audit/gap2/lane-1/email-verification-token.md` (P0:0 P1:0 P2:11 P3:2 open:13)
+- [ ] `docs/audit/gap2/lane-1/refresh-token-blocklist.md` (P0:0 P1:0 P2:9 P3:3 open:12)
+- [ ] `docs/audit/gap2/lane-1/campaign-unsubscribe-token.md` (P0:0 P1:0 P2:7 P3:3 open:10)
+- [ ] `docs/audit/gap2/lane-1/public-e2e-auth-controller.md` (P0:0 P1:0 P2:6 P3:6 open:12)
+- [ ] `docs/audit/gap2/lane-1/user-session.md` (P0:0 P1:0 P2:3 P3:4 open:7)
+- [ ] `docs/audit/gap2/lane-1/login-user.md` (P0:0 P1:0 P2:2 P3:3 open:5)
+- [ ] `docs/audit/gap2/lane-1/auth-token.md` (P0:0 P1:0 P2:1 P3:2 open:3)
+- [ ] `docs/audit/gap2/lane-1/e2e-superadmin-login.md` (P0:0 P1:0 P2:1 P3:9 open:10)
