@@ -109,14 +109,21 @@ export default async function ActivityPage({
   const today=istDay(new Date());
   const ago=(days:number)=>istDay(new Date(currentTimeMs()-days*86400000));
   const range=one(params.range);
+  const rawMode=one(params.mode)==="raw" && isSuperAdmin(context);
+  const rawSize=one(params.size);
+  const pageSize=rawMode && (rawSize==="50"||rawSize==="100")?Number(rawSize):25;
+  const selectedRange=range==="today"||range==="7d"||range==="30d"?range:
+    range==="ALL"?"all":"30d";
   // Raw forensic lookups default to all-time, as in legacy Audit Logs.
   // The Important activity feed still defaults to the last 30 IST days.
   const forensicLookup=selectedPreset==="all" && Boolean(
     one(params.actorUserId)||one(params.actorName)||one(params.eventType)||
     one(params.subjectType)||one(params.subjectId)||one(params.q));
-  const defaultFrom=!one(params.from)&&!one(params.to)&&
-    range!=="ALL"&&!forensicLookup?ago(29):one(params.from);
-  const quick=(from?:string,to?:string,view:PresetName=selectedPreset)=>{
+  const defaultFrom=one(params.from)??(!one(params.to)&&!forensicLookup?
+    range==="ALL"?undefined:
+    range==="today"?today:range==="7d"?ago(6):ago(29):undefined);
+  const quick=(from?:string,to?:string,view:PresetName=selectedPreset,
+    rangeKey:string|undefined=range)=>{
    const q=new URLSearchParams({
     ...(from?{from}:{}),...(to?{to}:{}),
     ...(!from&&!to?{range:"ALL"}:rangeKey?{range:rangeKey}:{}),
@@ -513,7 +520,7 @@ export default async function ActivityPage({
       </form>
       </details>
 
-      {selectedPreset==="all" && isSuperAdmin(context) ? (
+      {rawMode ? (
         <section aria-labelledby="raw-audit-log" className="min-w-0 space-y-3">
           <h2 id="raw-audit-log" className="text-lg font-semibold text-[var(--lms-heading)]">Audit Logs</h2>
           <p className="text-sm text-muted-foreground">
@@ -536,7 +543,7 @@ export default async function ActivityPage({
                     <td className="px-3 py-3">{actor?.displayName??"System"}</td>
                     <td className="max-w-[320px] px-3 py-3">{event.summary}</td>
                     <td className="max-w-[220px] break-words px-3 py-3">{event.subjectLabel??event.subjectId}</td>
-                    <td className="break-all px-3 py-3">{event.legacyActionKey??event.eventType}</td>
+                    <td className="break-all px-3 py-3">{event.eventType}</td>
                     <td className="px-3 py-3 text-muted-foreground">—</td>
                   </tr>
                 ))}

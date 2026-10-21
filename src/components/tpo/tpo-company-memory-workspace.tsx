@@ -12,6 +12,7 @@ import chartStyles from "./legacy-company-bar.module.css";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
+import {TpoPublicJoinLinkCard} from "./tpo-public-join-link-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Dropdown} from "@/components/ui/dropdown";
 import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
@@ -273,6 +274,8 @@ export function TpoCompanyMemoryWorkspace({
       {company.studentsHired == null ? (
         <div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-muted-foreground">
           Students-placed counts are unavailable for this college&apos;s selected placement rule. No estimated zero is shown.
+          <Button variant="secondary" type="button" disabled={phase!=="ready"}
+            onClick={retry} className="ml-3 min-h-11 md:min-h-9">Retry counts</Button>
         </div>
       ) : null}
 
@@ -292,6 +295,16 @@ export function TpoCompanyMemoryWorkspace({
           </ul>
         </section>
       ):null}
+      {company.canonicalCompanyId?<section aria-label="Company link and access" className="border-b border-border py-4">
+        <TpoPublicJoinLinkCard key={company.canonicalCompanyId} scope="COMPANY"
+          companyId={company.canonicalCompanyId} companyName={company.name}
+          initial={{ready:false,domain:null,link:null}}/>
+        <p className="mt-2 text-xs text-muted-foreground">Company trust and drive-review policy are controlled through the linked college company record.</p>
+        <Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
+          href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
+          Trust and review settings
+        </Link>
+      </section>:null}
       {company.canonicalCompanyId?<TpoCompanyTeamConversation
         companyId={company.canonicalCompanyId} companyName={company.name}
         actorMembershipId={actorMembershipId}/>:<p role="status" className="text-sm text-body">
