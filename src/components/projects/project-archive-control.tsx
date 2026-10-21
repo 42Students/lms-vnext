@@ -48,11 +48,12 @@ export function ProjectArchiveControl({
           "The workspace remains available for review.",
       });
       router.refresh();
-    } catch {
+    } catch (error) {
+      const detail=error instanceof Error&&error.message.trim()?error.message:
+        "Failed to archive workspace";
       showToast({
-        tone: "error",
-        title: "Could not archive project",
-        description: "This changed while you were working. Refresh and try again.",
+        tone:"error",title:"Failed to archive workspace",
+        description:detail+" Refresh and retry if this workspace changed.",
       });
     } finally {
       inFlight.current=false;
@@ -73,8 +74,10 @@ export function ProjectArchiveControl({
       setOpen(false);
       showToast({ tone: "success", title: "Workspace restored" });
       router.refresh();
-    } catch {
-      showToast({ tone: "error", title: "Failed to restore workspace" });
+    } catch(error) {
+      showToast({tone:"error",title:"Failed to restore workspace",
+        description:error instanceof Error?error.message:
+          "Workspace could not be restored. Refresh and retry."});
     } finally {
       inFlight.current=false;
       setPending(false);
@@ -126,19 +129,21 @@ export function ProjectArchiveControl({
       <Dialog
         open={open}
         onOpenChange={onDialogOpenChange}
-        title="Archive project?"
-        description={`${projectTitle} will be marked archived. The workspace remains accessible for review, but execution mutations are blocked.`}
+        title="Archive this workspace?"
+        description={`${projectTitle} will be archived. The workspace remains accessible for review.`}
         footer={
           <div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
             <Button className="w-full sm:w-auto" variant="secondary" disabled={pending} onClick={() => onDialogOpenChange(false)}>Cancel</Button>
             <Button className="w-full sm:w-auto" loading={pending} disabled={pending} onClick={() => void archive()}>
-              {pending ? "Archiving…" : "Archive project"}
+              {pending ? "Archiving…" : "Archive workspace"}
             </Button>
           </div>
         }
       >
         <p className="m-0 max-w-prose break-words border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-base)] leading-5 text-[var(--lms-body-text)]">
-          This is an archive action, not the separate recoverable-delete workflow.
+          Archiving does not delete the workspace. To move this workspace to
+          Deleted workspaces, use the separate Delete control. Archived content
+          remains available for authorized review and later restoration.
         </p>
       </Dialog>
       <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
