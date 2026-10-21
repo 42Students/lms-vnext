@@ -1,5 +1,7 @@
 import { redirect,notFound } from "next/navigation";
 import {z} from "zod";
+import {Banner} from "@/components/ui/banner";
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseWorkspace } from "@/components/courses/faculty-course-workspace";
 import { getFacultyCourseWorkspace } from "@/modules/courses/faculty-course-service";
@@ -11,33 +13,62 @@ export default async function FacultyCourseTabPage({
   params,searchParams,
 }: {
   params: Promise<{ deliveryId: string; courseTab: string[] }>;
-  searchParams:Promise<{filter?:string;lesson?:string}>;
+  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
   const { deliveryId, courseTab } = await params;
   const query=await searchParams;
-  const requestedFilter=query.filter?.toUpperCase();
-  const filter=(["ALL","LECTURES","RESOURCES","ASSESSMENTS","LIVE"].includes(requestedFilter??"")?
-    requestedFilter:"ALL") as "ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
-  if (courseTab.length !== 1 || (courseTab[0] !== "home" && courseTab[0] !== "blueprint")) {
-    redirect(facultyCourseTabHref(deliveryId, "home"));
-  }
+  const requestedFilter=typeof query.filter==="string"?query.filter.toUpperCase():"";
+  const normalizedFilter=requestedFilter==="LIVE-SESSIONS"?"LIVE":requestedFilter;
+  const filter=(["ALL","LECTURES","RESOURCES","ASSESSMENTS","LIVE"].includes(normalizedFilter)?
+    normalizedFilter:"ALL") as "ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
   const context = await getCurrentRequestContext();
+  // A malformed or foreign delivery must not be redirected before the
+  // active Faculty membership and teaching assignment are verified.
   const workspace = await getFacultyCourseWorkspace(context, deliveryId);
-  const lessonId=courseTab[0]==="blueprint"&&query.lesson?query.lesson:null;
-  if(lessonId&&(!z.string().uuid().safeParse(lessonId).success||
-    !workspace.lessons.some(lesson=>lesson.id===lessonId)))notFound();
-  const [homeSignals, display] = await Promise.all([
+  const requestedLesson=typeof query.lesson==="string"?query.lesson:null;
+  const requestedContent=typeof query.content==="string"?query.content:null;
+  if(requestedLesson&&!z.string().uuid().safeParse(requestedLesson).success)notFound();
+  if(requestedContent&&!z.string().uuid().safeParse(requestedContent).success)notFound();
+  const owningLesson=requestedContent?workspace.lessons.find(lesson=>
+    lesson.contents.some(content=>content.id===requestedContent)):null;
+  if(requestedContent&&!owningLesson)notFound();
+  const lessonId=requestedLesson??owningLesson?.id??null;
+  if(lessonId&&!workspace.lessons.some(lesson=>lesson.id===lessonId))notFound();
+  if(requestedLesson&&owningLesson&&requestedLesson!==owningLesson.id)notFound();
+  if (courseTab.length !== 1 || (courseTab[0] !== "home" && courseTab[0] !== "blueprint")) {
+    const safe=new URLSearchParams();
+    if(filter!=="ALL")safe.set("filter",filter);
+    if(lessonId)safe.set("lesson",lessonId);
+    if(requestedContent)safe.set("content",requestedContent);
+    redirect(facultyCourseTabHref(deliveryId,"home")+(safe.size?"?"+safe.toString():""));
+  }
+  const [homeSignals, displayResult] = await Promise.all([
     getFacultyCourseHomeSignals(context, workspace),
-    loadCourseDisplayContentIfReady(workspace.course.courseId),
+    loadCourseDisplayContentIfReady(workspace.course.courseId)
+      .then(data=>({data,failed:false}))
+      .catch(()=>({data:null,failed:true})),
   ]);
   return (
-    <FacultyCourseWorkspace
-      workspace={workspace}
-      homeSignals={homeSignals}
-      display={display}
-      view={courseTab[0] === "home" ? "OVERVIEW" : "BLUEPRINT"}
-      contentFilter={filter}
-      selectedLessonId={lessonId}
-    />
+    <div className="min-w-0 space-y-4">
+      {displayResult.failed ? <Banner tone="warning" role="alert">
+        Failed to load course details.
+        <Link href={facultyCourseTabHref(deliveryId,courseTab[0] as "home"|"blueprint")}
+          className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Try again
+        </Link>
+      </Banner> : null}
+      {requestedContent ? <Banner tone="info" role="status">
+        This content belongs to the selected lesson. Open the lesson's content list to review the item.
+        Automatic content highlighting is not yet available.
+      </Banner> : null}
+      <FacultyCourseWorkspace
+        workspace={workspace}
+        homeSignals={homeSignals}
+        display={displayResult.data}
+        view={courseTab[0] === "home" ? "OVERVIEW" : "BLUEPRINT"}
+        contentFilter={filter}
+        selectedLessonId={lessonId}
+      />
+    </div>
   );
 }
