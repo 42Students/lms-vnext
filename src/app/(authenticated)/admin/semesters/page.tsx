@@ -1,4 +1,5 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
+import { SemesterRefreshBoundary } from "@/components/admin/semester-refresh-boundary";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -61,22 +62,28 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </div>;
   }
 
+  const directoryScope=[context.user.id,context.membership?.id??"no-membership",context.adminScope.collegeId,JSON.stringify(parsed.data)].join(":");
   const result=await listCollegeSemesters(context,parsed.data)
     .then(value=>({ok:true as const,value}))
     .catch(error=>({ok:false as const,reason:error instanceof Error?error.message:"SEMESTERS_UNAVAILABLE"}));
   if(!result.ok){
-    return <div className="min-w-0 max-w-full space-y-4">
+    return <SemesterRefreshBoundary key={directoryScope} scopeKey={directoryScope}
+      failed retryHref={pageHref(parsed.data)}>
+      <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Semesters" />
       <ErrorState title={result.reason==="PROGRAMS_UNAVAILABLE"?"Programs unavailable":"Semesters unavailable"}
         description={result.reason==="PROGRAMS_UNAVAILABLE"
           ?"Programs could not be loaded. Retry the program lookup before creating a semester."
           :"The semester directory could not be loaded. Your filters were not changed."}
         action={<Link href={pageHref(parsed.data)}
-          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading semesters</Link>}/>
-    </div>;
+          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">{result.reason==="PROGRAMS_UNAVAILABLE"?"Retry loading programs":"Retry loading semesters"}</Link>}/>
+      </div>
+    </SemesterRefreshBoundary>;
   }
   const data=result.value;
-  return <div className="min-w-0 space-y-4 md:space-y-6">
+  return <SemesterRefreshBoundary key={directoryScope} scopeKey={directoryScope}
+    failed={false} retryHref={pageHref(parsed.data)}>
+    <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Semesters"
       description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —."
       actions={<Link href="/admin/semester-courses" className="inline-flex min-h-11 w-full items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Semester–Course Mapping</Link>} />
@@ -151,5 +158,6 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </section>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}
       hrefForPage={page=>pageHref({...data.query,page})} />
-  </div>;
+    </div>
+  </SemesterRefreshBoundary>;
 }
