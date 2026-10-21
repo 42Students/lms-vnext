@@ -16,6 +16,8 @@ import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
+import {SuperAdminHiringAcademicFilters} from "@/components/admin/super-admin-hiring-academic-filters";
+import {Pagination} from "@/components/ui/pagination";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
@@ -28,7 +30,13 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Analytics"/>
   <ErrorState title="Invalid analytics filters"
-   description="Check the selected dates or filters."
+   description={parsed.error.issues[0]?.path[0]==="appliedTo"
+     ?"Applied through must not precede Applied from."
+     :parsed.error.issues[0]?.path[0]==="jobId"?"Select a valid drive."
+     :parsed.error.issues[0]?.path[0]==="departmentId"?"Select a valid department."
+     :parsed.error.issues[0]?.path[0]==="programId"?"Select a valid program."
+     :parsed.error.issues[0]?.path[0]==="cohortId"?"Select a valid batch."
+     :"Check the date format and selected analytics filters."}
    action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
@@ -38,16 +46,34 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
  </div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
- const [data,filters]=await Promise.all([
+ const [reportResult,filterResult]=await Promise.allSettled([
   getSuperAdminCompanyHiringReport(context,parsed.data),
   getSuperAdminHiringReportFilters(context),
  ]);
+ if(reportResult.status==="rejected")return <div className="min-w-0 space-y-4 md:space-y-6">
+  <PageHeader title="Placement Analytics"/>
+  <ErrorState title="Failed to load hiring dashboard"
+   description="The selected college's hiring report could not be loaded. Please try again; no zero counts are implied."
+   action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Retry hiring dashboard</Link>}/>
+ </div>;
+ const data=reportResult.value;
+ const filters=filterResult.status==="fulfilled"?filterResult.value:null;
  const q=data.query;
  const params=new URLSearchParams();
  for(const key of ["q","jobId","departmentId","programId","cohortId","appliedFrom","appliedTo"] as const){
   if(q[key])params.set(key,q[key]!);
  }
  const groups=hiringCompanyRollups(data.rows);
+ const reportPageRaw=typeof raw.reportPage==="string"?Number(raw.reportPage):1;
+ const reportPages=Math.max(1,Math.ceil(data.rows.length/10));
+ const reportPage=Number.isSafeInteger(reportPageRaw)&&reportPageRaw>0
+  ?Math.min(reportPages,reportPageRaw):1;
+ const reportRows=data.rows.slice((reportPage-1)*10,reportPage*10);
+ const reportPageHref=(page:number)=>{
+  const next=new URLSearchParams(params);
+  if(page>1)next.set("reportPage",String(page));
+  return "/admin/placements/analytics"+(next.size?"?"+next.toString():"");
+ };
  const totals=groups.reduce((out,row)=>({
   totalApplications:out.totalApplications+row.totalApplications,
   applied:out.applied+row.applied,shortlisted:out.shortlisted+row.shortlisted,
@@ -79,20 +105,25 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
    actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    Export report (CSV) →</a>}/>
+    Export report</a>}/>
+  {filters===null?<Banner tone="warning" action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
+   Department, program, batch and drive choices could not be loaded. The verified hiring results remain visible.
+  </Banner>:null}
   <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
      <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0 w-full"/></label>
-    {select("jobId","Job",filters.jobs)}
+    {select("jobId","Job",filters?.jobs??[])}
     <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Refresh</Button>
    </div>
    <details className="min-w-0" open={Boolean(q.departmentId||q.programId||q.cohortId||q.appliedFrom||q.appliedTo)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
-     {select("departmentId","Department",filters.departments)}
-     {select("programId","Program",filters.programs)}
-     {select("cohortId","Batch",filters.batches)}
+     <SuperAdminHiringAcademicFilters
+      key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
+      departments={filters?.departments??[]} programs={filters?.programs??[]}
+      batches={filters?.batches??[]}
+      selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
       <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="w-full"/></label>
      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied through
@@ -127,8 +158,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
   <section aria-label="Company hiring results" className="min-w-0 space-y-4">
    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company hiring results</h2>
-   <DataTable columns={columns} rows={data.rows} getRowKey={row=>row.jobId}
+   <DataTable columns={columns} rows={reportRows} getRowKey={row=>row.jobId}
      caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
+   {data.rows.length>10?<div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+    <span>Showing {(reportPage-1)*10+1}–{Math.min(reportPage*10,data.rows.length)} of {data.rows.length} drives</span>
+    <Pagination page={reportPage} pageCount={reportPages} label="Company hiring results pagination" hrefForPage={reportPageHref}/>
+   </div>:null}
   </section>
   {groups.length?<section aria-label="Company totals" className="space-y-3">
    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company totals</h2>
