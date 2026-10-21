@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { sessionExpiredHref } from "@/lib/return-to";
 
 /**
@@ -9,6 +9,7 @@ import { sessionExpiredHref } from "@/lib/return-to";
  * mutations; the server layout also redirects when a new navigation occurs.
  */
 export function SessionResponseGuard() {
+  const [accessRevoked,setAccessRevoked]=useState(false);
   useEffect(() => {
     const original = window.fetch;
     let redirected = false;
@@ -26,7 +27,10 @@ export function SessionResponseGuard() {
       try { reason = (await response.clone().json() as {error?: string}).error; }
       catch { /* Original response body stays available for the caller. */ }
       if(response.status===403){
-        window.dispatchEvent(new Event("lms:access-denied"));
+        setAccessRevoked(true);
+        window.dispatchEvent(new CustomEvent("lms:access-denied",{
+          detail:{path:requestUrl.pathname}
+        }));
       }
       const method=(init?.method??(input instanceof Request?input.method:"GET")).toUpperCase();
       if(method!=="GET"&&method!=="HEAD"){
@@ -38,6 +42,9 @@ export function SessionResponseGuard() {
       }
       if (response.status === 401 || reason === "SESSION_EXPIRED" || reason === "SESSION_REVOKED") {
         redirected = true;
+        window.dispatchEvent(new CustomEvent("lms:session-lost",{
+          detail:{reason:reason==="SESSION_REVOKED"?"revoked":"expired",method}
+        }));
         // The root sign-in page renders the session-expiry explanation from
         // the validated auth=expired/revoked flag. Replace avoids Back loops.
         window.location.replace(sessionExpiredHref(
@@ -50,5 +57,12 @@ export function SessionResponseGuard() {
     window.fetch = guarded;
     return () => { if (window.fetch === guarded) window.fetch = original; };
   }, []);
-  return null;
+  return accessRevoked ? (
+    <div role="alert"
+      className="fixed bottom-4 left-4 z-[90] max-w-sm rounded-md border border-border bg-surface p-3 text-sm text-primary-text shadow-md">
+      Access changed. Switch to an authorized workspace or refresh this page.
+      <button type="button" onClick={()=>setAccessRevoked(false)}
+        className="ml-2 font-semibold underline">Dismiss</button>
+    </div>
+  ) : null;
 }
