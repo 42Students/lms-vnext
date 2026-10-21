@@ -27,7 +27,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_tpo_profile_page.tsx.md` (edit src/app/(authenticated)/tpo/profile/page.tsx; 24 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_college_activity_page.tsx.md` (edit src/app/(authenticated)/college/activity/page.tsx; 23 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_hr_conversations_page.tsx.md` (edit src/app/(authenticated)/hr/conversations/page.tsx; 21 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_NEW_docs_audit_gap2_lane-6_l11-u014-tpo-home.md.md` (new; 18 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_NEW_docs_audit_gap2_lane-6_l11-u014-tpo-home.md.md` (new; 18 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_NEW_docs_audit_gap2_lane-6_l12-u011-recruiter-notification-service.md.md` (new; 17 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_college_companies_page.tsx.md` (edit src/app/(authenticated)/college/companies/page.tsx; 17 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_learn_my-placements_calendar_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/calendar/page.tsx; 14 findings; best P2)
