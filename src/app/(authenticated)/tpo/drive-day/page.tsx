@@ -76,7 +76,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           <Alert tone="warning">Only the first 20 live rounds are shown; more records may exist.</Alert>
         ) : null}
         {liveRows.length === 0 ? (
-          <EmptyState title={snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred." action={<Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset focus</Link>}/>
+          <EmptyState title={snapshot.rows.length===0?"No verified round happening now":"No live rounds match this filter"} description="Only published scheduled rounds with a recorded start and duration count as live. A round without duration is not assumed active. No check-ins or no-shows are inferred." action={<Link href="/tpo/drive-day" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Reset focus</Link>}/>
         ) : (
           <div className="grid gap-4">
             {liveRows.map((round) => (

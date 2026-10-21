@@ -19,7 +19,7 @@ export default async function TpoChangeRequestsPage({params}:{params:Promise<{jo
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Change requests"}
    description="Track requested company changes, review replies and agree or decline with a permanent record."
    actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-    className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:w-auto">Back to drive</Link>}/>
+    className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:w-auto">Back to drive</Link>}/>
   {!data.storageReady?<Alert tone="warning">
    {data.pendingMessage} Changes cannot be recorded until the platform migration is registered.</Alert>
    :<TpoDriveChangeRequests jobId={jobId} party={data.party} userId={context.user.id} requests={data.requests}/>}

@@ -37,8 +37,8 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
 
   <PageHeader title="Company-share access history"
    actions={<>
-    <Link href={back} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto md:min-h-9">Back to company-share preview</Link>
-    {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:w-auto md:min-h-9">Export access history CSV</a>:null}
+    <Link href={back} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Back to company-share preview</Link>
+    {result.ready?<a href={tpoCompanyAuditExportHref(jobId,kind)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Export access history CSV</a>:null}
    </>}/>
   <Tabs ariaLabel="Company-share event filters" value={kind} renderPanel={false}
    items={tpoCompanyAuditKindSchema.options.map(option=>({
@@ -61,9 +61,9 @@ export default async function TpoCompanyShareAuditPage({params,searchParams}:{
   {result.ready?<nav aria-label="Access history pages" className="flex min-w-0 flex-col gap-2 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
    <span>{result.total} events · Page {result.page} of {result.totalPages}, 25 per page</span>
    {result.page>1?<Link href={companyShareAuditPageHref(jobId,kind,result.page-1)}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold sm:w-auto text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold sm:w-auto text-[var(--lms-teal-deep)] underline md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
    {result.limited?<Link href={companyShareAuditPageHref(jobId,kind,result.page+1)}
-    className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+    className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-[var(--lms-link-text)] underline sm:w-auto min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
   </nav>:null}
  </div>;
 }

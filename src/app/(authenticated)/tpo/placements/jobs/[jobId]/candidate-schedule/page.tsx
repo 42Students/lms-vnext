@@ -49,7 +49,7 @@ export default async function TpoCandidateSchedulePage({
       "Candidate-specific interview slots are pending migration registration. Open an interview round to see the setup status."}
     </Banner>
     <details className="border-b border-border pb-6" open={warning.state === "UNAVAILABLE" || warning.collisions > 0 || warning.unknown > 0 || warning.warnings.length > 0}>
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Persisted venue collision assessment</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Persisted venue collision assessment</summary>
       {warning.state === "UNAVAILABLE" ?
         <Alert tone="warning">Assessment unavailable; no conflict-free claim is made.</Alert>
         : <p className="mt-2 text-sm text-body leading-[22px]">
