@@ -18,7 +18,7 @@ export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
       onChange={()=>setMode("LATER")} name="noticeWhen" value="LATER"/> Later</label>
    </div>
   </fieldset>
-  {mode==="LATER"?<label className="grid gap-1 text-sm">Schedule for (IST)
+  {mode==="LATER"?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Schedule for (IST)
     <Input type="datetime-local" name="sendAt" required min={minDateTime}
       className="min-h-11 min-[768px]:min-h-9"/>
    </label>:null}

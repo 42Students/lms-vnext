@@ -233,18 +233,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/tpo-job-types-editor.tsx`
 - [x] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-notice-schedule-controls.tsx`
-- [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-prep-percentage-editor.tsx`
-- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-student-note-editor.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-notice-schedule-controls.tsx`
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-prep-percentage-editor.tsx`
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
+- [x] `src/components/tpo/tpo-student-note-editor.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
 - [ ] `src/components/tpo/tpo-student-saved-views.tsx`
 - [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
 - [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`

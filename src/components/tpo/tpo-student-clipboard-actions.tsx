@@ -35,7 +35,7 @@ export function TpoStudentClipboardActions({rows,selected,onSelect}:{
    </Button>
   </div>
   {open?<div className="space-y-2">
-   <label className="grid gap-2 text-sm font-semibold">Roll numbers (one per line, space or comma separated)
+   <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Roll numbers (one per line, space or comma separated)
     <Textarea rows={3} maxLength={15000} value={text} className="min-h-11" onChange={e=>setText(e.target.value)}
      /></label>
    <Button variant="primary" type="button" className="min-h-11 md:min-h-9" disabled={!text.trim()} onClick={paste}

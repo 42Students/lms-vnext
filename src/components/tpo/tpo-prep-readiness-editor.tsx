@@ -54,7 +54,7 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
  return <section className="min-w-0 space-y-3 border-t border-border pt-4">
   <h3 className="text-lg font-semibold text-foreground">Required preparation courses</h3>
   <p className="text-sm text-muted-foreground">Select active courses from this college only. TPO Students derives preparation support from saved learner course completions when published course evidence is available; missing progress remains unclassified.</p>
-  <label className="block text-sm">Find a preparation course
+  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a preparation course
    <Input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
     placeholder="Search course name or code" className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
   </label>
@@ -76,7 +76,7 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
      }}/><span className="min-w-0 break-words">{course.name} ({course.code})</span>
     </label>)}
   </fieldset>
-  <label className="block text-sm">Minimum completed courses
+  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum completed courses
    <Input type="number" min={0} max={selected.length} value={minimum} disabled={busy}
     onChange={e=>setMinimum(Number(e.target.value))}
     className="mt-1 min-h-11 min-[768px]:min-h-9 w-full sm:w-28"/>
