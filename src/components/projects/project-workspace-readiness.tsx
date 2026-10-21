@@ -42,8 +42,11 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         </div>}/>
     </div>;
   const readiness=result.value;
-  const isReady = readiness.projectStatus !== "ARCHIVED" &&
-    effectiveProjectSubmissionReady(readiness.execution.complete, readiness.readinessOverride.state);
+  const hasFinalSubmission=Boolean(readiness.finalSubmission.latest &&
+    readiness.finalSubmission.latest.status!=="DRAFT");
+  const isReady=readiness.projectStatus!=="ARCHIVED"&&
+    effectiveProjectSubmissionReady(readiness.execution.complete,
+      readiness.readinessOverride.state,hasFinalSubmission);
   const total=readiness.execution.tasks.total+readiness.execution.sprints.total;
   const complete=readiness.execution.tasks.done+readiness.execution.sprints.completed;
   const overall=total?Math.min(100,Math.max(0,Math.round(100*complete/total))):0;
@@ -83,6 +86,9 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         </div>
         <StatusBadge tone={isReady?"success":"warning"}>{isReady?"Ready":"Not ready"}</StatusBadge>
       </div>
+      {hasFinalSubmission?<p role="status" className="text-xs text-muted-foreground">
+        An existing final submission takes precedence over manual readiness overrides.
+      </p>:null}
       <div className="space-y-2 border-b border-border pb-4">
         <div className="flex items-center justify-between gap-2 text-sm font-semibold">
           <span>Overall project progress</span>

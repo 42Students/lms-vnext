@@ -48,10 +48,8 @@ export default async function FacultyNotificationsPage({
   const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
-  // The legacy inbox keeps college announcements visible when the personal
-  // feed fails. Isolate all three reads, but never swallow permission failures.
-  const [personalRead, countRead, announcementsResult] = await Promise.allSettled([
-    invalid
+  const [notificationRead, unreadCount, announcementRead] = await Promise.all([
+    (invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
           limit: 50,
@@ -68,18 +66,7 @@ export default async function FacultyNotificationsPage({
       ? listVisibleAnnouncementsForMembership(context)
       : Promise.resolve([]),
   ]);
-  for (const read of [personalRead, countRead, announcementsResult]) {
-    if (read.status === "rejected" && read.reason instanceof AuthorizationError)
-      throw read.reason;
-  }
-  const personalFailed = personalRead.status === "rejected" ||
-    countRead.status === "rejected";
-  const page = personalRead.status === "fulfilled"
-    ? personalRead.value : { items: [], nextCursor: null };
-  const unreadCount = countRead.status === "fulfilled" ? countRead.value : 0;
-  const announcementRead = announcementsResult.status === "fulfilled"
-    ? { available: announcementsEnabled, items: announcementsResult.value }
-    : { available: false, items: [] as Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>> };
+  const page=notificationRead.value;
   const announcements = announcementRead.items.filter(item =>
     scopeTab === "all" ||
     (scopeTab !== "personal" && item.receiverType.toLowerCase() === scopeTab),
@@ -129,18 +116,23 @@ export default async function FacultyNotificationsPage({
          {id:"faculty",label:"Faculty",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="faculty").length},
          {id:"personal",label:"Personal",unread:page.items.length},
         ]}/>
-      {personalFailed && (scopeTab === "all" || scopeTab === "personal") ? (
-        <Alert tone="warning">
-          Some notifications could not be loaded
-          <Link href={FACULTY_INBOX + "?view=" + view +
-            (scopeTab !== "all" ? "&tab=" + encodeURIComponent(scopeTab) : "")}
-            className="ml-2 font-semibold text-primary-text underline">Retry</Link>
-        </Alert>
-      ) : null}
-      {scopeTab === "all" || scopeTab === "personal" ? (
-      <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
-        <h2 id="faculty-personal-notifications" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
-          Personal notifications
+      {!notificationRead.available?<Alert tone="error">
+        <strong>Couldn't load notifications.</strong> Notifications could not be loaded. Retry without leaving this page.
+        <Link href={FACULTY_INBOX+"?view="+view} className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Alert>:null}
+      {announcementsEnabled&&!announcementRead.available?<Alert tone="warning">
+        Couldn't load college announcements. Personal notifications remain available.
+        <Link href={FACULTY_INBOX} className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Alert>:null}
+      {invalid?<Alert tone="error">
+        The notification filters or page link are invalid.
+        <Link href={FACULTY_INBOX+"?view="+view}
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">View all notifications</Link>
+      </Alert>:null}
+      <section aria-labelledby="faculty-feed-heading" className="min-w-0 space-y-4">
+        <h2 id="faculty-feed-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+          {scopeTab==="all"?"Notifications":scopeTab==="personal"?"Personal notifications":
+            scopeTab.charAt(0).toUpperCase()+scopeTab.slice(1)+" notifications"}
         </h2>
         {allEmpty?<p className="text-sm text-body">Announcements across college, department, and faculty will appear here.</p>:null}
         <NotificationList readEndpoint="/api/notifications/faculty" items={feed}
