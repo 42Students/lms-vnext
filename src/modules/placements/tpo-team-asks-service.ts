@@ -11,6 +11,16 @@ import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoTeamAskActionSchema,tpoTeamAskCanTransition,tpoTeamAskCreateSchema} from "./tpo-team-asks-model";
 
+/** Action-needed conflict for a verified member missing from a private thread.
+ * The HTTP handler must serialize the safe IDs with a 409 ADD_PEOPLE response.
+ */
+export class TpoTeamAddPeopleRequiredError extends Error {
+ readonly code="ADD_PEOPLE" as const;
+ readonly status=409 as const;
+ constructor(readonly missingMembershipIds:readonly string[]){
+  super("ADD_PEOPLE");this.name="TpoTeamAddPeopleRequiredError";
+ }
+}
 async function requireScope(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
@@ -78,8 +88,7 @@ export async function createTpoTeamAsk(context:RequestContext,raw:unknown){
    .where(and(eq(placementTpoInternalThreads.id,input.threadId),
     eq(placementTpoInternalThreads.collegeId,college.id)))
    .for("update").limit(1);
-  if(!thread||![thread.startedByMembershipId,thread.invitedMembershipId].includes(member.id)||
-   ![thread.startedByMembershipId,thread.invitedMembershipId].includes(input.assigneeMembershipId))
+  if(!thread||![thread.startedByMembershipId,thread.invitedMembershipId].includes(member.id))
    throw new Error("TEAM_THREAD_NOT_FOUND");
   const [assignee]=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
    .from(collegeMemberships)
@@ -91,6 +100,8 @@ export async function createTpoTeamAsk(context:RequestContext,raw:unknown){
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
    .limit(1);
   if(!assignee)throw new Error("TEAM_ASK_BAD_ASSIGNEE");
+  if(![thread.startedByMembershipId,thread.invitedMembershipId].includes(assignee.id))
+   throw new TpoTeamAddPeopleRequiredError([assignee.id]);
   const [already]=await tx.select({
    id:placementTpoTeamAsks.id,title:placementTpoTeamAsks.title,
    dueAt:placementTpoTeamAsks.dueAt,assigneeMembershipId:placementTpoTeamAsks.assigneeMembershipId,
