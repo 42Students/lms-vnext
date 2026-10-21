@@ -217,15 +217,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/placements/placement-operations-overview.tsx`
 - [x] `src/components/placements/placement-role-options.tsx`
 - [x] `src/components/placements/placement-season-manager.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recorded-outside-form.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-drawer.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-form.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
-- [ ] `src/components/placements/tpo-college-rules-control.tsx`
-- [ ] `src/components/placements/tpo-drive-cancel-form.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recorded-outside-form.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/placements/tpo-applicant-review-drawer.tsx`
+- [x] `src/components/placements/tpo-applicant-review-form.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-college-rules-control.tsx`
+- [x] `src/components/placements/tpo-drive-cancel-form.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
 - [ ] `src/components/placements/tpo-drive-edit-form.tsx`
 - [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
 - [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
