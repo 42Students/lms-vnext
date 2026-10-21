@@ -206,7 +206,7 @@ export function PublicRecruiterJoinForm({
               Join with your company email. You can then request placement drives and review the students who apply.
             </p>
             {sentTo?<h2 className="mt-5 text-lg font-semibold text-foreground">One more step</h2>:null}
-            <form className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
+            <form noValidate className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
@@ -230,7 +230,7 @@ export function PublicRecruiterJoinForm({
                   className="w-full min-w-0" />
                 {fieldErrors.name?<span id="join-name-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
               </label>
-              <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+              <details open={Boolean(fieldErrors.phone) || undefined} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
                 <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Optional contact details</summary>
                 <div className="grid min-w-0 gap-4 pt-3 min-[768px]:grid-cols-2">
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
