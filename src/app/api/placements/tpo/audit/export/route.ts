@@ -3,6 +3,7 @@ import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placement
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {tpoAuditCsv} from "@/modules/placements/tpo-audit-csv-model";
+import {tpoAuditXlsx} from "@/modules/placements/tpo-audit-xlsx-model";
 import {getTpoAuditLog,tpoAuditQuerySchema,type TpoAuditRow} from "@/modules/placements/tpo-audit-service";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -11,10 +12,8 @@ export async function GET(request:Request){
  try{
   const url=new URL(request.url);
   const format=url.searchParams.get("format")??"csv";
-  if(format!=="csv")return new Response(JSON.stringify({
-    error:"EXPORT_FORMAT_UNAVAILABLE",
-    message:"Excel workbook export is not configured for the audit log. Export selected or filtered rows as CSV.",
-    requestedFormat:format,
+  if(format!=="csv"&&format!=="xlsx")return new Response(JSON.stringify({
+    error:"INVALID_EXPORT_FORMAT",message:"Choose CSV or XLSX.",
   }),{status:422,headers:{"Content-Type":"application/json","Cache-Control":"private, no-store"}});
   const selected=url.searchParams.getAll("id");
   if(selected.length>5000||selected.some(id=>!/^[0-9a-f-]{36}$/i.test(id)))
@@ -62,9 +61,10 @@ export async function GET(request:Request){
        }).format(new Date(row.occurredAt))+" IST";
       }
      }).map(safeCell).join(","))].join("\r\n")+"\r\n";
-  return new Response("\uFEFF"+exported,{headers:{
-   "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", "csv") + '"',
+  const body=format==="xlsx"?tpoAuditXlsx(filtered,chosen):"\uFEFF"+exported;
+  return new Response(body,{headers:{
+   "Content-Type":format==="xlsx"?"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":"text/csv; charset=utf-8",
+   "Content-Disposition":'attachment; filename="' + gridExportFilename("audit-log", format) + '"',
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":items.length<total?"true":"false",
