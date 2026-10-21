@@ -30,6 +30,10 @@ const namespaces = new Set<string>(PRIVATE_OBJECT_NAMESPACES);
  * is required for vNext. Should a migration ever be commissioned, rehost the
  * bytes in the private bucket, verify/scan, then rewrite owner-scoped records.
  * Null entries require a dedicated destination feature, not a guessed folder.
+ * A verified private copy is NOT cutover completion. Operators must also
+ * disable public reads, remove/quarantine the old exposed source object, and
+ * confirm its old unsigned URL returns 403/404. This deletion is an explicit
+ * privileged migration step, never triggered by a browser upload.
  */
 export const LEGACY_STORAGE_FOLDER_CROSSWALK = {
   "lesson-content": "course-resource",
