@@ -269,18 +269,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/placements/placement-drive-controls.tsx`
 - [x] `src/components/placements/placement-drive-day-overview.tsx`
 - [x] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
-- [ ] `src/components/placements/placement-operations-overview.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
-- [ ] `src/components/placements/placement-role-options.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-bar-chart.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/placement-operations-overview.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/placement-role-options.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-bar-chart.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
 - [ ] `src/components/placements/super-admin-drive-deadline.tsx`
 - [ ] `src/components/placements/super-admin-drive-quick-search.tsx`
 - [ ] `src/components/placements/super-admin-published-drive-edit.tsx`
