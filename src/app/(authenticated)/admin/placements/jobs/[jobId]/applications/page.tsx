@@ -16,6 +16,7 @@ import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPOR
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
+import { SuperAdminDriveApplicationsCsvControl } from "@/components/admin/super-admin-drive-applications-csv-control";
 
 function adminHref(...args: Parameters<typeof driveApplicationsHref>) {
  return driveApplicationsHref(...args).replace("/college/placements/","/admin/placements/");
@@ -147,8 +148,9 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       }))}/>
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm sm:flex-row sm:items-center sm:justify-between">
       <span>{data.total.toLocaleString("en-IN")} matching applications</span>
-      <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+      <SuperAdminDriveApplicationsCsvControl
+       href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
+       limit={DRIVE_APPLICATION_EXPORT_CAP}/>
     </div>
     {!data.storageReady?<section className="space-y-3">
       <Banner tone="warning">Application stage actions are awaiting migration registration. You can still review the scoped applicant register.</Banner>
