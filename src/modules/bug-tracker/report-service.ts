@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -19,12 +19,22 @@ import { trackerReportSchema } from "./report-input-model";
  * Reuse the authenticated actor's existing inert access key across reports;
  * a forged dropdown display name never becomes the persisted reporter identity.
  */
-export async function createBugTrackerIssueForAdmin(context: RequestContext, rawInput: unknown) {
+export async function createBugTrackerIssueForAdmin(
+  context: RequestContext, rawInput: unknown, idempotencyKey?: string | null,
+) {
   if(context.user.platformStatus!=="ACTIVE")throw new TrackerAdminError("FORBIDDEN");
   const input = trackerReportSchema.parse(rawInput);
-  // Keep the externally shareable LMS-#### shape; random IDs must not
-  // leak the number of reports or make other reporters' IDs guessable.
-  const publicId = "LMS-" + randomBytes(8).readBigUInt64BE().toString().padStart(4, "0");
+  if (idempotencyKey != null &&
+      !/^[a-zA-Z0-9_-]{16,128}$/.test(idempotencyKey)) {
+    throw new TrackerAdminError("FORBIDDEN");
+  }
+  // Public IDs do not reveal a sequential DB row. A caller-supplied stable
+  // retry key gets a stable public ID for the same authenticated reporter.
+  // Without a key, preserve the existing cryptographically random behavior.
+  const publicId = "LMS-" + (idempotencyKey
+    ? createHash("sha256").update("tracker:v1:").update(context.user.id)
+      .update(":").update(idempotencyKey).digest().readBigUInt64BE()
+    : randomBytes(8).readBigUInt64BE()).toString().padStart(4, "0");
   const db = getDb();
   return db.transaction(async (tx) => {
     const [actor] = await tx.select({
@@ -33,6 +43,38 @@ export async function createBugTrackerIssueForAdmin(context: RequestContext, raw
     }).from(users).where(eq(users.id, context.user.id)).for("update").limit(1);
     if (!actor || actor.platformStatus !== "ACTIVE") {
       throw new TrackerAdminError("FORBIDDEN");
+    }
+    if (idempotencyKey) {
+      // Locking the reporter's users row above serializes same-user retries;
+      // the existing UNIQUE public_id index is the second defense.
+      const [priorReport] = await tx.select({
+        reporterUserId: db10BugReports.reporterUserId,
+        accountRole: db10BugReports.accountRole,
+        environment: db10BugReports.environment,
+        page: db10BugReports.page,
+        screen: db10BugReports.screen,
+        section: db10BugReports.section,
+        issueType: db10BugReports.issueType,
+        description: db10BugReports.description,
+        severity: db10BugReports.severity,
+        status: db10BugReports.status,
+      }).from(db10BugReports)
+        .where(eq(db10BugReports.publicId, publicId)).limit(1);
+      if (priorReport) {
+        if (priorReport.reporterUserId !== context.user.id ||
+            priorReport.accountRole !== input.accountRole ||
+            priorReport.environment !== input.environment ||
+            priorReport.page !== input.page ||
+            (priorReport.screen ?? null) !== (input.screen ?? null) ||
+            (priorReport.section ?? null) !== (input.section ?? null) ||
+            priorReport.issueType !== input.issueType ||
+            priorReport.description !== input.description ||
+            priorReport.severity !== input.severity) {
+          throw new TrackerAdminError("FORBIDDEN");
+        }
+        return { publicId, status: priorReport.status,
+          reporterAccess: "ACCOUNT_ONLY" as const };
+      }
     }
     const reporterName = actor.displayName.trim() || "Authenticated reporter";
     // Historic bug tracker allowed selecting an active named reporter, but
