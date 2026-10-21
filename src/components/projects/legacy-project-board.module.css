@@ -21,7 +21,7 @@
   gap: 12px;
   border: 1px solid rgba(38, 186, 199, .16) !important;
   border-radius: 20px !important;
-  background: linear-gradient(180deg, rgba(38, 186, 199, .04), #fff 28%) !important;
+  background: linear-gradient(180deg, rgba(38, 186, 199, .04), var(--lms-white) 28%) !important;
   box-shadow: 0 1px 2px rgba(26, 29, 33, .04), 0 8px 20px rgba(26, 29, 33, .05);
   transition: border-color 200ms cubic-bezier(.2,0,0,1), box-shadow 200ms cubic-bezier(.2,0,0,1), transform 200ms cubic-bezier(.2,0,0,1);
 }
@@ -65,7 +65,7 @@
   min-width: 0;
   border: 1px solid rgba(229, 233, 240, .85) !important;
   border-radius: 16px !important;
-  background: #fff !important;
+  background: var(--lms-white) !important;
   box-shadow: 0 1px 2px rgba(26, 29, 33, .04), 0 8px 20px rgba(26, 29, 33, .05);
   transition: border-color 200ms cubic-bezier(.2,0,0,1), box-shadow 200ms cubic-bezier(.2,0,0,1), transform 200ms cubic-bezier(.2,0,0,1);
 }
@@ -100,7 +100,7 @@
 }
 .scrollRegion::-webkit-scrollbar { display: none; }
 .scrollRegion:focus-visible {
-  outline: 2px solid #26bac7;
+  outline: 2px solid var(--lms-primary);
   outline-offset: 2px;
 }
 @media (max-width: 767px) {

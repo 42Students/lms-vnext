@@ -334,18 +334,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/placements/legacy-tpo-report-stats.module.css`
 - [x] `src/components/placements/placement-drive-workspace.tsx`
 - [x] `src/components/placements/report-bar-chart.module.css`
-- [ ] `src/components/placements/super-admin-hiring-funnel.module.css`
-- [ ] `src/components/placements/tpo-week-hour-calendar.module.css`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/legacy-project-board.module.css`
-- [ ] `src/components/projects/project-workspace-readiness.module.css`
-- [ ] `src/components/public/public-auth-skin.module.css`
-- [ ] `src/components/public/public-screen.module.css`
-- [ ] `src/components/shell/legacy-mobile-footer.css`
-- [ ] `src/components/shell/route-progress.css`
-- [ ] `src/components/shell/shell-nav-icons.tsx`
-- [ ] `src/components/shell/sidebar-legacy.css`
-- [ ] `src/components/shell/topbar/topbar.module.css`
+- [x] `src/components/placements/super-admin-hiring-funnel.module.css`
+- [x] `src/components/placements/tpo-week-hour-calendar.module.css`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/legacy-project-board.module.css`
+- [x] `src/components/projects/project-workspace-readiness.module.css`
+- [x] `src/components/public/public-auth-skin.module.css`
+- [x] `src/components/public/public-screen.module.css`
+- [x] `src/components/shell/legacy-mobile-footer.css`
+- [x] `src/components/shell/route-progress.css`
+- [x] `src/components/shell/shell-nav-icons.tsx`
+- [x] `src/components/shell/sidebar-legacy.css`
+- [x] `src/components/shell/topbar/topbar.module.css`
 - [ ] `src/components/tpo/legacy-batch-eligibility.module.css`
 - [ ] `src/components/tpo/legacy-company-bar.module.css`
 - [ ] `src/components/tpo/legacy-company-year-chart.module.css`
