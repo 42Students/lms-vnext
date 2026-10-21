@@ -36,9 +36,9 @@ export function LearnerPlacementAlertAction({id,href,unread}:{
  async function open(){
   if(await markRead() && safeHref)router.push(safeHref);
  }
- return <div className="mt-2 flex flex-wrap items-center gap-3">
+ return <div className="mt-2 flex flex-wrap items-center gap-3" aria-busy={pending}>
   {isUnread?<span role="status" className="text-xs font-semibold text-primary-text">(Unread)</span>:null}
-  {safeHref?<Link href={safeHref} aria-disabled={pending}
+  {safeHref?<Link href={safeHref}
      onClick={event=>{if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
        event.preventDefault();void open();}}
      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">

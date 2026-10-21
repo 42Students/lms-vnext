@@ -315,7 +315,7 @@ export function LearnerCareerRoundsWorkspace({
             {urgencyCount} within seven days
           </StatusBadge>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-sm">
+        <nav aria-label="Placement schedule views" className="flex flex-wrap items-center gap-2 text-sm">
           <Link href="/learn/my-placements/schedule?view=coming"
             className="font-semibold text-link underline underline-offset-4">
             Full Schedule · Coming up
@@ -324,7 +324,7 @@ export function LearnerCareerRoundsWorkspace({
             className="font-semibold text-link underline underline-offset-4">Past</Link>
           <Link href="/learn/my-placements/schedule?view=calendar"
             className="font-semibold text-link underline underline-offset-4">Calendar</Link>
-        </div>
+        </nav>
         <div className="flex gap-2 overflow-x-auto pb-2 md:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
             <FilterChip
