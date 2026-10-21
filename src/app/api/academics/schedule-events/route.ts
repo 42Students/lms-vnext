@@ -45,9 +45,10 @@ export async function POST(request: Request) {
         body,
       );
 
+    // Keep the vNext event and provide the historic OK acknowledgment.
     return NextResponse.json(
-      { event },
-      { status: 201 },
+      { event, status: "OK", message: "OK" },
+      { status: 201, headers: {"Cache-Control":"private, no-store"} },
     );
   } catch (error) {
     return apiErrorResponse(error);

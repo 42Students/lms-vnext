@@ -189,3 +189,5 @@
 
 - TPO CTC report model G2-13-031-087: change `src/modules/placements/report-model.ts` underlying knownCtc loop to boundaries 0/400000/600000/1000000/2000000 INR, labels below4/4-6/6-10/10-20/20+ LPA; regenerate CSV/metric tests. UI cannot accurately split existing 3–6 aggregate without raw offers.
 - College lessons partial load G2-17-007-033: maintain last valid rows in list component state when a subsequent partial scope fetch fails; show warning `Couldn't refresh lessons` plus Retry while retaining actual cached rows; error.tsx alone can't render the old list.
+
+- Class schedule creator UI G2-2-032-046: show verified create success toast and legacy duration from UI design source only after authorized POST acknowledgment; never show success on 401/403.

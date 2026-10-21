@@ -353,3 +353,5 @@
 
 - work2 #65 `tpo/reports/ctc/page.tsx` | G2-13-031-087: explicitly validates five legacy INR cutoffs 0/4/6/10/20 lakh and warns when the current 0–3/3–6/6–10/10–20/20+ aggregation cannot be truthfully split; no fabricated 3–4 counts. Raw-offer model reaggregation is a cross-file handoff.
 - work2 #66 `college/lessons/error.tsx` | G2-17-007-033: exact refresh-failure state and Retry plus list return, explicitly avoids claiming empty results or stale rows not actually mounted. Parent partial-fetch cache must retain verified rows; handoff.
+
+- work2 #67 `api/academics/schedule-events/route.ts` | G2-2-032-046: additive legacy `OK` status/message after confirmed create, while retaining vNext `{event}`, HTTP 201, and private no-store. Success-toast duration requires UI mutation handler integration.
