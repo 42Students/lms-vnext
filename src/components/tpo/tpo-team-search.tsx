@@ -33,6 +33,7 @@ export function TpoTeamSearch({value}:{value:string}){
     timer.current=setTimeout(()=>{
      const params=new URLSearchParams(window.location.search);
      params.set("tab","team");
+     params.delete("c");params.delete("m");params.delete("ask");params.delete("about");params.delete("page");
      if(query.length>=2)params.set("q",query);
      else params.delete("q");
      router.replace("/tpo/messages?"+params.toString(),{scroll:false});

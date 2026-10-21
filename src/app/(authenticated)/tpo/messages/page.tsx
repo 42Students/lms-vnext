@@ -84,7 +84,8 @@ export default async function TpoMessagesPage({
     {tabs("team")}
     {companySearch?<p role="status" className="text-sm text-body">Team conversations about {companySearch} · <Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Clear topic</Link></p>:null}
     <TpoTeamMessagesDirectory context={context} query={companySearch||(first(raw.q)??"")}
-      selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}/>
+      selectedId={first(raw.c)} messageId={first(raw.m)} askId={first(raw.ask)} filter={first(raw.filter)}
+      page={/^\d{1,4}$/.test(first(raw.page)??"")?Number(first(raw.page)):1}/>
   </div>;
   if(selectedTab!=="recruiters")return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages"/>
