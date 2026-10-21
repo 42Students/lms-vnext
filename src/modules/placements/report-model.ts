@@ -30,6 +30,27 @@ export type PlacementReportApplication = {
   membershipId: string;
   status: string;
   screeningStatus: string | null;
+  submittedAt?: Date | null;
+};
+
+export type PlacementReportStageHistory = {
+  applicationId: string;
+  fromStage: string | null;
+  toStage: string;
+  movedAt: Date;
+};
+
+export type PlacementReportHistoricalFunnel = {
+  /** Null means that no audited transition ledger was provided. */
+  evidence: "AUDITED" | "UNAVAILABLE";
+  applied: number;
+  shortlisted: number | null;
+  assessment: number | null;
+  interview: number | null;
+  offered: number | null;
+  rejected: number | null;
+  hired: number | null;
+  avgTimeToShortlistMs: number | null;
 };
 
 export type PlacementReportOffer = {
@@ -64,6 +85,8 @@ export type PlacementReportFacts = {
   countsAsPlacedAt?: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   jobs: readonly PlacementReportJob[];
   applications: readonly PlacementReportApplication[];
+  /** Real stage transitions; absent means the historical funnel is unknown. */
+  stageHistory?: readonly PlacementReportStageHistory[];
   offers: readonly PlacementReportOffer[];
   /** Current selected/verified/released ledger, separate from offers. */
   selections?: readonly PlacementReportSelection[];
@@ -142,6 +165,7 @@ export type PlacementReportCompanyRow = {
 
 export type PlacementReportSummary = {
   metrics: PlacementReportMetrics;
+  historicalFunnel: PlacementReportHistoricalFunnel;
   byBranch: PlacementReportBranchRow[];
   byDrive: PlacementReportDriveRow[];
   byCompany: PlacementReportCompanyRow[];
@@ -254,6 +278,67 @@ export function countsAsPlacedByCollegeRule(input: {
       (input.offerStatus === "ISSUED" || input.offerStatus === "ACCEPTED");
   }
   return input.offerStatus === "ACCEPTED";
+}
+
+/**
+ * Legacy job funnel numbers mean that an application EVER reached a stage,
+ * unlike the current-state screening totals. Do not infer missed stages from
+ * today's status or treat a missing history ledger as a valid zero count.
+ */
+export function summarizePlacementHistoricalFunnel(
+  input: PlacementReportFacts,
+): PlacementReportHistoricalFunnel {
+  const knownJobs = new Set(input.jobs.map((job) => job.id));
+  const applications = new Map(input.applications
+    .filter((application) => knownJobs.has(application.jobId))
+    .map((application) => [application.id, application]));
+  if (input.stageHistory === undefined) {
+    return {
+      evidence: "UNAVAILABLE", applied: applications.size,
+      shortlisted: null, assessment: null, interview: null,
+      offered: null, rejected: null, hired: null,
+      avgTimeToShortlistMs: null,
+    };
+  }
+  const historyByApplication = new Map<string, Set<string>>();
+  const firstShortlistAt = new Map<string, number>();
+  for (const event of input.stageHistory) {
+    const application = applications.get(event.applicationId);
+    if (!application) continue;
+    const stages = historyByApplication.get(event.applicationId) ?? new Set<string>();
+    if (event.fromStage) stages.add(event.fromStage);
+    stages.add(event.toStage);
+    historyByApplication.set(event.applicationId, stages);
+    if (event.toStage === "SHORTLISTED" && Number.isFinite(event.movedAt.getTime())) {
+      const timestamp = event.movedAt.getTime();
+      const previous = firstShortlistAt.get(event.applicationId);
+      if (previous === undefined || timestamp < previous) {
+        firstShortlistAt.set(event.applicationId, timestamp);
+      }
+    }
+  }
+  const stageCount = (stage: string) =>
+    [...historyByApplication.values()].filter((stages) => stages.has(stage)).length;
+  const shortlistDurations: number[] = [];
+  for (const [applicationId, shortlistedAt] of firstShortlistAt) {
+    const submittedAt = applications.get(applicationId)?.submittedAt?.getTime();
+    if (submittedAt !== undefined && Number.isFinite(submittedAt) &&
+      shortlistedAt >= submittedAt) shortlistDurations.push(shortlistedAt - submittedAt);
+  }
+  return {
+    evidence: "AUDITED",
+    applied: applications.size,
+    shortlisted: stageCount("SHORTLISTED"),
+    assessment: stageCount("ASSESSMENT"),
+    interview: stageCount("INTERVIEW"),
+    offered: stageCount("OFFERED"),
+    rejected: stageCount("REJECTED"),
+    hired: stageCount("HIRED"),
+    avgTimeToShortlistMs: shortlistDurations.length
+      ? Math.round(shortlistDurations.reduce((sum, duration) => sum + duration, 0) /
+        shortlistDurations.length)
+      : null,
+  };
 }
 
 export function summarizePlacementReports(
@@ -578,7 +663,10 @@ export function summarizePlacementReports(
         left.companyId.localeCompare(right.companyId),
     );
 
-  return { metrics, byBranch, byDrive, byCompany };
+  return {
+    metrics, byBranch, byDrive, byCompany,
+    historicalFunnel: summarizePlacementHistoricalFunnel(input),
+  };
 }
 
 /**
