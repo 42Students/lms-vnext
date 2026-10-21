@@ -329,18 +329,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/tpo/recruiter-leads-workspace.tsx`
 - [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
 - [x] `src/components/tpo/tpo-audit-grid.tsx`
-- [ ] `src/components/tpo/tpo-batch-instant-search.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-drive-grid.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-debounced-student-search.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/tpo/tpo-inbox-search.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-notice-audience-picker.tsx`
-- [ ] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- [x] `src/components/tpo/tpo-batch-instant-search.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- [x] `src/components/tpo/tpo-company-memory-drive-grid.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-debounced-student-search.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/tpo/tpo-inbox-search.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-notice-audience-picker.tsx`
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
 - [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
 - [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
