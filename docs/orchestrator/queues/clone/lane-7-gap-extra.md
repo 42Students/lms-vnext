@@ -14,6 +14,6 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L15-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterCollegeController.java`
 - [x] L17-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/PublicJobResponseDTO.java`
 - [x] L17-U031 (Cross-cutting area) `cross/17: Projects end to end: workspaces, teams, tasks, mentors, meetings, submissions, evaluation`
-- [ ] L18-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/JobImportantDateEventDTO.java`
+- [x] L18-U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/response/JobImportantDateEventDTO.java`
 - [ ] L18-U031 (Cross-cutting area) `cross/18: People management: onboarding, bulk import, profile fields, suspension, roles, deletion`
 - [ ] L19-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CourseController.java`
