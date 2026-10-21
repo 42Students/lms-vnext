@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getDb } from "@/db/client";
@@ -25,6 +25,7 @@ export default async function CollegeElectiveSlotDetail({params}:{
     id: string; name: string; description: string | null; version: number;
     credits: number; minPick: number; maxPick: number; status: string;
     semesterNumber: number; academicYear: string | null; programName: string;
+    programId: string; academicPeriodId: string | null; hasEnrollmentHistory: boolean;
   } | undefined;
   try {
     [slot] = await getDb().select({
@@ -33,6 +34,12 @@ export default async function CollegeElectiveSlotDetail({params}:{
       credits: electiveSlots.credits, minPick: electiveSlots.minPick,
       maxPick: electiveSlots.maxPick, status: electiveSlots.status,
       semesterNumber: electiveSlots.semesterNumber, academicYear: electiveSlots.academicYear,
+      programId: electiveSlots.programId, academicPeriodId: electiveSlots.academicPeriodId,
+      hasEnrollmentHistory: sql<boolean>`exists (
+        select 1 from elective_offerings eo where eo.slot_id = ${electiveSlots.id}
+        and (exists (select 1 from lms_group_members gm where gm.group_id=eo.group_id)
+          or exists (select 1 from lms_group_member_events ev where ev.group_id=eo.group_id))
+      )`,
       programName: programs.name,
     }).from(electiveSlots)
       .innerJoin(programs, eq(programs.id, electiveSlots.programId))

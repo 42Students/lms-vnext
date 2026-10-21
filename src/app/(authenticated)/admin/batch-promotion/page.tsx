@@ -37,19 +37,20 @@ export default async function SuperAdminBatchPromotionPage({
       <p className="mt-1">Batch promotion is always college-scoped in Superadmin. Use the header Organization/College selector.</p>
     </div>
   </div>;
+  const pageSize=typeof raw.pageSize==="string"&&["10","25","50"].includes(raw.pageSize)?Number(raw.pageSize):10;
+  const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,3}$/.test(raw.page)?Number(raw.page):1;
   let options:Awaited<ReturnType<typeof listCollegePromotionOptions>>;
-  try{options=await listCollegePromotionOptions(context,input.data);}
+  try{options=await listCollegePromotionOptions(context,input.data,
+    {page:requestedPage,pageSize,includeInactive:showCompleted});}
   catch{return <div className="min-w-0 space-y-5">
     <PageHeader title="Batch Promotion"/>
     <ErrorState title="Batches unavailable" description="Courses and batch choices could not be verified. No promotion has been prepared."
       action={<Link href="/admin/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry batches</Link>}/>
   </div>;}
-  const visibleCohorts = showCompleted ? options.cohorts : options.cohorts.filter(item=>item.status==="ACTIVE");
-  const pageSize=typeof raw.pageSize==="string"&&["10","25","50"].includes(raw.pageSize)?Number(raw.pageSize):10;
-  const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,3}$/.test(raw.page)?Number(raw.page):1;
-  const pageCount=Math.max(1,Math.ceil(visibleCohorts.length/pageSize));
+  const visibleCohorts = options.cohorts;
+  const pageCount=Math.max(1,Math.ceil(options.totalCohorts/pageSize));
   const currentPage=Math.min(requestedPage,pageCount);
-  const shownCohorts=visibleCohorts.slice((currentPage-1)*pageSize,currentPage*pageSize);
+  const shownCohorts=visibleCohorts;
   function pageHref(page:number,size=pageSize){
     const query=new URLSearchParams();
     if(input.data.programId)query.set("programId",input.data.programId);
@@ -108,6 +109,8 @@ export default async function SuperAdminBatchPromotionPage({
           className="min-h-11 min-[768px]:min-h-9">
           <option value="">Select a batch</option>
           {visibleCohorts.map(b => <option key={b.id} value={b.id}>{b.programName} · {b.name} ({b.status})</option>)}
+          {preview && !visibleCohorts.some(b => b.id === preview.batch.id) ?
+            <option value={preview.batch.id}>{preview.batch.programName} · {preview.batch.name} ({preview.batch.status})</option> : null}
         </Select>
       </label>
       <div className="order-last grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] min-[768px]:col-span-2 min-[768px]:grid-cols-2 min-[1200px]:col-span-3">
@@ -129,7 +132,7 @@ export default async function SuperAdminBatchPromotionPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
 
         <p role="status" className="text-sm text-muted-foreground">
-          {visibleCohorts.length?"Showing "+((currentPage-1)*pageSize+1)+"–"+Math.min(currentPage*pageSize,visibleCohorts.length):"Showing 0"} of {visibleCohorts.length} matching batches ({options.cohorts.length} total)
+          {options.totalCohorts?"Showing "+((currentPage-1)*pageSize+1)+"–"+Math.min(currentPage*pageSize,options.totalCohorts):"Showing 0"} of {options.totalCohorts} matching batches
         </p>
         <div className="flex flex-wrap items-center gap-2 text-xs" aria-label="Rows per page">
           <span>Rows per page:</span>

@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -38,6 +39,7 @@ export default async function CollegeBatchPromotionPage({
       action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
   </div>;
   const incoming = await searchParams;
+  const showCompleted = first(incoming.showCompleted) === "1";
   const batchPageRaw=first(incoming.batchPage)??"1";
   const batchSizeRaw=first(incoming.batchPageSize)??"10";
   const batchPage=/^[1-9][0-9]{0,3}$/.test(batchPageRaw)?Number(batchPageRaw):null;
@@ -52,14 +54,16 @@ export default async function CollegeBatchPromotionPage({
       value !== undefined && value !== "",
     )),
   );
-  if (!parsed.success||batchPage===null||batchSize===null) return <div className="min-w-0 space-y-4 md:space-y-6">
+  if (!parsed.success||batchPage===null||batchSize===null||
+      (first(incoming.showCompleted) !== undefined && !["1",""].includes(first(incoming.showCompleted)!))) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
       action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
   const [optionsResult,previewResult]=await Promise.allSettled([
-    listCollegePromotionOptions(context,parsed.data),
+    listCollegePromotionOptions(context,parsed.data,
+      {page:batchPage!,pageSize:batchSize!,includeInactive:showCompleted}),
     parsed.data.cohortId?previewCollegeBatchPromotion(context,parsed.data):Promise.resolve(null),
   ]);
   if(optionsResult.status==="rejected"){
@@ -79,21 +83,22 @@ export default async function CollegeBatchPromotionPage({
   const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
     ?await getPromotionFacultyReadiness(context,preview.batch.programId,
       parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
-  const totalBatches=options.cohorts.length;
+  const totalBatches=options.totalCohorts;
   const totalBatchPages=Math.max(1,Math.ceil(totalBatches/batchSize!));
   const currentBatchPage=Math.min(batchPage!,totalBatchPages);
-  const directoryRows=options.cohorts.slice(
-    (currentBatchPage-1)*batchSize!,currentBatchPage*batchSize!);
+  const directoryRows=options.cohorts;
   const currentUrl=(page:number,size=batchSize!)=>{
     const params=new URLSearchParams();
     if(parsed.data.programId)params.set("programId",parsed.data.programId);
+    if(showCompleted)params.set("showCompleted","1");
     if(parsed.data.cohortId)params.set("cohortId",parsed.data.cohortId);
     if(parsed.data.yearStart!==undefined)params.set("yearStart",formatPromotionAcademicYear(parsed.data.yearStart));
     params.set("batchPage",String(page));params.set("batchPageSize",String(size));
     return "/college/batch-promotion?"+params.toString();
   };
   const batchPreviewHref=(row:(typeof options.cohorts)[number])=>{
-    const params=new URLSearchParams({programId:row.programId,cohortId:row.id});
+    const params=new URLSearchParams({programId:row.programId,cohortId:row.id,
+      ...(showCompleted?{showCompleted:"1"}:{})});
     return "/college/batch-promotion?"+params.toString();
   };
   return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -162,6 +167,8 @@ export default async function CollegeBatchPromotionPage({
             {options.cohorts.map(cohort => <option key={cohort.id} value={cohort.id}>
               {cohort.programName} · {cohort.name} ({cohort.status})
             </option>)}
+            {preview && !options.cohorts.some(cohort => cohort.id === preview.batch.id) ?
+              <option value={preview.batch.id}>{preview.batch.programName} · {preview.batch.name} ({preview.batch.status})</option> : null}
           </Select>
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -170,6 +177,10 @@ export default async function CollegeBatchPromotionPage({
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
             placeholder="e.g., 2099-00"
             />
+        </label>
+        <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-muted-foreground">
+          <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted} />
+          Show completed / inactive batches
         </label>
         <div className="flex min-w-0 items-end">
           <Button type="submit" className="min-h-11 w-full md:min-h-9">Preview</Button>
