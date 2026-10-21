@@ -65,9 +65,14 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     <strong className="block break-words">{row.student}</strong>
     <span className="block text-xs text-muted-foreground">{row.department??"—"}</span>
   </div>},
-  {key:"type",header:"Type",cell:row=>row.kind==="GD"?"Group discussion":"Interview"},
+  {key:"type",header:"Type",cell:row=>row.typeLabel},
   {key:"status",header:"Status",cell:row=><span>
-    <StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"error":"neutral"}>{row.status}</StatusBadge>
+    <StatusBadge tone={row.status==="COMPLETED"?"success":
+      row.status==="CONFIRMED"?"info":
+      row.status==="SCHEDULED"?"info":
+      row.status==="RESCHEDULE_REQUESTED"?"warning":
+      row.status==="CANCELLED"||row.status==="NO_SHOW"?"error":"neutral"}>
+      {row.statusLabel}</StatusBadge>
     {row.conflictKind?<span className="mt-1 block text-xs text-danger-text">⚠ Conflict: {row.conflictKind.toLowerCase()}</span>:null}
   </span>},
   {key:"start",header:"Date & Time",cell:row=>formatter.format(row.start)+" IST"},
@@ -122,8 +127,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
       <option value="">All departments</option>{data.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select>
     </label>
-    {([{name:"type",label:"Type",values:["ALL","INTERVIEW","GD"]},
-      {name:"status",label:"Status",values:["ALL","SCHEDULED","COMPLETED","NO_SHOW","CANCELLED"]},
+    {([{name:"type",label:"Type",values:["ALL","SCREENING","TECHNICAL","HR","MANAGERIAL","FINAL","INTERVIEW","GD"]},
+      {name:"status",label:"Status",values:["ALL","ACTIVE","SCHEDULED","CONFIRMED","RESCHEDULE_REQUESTED","COMPLETED","NO_SHOW","CANCELLED"]},
       {name:"mode",label:"Mode",values:["ALL","ON_CAMPUS","VIRTUAL"]}]
     ).map(filter=><label key={filter.name} className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{filter.label}
      <Select name={filter.name} defaultValue={String(valid.data[filter.name as "type"|"status"|"mode"])}
@@ -133,7 +138,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort
      <Select name="sort" defaultValue={valid.data.sort} >
       <option value="UPCOMING">Date ↑ Earliest</option><option value="RECENT">Date ↓ Latest</option>
-      <option value="STUDENT">Job title</option>
+      <option value="STUDENT">Student</option>
      </Select>
     </label>
       </div>
@@ -153,7 +158,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     <span className="inline-flex items-center gap-2">Sort by:
       <Select aria-label="Sort interviews" defaultValue={valid.data.sort} name="sort" form="interview-sort-form">
         <option value="UPCOMING">Date ↑ Earliest</option><option value="RECENT">Date ↓ Latest</option>
-        <option value="STUDENT">Job title</option>
+        <option value="STUDENT">Student</option>
       </Select>
       <form method="get" id="interview-sort-form" action="/college/placements/interviews">
         <Button type="submit" variant="secondary">Sort</Button>
@@ -166,7 +171,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     {data.summary.conflicts>0?<StatusBadge tone="error">{data.summary.conflicts} {data.summary.conflicts===1?"conflict":"conflicts"}</StatusBadge>:null}
     {hasActiveFilters?<Link href="/college/placements/interviews" className="inline-flex min-h-9 items-center text-primary-text underline">Clear filters</Link>:null}
    </div>
-   {data.limited?<CollegeInterviewNotice message="Results and summary are capped at the first 5,000 records. Narrow filters for a complete view."/>:null}
+   {data.limited?<CollegeInterviewNotice message="Export includes at most the first 10,000 matching records; the full matching count is displayed. Narrow filters for a complete view."/>:null}
    {data.conflictsIncomplete?<CollegeInterviewNotice message="More than 10,000 overlapping bookings exist in this period. Conflict flags may be incomplete; narrow the time range before scheduling."/>:null}
    <section aria-label="College interview appointments" className="space-y-3">
     <div className="space-y-3 md:hidden">
@@ -178,7 +183,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">View</Link>
         </div>
         <p className="text-sm">{row.student} <span className="text-muted-foreground">· {row.department??"—"}</span></p>
-        <p className="text-sm">{row.kind} · {row.status} · {formatter.format(row.start)} IST</p>
+        <p className="text-sm">{row.typeLabel} · {row.statusLabel} · {formatter.format(row.start)} IST</p>
         <div className="flex items-center justify-between gap-3 text-sm">
           <span>{row.mode==="VIRTUAL"?"▣ Online":"⌖ In-person"} · {row.venue??"—"}</span>
           <a href={singleIcsHref(row)} download={"interview-"+row.id+".ics"} className="min-h-11 shrink-0 font-semibold text-primary-text underline">ICS ↓</a>
