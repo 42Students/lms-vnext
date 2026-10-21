@@ -106,5 +106,5 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_api_attendance_admin_sessions_scheduleEventId_route.ts.md` (edit src/app/api/attendance/admin/sessions/[scheduleEventId]/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_attendance_admin-grid-model.ts.md` (edit src/modules/attendance/admin-grid-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-faculty-type-model.ts.md` (edit src/modules/people/college-faculty-type-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-faculty-csv-service.ts.md` (edit src/modules/people/college-faculty-csv-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_college-faculty-csv-service.ts.md` (edit src/modules/people/college-faculty-csv-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_api_people_membershipId_roles_route.ts.md` (edit src/app/api/people/[membershipId]/roles/route.ts; 1 findings; best P3)
