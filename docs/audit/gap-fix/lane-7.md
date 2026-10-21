@@ -87,3 +87,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_superadmin-login.md.md` | 8/8 packet findings triaged with exact target paths; no changes to shared sign-in and consent/auth outside lane ownership. **Handoff, not fixed**, no code/CI execution.
 
 - `NEW_docs_audit_gap2_lane-14_l18-u029-semester-management.md.md` | 7/7 packet findings triaged with exact target paths; no changes to Academic semester form/page outside lane ownership. **Handoff, not fixed**, no code/CI execution.
+
+- `src_lib_report-client-error.ts.md` | 7/7 findings evaluated; replaced root-only unchecked fetch with redacted bounded client report API plus opt-in installer for window script/resource errors, unhandledrejection with route-abort suppression, and opt-in non-suppressing console.error instrumentation. Typed categorical mid-action reporter exported; root installation and API/video/upload call sites still require owner integration, logged in handoff. No app tests or CI; static source review.
+
+- `src_components_marketing_marketing-layout.tsx.md` | 7/7 findings inspected and improved in owned marketing layout: focus-visible Skip to main content/main anchor, site-wide Organization/WebSite JSON-LD, optional WebPage/BreadcrumbList projection, route metadata builder and safe prefilled demo mailto helper. Route pages must pass path/title and adopt metadata builder/DEMO_MAILTO to complete SEO+CTA, handed off; no misleading OG image asset invented. Static JSX/TypeScript review only.
