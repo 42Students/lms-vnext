@@ -349,8 +349,10 @@ export function PlacementEmployerRelationships({
 
                   <Button size="sm" variant="ghost"
                     className="min-h-11 w-full sm:w-auto md:min-h-9"
-                    disabled={busy||(item.drives??0)>0}
-                    title={(item.drives??0)>0?"Used by drives: switch it off instead":undefined}
+                    disabled={busy||item.drives==null||item.drives>0}
+                    title={item.drives==null
+                      ?"Drive usage is unavailable. Refresh before archiving."
+                      :item.drives>0?"Used by drives: switch it off instead":undefined}
                     onClick={()=>setArchiveConfirmId(item.relationshipId)}>Archive</Button>
                   </>)}
                 </div>

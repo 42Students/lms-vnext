@@ -13,8 +13,8 @@ Packets:
 
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_report-service.ts.md` (edit src/modules/placements/report-service.ts; 10 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-job-type-write-service.ts.md` (edit src/modules/placements/tpo-job-type-write-service.ts; 9 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_placements_page.tsx.md` (edit src/app/placements/page.tsx; 4 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-recruiter-access-model.ts.md` (edit src/modules/placements/tpo-recruiter-access-model.ts; 2 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_app_placements_page.tsx.md` (edit src/app/placements/page.tsx; 4 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-recruiter-access-model.ts.md` (edit src/modules/placements/tpo-recruiter-access-model.ts; 2 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_placement-employer-relationships.tsx.md` (edit src/components/placements/placement-employer-relationships.tsx; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_college-company-create.tsx.md` (edit src/components/placements/college-company-create.tsx; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_college-drive-attention-cards.tsx.md` (edit src/components/placements/college-drive-attention-cards.tsx; 10 findings; best P1)

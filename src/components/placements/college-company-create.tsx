@@ -21,20 +21,28 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
  const [websiteUrl,setWebsiteUrl]=useState("");
  const [primaryDomain,setPrimaryDomain]=useState("");
  const [error,setError]=useState("");
+ const [fieldErrors,setFieldErrors]=useState<Partial<Record<"name"|"websiteUrl"|"primaryDomain",string>>>({});
  const [notice,setNotice]=useState("");
  const dirty=Boolean(name.trim()||websiteUrl.trim()||primaryDomain.trim());
  function requestClose(){
   if(pending)return;
   if(dirty){setConfirmDiscard(true);return;}
-  setOpen(false);setError("");
+  setOpen(false);setError("");setFieldErrors({});
  }
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   const parsed=collegeCompanyDraftPayload({collegeId,name,websiteUrl,primaryDomain});
   if(!parsed.success){
-   const nameIssue=parsed.error.issues.find(issue=>issue.path[0]==="name");
-   setError(nameIssue?.message??parsed.error.issues[0]?.message??"Check company details.");return;
+   const errors:Partial<Record<"name"|"websiteUrl"|"primaryDomain",string>>={};
+   for(const issue of parsed.error.issues){
+    const key=issue.path[0];
+    if(key==="name"||key==="websiteUrl"||key==="primaryDomain")
+     errors[key]??=issue.message;
+   }
+   setFieldErrors(errors);
+   setError("Check the highlighted company details.");return;
   }
+  setFieldErrors({});
   void run(async()=>{
    setError("");setNotice("");
    try{
@@ -42,7 +50,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
       method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify(parsed.data),
     });
-    setName("");setWebsiteUrl("");setPrimaryDomain("");setOpen(false);
+    setName("");setWebsiteUrl("");setPrimaryDomain("");setFieldErrors({});setOpen(false);
     setNotice("Company created. Added to this college; existing company identities are reused where possible.");
     router.refresh();
    }catch(cause){
@@ -61,16 +69,23 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   {open?<form onSubmit={submit} className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-2">
     <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] md:col-span-2">Add company</h2>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
-      <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name} onChange={e=>setName(e.target.value)}
+      <Input required minLength={2} maxLength={150} placeholder="e.g. Infosys Limited" value={name}
+        aria-invalid={Boolean(fieldErrors.name)}
+        onChange={e=>{setName(e.target.value);setFieldErrors(current=>({...current,name:undefined}));}}
         className={field} />
+      {fieldErrors.name?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS, optional)
-      <Input type="url" pattern="https://.*" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)}
+      <Input type="url" pattern="https://.*" value={websiteUrl} aria-invalid={Boolean(fieldErrors.websiteUrl)}
+        onChange={e=>{setWebsiteUrl(e.target.value);setFieldErrors(current=>({...current,websiteUrl:undefined}));}}
         placeholder="https://example.com" className={field}/>
+      {fieldErrors.websiteUrl?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.websiteUrl}</span>:null}
     </label>
     <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company email domain (optional)
-      <Input value={primaryDomain} maxLength={255} onChange={e=>setPrimaryDomain(e.target.value)}
+      <Input value={primaryDomain} maxLength={255} aria-invalid={Boolean(fieldErrors.primaryDomain)}
+        onChange={e=>{setPrimaryDomain(e.target.value);setFieldErrors(current=>({...current,primaryDomain:undefined}));}}
         placeholder="example.com" className={field}/>
+      {fieldErrors.primaryDomain?<span role="alert" className="text-xs font-normal text-error">{fieldErrors.primaryDomain}</span>:null}
     </label>
     <p className="text-sm text-muted-foreground sm:col-span-2 leading-[22px]">
       A company is shared across colleges by its canonical identity. Only this college&apos;s relationship may be edited here.
@@ -90,6 +105,6 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
    title="Discard unsaved changes?" description="Your company details have not been saved."
    cancelLabel="Keep editing" confirmLabel="Discard changes" confirmVariant="danger"
-   onConfirm={()=>{setConfirmDiscard(false);setOpen(false);setError("");setName("");setWebsiteUrl("");setPrimaryDomain("");}} />
+   onConfirm={()=>{setConfirmDiscard(false);setOpen(false);setError("");setName("");setWebsiteUrl("");setPrimaryDomain("");setFieldErrors({});}} />
  </section>;
 }
