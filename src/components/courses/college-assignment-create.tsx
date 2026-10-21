@@ -9,9 +9,11 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
-import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import {type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+const DEFAULT_ASSIGNMENT_METHODS: AssignmentMethod[] = ["WRITTEN_RESPONSE"];
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
@@ -27,8 +29,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [title,setTitle]=useState("");
  const [description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState("");
- const [points,setPoints]=useState("10");
- const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
+ const [points,setPoints]=useState("0");
+ const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(DEFAULT_ASSIGNMENT_METHODS);
  const [pending,setPending]=useState(false);
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
@@ -36,26 +38,26 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const lock=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const chosen=lessons.find(x=>x.id===lessonId);
- const pointsValid=Number.isInteger(Number(points))&&Number(points)>=1&&Number(points)<=10000;
+ const pointsValid=points.trim().length>0&&Number.isInteger(Number(points))&&Number(points)>=0&&Number(points)<=10000;
  const sections=useMemo(()=>deliveries.filter(d=>d.offeringId===chosen?.offeringId),
    [deliveries,chosen?.offeringId]);
  function discardDraft(){
-  setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
-  setDeliveryId("");setAllowedMethods(ALL_ASSIGNMENT_METHODS);setError("");setConfirmDiscard(false);
+  setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("0");
+  setDeliveryId("");setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setError("");setConfirmDiscard(false);
  }
  function close(){
   if(pending)return;
-  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||points!=="10"||
-   allowedMethods.length!==ALL_ASSIGNMENT_METHODS.length||
-   ALL_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
+  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||points!=="0"||
+   allowedMethods.length!==DEFAULT_ASSIGNMENT_METHODS.length||
+   DEFAULT_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
   if(dirty){setConfirmDiscard(true);return;}
   discardDraft();
  }
  async function create(){
   if(lock.current||!chosen)return;
   const maxPoints=Number(points);
-  if(!title.trim()||!Number.isInteger(maxPoints)||maxPoints<1||maxPoints>10000){
-   setError("Enter an assignment title and 1–10000 points.");return;
+  if(!title.trim()||title.trim().length>255||!pointsValid||!Number.isInteger(maxPoints)){
+   setError("Enter an assignment title (1–255 characters) and points from 0 to 10000.");return;
   }
   if(description.length>10000){setError("Instructions must be at most 10,000 characters.");return;}
   if(allowedMethods.length===0){setError("Select at least one allowed submission method.");return;}
@@ -82,22 +84,25 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
    setConfirmCreate(false);
    if(!keepOpen)setOpened(false);
-   setTitle("");setDescription("");setDueAt("");setPoints("10");
+   setTitle("");setDescription("");setDueAt("");setPoints("0");
+   setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);
    setMessage("Assignment draft created. Publish it to let learners submit.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
   finally{lock.current=false;setPending(false);}
  }
- return <section className="min-w-0 space-y-4 border-b border-border pb-4">
-  <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-   <p className="min-w-0 text-[var(--lms-font-base)] text-[var(--lms-body-text)]">Create a shared or Section-specific assignment draft.</p>
-   {!opened?<Button type="button" variant="primary" disabled={!lessons.length||pending}
-    className="min-h-11 w-full min-[768px]:w-auto md:min-h-9"
-    onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</Button>:null}
-  </div>
+ return <div className="min-w-0">
+  <Button type="button" variant="primary" disabled={!lessons.length||pending}
+   className="min-h-11 w-full md:w-auto md:min-h-9"
+   onClick={()=>{setError("");setMessage("");setOpened(true);}}>
+   <span aria-hidden="true">+</span>Create Assignment
+  </Button>
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
-  {opened?<div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
+  <Dialog open={opened} onOpenChange={next=>{if(!next)close();}}
+   title="Create Assignment" description="Select a course, audience and assignment details."
+   className="max-w-[720px]">
+   <div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / Lesson
     <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
      className="min-h-11 w-full md:min-h-9">
@@ -114,10 +119,10 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      </option>)}
     </Select></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-    <Input required maxLength={200} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
+    <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
-    <Input type="number" min={1} max={10000} value={points} disabled={pending}
+    <Input type="number" min={0} max={10000} placeholder="Enter points" value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
    <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
@@ -131,7 +136,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      onChange={e=>setDueAt(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 sm:col-span-2 text-[var(--lms-neutral-400)]">Instructions
-    <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
+    <Textarea rows={4} placeholder="What the student needs to submit" maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="min-h-24 w-full"/></label>
 
@@ -149,7 +154,9 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      className="min-h-11 w-full sm:w-auto md:min-h-9">
      {pending?"Creating…":"Create draft"}</Button>
    </div>
-  </div>:null}
+   </div>
+   {error?<Alert tone="error" className="mt-3">{error}</Alert>:null}
+  </Dialog>
   <ConfirmDialog open={confirmCreate} onOpenChange={next=>{if(!pending)setConfirmCreate(next);}}
    title="Create assignment as a draft?" description="Learners cannot submit until published."
    confirmLabel="Create draft" confirmVariant="primary" pending={pending} confirmDisabled={!chosen||!title.trim()||!pointsValid} onConfirm={()=>void create()}>
@@ -160,5 +167,5 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    confirmVariant="danger" pending={pending} onConfirm={discardDraft}/>
   {error?<Alert tone="error">{error}</Alert>:null}
   {message?<Alert tone="success">{message}</Alert>:null}
- </section>;
+ </div>;
 }

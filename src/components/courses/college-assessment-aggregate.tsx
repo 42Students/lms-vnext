@@ -15,6 +15,7 @@ import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
 import {CollegeAssignmentActions} from "./college-assignment-actions";
+import { CollegeAssessmentCourseSectionFilters, type AssessmentDirectoryCourse, type AssessmentDirectorySection } from "./college-assessment-course-section-filters";
 import {CollegeQuizActions} from "./college-quiz-actions";
 import {CollegeQuizAttempts} from "./college-quiz-attempts";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
@@ -36,6 +37,8 @@ type Data = {
   pageSize: number;
   totalPages: number;
   reviewDeliveries: {offeringId:string;deliveryId:string;sectionName:string;sectionCode:string}[];
+  directoryCourses: AssessmentDirectoryCourse[];
+  directorySections: AssessmentDirectorySection[];
 };
 
 function formatDue(value: Date | null) {
@@ -83,10 +86,16 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           "Course authoring and detailed review remain in their offering workspaces."
         }
         actions={
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {isAssignment ? leading : null}
+            {isAssignment ? data.items.length ? <Link prefetch={false} download
+              href={collegeAssessmentExportHref(data.kind,data.query,"PAGE")}
+              className="inline-flex min-h-11 items-center gap-2 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              <span aria-hidden="true">↓</span>Export CSV (page)
+            </Link> : <Button type="button" variant="secondary" disabled>Export CSV (page)</Button> : null}
             <Link prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}
               className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-              Export CSV
+              {isAssignment ? "Export all matching" : "Export CSV"}
             </Link>
             <Link href={isAssignment ? "/college/quizzes" : "/college/assignments"}
               className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
@@ -99,7 +108,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           </div>
         }
       />
-      {leading ? <section aria-label="New assessment" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
+      {!isAssignment && leading ? <section aria-label="New assessment" className="min-w-0 border-b border-border pb-4">{leading}</section> : null}
 
       <section aria-label="Assessment directory filters"
         className="border-b border-border pb-6">
@@ -123,14 +132,12 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               <option value="ARCHIVED">Archived</option>
             </Select>
           </label>
-          <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.courseCode || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
+          <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
+            sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
+            initialDeliveryId={data.query.deliveryId??""}/>
+          <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
             <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assessment directory filters</summary>
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Exact course code
-            <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
-              className="min-h-11 md:min-h-9" />
-          </label>
           <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
@@ -229,7 +236,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   <div><dt className="font-semibold text-muted-foreground">Submitted</dt>
                     <dd>{item.submittedLearners}/{item.eligibleLearners}</dd></div>
                   {isAssignment?<div><dt className="font-semibold text-muted-foreground">Graded</dt>
-                    <dd>{item.gradedLearners} graded</dd></div>:null}
+                    <dd>{item.gradedLearners} graded · {Math.max(0,item.submittedLearners-item.gradedLearners)} not graded</dd></div>:null}
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd><StatusBadge tone={item.resultsPublished?"success":"warning"}>{item.resultsPublished?"Published":"Hidden"}</StatusBadge></dd></div>:null}
                 </dl>
                 {!isAssignment?<><QuizListActions item={item}/><CollegeQuizActions quiz={item}/><CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId} specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries} status={item.status}/></>:null}
@@ -273,7 +280,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   {key:"submitted",header:"Submitted / eligible",mobilePriority:"secondary" as const,
                     cell:(item)=>item.submittedLearners+"/"+item.eligibleLearners+" submitted"},
                   ...(isAssignment?[{key:"graded",header:"Graded",mobilePriority:"secondary" as const,
-                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded"}]:[]),
+                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded / "+Math.max(0,item.submittedLearners-item.gradedLearners)+" not graded"}]:[]),
                   {key:"actions",header:"Actions",mobilePriority:"action" as const,
                     cell:(item)=><div className="min-w-0 space-y-2">
                       {isAssignment?<><CollegeAssignmentActions assignment={item}/>
@@ -295,7 +302,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-sm text-muted-foreground">
-          Page {data.page} of {data.totalPages} · {data.total} records · 25/page
+          Page {data.page} of {data.totalPages} · {data.total} records · {data.pageSize}/page
         </p>
         <Pagination page={data.page} pageCount={data.totalPages}
           hrefForPage={page=>collegeAssessmentHref(data.kind,{...data.query,page})}

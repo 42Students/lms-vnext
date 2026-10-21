@@ -73,6 +73,32 @@ export async function listCollegeAssessmentAggregate(
   }
 
   const db = getDb();
+  // Authorized filter options come from the selected college, not the
+  // current paginated assessment rows.
+  const [directoryCourses,directorySections]=await Promise.all([
+    db.selectDistinct({code:courses.code,name:courses.name}).from(courses)
+      .innerJoin(departments,eq(departments.id,courses.departmentId))
+      .where(and(eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE")))
+      .orderBy(asc(courses.name),asc(courses.code)),
+    db.selectDistinct({
+      courseCode:courses.code,deliveryId:courseSectionDeliveries.id,
+      sectionName:sections.name,sectionCode:sections.code,
+    }).from(courseSectionDeliveries)
+      .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+      .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+      .innerJoin(departments,eq(departments.id,courses.departmentId))
+      .innerJoin(sections,and(
+        eq(sections.id,courseSectionDeliveries.sectionId),
+        eq(sections.cohortId,courseOfferings.cohortId),
+        eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
+      ))
+      .where(and(
+        eq(departments.collegeId,collegeId),eq(courses.status,"ACTIVE"),
+        eq(courseOfferings.status,"ACTIVE"),eq(sections.status,"ACTIVE"),
+        isNull(courseSectionDeliveries.endedAt),
+      ))
+      .orderBy(asc(courses.code),asc(sections.name),asc(sections.code)),
+  ]);
   // Deliberately keep the two Drizzle roots statically typed. Both are
   // registered, and neither page consults draft assessment storage tables.
   let rows: AssessmentRow[];
@@ -83,6 +109,7 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.deliveryId ? eq(courseAssignments.deliveryId,query.deliveryId) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
@@ -131,6 +158,7 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      query.deliveryId ? eq(courseQuizzes.deliveryId,query.deliveryId) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
@@ -367,6 +395,8 @@ export async function listCollegeAssessmentAggregate(
     query,
     items,
     reviewDeliveries,
+    directoryCourses,
+    directorySections,
     total,
     page: query.page,
     pageSize: COLLEGE_ASSESSMENT_PAGE_SIZE,

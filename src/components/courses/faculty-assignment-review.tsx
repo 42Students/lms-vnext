@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
+import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -94,7 +95,7 @@ function SubmissionGradeCard({
     useState<string | null>(null);
   const [success, setSuccess] = useState<string|null>(null);
   const [needsRefresh,setNeedsRefresh]=useState(false);
-  const [confirmAction,setConfirmAction]=useState<"REGRADING"|"SAVE_PUBLISH"|"PUBLISH"|null>(null);
+  const [confirmAction,setConfirmAction]=useState<"REGRADING"|"SAVE_PUBLISH"|"PUBLISH"|"HIDE"|null>(null);
   const operationInFlight = useRef(false);
 
   async function saveGrade(
@@ -291,6 +292,41 @@ function SubmissionGradeCard({
     }
   }
 
+  /** Restore legacy grade privacy without silently changing the saved score. */
+  async function hidePublishedGrade(){
+    if(!submission.gradePublished||submission.pointsAwarded===null)return;
+    if(!beginFacultyManualGradeOperation(operationInFlight))return;
+    setSaving(true);setError(null);setSuccess(null);setNeedsRefresh(false);
+    try{
+      const response=await fetch(
+        "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/grade",{
+          method:"PATCH",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            pointsAwarded:submission.pointsAwarded,
+            feedback:submission.feedback,
+            expectedVersion:submission.version,
+            hidePublished:true,
+          }),
+        });
+      if(!response.ok){
+        setNeedsRefresh(facultyManualGradeNeedsRefresh(response.status));
+        setError(await courseApiError(response));return;
+      }
+      const saved=facultyManualGradeReceipt(
+        await response.json(),submission,"GRADE",maxPoints,{
+          points:submission.pointsAwarded,feedback:submission.feedback,
+        });
+      setSuccess("Grade saved and hidden from the learner.");
+      onUpdated({...submission,...saved,gradePublished:false});
+    }catch{
+      setNeedsRefresh(true);
+      setError("The grade visibility outcome is uncertain. Reload before retrying.");
+    }finally{
+      operationInFlight.current=false;
+      setSaving(false);setConfirmAction(null);
+    }
+  }
+
   return (
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div className="flex min-w-0 flex-col items-start gap-3 sm:flex-row sm:justify-between">
@@ -427,6 +463,13 @@ function SubmissionGradeCard({
               Save your score and feedback changes before publishing.
             </p>
           ) : null}
+          {submission.gradePublished && actions.canGrade ? (
+            <Button size="md" type="button" variant="secondary"
+              className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
+              disabled={saving||publishing||draftState.hasChanges}
+              title={draftState.hasChanges?"Save or discard score edits before hiding the published grade":undefined}
+              onClick={()=>setConfirmAction("HIDE")}>Save &amp; hide from learner</Button>
+          ) : null}
           {submission.gradePublished ? (
             <span className="text-xs font-semibold text-success">
               Learner can see{" "}
@@ -448,18 +491,19 @@ function SubmissionGradeCard({
       <ConfirmDialog
         open={confirmAction !== null}
         onOpenChange={nextOpen => { if (!nextOpen && !saving && !publishing) setConfirmAction(null); }}
-        title={confirmAction === "REGRADING" ? "Regrade learner submission" : confirmAction === "SAVE_PUBLISH" ? "Save and publish grade" : "Publish grade"}
-        description={confirmAction === "REGRADING"
+        title={confirmAction === "HIDE" ? "Hide published grade?" : confirmAction === "REGRADING" ? "Regrade learner submission" : confirmAction === "SAVE_PUBLISH" ? "Save and publish grade" : "Publish grade"}
+        description={confirmAction === "HIDE" ? "The learner will no longer see the published grade. The saved score and feedback will remain available to graders." : confirmAction === "REGRADING"
           ? "Regrading will hide the currently published grade until you publish the new grade. Continue?"
           : confirmAction === "SAVE_PUBLISH"
             ? "Save and publish this grade to the learner?"
             : facultyManualGradePublishPrompt(submission.pointsAwarded,maxPoints,submission.feedback)}
-        confirmLabel={confirmAction === "REGRADING" ? "Continue regrading" : confirmAction === "SAVE_PUBLISH" ? "Save and publish" : "Publish grade"}
-        confirmVariant={confirmAction === "REGRADING" ? "danger" : "primary"}
+        confirmLabel={confirmAction === "HIDE" ? "Save & hide from learner" : confirmAction === "REGRADING" ? "Continue regrading" : confirmAction === "SAVE_PUBLISH" ? "Save and publish" : "Publish grade"}
+        confirmVariant={confirmAction === "HIDE" || confirmAction === "REGRADING" ? "danger" : "primary"}
         pending={saving || publishing}
-        confirmDisabled={confirmAction === "REGRADING" || confirmAction === "SAVE_PUBLISH" ? draftState.points === null : !draftState.canPublish}
+        confirmDisabled={confirmAction === "HIDE" ? !submission.gradePublished||draftState.hasChanges : confirmAction === "REGRADING" || confirmAction === "SAVE_PUBLISH" ? draftState.points === null : !draftState.canPublish}
         onConfirm={() => {
-          if (confirmAction === "REGRADING" && draftState.points !== null) void saveGradeConfirmed(draftState.points);
+          if (confirmAction === "HIDE") void hidePublishedGrade();
+          else if (confirmAction === "REGRADING" && draftState.points !== null) void saveGradeConfirmed(draftState.points);
           else if (confirmAction === "SAVE_PUBLISH" && draftState.points !== null) void saveAndPublishConfirmed(draftState.points);
           else if (confirmAction === "PUBLISH" && draftState.canPublish) void publishGradeConfirmed();
         }}
@@ -501,14 +545,16 @@ export function FacultyAssignmentReview({
   const loadSequence = useRef(0);
   const [selectedSubmissionId,setSelectedSubmissionId]=useState<string|null>(null);
 
+  const ReviewOverlay=reviewScope==="COLLEGE"?Dialog:Drawer;
   if(status==="ARCHIVED")return null;
   if(status==="DRAFT")return <div className="mt-3">
     <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
       onClick={()=>setOpen(true)}>View submissions</Button>
-    <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
+    <ReviewOverlay open={open} onOpenChange={setOpen} title="Assignment submissions"
+      className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
       description="Draft assignments are hidden from learners.">
       <EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work." />
-    </Drawer>
+    </ReviewOverlay>
   </div>;
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
@@ -548,7 +594,8 @@ export function FacultyAssignmentReview({
           View submissions
         </Button>
       </div>
-      <Drawer
+      <ReviewOverlay
+        className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
         open={open}
         onOpenChange={(nextOpen)=>{
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
@@ -650,7 +697,7 @@ export function FacultyAssignmentReview({
           onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
       </nav> : null}
       </div>
-      </Drawer>
+      </ReviewOverlay>
     </>
   );
 }

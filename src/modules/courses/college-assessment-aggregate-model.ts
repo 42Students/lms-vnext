@@ -1,12 +1,13 @@
 import { z } from "zod";
 
-export const COLLEGE_ASSESSMENT_PAGE_SIZE = 25;
+export const COLLEGE_ASSESSMENT_PAGE_SIZE = 20;
 export const collegeAssessmentKindSchema = z.enum(["ASSIGNMENT", "QUIZ"]);
 export type CollegeAssessmentKind = z.infer<typeof collegeAssessmentKindSchema>;
 
 export const collegeAssessmentListQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   courseCode: z.string().trim().min(1).max(64).optional(),
+  deliveryId: z.string().uuid().optional(),
   periodCode:z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
   programCode:z.string().trim().min(1).max(64).optional(),
@@ -53,6 +54,7 @@ export function collegeAssessmentHref(
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.courseCode) params.set("courseCode",query.courseCode);
+  if (query.deliveryId) params.set("deliveryId",query.deliveryId);
   if(query.periodCode)params.set("periodCode",query.periodCode);
   if(query.cohortCode)params.set("cohortCode",query.cohortCode);
   if(query.programCode)params.set("programCode",query.programCode);

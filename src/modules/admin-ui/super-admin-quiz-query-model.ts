@@ -5,14 +5,14 @@ import {adminAssessmentQuerySchema} from "@/modules/courses/admin-assessment-dir
  * coercion is intentionally supported for internal, typed callers).
  */
 export function parseSuperAdminQuizQuery(raw:Record<string,string|string[]|undefined>) {
-  const allowed=["q","status","courseCode","scope","results","page"];
+  const allowed=["q","status","courseCode","deliveryId","scope","results","page"];
   if(Object.keys(raw).some(key=>!allowed.includes(key)) ||
      Object.values(raw).some(Array.isArray) ||
      (raw.page!==undefined && (typeof raw.page!=="string" || !/^[0-9]+$/.test(raw.page)))) {
     return adminAssessmentQuerySchema.safeParse(null);
   }
   return adminAssessmentQuerySchema.safeParse({
-    q:raw.q,status:raw.status,courseCode:raw.courseCode,
+    q:raw.q,status:raw.status,courseCode:raw.courseCode,deliveryId:raw.deliveryId,
     scope:raw.scope,results:raw.results,page:raw.page,
   });
 }

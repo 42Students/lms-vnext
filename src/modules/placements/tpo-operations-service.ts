@@ -3,6 +3,7 @@ import {
   asc,
   desc,
   eq,
+  inArray,
   isNull,
   ne,
   sql,
@@ -195,9 +196,12 @@ export async function getPlacementTpoOperations(
       ])
     : null;
 
-  const [jobs, applications, rounds, resultRows, offerRows] =
-    await Promise.all([
-      db
+
+  // A dashboard must not materialize every drive and its learner fanout.
+  // Legacy samples at most 60 latest active cards; draft/closed sample is
+  // intentionally separate. Directory filters need DB-side pagination.
+  const [activeJobs, otherJobs] = await Promise.all([
+db
         .select({
           job: placementJobs,
           company: placementCompanies,
@@ -220,10 +224,43 @@ export async function getPlacementTpoOperations(
         .where(
           and(
             eq(placementJobs.collegeId, collegeId),
+            eq(placementJobs.status, "PUBLISHED"),
             isNull(placementJobs.archivedAt),
           ),
         )
-        .orderBy(asc(placementJobs.title)),
+        .orderBy(sql`${placementJobs.publishedAt} desc nulls last`, desc(placementJobs.createdAt), desc(placementJobs.id)).limit(60),
+db
+        .select({
+          job: placementJobs,
+          company: placementCompanies,
+        })
+        .from(placementJobs)
+        .innerJoin(
+          placementCompanyRelationships,
+          eq(
+            placementCompanyRelationships.id,
+            placementJobs.companyRelationshipId,
+          ),
+        )
+        .innerJoin(
+          placementCompanies,
+          eq(
+            placementCompanies.id,
+            placementCompanyRelationships.companyId,
+          ),
+        )
+        .where(
+          and(
+            eq(placementJobs.collegeId, collegeId),
+            ne(placementJobs.status, "PUBLISHED"),
+            isNull(placementJobs.archivedAt),
+          ),
+        )
+        .orderBy(sql`${placementJobs.publishedAt} desc nulls last`, desc(placementJobs.createdAt), desc(placementJobs.id)).limit(20),
+  ]);
+  const jobs = [...activeJobs, ...otherJobs];
+  const sampledJobIds = jobs.map(({ job }) => job.id);
+  const [applications, rounds, resultRows, offerRows] = await Promise.all([
       db
         .select({
           application: placementApplications,
@@ -249,6 +286,7 @@ export async function getPlacementTpoOperations(
           and(
             eq(placementJobs.collegeId, collegeId),
             isNull(placementJobs.archivedAt),
+            inArray(placementJobs.id, sampledJobIds),
             eq(
               placementApplications.status,
               "SUBMITTED",
@@ -271,6 +309,7 @@ export async function getPlacementTpoOperations(
           and(
             eq(placementJobs.collegeId, collegeId),
             isNull(placementJobs.archivedAt),
+            inArray(placementJobs.id, sampledJobIds),
             ne(
               placementJobRounds.status,
               "CANCELLED",
@@ -304,6 +343,7 @@ export async function getPlacementTpoOperations(
           and(
             eq(placementJobs.collegeId, collegeId),
             isNull(placementJobs.archivedAt),
+            inArray(placementJobs.id, sampledJobIds),
             ne(
               placementRoundResults.status,
               "SUPERSEDED",
@@ -347,8 +387,55 @@ export async function getPlacementTpoOperations(
             isNull(
               placementJobs.archivedAt,
             ),
+            inArray(placementJobs.id, sampledJobIds),
           ),
         ),
+    ]);
+
+
+
+  // Dashboard cards are bounded; headline counts are NOT card-array lengths.
+  // Metrics represent all non-archived jobs for the selected college.
+  const [[jobTotals], [applicationTotals], [resultTotals], [offerTotals], [roundTotals]] =
+    await Promise.all([
+      db.select({
+        total: sql<number>`count(*)::int`,
+        draft: sql<number>`count(*) filter (where ${placementJobs.status} = 'DRAFT')::int`,
+        published: sql<number>`count(*) filter (where ${placementJobs.status} = 'PUBLISHED')::int`,
+        closed: sql<number>`count(*) filter (where ${placementJobs.status} = 'CLOSED')::int`,
+      }).from(placementJobs).where(and(
+        eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
+      )),
+      db.select({
+        submitted: sql<number>`count(*)::int`,
+        pending: sql<number>`count(*) filter (where ${placementApplicationScreenings.status} in ('PENDING', 'HOLD'))::int`,
+      }).from(placementApplications)
+        .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
+        .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+        .where(and(eq(placementJobs.collegeId, collegeId),
+          isNull(placementJobs.archivedAt), eq(placementApplications.status, "SUBMITTED"))),
+      db.select({
+        staged: sql<number>`count(*) filter (where ${placementRoundResults.status} = 'STAGED')::int`,
+      }).from(placementRoundResults)
+        .innerJoin(placementJobRounds, eq(placementJobRounds.id, placementRoundResults.roundId))
+        .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
+        .where(and(eq(placementJobs.collegeId, collegeId),
+          isNull(placementJobs.archivedAt), ne(placementRoundResults.status, "SUPERSEDED"))),
+      db.select({
+        issued: sql<number>`count(*) filter (where ${placementOffers.status} = 'ISSUED')::int`,
+        pendingJoining: sql<number>`count(*) filter (where ${placementOffers.status} = 'ACCEPTED' and ${placementJoiningOutcomes.status} = 'PENDING')::int`,
+        joined: sql<number>`count(*) filter (where ${placementJoiningOutcomes.status} = 'JOINED')::int`,
+      }).from(placementOffers)
+        .innerJoin(placementApplications, eq(placementApplications.id, placementOffers.applicationId))
+        .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+        .leftJoin(placementJoiningOutcomes, eq(placementJoiningOutcomes.offerId, placementOffers.id))
+        .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt))),
+      db.select({
+        scheduled: sql<number>`count(*) filter (where ${placementJobRounds.status} = 'SCHEDULED')::int`,
+      }).from(placementJobRounds)
+        .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
+        .where(and(eq(placementJobs.collegeId, collegeId),
+          isNull(placementJobs.archivedAt), ne(placementJobRounds.status, "CANCELLED"))),
     ]);
 
   const applicationsByJob = new Map<
@@ -733,46 +820,17 @@ export async function getPlacementTpoOperations(
       },
     },
     summary: {
-      totalJobs: jobs.length,
-      draftJobs: jobs.filter(
-        ({ job }) => job.status === "DRAFT",
-      ).length,
-      publishedJobs: jobs.filter(
-        ({ job }) => job.status === "PUBLISHED",
-      ).length,
-      closedJobs: jobs.filter(
-        ({ job }) => job.status === "CLOSED",
-      ).length,
-      submittedApplications:
-        applications.length,
-      pendingScreening: applications.filter(
-        ({ screening }) =>
-          screening.status === "PENDING" ||
-          screening.status === "HOLD",
-      ).length,
-      stagedResults: resultRows.filter(
-        ({ result }) =>
-          result.status === "STAGED",
-      ).length,
-      issuedOffers: offerRows.filter(
-        ({ offer }) =>
-          offer.status === "ISSUED",
-      ).length,
-      acceptedPendingJoining:
-        offerRows.filter(
-          ({ offer, joining }) =>
-            offer.status === "ACCEPTED" &&
-            joining?.status ===
-              "PENDING",
-        ).length,
-      joinedOffers: offerRows.filter(
-        ({ joining }) =>
-          joining?.status === "JOINED",
-      ).length,
-      activeDrives: rounds.filter(
-        ({ round }) =>
-          round.status === "SCHEDULED",
-      ).length,
+      totalJobs: Number(jobTotals?.total ?? 0),
+      draftJobs: Number(jobTotals?.draft ?? 0),
+      publishedJobs: Number(jobTotals?.published ?? 0),
+      closedJobs: Number(jobTotals?.closed ?? 0),
+      submittedApplications: Number(applicationTotals?.submitted ?? 0),
+      pendingScreening: Number(applicationTotals?.pending ?? 0),
+      stagedResults: Number(resultTotals?.staged ?? 0),
+      issuedOffers: Number(offerTotals?.issued ?? 0),
+      acceptedPendingJoining: Number(offerTotals?.pendingJoining ?? 0),
+      joinedOffers: Number(offerTotals?.joined ?? 0),
+      activeDrives: Number(roundTotals?.scheduled ?? 0),
       jobsNeedingAttention: new Set(
         workQueue.map((item) => item.jobId),
       ).size,

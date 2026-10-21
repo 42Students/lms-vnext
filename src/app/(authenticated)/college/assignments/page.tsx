@@ -6,7 +6,8 @@ import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-as
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
+import { Alert } from "@/components/ui/alert";
+import { collegeAssessmentHref, collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
 type SearchParams = Record<string, string | string[] | undefined>;
@@ -20,7 +21,7 @@ export default async function CollegeAssignmentsPage({
   const context = await getCurrentRequestContext();
   if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
   const params = await searchParams;
-  const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), page: one(params.page) };
+  const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,deliveryId: one(params.deliveryId)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), page: one(params.page) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
     Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined)),
   );
@@ -34,12 +35,27 @@ export default async function CollegeAssignmentsPage({
       </div>
     );
   }
-  const data = await listCollegeAssessmentAggregate(
-    context, "ASSIGNMENT", parseCollegeAssessmentQuery("ASSIGNMENT", validation.data),
-  );
-  const lessons=await getCollegeAssignmentAuthoringOptions(context);
+  const query=parseCollegeAssessmentQuery("ASSIGNMENT",validation.data);
+  const [dataResult,lessonsResult]=await Promise.allSettled([
+    listCollegeAssessmentAggregate(context,"ASSIGNMENT",query),
+    getCollegeAssignmentAuthoringOptions(context),
+  ]);
+  if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
+    <PageHeader title="Assignments"/>
+    <ErrorState title="Assignments unavailable"
+      description="The assignment directory could not be loaded. Your filters have not changed."
+      action={<Link href={collegeAssessmentHref("ASSIGNMENT",query)}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Retry loading assignments
+      </Link>}/>
+  </div>;
+  const data=dataResult.value;
   return <div className="min-w-0 overflow-x-clip">
     <CollegeAssessmentAggregate data={data}
-      leading={<CollegeAssignmentCreate lessons={lessons} deliveries={data.reviewDeliveries}/>}/>
+      leading={lessonsResult.status==="fulfilled"?
+        <CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
+        <Alert tone="warning" role="status">
+          Assignment creation options are temporarily unavailable. Existing assignments remain visible.
+        </Alert>}/>
   </div>;
 }

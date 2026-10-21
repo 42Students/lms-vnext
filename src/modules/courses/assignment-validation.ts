@@ -162,6 +162,8 @@ export const gradeAssignmentSubmissionInputSchema =
       .number()
       .int()
       .min(0),
+    /** Hide the published grade without changing its score or feedback. */
+    hidePublished: z.literal(true).optional(),
   }).strict();
 
 export const publishAssignmentGradeInputSchema =

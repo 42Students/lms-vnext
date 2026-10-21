@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {FacultyItemActions} from "@/components/courses/faculty-item-actions";
 import {AdminQuizResultsActions} from "@/components/courses/admin-learning-structure-actions";
 import {CollegeAssignmentActions} from "@/components/courses/college-assignment-actions";
+import {CollegeAssessmentCourseSectionFilters} from "@/components/courses/college-assessment-course-section-filters";
 import {CollegeAssignmentReview} from "@/components/courses/college-assignment-review";
 import {CollegeQuizActions} from "@/components/courses/college-quiz-actions";
 import {CollegeQuizAttempts} from "@/components/courses/college-quiz-attempts";
@@ -44,9 +45,9 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
           <option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Course code
-        <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 md:min-h-9"/>
-      </label>
+      <CollegeAssessmentCourseSectionFilters courses={data.directoryCourses}
+        sections={data.directorySections} initialCourseCode={data.query.courseCode??""}
+        initialDeliveryId={data.query.deliveryId??""}/>
       <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Audience
         <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
@@ -107,7 +108,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
     <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between print:hidden">
-      <span className="text-xs text-muted-foreground">25 per page</span>
+      <span className="text-xs text-muted-foreground">{data.pageSize} per page</span>
       <Pagination page={data.page} pageCount={data.totalPages}
         hrefForPage={page => adminAssessmentHref(data.kind, { ...data.query, page })}
         label={title + " pages"} showBoundaryLinks={false} />
