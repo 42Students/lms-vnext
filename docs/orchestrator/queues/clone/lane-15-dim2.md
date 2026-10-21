@@ -203,16 +203,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/placements/placement-calendar-workspace.tsx`
 - [x] `src/components/placements/placement-job-create-form.tsx`
 - [x] `src/components/placements/public-join-preview-retry.tsx`
-- [ ] `src/components/placements/public-recruit-from-us.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/super-admin-drive-archive.tsx`
-- [ ] `src/components/placements/super-admin-drive-deadline.tsx`
-- [ ] `src/components/placements/super-admin-drive-duplicate.tsx`
-- [ ] `src/components/placements/super-admin-platform-placement-policy.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/public-recruit-from-us.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- [x] `src/components/placements/super-admin-drive-archive.tsx`
+- [x] `src/components/placements/super-admin-drive-deadline.tsx`
+- [x] `src/components/placements/super-admin-drive-duplicate.tsx`
+- [x] `src/components/placements/super-admin-platform-placement-policy.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
 - [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
 - [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
 - [ ] `src/components/placements/tpo-round-apply-control.tsx`
