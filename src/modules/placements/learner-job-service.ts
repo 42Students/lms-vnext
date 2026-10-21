@@ -6,6 +6,8 @@ import {
   inArray,
   isNotNull,
   isNull,
+  ne,
+  or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {placementBatchLifecycles} from "@/db/schema/placement-batches";
@@ -64,6 +66,7 @@ export async function listLearnerPlacementJobs(
 ) {
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
+  const scopedJobId=jobId?placementJobIdSchema.parse(jobId):undefined;
   // An explicitly empty selection must never turn into an unrestricted feed.
   if(requestedJobIds&&requestedJobIds.length===0)return [];
   if(requestedJobIds&&requestedJobIds.length>100)
@@ -77,6 +80,18 @@ export async function listLearnerPlacementJobs(
     now,
   );
 
+  // A learner may only discover published jobs targeting the persisted
+  // active academic cohort/program. A duplicate enrollment is ambiguous.
+  const enrollments = await getDb().select({
+    id: learnerProgramEnrollments.id,
+    cohortId: learnerProgramEnrollments.cohortId,
+    programId: learnerProgramEnrollments.programId,
+  }).from(learnerProgramEnrollments).where(and(
+    eq(learnerProgramEnrollments.membershipId, membership.id),
+    eq(learnerProgramEnrollments.status, "ACTIVE"),
+  )).limit(2);
+  if (enrollments.length !== 1) return [];
+
   const rows = await getDb()
     .select({
       job: placementJobs,
@@ -87,6 +102,7 @@ export async function listLearnerPlacementJobs(
         websiteUrl: placementCompanies.websiteUrl,
         logoObjectPath:
           placementCompanies.logoObjectPath,
+        logoPublicUrl:placementCompanies.logoPublicUrl,
       },
       application: {
         id: placementApplications.id,
@@ -148,7 +164,13 @@ export async function listLearnerPlacementJobs(
           membership.collegeId,
         ),
         eq(placementJobs.status, "PUBLISHED"),
-        jobId ? eq(placementJobs.id, jobId) : undefined,
+        // A migrated ATS-only legacy job was never discoverable in the
+        // learner's jobs list, even when technically published.
+        or(isNull(placementJobs.legacyVisibilityType),
+          ne(placementJobs.legacyVisibilityType,"EXTERNAL_ONLY")),
+        or(isNull(placementJobs.legacyWasDeleted),
+          eq(placementJobs.legacyWasDeleted,false)),
+        scopedJobId ? eq(placementJobs.id,scopedJobId) : undefined,
         requestedJobIds ? inArray(placementJobs.id,[...new Set(requestedJobIds)]) : undefined,
         isNull(placementJobs.archivedAt),
         eq(
@@ -161,25 +183,16 @@ export async function listLearnerPlacementJobs(
         eq(placementCompanies.status, "ACTIVE"),
       ),
     )
+    // Legacy learner Jobs defaults to newly posted first. Deadline is a
+    // visible badge and an apply guard, never the default discovery order.
+    // UUID/role-option tie-breakers make this stable across pagination.
     .orderBy(
-      asc(placementJobs.applicationDeadline),
-      asc(placementJobs.title),
-      asc(placementJobs.id),
+      desc(placementJobs.createdAt),
+      desc(placementJobs.id),
       asc(placementJobRoleOptions.title),
       asc(placementJobRoleOptions.id),
     );
 
-  // A learner may only discover published jobs targeting the persisted
-  // active academic cohort/program. A duplicate enrollment is ambiguous.
-  const enrollments = await getDb().select({
-    id: learnerProgramEnrollments.id,
-    cohortId: learnerProgramEnrollments.cohortId,
-    programId: learnerProgramEnrollments.programId,
-  }).from(learnerProgramEnrollments).where(and(
-    eq(learnerProgramEnrollments.membershipId, membership.id),
-    eq(learnerProgramEnrollments.status, "ACTIVE"),
-  )).limit(2);
-  if (enrollments.length !== 1) return [];
   const activeSections = await getDb().select({id:sections.id})
     .from(sectionEnrollments)
     .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
