@@ -129,7 +129,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
     "Saved audit view storage is unavailable. Your current audit filters still work."}
   </p>
   <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-   <label className="grid min-w-0 gap-1 text-xs">View name
+   <label className="grid min-w-0 gap-[6px] text-[13px]">View name
     <Input value={name} maxLength={50} className="min-h-11 w-full md:min-h-9" disabled={!ready||busy}
      onChange={event=>{setName(event.target.value);setError("");setMessage("");}}
      />
@@ -138,7 +138,7 @@ export function TpoAuditSavedViews({filters}:{filters:{
     className="min-h-11 w-full sm:w-auto md:min-h-9">Save current</Button>
   </div>
   {views.length?<div className="mt-3 grid min-w-0 grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-4">
-   <label className="col-span-2 grid min-w-0 gap-1 text-xs sm:col-span-4">Saved view
+   <label className="col-span-2 grid min-w-0 gap-[6px] text-[13px] sm:col-span-4">Saved view
     <Select value={selected} className="min-h-11 w-full md:min-h-9" onChange={event=>{setSelected(event.target.value);setError("");setMessage("");}}
      disabled={!ready||busy} >
      <option value="">Select a view</option>

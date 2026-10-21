@@ -114,7 +114,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
    <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download a template</a></details>
   </div>
-  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Paste CSV contents</summary><label className="block text-sm print:hidden">CSV contents
+  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Paste CSV contents</summary><label className="block text-[13px] print:hidden">CSV contents
    <Textarea className="mt-1 min-h-32 w-full min-w-0 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");setAcknowledged(false);setSkippedByUser([]);setChosenName("");}} disabled={busy} maxLength={1500000}/>
   </label></details>

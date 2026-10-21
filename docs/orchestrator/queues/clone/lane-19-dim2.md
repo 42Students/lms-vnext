@@ -203,16 +203,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
 - [x] `src/components/tpo/recruiter-inline-owner.tsx`
 - [x] `src/components/tpo/recruiter-inline-stage.tsx`
-- [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
-- [ ] `src/components/tpo/tpo-after-college-editor.tsx`
-- [ ] `src/components/tpo/tpo-audit-grid.tsx`
-- [ ] `src/components/tpo/tpo-audit-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-batch-class-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-decision-control.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/recruiter-roster-display-controls.tsx`
+- [x] `src/components/tpo/tpo-academic-import-preview.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`
+- [x] `src/components/tpo/tpo-audit-grid.tsx`
+- [x] `src/components/tpo/tpo-audit-saved-views.tsx`
+- [x] `src/components/tpo/tpo-batch-class-decision.tsx`
+- [x] `src/components/tpo/tpo-batch-decision-control.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [ ] `src/components/tpo/tpo-batch-facet-filters.tsx`
 - [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
 - [ ] `src/components/tpo/tpo-batch-instant-search.tsx`
