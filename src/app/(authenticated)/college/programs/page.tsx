@@ -1,4 +1,5 @@
 import { Alert } from "@/components/ui/alert";
+import Link from "next/link";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminProgramDirectory } from "@/components/admin/admin-program-directory";
@@ -34,6 +35,20 @@ export default async function CollegeProgramsPage() {
         title="Programs"
         description="Create, find and manage the programs in your college."
       />
+      <nav aria-label="Academic Setup" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
+        {([
+          ["/college/departments","Departments"],
+          ["/college/programs","Programs"],
+          ["/college/semesters","Semesters"],
+          ["/college/batches","Batches"],
+          ["/college/classes","Classes"],
+        ] as const).map(([href,label])=><Link key={href} href={href}
+          aria-current={href==="/college/programs"?"page":undefined}
+          className={"inline-flex min-h-11 items-center border-b-[3px] px-3 font-semibold md:min-h-9 "+
+            (href==="/college/programs"?"border-primary text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+          {label}
+        </Link>)}
+      </nav>
       <section aria-label="Active programs" className="min-w-0">
         <AdminProgramDirectory
         programs={programs.map((program) => ({
