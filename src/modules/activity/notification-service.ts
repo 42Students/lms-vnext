@@ -1247,6 +1247,13 @@ export function sanitizeStaffNotificationHtml(input: string): string {
   }).join("").slice(0, 50_000);
 }
 
+function staffNotificationTitle(input: string): string {
+  const title = input.replace(/<[^>]*>/g, "").trim();
+  if (!title) throw new Error("Title is required");
+  if (title.length > 200) throw new Error("Title cannot exceed 200 characters");
+  return title;
+}
+
 function notificationPreviewFromHtml(html: string): string {
   return html.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
     .slice(0, 2000) || "Notification";
@@ -1281,6 +1288,7 @@ export async function createStaffNotification(
     throw new Error("Assessment URL must use http or https");
   }
   const htmlContent = sanitizeStaffNotificationHtml(draft.htmlContent);
+  const title = staffNotificationTitle(draft.title);
   const body = notificationPreviewFromHtml(htmlContent);
   const now = new Date();
   const deliveryStatus = scheduledAt ? "SCHEDULED" : "SENT";
@@ -1298,12 +1306,12 @@ export async function createStaffNotification(
       importance: "NORMAL",
       subjectType: "NOTIFICATION",
       subjectId: "staff-notice",
-      subjectLabel: draft.title,
-      summary: draft.title,
+      subjectLabel: title,
+      summary: title,
       metadata: {
         classId: audience.classId,
         courseId: audience.courseId,
-        title: draft.title,
+        title,
         htmlContent,
         assessmentUrl: safeAssessmentUrl,
         scheduledAt: scheduledAt?.toISOString() ?? null,
@@ -1315,7 +1323,7 @@ export async function createStaffNotification(
       ? await tx.insert(inAppNotifications).values(userIds.map((userId) => ({
           userId,
           eventId: event.id,
-          title: draft.title,
+          title,
           body,
           legacyAssessmentUrl: safeAssessmentUrl,
           legacyCreatedByUserId: context.user.id,
@@ -1395,6 +1403,7 @@ export async function updateStaffNotification(
     throw new Error("Assessment URL must use http or https");
   }
   const htmlContent = sanitizeStaffNotificationHtml(draft.htmlContent);
+  const title = staffNotificationTitle(draft.title);
   const body = notificationPreviewFromHtml(htmlContent);
   // Resolve new recipients before locking the event; re-check their college
   // grants again inside the transaction before replacing pending receipts.
@@ -1436,13 +1445,13 @@ export async function updateStaffNotification(
     await tx.update(activityEvents).set({
       organizationId: audience.organizationId,
       collegeId: audience.collegeId,
-      subjectLabel: draft.title,
-      summary: draft.title,
+      subjectLabel: title,
+      summary: title,
       metadata: {
         ...event.metadata,
         classId: audience.classId,
         courseId: audience.courseId,
-        title: draft.title,
+        title,
         htmlContent,
         assessmentUrl: safeAssessmentUrl,
         scheduledAt: status === "SCHEDULED" ? scheduledAt?.toISOString() : event.metadata.scheduledAt,
@@ -1454,14 +1463,14 @@ export async function updateStaffNotification(
         .where(eq(inAppNotifications.eventId, id));
       if (userIds.length > 0) {
         await tx.insert(inAppNotifications).values(userIds.map((userId) => ({
-          userId, eventId: id, title: draft.title, body,
+          userId, eventId: id, title, body,
           scheduledAt, deliveredAt: null, deliveryStatus: "SCHEDULED",
           legacyAssessmentUrl: safeAssessmentUrl,
           legacyCreatedByUserId: context.user.id,
         }))).onConflictDoUpdate({
           target: [inAppNotifications.userId, inAppNotifications.eventId],
           set: {
-            title: draft.title, body, scheduledAt, deliveredAt: null,
+            title, body, scheduledAt, deliveredAt: null,
             deletedAt: null, deliveryStatus: "SCHEDULED",
             legacyAssessmentUrl: safeAssessmentUrl,
           },
@@ -1469,7 +1478,7 @@ export async function updateStaffNotification(
       }
     } else {
       await tx.update(inAppNotifications).set({
-        title: draft.title, body, legacyAssessmentUrl: safeAssessmentUrl,
+        title, body, legacyAssessmentUrl: safeAssessmentUrl,
       }).where(and(eq(inAppNotifications.eventId, id), isNull(inAppNotifications.deletedAt)));
     }
     return {
