@@ -116,10 +116,10 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
         }
        }}/>
      </label>
-     <p className="text-xs text-muted-foreground" aria-live="polite">
+     <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">
       Enter or Ctrl/Cmd+Enter to send · Shift+Enter for a new line · {message.length}/4000
      </p>
-     <p className="text-xs text-muted-foreground">
+     <p className="text-xs text-muted-foreground leading-[20px]">
       This starts their General thread. Messages about a drive are best sent from that drive.
      </p>
      {error?<InlineNotice tone="error" message={error}/>:null}

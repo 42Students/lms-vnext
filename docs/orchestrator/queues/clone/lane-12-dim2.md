@@ -283,16 +283,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/tpo/tpo-company-create-form.tsx`
 - [x] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [x] `src/components/tpo/tpo-debar-control.tsx`
-- [ ] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/tpo/tpo-timed-debar-control.tsx`
+- [x] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-timed-debar-control.tsx`
 - [ ] `src/components/tracker/known-errors-workspace.tsx`
 - [ ] `src/components/tracker/tracker-issue-logs-panel.tsx`
 - [ ] `src/components/tracker/tracker-report-form.tsx`

@@ -99,9 +99,9 @@ export function TpoFindShortcut(){
        (active===index?"bg-primary-subtle":"hover:bg-muted")}>
       <span className="min-w-0 flex-1 break-words">{row.label}</span><span className="max-w-full shrink-0 break-words text-xs text-muted-foreground">{row.group}</span>
     </Button>)}
-    {!showing.length&&!loading&&!error?<p role="status" className="p-3 text-sm text-muted-foreground">
+    {!showing.length&&!loading&&!error?<p role="status" className="p-3 text-sm text-muted-foreground leading-[22px]">
       {query.trim().length<2?"Open a record to see it here.":"No matching records."}</p>:null}
-    {loading?<p role="status" className="p-3 text-sm text-muted-foreground">Searching…</p>:null}
+    {loading?<p role="status" className="p-3 text-sm text-muted-foreground leading-[22px]">Searching…</p>:null}
     {error?<Alert tone="error">{error}</Alert>:null}
    </PopoverListbox>
    <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
