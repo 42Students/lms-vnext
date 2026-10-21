@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Drawer } from "@/components/ui/drawer";
 import { useToast } from "@/components/ui/toast";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -47,6 +48,8 @@ export function FacultyLessonVideoManager({
   const [titleDraft,setTitleDraft]=useState<Record<string,string>>({});
   const [previewId,setPreviewId]=useState<string|null>(null);
   const [confirmation,setConfirmation]=useState<VideoConfirmation|null>(null);
+  const [editingId,setEditingId]=useState<string|null>(null);
+  const [uploadDrawerOpen,setUploadDrawerOpen]=useState(false);
   const controllerRef=useRef<AbortController|null>(null);
   const locked=useRef(false);
 
@@ -124,7 +127,7 @@ export function FacultyLessonVideoManager({
         file:chosen,...(replace?{replaceVideoId:replace.id}:{}),
         signal,onProgress:setProgress,
       });
-      setFile(null);setTitle("");setDuration("");
+      setFile(null);setTitle("");setDuration("");setUploadDrawerOpen(false);
       setInfo(result.processingStatus==="READY"?"Video upload completed.":"Video uploaded. Processing is not complete yet.");
       router.refresh();
     },chosen.name);
@@ -246,10 +249,18 @@ export function FacultyLessonVideoManager({
 
   return <section aria-label="Lesson video management" className="mt-4 min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
-    <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("lesson-video")}</p>
-    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Title
-        <Input className="mt-[6px]" value={title} maxLength={255} onChange={event=>setTitle(event.target.value)}/>
+    <div className="flex flex-wrap items-center justify-between gap-2">
+     <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("lesson-video")}</p>
+     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setUploadDrawerOpen(true)}
+      className="min-h-11 md:min-h-9">Upload New Video</Button>
+    </div>
+    <Drawer open={uploadDrawerOpen} onOpenChange={open=>{if(!busy)setUploadDrawerOpen(open);}}
+     title="Upload New Video" description="Choose an approved lesson video file." dismissible={!busy}
+     className="w-full sm:w-[min(600px,100vw)]">
+    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2">
+      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Video Title
+        <Input className="mt-[6px]" value={title} maxLength={255} required placeholder="Enter Video Title"
+         onChange={event=>setTitle(event.target.value)}/>
       </label>
       <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Duration (seconds, optional)
         <Input className="mt-[6px]" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
@@ -264,9 +275,12 @@ export function FacultyLessonVideoManager({
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
       </label>
     </div>
-    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" size="md" loading={busy} disabled={busy||loading||!title.trim()||!file} onClick={()=>upload()}>
-      Upload video
-    </Button>
+    <div className="mt-4 flex flex-wrap justify-end gap-2">
+     <Button variant="secondary" type="button" disabled={busy} onClick={()=>setUploadDrawerOpen(false)}>Cancel</Button>
+     <Button type="button" size="md" loading={busy} disabled={busy||loading||!title.trim()||!file}
+      onClick={()=>upload()}>Submit</Button>
+    </div>
+    </Drawer>
     {busy&&activeName?<div className="space-y-2" role="status">
       <p className="break-words text-sm text-body leading-[22px]">{activeName}: {progress}%</p>
       <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles.upload} />
@@ -279,12 +293,19 @@ export function FacultyLessonVideoManager({
         const state=videoProcessingDescriptor(video.processingStatus);
         const canEdit=video.deliveryId===deliveryId;
         return <li key={video.id} className="min-w-0 space-y-3 py-4">
-          <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <p className="min-w-0 break-words text-sm font-semibold text-foreground leading-[22px]">{video.title} · {formatFileSize(video.sizeBytes)}</p>
-            <div className="flex min-w-0 flex-wrap items-center gap-2">
-              <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
-              <StatusBadge tone="neutral">{videoPublishLabel(video.publishStatus,video.visibleToStudents)}</StatusBadge>
-            </div>
+          <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+           <div className="min-w-0">
+            <h4 className="break-words text-sm font-semibold text-foreground leading-[22px]">{video.title} · {formatFileSize(video.sizeBytes)}</h4>
+            <p className="text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(video.createdAt))}</p>
+           </div>
+           <div className="flex flex-wrap items-center gap-2">
+            <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
+            <StatusBadge tone="neutral">{videoPublishLabel(video.publishStatus,video.visibleToStudents)}</StatusBadge>
+            <Button type="button" variant="secondary" size="sm" aria-label="Edit content" title="Edit content"
+             disabled={busy||!canEdit||Boolean(video.lessonContentId)} onClick={()=>setEditingId(video.id)}>✎</Button>
+            <Button type="button" variant="secondary" size="sm" aria-label="Delete content" title="Delete content"
+             disabled={busy||!canEdit||Boolean(video.lessonContentId)} onClick={()=>setConfirmation({kind:"DELETE",video})}>×</Button>
+           </div>
           </div>
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!facultyVideoMayPreview(video)}
@@ -364,14 +385,50 @@ export function FacultyLessonVideoManager({
     <ConfirmDialog
       open={confirmation!==null}
       onOpenChange={nextOpen=>{if(!nextOpen&&!busy)setConfirmation(null);}}
-      title={confirmation?.kind==="DELETE"?"Delete this video?":"Replace this video?"}
+      title={confirmation?.kind==="DELETE"?"Delete the video":"Replace this video?"}
       description={confirmation?.kind==="DELETE"
-        ?"Delete this unlinked video? This removes the managed asset; existing lesson content is not deleted by this action."
+        ?"Are you sure to delete this video? This removes an unlinked video asset, not existing lesson content."
         :"The selected file will replace the current lesson video."}
-      confirmLabel={confirmation?.kind==="DELETE"?"Delete video":"Replace video"}
+      confirmLabel={confirmation?.kind==="DELETE"?"Yes":"Replace video"}
       confirmVariant={confirmation?.kind==="DELETE"?"danger":"primary"}
       pending={busy}
+      cancelLabel={confirmation?.kind==="DELETE"?"No":"Cancel"}
       onConfirm={confirmVideoAction}
     />
+    {videos.filter(video=>video.id===editingId).map(video=>{
+     const editedTitle=titleDraft[video.id]??video.title;
+     const editedDuration=durationDraft[video.id]??String(video.durationSeconds??"");
+     const dirty=editedTitle!==video.title||editedDuration!==String(video.durationSeconds??"");
+     return <Drawer key={video.id} open={true} onOpenChange={open=>{
+      if(open||busy)return;
+      if(dirty){setError("Save or discard the video edits before closing.");return;}
+      setEditingId(null);
+     }} title="Update Video" description={video.title} dismissible={!busy}
+      className="w-full sm:w-[min(600px,100vw)]">
+      <div className="space-y-4">
+       <label className="grid gap-2 text-sm font-semibold">Video Title
+        <Input maxLength={255} placeholder="Enter Video Title" value={editedTitle} disabled={busy}
+         onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
+       </label>
+       <label className="grid gap-2 text-sm font-semibold">Duration (seconds)
+        <Input type="number" min={1} max={86400} value={editedDuration} disabled={busy}
+         onChange={event=>setDurationDraft(old=>({...old,[video.id]:event.target.value}))}/>
+       </label>
+       <div className="flex flex-wrap justify-end gap-2">
+        <Button variant="secondary" disabled={busy} onClick={()=>{
+         setTitleDraft(old=>({...old,[video.id]:video.title}));
+         setDurationDraft(old=>({...old,[video.id]:String(video.durationSeconds??"")}));
+         setEditingId(null);
+        }}>Cancel</Button>
+        <Button disabled={busy||!dirty||!editedTitle.trim()||
+         (editedDuration.trim()!==""&&(!Number.isInteger(Number(editedDuration))||
+          Number(editedDuration)<1||Number(editedDuration)>86400))}
+         onClick={()=>{change(video,{title:editedTitle.trim(),durationSeconds:editedDuration.trim()?Number(editedDuration):null});setEditingId(null);}}>
+         Submit
+        </Button>
+       </div>
+      </div>
+     </Drawer>;
+    })}
   </section>;
 }
