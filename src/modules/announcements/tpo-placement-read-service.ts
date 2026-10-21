@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull,isNotNull,or,lte,gt,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10Announcements,placementCellAnnouncementReads} from "@/db/schema/db10-announcements";
+import {db10Announcements,announcementBroadcastGroups,placementCellAnnouncementReads} from "@/db/schema/db10-announcements";
 import {placementTpoNoticeAudiences} from "@/db/schema/placement-tpo-notice-audiences";
 import {users} from "@/db/schema/users";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -36,7 +36,13 @@ export async function listTpoPlacementAnnouncements(
    senderName:users.displayName,updatedAt:db10Announcements.updatedAt,
    createdAt:db10Announcements.createdAt,scheduledAt:db10Announcements.scheduledAt,
    expiresAt:db10Announcements.expiresAt,
-  }).from(db10Announcements).leftJoin(users,eq(users.id,db10Announcements.senderUserId)).where(and(
+   sentAt:announcementBroadcastGroups.sentAt,
+   broadcastRecipientCount:announcementBroadcastGroups.recipientCount,
+   broadcastAudienceLabel:announcementBroadcastGroups.audienceLabel,
+  }).from(db10Announcements)
+    .leftJoin(users,eq(users.id,db10Announcements.senderUserId))
+    .leftJoin(announcementBroadcastGroups,eq(announcementBroadcastGroups.id,db10Announcements.broadcastGroupId))
+    .where(and(
    eq(db10Announcements.organizationId,college.organizationId),
    eq(db10Announcements.collegeId,college.id),
    eq(db10Announcements.receiverType,"COLLEGE"),
@@ -50,7 +56,15 @@ export async function listTpoPlacementAnnouncements(
     or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
     or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
    ]),
-  )).orderBy(desc(db10Announcements.isPinned),desc(db10Announcements.createdAt),desc(db10Announcements.id))
+  )).orderBy(
+    sql`case when ${db10Announcements.isPinned} = true
+      and ${db10Announcements.deletedAt} is null
+      and (${db10Announcements.expiresAt} is null or ${db10Announcements.expiresAt} > ${now})
+      and (${db10Announcements.scheduledAt} is null or ${db10Announcements.scheduledAt} <= ${now})
+      then 1 else 0 end desc`,
+    desc(sql`coalesce(${announcementBroadcastGroups.sentAt},
+      ${db10Announcements.scheduledAt},${db10Announcements.createdAt})`),
+    desc(db10Announcements.id))
   .limit(101).offset((safePage-1)*100);
   const visibleRows=rows.slice(0,100);
   const audiences=targetedReady&&visibleRows.length?await tx.select({
@@ -67,10 +81,27 @@ export async function listTpoPlacementAnnouncements(
    inArray(placementCellAnnouncementReads.announcementId,visibleRows.map(row=>row.id)),
   )):[];
   const readById=new Map(readRows.map(row=>[row.id,row.readAt]));
+  const detailsById=new Map(visibleRows.map(row=>[row.id,{
+    sentAt:row.sentAt,recipientCount:row.broadcastRecipientCount,
+    audienceLabel:row.broadcastAudienceLabel,
+  }]));
   return {status:"READY" as const,items:projectTpoAnnouncementRows(visibleRows).map(row=>({
-   ...row,audienceKind:audienceById.get(row.id)??"COLLEGE",
+   ...row,audienceKind:targetedReady?audienceById.get(row.id)??"COLLEGE":undefined,
+   // College-cell acknowledgment is one receipt. Historic per-faculty reads
+   // cannot be inferred from that collective read rollup.
    readAt:cellReadsReady?readById.get(row.id)??null:undefined,
-  })),page:safePage,hasMore:rows.length>100,readStateReady:cellReadsReady};
+   readCount:cellReadsReady?(readById.has(row.id)?1:0):null,
+   recipientCount:detailsById.get(row.id)?.recipientCount??null,
+   audienceLabel:detailsById.get(row.id)?.audienceLabel??null,
+   sentAt:detailsById.get(row.id)?.sentAt??null,
+  })),page:safePage,hasMore:rows.length>100,readStateReady:cellReadsReady,
+   audienceStateReady:targetedReady,
+   availabilityWarning:!targetedReady?
+    "Announcement audience details are temporarily unavailable.":
+    tab==="from-42"&&!cellReadsReady?
+    "Read acknowledgments are temporarily unavailable.":null,
+   nextPage:safePage<1000&&rows.length>100?safePage+1:null};
+
  });
 }
 
