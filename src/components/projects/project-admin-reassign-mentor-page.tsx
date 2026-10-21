@@ -100,7 +100,7 @@ export async function ProjectAdminReassignMentorPage({
         {query.status?<Input type="hidden" name="status" value={query.status}/>:null}
         {query.fromMentorId?<Input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
         <Input type="hidden" name="pageSize" value={query.pageSize}/>
-        <label className="grid flex-1 gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Search eligible mentors by name or email (across the college)
           <Input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
             placeholder="Enter mentor name or email" className="w-full"/>
@@ -114,7 +114,7 @@ export async function ProjectAdminReassignMentorPage({
         {query.q ? <Input type="hidden" name="q" value={query.q} /> : null}
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
-        <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Filter by current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
             className="w-full">

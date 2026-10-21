@@ -326,10 +326,10 @@ export function PlacementOfferControls({
   return (
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Offers & joining
         </h2>
-        <p className="mt-1 text-sm text-body">
+        <p className="mt-1 text-sm text-body leading-[22px]">
           Issue offers only after every evaluative round has a confirmed pass. Learners accept or decline; the placement team records joining outcomes.
         </p>
       </div>
@@ -364,7 +364,7 @@ export function PlacementOfferControls({
       ) : null}
 
       {candidates.length === 0 ? (
-        <p className="m-0 py-6 text-sm text-muted-foreground">
+        <p className="m-0 py-6 text-sm text-muted-foreground leading-[22px]">
           No shortlisted candidates are available for offer review.
         </p>
       ) : (
@@ -392,7 +392,7 @@ export function PlacementOfferControls({
                       {item.displayName ??
                         "Candidate"}
                     </p>
-                    <p className="mt-1 break-words text-sm text-body">
+                    <p className="mt-1 break-words text-sm text-body leading-[22px]">
                       {item.roleTitle} ·{" "}
                       {item.email ??
                         "No email on profile"}
@@ -843,7 +843,7 @@ export function PlacementOfferControls({
             onClick={()=>void withdraw(withdrawTarget)}>Confirm withdrawal</Button>
         </div>}>
         <div className="space-y-4">
-          <p className="text-sm text-body">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
+          <p className="text-sm text-body leading-[22px]">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
           <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Reason<Select className={inputClass} value={withdrawReason}
             onChange={e=>setWithdrawReason(e.target.value)}>
             {["Company withdrew the offer","Hiring freeze","Duplicate offer issued","Offer details were incorrect","Other"].map(v=><option key={v}>{v}</option>)}

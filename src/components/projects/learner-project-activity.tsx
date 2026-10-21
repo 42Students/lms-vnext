@@ -35,7 +35,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const csv=learnerProjectActivityCsv(shown);
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
-    <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Activity</h2>
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Activity</h2>
     <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 md:grid-cols-2 min-[992px]:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Activity type

@@ -74,8 +74,8 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
   }}>
    Saved student views</Button>:null}
   {open?<div className="w-full min-w-0 max-w-4xl space-y-4 border-y border-border py-4">
-   <h2 className="font-semibold">Saved views</h2>
-   {busy&&!deleteTarget?<p role="status" className="text-sm text-body">Loading saved views…</p>:null}
+   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Saved views</h2>
+   {busy&&!deleteTarget?<p role="status" className="text-sm text-body leading-[22px]">Loading saved views…</p>:null}
    {pins.length?<div className="flex min-w-0 flex-wrap gap-2"><strong className="w-full text-sm">Pinned</strong>
     {pins.map(view=><Button className="min-h-11 w-full break-words sm:w-auto md:min-h-9" variant="secondary" key={view.id} type="button" disabled={busy} onClick={()=>void use(view)}
      >{view.name}</Button>)}
@@ -97,7 +97,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
      action:"UPDATE",id:selected,name:name.trim(),filters:filterQuery(new URLSearchParams(params.toString())),pinned,
     })} >Update selected view</Button>:null}
    </div>
-   {chosen?<p className="break-words text-xs text-muted-foreground">Selected view: {chosen.name}. Update saves the filters currently visible on this page.</p>:null}
+   {chosen?<p className="break-words text-xs text-muted-foreground leading-[20px]">Selected view: {chosen.name}. Update saves the filters currently visible on this page.</p>:null}
    </Disclosure>
    <div className="max-h-64 min-w-0 divide-y divide-border overflow-auto overscroll-contain">
     {rows.map(view=><div key={view.id} className="flex min-h-11 min-w-0 flex-col items-stretch gap-2 py-3 sm:flex-row sm:items-center">
@@ -113,7 +113,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
       <Button className="min-h-11 flex-1 sm:flex-none md:min-h-9" variant="ghost" type="button" disabled={busy} onClick={()=>setDeleteTarget(view)}>Delete</Button>
      </div>
     </div>)}
-    {!rows.length&&!busy&&!error?<p role="status" className="py-3 text-sm text-muted-foreground">No saved student views.</p>:null}
+    {!rows.length&&!busy&&!error?<p role="status" className="py-3 text-sm text-muted-foreground leading-[22px]">No saved student views.</p>:null}
    </div>
    <Dialog open={deleteTarget!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setDeleteTarget(null);}}
     title="Delete saved view" description={"Delete saved view "+(deleteTarget?.name??"")+"?"}
@@ -127,7 +127,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
           setDeleteTarget(null);
         }
       })}>Delete view</Button></div>}>
-      <p className="text-sm">The saved view will be removed. Student records will not be changed.</p>
+      <p className="text-sm leading-[22px]">The saved view will be removed. Student records will not be changed.</p>
    </Dialog>
    {error?<InlineNotice tone="error" message={error}/>:null}
    {notice?<InlineNotice tone="success" message={notice}/>:null}

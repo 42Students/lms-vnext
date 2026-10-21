@@ -55,7 +55,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   <section className="grid min-w-0 grid-cols-2 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[992px]:grid-cols-4" aria-label="Applicant pipeline counts">
    {Object.entries(data.counts).map(([label,count])=>
     <div className="min-w-0 border-b border-[var(--lms-canvas-border)] px-1 py-3" key={label}>
-      <p className="text-xs capitalize text-body">{label}</p>
+      <p className="text-xs capitalize text-body leading-[20px]">{label}</p>
       <p className="text-xl font-semibold tabular-nums text-foreground">{count}</p>
     </div>)}
   </section>
@@ -103,7 +103,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     </div>
    </details>
   </form>
-  <p role="status" className="text-sm text-body leading-[1.6]">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
+  <p role="status" className="text-sm text-body leading-[22px]">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
   {data.rows.length > 0 && context.membership &&
     can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?
@@ -130,6 +130,6 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
    {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] min-[768px]:min-h-9 min-[768px]:w-auto hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:<span/>}
    {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-teal-deep)] min-[768px]:min-h-9 min-[768px]:w-auto hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
   </nav>
-  <p className="text-xs text-body">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
+  <p className="text-xs text-body leading-[20px]">This stage snapshot does not claim independent employer selection or share private screening comments.</p>
  </div>;
 }
