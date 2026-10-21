@@ -93,17 +93,17 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
           <p className="md:col-span-2 text-xs text-muted-foreground">
             Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
           </p>
-          <label className="grid gap-1 text-sm">Name
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
             <Input disabled={pending} value={person.name} readOnly className={field+" opacity-70"}/>
           </label>
-          <label className="grid gap-1 text-sm">Login Mobile
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Login Mobile
             <Input disabled={pending} value={person.canonicalPhone} readOnly className={field+" opacity-70"}/>
           </label>
-          <label className="grid gap-1 text-sm">Login Email
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Login Email
             <Input disabled={pending} value={person.canonicalEmail} readOnly className={field+" opacity-70"}/>
           </label>
           {kind==="FACULTY"?<>
-            <label className="grid gap-1 text-sm">Department
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
               <Select disabled={pending} className={field} value={person.primaryDepartmentId??""}
                 onChange={e=>patch("primaryDepartmentId",e.target.value)}>
                 <option value="">No department</option>
@@ -112,7 +112,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
                 {departments.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
               </Select>
             </label>
-            <label className="grid gap-1 text-sm">Faculty Type
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty Type
               <Select disabled={pending} className={field} value={person.employmentType??""}
                 onChange={e=>patch("employmentType",e.target.value)}>
                 <option value="">Not specified</option>
@@ -121,43 +121,43 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
                 {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
               </Select>
             </label>
-            <label className="grid gap-1 text-sm">Academic title
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic title
               <Input disabled={pending} className={field} maxLength={128} value={person.academicTitle??""}
                 onChange={e=>patch("academicTitle",e.target.value)}/>
             </label>
           </>:<>
-            <label className="grid gap-1 text-sm">Roll Number
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Roll Number
               <Input disabled={pending} className={field} maxLength={128} value={person.rollNumber??""}
                 onChange={e=>patch("rollNumber",e.target.value)}/>
             </label>
-            <label className="grid gap-1 text-sm">Registration Number
+            <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Registration Number
               <Input disabled={pending} className={field} maxLength={128} value={person.registrationNumber??""}
                 onChange={e=>patch("registrationNumber",e.target.value)}/>
             </label>
           </>}
-          <label className="grid gap-1 text-sm">Gender
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
             <Select disabled={pending} className={field} value={person.gender} onChange={e=>patch("gender",e.target.value)}>
               {["","Male","Female","Other","Prefer not to say"].map(value=>
                 <option key={value} value={value}>{value||"Not specified"}</option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-sm">Date of Birth
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date of Birth
             <Input disabled={pending} className={field} type="date" value={person.dateOfBirth}
               onChange={e=>patch("dateOfBirth",e.target.value)}/>
           </label>
-          <label className="grid gap-1 text-sm">Contact mobile
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact mobile
             <Input disabled={pending} className={field} maxLength={32} value={person.contactPhone}
               onChange={e=>patch("contactPhone",e.target.value)}/>
           </label>
-          <label className="grid gap-1 text-sm">Contact email
+          <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact email
             <Input disabled={pending} className={field} type="email" value={person.contactEmail}
               onChange={e=>patch("contactEmail",e.target.value)}/>
           </label>
-          <label className="grid gap-1 text-sm md:col-span-2">Address
+          <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Address
             <Textarea disabled={pending} className="min-w-0" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
-          <label className="grid gap-1 text-sm md:col-span-2">Bio
+          <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Bio
             <Textarea disabled={pending} className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>

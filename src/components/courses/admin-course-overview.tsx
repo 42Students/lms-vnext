@@ -482,7 +482,7 @@ export function AdminCourseOverview({
         </div>
         {catalogue && catalogueQuery ? <FilterBar title="Filters"
           activeCount={Number(Boolean(catalogueQuery.q)) + Number(catalogueQuery.sort !== "NAME_ASC")}
-          search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          search={<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search courses
             <Input form="college-course-catalogue-filters" name="q" type="search" maxLength={100}
               defaultValue={catalogueQuery.q} placeholder="Name, code or department"
@@ -491,14 +491,14 @@ export function AdminCourseOverview({
           action={<Button type="submit" form="college-course-catalogue-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
           <form id="college-course-catalogue-filters" method="get" action={courseBasePath}
             className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2">
-            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Sort
               <Select name="sort" defaultValue={catalogueQuery.sort} className="min-h-11 md:min-h-9">
                 <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
                 <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
               </Select>
             </label>
-            {courseBasePath.startsWith("/admin/") ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            {courseBasePath.startsWith("/admin/") ? <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Per page
               <Select name="pageSize" defaultValue={catalogueQuery.pageSize ?? "25"} className="min-h-11 md:min-h-9">
                 <option value="25">25</option><option value="50">50</option><option value="100">100</option>

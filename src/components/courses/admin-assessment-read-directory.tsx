@@ -32,11 +32,11 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     {showHeader ? <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} /> : null}
     <FilterBar title="Assessment filters"><form action={base} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 print:hidden">
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment title
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Assessment title
         <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 md:min-h-9" />
       </label>
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Status
         <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
           <option value="ALL">All</option><option value="DRAFT">Draft</option>
           <option value="PUBLISHED">Published</option>
@@ -44,15 +44,15 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
           <option value="ARCHIVED">Archived</option>
         </Select>
       </label>
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course code
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Course code
         <Input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 md:min-h-9"/>
       </label>
-      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
+      <label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Audience
         <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
           <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
         </Select>
       </label>
-      {!assignment?<label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Results
+      {!assignment?<label className="grid gap-[var(--lms-space-1)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Results
         <Select name="results" defaultValue={data.query.results} className="min-h-11 md:min-h-9">
          <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
         </Select>
