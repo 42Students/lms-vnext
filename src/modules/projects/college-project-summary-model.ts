@@ -2,7 +2,7 @@ import { z } from "zod";
 const nullable = (max: number) => z.string().trim().max(max).nullable();
 const dateOrNull = z.iso.date().nullable();
 export const collegeProjectSummaryPatch = z.strictObject({
-  title: z.string().trim().min(1, "Title is required").max(160, "Title must be 160 characters or fewer"),
+  title: z.string().trim().min(1).max(200),
   summary: nullable(4000),
   status: z.enum(["PLANNED","ACTIVE","COMPLETED"]),
   progressPercent: z.number().int().min(0).max(100),
@@ -14,7 +14,7 @@ export const collegeProjectSummaryPatch = z.strictObject({
   nextAction: nullable(4000),
   startDate: dateOrNull,
   endDate: dateOrNull,
-  sprintLengthWeeks: z.number().int().min(1).max(12).nullable(),
+  sprintLengthWeeks: z.number().int().min(1).max(104).nullable(),
   estimationUnit: z.enum(["POINTS","HOURS","TASKS"]).nullable(),
   expectedTitle: z.string(),
   expectedSummary: z.string().nullable(),
@@ -22,7 +22,7 @@ export const collegeProjectSummaryPatch = z.strictObject({
   expectedUpdatedAt: z.iso.datetime({offset:true}),
 }).superRefine((value,ctx) => {
   if(value.startDate && value.endDate && value.endDate < value.startDate)
-    ctx.addIssue({code:"custom",path:["endDate"],message:"End date must be on or after the start date"});
+    ctx.addIssue({code:"custom",path:["endDate"],message:"End date must be after start date."});
 });
 export function collegeProjectStatusChangeAllowed(from:string,to:string,hasMentor:boolean,approvedDelivery:boolean) {
   // Fail closed for ARCHIVED and unknown historical states, including no-op retries.
