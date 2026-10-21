@@ -14,9 +14,9 @@ export function RouteProgress() {
   const [pending, setPending] = useState(false);
   const [slow, setSlow] = useState(false);
   const [stalled, setStalled] = useState(false);
-  const recovery = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const reveal = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const stall = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const recovery = useRef<number | null>(null);
+  const reveal = useRef<number | null>(null);
+  const stall = useRef<number | null>(null);
 
   useEffect(() => {
     const clearTimers = () => {
