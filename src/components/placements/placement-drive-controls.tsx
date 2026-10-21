@@ -1450,7 +1450,7 @@ export function PlacementDriveControls({
                     : "No persisted venue overlap was proven for the current drive within the assessed upcoming window. This is not schedule clearance."}
               {" "}
               <a href="/tpo/placements/schedule-conflicts?days=90"
-                className="font-semibold text-primary-text hover:underline">
+                className="font-semibold text-primary-text hover:underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
                 Review college venue conflicts →
               </a>
               <p className="mt-1 text-xs text-muted-foreground">
@@ -1499,9 +1499,9 @@ export function PlacementDriveControls({
                 <div><dt className="text-xs text-body">Mode</dt><dd>{facts.mode}</dd></div>
                 <div><dt className="text-xs text-body">When</dt><dd>{facts.when}</dd></div>
                 <div><dt className="text-xs text-body">Venue or meeting link</dt><dd className="break-words">{round.mode==="VIRTUAL"&&round.meetingUrl?
-                  <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Open meeting link</a>:facts.place}</dd></div>
+                  <a href={round.meetingUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open meeting link</a>:facts.place}</dd></div>
                 <div><dt className="text-xs text-body">Students in this round</dt>
-                  <dd><a className="font-semibold text-primary-text underline"
+                  <dd><a className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(data.jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}>
                     {facts.students} · see who</a></dd>
                 </div>
@@ -1510,7 +1510,7 @@ export function PlacementDriveControls({
                 {facts.duration!=null?<div><dt className="text-xs text-body">Duration</dt><dd>{facts.duration} minutes</dd></div>:null}
                 {facts.platform?<div><dt className="text-xs text-body">Test platform</dt><dd>{facts.platform}</dd></div>:null}
                 {facts.testUrl?<div><dt className="text-xs text-body">Test link</dt><dd>
-                  <a className="text-primary-text underline" target="_blank" rel="noopener noreferrer" href={facts.testUrl}>Open test</a>
+                  <a className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" target="_blank" rel="noopener noreferrer" href={facts.testUrl}>Open test</a>
                 </dd></div>:null}
                 {facts.bring?<div className="sm:col-span-2"><dt className="text-xs text-body">What to bring</dt><dd>{facts.bring}</dd></div>:null}
               </dl>

@@ -1033,7 +1033,7 @@ export async function PlacementCalendarWorkspace({
                           key={event.id}
                           href={href}
                           title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-9 rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                          className="block min-h-9 rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
                         >
                           <span className="block truncate">
                             {eventTime(
