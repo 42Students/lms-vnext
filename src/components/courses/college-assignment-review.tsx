@@ -2,6 +2,7 @@
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -25,12 +26,10 @@ export function CollegeAssignmentReview({
  const [retryAllowed,setRetryAllowed]=useState(false);
  const [failedIds,setFailedIds]=useState<string[]>([]);
  const [progress,setProgress]=useState("");
+ const [confirmBulk,setConfirmBulk]=useState<{deliveryId:string;retryOnly:string[]|null}|null>(null);
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string,retryOnly:readonly string[]|null=null){
-  if(bulkBusy||!window.confirm(
-    retryOnly?"Retry publication of "+retryOnly.length+" failed grades for this Section?":
-    "Publish grades for every graded submission in this Section? Published results become visible to learners."
-  ))return;
+  if(bulkBusy)return;
   setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setProgress("Loading graded submissions…");
   let published=0,failed=0;
   const failedRows=new Set<string>();
@@ -88,7 +87,7 @@ export function CollegeAssignmentReview({
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
-   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
+   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy} onClick={()=>setConfirmBulk({deliveryId:selected.deliveryId,retryOnly:null})}
     className="min-h-11 md:min-h-9">
     {bulkBusy?"Publishing…":"Publish grades"}
    </Button>:null}
@@ -96,9 +95,23 @@ export function CollegeAssignmentReview({
   {bulkBusy?<Alert tone="info" role="status">Publishing graded submissions for this Section. {progress} Do not close this page.</Alert>:null}
   {bulkStatus?<Alert tone={retryAllowed?"warning":"success"} role="status">{bulkStatus}</Alert>:null}
   {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
-   onClick={()=>void publishAllGrades(selected.deliveryId,failedIds.length?failedIds:null)}
+   onClick={()=>setConfirmBulk({deliveryId:selected.deliveryId,retryOnly:failedIds.length?[...failedIds]:null})}
    className="min-h-11 md:min-h-9">
    {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
   </Button>:null}
+  <ConfirmDialog open={confirmBulk!==null}
+   onOpenChange={open=>{if(!open&&!bulkBusy)setConfirmBulk(null);}}
+   title={confirmBulk?.retryOnly?"Retry publishing failed grades?":"Publish grades?"}
+   description={confirmBulk?.retryOnly?
+    "Retry publication of "+confirmBulk.retryOnly.length+" failed grades for this Section?":
+    "Publish grades for every graded submission in this Section? Published results become visible to learners."}
+   confirmLabel={confirmBulk?.retryOnly?"Retry failed grades":"Publish grades"}
+   confirmVariant="primary" pending={bulkBusy}
+   onConfirm={()=>{
+    if(!confirmBulk)return;
+    const selectedBulk=confirmBulk;
+    setConfirmBulk(null);
+    void publishAllGrades(selectedBulk.deliveryId,selectedBulk.retryOnly);
+   }}/>
  </div>;
 }
