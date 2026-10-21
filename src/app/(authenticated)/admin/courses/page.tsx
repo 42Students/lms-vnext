@@ -94,10 +94,17 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId}=parsed;
-  const [workspace,lessonCountByCourse]=await Promise.all([
+  const [workspaceResult,dependenciesResult]=await Promise.allSettled([
     getAdminCourseWorkspace(context,collegeId),
     getSuperAdminCourseDependencyCounts(context),
   ]);
+  if(workspaceResult.status==="rejected")return <div className="min-w-0 space-y-4">
+    <PageHeader title="Courses"/>
+    <ErrorState title="Could not load courses" description="The college course list is temporarily unavailable. No empty catalogue has been assumed."
+      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry courses</Link>}/>
+   </div>;
+  const workspace=workspaceResult.value;
+  const lessonCountByCourse=dependenciesResult.status==="fulfilled"?dependenciesResult.value:undefined;
 
   return (
     <div className="min-w-0 space-y-6">
@@ -117,6 +124,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             { value: "quizzes", label: "Quizzes →", href: "/admin/quizzes" },
           ]}
         />
+      {dependenciesResult.status==="rejected"?<Banner tone="warning" role="alert">
+       Course dependency counts are temporarily unavailable. Review the latest records before archiving or deleting a course.
+       <Link href="/admin/courses" className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Banner>:null}
       <AdminCourseOverview
         workspace={workspace}
         courseBasePath="/admin/courses"
