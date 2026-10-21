@@ -19,6 +19,7 @@ import { collegeMemberships } from "./memberships";
 import { departments } from "./departments";
 import { courses } from "./courses";
 import { users } from "./users";
+import { placementDriveChangeRequests } from "./placement-drive-change-requests";
 import {
   placementApplications,
   placementJobs,
@@ -45,6 +46,9 @@ export const placementTpoMessageThreads = pgTable(
       }),
     jobId: uuid("job_id"),
     lastMessageAt: timestamp("last_message_at", { withTimezone: true }),
+    /** Store a keyed digest only; no raw inbound email bearer token. */
+    replyTokenHash: varchar("reply_token_hash", { length: 64 }),
+    recruiterEmailedAt: timestamp("recruiter_emailed_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -56,6 +60,10 @@ export const placementTpoMessageThreads = pgTable(
     uniqueIndex("placement_tpo_message_threads_job_uq")
       .on(table.collegeId, table.recruiterUserId, table.jobId)
       .where(sql`${table.jobId} is not null`),
+    uniqueIndex("placement_tpo_message_threads_reply_token_uq")
+      .on(table.replyTokenHash).where(sql`${table.replyTokenHash} is not null`),
+    check("placement_tpo_message_threads_reply_token_ck",
+      sql`${table.replyTokenHash} is null or ${table.replyTokenHash} ~ '^[0-9a-f]{64}$'`),
     index("placement_tpo_message_threads_college_last_idx").on(
       table.collegeId,
       table.lastMessageAt,
@@ -81,6 +89,11 @@ export const placementTpoMessages = pgTable(
     senderUserId: uuid("sender_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
+    kind: varchar("kind", { length: 16 }).notNull().default("MESSAGE"),
+    event: varchar("event", { length: 80 }),
+    changeRequestId: uuid("change_request_id")
+      .references(() => placementDriveChangeRequests.id, { onDelete: "restrict" }),
+    via: varchar("via", { length: 12 }).notNull().default("APP"),
     body: text("body").notNull(),
     readAt: timestamp("read_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -92,6 +105,11 @@ export const placementTpoMessages = pgTable(
       table.threadId,
       table.createdAt,
     ),
+    index("placement_tpo_messages_change_request_idx").on(table.changeRequestId, table.createdAt),
+    check("placement_tpo_messages_kind_ck", sql`${table.kind} in ('MESSAGE','EVENT')`),
+    check("placement_tpo_messages_via_ck", sql`${table.via} in ('APP','EMAIL')`),
+    check("placement_tpo_messages_event_shape_ck",
+      sql`${table.kind} <> 'EVENT' or (${table.event} is not null and ${table.changeRequestId} is not null)`),
     check(
       "placement_tpo_messages_sender_ck",
       sql`${table.senderType} in ('TPO', 'RECRUITER')`,
@@ -215,6 +233,7 @@ export const placementTpoShareEvents = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("placement_tpo_share_events_action_time_idx").on(table.action, table.createdAt),
     index("placement_tpo_share_events_share_created_idx").on(
       table.shareId,
       table.createdAt,
