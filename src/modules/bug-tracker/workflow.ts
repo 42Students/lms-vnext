@@ -95,8 +95,14 @@ export class BugWorkflowError extends Error {
       | "INVALID_INPUT"
       | "INVALID_STATE",
   ) {
-    super(code);
+    super(code === "INVALID_STATE" ? "Issue is not ready for retest." : code);
     this.name = "BugWorkflowError";
+  }
+
+  /** INVALID_STATE is a legacy retest conflict, not a malformed request. */
+  get httpStatus(): 400 | 403 | 409 {
+    return this.code === "INVALID_STATE" || this.code === "STALE_VERSION"
+      ? 409 : this.code === "FORBIDDEN" ? 403 : 400;
   }
 }
 
