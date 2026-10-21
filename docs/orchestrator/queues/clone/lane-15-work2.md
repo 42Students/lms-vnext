@@ -4,8 +4,8 @@ You own 67 work packets moved from slower lanes. Same rules as every wave-1 lane
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-student-notes-service.ts.md` (edit src/modules/placements/tpo-student-notes-service.ts; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_recruiter_bell_route.ts.md` (edit src/app/api/placements/recruiter/bell/route.ts; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-student-notes-service.ts.md` (edit src/modules/placements/tpo-student-notes-service.ts; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_recruiter_bell_route.ts.md` (edit src/app/api/placements/recruiter/bell/route.ts; 1 findings; best P3)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_tpo-public-placement-content-editor.tsx.md` (edit src/components/placements/tpo-public-placement-content-editor.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_recruiter_profile_details_route.ts.md` (edit src/app/api/placements/recruiter/profile/details/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_campaign-unsubscribe-confirm.tsx.md` (edit src/components/placements/campaign-unsubscribe-confirm.tsx; 2 findings; best P2)

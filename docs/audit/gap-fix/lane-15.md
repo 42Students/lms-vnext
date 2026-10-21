@@ -254,3 +254,6 @@
 
 ## Lane-15 queue disposition
 - All 59 per-file work packets are ticked in `docs/orchestrator/queues/clone/lane-15-work.md`; each handled as either scoped schema/migration change, already-fixed verification, immutable-existing-SQL disposition, or documented conflicting staged cutover handoff. No code, TypeScript compiler, tests, CI or SQL replay executed. New migrations 0164–0170 remain UNVERIFIED and must pass migration integration before use.
+
+- work2 #1 `src/modules/placements/tpo-student-notes-service.ts` | G2-4-022-028: return legacy `ok:true` acknowledgment while preserving accurate added/skipped/member IDs. No change to authorization or partial-skip semantics.
+- work2 #2 `src/app/api/placements/recruiter/bell/route.ts` | G2-10-025-037: POST retains counted `marked` and adds legacy `ok:true` acknowledgment; GET untouched.
