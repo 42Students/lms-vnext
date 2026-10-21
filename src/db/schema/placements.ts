@@ -249,6 +249,17 @@ export const placementRecruiterCollegeGrants = pgTable(
       .notNull()
       .default("PENDING"),
     revokeReason: text("revoke_reason"),
+    /** Optional migration-only, never used to authorize privileges. */
+    legacyImportMetadata: jsonb("legacy_import_metadata").$type<{
+      accessId?: number;
+      recruiterId?: number;
+      collegeId?: number;
+      organizationId?: number | null;
+      originalActorType?: string;
+      originalVersion?: number;
+      indefiniteValidUntil?: boolean;
+      unknownCapabilities?: string[];
+    }>(),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -281,12 +292,20 @@ export const placementRecruiterCollegeGrants = pgTable(
       .where(sql`${table.status} = 'ACTIVE'`),
     check("placement_recruiter_grants_version_ck", sql`${table.version} > 0`),
     check(
+      "placement_recruiter_grant_revoke_reason_length_ck",
+      sql`${table.revokeReason} is null or length(${table.revokeReason}) <= 500`,
+    ),
+    check(
       "placement_recruiter_grant_verification_ck",
       sql`${table.verificationStatus} in ('PENDING', 'VERIFIED', 'REJECTED')`,
     ),
     check(
       "placement_recruiter_grant_validity_ck",
       sql`${table.validUntil} is null or ${table.validUntil} > ${table.createdAt}`,
+    ),
+    check(
+      "placement_recruiter_grant_legacy_metadata_ck",
+      sql`${table.legacyImportMetadata} is null or jsonb_typeof(${table.legacyImportMetadata}) = 'object'`,
     ),
     check(
       "placement_recruiter_grant_capabilities_ck",
@@ -568,6 +587,10 @@ export const placementJobs = pgTable(
       table.seasonId,
       table.status,
     ),
+    /** Efficient deadline sweeps: only live published drives are eligible. */
+    index("placement_jobs_published_deadline_idx")
+      .on(table.applicationDeadline)
+      .where(sql`${table.status} = 'PUBLISHED' and ${table.applicationDeadline} is not null`),
     index("placement_jobs_relationship_idx").on(
       table.companyRelationshipId,
     ),
@@ -765,6 +788,8 @@ export const placementCandidateAcademicEvidence = pgTable(
     undergraduatePctBasisPoints: integer(
       "undergraduate_pct_basis_points",
     ),
+    /** For actual PG qualifications only; NULL means unprovided, not zero. */
+    postgraduatePctBasisPoints: integer("postgraduate_pct_basis_points"),
     gapYears: integer("gap_years"),
     isLateralEntry: boolean("is_lateral_entry")
       .notNull()
@@ -808,7 +833,8 @@ export const placementCandidateAcademicEvidence = pgTable(
       sql`(${table.tenthPctBasisPoints} is null or ${table.tenthPctBasisPoints} between 0 and 10000)
         and (${table.twelfthPctBasisPoints} is null or ${table.twelfthPctBasisPoints} between 0 and 10000)
         and (${table.diplomaPctBasisPoints} is null or ${table.diplomaPctBasisPoints} between 0 and 10000)
-        and (${table.undergraduatePctBasisPoints} is null or ${table.undergraduatePctBasisPoints} between 0 and 10000)`,
+        and (${table.undergraduatePctBasisPoints} is null or ${table.undergraduatePctBasisPoints} between 0 and 10000)
+        and (${table.postgraduatePctBasisPoints} is null or ${table.postgraduatePctBasisPoints} between 0 and 10000)`,
     ),
     check(
       "placement_candidate_academic_evidence_gap_ck",
@@ -866,6 +892,8 @@ export const placementJobEligibilityPolicies = pgTable(
     minUndergraduatePctBasisPoints: integer(
       "min_undergraduate_pct_basis_points",
     ),
+    /** PG eligibility only when the learner has relevant postgraduate evidence. */
+    minPostgraduatePctBasisPoints: integer("min_postgraduate_pct_basis_points"),
     /** P-S2-02: minimum percentage throughout (basis points; 75.25% = 7525). */
     minPctThroughoutBasisPoints: integer(
       "min_pct_throughout_basis_points",
@@ -916,7 +944,8 @@ export const placementJobEligibilityPolicies = pgTable(
       sql`(${table.minTenthPctBasisPoints} is null or ${table.minTenthPctBasisPoints} between 0 and 10000)
         and (${table.minTwelfthPctBasisPoints} is null or ${table.minTwelfthPctBasisPoints} between 0 and 10000)
         and (${table.minDiplomaPctBasisPoints} is null or ${table.minDiplomaPctBasisPoints} between 0 and 10000)
-        and (${table.minUndergraduatePctBasisPoints} is null or ${table.minUndergraduatePctBasisPoints} between 0 and 10000)`,
+        and (${table.minUndergraduatePctBasisPoints} is null or ${table.minUndergraduatePctBasisPoints} between 0 and 10000)
+        and (${table.minPostgraduatePctBasisPoints} is null or ${table.minPostgraduatePctBasisPoints} between 0 and 10000)`,
     ),
     check(
       "placement_job_policy_pct_throughout_ck",
@@ -1813,6 +1842,64 @@ export const placementOfferStatusHistory = pgTable(
 );
 
 
+
+/**
+ * Append-only private interview evidence. Slot booking, applied round results,
+ * and learner-visible status remain in their existing authoritative tables.
+ * Never expose staff feedback through learner read projections.
+ */
+export const placementInterviewPrivateEvents = pgTable(
+  "placement_interview_private_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id").notNull().references(
+      () => placementJobs.id, { onDelete: "restrict" },
+    ),
+    roundId: uuid("round_id").notNull().references(
+      () => placementJobRounds.id, { onDelete: "restrict" },
+    ),
+    applicationId: uuid("application_id").notNull().references(
+      () => placementApplications.id, { onDelete: "restrict" },
+    ),
+    eventType: varchar("event_type", { length: 32 }).notNull(),
+    /** Previous and new schedule are timestamptz; imported local times need IST conversion. */
+    previousScheduledAt: timestamp("previous_scheduled_at", { withTimezone: true }),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
+    /** Legacy interview IDs are provenance only, not runtime foreign keys. */
+    legacyInterviewId: varchar("legacy_interview_id", { length: 40 }),
+    /** Staff-only rating, recommendation and interviewer notes. */
+    privateFeedback: jsonb("private_feedback").$type<Record<string, unknown>>(),
+    actorUserId: uuid("actor_user_id").notNull().references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      name: "placement_interview_events_round_job_fk",
+      columns: [table.roundId, table.jobId],
+      foreignColumns: [placementJobRounds.id, placementJobRounds.jobId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "placement_interview_events_app_job_fk",
+      columns: [table.applicationId, table.jobId],
+      foreignColumns: [placementApplications.id, placementApplications.jobId],
+    }).onDelete("restrict"),
+    index("placement_interview_private_events_subject_idx").on(
+      table.roundId, table.applicationId, table.createdAt,
+    ),
+    check(
+      "placement_interview_private_events_type_ck",
+      sql`${table.eventType} in ('SCHEDULED', 'CONFIRMED', 'RESCHEDULE_REQUESTED', 'RESCHEDULED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'FEEDBACK_RECORDED')`,
+    ),
+    check(
+      "placement_interview_private_events_feedback_ck",
+      sql`${table.privateFeedback} is null or jsonb_typeof(${table.privateFeedback}) = 'object'`,
+    ),
+  ],
+);
 
 export const placementLearnerRequests = pgTable(
   "placement_learner_requests",
