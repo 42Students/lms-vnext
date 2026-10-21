@@ -1,13 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import {Disclosure} from "@/components/ui/disclosure";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
 import {
   availableLearnerJobFacets,
@@ -49,6 +48,8 @@ export function LearnerJobsBrowse({
   const urlSearch=urlState.filters.search;
   const [search,setSearch]=useState(urlSearch);
   const [mobileOpen,setMobileOpen]=useState(false);
+  const [navigating,startNavigation]=useTransition();
+  const mobileFilterButton=useRef<HTMLButtonElement|null>(null);
   const lastCommittedQuery=useRef(urlSearch);
 
   const updateQuery=useCallback((changes:Record<string,string|null>,options?:{replace?:boolean})=>{
@@ -61,9 +62,11 @@ export function LearnerJobsBrowse({
     }
     const query=learnerDriveQueryWithChanges(prior.toString(),changes);
     const href=query?pathname+"?"+query:pathname;
-    if(options?.replace)router.replace(href,{scroll:false});
-    else router.push(href,{scroll:false});
-  },[pathname,params,router]);
+    startNavigation(()=>{
+      if(options?.replace)router.replace(href,{scroll:false});
+      else router.push(href,{scroll:false});
+    });
+  },[pathname,params,router,startNavigation]);
 
   useEffect(()=>{
     const onPopState=()=>{
@@ -87,13 +90,28 @@ export function LearnerJobsBrowse({
     const handle=window.setTimeout(()=>{
       lastCommittedQuery.current=text;
       updateQuery({q:text||null},{replace:true});
-    },350);
+    },220);
     return ()=>window.clearTimeout(handle);
   },[search,urlSearch,updateQuery]);
 
   const filters:LearnerJobBrowseFilters={...urlState.filters,search};
   const facets = useMemo(() => availableLearnerJobFacets(items), [items]);
   const employmentCounts=useMemo(()=>learnerJobEmploymentTypeCounts(items),[items]);
+  const locationCounts=useMemo(()=>{
+    const counts=new Map<string,number>();
+    for(const item of items)for(const location of new Set(item.roleOption.locations
+      .map(value=>value.trim()).filter(Boolean))){
+      counts.set(location.toLowerCase(),(counts.get(location.toLowerCase())??0)+1);
+    }
+    return counts;
+  },[items]);
+  const eligibleCount=new Set(items.filter(row=>row.canApply).map(row=>row.job.id)).size;
+  const soonCutoff=Date.parse(snapshotNowIso)+7*86_400_000;
+  const closingCount=new Set(items.filter(row=>{
+    const deadline=row.job.applicationDeadline?Date.parse(row.job.applicationDeadline):NaN;
+    return !row.deadlinePassed&&Number.isFinite(deadline)&&deadline>=Date.parse(snapshotNowIso)&&
+      deadline<=soonCutoff;
+  }).map(row=>row.job.id)).size;
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityDriveCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const savedSummary=learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds);
@@ -102,8 +120,20 @@ export function LearnerJobsBrowse({
   const historicSaved=savedHistory.filter(row=>
     ownSavedIds.has(row.jobId)&&!accessibleIds.has(row.jobId));
   const savedOnly=urlState.savedOnly||params.get("tab")==="saved";
+  const filterSummary=[
+    search.trim()?'"'+search.trim()+'"':null,
+    filters.employmentType!=="all"?humanize(filters.employmentType):null,
+    filters.location!=="all"?filters.location:null,
+    filters.eligibleOnly?"eligible":null,
+    filters.closingSoon?"closing soon":null,
+    filters.availability!=="all"?filters.availability.replaceAll("-"," "):null,
+  ].filter(Boolean).join(", ")||"your filters";
   const matchingItems=savedOnly?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items;
-  const visible = filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso));
+  const visible=useMemo(()=>
+    filterLearnerPlacementJobs(matchingItems,filters,Date.parse(snapshotNowIso)),
+   [matchingItems,snapshotNowIso,filters.search,filters.employmentType,filters.location,
+    filters.eligibleOnly,filters.closingSoon,filters.availability,filters.sort,
+    filters.departmentId,filters.programId,filters.jobType]);
   const parsedPage=urlState.page;
   const isNotOpen=(item:LearnerPlacementJobItem)=>
     !item.deadlinePassed&&!item.canApply;
@@ -113,8 +143,10 @@ export function LearnerJobsBrowse({
   const notOpenAll=visible.filter(isNotOpen);
   const expiredAll=visible.filter(item=>item.deadlinePassed);
   const savedExpired=savedOnly?expiredAll:[];
+  const savedNotOpen=savedOnly?notOpenAll:[];
   const primary=savedOnly
-    ?filters.availability==="closed"?[]:visible.filter(item=>!item.deadlinePassed)
+    ?filters.availability==="closed"||filters.availability==="not-open"
+      ?[]:visible.filter(item=>!item.deadlinePassed&&!isNotOpen(item))
     :filters.availability==="not-open"||filters.availability==="closed"?[]:
       visible.filter(item=>!isNotOpen(item)&&!item.deadlinePassed);
   const pagination=learnerDrivePageState(primary.length,parsedPage,PAGE_SIZE);
@@ -127,16 +159,40 @@ export function LearnerJobsBrowse({
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11";
+  const resetFilters=()=>{
+    setSearch("");
+    updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,
+      availability:null,sort:null});
+    setMobileOpen(false);
+  };
   return (
     <div className="min-w-0 space-y-4">
-      <SegmentedControl label="Drive bookmarks"
-        className="w-fit max-w-full"
-        value={savedOnly ? "saved" : "all"}
-        onChange={(next) => updateQuery({ saved: next === "saved" ? "1" : null })}
-        options={[
-          { value: "all", label: "All drives" },
-          { value: "saved", label: "Saved (" + new Set(savedJobIds).size + ")" },
-        ]} />
+      <section className="border-b border-border pb-3" aria-label="Drives at a glance">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xl font-semibold text-foreground">Drives</h2>
+            <p className="mt-1 text-sm text-body">{allDrives.drives} published {allDrives.drives===1?"drive":"drives"} · {allDrives.roles} role options</p>
+          </div>
+          <Button variant="link" type="button" aria-label={"View "+new Set(savedJobIds).size+" saved drives"}
+            onClick={()=>updateQuery({saved:"1"})} className="min-h-11 px-1 text-sm font-semibold md:min-h-9">
+            {new Set(savedJobIds).size} saved →
+          </Button>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {allDrives.withApplications} {allDrives.withApplications===1?"drive has":"drives have"} your application.
+        </p>
+      </section>
+      <nav role="tablist" aria-label="Drive bookmarks" className="flex min-h-11 items-end gap-6 border-b border-border">
+        <button role="tab" type="button" aria-selected={!savedOnly} aria-controls="learner-drive-results"
+          className={"min-h-11 border-b-[3px] px-1 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 "+(!savedOnly?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-foreground")}
+          onClick={()=>updateQuery({saved:null})}>All drives</button>
+        <button role="tab" type="button" aria-selected={savedOnly} aria-controls="learner-drive-results"
+          className={"flex min-h-11 items-center gap-2 border-b-[3px] px-1 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 "+(savedOnly?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-foreground")}
+          onClick={()=>updateQuery({saved:"1"})}>
+          Saved <span aria-label={new Set(savedJobIds).size+" saved drives"} className="rounded-full bg-[var(--lms-primary-subtle)] px-2 py-0.5 text-xs font-semibold text-primary-text">{new Set(savedJobIds).size}</span>
+        </button>
+      </nav>
+      {navigating?<p role="status" className="text-xs text-body">Updating drives…</p>:null}
       <section className="border-t border-border pt-4" aria-label="Find placement drives">
         <div className="mb-3">          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search drives, companies and roles
@@ -164,7 +220,7 @@ export function LearnerJobsBrowse({
         <div className="grid gap-3 md:grid-cols-2">
 
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Job type
+            Type
             <Select value={filters.employmentType}
               onChange={(event) => updateQuery({ type: event.target.value })}
               className={selectClass}>
@@ -181,7 +237,7 @@ export function LearnerJobsBrowse({
               className={selectClass}>
               <option value="all">All locations</option>
               {facets.locations.map((location) => (
-                <option key={location} value={location}>{location}</option>
+                <option key={location} value={location}>{location} ({locationCounts.get(location.toLowerCase())??0})</option>
               ))}
             </Select>
           </label>
@@ -200,28 +256,20 @@ export function LearnerJobsBrowse({
             label: label + " (" + availabilityCounts[key] + ")",
           }))} />
         <div className="flex flex-wrap items-center gap-3">
-          <label className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center gap-2 text-sm font-semibold text-body">
-            <Checkbox
-              checked={filters.eligibleOnly}
-              onChange={(event) => updateQuery({
-                eligible: event.target.checked ? "1" : null,
-              })}
-              className="h-4 w-4 accent-[var(--lms-primary)]"
-            />
-            Eligible only
-          </label>
-          <label className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center gap-2 text-sm font-semibold text-body">
-            <Checkbox
-              checked={filters.closingSoon}
-              onChange={(event) => updateQuery({
-                soon: event.target.checked ? "1" : null,
-              })}
-              className="h-4 w-4 accent-[var(--lms-primary)]"
-            />
-            Closing in 7 days
-          </label>
+          <button type="button" aria-pressed={filters.eligibleOnly}
+            onClick={()=>updateQuery({eligible:filters.eligibleOnly?null:"1"})}
+            className={"inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
+              (filters.eligibleOnly?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-primary-text":"border-border bg-surface text-body hover:border-[var(--lms-primary)]")}>
+            Eligible <span className="text-xs opacity-80">{eligibleCount}</span>
+          </button>
+          <button type="button" aria-pressed={filters.closingSoon}
+            onClick={()=>updateQuery({soon:filters.closingSoon?null:"1"})}
+            className={"inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
+              (filters.closingSoon?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-primary-text":"border-border bg-surface text-body hover:border-[var(--lms-primary)]")}>
+            Closing soon <span className="text-xs opacity-80">{closingCount}</span>
+          </button>
           <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-[6px] text-[length:var(--lms-font-sm)] md:ml-auto md:w-auto md:flex-row md:items-center md:gap-2 md:min-h-[var(--lms-control-height)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Sort by
+            Sort
             <Select value={filters.sort}
               aria-label="Sort placement drives"
               onChange={(event) => updateQuery({ sort: event.target.value })}
@@ -233,9 +281,7 @@ export function LearnerJobsBrowse({
             </Select>
           </label>
           <Button variant="link" type="button" onClick={() => {
-              setSearch("");
-              updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,availability:null});
-              setMobileOpen(false);
+              resetFilters();
             }} className="min-h-11 px-2 md:min-h-9">
             Clear filters
           </Button>
@@ -243,21 +289,11 @@ export function LearnerJobsBrowse({
         </div>
       </section>
 
-      <section aria-label="All published drives summary" className="min-w-0 border-b border-border pb-3 pt-2">
-        <h2 className="text-base font-semibold text-foreground">All drives</h2>
-        <p className="mt-1 text-sm text-body">
-          {allDrives.drives} published {allDrives.drives===1?"drive":"drives"} · {allDrives.roles} role options
-          · {allDrives.withApplications} {allDrives.withApplications===1?"drive has":"drives have"} your application.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Role filters below show options, not distinct employers or separate drives.
-        </p>
-      </section>
-      <p role="status" className="text-sm text-body">
+      <div id="learner-drive-results" role="status" className="text-sm text-body">
         {visible.length===0?"No matching drives":
           primary.length===0?`${visible.length} matching roles in secondary sections`:
           `Showing ${pagination.firstNumber}–${pagination.lastNumber} of ${primary.length} primary roles`}
-      </p>
+      </div>
       {pagination.recovered ? (
         <p role="status" className="border-b border-border py-3 text-sm text-body">
           Your requested results page is no longer available after filtering.
@@ -296,8 +332,7 @@ export function LearnerJobsBrowse({
           <p className="mt-2 text-sm text-body">{empty.description}</p>
           {empty.showReset ? <Button variant="link" type="button"
             onClick={()=>{
-              setSearch("");
-              updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,availability:null});
+              resetFilters();
             }}
             className="mt-3 min-h-11 px-0">
             Clear all filters
