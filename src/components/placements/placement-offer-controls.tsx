@@ -326,7 +326,7 @@ export function PlacementOfferControls({
   return (
     <section className="border-b border-border pb-6">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
           Offers & joining
         </h2>
         <p className="mt-1 text-sm text-body leading-[22px]">
