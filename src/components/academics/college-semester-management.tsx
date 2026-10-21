@@ -61,8 +61,8 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   const createNameRef = useRef<HTMLInputElement>(null);
   const [createErrors, setCreateErrors] = useState<SemesterFieldErrors>({});
   const [createError, setCreateError] = useState("");
-  const [programId, setProgramId] = useState(programs[0]?.id ?? "");
-  const [termNumber, setTermNumber] = useState("1");
+  const [programId, setProgramId] = useState("");
+  const [termNumber, setTermNumber] = useState("");
   const [name, setName] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -113,45 +113,51 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
   }
 
   return (
-    <details aria-label={SEMESTER_COPY.createTitle} className="group min-w-0 border-b border-border pb-4">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">{SEMESTER_COPY.createTitle}</summary>
+    <section aria-label={SEMESTER_COPY.createTitle}
+      className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
+      <h2 className="font-semibold text-[var(--lms-heading)]">{SEMESTER_COPY.createTitle}</h2>
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">Create a program before adding semesters.</p>
       ) : (
-        <form noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)] md:grid-cols-2">
+        <form noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-3)]">
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.programLabel}
-            <Select ref={programRef} required value={programId} aria-invalid={Boolean(createErrors.program)}
+            <Select ref={programRef} required value={programId} aria-invalid={Boolean(createErrors.program)} aria-describedby={createErrors.program ? "semester-program-error" : undefined}
               onChange={e => { setProgramId(e.target.value); setCreateErrors(current => ({ ...current, program: undefined })); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
+              <option value="">Select program</option>
               {programs.map(program => <option key={program.id} value={program.id}>
                 {program.name} ({program.code})
               </option>)}
             </Select>
-            {createErrors.program ? <span role="alert" className="text-xs text-error">{createErrors.program}</span> : null}
+            {createErrors.program ? <span role="alert" id="semester-program-error" className="text-xs text-error">{createErrors.program}</span> : null}
           </label>
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid max-w-[220px] gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.numberLabel}
             <Input ref={numberRef} required type="number" min={1} max={12} step={1} value={termNumber}
-              aria-invalid={Boolean(createErrors.number)} placeholder={SEMESTER_COPY.numberPlaceholder}
+              aria-invalid={Boolean(createErrors.number)} aria-describedby={createErrors.number ? "semester-number-error" : undefined} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => { setTermNumber(e.target.value); setCreateErrors(current => ({ ...current, number: undefined })); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
-            <Input ref={createNameRef} required maxLength={255} value={name} aria-invalid={Boolean(createErrors.name)}
+            <Input ref={createNameRef} required maxLength={255} value={name} aria-invalid={Boolean(createErrors.name)} aria-describedby={createErrors.name ? "semester-name-error" : undefined}
               onChange={e => { setName(e.target.value); setCreateErrors(current => ({ ...current, name: undefined })); }}
               placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground" />
           </label>
-          {createErrors.name ? <p role="alert" className="text-xs text-error md:col-span-2">{createErrors.name}</p> : null}
-          {createErrors.number ? <p role="alert" className="text-xs text-error md:col-span-2">{createErrors.number}</p> : null}
+          {createErrors.name ? <p role="alert" id="semester-name-error" className="text-xs text-error">{createErrors.name}</p> : null}
+          {createErrors.number ? <p role="alert" id="semester-number-error" className="text-xs text-error">{createErrors.number}</p> : null}
           <p className="border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-xs text-body md:col-span-2 leading-5">
             Total credits are calculated from courses mapped to this semester.
           </p>
+          <div className="flex items-center gap-3 text-sm text-body">
+            <Switch label="Active" checked disabled />
+            <span className="text-xs text-muted-foreground">New semesters start Active. You can change their status afterward.</span>
+          </div>
           <div className="flex items-end justify-stretch md:col-span-2 md:justify-end">
             <Button variant="primary" type="submit" disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">
-              {pending ? "Saving…" : SEMESTER_COPY.createButton}
+              <span aria-hidden="true">＋</span> {pending ? "Saving…" : SEMESTER_COPY.createButton}
             </Button>
           </div>
         </form>
@@ -161,7 +167,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
         <Button variant="secondary" type="button" onClick={() => setCreateError("")}>Dismiss</Button>
       </div> : null}
       {notice ? <p role="status" className="mt-3 text-sm text-body leading-[22px]">{notice}</p> : null}
-    </details>
+    </section>
   );
 }
 
