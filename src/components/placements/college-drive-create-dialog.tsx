@@ -12,7 +12,12 @@ export function CollegeDriveCreateDialog({children}:{children:ReactNode}){
   if(!next)setDirty(false);
  };
  return <>
-  <Button type="button" className="min-h-11 md:min-h-9" onClick={()=>setOpen(true)}>Create Job</Button>
+  <Button type="button" className="min-h-11 md:min-h-9" onClick={()=>setOpen(true)}>
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2">
+      <path strokeLinecap="round" d="M12 5v14M5 12h14"/>
+    </svg>
+    Create Job
+  </Button>
   <Dialog title="Create Job" open={open} onOpenChange={change}
    className="max-w-[800px]"
    bodyClassName="!min-w-0 !overflow-x-hidden !p-4 md:!p-6">
