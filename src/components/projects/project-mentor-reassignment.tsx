@@ -304,7 +304,7 @@ export function ProjectMentorReassignment({
         </div>
 
         <details className="mt-[var(--lms-space-4)] min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-2)]">
-         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Reassignment impact</summary>
+         <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reassignment impact</summary>
         <p className="mt-[var(--lms-space-2)] text-sm leading-6 text-body">
           The previous primary mentor is removed from
           each changed workspace. Existing co-mentors
