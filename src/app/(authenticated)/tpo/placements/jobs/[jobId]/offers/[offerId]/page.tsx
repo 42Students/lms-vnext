@@ -30,7 +30,7 @@ export default async function TpoOfferEvidencePage({params}:{params:Promise<{job
     <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:w-auto md:min-h-9 print:hidden" href={base+"/offers"}>← Offer register</Link>
     <Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:w-auto md:min-h-9 print:hidden" href={"/tpo/students/"+encodeURIComponent(data.candidate.membershipId)+"/history"}>Learner placement history →</Link>
    </>}/>
-  <section aria-label="Current offer facts" className="grid min-w-0 grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5 print:overflow-visible">
+  <section aria-label="Current offer facts" className="grid min-w-0 grid-cols-1 md:grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border xl:grid-cols-5 print:overflow-visible">
    {facts.map(([name,value])=><div key={name} className="min-w-0 border-b border-r border-border px-3 py-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:last:border-r-0">
     <p className="text-xs text-muted-foreground">{name}</p><p className="mt-2 break-words font-semibold">{name==="Current status"?<StatusBadge tone={value==="ACCEPTED"?"success":value==="DECLINED"?"error":value==="PENDING"?"warning":"neutral"}>{value}</StatusBadge>:value}</p>
    </div>)}
