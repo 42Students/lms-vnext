@@ -35,6 +35,8 @@ export type PlacementCalendarEvent = {
 
   jobId: string | null;
   jobTitle: string | null;
+  /** Exact college-scoped candidate booking, when this event is a slot. */
+  applicationId?: string | null;
 
   roundId: string | null;
   roundKind: string | null;

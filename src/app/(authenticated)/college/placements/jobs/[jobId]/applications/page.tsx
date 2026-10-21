@@ -37,7 +37,10 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       description="This placement drive link is invalid. Return to the college drive list and choose a valid drive."
       action={<Link href="/college/placements/jobs" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Back to drives</Link>} />
   </div>;
-  const query = driveApplicationsParams(await searchParams);
+  const rawParams=await searchParams;
+  const query = driveApplicationsParams(rawParams);
+  const initialDetailId=typeof rawParams.applicationId==="string" &&
+   z.uuid().safeParse(rawParams.applicationId).success?rawParams.applicationId:null;
   if (!query) return <div className="min-w-0 space-y-5">
     <PageHeader title="Applications" />
     <ErrorState title="Invalid applicant filters" description="The requested search, status, screening or page is invalid."
@@ -158,7 +161,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         rows={data.items} getRowKey={row=>row.id}
         empty={<EmptyState title="No matching applications" description="No applications match these filters." action={<Link href={driveApplicationsHref(jobId,{...query,q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined,page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>} />
      </section>:
-     <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query}/>}
+     <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query} initialDetailId={initialDetailId}/>}
     <nav aria-label="Application pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-3 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[var(--lms-font-sm)] text-[var(--lms-body-text)] sm:flex-row sm:items-center">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
         {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}

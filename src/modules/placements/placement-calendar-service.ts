@@ -514,6 +514,7 @@ export async function listPlacementCalendarEvents(
   const appointmentRows = (!input.kind || input.kind === "INTERVIEW_SLOT")
     ? await db.select({
         id: placementRoundCandidateSlots.id,
+        applicationId: placementRoundCandidateSlots.applicationId,
         scheduledAt: appointmentTime,
         endsAt: placementRoundCandidateSlots.endsAt,
         status: placementRoundCandidateSlots.status,
@@ -568,6 +569,7 @@ export async function listPlacementCalendarEvents(
     companyName: row.companyName,
     jobId: row.jobId,
     jobTitle: row.jobTitle,
+    applicationId: row.applicationId,
     roundId: row.roundId,
     roundKind: row.roundKind,
     leadId: null,

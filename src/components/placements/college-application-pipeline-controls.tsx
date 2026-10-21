@@ -21,7 +21,7 @@ type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDay
  status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null;
  allowedNextStages?:readonly string[];stageMovedByName?:string|null;stageMovedAt?:string|null;};
 const transitions=COLLEGE_APPLICATION_TRANSITIONS;
-export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements"}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements"}){
+export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements",initialDetailId=null}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements";initialDetailId?:string|null}){
  const router=useRouter();
  const {showToast}=useToast();
  // A late network reply from the previous selected college must not open a
@@ -47,6 +47,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setSelected([]);setAllMatching(false);setDetailId(null);setDetailPayload(null);
   setDialog(false);setBusy(false);setError("");setOutcome(null);setFailedDetailId(null);
  },[activeScope]);
+ useEffect(()=>{
+  // The server validates the application UUID before passing it here;
+  // the detail API independently rechecks the selected college and job.
+  if(initialDetailId)void openDetail(initialDetailId);
+ },[activeScope,initialDetailId]);
  useEffect(()=>{
   // A "select all matching" command is never carried over to a changed filter.
   setAllMatching(false);
