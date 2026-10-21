@@ -87,9 +87,14 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
         }
         actions={
           <div className="flex flex-wrap gap-2">
+            {isAssignment ? data.items.length ? <Link prefetch={false} download
+              href={collegeAssessmentExportHref(data.kind,data.query,"PAGE")}
+              className="inline-flex min-h-11 items-center gap-2 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+              <span aria-hidden="true">↓</span>Export CSV (page)
+            </Link> : <Button type="button" variant="secondary" disabled>Export CSV (page)</Button> : null}
             <Link prefetch={false} download href={collegeAssessmentExportHref(data.kind,data.query)}
               className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-              Export CSV
+              {isAssignment ? "Export all matching" : "Export CSV"}
             </Link>
             <Link href={isAssignment ? "/college/quizzes" : "/college/assignments"}
               className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
