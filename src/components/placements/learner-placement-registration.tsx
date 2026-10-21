@@ -52,7 +52,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{LEARNER_REGISTRATION_COPY.title}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
-      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none">
+      {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
         <Radio name="sp-choice" checked={choice===item.value}
           onChange={()=>{setChoice(item.value);setConsent(false);}} className="mt-1" />
         <span className="min-w-0"><span className="block break-words font-semibold">{item.label}</span>

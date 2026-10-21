@@ -15,7 +15,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
           Your placement alerts
         </h2>
         <Link href={learnerAlertsHistoryHref(unreadOnly)}
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Personal notification history →
         </Link>
       </div>
