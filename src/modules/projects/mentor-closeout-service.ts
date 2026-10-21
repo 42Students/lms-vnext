@@ -39,7 +39,7 @@ async function facts(db:ReturnType<typeof getDb>,projectId:string,projectStatus:
   const [sprints]=await db.select({n:count()}).from(projectSprints)
     .where(and(eq(projectSprints.projectId,projectId),isNull(projectSprints.deletedAt),ne(projectSprints.status,"COMPLETED")));
   const [releases]=await db.select({n:count()}).from(projectReleases)
-    .where(and(eq(projectReleases.projectId,projectId),ne(projectReleases.status,"SHIPPED")));
+    .where(and(eq(projectReleases.projectId,projectId),isNull(projectReleases.deletedAt),ne(projectReleases.status,"SHIPPED")));
   return closeoutChecklist({
     projectStatus,approved:latest?.status==="APPROVED",
     openTasks:Number(tasks?.n??0),openSprints:Number(sprints?.n??0),
@@ -82,7 +82,7 @@ export async function completeMentorProject(
     const [sprints]=await tx.select({n:count()}).from(projectSprints)
       .where(and(eq(projectSprints.projectId,locked.id),isNull(projectSprints.deletedAt),ne(projectSprints.status,"COMPLETED")));
     const [releases]=await tx.select({n:count()}).from(projectReleases)
-      .where(and(eq(projectReleases.projectId,locked.id),ne(projectReleases.status,"SHIPPED")));
+      .where(and(eq(projectReleases.projectId,locked.id),isNull(projectReleases.deletedAt),ne(projectReleases.status,"SHIPPED")));
     const checklist=closeoutChecklist({
       projectStatus:locked.status,approved:latest?.status==="APPROVED",
       openTasks:Number(tasks?.n??0),openSprints:Number(sprints?.n??0),
