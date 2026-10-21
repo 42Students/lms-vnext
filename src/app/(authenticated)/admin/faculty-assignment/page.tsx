@@ -34,13 +34,35 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
     if(row.status!=="ACTIVE")return null;
     const rawRole=row.details.find(detail=>detail.startsWith("Teaching role: "))?.slice("Teaching role: ".length);
     const role=COURSE_TEACHING_ROLES.find(value=>value===rawRole);
-    return <Disclosure title="Manage assignment" className="min-w-0"
-      contentClassName="flex min-w-0 flex-col items-start gap-2 pb-2 pt-2 sm:flex-row sm:flex-wrap">
-      {role&&row.revision?<SuperAdminTeachingRoleEdit assignmentId={row.id} role={role} revision={row.revision}/>:null}
-      <TeachingAssignmentActions legacyCopy assignment={{
-        id:row.id,facultyDisplayName:row.title,courseName:row.subtitle,sectionName:row.details[0]??"Selected class",
-      }}/>
-    </Disclosure>;
+    return <div className="flex min-w-0 flex-wrap items-start gap-2" aria-label={"Assignment "+row.id+" actions"}>
+      <Disclosure title="Edit" className="min-w-0 border border-border rounded-[var(--lms-control-radius)] px-2"
+        contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
+        <p className="m-0 text-xs text-body">Edit assignment {row.id}</p>
+        {role&&row.revision?<SuperAdminTeachingRoleEdit assignmentId={row.id}
+          role={role} revision={row.revision}/>:null}
+        <p className="m-0 max-w-prose text-xs text-muted-foreground">
+          To change Faculty, Course, Class, Batch, Semester, or Year, end the
+          existing assignment and create the replacement under the correct
+          course delivery. Keeping distinct assignments preserves attendance
+          and assessment audit history.
+        </p>
+        <Link href="/admin/courses" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+          Open course delivery setup →
+        </Link>
+      </Disclosure>
+      <Disclosure title="Delete / End" className="min-w-0 rounded-[var(--lms-control-radius)] border border-error px-2"
+        contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
+        <p className="m-0 text-xs text-body">End assignment {row.id}</p>
+        <p className="m-0 max-w-prose text-xs text-muted-foreground">
+          Delete is represented by End in vNext. The teaching history remains
+          auditable and the assignment can no longer create new sessions.
+        </p>
+        <TeachingAssignmentActions legacyCopy assignment={{
+          id:row.id,facultyDisplayName:row.title,courseName:row.subtitle,
+          sectionName:row.details[0]??"Selected class",
+        }}/>
+      </Disclosure>
+    </div>;
   }}
   loader={query=>listAdminFacultyAssignments(context,query)}/></div>;
 }

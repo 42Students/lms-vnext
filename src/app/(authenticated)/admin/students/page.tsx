@@ -88,7 +88,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   searchParams={searchParams}
   renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Bulk module access controls</summary>
-    <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
+    <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess collegeId={context.adminScope?.collegeId??""} learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
    </details>}
   renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto">
     <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>

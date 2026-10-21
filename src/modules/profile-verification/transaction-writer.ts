@@ -151,6 +151,27 @@ export const postgresLockedVerificationTransition: LockedTransition =
           event.actorUserId.length === 0) {
         throw new VerificationStateError("INVALID_TRANSITION");
       }
+      // A returned UPDATE_PENDING proof must never replace the previously
+      // approved snapshot or its publication. First-time SEND_BACK instead
+      // enters SENT_BACK with no verified evidence. These invariants are
+      // checked under the same membership/verification row locks as the write.
+      if(event.action==="SENT_BACK"){
+        if(!event.note||event.note.trim().length<3||
+          record.note?.trim()!==event.note.trim())
+          throw new VerificationStateError("INVALID_TRANSITION");
+        if(current?.status==="UPDATE_PENDING"&&(
+          record.status!=="VERIFIED"||
+          JSON.stringify(record.verifiedSnapshot)!==JSON.stringify(current.verifiedSnapshot)||
+          record.verifiedAt?.getTime()!==current.verifiedAt?.getTime()))
+          throw new VerificationStateError("INVALID_TRANSITION");
+        if(current?.status==="SUBMITTED"&&(
+          record.status!=="SENT_BACK"||record.verifiedSnapshot!==null))
+          throw new VerificationStateError("INVALID_TRANSITION");
+      }
+      if(event.action==="VERIFIED"&&(
+        record.status!=="VERIFIED"||
+        JSON.stringify(record.verifiedSnapshot)!==JSON.stringify(record.submittedSnapshot)))
+        throw new VerificationStateError("INVALID_TRANSITION");
       const values = {
         submittedSnapshot: record.submittedSnapshot,
         verifiedSnapshot: record.verifiedSnapshot,
@@ -208,7 +229,12 @@ export const postgresLockedVerificationTransition: LockedTransition =
           subjectId:persisted.id,
           summary:event.action === "VERIFIED"
             ? "Learner profile section verified" : "Profile section returned for correction",
-          metadata:{section,version:record.version},
+          metadata:{section,version:record.version,
+            eligibilityEvidenceRefreshed:event.action==="VERIFIED"&&section==="EDUCATION",
+            decisionNotificationQueued:true,
+            retainedPriorVerifiedSnapshot:event.action==="SENT_BACK"&&
+              current?.status==="UPDATE_PENDING"},
+
         }).returning({id:activityEvents.id});
         if (!activity) throw new VerificationStateError("INVALID_TRANSITION");
         const message=verificationDecisionNotice({

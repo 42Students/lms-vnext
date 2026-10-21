@@ -2,7 +2,13 @@ import {z} from "zod";
 export const MAX_COLLEGE_IMPORT_ROWS=200;
 export const collegeImportInputSchema=z.strictObject({organizationId:z.uuid(),csv:z.string().min(1).max(150000)});
 export type CollegeImportRow={line:number;name:string;code:string;city:string|null;state:string|null;country:string|null};
-export function parseCollegeImportCsv(raw:string):CollegeImportRow[]{
+/** One organization is selected for each import. This recognizes legacy
+ * uniqueId/orgId headings but never guesses a numeric legacy organization ID
+ * to a UUID belonging to an unrelated tenant. Split multi-org CSVs by their
+ * verified organization mapping before import. */
+export const COLLEGE_IMPORT_TEMPLATE="name,code,city,state,country";
+export const LEGACY_COLLEGE_IMPORT_TEMPLATE="organizationId,name,uniqueId,city,state";
+export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string):CollegeImportRow[]{
  const records:string[][]=[], source=raw.replace(/^\uFEFF/,"");
  let fields:string[]=[],value="",inside=false,afterQuote=false;
  for(let i=0;i<source.length;i++){
@@ -30,9 +36,14 @@ export function parseCollegeImportCsv(raw:string):CollegeImportRow[]{
  fields.push(value.trim());if(fields.some(Boolean))records.push(fields);
  if(!records.length)throw Error("Paste at least one college.");
  const header=records[0].map(x=>x.toLowerCase().replace(/\s+/g,""));
- const withHeader=header.includes("name")&&header.includes("code");
- const keys=["name","code","city","state","country"];
- const positions=withHeader?keys.map(k=>header.indexOf(k)):[0,1,2,3,4];
+ const codeHeader=header.includes("code")?"code":"uniqueid";
+ const withHeader=header.includes("name")&&header.includes(codeHeader);
+ const organizationColumn=header.indexOf("organizationid")>=0?header.indexOf("organizationid"):header.indexOf("orgid");
+ const legacyPositional=!withHeader&&records[0].length>=3&&
+   (/^\d+$/.test(records[0][0]??"")||z.uuid().safeParse(records[0][0]).success);
+ const keys=["name",codeHeader,"city","state","country"];
+ const positions=withHeader?keys.map(k=>header.indexOf(k)):
+   legacyPositional?[1,2,3,4,-1]:[0,1,2,3,4];
  if(withHeader&&new Set(header).size!==header.length)throw Error("Duplicate CSV heading.");
  const data=withHeader?records.slice(1):records;
  if(data.length===0)throw Error("Paste at least one college.");
@@ -40,6 +51,14 @@ export function parseCollegeImportCsv(raw:string):CollegeImportRow[]{
  const codes=new Set<string>();
  return data.map((row,index)=>{
   const v=(i:number)=>positions[i]<0?"":(row[positions[i]]??"").trim();
+  if(legacyPositional&&/^\d+$/.test(row[0]??""))throw Error("Legacy numeric organization IDs cannot establish a vNext tenant. Convert orgId to its verified organization UUID and import each organization separately using organizationId,name,uniqueId,city,state.");
+  const sourceOrg=withHeader&&organizationColumn>=0?(row[organizationColumn]??"").trim():legacyPositional?(row[0]??"").trim():"";
+  if(sourceOrg){
+   if(!z.uuid().safeParse(sourceOrg).success)
+    throw Error("Row "+(index+1)+": legacy organization ID needs an explicit UUID mapping; numeric IDs cannot be imported directly.");
+   if(selectedOrganizationId&&sourceOrg.toLowerCase()!==selectedOrganizationId.toLowerCase())
+    throw Error("Row "+(index+1)+": this college belongs to another organization. Import one organization at a time.");
+  }
   const name=v(0),code=v(1);
   if(!name||name.length>255||!code||code.length>64)
    throw Error("Row "+(index+1)+": name and code are required within length limits.");

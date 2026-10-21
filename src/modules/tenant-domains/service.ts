@@ -38,6 +38,7 @@ export type VerificationResult = {
   result:
     | "VERIFIED"
     | "TXT_RECORD_MISSING"
+    | "TXT_VALUE_MISMATCH"
     | "DNS_LOOKUP_FAILED";
 };
 
