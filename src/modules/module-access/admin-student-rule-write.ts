@@ -22,6 +22,17 @@ export function studentRuleWriteErrorMessage(error:unknown):string{
  }
  return "Could not save — please retry";
 }
+/** The schema deliberately forbids nullable enabled rows. An imported
+ * enabled=null + locked=true orphan cannot be silently represented as a
+ * disabled rule: retain it for migration review, then clear via INHERIT.
+ * Clearing an actual membership lock removes the override so a parent may
+ * determine access, matching the effective old enabled=null/locked=false.
+ */
+export function legacyOrphanLearnerLockDisposition(input:{enabled:boolean|null;locked:boolean}){
+ return input.enabled===null&&input.locked?
+  {safeToImport:false,action:"REVIEW_BEFORE_CLEAR" as const}:
+  {safeToImport:input.enabled!==null,action:"INHERIT" as const};
+}
 /** Explicit audited lock-clear uses the INHERIT transition with the latest
  * optimistic snapshot, rather than mutating a stale lock blindly. */
 export async function clearSuperAdminStudentLock(
