@@ -208,12 +208,6 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
       onClick={()=>remove(row)}>Remove</Button>
     </div>
     <div className="grid min-w-0 gap-3 md:grid-cols-2">
-     <label className="text-xs font-semibold text-body">Title
-      <Input className="mt-1" maxLength={200} aria-invalid={!row.title.trim()}
-       value={row.title} onChange={event=>changeTitle(row,event.target.value)}/>
-      {!row.title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
-       Item {index+1}: Title required</span>:null}
-     </label>
      <label className="text-xs font-semibold text-body">Key
       <Input className="mt-1" maxLength={120} required
        disabled={Boolean(row.id&&resources.some(resource=>resource.id===row.id&&
@@ -221,7 +215,10 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
        value={row.key} onChange={event=>edit(row.localId,"key",event.target.value)}/>
       {row.id?<span className="mt-1 block text-xs font-normal text-body">
        Existing resource keys are preserved for linked references.
-      </span>:null}
+      </span>:<span className="mt-1 block text-xs font-normal text-muted-foreground">
+       Optional: leave the generated key as is or enter your own. Auto-generated from title if left blank.
+       {row.title?" Preview: "+makeResourceKey(row.title):""}
+      </span>}
      </label>
      <label className="text-xs font-semibold text-body">Type
       <Select className="mt-1" value={row.legacyKind}
@@ -230,18 +227,25 @@ export function ProjectResourceLibraryEditor({projectId,token,resources}:{
        {legacyResourceKinds.map(kind=><option key={kind} value={kind}>{kind}</option>)}
       </Select>
      </label>
-     <label className="text-xs font-semibold text-body">URL (optional)
+     <label className="text-xs font-semibold text-body">Title <span aria-hidden="true" className="text-error">*</span>
+      <Input required className="mt-1" maxLength={200} aria-invalid={!row.title.trim()}
+       value={row.title} onChange={event=>changeTitle(row,event.target.value)}/>
+      {!row.title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
+       Item {index+1}: Title required</span>:null}
+     </label>
+     <label className="text-xs font-semibold text-body">URL (for a Link)
       <Input className="mt-1" type="url" maxLength={2048}
-       aria-invalid={!httpUrl(row.url)} value={row.url??""} placeholder="https://…"
+       aria-invalid={!httpUrl(row.url)} value={row.url??""} placeholder="https://..."
        onChange={event=>edit(row.localId,"url",event.target.value||null)}/>
+     </label>
+     <label className="text-xs font-semibold text-body md:col-span-2">Access notes
+      <Textarea className="mt-1" rows={2} maxLength={4000} value={row.accessNotes??""}
+       placeholder="e.g. Requires college email to view"
+       onChange={event=>edit(row.localId,"accessNotes",event.target.value||null)}/>
      </label>
      <label className="text-xs font-semibold text-body md:col-span-2">Description
       <Textarea className="mt-1" rows={2} maxLength={4000} value={row.description??""}
        onChange={event=>edit(row.localId,"description",event.target.value||null)}/>
-     </label>
-     <label className="text-xs font-semibold text-body md:col-span-2">Access notes
-      <Textarea className="mt-1" rows={2} maxLength={4000} value={row.accessNotes??""}
-       onChange={event=>edit(row.localId,"accessNotes",event.target.value||null)}/>
      </label>
      <label className="text-xs font-semibold text-body">Status
       <Select className="mt-1" value={row.status}
