@@ -4,7 +4,7 @@ import {Radio} from "@/components/ui/radio";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
 
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
@@ -25,6 +25,18 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  const [message,setMessage]=useState("");
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [confirmOpen,setConfirmOpen]=useState(false);
+ const dirty=selection!==savedMethod;
+ // This guard protects reload/close; client-side tab switches still require
+ // the shared college-setup dirty registry (tracked in lane handoff).
+ useEffect(()=>{
+   const beforeUnload=(event:BeforeUnloadEvent)=>{
+     if(!dirty&&!saving)return;
+     event.preventDefault();
+     event.returnValue="";
+   };
+   window.addEventListener("beforeunload",beforeUnload);
+   return ()=>window.removeEventListener("beforeunload",beforeUnload);
+ },[dirty,saving]);
  async function save(){
   if(!ready||saving||selection===savedMethod)return;
   setMessage("");
@@ -64,6 +76,7 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
    </label>)}
   </fieldset>
   <p className="text-xs leading-5 text-muted-foreground">Saved sign-in method: {choices.find(choice=>choice.value===savedMethod)?.label??savedMethod}</p>
+  {dirty?<Alert tone="warning">Unsaved sign-in method changes. Save or restore the saved selection before leaving this page.</Alert>:null}
   <Button type="button" disabled={!ready||saving||selection===savedMethod} onClick={()=>{setMessage("");setConfirmOpen(true);}}
    className="min-h-11 w-full md:min-h-9 md:w-auto print:hidden" loading={saving}>
    {saving?"Saving…":"Save sign-in settings"}
