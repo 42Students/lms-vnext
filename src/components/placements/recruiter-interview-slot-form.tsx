@@ -79,9 +79,12 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   // Each legacy entry can carry a different round, mode, panel and capacity.
   // The native API only writes one block transactionally. Present and retain
   // any partial success instead of claiming a nonexistent atomic batch.
-  const current=readSlot(form);
-  if(!current)return;
-  const entries=[...queued,current];
+  const hasCurrent=Boolean(start||end);
+  // After a partial failure the remaining queue can be retried unchanged,
+  // without inventing a new final time block just to submit it.
+  const current=hasCurrent||queued.length===0?readSlot(form):null;
+  if((hasCurrent||queued.length===0)&&!current)return;
+  const entries=current?[...queued,current]:[...queued];
   if(entries.length>10){setError("Propose at most 10 time blocks at once.");return;}
   const now=nowInIst();
   if(entries.some(slot=>slot.startAt<now||slot.endAt<=slot.startAt)){
@@ -131,7 +134,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-4 sm:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interview round
-   <Select name="roundId" required defaultValue="" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
+   <Select name="roundId" required={queued.length===0} defaultValue="" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
     <option value="" disabled>Select an interview round</option>
     {rounds.map(row=><option key={row.id} value={row.id}>{row.sequence}. {row.name}</option>)}
    </Select>
@@ -142,12 +145,12 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    </Select>
   </label>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
-   <Input name="startAt" type="datetime-local" min={today} required value={start}
+   <Input name="startAt" type="datetime-local" min={today} required={queued.length===0} value={start}
     onChange={event=>{const next=event.target.value;setStart(next);if(end&&end<=next)setEnd("");setError(null);}}
     className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
-   <Input name="endAt" type="datetime-local" min={start||today} required value={end}
+   <Input name="endAt" type="datetime-local" min={start||today} required={queued.length===0} value={end}
     onChange={event=>{setEnd(event.target.value);setError(null);}}
     className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
@@ -187,7 +190,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}
     variant="primary" className="min-h-11 w-full sm:col-span-2 md:min-h-9">
-    {submitting?"Sending time blocks…":queued.length?"Propose "+(queued.length+1)+" time blocks":"Propose slot"}
+    {submitting?"Sending time blocks…":queued.length?"Propose "+(queued.length+(start||end?1:0))+" time blocks":"Propose slot"}
   </Button>
  </form>;
 }
