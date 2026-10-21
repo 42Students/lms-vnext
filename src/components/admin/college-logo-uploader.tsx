@@ -20,6 +20,9 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [savedUrl,setSavedUrl]=useState<string|null>(null);
  const [confirmRemove,setConfirmRemove]=useState(false);
+ const [stagedBlob,setStagedBlob]=useState<Blob|null>(null);
+ const [stagedRemoval,setStagedRemoval]=useState(false);
+ const committingRef=useRef(false);
  useEffect(()=>()=>{if(preview)URL.revokeObjectURL(preview);},[preview]);
  function select(value:File|null){
   if (!value && fileInputRef.current) fileInputRef.current.value="";
@@ -32,21 +35,43 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     setMessage("Choose an image under 10 MiB before cropping.");return;
   }
   setFile(value);setPreview(value?URL.createObjectURL(value):null);
+  setStagedBlob(null);setStagedRemoval(false);
   setPositionX(50);setPositionY(50);setZoom(1);setMessage("");
   setMessageTone("success");
  }
- async function remove(){
+ function remove(){
   if(!canEdit||busy)return;
-  setBusy(true);setMessage("");
-  try{
-   const response=await fetch("/api/colleges/"+encodeURIComponent(collegeId)+"/branding/logo",{
-    method:"DELETE",credentials:"same-origin",
-   });
-   if(!response.ok)throw Error("Could not remove the logo.");
-   setSavedUrl(null);setRemoved(true);setConfirmRemove(false);setMessageTone("success");setMessage("Uploaded logo removed.");router.refresh();
-  }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Could not remove logo.");}
-  finally{setBusy(false);}
+  select(null);setStagedRemoval(true);setConfirmRemove(false);
+  setMessageTone("success");setMessage("Logo removal staged. Use Save in the branding form to apply it.");
  }
+ useEffect(()=>{
+  if(!canEdit||(!stagedBlob&&!stagedRemoval))return;
+  const onBrandingSaved=(event:Event)=>{
+   if(!(event instanceof CustomEvent)||event.detail?.collegeId!==collegeId||committingRef.current)return;
+   committingRef.current=true;setBusy(true);setMessage("");
+   void (async()=>{
+    try{
+     const endpoint="/api/colleges/"+encodeURIComponent(collegeId)+"/branding/logo";
+     const body=new FormData();
+     if(stagedBlob)body.set("file",stagedBlob,"college-logo.png");
+     const response=await fetch(endpoint,{method:stagedBlob?"POST":"DELETE",credentials:"same-origin",
+      ...(stagedBlob?{body}:{})});
+     if(!response.ok)throw Error(stagedBlob?"Logo upload failed. Check storage and retry Save.":"Could not remove the logo. Retry Save.");
+     if(stagedBlob){
+      const result=await response.json() as {logoUrl:string};
+      setSavedUrl(result.logoUrl+"?v="+Date.now());setRemoved(false);
+     }else{setSavedUrl(null);setRemoved(true);}
+     setStagedBlob(null);setStagedRemoval(false);setFile(null);setPreview(null);
+     if(fileInputRef.current)fileInputRef.current.value="";
+     setMessageTone("success");setMessage(stagedBlob?"College logo uploaded and saved.":"Uploaded logo removed.");
+     router.refresh();
+    }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Could not save logo. Retry Save.");}
+    finally{committingRef.current=false;setBusy(false);}
+   })();
+  };
+  window.addEventListener("college-branding-saved",onBrandingSaved);
+  return ()=>window.removeEventListener("college-branding-saved",onBrandingSaved);
+ },[canEdit,collegeId,router,stagedBlob,stagedRemoval]);
  async function upload(){
   if(!file||!canEdit||busy)return;
   setBusy(true);setMessage("");
@@ -68,24 +93,16 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     const blob=await new Promise<Blob|null>(resolve=>canvas.toBlob(resolve,"image/png"));
     if(!blob)throw Error("Could not crop the selected image.");
     if(blob.size>2*1024*1024)throw Error("The cropped PNG is over 2 MiB. Choose a simpler or smaller image.");
-    const body=new FormData();body.set("file",blob,"college-logo.png");
-    const response=await fetch("/api/colleges/"+encodeURIComponent(collegeId)+"/branding/logo",{
-     method:"POST",credentials:"same-origin",body,
-    });
-    if(!response.ok){
-     const error=await response.json().catch(()=>({error:"UPLOAD_FAILED"})) as {error?:string};
-     throw Error(error.error==="LOGO_INVALID"?"Logo must be a square PNG at least 200 × 200.":"Logo upload failed. Check storage configuration and try again.");
-    }
-    const result=await response.json() as {logoUrl:string};
-    setSavedUrl(result.logoUrl+"?v="+Date.now());setRemoved(false);
-    select(null);setMessageTone("success");setMessage("College logo uploaded and saved.");router.refresh();
+    select(null);setStagedBlob(blob);setStagedRemoval(false);
+    setMessageTone("success");setMessage("Logo crop staged. Use Save in the branding form to publish this logo.");
    }finally{bitmap.close();}
   }catch(error){setMessageTone("error");setMessage(error instanceof Error?error.message:"Upload failed.");}
   finally{setBusy(false);}
  }
  return <section aria-label="College logo upload" className="min-w-0 space-y-[var(--lms-space-3)]">
   <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">College logo</h2>
-  <p className="max-w-[75ch] text-sm leading-[22px] text-body">Upload a square logo. Choose a crop area; the saved image is a 200-pixel-or-larger PNG. Original files are not made public.</p>
+  <p className="max-w-[75ch] text-sm leading-[22px] text-body">Choose a square logo, crop it, then select Save in the branding form. The current login logo stays active unless the branding save succeeds.</p>
+  {stagedBlob||stagedRemoval?<Alert tone="warning">Unsaved logo {stagedRemoval?"removal":"replacement"} is staged. Save the branding form to apply it, or leave this page to discard it. Your current logo is still live.</Alert>:null}
   {(savedUrl||(!removed&&currentUrl))?<div className="flex min-w-0 items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <Card as="div" className="w-fit shrink-0 p-2">
     <img src={(savedUrl||currentUrl)!} alt="Current college logo" className="aspect-square w-20 max-w-full object-contain"/>
@@ -117,7 +134,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
     </div>
     <Button type="button" disabled={busy} onClick={()=>void upload()}
       className="min-h-11 w-full justify-center sm:w-auto md:min-h-9">
-      {busy?"Uploading…":"Crop and upload logo"}
+      {busy?"Preparing…":"Crop and stage logo"}
     </Button>
    </div>:null}</>:<Alert tone="info">You can view the logo, but cannot change it.</Alert>}
   {canEdit&&(savedUrl||(!removed&&currentUrl))?<Disclosure title="Logo management"
@@ -128,7 +145,7 @@ export function CollegeLogoUploader({collegeId,currentUrl,canEdit}:{
       Remove uploaded logo
     </Button>
   </Disclosure>:null}
-  <ConfirmDialog open={confirmRemove} onOpenChange={setConfirmRemove} title="Remove this college's uploaded logo?" description="The uploaded logo will be removed from this college." confirmLabel="Remove uploaded logo" confirmVariant="danger" pending={busy} onConfirm={()=>void remove()}/>
+  <ConfirmDialog open={confirmRemove} onOpenChange={setConfirmRemove} title="Remove this college's uploaded logo?" description="Removal will be staged and applied only after you save the branding form." confirmLabel="Stage logo removal" confirmVariant="danger" pending={busy} onConfirm={remove}/>
   {message?<Alert tone={messageTone}>{message}</Alert>:null}
  </section>;
 }

@@ -1,4 +1,7 @@
 import { EmptyState } from "@/components/ui/empty-state";
+import {ErrorState} from "@/components/ui/error-state";
+import {getLearnerPlacementJourney} from "@/modules/placements/learner-journey-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -25,8 +28,39 @@ export default async function LearnerApplicationHistoryPage({
     notFound();
   }
   const context = await getCurrentRequestContext();
-  const history = await getOwnLearnerApplicationHistory(context, applicationId);
+  let history:Awaited<ReturnType<typeof getOwnLearnerApplicationHistory>>;
+  let journey:Awaited<ReturnType<typeof getLearnerPlacementJourney>>;
+  try{
+    [history,journey]=await Promise.all([
+      getOwnLearnerApplicationHistory(context,applicationId),
+      getLearnerPlacementJourney(context),
+    ]);
+  }catch(error){
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Application status history"/>
+      <ErrorState title="Couldn't load application status history"
+        description="Your saved application has not been changed. Try reloading the authorized status timeline."
+        action={<Link href={"/learn/my-placements/applications/"+encodeURIComponent(applicationId)+"/history"}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+    </div>;
+  }
   if (!history) notFound();
+  const owned=journey.find(item=>item.applicationId===applicationId);
+  if(!owned)notFound();
+  const baselinePresent=history.events.some(event=>event.toStatus==="SUBMITTED"||
+    event.toStatus==="APPLIED");
+  const events=[
+    ...(!baselinePresent?[{
+      id:"baseline-"+applicationId,fromStatus:null,toStatus:"SUBMITTED",
+      occurredAt:owned.submittedAt,label:"Application submitted",
+    }]:[]),
+    ...history.events,
+    ...(owned.withdrawnAt&&!history.events.some(event=>event.toStatus==="WITHDRAWN")?[{
+      id:"withdrawn-"+applicationId,fromStatus:"SUBMITTED",toStatus:"WITHDRAWN",
+      occurredAt:owned.withdrawnAt,label:"Application withdrawn",
+    }]:[]),
+  ].sort((a,b)=>a.occurredAt.getTime()-b.occurredAt.getTime()||a.id.localeCompare(b.id));
 
   return (
     <div className="min-w-0 space-y-5">
@@ -45,14 +79,13 @@ export default async function LearnerApplicationHistoryPage({
       <section className="border-b border-border py-4 sm:py-6">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
         <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">
-          Only recorded application status changes are shown. Screening
-          and round decisions remain in your application details.
+          Your timeline includes a submission baseline reconstructed from your own saved application when older history entries are missing. Screening and round decisions remain in your application details.
         </p>
-        {history.events.length === 0 ? (
+        {events.length === 0 ? (
           <EmptyState title="No application-status history records available" description="Your current application status appears above." />
         ) : (
           <ol className="mt-4 divide-y divide-border">
-            {history.events.map((event) => (
+            {events.map((event) => (
               <li key={event.id} className="min-w-0 py-3 first:pt-0 last:pb-0 sm:py-4">
                 <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                   <p className="m-0 min-w-0 break-words text-sm font-semibold text-foreground leading-[22px]">{event.label}</p>
@@ -64,14 +97,14 @@ export default async function LearnerApplicationHistoryPage({
                   {event.fromStatus
                     ? event.fromStatus.replaceAll("_", " ") + " → "
                     : "Initial status: "}
-                  {event.toStatus.replaceAll("_", " ")}
+                  {event.toStatus==="SUBMITTED"?"APPLIED":event.toStatus.replaceAll("_", " ")}
                 </p>
               </li>
             ))}
           </ol>
         )}
         <p className="mt-4 text-xs text-muted-foreground leading-5">
-          Internal actor identifiers and private change notes are not shown.
+          Internal actor identifiers and private change notes are not shown on learner timelines. To clarify a recorded status or withdrawal reason, contact your placement cell.
         </p>
       </section>
     </div>

@@ -4,7 +4,9 @@ import {Radio} from "@/components/ui/radio";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Alert} from "@/components/ui/alert";
 
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
+import {useToast} from "@/components/ui/toast";
+import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
@@ -17,8 +19,10 @@ const choices:{value:Method;label:string;hint:string}[]=[
  {value:"EMAIL_ONLY",label:"Email only",hint:"Only email one-time codes on this college host"},
  {value:"PHONE_ONLY",label:"Phone only",hint:"Only phone one-time codes on this college host"},
 ];
-export function CollegeSigninMethodForm({collegeId,method,version,ready}:{collegeId:string;method:Method;version:number;ready:boolean}){
- const router=useRouter(),[selection,setSelection]=useState<Method>(method);
+export function CollegeSigninMethodForm({collegeId,method,version,ready,onDirtyChange,onBusyChange}:{collegeId:string;method:Method;version:number;ready:boolean;onDirtyChange?:(dirty:boolean)=>void;onBusyChange?:(busy:boolean)=>void}){
+ const router=useRouter(),{showToast}=useToast(),{askConfirm,dialog}=useConfirmFlow();
+ const requestSeq=useRef(0);
+ const [selection,setSelection]=useState<Method>(method);
  const [savedMethod,setSavedMethod]=useState<Method>(method);
  const [currentVersion,setCurrentVersion]=useState(version);
  const {pending:saving,run:guardedRun}=useGuardedAction({busyLabel:"Saving..."});
@@ -26,8 +30,9 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
  const [messageTone,setMessageTone]=useState<"success"|"error">("success");
  const [confirmOpen,setConfirmOpen]=useState(false);
  const dirty=selection!==savedMethod;
- // This guard protects reload/close; client-side tab switches still require
- // the shared college-setup dirty registry (tracked in lane handoff).
+ useEffect(()=>{onDirtyChange?.(dirty);return ()=>onDirtyChange?.(false);},[dirty,onDirtyChange]);
+ useEffect(()=>{onBusyChange?.(saving);return ()=>onBusyChange?.(false);},[saving,onBusyChange]);
+ useEffect(()=>{return ()=>{requestSeq.current++;};},[collegeId]);
  useEffect(()=>{
    const beforeUnload=(event:BeforeUnloadEvent)=>{
      if(!dirty&&!saving)return;
@@ -37,9 +42,30 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
    window.addEventListener("beforeunload",beforeUnload);
    return ()=>window.removeEventListener("beforeunload",beforeUnload);
  },[dirty,saving]);
+ useEffect(()=>{
+   if(!dirty&&!saving)return;
+   const intercept=(event:MouseEvent)=>{
+     if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey||
+        !(event.target instanceof Element))return;
+     const anchor=event.target.closest("a[href]");
+     if(!(anchor instanceof HTMLAnchorElement)||anchor.hasAttribute("download")||
+        (anchor.target&&anchor.target!=="_self"))return;
+     const target=new URL(anchor.href,window.location.href);
+     if(target.origin!==window.location.origin||
+        (target.pathname===window.location.pathname&&target.search===window.location.search))return;
+     event.preventDefault();event.stopPropagation();
+     if(saving){showToast({tone:"info",title:"Wait until sign-in settings finish saving."});return;}
+     void askConfirm("Discard unsaved sign-in settings? Keep editing to preserve your changes.").then(confirmed=>{
+       if(confirmed)router.push(target.pathname+target.search+target.hash);
+     });
+   };
+   document.addEventListener("click",intercept,true);
+   return ()=>document.removeEventListener("click",intercept,true);
+ },[dirty,saving,showToast,askConfirm,router]);
  async function save(){
   if(!ready||saving||selection===savedMethod)return;
   setMessage("");
+  const seq=++requestSeq.current;
   await guardedRun(async()=>{
     try {
       const response=await apiFetch<{policy:{method:Method;version:number}}>(
@@ -53,18 +79,23 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
       if(!committed||!collegeSignInMethodSchema.safeParse(committed.method).success||
          !Number.isSafeInteger(committed.version)||committed.version<0)
        throw new Error("INVALID_POLICY_RESPONSE");
+      if(requestSeq.current!==seq)return;
       setSavedMethod(committed.method);
       setCurrentVersion(committed.version);
-      setConfirmOpen(false);setMessageTone("success");setMessage("Sign-in settings saved");router.refresh();
+      setConfirmOpen(false);setMessageTone("success");setMessage("Sign-in settings saved");
+      showToast({tone:"success",title:"Sign-in settings saved"});router.refresh();
     }catch(error){
-      setMessageTone("error");
-      setMessage(error instanceof FriendlyFetchError && error.status===409
+      if(requestSeq.current!==seq)return;
+      const reason=error instanceof FriendlyFetchError&&error.status===409
         ?"Settings changed elsewhere. Refresh before retrying."
-        :error instanceof FriendlyFetchError?error.message:"Could not save sign-in settings.");
+        :error instanceof FriendlyFetchError?error.message:"Please try again.";
+      const feedback="Couldn\u0027t save sign-in settings: "+(reason==="INVALID_POLICY_RESPONSE"?"Please refresh and try again.":reason);
+      setMessageTone("error");setMessage(feedback);
+      showToast({tone:"error",title:feedback});
     }
   });
  }
- return <section aria-label="College sign-in methods" className="min-w-0 max-w-3xl space-y-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+ return <><section aria-label="College sign-in methods" className="min-w-0 max-w-3xl space-y-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Sign-in method</h2>
   {!ready?<Alert tone="warning">Sign-in method storage is unavailable; changes are disabled.</Alert>:null}
   <fieldset disabled={!ready||saving} className="grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] print:hidden">
@@ -85,5 +116,5 @@ export function CollegeSigninMethodForm({collegeId,method,version,ready}:{colleg
     {message&&messageTone==="error"?<Alert tone="error">{message}</Alert>:null}
   </ConfirmDialog>
   {message?<Alert tone={messageTone}>{message}</Alert>:null}
- </section>;
+ </section>{dialog}</>;
 }

@@ -1,6 +1,8 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Disclosure} from "@/components/ui/disclosure";
+import {getFacultyClassSchedule} from "@/modules/courses/faculty-schedule-service";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -28,14 +30,31 @@ export default async function FacultyCalendarPage({
     month:raw.month??currentIstMonth(new Date()),
     deliveryId:raw.deliveryId||undefined,
   }:{invalid:true});
-  if(!input.success)return <section role="alert" className="space-y-3">
-    <PageHeader title={"Invalid month or Section filter"} />
+  if(!input.success){
+    const badKey=["startDate","endDate"].find(key=>key in raw);
+    const invalidDate=badKey?"Invalid date '"+badKey+"': "+
+      String(raw[badKey]??"").slice(0,100):"Invalid month or Section filter";
+    const reversed=typeof raw.startDate==="string"&&typeof raw.endDate==="string"&&
+      raw.startDate>raw.endDate;
+    return <section role="alert" className="space-y-3">
+    <PageHeader title={reversed?"startDate must be before or equal to endDate":invalidDate} />
     <Link href="/teacher/calendar" className="font-semibold text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
       Clear filters
     </Link>
   </section>;
+  }
   const context=await getCurrentRequestContext();
-  const {schedule,grid}=await getFacultyIstMonth(context,input.data);
+  const [primary,upcomingRead]=await Promise.all([
+    getFacultyIstMonth(context,input.data),
+    getFacultyClassSchedule(context).then(value=>({available:true as const,value}))
+      .catch(()=>({available:false as const,value:null})),
+  ]);
+  const {schedule,grid}=primary;
+  const nextClasses=upcomingRead.available?
+    upcomingRead.value.upcomingEvents
+      .filter(item=>!input.data.deliveryId||item.deliveryId===input.data.deliveryId||
+        (item.deliveryId===null&&schedule.courses.some(c=>c.deliveryId===input.data.deliveryId&&c.sectionId===item.sectionId)))
+      .slice(0,3):[];
   const events:LearnerScheduleEvent[]=schedule.events.map(event=>({
     id:event.id,sectionId:event.sectionId,sectionName:event.sectionName,
     title:event.title,description:event.description,
@@ -52,6 +71,28 @@ export default async function FacultyCalendarPage({
       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
       View live classes
     </Link>} />
+    <section aria-label="Upcoming classes" className="min-w-0 space-y-3 border-b border-border pb-4">
+     <div className="flex flex-wrap items-center justify-between gap-3">
+      <h2 className="text-base font-semibold text-foreground">Next classes</h2>
+      <p className="text-xs text-muted-foreground">{nextClasses.length} coming up · {schedule.courses.length} teaching sections</p>
+     </div>
+     {!upcomingRead.available?<Alert tone="warning">
+       Couldn't load your next classes. Refresh this page to try again.
+       <Link href={facultyMonthHref(grid.query)} className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
+     </Alert>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
+       <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
+         className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+           <p className="break-words text-sm font-semibold text-foreground">{item.title}</p>
+           <p className="text-xs text-body">{new Intl.DateTimeFormat("en-IN",{
+             timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+           }).format(item.startsAt)} IST · {item.sectionName}</p>
+          </div>
+          {item.deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Open course →</Link>:
+           <span className="text-xs text-muted-foreground">Section-wide class</span>}
+         </li>)}</ol>}
+    </section>
     <section className="min-w-0">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className={monthStyles.period}>
@@ -122,11 +163,10 @@ export default async function FacultyCalendarPage({
         A Section-wide session is shown without guessing a course link.
       </p>
     </section>
-    <section aria-label="Detailed class schedule" className="min-w-0 space-y-3 border-t border-border pt-6">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Detailed day/week schedule</h2>
+    <Disclosure title="Detailed day/week schedule" className="min-w-0 border-t border-border pt-4" contentClassName="pt-4">
       <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
         events={events} courseBasePath="/teacher/courses"
         initialView="week" />
-    </section>
+    </Disclosure>
   </div>;
 }

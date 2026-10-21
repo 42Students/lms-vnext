@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
+import {ErrorState} from "@/components/ui/error-state";
+import {CoursesServiceError} from "@/modules/courses/errors";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {FacultyAttendanceScheduleEditor} from "@/components/attendance/faculty-attendance-schedule-editor";
@@ -21,22 +24,36 @@ export default async function FacultyCourseAttendancePage({
   const context = await getCurrentRequestContext();
   const { deliveryId } = await params;
   const query = await searchParams;
+  // Render only sections covered by the faculty member's CURRENT teaching
+  // assignments. A numeric legacy cls without a persisted crosswalk is never
+  // silently routed into some unrelated section.
+  const assigned=await listFacultyCourseDeliveries(context);
+  const current=assigned.find(item=>item.deliveryId===deliveryId);
+  if(!current)notFound();
+  const sections=assigned.filter(item=>item.courseId===current.courseId);
   if(query.cls){
-    const assigned=await listFacultyCourseDeliveries(context);
-    const current=assigned.find(item=>item.deliveryId===deliveryId);
-    if(!current)notFound();
-    const target=assigned.find(item=>item.courseId===current.courseId&&
-      (item.sectionId===query.cls||item.deliveryId===query.cls));
+    const target=sections.find(item=>item.sectionId===query.cls||
+      item.deliveryId===query.cls||item.sectionCode===query.cls);
     if(!target)notFound();
     redirect("/teacher/courses/"+encodeURIComponent(target.deliveryId)+
       "/attendanceDetail"+(query.sessionId&&target.deliveryId===deliveryId?
        "?sessionId="+encodeURIComponent(query.sessionId):""));
   }
-  const data =
-    await getFacultyAttendanceWorkspace(
-      context,
-      deliveryId,
-    );
+
+  let data:Awaited<ReturnType<typeof getFacultyAttendanceWorkspace>>;
+  try {
+    data=await getFacultyAttendanceWorkspace(context,deliveryId);
+  }catch(error){
+    if(error instanceof AuthorizationError||error instanceof CoursesServiceError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <ErrorState title="Couldn't load attendance data for this month."
+        description="Failed to load students or attendance. Your existing marks have not been changed."
+        action={<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail"}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
+      <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/home"}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">← Course workspace</Link>
+    </div>;
+  }
 
   const workspace: FacultyAttendanceWorkspaceData = {
     course: {
@@ -74,6 +91,16 @@ export default async function FacultyCourseAttendancePage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
+      {sections.length>1?<nav aria-label="Teaching section selector" className="min-w-0 space-y-2 border-b border-border pb-3">
+       <p className="text-sm font-semibold text-foreground">Class</p>
+       <div className="flex flex-wrap gap-2">{sections.map(item=><Link key={item.deliveryId}
+        href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/attendanceDetail"}
+        aria-current={item.deliveryId===deliveryId?"page":undefined}
+        className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+
+          (item.deliveryId===deliveryId?"border-primary bg-primary-subtle text-primary-text":"border-border bg-surface text-body hover:border-primary")}
+       >{item.sectionName} ({item.sectionCode})</Link>)}</div>
+       <p className="text-xs text-muted-foreground">Choose a class to see that section&#39;s attendance. Unsaved marks must be saved before switching.</p>
+      </nav>:null}
       <nav aria-label="Course attendance shortcuts" className="flex min-w-0 flex-col gap-2 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between">
       <Link
         href={`/teacher/courses/${deliveryId}/home`}
