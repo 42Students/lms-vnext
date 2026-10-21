@@ -1,14 +1,7 @@
-/** Legacy Next Pages Router /api/hello was an unconditional not-found
- * route, NOT a health check. Preserve the exact status under all methods,
- * independent of credentials, query, body or runtime deployment readiness.
- * Use /ready for readiness and /health for service probes. */
+import {NextResponse} from "next/server";
+/** Legacy stub: all methods respond with 404 and {message:"Not found"}, never 200 Hello. */
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
-function retired(){return new Response(null,{status:404,headers:{"Cache-Control":"no-store"}});}
-export const GET=retired;
-export const HEAD=retired;
-export const POST=retired;
-export const PUT=retired;
-export const PATCH=retired;
-export const DELETE=retired;
-export const OPTIONS=retired;
+function retired(){return NextResponse.json({message:"Not found"},{status:404,headers:{"Cache-Control":"no-store"}});}
+export const GET=retired,POST=retired,PUT=retired,PATCH=retired,DELETE=retired,OPTIONS=retired;
+export function HEAD(){return new Response(null,{status:404,headers:{"Cache-Control":"no-store","Content-Type":"application/json"}});}

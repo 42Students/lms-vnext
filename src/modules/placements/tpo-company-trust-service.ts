@@ -18,6 +18,8 @@ export class TpoCompanyTrustConflict extends Error {
 }
 
 /**
+ * Legacy PUT {trusted:boolean} maps to nextTrusted only after explicit confirmation and CAS.
+ * A missing boolean must never silently reset a live trusted relationship.
  * College relationship trust, not a recruiter email-domain allowlist or
  * permission grant. Only a TPO can change the active relationship.
  * Immutable canonical activity is inserted in the same transaction.
@@ -121,3 +123,5 @@ export function canTrustedRecruiterAutoPublish(input:{
   input.collegeAllowsDirectPublishing&&input.verifiedCompany;
 }
 
+
+export function legacyCompanyTrustBooleanLabel(value:boolean|null|undefined){return value===true?"Trusted":"Not trusted";}

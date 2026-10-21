@@ -1,5 +1,4 @@
 import "server-only";
-import {randomUUID} from "node:crypto";
 import {and,desc,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
@@ -44,8 +43,16 @@ export async function writeMentorProjectRelease(
   if(operation==="POST"){
    const [last]=await tx.select({sequence:projectReleases.sequence}).from(projectReleases)
     .where(eq(projectReleases.projectId,projectId)).orderBy(desc(projectReleases.sequence)).limit(1);
+   const slug=(input as {title:string}).title.normalize("NFKD").replace(/[\u0300-\u036f]/g,"")
+     .toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,47)||"release";
+   const existingKeys=await tx.select({templateKey:projectReleases.templateKey})
+     .from(projectReleases).where(eq(projectReleases.projectId,projectId));
+   const keys=new Set(existingKeys.map(item=>item.templateKey));
+   let templateKey="custom-"+slug,serial=2;
+   while(keys.has(templateKey)){const suffix="-"+serial++;
+     templateKey="custom-"+slug.slice(0,64-7-suffix.length)+suffix;}
    const [row]=await tx.insert(projectReleases).values({
-    projectId,templateKey:"custom-"+randomUUID(),sequence:(last?.sequence??-1)+1,
+    projectId,templateKey,sequence:(last?.sequence??-1)+1,
     title:(input as {title:string;description?:string|null}).title,description:(input as {title:string;description?:string|null}).description??null,status:"PLANNED",
    }).returning();
    result=row??null;change="CREATED";
@@ -80,7 +87,7 @@ export async function writeMentorProjectRelease(
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_release",subjectId:result.id,subjectLabel:result.title,
    summary:"Project release "+change.toLowerCase(),
-   metadata:{projectId,releaseId:result.id,change,
+   metadata:{projectId,releaseId:result.id,change,legacyVersionMapping:"UPDATED_AT_MS_CAS",releaseKey:result.templateKey,
     previousStatus:existing?.status??null,updatedStatus:change==="DELETED"?null:result.status},
    groupKey:"project:"+projectId,
   });

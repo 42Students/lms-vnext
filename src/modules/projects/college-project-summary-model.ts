@@ -2,12 +2,12 @@ import { z } from "zod";
 const nullable = (max: number) => z.string().trim().max(max).nullable();
 const dateOrNull = z.iso.date().nullable();
 export const collegeProjectSummaryFieldsSchema = z.strictObject({
-  title: z.string().trim().min(1).max(200),
+  title: z.string().trim().min(1).max(160),
   summary: nullable(4000),
   status: z.enum(["PLANNED","ACTIVE","COMPLETED"]),
   progressPercent: z.number().int().min(0).max(100),
-  phase: nullable(120),
-  dueLabel: nullable(160),
+  phase: nullable(80),
+  dueLabel: nullable(80),
   courseLabel: nullable(160),
   sectionId: z.string().uuid().nullable(),
   blocker: nullable(4000),
