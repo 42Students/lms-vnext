@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
@@ -31,6 +32,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
+ const [confirmTransition,setConfirmTransition]=useState<"PUBLISH"|"ARCHIVE"|null>(null);
  async function command(action:"SAVE"|"PUBLISH"|"ARCHIVE"){
   if(busy)return;
   let path="/api/courses/assignments/"+encodeURIComponent(assignment.id);
@@ -48,10 +50,6 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    body={expectedUpdatedAt,confirmed:true,title:title.trim(),description:description.trim()||null,
     maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
   }else{
-   const question=action==="ARCHIVE"?
-    "Delete this assignment? Existing submissions must be preserved and will block deletion.":
-    "Publish this assignment to enrolled students?";
-   if(!window.confirm(question))return;
    path+="/transition";body={action};
   }
   setBusy(true);setError("");setNotice("");
@@ -65,7 +63,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
       "This assignment changed while you were editing. Reopen it to avoid overwriting someone else's changes.":
      "Could not update assignment. Check the form and try again.");
    setEditing(false);setNotice(action==="SAVE"?"Assignment updated.":action==="ARCHIVE"?
-    "Assignment deleted.":"Assignment published.");
+    "Assignment deleted":"Assignment published.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not update assignment.");}
   finally{setBusy(false);}
@@ -74,7 +72,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   <div className="flex flex-wrap gap-2">
    {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     variant="secondary" className="min-h-11 md:min-h-9"
-    onClick={()=>void (async()=>{
+    aria-label={"Edit "+assignment.title} onClick={()=>void (async()=>{
       if(editing){setEditing(false);return;}
       setError("");setNotice("");setMethodsLoaded(false);setExpectedUpdatedAt(null);
       try{
@@ -96,11 +94,21 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     })()}>Edit</Button>:null}
    {assignment.status==="DRAFT"?<Button type="button" disabled={busy}
     variant="primary" className="min-h-11 md:min-h-9"
-    onClick={()=>void command("PUBLISH")}>Publish</Button>:null}
+    aria-label={"Publish "+assignment.title} onClick={()=>setConfirmTransition("PUBLISH")}>Publish</Button>:null}
    {assignment.status!=="ARCHIVED"?<Button type="button" disabled={busy}
     variant="danger" className="min-h-11 md:min-h-9"
-    onClick={()=>void command("ARCHIVE")}>Delete</Button>:null}
+    aria-label={"Delete "+assignment.title} onClick={()=>setConfirmTransition("ARCHIVE")}>Delete</Button>:null}
   </div>
+  <ConfirmDialog open={confirmTransition!==null} onOpenChange={open=>{if(!open&&!busy)setConfirmTransition(null);}}
+   title={confirmTransition==="ARCHIVE"?"Delete assignment?":"Publish assignment?"}
+   description={confirmTransition==="ARCHIVE"?
+    "Delete this assignment? Existing submissions must be preserved and will block deletion.":
+    "Publish this assignment to enrolled students?"}
+   confirmLabel={confirmTransition==="ARCHIVE"?"Delete":"Publish"} confirmVariant={confirmTransition==="ARCHIVE"?"danger":"primary"}
+   pending={busy} onConfirm={()=>{
+    if(!confirmTransition)return;
+    const next=confirmTransition;setConfirmTransition(null);void command(next);
+   }}/>
   {editing?<div className="grid gap-2 border-y border-border p-3">
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
     <Input maxLength={255} placeholder="e.g., Module 1 Project" disabled={busy} value={title} onChange={e=>setTitle(e.target.value)}
