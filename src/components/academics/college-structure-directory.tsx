@@ -13,6 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeDirectoryPageSize, CollegeDirectoryRefresh } from "./college-directory-page-size";
 import { CollegeDirectoryInstantFilters } from "./college-directory-instant-filters";
+import { classesExportHref } from "@/modules/academics/college-classes-export-model";
 import { CollegeClassScopeFilters } from "./college-class-scope-filters";
 import {
   classCapacityLabel,
@@ -48,11 +49,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
   const filtered = Object.entries(data.query).some(([key,value]) =>
     !["page","pageSize"].includes(key) && value !== undefined && value !== null &&
     value !== "" && value !== "ALL");
-  const exportUrl = "/api/academics/college-classes-export?" +
-    new URLSearchParams({q:data.query.q ?? "",
-      ...(data.kind === "CLASSES" && data.query.programId ? {programId:data.query.programId} : {}),
-      ...(data.kind === "CLASSES" && data.query.cohortCode ? {cohortCode:data.query.cohortCode} : {}),
-    }).toString();
+  const exportUrl = data.kind === "CLASSES" ? classesExportHref(data.query) : "";
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
@@ -89,7 +86,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {classes ? "Class, batch or program" : "Elective, program or description"}
           <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={data.query.q}
-            className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search class, program, batch or capacity" : "Search registered records"} />
+            className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search classes" : "Search slots"} />
         </label>}
         action={filtered ? <Link href={path}
           className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">Clear filters</Link> : null}>
@@ -399,7 +396,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-b border-[var(--lms-canvas-border)]">
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
           <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching {classes ? "classes" : "elective slots"}</p>
-          <CollegeDirectoryRefresh />
+          <span className="text-xs text-muted-foreground">Showing {data.items.length} on this page</span>
         </div>
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
@@ -411,7 +408,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
                 : "No electives match these filters."
               : "No rows on this page. Choose an earlier page."}
            </p>
-           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters and view all {title.toLowerCase()}</Link>
+           {filtered ? <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">
+             Clear filters and view all {title.toLowerCase()}</Link> : null}
           </div>
         ) : (
           <>{data.kind === "CLASSES" ? (
