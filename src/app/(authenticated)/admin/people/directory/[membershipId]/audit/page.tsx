@@ -22,7 +22,7 @@ export default async function MembershipAuditPage({params}:{params:Promise<{memb
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader eyebrow="Super Admin · People" title={"Audit trail · "+(data.membership.name??"Unnamed person")}
    description={"Recorded events for this exact membership in the selected college: "+data.membership.collegeName} actions={<PageBackLink href={"/admin/people/directory/"+encodeURIComponent(membershipId)} label="Membership profile" />}/>
-  <p role="status" className="max-w-3xl text-sm leading-6 text-body">Showing latest {data.events.length} recorded events. This is not an authentication-session or cross-college activity audit.</p>
+  <p role="status" className="max-w-3xl text-sm leading-6 text-body">Showing latest {data.events.length.toLocaleString("en-IN")} recorded events. This is not an authentication-session or cross-college activity audit.</p>
   {data.events.length ? <ol className="min-w-0 divide-y divide-border border-y border-border">{data.events.map(event=><li key={event.id} className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-1)] sm:flex-row sm:items-start sm:justify-between sm:gap-[var(--lms-space-4)]">
      <h2 className="min-w-0 break-words text-sm font-semibold leading-6 text-[var(--lms-heading)]">{event.summary}</h2>

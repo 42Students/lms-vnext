@@ -67,7 +67,7 @@ export default async function UnassignedIdentityDirectory({ searchParams }: {
         className="min-h-11 min-w-0 text-base md:min-h-9 md:text-sm">{roles.map(role => <option key={role}>{role}</option>)}</Select></label>
       <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
     </form>
-    <p role="status" className="text-xs text-muted-foreground">{data.total} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
+    <p role="status" className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching users · page {data.page} of {data.totalPages} · 30 per page</p>
     {data.items.length ? <div className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(row => <article key={row.id}
       className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
       <h2 className="break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{row.displayName ?? "Unnamed user"}</h2>
