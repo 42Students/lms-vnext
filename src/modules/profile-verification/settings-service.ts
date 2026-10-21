@@ -133,3 +133,20 @@ export async function setTpoProfileVerificationEnabled(
     });
   });
 }
+
+/** Read only the selected college's CGPA conversion, with source default. */
+export async function getCollegeCgpaConversionRule(
+ context:RequestContext,rawCollegeId:string,
+):Promise<CgpaRule>{
+ const collegeId=uuid.parse(rawCollegeId);
+ const [college]=await getDb().select({organizationId:colleges.organizationId})
+  .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+ if(!college)throw Error("COLLEGE_NOT_FOUND");
+ requirePermission(context,"placements.manage",{
+  collegeId,organizationId:college.organizationId,
+ });
+ const [setting]=await getDb().select({rule:profileVerificationSettings.cgpaToPct})
+  .from(profileVerificationSettings)
+  .where(eq(profileVerificationSettings.collegeId,collegeId)).limit(1);
+ return normaliseCgpaRule(setting?.rule);
+}

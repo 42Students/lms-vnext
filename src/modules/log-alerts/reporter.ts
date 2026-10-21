@@ -8,7 +8,7 @@ import {
   db10LogAlertDailyCounts as daily,
   db10LogAlertObservedEvents as observed,
 } from "@/db/schema/db10-log-alerts.draft";
-import { logAlertsRuntimeEnabled } from "./readiness";
+import { logAlertsRuntimeEnabled,logAlertOperationalStatus } from "./readiness";
 import { redactAlertText, safeAlertPath, safeAlertLabel } from "./redaction";
 import { alertEnvironment, errorSignatureHash } from "./signature";
 import { burstSlot, countSuppressedOccurrence, decideAlert, reopenRegressedSignature } from "./policy";
@@ -33,7 +33,7 @@ let fallbackSent = 0;
 export function formatAlert(input: {
   kind: string; environment: string; time: Date; event: string;
   path: string; message: string; requestId?: string; status?: number;
-  count?: number; affectedAccounts?: number; component?: string;
+  count?: number; affectedAccounts?: number|null; component?: string;
 }): string {
   return [
     "vNext " + input.kind,
@@ -45,7 +45,8 @@ export function formatAlert(input: {
     "Status: " + (input.status ?? "-"),
     "Request ID: " + (input.requestId && /^(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(input.requestId) ? input.requestId : "-"),
     "Count: " + (input.count ?? 1),
-    "Affected accounts: " + (input.affectedAccounts ?? 0),
+    "Affected accounts: " + (input.affectedAccounts===null||input.affectedAccounts===undefined?
+      "Unknown":input.affectedAccounts),
     "Message: " + redactAlertText(input.message),
   ].join("\n");
 }
@@ -196,7 +197,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
         kind, environment, time: now, event: input.event, path, message,
         requestId: input.requestId, status: input.status, component: input.component,
         count: current ? Number(current.occurrenceCount) + 1 : 1,
-        affectedAccounts: radius?.total ?? 0,
+        affectedAccounts: radius?.total??(accountHash?1:null),
       }), { acknowledgeSignatureId: id });
       if (!delivered) {
         // A known signature was counted even if an optional spike/regression
@@ -238,4 +239,19 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
     if (!providerAccepted) return emergencySend(hash, summary);
     return false;
   }
+}
+
+/** Operational health is separate from accepted/deduplicated incident writes.
+ * False return must never be reported to the caller as a delivered alert. */
+export async function reportErrorForAlertWithStatus(input:ReportableError):Promise<{
+ accepted:boolean;status:"NOT_CONFIGURED"|"PERSISTENCE_NOT_READY"|"DELIVERY_FAILED"|"ATTEMPTED";
+ persistenceReady:boolean;notifierConfigured:boolean;
+}>{
+ const readiness=logAlertOperationalStatus();
+ if(!readiness.notifierConfigured)return {accepted:false,status:"NOT_CONFIGURED",
+  persistenceReady:readiness.persistenceReady,notifierConfigured:false};
+ const accepted=await reportErrorForAlert(input);
+ return {accepted,status:!readiness.persistenceReady?"PERSISTENCE_NOT_READY":
+  accepted?"ATTEMPTED":"DELIVERY_FAILED",
+  persistenceReady:readiness.persistenceReady,notifierConfigured:true};
 }

@@ -26,7 +26,7 @@ export function splitMentorMeetings(
   const upcoming: MentorMeetingCalendarItem[] = [];
   const past: MentorMeetingCalendarItem[] = [];
   for (const item of items) {
-    const end = Date.parse(item.endsAt);
+    const end = Date.parse(item.endsAt??item.startsAt);
     const start = Date.parse(item.startsAt);
     const meetingIsFuture = Number.isFinite(end) && end > currentTime ||
       !Number.isFinite(end) && Number.isFinite(start) && start > currentTime;
@@ -50,16 +50,17 @@ export function mentorMeetingDisplayStatus(
   item: MentorMeetingCalendarItem, now: Date,
 ): string {
   if (item.status !== "SCHEDULED" && item.status !== "RESCHEDULED") return item.status;
-  // MISSED is a read-only derived badge, never persisted to PostgreSQL.
-  // Evaluate the scheduled end instant, including meetings ending earlier today.
-  const end = Date.parse(item.endsAt);
+  // Legacy meetings without a recorded end use their start instant.
+  const end = Date.parse(item.endsAt??item.startsAt);
   if (!Number.isFinite(end) || !Number.isFinite(now.getTime())) return item.status;
   return end < now.getTime() ? "MISSED" : item.status;
 }
 
 export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem, now?: Date): string | null {
-  if (!["SCHEDULED", "RESCHEDULED"].includes(item.status) || !item.meetingUrl) return null;
-  if (now && Date.parse(item.endsAt) <= now.getTime()) return null;
+  // Legacy Join remains available for every non-cancelled meeting with a safe URL.
+  // REQUESTED and COMPLETED remain read-only in this view.
+  if (item.status==="CANCELLED" || !item.meetingUrl) return null;
+  void now;
   try {
     const url = new URL(item.meetingUrl);
     return (url.protocol === "https:" || url.protocol === "http:") &&
