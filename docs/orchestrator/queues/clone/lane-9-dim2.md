@@ -113,7 +113,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/courses/faculty-quiz-question-editor.tsx`
 - [x] `src/components/courses/faculty-quiz-review.tsx`
 - [x] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
 - [ ] `src/components/courses/learner-course-discussion.tsx`
 - [ ] `src/components/courses/learner-course-list.tsx`
 - [ ] `src/components/courses/learner-quiz-attempt.tsx`
