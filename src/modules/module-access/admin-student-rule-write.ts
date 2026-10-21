@@ -14,6 +14,24 @@ import {studentRuleWriteInput,studentRuleMatches,isStudentRuleNoop,hasPersistedA
 export class StudentRuleConflict extends Error {
  constructor(public readonly code:string){super(code);this.name="StudentRuleConflict";}
 }
+/** Legacy fallback copy plus actionable optimistic/ancestor conflict hints. */
+export function studentRuleWriteErrorMessage(error:unknown):string{
+ if(error instanceof StudentRuleConflict){
+  if(error.code==="STALE_RULE")return "This rule changed in another tab. Refresh and try again.";
+  if(error.code==="ANCESTOR_LOCKED")return "This module is locked at a higher level.";
+ }
+ return "Could not save — please retry";
+}
+/** Explicit audited lock-clear uses the INHERIT transition with the latest
+ * optimistic snapshot, rather than mutating a stale lock blindly. */
+export async function clearSuperAdminStudentLock(
+ context:RequestContext,collegeId:string,membershipId:string,
+ module:"projects"|"electives",expected:{enabled:boolean;locked:boolean},
+){
+ return writeSuperAdminStudentRule(context,collegeId,membershipId,{
+  action:"INHERIT",module,expected,
+ });
+}
 export async function writeSuperAdminStudentRule(context:RequestContext,collegeInput:string,memberInput:string,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
  const collegeId=z.uuid().parse(collegeInput);
