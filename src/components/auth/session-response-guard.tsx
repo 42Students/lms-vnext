@@ -28,6 +28,14 @@ export function SessionResponseGuard() {
       if(response.status===403){
         window.dispatchEvent(new Event("lms:access-denied"));
       }
+      const method=(init?.method??(input instanceof Request?input.method:"GET")).toUpperCase();
+      if(method!=="GET"&&method!=="HEAD"){
+        // The mutation caller still receives the exact response; this event
+        // only offers a consistent way to refresh optimistic UI on auth loss.
+        window.dispatchEvent(new CustomEvent("lms:mutation-access-lost",{
+          detail:{status:response.status,reason:reason??null}
+        }));
+      }
       if (response.status === 401 || reason === "SESSION_EXPIRED" || reason === "SESSION_REVOKED") {
         redirected = true;
         // The root sign-in page renders the session-expiry explanation from
