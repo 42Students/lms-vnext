@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
+import { CollegeFacultyScheduleReassign } from "@/components/college/college-faculty-schedule-reassign";
 import { CollegePersonEditAction } from "@/components/college/college-person-edit-action";
 import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
 import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
@@ -116,6 +117,8 @@ export async function CollegeRoleDirectoryWorkspace({
       membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>
     : <CollegeStudentLifecycleAction membershipId={item.membershipId}
       name={item.name} status={item.membershipStatus}/>}
+    {kind==="FACULTY" && item.membershipStatus==="ACTIVE" && item.userStatus==="ACTIVE"
+      ? <CollegeFacultyScheduleReassign membershipId={item.membershipId} name={item.name}/> : null}
     {kind==="LEARNER" && item.membershipStatus==="ACTIVE"&&
       item.userStatus==="ACTIVE"&&item.cohort!==null
       ? <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/> : null}
