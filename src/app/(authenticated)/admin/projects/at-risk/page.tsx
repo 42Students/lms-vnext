@@ -21,7 +21,7 @@ export default async function SuperAdminProjectAtRiskRoute({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="At-risk projects" actions={<PageBackLink href="/admin/projects" label="Project workspaces" />} />
+      <PageHeader title="At Risk" actions={<PageBackLink href="/admin/projects" label="Project workspaces" />} />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
         action={<PageBackLink href="/dashboard" label="Back to dashboard" />}
@@ -35,7 +35,7 @@ export default async function SuperAdminProjectAtRiskRoute({
     return (
       <div className="min-w-0 space-y-4">
         <PageHeader
-          title="At-risk projects"
+          title="At Risk"
           description="A selected college scope is required."
           actions={<PageBackLink href="/admin/projects" label="Project workspaces" />}
         />

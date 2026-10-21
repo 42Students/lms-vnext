@@ -21,7 +21,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
 }){
  const ctx=await getCurrentRequestContext(), raw=await searchParams;
  if(!ctx.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
-  <PageHeader title="All drives"/>
+  <PageHeader title="Drives"/>
   <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
  </div>;
  requireSuperAdminSelectedCollege(ctx,"placements.manage");
@@ -29,7 +29,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  // forged college/scope selectors and contradictory link parameters.
  const parsed=adminDriveDirectoryQuerySchema.safeParse(raw);
  if(!parsed.success)return <div className="min-w-0 space-y-4">
-  <PageHeader title="All drives"/>
+  <PageHeader title="Drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
    action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear filters</Link>}/>
  </div>;
@@ -39,7 +39,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
   .then(value=>({ok:true as const,value}))
   .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
  if(!loaded.ok)return <div className="min-w-0 space-y-4">
-  <PageHeader title="All drives"/>
+  <PageHeader title="Drives"/>
   <ErrorState
    title={loaded.denied?"Drive access denied":"Drives unavailable"}
    description={loaded.denied
@@ -74,7 +74,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     Open drive →</Link>},
  ];
  return <div className="min-w-0 space-y-4 md:space-y-6">
-  <PageHeader title="All drives"
+  <PageHeader title="Drives"
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
     <PageBackLink href="/admin/placements" label="Placement overview" />

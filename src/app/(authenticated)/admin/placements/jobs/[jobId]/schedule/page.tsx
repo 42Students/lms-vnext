@@ -25,7 +25,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
 }) {
   const context=await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   // Validate the platform actor and selected tenant before reading private rounds.
