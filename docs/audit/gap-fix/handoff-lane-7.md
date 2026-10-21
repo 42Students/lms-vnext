@@ -1000,3 +1000,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-11-024-009/-051 | `src/modules/placements/tpo-communication-settings-service.ts + schema` | Migrate approval-required, AFTER_REVIEW applicant visibility and trusted domains as audited editable fields, not just duration.
 - G2-10-025-055/-095 / G2-14-016-035 | `src/app/(authenticated)/hr/profile/page.tsx` | Pass verified selectedCollegeId into recruiter profile service and document contact/login mapping; enforce current grant capability matrix.
+
+- G2-7-032-037 | `src/components/projects/project-readiness-override-form.tsx + toast system` | Integrate legacy timed toast without suppressing inline retry status.
+- G2-18-031-077 | `src/modules/auth/runtime.ts + session store + identity persistence` | Verify Exotel test allowlists, contact collision, revocation timing, and no cross-college session grant using DB integration; no runtime testing permitted in lane.
