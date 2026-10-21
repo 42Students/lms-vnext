@@ -716,11 +716,21 @@ export async function PlacementCalendarWorkspace({
       {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
        <h2 className="text-base font-semibold">Today</h2>
        {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
-         <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
-         {event.status==="DONE"?<span className="ml-2 text-success-text">Done</span>:null}
+         {eventHref(event,audience)?<Link href={eventHref(event,audience)!}
+          aria-label={"Open "+event.title+", "+eventTime(event.startsAt)+" IST"}
+          className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+           <span>{eventTime(event.startsAt)}</span><span>· {event.kind==="APPLICATION_DEADLINE"?"Today: ":""}{event.title}</span>
+           {event.status==="DONE"?<span className="text-success-text">· Done</span>:null}
+         </Link>:<>
+           <span className="font-semibold">{eventTime(event.startsAt)}</span>
+           {" · "}{event.title}{event.status==="DONE"?" · Done":""}
+         </>}
         </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>:
          <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
-       {needsKnown?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
+       {needsKnown?<p className="mt-3 text-sm text-body">
+        Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}
+        {nextSeven.length>0?" · "+nextSeven[0].title+" · "+dateLabel(placementCalendarDayKey(nextSeven[0].startsAt)):""}
+       </p>:null}
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
        <h2 className="text-base font-semibold">Needs doing</h2>
