@@ -240,7 +240,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                   aria-label={"Move "+row.courseName+" up"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"3":String(row.credits),
                     orderedPeers(row).findIndex(item=>item.id===row.id))}>↑</Button>
-                <Button variant="secondary" type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
+                <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending||orderedPeers(row).at(-1)?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" down"}
                   onClick={()=>updateMapping(row.id,row.credits===null?"":String(row.credits),
