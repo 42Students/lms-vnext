@@ -147,3 +147,6 @@
 
 - Account lifecycle and password/reset owner | G2-1-001-046 | Verify global disable invalidates all identity_device_sessions immediately, college suspension only denies that membership/role across all endpoints, and credential rotation uses revokeAllSessionsForUser under lock; do not use retired legacy tokenVersion; never alter 0000 migration.
 - `src/modules/log-alerts/*`, lane 15 migration/replay owner | G2-14-018-051 | Replay 0133 on fresh and upgraded DB copies, map original Long log_alert_state IDs by `state_key` not UUID casting; checkpoint cursor + admin_last_viewed must persist through deploy, verify ADD COLUMN IF NOT EXISTS operational paths and no duplicate key.
+
+- Lane 1 DB05 schema journal and `src/modules/courses/lesson-order-*` service | G2-17-018-039 | Stage 0243 only after unique (lesson_content_id,lesson_id) and owning delivery/lesson FK/scope guards, resolve numeric old class to UUID delivery with per-class stable sequence/duplicate preflight; no staged SQL active yet.
+- TPO email campaign importer and composer | G2-19-010-067 | Map source numeric campaign to tenant-safe UUID header+draft with historical sender/subject/body/counts in 0235; preserve old status and distinguish historic SENT counts from current delivery receipt, do not create duplicate parallel campaign data.
