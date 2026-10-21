@@ -112,7 +112,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
    </details>
    <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
   </form>
-  <p className="text-xs text-muted-foreground">{data.total} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
+  <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length ? <DataTable<(typeof data.items)[number]>
    caption="People directory memberships"
    rows={data.items}

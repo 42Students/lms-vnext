@@ -66,7 +66,7 @@ export default async function SuperAdminCourseProgressPage({
     </Alert>:null}
     <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:underline" href="/admin/course-progress">Clear filters</Link>
     <p className="text-sm text-muted-foreground">
-      {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
+      {data.total.toLocaleString("en-IN")} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
     </p>
     {data.items.length ? <div className="divide-y divide-border border-y border-border">

@@ -82,7 +82,7 @@ export default async function SuperAdminLessonsPage({
       </details>
       <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/admin/lessons">Clear filters</Link>
     </form>
-    <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
+    <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
     </Alert>:null}

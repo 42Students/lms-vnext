@@ -76,7 +76,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
       candidates={appointments.candidates} appointments={appointments.interviews}
       preferredApplicationId={query.applicationId}/>
     <section aria-label="Persisted interview rounds" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-      <p className="text-sm text-muted-foreground">{data.total} matching interview/GD rounds</p>
+      <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching interview/GD rounds</p>
       <DataTable columns={columns} rows={data.items} getRowKey={item=>item.id}
         caption="Persisted interview rounds"
         empty={<EmptyState title={data.total===0?"No matching interview rounds":"No rounds on this page"}
