@@ -165,6 +165,22 @@ export default async function SuperAdminLearnerAccessTracePage({
         actions={<Link href={`/admin/features/${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← {college.name} access hierarchy</Link>}
       />
 
+      <nav className="flex min-w-0 flex-wrap gap-2" aria-label="Module access trace sections">
+        <Link href={adminModuleTraceHref(college.id,{overridesOnly:"only"})}
+         aria-current={query.overridesOnly==="only"?"page":undefined}
+         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+         Stored learner overrides
+        </Link>
+        <Link href={adminModuleTraceHref(college.id,{overridesOnly:"locked"})}
+         aria-current={query.overridesOnly==="locked"?"page":undefined}
+         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+         Locked learner overrides
+        </Link>
+        <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
+         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+         Recent module changes
+        </Link>
+      </nav>
       <section className="min-w-0 space-y-4 border-t border-border pt-4">
         <div>
           <h2 className="m-0 text-lg font-semibold leading-6 text-foreground">
@@ -237,7 +253,11 @@ export default async function SuperAdminLearnerAccessTracePage({
           Page {page} of {totalPages}
         </p>
 
-        <DataTable<(typeof learners)[number]> caption="Learner access trace"
+        {query.overridesOnly!=="all"?<p role="status" className="text-sm text-body">
+          {query.overridesOnly==="locked"?"Locked membership override register":"Membership override register"} ·
+          Each row links to its complete inherited rule chain and all stored membership decisions.
+        </p>:null}
+        <DataTable<(typeof learners)[number]> caption={query.overridesOnly==="all"?"Learner access trace":"Learner override register"}
           rows={learners} getRowKey={learner=>learner.membershipId}
           empty={<EmptyState title="No matching learners"
             description="This college has no active learner memberships matching the search on this page."/>}
@@ -376,6 +396,16 @@ export default async function SuperAdminLearnerAccessTracePage({
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
             Inspect membership overrides and locks →
           </Link>
+          <nav aria-label="Selected learner access actions" className="flex min-w-0 flex-wrap gap-3">
+           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+            View audited module changes
+           </Link>
+           <Link href={adminModuleTraceHref(college.id,{overridesOnly:"only",membershipId:selected.membershipId})}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+            See learner in override register
+           </Link>
+          </nav>
           <section className="min-w-0 border-t border-border pt-6" aria-label="Student overrides and locks">
             <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Student overrides and locks</h3>
             <p className="mt-2 text-sm text-body">Persisted member-specific rules for this active learner. An inherited or masked rule does not mean the learner&apos;s final access is enabled.</p>
@@ -419,7 +449,7 @@ export default async function SuperAdminLearnerAccessTracePage({
                 </StatusBadge>
               </div>
 
-              <Disclosure title="View resolution chain" defaultOpen={module.module==="projects"}
+              <Disclosure title={"View "+module.label+" resolution chain (all scopes)"} defaultOpen={module.module==="projects"}
                 className="min-w-0"
                 contentClassName="min-w-0 pt-3 pb-2">
               <DataTable<(typeof module.steps)[number]>
@@ -429,6 +459,11 @@ export default async function SuperAdminLearnerAccessTracePage({
                 columns={[
                   {key:"level",header:"Resolution level",mobilePriority:"primary",cell:step=><>
                     <span className="font-semibold text-foreground">{scopeLabel(step.level)}</span>
+                    {step.locked?<span aria-label="Locked scope" className="ml-2 inline-flex items-center gap-1 text-xs font-semibold text-warning-text">
+                      <svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                       <rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+                      </svg>Locked
+                    </span>:null}
                     {step.scopeId?<span className="mt-1 block text-xs text-muted-foreground">Scope ID ending {step.scopeId.slice(-8)}</span>:null}
                   </>},
                   {key:"stored",header:"Stored rule / fallback",mobilePriority:"secondary",cell:step=>
@@ -436,9 +471,10 @@ export default async function SuperAdminLearnerAccessTracePage({
                     step.source==="PERSISTED"?describeStoredOverride({enabled:step.value===true,locked:step.locked}):
                     step.inChain?"Inherit · no stored rule":"Not in current chain"},
                   {key:"result",header:"Result",mobilePriority:"secondary",cell:step=>
-                    step.winner?<StatusBadge tone="success">Winner</StatusBadge>:
+                    step.winner?<StatusBadge tone="success">Decided here</StatusBadge>:
                     step.ignored?<StatusBadge tone="warning">Ignored</StatusBadge>:
-                    step.source==="PERSISTED"?<StatusBadge tone="neutral">Not selected</StatusBadge>:"—"},
+                    step.source==="PERSISTED"?<StatusBadge tone="neutral">Overridden</StatusBadge>:
+                    step.inChain?<StatusBadge tone="neutral">Inherited</StatusBadge>:"—"},
                   {key:"reason",header:"Why",mobilePriority:"secondary",cell:step=><span className="text-xs text-body">{step.reason}</span>},
                 ]}
                 empty={<EmptyState title="No resolution steps" description="No stored rules or fallback steps were found for this module."/>}

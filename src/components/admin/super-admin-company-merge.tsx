@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
 
 type Company = { id: string; name: string };
 export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]}) {
@@ -15,6 +16,7 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
   const [busy,setBusy]=useState(false);
   const inFlightRef=useRef(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
+  const [modalOpen,setModalOpen]=useState(false);
   const [error,setError]=useState("");
   const [result,setResult]=useState("");
   const [searchTerm,setSearchTerm]=useState("");
@@ -51,11 +53,12 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
     try{
       const response=await fetch("/api/admin/companies/merge",{
         method:"POST",headers:{"content-type":"application/json"},
+        // Legacy intoCompanyId is the canonical company retained by vNext.
         body:JSON.stringify({keepCompanyId:keep,mergeCompanyId:source,confirm:true}),
       });
       const payload=await response.json().catch(()=>null);
       if(!response.ok)throw Error(payload?.error??"Company merge was rejected.");
-      setConfirmOpen(false);
+      setConfirmOpen(false);setModalOpen(false);
       setSource("");
       setResult("Company merged. Canonical company retained; duplicate archived.");
       showToast({tone:"success",title:"Merged"});
@@ -63,7 +66,17 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
     }catch(cause){setError(cause instanceof Error?cause.message:"Unable to merge companies");}
     finally{inFlightRef.current=false;setBusy(false);}
   }
-  return <div className="mt-[var(--lms-space-3)] min-w-0 space-y-[var(--lms-space-3)] print:hidden">
+  const sourceName=allCompanies.find(c=>c.id===source)?.name??"company";
+  return <>
+    <Button type="button" variant="secondary" className="mt-2 min-h-11 md:min-h-9 print:hidden"
+     aria-label={"Merge "+sourceName+" into another company"}
+     onClick={()=>{setError("");setResult("");setModalOpen(true);}}>Merge company…</Button>
+    <Dialog open={modalOpen} onOpenChange={next=>{if(!busy)setModalOpen(next);}}
+     title={"Merge "+sourceName+" into…"} dismissible={!busy} className="max-w-[640px]"
+     description="Search for an authorized target company. This action is permanent; confirm after reviewing the exact source and target."
+     footer={<Button type="button" variant="secondary" disabled={busy}
+       onClick={()=>setModalOpen(false)}>Close</Button>}>
+    <div className="mt-[var(--lms-space-3)] min-w-0 space-y-[var(--lms-space-3)] print:hidden">
     <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
         Search merge targets in the selected college
@@ -107,5 +120,7 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
     </ConfirmDialog>
     {error&&!confirmOpen?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {result?<p role="status" aria-live="polite" className="max-w-prose text-sm text-success-text">{result}</p>:null}
-  </div>;
+    </div>
+    </Dialog>
+   </>;
 }

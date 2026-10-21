@@ -322,60 +322,32 @@ export function PersonMembershipActions({
         </div>
       </Dialog>
 
-      <Dialog
+      <ConfirmDialog
         open={suspendOpen}
         onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setSuspendOpen(next); }}
-        dismissible={!lifecyclePending&&!lifecycleRequestPending.current}
-        title={`Suspend ${displayName}`}
-        description="Suspension blocks this college membership and revokes the person's existing device sessions. Other active college memberships remain eligible after a fresh sign-in."
-        footer={
-          <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-            <Button
-              variant="secondary"
-                disabled={lifecyclePending}
-              onClick={() => setSuspendOpen(false)}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="danger"
-                loading={lifecyclePending}
-              disabled={
-                lifecyclePending ||
-                Boolean(rolePending) ||
-                !suspensionReason.trim()
-              }
-              onClick={() =>
-                lifecycle({
-                  action: "SUSPEND",
-                  reason: suspensionReason,
-                })
-              }
-            >
-              {lifecyclePending
-                ? "Suspending…"
-                : "Suspend membership"}
-            </Button>
-          </div>
-        }
-      >
-        <label
-          htmlFor={`suspension-reason-${membershipId}`}
-          className="mb-[6px] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4"
-        >
+        title={`Suspend ${displayName}?`}
+        description="Blocks login immediately and revokes any active session. Reversible — data and history are kept. This affects the selected college membership only; other active college memberships remain eligible after a fresh sign-in."
+        confirmLabel={lifecyclePending?"Suspending…":"Suspend membership"}
+        confirmVariant="danger"
+        pending={lifecyclePending}
+        confirmDisabled={suspensionReason.trim().length<3||suspensionReason.trim().length>500||Boolean(rolePending)}
+        onConfirm={()=>lifecycle({action:"SUSPEND",reason:suspensionReason.trim()})}>
+        <label htmlFor={`suspension-reason-${membershipId}`}
+          className="mb-[6px] block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Suspension reason
         </label>
-        <Textarea
-          className="min-h-24 w-full"
+        <Textarea className="min-h-24 w-full"
           id={`suspension-reason-${membershipId}`}
           value={suspensionReason}
-          onChange={(event) =>
-            setSuspensionReason(event.target.value)
-          }
-          maxLength={1000}
-          placeholder="Explain why this membership is being suspended."
-        />
-      </Dialog>
+          onChange={event=>setSuspensionReason(event.target.value)}
+          minLength={3} maxLength={500}
+          disabled={lifecyclePending}
+          placeholder="Enter a reason (3–500 characters)."
+          aria-describedby={`suspension-help-${membershipId}`}/>
+        <p id={`suspension-help-${membershipId}`} className="mt-1 text-xs text-muted-foreground">
+          3–500 characters. Required for the audit record; historical user and college data are kept.
+        </p>
+      </ConfirmDialog>
 
       <ConfirmDialog
         open={endOpen}
