@@ -68,5 +68,5 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FileUploadController.java`
 - [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/index.js`
 - [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/tasks.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/JobForm.js`
 - [ ] U031 (Cross-cutting area) `cross/10: Search, filters, sorting, pagination conventions across all list pages`
