@@ -53,14 +53,12 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
      });
      if(!response.ok){
        setError(await courseApiError(response));
-       setConfirmAction(null);
        return;
      }
      setSaved(true);setLastAction(action);setConfirmAction(null);
      router.refresh();
    }catch(err){
      setError(err instanceof Error?err.message:"The assessment could not be changed. Refresh and try again.");
-     setConfirmAction(null);
    }finally{inFlight.current=false;setPending(null);}
  }
  return <div className="min-w-0 space-y-3">
@@ -86,7 +84,8 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
    confirmLabel={confirmAction==="ARCHIVE"?"Delete":confirmAction==="CLOSE"?"Close":"Publish"}
    confirmVariant={confirmAction==="ARCHIVE"||confirmAction==="CLOSE"?"danger":"primary"}
    pending={pending!==null}
-   onConfirm={()=>{if(confirmAction)void run(confirmAction);}}
- />
+   onConfirm={()=>{if(confirmAction)void run(confirmAction);}}>
+   {error?<Alert tone="error">{error}</Alert>:null}
+ </ConfirmDialog>
  </div>;
 }
