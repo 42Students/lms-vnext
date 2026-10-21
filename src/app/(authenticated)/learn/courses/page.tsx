@@ -50,6 +50,9 @@ export default async function LearnerCoursesPage() {
         courseName: course.courseName || "Course name unavailable",
         courseCode: course.courseCode,
         courseDescription: course.courseDescription,
+        courseEnabled:course.courseEnabled,
+        courseStatus:course.courseStatus,
+        courseAllowedForDisplay:course.courseAllowedForDisplay,
         offeringType: course.offeringType,
         credits: course.credits,
         sectionName: course.sectionName,
@@ -81,6 +84,8 @@ export default async function LearnerCoursesPage() {
         return unavailable("Invalid course record " + (index + 1));
       }
       const historical=Boolean(course.deliveryEndedAt)||
+       course.courseStatus!=="ACTIVE"||!course.courseEnabled||
+       course.courseAllowedForDisplay===0||
        course.sectionEnrollmentStatus!=="ACTIVE"||
        course.programEnrollmentStatus!=="ACTIVE"||
        course.periodStatus==="CLOSED";
@@ -116,6 +121,8 @@ export default async function LearnerCoursesPage() {
             itemsTotal: workspace.summary.itemsTotal,
           },
           readOnly:
+            course.courseStatus!=="ACTIVE"||!course.courseEnabled||
+            course.courseAllowedForDisplay===0||
             Boolean(course.deliveryEndedAt) ||
             course.sectionEnrollmentStatus !== "ACTIVE" ||
             course.programEnrollmentStatus !== "ACTIVE" ||
