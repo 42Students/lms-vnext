@@ -118,27 +118,27 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <Input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
     {query.success&&query.data.targetId?<Input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     {query.success?query.data.targetIds?.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>):null}
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
      <Input name="title" required maxLength={200} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]" />
     </label>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
      <Textarea name="message" required maxLength={8000} rows={5} className="" />
     </label>
     <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
      <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
      <div className="mt-3 grid min-w-0 gap-3">
-     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
+     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
        className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
      </label>
-     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
+     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
       <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
        placeholder="https://forms.gle/…" title="The link has to start with https://"
        className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
      </label>
      </div>
     </details>
-    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
+    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
       <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
     </label>
     <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin this notice</label>
@@ -205,34 +205,34 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <TpoNoticeComposerDialog mode="EDIT">
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="grid min-w-0 gap-4">
        <Input type="hidden" name="expectedVersion" value={row.version}/>
-       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
         <Input name="title" required maxLength={200} defaultValue={row.title}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
-       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
         <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
          className=""/>
        </label>
        <details open={Boolean(row.buttonLabel||row.buttonUrl)} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
         <div className="mt-3 grid min-w-0 gap-3">
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
+        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
           className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
         </label>
-        <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
+        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button link
          <Input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
           defaultValue={row.buttonUrl??""} title="The link has to start with https://"
           className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
         </label>
         </div>
        </details>
-       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
+       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Send at (IST)
         <DateInput mode="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
-       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST)
+       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST)
         <DateInput mode="datetime-local" name="showUntil"
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
