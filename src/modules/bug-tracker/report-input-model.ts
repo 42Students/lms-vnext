@@ -14,7 +14,7 @@ export const trackerReportSchema = z.object({
   issueType: z.string().trim().min(1, "Select the closest issue type.").max(80)
     .refine(value => ISSUE_TYPE_OPTIONS.some(option => option.value === value), "Select the closest issue type."),
   severity: z.enum(BUG_SEVERITIES),
-  description: z.string().trim().min(1, "Describe what went wrong.")
+  description: z.string().trim().min(1, "description is required")
     .max(4000, "Keep the description under 4000 characters."),
   evidenceLink: z.union([z.url({ protocol: /^https?$/ }).max(1000), z.literal(""), z.null()]).optional(),
   sourceUrl: z.union([
