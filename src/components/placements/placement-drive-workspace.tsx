@@ -605,8 +605,12 @@ export async function PlacementDriveWorkspace({
                   {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<ThirdPartyLink href={round.testUrl} label="Open test instructions →"/>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body leading-[22px]">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
-                    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">{round.status==="COMPLETED"?"See attendance":"Open drive day"} →</Link>
+                    <Link href={(round.mode===null||round.mode==="ON_CAMPUS")
+                      ?"/tpo/drive-day/"+encodeURIComponent(round.id)
+                      :"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">{round.mode===null||round.mode==="ON_CAMPUS"
+                        ?round.status==="COMPLETED"?"See attendance →":"Open drive day →"
+                        :"See who reached this round →"}</Link>
                     {round.kind !== "TALK" ? <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
                       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">Enter results →</Link> : null}
                   </div>
