@@ -125,7 +125,7 @@ export default async function SuperAdminLectureHallsPage({
         <Link href="/admin/lecture-halls" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Clear</Link>
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
           <a href={csvHref} download className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Export CSV</a>
-          <form action="/admin/lecture-halls" method="get">
+          <form action="/admin/lecture-halls" method="get" aria-label="Refresh Lecture Halls 2">
             {Object.entries(query).map(([name,value]) => value !== undefined && value !== ""
               ? <Input key={name} type="hidden" name={name} value={String(value)} /> : null)}
             <Button type="submit" variant="secondary">Refresh</Button>
