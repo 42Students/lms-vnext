@@ -66,11 +66,12 @@ type Lead = {
   createdAt:string;
   ownerName:string|null;
   lastActivityAt:string|null;
+  lastActivityType?:string|null;
   nextFollowupAt:string|null;
   inviteStatus:string;
 };
 
-type RosterGridRow=Lead & {drivesRan:number|null;studentsPlaced:number|null};
+type RosterGridRow=Lead & {drivesRan:number|null;studentsPlaced:number|null;studentsPlacedEvidence:string|null};
 const recruiterDate=(value:string|null|undefined,withYear=false):string=>{
  if(!value)return "-";
  const parsed=new Date(value);
@@ -118,8 +119,13 @@ const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
    {chip==="QUIET"?"Quiet "+lead.quietDays+"d":RECRUITER_ATTENTION_LABELS[chip]}
   </StatusBadge>)}</span>:<span className="text-muted-foreground">-</span>},
  {key:"Owner",label:"Owner",read:lead=>lead.ownerName||"Unassigned"},
- {key:"Last activity",label:"Last activity",read:lead=>recruiterDate(lead.lastActivityAt),
-  sortKind:"date",sortValue:lead=>lead.lastActivityAt?new Date(lead.lastActivityAt).getTime():null},
+ {key:"Last activity",label:"Last activity",read:lead=>recruiterDate(lead.lastActivityAt)+
+  (lead.lastActivityType?" · "+lead.lastActivityType.toLowerCase():""),
+  sortKind:"date",sortValue:lead=>lead.lastActivityAt?new Date(lead.lastActivityAt).getTime():null,
+  render:lead=><span className="inline-flex min-w-0 flex-col items-start leading-tight">
+   <span>{recruiterDate(lead.lastActivityAt)}</span>
+   {lead.lastActivityType?<small className="text-[11px] text-muted-foreground">{lead.lastActivityType.replaceAll("_"," ").toLowerCase()}</small>:null}
+  </span>},
  {key:"Next follow-up",label:"Next follow-up",read:lead=>recruiterDate(lead.nextFollowupAt),
   sortKind:"date",sortValue:lead=>lead.nextFollowupAt?new Date(lead.nextFollowupAt).getTime():null},
  {key:"Invite",label:"Invite",read:lead=>inviteLabel(lead.inviteStatus),
@@ -132,7 +138,8 @@ const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
   sortKind:"date",sortValue:lead=>new Date(lead.createdAt).getTime()},
  {key:"Came from",label:"Came from",read:lead=>sourceLabel(lead.source)},
  {key:"Company drives",label:"Company drives",read:lead=>lead.drivesRan,sortKind:"number"},
-  {key:"Students placed",label:"Students placed",read:lead=>lead.studentsPlaced??"-",sortKind:"number"},
+  {key:"Students placed",label:"Students placed",read:lead=>lead.studentsPlaced??"-",sortKind:"number",
+   tooltip:lead=>lead.studentsPlacedEvidence??"Confirmed joining outcomes aggregated at company level."},
  {key:"Actions",label:"Actions",read:lead=>lead.recruiterUserId?"Joined":"Invite"},
 ];
 
@@ -487,10 +494,13 @@ export function RecruiterLeadsWorkspace({
     company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
   const leadPlacementCounts=useMemo(()=>new Map(companies.flatMap(company=>
     company.people.map(person=>[person.id,company.studentsPlaced] as const))),[companies]);
+  const leadPlacementEvidence=useMemo(()=>new Map(companies.flatMap(company=>
+    company.people.map(person=>[person.id,company.studentsPlacedEvidence] as const))),[companies]);
   const rosterRows=useMemo(()=>rows.map(row=>({
     ...row,drivesRan:companiesPhase==="ready"?leadDriveCounts.get(row.id)??null:null,
     studentsPlaced:companiesPhase==="ready"?leadPlacementCounts.get(row.id)??null:null,
-  })),[rows,leadDriveCounts,leadPlacementCounts,companiesPhase]);
+    studentsPlacedEvidence:companiesPhase==="ready"?leadPlacementEvidence.get(row.id)??null:null,
+  })),[rows,leadDriveCounts,leadPlacementCounts,leadPlacementEvidence,companiesPhase]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
