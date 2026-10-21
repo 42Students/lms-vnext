@@ -42,17 +42,66 @@ function humanize(value: string) {
     .join(" ");
 }
 
+// Historical admin_audit_log keys use ENTITY_VERB[_BULK], whereas the
+// normalized event stream uses module.entity_verb. Both are display-only inputs.
+const ACTION_WORDS: Readonly<Record<string,string>> = {
+ CREATE:"created",ADD:"added",UPDATE:"updated",UPDATED:"updated",EDIT:"edited",DELETE:"deleted",
+ REMOVE:"removed",RESTORE:"restored",PROMOTE:"promoted",SUSPEND:"suspended",
+ REACTIVATE:"reactivated",IMPERSONATE:"impersonated",ASSIGN:"assigned",UNASSIGN:"unassigned",
+ SET:"changed",TOGGLE:"switched",READ:"viewed",VIEW:"viewed",MARK:"marked",
+ SYNC:"synced",REORDER:"reordered",PUBLISH:"published",UNPUBLISH:"unpublished",
+ ARCHIVE:"archived",APPROVE:"approved",REJECT:"rejected",IMPORT:"imported",
+ EXPORT:"exported",MOVE:"moved",RESET:"reset",CLEAR:"cleared",GRADE:"graded",
+ UPLOAD:"uploaded",SEND:"sent",INVITE:"invited",CLOSE:"closed",OPEN:"opened",
+ COMPLETE:"completed",ROLLBACK:"rolled back",SENT:"sent",CREATED:"created",
+ DELETED:"deleted",REJECTED:"rejected",APPROVED:"approved",ARCHIVED:"archived",
+};
+const ENTITY_WORDS: Readonly<Record<string,string>> = {
+ CLASS_SCHEDULE:"a class session",LESSON_CONTENT:"lesson content",LECTURE_HALL:"lecture hall",
+ SEMESTER_COURSE:"semester courses",MODULE_ACCESS:"module access for",
+ COLLEGE_FEATURE:"a college feature",LEARNER_IDENTITY:"student identity documents of",
+ PROJECT_TASK_COMMENT:"a comment on task",PROJECT_TASK:"task",PROJECT:"project",
+ BATCH_SEMESTER:"the semester of batch",COURSE_BULK_STATUS:"the status of courses",
+ LEARNER:"student",LEARNER_PROFILE:"student profile",
+};
+const SPECIAL_ACTIONS: Readonly<Record<string,{verb:string;thing:string}>> = {
+ LEARNER_PROFILE_WRITE_BY_OTHER:{verb:"edited",thing:"the profile of"},
+ PROJECT_ASSIGN_MENTOR:{verb:"assigned",thing:"a mentor to project"},
+ PROJECT_ASSIGN_LEARNERS:{verb:"assigned",thing:"students to project"},
+ PROJECT_RESOURCE_SYNC:{verb:"updated",thing:"the resources of project"},
+ PROJECT_MEETINGS_SYNC:{verb:"updated",thing:"the meetings of project"},
+ PROJECT_TASK_REORDER:{verb:"reordered",thing:"tasks in project"},
+ CLASS_SCHEDULE_RECURRING_CREATE:{verb:"created",thing:"repeating class sessions"},
+ SEMESTER_COURSE_BULK_ADD:{verb:"added",thing:"courses to semester"},
+ SEMESTER_COURSE_REMOVE:{verb:"removed",thing:"a course from semester"},
+ JOB_UPDATED:{verb:"updated",thing:"drive"},
+};
+function actionSentence(code:string,subjectType:string) {
+ const tokens=code.replaceAll(".", "_").toUpperCase().split("_").filter(Boolean);
+ const key=tokens.join("_");
+ const special=SPECIAL_ACTIONS[key]??SPECIAL_ACTIONS[tokens.slice(1).join("_")];
+ if(special)return special.verb+" "+special.thing;
+ // The normalized module prefix does not belong to the entity name.
+ const codeTokens=code.includes(".")?code.split(".").at(-1)!.toUpperCase().split("_"):tokens;
+ const verbIndex=codeTokens.findLastIndex(word=>Boolean(ACTION_WORDS[word]));
+ const verb=verbIndex>=0?ACTION_WORDS[codeTokens[verbIndex]!]:"changed";
+ const entityTokens=(verbIndex>=0?codeTokens.slice(0,verbIndex):codeTokens)
+  .filter(word=>word!=="BULK"&&word!=="BY"&&word!=="OTHER");
+ const canonical=entityTokens.join("_")||subjectType.toUpperCase();
+ const thing=ENTITY_WORDS[canonical]||humanize(entityTokens.join("_")||subjectType)||"an item";
+ return verb+" "+thing;
+}
 export function activityEventSentence(
  event:{eventType:string;subjectType:string;subjectLabel:string|null},
  actor:{displayName:string|null;email:string|null}|null,
 ){
  const who=actor?.displayName?.trim()||actor?.email?.trim()||"System";
- const action=event.eventType.split(".").at(-1)?.replaceAll("_"," ").toLowerCase()||"updated";
- const thing=humanize(event.subjectType);
+ const action=actionSentence(event.eventType,event.subjectType);
  const label=event.subjectLabel?.trim();
- return [who,action,thing,label&&label.toLowerCase()!==thing.toLowerCase()?label:null]
+ return [who,action,label&&label.toLowerCase()!==humanize(event.subjectType)?label:null]
   .filter(Boolean).join(" ");
 }
+
 function activityDay(value:string){
  return new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(value));
 }
@@ -104,8 +153,8 @@ export function ActivityCenter({
 }) {
   if (groups.length === 0) {
     return <EmptyState
-      title="No meaningful activity matches these filters."
-      description="Technical request noise is intentionally excluded from this center."
+      title="Nothing important happened in this period."
+      description="No activity in this period. Try another date, category or search."
       action={<Link href={emptyActionHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset</Link>}
     />;
   }
@@ -180,11 +229,12 @@ export function ActivityCenter({
               <Disclosure title="Details" className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
                 <dl className="mt-2 grid gap-1 min-[768px]:grid-cols-2">
                   <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
+                  <div><dt>Actor</dt><dd className="break-all">{item.actor?.displayName??item.actor?.email??"System"}{item.actor?.id?" · "+item.actor.id:""}</dd></div>
                   <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>
                   <div><dt>Exact time (IST)</dt><dd>{formatWhen(item.event.occurredAt)}</dd></div>
                   <div><dt>Events grouped</dt><dd>{group.count>1?"several at once ("+group.count+")":"1"}</dd></div>
                   {Object.entries(item.event.metadata).map(([name,value])=><div key={name}>
-                    <dt>{humanize(name)}</dt><dd className="break-all">{typeof value==="string"?value:JSON.stringify(value)}</dd>
+                    <dt>{humanize(name)}</dt><dd className="break-all whitespace-pre-wrap">{typeof value==="string"?value:JSON.stringify(value,null,2)}</dd>
                   </div>)}
                 </dl>
               </Disclosure>
