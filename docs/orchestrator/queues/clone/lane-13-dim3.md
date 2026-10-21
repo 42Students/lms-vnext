@@ -34,16 +34,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/projects/project-admin-audit-page.tsx`
 - [x] `src/components/projects/project-list.tsx`
 - [x] `src/components/projects/super-admin-template-tabs.tsx`
-- [ ] `src/components/tpo/legacy-tpo-notification-feed.module.css`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/ui/button.tsx`
-- [ ] `src/components/ui/input-group.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/components/ui/toast.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
-- [ ] `src/components/activity/activity-center.tsx`
+- [x] `src/components/tpo/legacy-tpo-notification-feed.module.css`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/ui/button.tsx`
+- [x] `src/components/ui/input-group.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/components/ui/toast.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/components/activity/activity-center.tsx`
 - [ ] `src/components/admin/lecture-hall-manager.tsx`
 - [ ] `src/components/college/college-department-insights.tsx`
 - [ ] `src/components/college/college-student-import-history.tsx`
