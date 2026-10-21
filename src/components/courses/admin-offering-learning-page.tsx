@@ -25,6 +25,7 @@ import {
 export async function AdminOfferingLearningPage({
   context,
   offeringId,
+  eyebrow,
   backHref,
   deliveryId=null,
 }: {
@@ -75,7 +76,12 @@ export async function AdminOfferingLearningPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader
+      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <Link href={backHref} className="font-semibold text-link underline underline-offset-4">Courses</Link>
+        <span aria-hidden="true">/</span>
+        <span className="break-words" aria-current="page">{workspace.offering.courseName}</span>
+      </nav>
+      <PageHeader eyebrow={eyebrow}
         title={
           workspace.offering.courseName
         }

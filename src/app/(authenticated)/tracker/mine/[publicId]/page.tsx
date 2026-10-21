@@ -15,7 +15,14 @@ export default async function MyTrackerReportDetail({
   const context=await getCurrentRequestContext();
   if(context.user.platformStatus!=="ACTIVE")redirect("/dashboard");
   const {publicId}=await params;
-  if(!trackerPublicIdSchema.safeParse(publicId).success)notFound();
+  // Legacy URLs used a decimal sequence or a differently cased LMS prefix.
+  // Map display aliases to a canonical public ID; reporter ownership is still
+  // enforced independently by every issue, attachment and history query.
+  const canonical=/^[1-9][0-9]{0,8}$/.test(publicId)
+    ?"LMS-"+publicId.padStart(4,"0")
+    :publicId.toUpperCase();
+  if(!trackerPublicIdSchema.safeParse(canonical).success)notFound();
+  if(canonical!==publicId)redirect("/tracker/mine/"+encodeURIComponent(canonical));
   if(!trackerAdminRuntimeEnabled())return <div className="min-w-0 space-y-4">
     <PageHeader title="My report" description={publicId}/>
     <Banner tone="warning">Reports are temporarily unavailable. Try again soon.</Banner>
