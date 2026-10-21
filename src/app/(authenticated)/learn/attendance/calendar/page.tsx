@@ -46,7 +46,7 @@ export default async function LearnerAttendanceCalendarPage({
   if(!parsed.success) return <section className="min-w-0 space-y-4">
     <PageHeader title="Attendance calendar" />
     <ErrorState title="Invalid attendance calendar filters" description="Check the month, course and status filters or clear them to continue."
-      action={<Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+      action={<Link href="/learn/attendance/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getOwnLearnerAttendanceCalendar(context,parsed.data);
@@ -73,7 +73,7 @@ export default async function LearnerAttendanceCalendarPage({
 
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Attendance calendar"
-      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      actions={<Link href={sourceLink} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors duration-150 motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Attendance detail
       </Link>} />
     <FilterBar title="Filters"><form action="/learn/attendance/calendar" method="get"
@@ -105,7 +105,7 @@ export default async function LearnerAttendanceCalendarPage({
           Apply filters
         </Button>
         <Link href="/learn/attendance/calendar"
-          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
+          className="inline-flex min-h-11 w-full items-center justify-center text-sm sm:w-auto font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </div>
     </form></FilterBar>
     <Disclosure title="Filtered attendance totals" className="border-b border-border" contentClassName="min-w-0 space-y-3 pb-4">
@@ -177,7 +177,7 @@ export default async function LearnerAttendanceCalendarPage({
             <Link href={"/learn/attendance?"+new URLSearchParams({
               month:data.query.month,deliveryId:row.deliveryId,
             }).toString()}
-              className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto hover:text-primary-hover hover:underline md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="mt-2 inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto hover:text-[var(--lms-primary-text)] hover:underline md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               View Course attendance →
             </Link>
           </li>)}

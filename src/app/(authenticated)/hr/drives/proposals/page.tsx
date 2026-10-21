@@ -58,7 +58,7 @@ export default async function RecruiterDriveProposalHistory({
    {data.items.length?<Link
      href={hrSentProposalExportHref({collegeId:data.collegeId!,q:input.data.q,
       page:data.page,sort:input.data.sort})}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      Export this page (summary CSV)
     </Link>:null}
    <p role="status" className="max-w-2xl text-sm text-body leading-[22px]">
@@ -82,7 +82,7 @@ export default async function RecruiterDriveProposalHistory({
     {data.items.map(row=><li key={row.id}
      className="min-w-0 py-3">
      <Link href={"/hr/conversations/"+row.threadId}
-      className="block break-words font-semibold text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.title}</Link>
+      className="block break-words font-semibold text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{row.title}</Link>
      <p className="mt-2 text-xs text-muted-foreground leading-5">
       Proposal reference: {row.referenceId}
      </p>
@@ -97,9 +97,9 @@ export default async function RecruiterDriveProposalHistory({
     action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Draft another proposal</Link>} />}
    {data.pages>1 ? <nav aria-label="Sent proposal pages" className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
     {data.page>1?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page-1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Newer proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Newer proposals</Link>:null}
     {data.page<data.pages?<Link href={hrSentProposalHistoryHref({collegeId:data.collegeId!,q:input.data.q,sort:input.data.sort,page:data.page+1})}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Older proposals</Link>:null}
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] min-[768px]:min-h-9 border border-border bg-surface px-4 text-sm text-primary-text hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Older proposals</Link>:null}
    </nav> : null}
   </>}
  </div>;

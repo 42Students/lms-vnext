@@ -12,7 +12,7 @@ export default async function CollegeSemesterCoursesPage() {
   return <div className="min-w-0 space-y-6 md:space-y-6">
     <PageHeader title="Semester–Course Mapping"
       actions={<Link href="/college/courses"
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[150ms] md:min-h-9 motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-[var(--lms-primary-text)] transition-[background-color,border-color] duration-[150ms] md:min-h-9 motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Course offerings
       </Link>} />
     <CollegeTermMappingManager data={curriculumData} />

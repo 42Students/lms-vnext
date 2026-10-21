@@ -83,7 +83,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
             <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
-              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{item.submissionUrl}</a>
+              className="inline-flex min-h-11 max-w-full items-center break-all text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.submissionUrl}</a>
           ) : (
             <Alert tone="warning" className="break-all">Saved link unavailable. Open the original submission from a trusted HTTPS source.</Alert>
           )

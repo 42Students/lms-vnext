@@ -31,7 +31,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     <PageHeader title="Choose a course" description="This quiz is in more than one of your courses." />
     <ul className="min-w-0 divide-y divide-border border-y border-border">
       {resolution.options.map(option=><li key={option.deliveryId} className="min-w-0 py-[var(--lms-space-2)]">
-        <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+        <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           href={"/learn/allQuizzes/"+encodeURIComponent(path.quizId)+"?deliveryId="+encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -64,7 +64,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
           <p className="mt-2 flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={attempt.resultsVisible?"success":"neutral"}>{attempt.resultsVisible?"Results published":"Results pending"}</StatusBadge>{learnerAttemptResultLabel(attempt)}</p></div>
           <Link href={historyUrl+"&attemptId="+encodeURIComponent(attempt.id)}
             aria-current={selected?.id===attempt.id?"page":undefined}
-            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center text-sm font-semibold text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             {attempt.resultsVisible ? "View result" : "View attempt"}
           </Link>
         </li>)}
@@ -73,7 +73,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
     {selected ? <section className="min-w-0 space-y-3 border-b border-border pb-[var(--lms-space-4)]">
       <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</h2>
-        <Link href={historyUrl} className="inline-flex min-h-11 w-full items-center justify-center text-sm text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Close detail</Link>
+        <Link href={historyUrl} className="inline-flex min-h-11 w-full items-center justify-center text-sm text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Close detail</Link>
       </div>
       <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (

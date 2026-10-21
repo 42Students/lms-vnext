@@ -69,7 +69,7 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
     >
       {content}
     </Link>
@@ -154,7 +154,7 @@ async function SuperAdminDashboard({
       {collegeId?<CollegeAtGlancePanel collegeId={collegeId} initial={glance}/>:null}
       {collegeId?<SuperAdminTodayBoard data={today}/>:null}
       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Safety scope</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Safety scope</summary>
         <p className="mt-2 text-sm text-body leading-[1.6]">
           {scopeLabel}. Use the selector in the top bar before
           college-specific administration. Global system-role

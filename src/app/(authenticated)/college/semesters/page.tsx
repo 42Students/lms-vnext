@@ -26,14 +26,14 @@ export default async function CollegeSemestersPage({
       <PageHeader title="Semesters" />
       <ErrorState title="Invalid semester filters"
         description={collegeDirectoryValidationMessage(parsed.error)}
-        action={<Link href="/college/semesters" className="lms-inline-link inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+        action={<Link href="/college/semesters" className="lms-inline-link inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
     </div>;
   }
   return <div className="min-w-0 space-y-4">
     <CollegeAcademicDirectory
       data={await listCollegeSemesters(context, parsed.data)}
       actions={<Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-[14px] font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-[14px] font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Export CSV
       </Link>}
     />
