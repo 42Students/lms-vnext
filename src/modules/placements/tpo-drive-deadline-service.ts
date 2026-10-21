@@ -57,6 +57,26 @@ export async function extendTpoDriveDeadline(context:RequestContext,rawJobId:unk
    fromUpdatedAt:job.updatedAt.toISOString(),toUpdatedAt:updated.updatedAt.toISOString(),
   });
   return {jobId:updated.id,updatedAt:updated.updatedAt.toISOString(),
-   applicationDeadline:updated.applicationDeadline?.toISOString()??null};
+   applicationDeadline:updated.applicationDeadline?.toISOString()??null,
+   message:"Deadline extended"};
  });
 }
+
+/** A future scheduled-expiry writer must CAS on both the PUBLISHED state
+ * and the exact deadline it originally selected, *in its UPDATE WHERE*.
+ * Checking this pure snapshot predicate alone is not sufficient for writes.
+ * The current platform deliberately derives closure at read/write time and
+ * does not have a persisted automatic closure sweep. */
+export function isTpoDriveExpirySnapshotStillCurrent(
+ current:{status:string;applicationDeadline:Date|null},
+ expectedDeadline:Date,
+ now:Date,
+):boolean{
+ return current.status==="PUBLISHED" &&
+  current.applicationDeadline instanceof Date &&
+  current.applicationDeadline.getTime()===expectedDeadline.getTime() &&
+  now.getTime()>=expectedDeadline.getTime();
+}
+
+/** Exact legacy fallback for the caller's retry/error toast. */
+export const TPO_DEADLINE_FAILURE_COPY="Failed to extend deadline";

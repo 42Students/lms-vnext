@@ -6,6 +6,7 @@ import type { AdminScope } from "@/modules/identity/context";
 import type { AdminScopeChoices } from "@/modules/admin-scope/service";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/toast";
 
 function selectedValue(scope: AdminScope | null | undefined) {
   if (scope?.collegeId) {
@@ -27,6 +28,7 @@ export function AdminScopeSwitcher({
   scope: AdminScope | null | undefined;
 }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [error, setError] = useState<string | null>(null);
   const [search,setSearch]=useState("");
   const matchingColleges = choices.colleges.filter((college) =>
@@ -65,13 +67,21 @@ export function AdminScopeSwitcher({
       }
 
       if (!response.ok) {
-        setError("Could not change admin scope.");
+        const feedback=value.startsWith("college:")
+          ? "Couldn't switch to your saved college. Pick it again from the header."
+          : "Could not change admin scope.";
+        setError(feedback);
+        showToast({tone:"error",title:feedback});
         return;
       }
 
+      if(!value && choices.colleges.length>1)
+        showToast({tone:"info",title:"Showing all colleges — data may be large."});
       router.refresh();
       } catch {
-        setError("Could not change admin scope. Check your connection and retry.");
+        const feedback="Failed to load colleges. Please refresh.";
+        setError(feedback);
+        showToast({tone:"error",title:feedback});
       }
     });
   }
