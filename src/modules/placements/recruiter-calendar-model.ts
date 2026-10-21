@@ -3,6 +3,12 @@ import {
   type PlacementCalendarEvent,
 } from "./placement-calendar-model";
 
+export const RECRUITER_CALENDAR_EVENT_STYLE={
+ ROUND:{label:"Round",color:"blue"},
+ INTERVIEW_SLOT:{label:"Interview slot",color:"green"},
+ APPLICATION_DEADLINE:{label:"Deadline",color:"orange"},
+ RESULTS_DUE:{label:"Results due",color:"gold"},
+} as const;
 export type RecruiterCalendarJob = {
   id: string;
   title: string;
@@ -82,6 +88,13 @@ export function buildRecruiterCalendarEvents(input: {
   );
 
   const events: PlacementCalendarEvent[] = [];
+  // Slots are already read under the recruiter grant in the calendar service.
+  const slotCounts=new Map<string,number>();
+  for(const slot of input.slots??[]){
+    if(!authorizedJobs.has(slot.jobId)||!insideWindow(slot.startAt)||
+      !["PROPOSED","OFFERED","BOOKED"].includes(slot.status))continue;
+    slotCounts.set(slot.roundId,(slotCounts.get(slot.roundId)??0)+1);
+  }
 
   for (const job of authorizedJobs.values()) {
     if (!insideWindow(job.applicationDeadline)) {
@@ -141,7 +154,9 @@ export function buildRecruiterCalendarEvents(input: {
       status: round.status,
       timezone: round.timezone,
       venue: round.venue,
-      note: null,
+      note:slotCounts.has(round.id)
+        ? `${slotCounts.get(round.id)} interview slot${slotCounts.get(round.id)===1?"":"s"}`
+        : null,
       completedAt: null,
     });
   }
@@ -179,6 +194,8 @@ export function buildRecruiterResultsDueItems(input: {
       !Number.isFinite(due.getTime()) ||
       due.getTime() < input.startsAt.getTime() || due.getTime() >= input.endsBefore.getTime()) return [];
     return [{ id:round.id, jobId:round.jobId, jobTitle:job.title,
-      roundName:round.name, dueAt:due, status:round.status }];
+      roundName:round.name, dueAt:due, status:round.status,
+      category:"RESULTS_DUE" as const,label:"Results due" as const,
+      color:"gold" as const }];
   }).sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id));
 }
