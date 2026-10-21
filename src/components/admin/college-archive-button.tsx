@@ -8,6 +8,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { Alert } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/toast";
 
 type CollegeUsage = {
@@ -67,6 +68,7 @@ export function CollegeArchiveButton({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [archiveError,setArchiveError]=useState("");
   const [pending, startTransition] =
     useTransition();
   const inFlightRef=useRef(false);
@@ -91,20 +93,19 @@ export function CollegeArchiveButton({
               | undefined,
           );
 
-        showToast({
-          tone: "error",
-          title: "Archive blocked",
-          description:
-            payload?.error ===
-            "COLLEGE_HAS_DEPENDENCIES"
-              ? `Clear or close live dependencies first${dependencies ? `: ${dependencies}` : "."}`
-              : payload?.error === "FORBIDDEN"
-                ? "Only a Super Admin can archive a college."
-                : "The college could not be archived.",
-        });
+        const message=payload?.error==="COLLEGE_HAS_DEPENDENCIES"
+          ? `Resolve linked records before archiving${dependencies?`: ${dependencies}`:"."}`
+          : payload?.error==="FORBIDDEN"
+            ? "Only a Super Admin can archive this college."
+            : payload?.error==="COLLEGE_NOT_FOUND"
+              ? "This college is no longer active. Refresh the directory."
+              : "The college could not be archived. Refresh and retry.";
+        setArchiveError(message);
+        showToast({tone:"error",title:"Failed to archive college",description:message});
         return;
       }
 
+      setArchiveError("");
       setOpen(false);
       showToast({
         tone: "success",
@@ -114,7 +115,8 @@ export function CollegeArchiveButton({
       });
       router.refresh();
       } catch {
-        showToast({tone:"error",title:"Archive blocked",description:"The college could not be archived."});
+        setArchiveError("The college could not be archived. Check your connection and try again.");
+        showToast({tone:"error",title:"Failed to archive college",description:"The college could not be archived."});
       } finally {
         inFlightRef.current=false;
       }
@@ -128,7 +130,7 @@ export function CollegeArchiveButton({
         size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
         disabled={pending}
-        onClick={() => setOpen(true)}
+        onClick={() => {setArchiveError("");setOpen(true);}}
       >
         Archive
       </Button>
@@ -137,7 +139,7 @@ export function CollegeArchiveButton({
         onOpenChange={next=>{if(!pending)setOpen(next);}}
         dismissible={!pending}
         title="Archive college"
-        description={`Archive ${name}? This disables the tenant boundary and is allowed only after all live dependencies are cleared.`}
+        description={`Archive ${name}? This deactivates the tenant without deleting historical records and requires all linked dependencies to be resolved.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
@@ -162,11 +164,16 @@ export function CollegeArchiveButton({
           </div>
         }
       >
+        {archiveError?<Alert tone="error">
+          <p>{archiveError}</p>
+          <Button type="button" variant="ghost" disabled={pending} onClick={archive}>Retry archive</Button>
+        </Alert>:null}
         <p className="m-0 max-w-prose text-sm text-body">
-          The server checks memberships,
-          departments, academic periods,
-          Projects, Placements and tenant
-          domains immediately before archive.
+          The server rechecks memberships, departments, academic periods,
+          Projects, Placements and tenant domains before archiving.
+          Archived colleges remain available for authorized restoration. If this
+          college is your selected scope, that selection is cleared. Restoration
+          does not automatically reactivate child memberships or domains.
         </p>
       </Dialog>
     </>
