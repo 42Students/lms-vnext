@@ -12,12 +12,12 @@ import { TrackerAdminError } from "./admin-errors";
 import { trackerReportSchema } from "./report-input-model";
 
 /**
- * SA-placements-projects-100: authenticated intake while reporter sessions
- * remain unapproved (SA-placements-projects-101 / OD-27 is intentionally SKIP).
- * The access row satisfies DB10's required reporter provenance but has no
- * issued token/session, so it cannot grant someone access to tracker reports.
- * Reuse the authenticated actor's existing inert access key across reports;
- * a forged dropdown display name never becomes the persisted reporter identity.
+ * Reporter enrollment is tied to an ACTIVE platform identity. The reporter
+ * principal is recorded for provenance only: no bearer secret or tracker
+ * session is returned or issued. A previously disabled reporter remains
+ * disabled; re-enabling revoked access requires the dedicated admin process.
+ * Authenticated bug intake remains available through its own role boundary,
+ * and the actor cannot select someone else's reporter identity.
  */
 export async function createBugTrackerIssueForAdmin(
   context: RequestContext, rawInput: unknown, idempotencyKey?: string | null,
@@ -81,7 +81,10 @@ export async function createBugTrackerIssueForAdmin(
     // names are not identities and may collide. User IDs are authoritative.
     // Existing rows are re-used so reporting does not create a new disabled
     // principal on every submission. No external login token is issued.
-    const [existingAccess]=await tx.select({id:db10BugTrackerAccess.id})
+    const [existingAccess]=await tx.select({
+      id:db10BugTrackerAccess.id,active:db10BugTrackerAccess.active,
+      accessRole:db10BugTrackerAccess.accessRole,
+    })
       .from(db10BugTrackerAccess)
       .where(eq(db10BugTrackerAccess.subjectUserId,context.user.id)).limit(1);
     const [prior] = await tx.select({ id: db10BugReports.reporterAccessId })
@@ -92,10 +95,16 @@ export async function createBugTrackerIssueForAdmin(
       displayName: reporterName,
       tokenHash: randomBytes(32).toString("hex"),
       accessRole: "REPORTER",
-      active: false,
+      // Newly authenticated reporters can have a real, user-bound active
+      // reporter principal. The random token hash is never returned, so this
+      // does not grant access to any legacy bearer-token login endpoint.
+      active: true,
     }).returning({ id: db10BugTrackerAccess.id }))[0];
     if (!reporter) throw new Error("Tracker reporter could not be recorded");
     if(prior && !existingAccess){
+      // A previous report's access ID is trusted only if its reporter was
+      // this persisted user and its principal was not reassigned. Never
+      // promote an inactive or legacy external token as a new session.
       await tx.update(db10BugTrackerAccess)
         .set({subjectUserId:context.user.id})
         .where(eq(db10BugTrackerAccess.id,prior.id));
