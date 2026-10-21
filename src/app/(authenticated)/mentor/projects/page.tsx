@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
@@ -25,7 +26,23 @@ import { listMyProjectInstances } from "@/modules/projects/member-service";
 import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-list-service";
 import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
 
-export default async function MentorProjectsPage({
+function MentorProjectsLoading() {
+  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Checking Projects access">
+    <PageHeader title="Projects" description="Checking Projects access…"/>
+    <div aria-hidden="true" className="space-y-4">{[1,2,3].map(id=><div key={id} className="rounded-lg border border-border p-5">
+      <span className="block h-4 w-1/3 animate-pulse rounded bg-muted"/>
+      <span className="mt-3 block h-5 w-1/2 animate-pulse rounded bg-muted"/>
+      <span className="mt-3 block h-4 w-4/5 animate-pulse rounded bg-muted"/>
+    </div>)}</div>
+  </div>;
+}
+type MentorProjectParams=Record<string,string|string[]|undefined>;
+export default function MentorProjectsPage({searchParams}:{searchParams:Promise<MentorProjectParams>}) {
+  return <Suspense fallback={<MentorProjectsLoading/>}>
+    <MentorProjectsContent searchParams={searchParams}/>
+  </Suspense>;
+}
+async function MentorProjectsContent({
   searchParams,
 }: {
   searchParams: Promise<
@@ -71,14 +88,31 @@ export default async function MentorProjectsPage({
 
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
+  const retryLink = <Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>;
+  const readFailure = () => <div className="min-w-0 space-y-4">
+    <PageHeader title="Projects"/>
+    <ErrorState title="Projects could not be loaded"
+      description="Couldn't refresh projects. Try again; your college and mentor access remain unchanged."
+      action={retryLink}/>
+  </div>;
   const canPageInSql=canPageMentorProjectList(query);
-  const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
-  const allRows=paged?.items??await listMyProjectInstances(context);
-  const [attentionRows,workCounts,teamSizes]=await Promise.all([
+  const pagedResult = canPageInSql
+    ? await Promise.allSettled([listPagedMentorProjects(context,query)])
+    : null;
+  if(pagedResult?.[0].status==="rejected")return readFailure();
+  const paged=pagedResult?.[0].status==="fulfilled"?pagedResult[0].value:null;
+  const allResult=paged ? null : await Promise.allSettled([listMyProjectInstances(context)]);
+  if(allResult?.[0].status==="rejected")return readFailure();
+  const allRows=paged?.items??(allResult?.[0].status==="fulfilled"?allResult[0].value:[]);
+  const dependent=await Promise.allSettled([
     listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
     getMentorProjectWorkCounts(context,paged?allRows:undefined),
     getMentorProjectTeamSizes(context,paged?allRows:undefined),
   ]);
+  if(dependent.some(row=>row.status==="rejected"))return readFailure();
+  const attentionRows=dependent[0].status==="fulfilled"?dependent[0].value:[];
+  const workCounts=dependent[1].status==="fulfilled"?dependent[1].value:new Map();
+  const teamSizes=dependent[2].status==="fulfilled"?dependent[2].value:new Map();
   const alerts = new Map<
     string,
     Set<string>
@@ -274,7 +308,16 @@ export default async function MentorProjectsPage({
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,
+            phaseLabel:row.project.phase?.trim() || "In progress",
             dueLabel:row.project.dueLabel || row.project.endDate,
+            dueState:(()=>{
+              const raw=row.project.endDate;
+              if(!raw)return "No due date";
+              const parsed=Date.parse(/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)?raw+"T23:59:59+05:30":raw);
+              if(!Number.isFinite(parsed))return "Due";
+              const days=Math.ceil((parsed-Date.now())/86_400_000);
+              return days<0?"Overdue":days<=7?"Due soon":"Due";
+            })(),
             actionLine:projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
             blockedHref:row.project.blocker?.trim()
               ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
