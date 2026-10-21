@@ -24,6 +24,7 @@ import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drive
 import {Button} from "@/components/ui/button";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Pagination } from "@/components/ui/pagination";
+import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 
 const PAGE_SIZE = 20;
 
@@ -34,11 +35,12 @@ function humanize(value: string) {
 export function LearnerJobsBrowse({
   items,
   snapshotNowIso,
-  savedJobIds,
+  savedJobIds,savedHistory=[],
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso: string;
   savedJobIds:readonly string[];
+  savedHistory?:readonly {jobId:string;title:string;status:string;deadline:string|null}[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -93,25 +95,30 @@ export function LearnerJobsBrowse({
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityDriveCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
   const savedSummary=learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds);
+  const accessibleIds=new Set(items.map(row=>row.job.id));
+  const historicSaved=savedHistory.filter(row=>!accessibleIds.has(row.jobId));
   const savedOnly=urlState.savedOnly||params.get("tab")==="saved";
   const matchingItems=savedOnly?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items;
   const visible = filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso));
   const parsedPage=urlState.page;
   const isNotOpen=(item:LearnerPlacementJobItem)=>
-    !item.canApply&&item.application===null&&!item.deadlinePassed;
+    !item.deadlinePassed&&!item.canApply;
   // The old LMS paginates its open/current cards separately. Closed saved
   // records and ineligible cards stay in their own sections, without
   // consuming the 20 slots available on the primary open page.
   const notOpenAll=visible.filter(isNotOpen);
-  const savedExpired=savedOnly?visible.filter(item=>item.deadlinePassed):[];
-  const primary= savedOnly
-    ?filters.availability==="closed"?savedExpired:visible.filter(item=>!item.deadlinePassed)
-    :filters.availability==="not-open"?notOpenAll:visible.filter(item=>!isNotOpen(item));
+  const expiredAll=visible.filter(item=>item.deadlinePassed);
+  const savedExpired=savedOnly?expiredAll:[];
+  const primary=savedOnly
+    ?filters.availability==="closed"?[]:visible.filter(item=>!item.deadlinePassed)
+    :filters.availability==="not-open"||filters.availability==="closed"?[]:
+      visible.filter(item=>!isNotOpen(item)&&!item.deadlinePassed);
   const pagination=learnerDrivePageState(primary.length,parsedPage,PAGE_SIZE);
   const {page,totalPages}=pagination;
   const paged=primary.slice(pagination.startIndex,pagination.endIndex);
-  const ordinaryRoleCards=savedOnly?[]:paged.filter(item=>!isNotOpen(item));
-  const notOpenRoleCards=savedOnly?[]:filters.availability==="not-open"?paged:notOpenAll;
+  const ordinaryRoleCards=savedOnly?[]:paged;
+  const notOpenRoleCards=savedOnly?[]:notOpenAll;
+  const expiredRoleCards=savedOnly?[]:expiredAll;
   const savedOpen=savedOnly&&filters.availability!=="closed"?paged:[];
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
@@ -255,16 +262,16 @@ export function LearnerJobsBrowse({
         </p>
       ):null}
 
-      {savedOnly&&savedSummary.expired>0?<p role="status" className="border-b border-border pb-3 text-xs text-body">
-        {savedSummary.expired} saved drive(s) are not available in your current authorized published catalog.
-        Their bookmarks remain saved; this list does not claim they were removed.
+      {savedOnly&&historicSaved.length>0?<p role="status" className="border-b border-border pb-3 text-xs text-body">
+        {historicSaved.length} saved drive(s) are no longer in the current published catalogue.
+        Their bookmarks remain until you remove them.
       </p>:null}
-      {savedOnly && matchingItems.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
+      {savedOnly && matchingItems.length===0&&historicSaved.length===0?<div className="flex min-h-44 min-w-0 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
         <h2 className="font-semibold text-foreground">No saved drives yet</h2>
         <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
         <Button variant="link" type="button" className="min-h-11 px-0"
           onClick={()=>updateQuery({saved:null})}>Browse all jobs</Button>
-      </div>:empty.kind==="NO_PUBLISHED" ? (
+      </div>:empty.kind==="NO_PUBLISHED"&&!savedOnly ? (
         <div className="space-y-3">
           <EmptyState title={empty.title} description={empty.description} />
           <Link href="/learn/my-placements"
@@ -272,7 +279,7 @@ export function LearnerJobsBrowse({
             Review placement dashboard →
           </Link>
         </div>
-      ) : empty.kind==="FILTERED_OUT" ? (
+      ) : empty.kind==="FILTERED_OUT"&&!savedOnly ? (
         <div className="flex min-h-44 flex-col items-center justify-center gap-3 border-y border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center" role="status">
           <p className="font-semibold text-foreground">{empty.title}</p>
           <p className="mt-2 text-sm text-body">{empty.description}</p>
@@ -289,15 +296,33 @@ export function LearnerJobsBrowse({
         savedOnly?<div className="space-y-5">
           {savedOpen.length?<LearnerPlacementJobs items={savedOpen} snapshotNowIso={snapshotNowIso}
              returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
-          {savedExpired.length?<section aria-label="Expired saved jobs" className="space-y-3">
+          {(savedExpired.length||historicSaved.length)?<section aria-label="Expired saved jobs" className="space-y-3">
             <h2 className="text-lg font-semibold text-foreground">Expired saved jobs</h2>
-            <p className="text-sm text-body">These saved drives no longer accept applications, but you can review their details or remove the bookmark.</p>
-            <LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
-             returnQuery={params.toString()} savedJobIds={savedJobIds}/>
+            <p className="text-sm text-body">Saved drives stay in your private history even after closure, without restoring application permission.</p>
+            {savedExpired.length?<LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
+             returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+            {historicSaved.length?<ul className="divide-y divide-border border-y border-border">
+             {historicSaved.map(saved=><li key={saved.jobId} className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <div><strong className="block break-words">{saved.title?.trim()||"Untitled drive"}</strong>
+               <span className="text-xs text-body">{saved.status==="PUBLISHED"?"No longer visible to your current cohort":saved.status.replaceAll("_"," ")}
+                {saved.deadline&&Number.isFinite(Date.parse(saved.deadline))?" · Deadline "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(saved.deadline)):""}
+               </span>
+              </div>
+              <LearnerSaveDriveButton jobId={saved.jobId} jobTitle={saved.title??"Untitled drive"}
+               initialSaved surface="LIST"/>
+             </li>)}
+            </ul>:null}
           </section>:null}
         </div>:<div className="space-y-5">
           {ordinaryRoleCards.length>0?<LearnerPlacementJobs items={ordinaryRoleCards}
             snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+          {expiredRoleCards.length>0?<Disclosure title={"Expired ("+expiredRoleCards.length+" roles)"}
+             defaultOpen={filters.availability==="closed"} ariaLabel="Expired drives"
+             className="border-t border-border py-3 [&>summary]:min-h-11">
+            <p className="mb-3 text-sm text-body">The application deadline has passed. These records remain available for review.</p>
+            <LearnerPlacementJobs items={expiredRoleCards} snapshotNowIso={snapshotNowIso}
+             returnQuery={params.toString()} savedJobIds={savedJobIds}/>
+          </Disclosure>:null}
           {notOpenRoleCards.length>0?<Disclosure title={"Not open to you ("+notOpenRoleCards.length+" roles) · See reasons"}
              defaultOpen={filters.availability==="not-open"} ariaLabel="Not open to you"
              className="border-t border-border py-3 [&>summary]:min-h-11 [&>summary]:text-foreground">

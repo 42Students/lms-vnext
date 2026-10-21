@@ -25,7 +25,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_college-interview-appointments.tsx.md` (edit src/components/placements/college-interview-appointments.tsx; 19 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-drive-attention-service.ts.md` (edit src/modules/placements/college-drive-attention-service.ts; 19 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-drive-workspace.tsx.md` (edit src/components/placements/placement-drive-workspace.tsx; 18 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_public-recruit-from-us.tsx.md` (edit src/components/placements/public-recruit-from-us.tsx; 18 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_public-recruit-from-us.tsx.md` (edit src/components/placements/public-recruit-from-us.tsx; 18 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-jobs-browse.tsx.md` (edit src/components/placements/learner-jobs-browse.tsx; 18 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-bulk-drive-actions.tsx.md` (edit src/components/placements/super-admin-bulk-drive-actions.tsx; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_eligibility-service.ts.md` (edit src/modules/placements/eligibility-service.ts; 17 findings; best P1)
