@@ -95,11 +95,28 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
       phoneValue.replace(/\D/g,"").length>15)){
       setError("Additional phone must contain 10–15 digits.");return;
     }
+    const baseline = savedSnapshot.current;
+    const changedSections:ProfileSection[]=[];
+    if (profile.displayName!==baseline.displayName ||
+        profile.roleTitle!==baseline.roleTitle ||
+        profile.about!==baseline.about ||
+        profile.photoUrl!==baseline.photoUrl ||
+        JSON.stringify(profile.personalDetails)!==JSON.stringify(baseline.personalDetails))
+      changedSections.push("personal");
+    if(JSON.stringify(profile.social)!==JSON.stringify(baseline.social))
+      changedSections.push("social");
+    if(JSON.stringify(profile.address)!==JSON.stringify(baseline.address))
+      changedSections.push("address");
+    if(JSON.stringify(profile.contacts)!==JSON.stringify(baseline.contacts))
+      changedSections.push("contacts");
+    if(!changedSections.length)return;
     setSaving(true); setError(""); setSaved(false);
     try {
       const result = await apiFetch<{profile:VersionedCollegeProfile}>("/api/college/profile", {
         method: "PATCH", headers: { "content-type": "application/json" },
-        body: JSON.stringify(profile),
+        // Only dirty profile cards replace stored cards. The server checks the
+        // baseline under a row lock so concurrent updates to other cards survive.
+        body: JSON.stringify({...profile,baseline,changedSections}),
       });
       savedSnapshot.current=result.profile;
       setProfile(result.profile); setSaved(true);setEditableSection(null);

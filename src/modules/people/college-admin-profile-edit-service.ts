@@ -74,8 +74,28 @@ export function readCollegeProfileSections(raw:unknown){
    normalized[name]=defaults[name];continue;
   }
   const result=sections[name].safeParse(source[name]);
-  if(result.success)normalized[name]=result.data;
-  else {unavailableSections.push(name);normalized[name]=defaults[name];}
+  if(result.success){normalized[name]=result.data;continue;}
+  unavailableSections.push(name);
+  // An invalid legacy JSON field must not discard its valid siblings.
+  // Keep the warning so an operator can still repair the original document.
+  if((name==="social"||name==="address"||name==="contacts") &&
+      source[name] && typeof source[name]==="object" &&
+      !Array.isArray(source[name])){
+    const shape=name==="social"?collegeOwnProfileSchema.shape.social.shape:
+      name==="address"?collegeOwnProfileSchema.shape.address.shape:
+      collegeOwnProfileSchema.shape.contacts.shape;
+    const fragment=source[name] as Record<string,unknown>;
+    const retained:Record<string,unknown>={
+      ...(defaults[name] as Record<string,unknown>),
+    };
+    for(const [key,fieldSchema] of Object.entries(shape)){
+      if(!Object.prototype.hasOwnProperty.call(fragment,key))continue;
+      const candidate=fieldSchema.safeParse(fragment[key]);
+      if(candidate.success)retained[key]=candidate.data;
+    }
+    const repaired=sections[name].safeParse(retained);
+    normalized[name]=repaired.success?repaired.data:defaults[name];
+  }else normalized[name]=defaults[name];
  }
  const parsed=collegeOwnProfileSchema.omit({displayName:true}).parse(normalized);
  return {document:parsed,unavailableSections,missingSections,
@@ -122,47 +142,104 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
 export async function updateCollegeOwnProfile(context: RequestContext, raw: unknown) {
   const member = ownMembership(context);
   const input = collegeOwnProfileSchema.parse(raw);
-  const versionRaw=raw&&typeof raw==="object"&&!Array.isArray(raw)
-    ?(raw as Record<string,unknown>).profileDocumentVersion:undefined;
-  const version=z.number().int().nonnegative().safeParse(versionRaw);
-  if(!version.success)throw new CollegeProfileVersionRequired();
+  const submitted = raw && typeof raw === "object" && !Array.isArray(raw)
+    ? raw as Record<string, unknown> : {};
+  const version = z.number().int().nonnegative()
+    .safeParse(submitted.profileDocumentVersion);
+  if (!version.success) throw new CollegeProfileVersionRequired();
+
+  // Modern editors send an explicit section diff and their saved baseline.
+  // A legacy whole-document writer keeps strict version CAS behavior.
+  const sectionSchema = z.array(
+    z.enum(["personal", "social", "address", "contacts"]),
+  ).min(1).max(4);
+  const sectionInput = submitted.changedSections === undefined ? null
+    : sectionSchema.safeParse(submitted.changedSections);
+  const baselineInput = submitted.baseline === undefined ? null
+    : collegeOwnProfileSchema.safeParse(submitted.baseline);
+  if ((sectionInput && !sectionInput.success) ||
+      (sectionInput && (!baselineInput || !baselineInput.success)) ||
+      (!sectionInput && baselineInput)) {
+    throw new CollegeProfileVersionRequired();
+  }
+  const edited = sectionInput?.success ? new Set(sectionInput.data) : null;
+  const baseline = baselineInput?.success ? baselineInput.data : null;
   const { displayName, ...details } = input;
+
   return getDb().transaction(async tx => {
-    const [account] = await tx.select({ id: users.id }).from(users)
-      .where(eq(users.id, context.user.id)).for("update").limit(1);
+    const [account] = await tx.select({ id: users.id, displayName: users.displayName })
+      .from(users).where(eq(users.id, context.user.id))
+      .for("update").limit(1);
     if (!account) throw new Error("PROFILE_NOT_FOUND");
     const [existing] = await tx.select().from(facultyProfiles)
       .where(eq(facultyProfiles.membershipId, member.id)).for("update").limit(1);
-    if((existing?.profileDocumentVersion??0)!==version.data)
-      throw new CollegeProfileVersionConflict();
-    await tx.update(users).set({ displayName, updatedAt: new Date() })
-      .where(eq(users.id, account.id));
-    const previous=existing?.profileDocument?.collegeAdmin;
-    const previousRead=readCollegeProfileSections(previous);
-    if(previousRead.partialLoad){
-      // This is a whole-document writer: do not let a stale form overwrite
-      // an invalid untouched legacy section with the UI default.
-      throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:"+
+    const currentVersion = existing?.profileDocumentVersion ?? 0;
+    const previous = existing?.profileDocument?.collegeAdmin;
+    const previousRead = readCollegeProfileSections(previous);
+    if (previousRead.partialLoad) {
+      // Don't silently overwrite corrupted stored sections with defaults.
+      throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:" +
         previousRead.unavailableSections.join(","));
     }
-    const prior=previous && typeof previous==="object" && !Array.isArray(previous)
-      ? previous as Record<string,unknown>:{};
-    const priorAddress=prior.address && typeof prior.address==="object" &&
-      !Array.isArray(prior.address) ? prior.address as Record<string,unknown>:{};
-    // Old editors omit later-added legacy fields. Preserve rather than erase
-    // them when saving unrelated profile sections.
-    const mergedDetails={
-      ...details,
-      ...(details.personalDetails===undefined && prior.personalDetails
-        ? {personalDetails:prior.personalDetails}:{}),
-      address:{...priorAddress,...details.address},
-      contacts:{
-        ...(prior.contacts && typeof prior.contacts==="object" &&
-           !Array.isArray(prior.contacts) ? prior.contacts as Record<string,unknown>:{}),
-        ...details.contacts,
-      },
+    const prior = previous && typeof previous === "object" && !Array.isArray(previous)
+      ? previous as Record<string, unknown> : {};
+    const current = previousRead.document;
+
+    if (currentVersion !== version.data) {
+      if (!edited || !baseline) throw new CollegeProfileVersionConflict();
+      // Changed sections alone must still match the original values.
+      // Concurrent changes in untouched sections may be safely retained.
+      const personalBefore = JSON.stringify([
+        baseline.displayName, baseline.roleTitle, baseline.about,
+        baseline.photoUrl, baseline.personalDetails,
+      ]);
+      const personalNow = JSON.stringify([
+        account.displayName, current.roleTitle, current.about,
+        current.photoUrl, current.personalDetails,
+      ]);
+      if ((edited.has("personal") && personalBefore !== personalNow) ||
+          (edited.has("social") &&
+            JSON.stringify(baseline.social) !== JSON.stringify(current.social)) ||
+          (edited.has("address") &&
+            JSON.stringify(baseline.address) !== JSON.stringify(current.address)) ||
+          (edited.has("contacts") &&
+            JSON.stringify(baseline.contacts) !== JSON.stringify(current.contacts))) {
+        throw new CollegeProfileVersionConflict();
+      }
+    }
+
+    const nameChanged = edited === null || edited.has("personal");
+    const nextDisplayName = nameChanged ? displayName : account.displayName;
+    if (nameChanged && nextDisplayName !== account.displayName) {
+      await tx.update(users).set({
+        displayName: nextDisplayName, updatedAt: new Date(),
+      }).where(eq(users.id, account.id));
+    }
+
+    const priorAddress = prior.address && typeof prior.address === "object" &&
+      !Array.isArray(prior.address) ? prior.address as Record<string, unknown> : {};
+    const priorContacts = prior.contacts && typeof prior.contacts === "object" &&
+      !Array.isArray(prior.contacts) ? prior.contacts as Record<string, unknown> : {};
+    const mergedDetails = {
+      ...current,
+      ...(nameChanged ? {
+        roleTitle: details.roleTitle, about: details.about, photoUrl: details.photoUrl,
+        ...(details.personalDetails === undefined && prior.personalDetails
+          ? { personalDetails: prior.personalDetails } :
+          { personalDetails: details.personalDetails }),
+      } : {}),
+      ...((edited === null || edited.has("social"))
+        ? { social: { ...current.social, ...details.social } } : {}),
+      ...((edited === null || edited.has("address"))
+        ? { address: { ...priorAddress, ...details.address } } : {}),
+      ...((edited === null || edited.has("contacts"))
+        ? { contacts: { ...priorContacts, ...details.contacts } } : {}),
     };
-    const document = { ...(existing?.profileDocument ?? {}), collegeAdmin: mergedDetails };
+    // Preserve fields not yet surfaced by the vNext profile editor.
+    const document = {
+      ...(existing?.profileDocument ?? {}),
+      collegeAdmin: { ...prior, ...mergedDetails },
+    };
     if (existing) {
       await tx.update(facultyProfiles).set({
         profileDocument: document,
@@ -171,9 +248,14 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
       }).where(eq(facultyProfiles.membershipId, member.id));
     } else {
       await tx.insert(facultyProfiles).values({
-        membershipId: member.id, profileDocument: document, profileDocumentVersion: 1,
+        membershipId: member.id, profileDocument: document,
+        profileDocumentVersion: 1,
       });
     }
-    return {...input,profileDocumentVersion:version.data+1};
+    return {
+      displayName: nextDisplayName,
+      ...mergedDetails,
+      profileDocumentVersion: currentVersion + 1,
+    };
   });
 }
