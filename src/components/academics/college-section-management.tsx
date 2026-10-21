@@ -24,6 +24,7 @@ type ClassRow = {
   id: string; name: string; code: string;
   cohortId: string; academicPeriodId: string;
   capacity: number | null; minSize: number | null; description?: string | null; status: "ACTIVE" | "ARCHIVED"; activeLearners: number | null;
+  canDelete?:boolean;updatedAt?:Date|string;
 };
 
 async function requestWrite(method: "POST" | "PATCH", url: string, input: unknown) {
@@ -196,6 +197,17 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [discardConfirm, setDiscardConfirm] = useState(false);
+  const [deleteConfirm,setDeleteConfirm]=useState(false);
+  const [scheduleOpen,setScheduleOpen]=useState(false);
+  const [scheduleLoading,setScheduleLoading]=useState(false);
+  const [scheduleError,setScheduleError]=useState("");
+  const [scheduleItems,setScheduleItems]=useState<Array<{
+    id:string;title:string;startsAt:string|Date;endsAt:string|Date;status:string
+  }>>([]);
+  const [scheduleTitle,setScheduleTitle]=useState("");
+  const [scheduleStart,setScheduleStart]=useState("");
+  const [scheduleEnd,setScheduleEnd]=useState("");
+  const [scheduleLocation,setScheduleLocation]=useState("");
   const [name, setName] = useState(row.name);
   const [code, setCode] = useState(row.code);
   const [capacity, setCapacity] = useState(row.capacity === null ? "" : String(row.capacity));
@@ -213,6 +225,63 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
     row.minSize !== draft.minSize || row.cohortId !== cohortId ||
     row.academicPeriodId !== academicPeriodId || (row.description ?? null) !== draft.description;
 
+  const sectionHref="/api/college/classes/"+encodeURIComponent(row.id);
+  async function loadSchedule(){
+    setScheduleLoading(true);setScheduleError("");
+    try{
+      const response=await apiFetch<{events:typeof scheduleItems}>(
+        "/api/academics/schedule-events?sectionId="+encodeURIComponent(row.id),
+        {cache:"no-store"});
+      setScheduleItems(response.events);
+    }catch(error){
+      setScheduleError(academicSetupErrorMessage(error,"Could not load class schedule."));
+    }finally{setScheduleLoading(false);}
+  }
+  function openSchedule(){setScheduleOpen(true);void loadSchedule();}
+  async function createSchedule(event:FormEvent<HTMLFormElement>){
+    event.preventDefault();
+    if(pending||scheduleLoading)return;
+    if(!scheduleTitle.trim()||!scheduleStart||!scheduleEnd){
+      setScheduleError("Enter a title, start time and end time.");return;
+    }
+    setScheduleLoading(true);setScheduleError("");
+    try{
+      // Class timetable uses IST across the LMS regardless of browser timezone.
+      const at=(value:string)=>value+":00+05:30";
+      await apiFetch("/api/academics/schedule-events",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({
+          sectionId:row.id,title:scheduleTitle.trim(),
+          startsAt:at(scheduleStart),endsAt:at(scheduleEnd),
+          location:scheduleLocation.trim()||null,
+        }),
+      });
+      setScheduleTitle("");setScheduleStart("");setScheduleEnd("");setScheduleLocation("");
+      showToast({tone:"success",title:"Class schedule updated"});
+      await loadSchedule();router.refresh();
+    }catch(error){
+      setScheduleError(academicSetupErrorMessage(error,"Could not schedule class."));
+    }finally{setScheduleLoading(false);}
+  }
+  async function deleteClass(){
+    if(pending||!row.canDelete||!row.updatedAt)return;
+    setDeleteConfirm(false);
+    const updatedAt=new Date(row.updatedAt).toISOString();
+    startTransition(async()=>{
+      try{
+        await apiFetch(sectionHref,{
+          method:"DELETE",headers:{"content-type":"application/json"},
+          body:JSON.stringify({expectedUpdatedAt:updatedAt,confirm:true}),
+        });
+        showToast({tone:"success",title:"Class deleted"});
+        router.refresh();
+      }catch(error){
+        const message=academicSetupErrorMessage(error,"Could not delete class.");
+        setNotice(message);
+        showToast({tone:"error",title:"Class not deleted",description:message});
+      }
+    });
+  }
   function cancel() {
     if (changed && !discardConfirm) { setDiscardConfirm(true); return; }
     setDiscardConfirm(false); setEditing(false); setNotice("");
@@ -247,12 +316,21 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
     });
   }
 
-  return <div className="min-w-0">
+  return <div className="min-w-0 space-y-2">
+    <div className="flex flex-wrap items-center gap-2">
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
       className="min-h-11 w-full sm:w-auto md:min-h-9" aria-label={"Edit class "+row.name}>
       Edit
     </Button>
+    <Button variant="secondary" type="button" disabled={pending}
+      onClick={openSchedule} aria-label={"Schedule class "+row.name}>Schedule</Button>
+    <Button variant="danger" type="button"
+      disabled={pending||!row.canDelete||!row.updatedAt}
+      title={row.canDelete?"Delete this unused class":
+        "Cannot delete a class with learners, faculty, schedules or deliveries"}
+      onClick={()=>setDeleteConfirm(true)} aria-label={"Delete class "+row.name}>Delete</Button>
+    </div>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
       title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={false}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
@@ -321,6 +399,50 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         </div>
       </form>
     </Dialog> : null}
+    <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}
+      title={'Schedule class “'+row.name+'”'} className="max-w-[620px]">
+      <div className="space-y-4">
+        <p className="text-sm text-body">Times are in India Standard Time (IST).
+          Teaching sessions cannot overlap existing class, faculty or room bookings.</p>
+        {scheduleLoading?<p role="status" className="text-sm">Loading schedule…</p>:null}
+        {scheduleError?<p role="alert" className="text-sm text-error">{scheduleError}</p>:null}
+        <ul className="max-h-48 space-y-2 overflow-y-auto" aria-label="Existing class sessions">
+          {scheduleItems.map(item=><li key={item.id} className="border-b border-border pb-2 text-sm">
+            <strong>{item.title}</strong> · {item.status} ·
+            {" "}{new Date(item.startsAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}
+          </li>)}
+        </ul>
+        {!scheduleLoading&&scheduleItems.length===0?
+          <p className="text-sm text-muted-foreground">No class sessions scheduled yet.</p>:null}
+        <form onSubmit={event=>void createSchedule(event)} className="grid gap-3 sm:grid-cols-2">
+          <label className="text-sm font-semibold sm:col-span-2">Session title
+            <Input required maxLength={255} value={scheduleTitle}
+              onChange={event=>setScheduleTitle(event.target.value)} className="mt-1"/>
+          </label>
+          <label className="text-sm font-semibold">Start (IST)
+            <Input required type="datetime-local" value={scheduleStart}
+              onChange={event=>setScheduleStart(event.target.value)} className="mt-1"/>
+          </label>
+          <label className="text-sm font-semibold">End (IST)
+            <Input required type="datetime-local" value={scheduleEnd}
+              min={scheduleStart} onChange={event=>setScheduleEnd(event.target.value)} className="mt-1"/>
+          </label>
+          <label className="text-sm font-semibold sm:col-span-2">Location (optional)
+            <Input maxLength={500} value={scheduleLocation}
+              onChange={event=>setScheduleLocation(event.target.value)} className="mt-1"/>
+          </label>
+          <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
+            <Button variant="secondary" type="button" onClick={()=>setScheduleOpen(false)}>Close</Button>
+            <Button type="submit" disabled={scheduleLoading||pending}>Add session</Button>
+          </div>
+        </form>
+      </div>
+    </Dialog>
+    <ConfirmDialog open={deleteConfirm} onOpenChange={setDeleteConfirm}
+      title={'Delete class “'+row.name+'”?'}
+      description="Only a class with no learners, faculty assignments, schedules or course deliveries can be deleted. This action cannot be undone."
+      confirmLabel="Delete class" confirmVariant="danger" pending={pending}
+      onConfirm={()=>void deleteClass()}/>
     <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
       title={'Discard edits to “'+row.name+'”?'}
       description="Your unsaved changes will be lost."
