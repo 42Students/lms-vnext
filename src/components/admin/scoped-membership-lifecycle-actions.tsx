@@ -37,7 +37,7 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    <Button variant="secondary" type="button" onClick={()=>{setError(null);setNotice(null);setOpen(current=>!current);}} disabled={busy}
     className="min-h-11 w-full sm:w-auto md:min-h-9" aria-expanded={open}>Suspend</Button>
    {open?<div role="region" aria-label="Suspend membership" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason for suspension
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason for suspension
      <Textarea value={reason} maxLength={1000} rows={2}
       onChange={event=>setReason(event.target.value)}
       className="min-h-24 w-full"/>
