@@ -2,7 +2,7 @@ import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
 import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -49,13 +49,30 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const recruiter = context.recruiter;
   const grants = recruiter.grants;
   const selectedId = parsed.data.collegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
-  if (selectedId && !grants.some(grant => grant.collegeId === selectedId)) notFound();
+  if (selectedId && !grants.some(grant => grant.collegeId === selectedId)) {
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+      <PageHeader title="Today" />
+      <ErrorState title="College access unavailable"
+        description="This college is not part of your active recruiter access. Your invitation may have expired or been revoked. Ask the college placement cell to restore access."
+        action={<Link href="/hr/home" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Choose college</Link>} />
+    </div>;
+  }
   if (!selectedId) {
-    const access=await getRecruiterSelfGrantOverview(context);
+    let access: Awaited<ReturnType<typeof getRecruiterSelfGrantOverview>>;
+    try { access = await getRecruiterSelfGrantOverview(context); }
+    catch {
+      return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+        <PageHeader title="Today" />
+        <ErrorState title="We couldn't load your account"
+          description="We could not verify your college access. No college details are shown until the account lookup succeeds."
+          action={<Link href="/hr/home" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+      </div>;
+    }
     const byId=new Map(access.grants.map(item=>[item.id,item]));
     const visible=grants.filter(item=>byId.has(item.id));
     return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Today" description={"College access for " + recruiter.companyName} />
+    <p className="text-sm text-body leading-[22px]">Choose an authorized college to view its own drives, notifications and applicant shares. Counts are not combined across colleges.</p>
     {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
     <section className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
@@ -63,6 +80,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">{detail.collegeName}</h2>
         {detail.collegeCode?<p className="text-xs text-muted-foreground">College code: {detail.collegeCode}</p>:null}
         <p className="text-xs text-muted-foreground">Access granted: {detail.grantedAtLabel} (IST)</p>
+        <p className="text-xs text-muted-foreground">For TPO contact details, ask the placement cell that invited your organization. Personal contact details are not included in your current grant summary.</p>
         <Link href={"/hr/home?collegeId="+encodeURIComponent(grant.collegeId)}
           className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-[650] text-on-primary hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Open recruiter Today
@@ -76,7 +94,18 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayEightDayWindow(now);
-  const jobs=await listOwnRecruiterPlacementJobs(context,selectedId,{limit:500});
+  let jobs: Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>;
+  try { jobs=await listOwnRecruiterPlacementJobs(context,selectedId,{limit:500}); }
+  catch {
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+      <PageHeader title="Today" />
+      <ErrorState title="We could not load what needs you today."
+        description="Your verified employer drives could not be loaded. We have not treated missing data as zero tasks."
+        action={<Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
+          className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+    </div>;
+  }
+  // The 500-job preview is not a historical total.
   const recentJobCapReached=jobs.length===500;
   const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
     listRecruiterCalendarEvents(context,week),
@@ -85,6 +114,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   ]);
   const calendar=calendarResult.status==="fulfilled"?calendarResult.value:
     {events:[],resultsDue:[]};
+  const unavailableSources = [
+    ...(calendarResult.status==="rejected" ? ["Calendar and result deadlines"] : []),
+    ...(inboxResult.status==="rejected" ? ["Notifications"] : []),
+    ...(conversationResult.status==="rejected" ? ["Conversations"] : []),
+  ];
   const conversations=conversationResult.status==="fulfilled"?conversationResult.value:null;
   const summaryPartiallyUnavailable=calendarResult.status==="rejected"||
     inboxResult.status==="rejected"||conversationResult.status==="rejected";
@@ -92,9 +126,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
-  const liveDriveCounts=await recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id));
-  const mostSharedLiveId=[...liveDrives].sort((left,right)=>
-    (liveDriveCounts[right.job.id]?.sharedApplicants??0)-(liveDriveCounts[left.job.id]?.sharedApplicants??0))[0]?.job.id??null;
+  const liveDriveCounts=await recruiterVisiblePortfolioCounts(
+    context,selectedId,liveDrives.map(row=>row.job.id),
+  ).catch(() => null);
+  const mostSharedLiveId=liveDriveCounts ? [...liveDrives].sort((left,right)=>
+    (liveDriveCounts[right.job.id]?.sharedApplicants??0)-(liveDriveCounts[left.job.id]?.sharedApplicants??0))[0]?.job.id??null : null;
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -114,13 +150,25 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const requestCount=requests.length;
   const waitingRequests=recruiterTodayWaitingRequests(requests);
   const weekEvents=recruiterTodayWeekEvents({events:calendar.events,resultsDue:dueResults,allowedJobs:collegeJobs.map(row=>row.job.id),now});
-  const profile = await getRecruiterSelfProfile(context);
+  let profile: Awaited<ReturnType<typeof getRecruiterSelfProfile>>;
+  try { profile = await getRecruiterSelfProfile(context); }
+  catch {
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+      <PageHeader title="Today" />
+      <ErrorState title="We couldn't load your account"
+        description="Your recruiter profile could not be verified. Other college records have not been substituted for your account."
+        action={<Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
+          className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry</Link>} />
+    </div>;
+  }
   const greeting = recruiterTodayGreeting(now,profile.displayName,recruiter.companyName,actionQueue.length);
   const actions = [
     {label:"Live drives", value:today.live, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
     {label:"Deadlines within 7 days", value:today.dueSoon.length, url:"/hr/drives?collegeId=" + encodeURIComponent(selectedId) + "&view=LIVE"},
-    {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
-    {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
+    ...(calendarResult.status==="fulfilled" ? [
+      {label:"Scheduled rounds this week", value:today.upcomingRounds.length, url:"/hr/calendar"},
+      {label:"Results due this week", value:dueResults.length, url:"/hr/calendar"},
+    ] : []),
     ...(conversationSignals && conversationSignals.unreadInPage>0 ? [{
       label:"Unread conversations (first page)",value:conversationSignals.unreadInPage,
       url:hrConversationsHref({collegeId:selectedId,q:"",unreadOnly:"true",page:1}),
@@ -147,10 +195,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     </Alert>:null}
     {summaryPartiallyUnavailable?<Alert tone="warning">
       <p className="font-semibold">Drive summary is partially unavailable.</p>
-      <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>
+      <p className="mt-1">Unavailable: {unavailableSources.join(", ")}. We cannot confirm zero activity for these sources; verified drive data is shown separately.</p>
       <Link href={"/hr/home?collegeId="+encodeURIComponent(selectedId)}
         className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
     </Alert>:null}
+    {!liveDriveCounts ? <Alert tone="warning">Shared applicant counts are temporarily unavailable. Missing results have not been displayed as zero applicants.</Alert> : null}
     <section aria-label="Next recruiter actions" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
       <h2 className="text-[var(--lms-font-lg)] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-7">Next up</h2>
       <p className="text-xs text-muted-foreground">Only active drives belonging to your selected college and company appear here.</p>
@@ -221,20 +270,20 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
           className="inline-flex min-h-11 items-center text-sm text-primary-text hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">See all live drives</Link>
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">Applied counts here mean applicants the placement cell has explicitly shared with you; private/unshared submissions are not visible.</p>
+      <p className="mt-2 text-xs text-muted-foreground">Applicant counts here show only applicants the placement cell has explicitly shared with you. They are not total college applications; private or unshared submissions are not visible.</p>
       {liveDrives.length?<div className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
         {liveDrives.map(row=><Link key={row.job.id}
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="block min-w-0 break-words py-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
-          {row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<Badge  tone="neutral" className="mt-1">Most shared applicants in this preview</Badge>:null}
+          {liveDriveCounts&&row.job.id===mostSharedLiveId&&liveDrives.length>1&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)>0?<Badge  tone="neutral" className="mt-1">Most shared applicants in this preview</Badge>:null}
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>
           <span className="mt-2 block text-sm font-semibold text-foreground">
-            {liveDriveCounts[row.job.id]?.sharedApplicants??0} shared applicants
+            {liveDriveCounts ? `${liveDriveCounts[row.job.id]?.sharedApplicants??0} shared applicants` : "Shared applicant count unavailable"}
           </span>
-          {(liveDriveCounts[row.job.id]?.sharedApplicants??0)===0?
+          {liveDriveCounts&&(liveDriveCounts[row.job.id]?.sharedApplicants??0)===0?
             <span className="mt-1 block text-xs text-muted-foreground">No shortlisted applicants have been shared yet.</span>:null}
           <span className="mt-2 block text-sm text-primary-text">Open hiring drive →</span>
         </Link>)}
@@ -279,7 +328,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="mt-1 text-xs text-muted-foreground">
         Only employer-owned threads from your selected college. No message bodies appear on Today.
       </p>
-      {conversationSignals?.unread.length?<ul className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
+      {conversationResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Unread conversations unavailable. Use Retry above before drawing conclusions.</p> : conversationSignals?.unread.length?<ul className="mt-4 min-w-0 divide-y divide-[var(--lms-canvas-border)]">
         {conversationSignals.unread.map(row=><li key={row.id}>
           <Link href={row.href} className="block min-h-11 min-w-0 break-words py-3 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
             <span className="block break-words font-semibold text-primary-text">{row.label}</span>
@@ -308,7 +357,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </p>}
       <h3 className="mt-4 font-semibold text-[var(--lms-heading)]">Conversations waiting for a reply</h3>
       <p className="mt-1 text-sm text-body">These conversations were last updated by you. This does not prove a reply is due.</p>
-      {conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
+      {conversationResult.status==="rejected" ? <p role="alert" className="mt-3 text-sm text-muted-foreground">Conversation status unavailable.</p> : conversationSignals?.waiting.length?<ul className="mt-4 grid gap-3 min-[768px]:grid-cols-2">
         {conversationSignals.waiting.map(row=><li key={row.id}>
           <Link href={row.href} className="block rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4 text-sm text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             {row.label} · Last message from you
