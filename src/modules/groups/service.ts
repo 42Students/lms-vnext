@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, electiveOfferings, electiveSlots,
+  learnerProfiles, learnerProgramEnrollments, sectionEnrollments, sections,
   lmsGroupMemberEvents, lmsGroupMembers, lmsGroups, membershipRoles, users,
   projectInstances, projectMembers,
 } from "@/db/schema";
@@ -48,11 +49,11 @@ function actorType(context: RequestContext) {
 function assertScope(context: RequestContext, group: GroupRow, mode: "SELF" | "MANUAL", memberId: string) {
   if (mode === "SELF") {
     if (
-      group.ownerScope !== "COLLEGE" || group.collegeId === null ||
       !hasActiveMembership(context) ||
       !context.membership?.roles.includes("LEARNER") ||
       context.membership.id !== memberId ||
-      context.membership.collegeId !== group.collegeId
+      (group.ownerScope === "COLLEGE" &&
+        (group.collegeId === null || context.membership.collegeId !== group.collegeId))
     ) throw new GroupServiceError("GROUP_SELF_ACCESS_DENIED");
     return;
   }
@@ -70,6 +71,37 @@ function assertSelfWindow(group: GroupRow, now: Date) {
       (group.selfJoinOpenUntil && now > group.selfJoinOpenUntil))
     throw new GroupServiceError("GROUP_SELF_JOIN_CLOSED");
 }
+/** Platform-open groups still require an active, persisted learner identity,
+ * but must not invent a platform-wide membership or bypass the role switcher.
+ */
+async function assertGroupMemberActor(
+ tx:Tx, context:RequestContext, group:GroupRow,
+ mode:"SELF"|"MANUAL", memberId:string,
+) {
+ if(mode!=="SELF" || group.ownerScope!=="PLATFORM") {
+  return assertPersistedGroupActor(tx,context,{
+   collegeId:group.collegeId,mode,memberId,
+  });
+ }
+ const member=context.membership;
+ if(!member || member.id!==memberId ||
+    !member.roles.includes("LEARNER") || context.user.platformStatus!=="ACTIVE")
+  throw new GroupServiceError("GROUP_SELF_ACCESS_DENIED");
+ const [current]=await tx.select({id:collegeMemberships.id})
+  .from(collegeMemberships)
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+   eq(users.platformStatus,"ACTIVE"),eq(users.id,context.user.id)))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(collegeMemberships.id,memberId),
+   eq(collegeMemberships.collegeId,member.collegeId),
+   eq(collegeMemberships.status,"ACTIVE")))
+  .for("share",{of:collegeMemberships}).limit(1);
+ if(!current)throw new GroupServiceError("GROUP_SELF_ACCESS_DENIED");
+}
+
+export const GROUP_SELF_ACCESS_MESSAGE = "Learners only";
+
 async function lockGroup(tx: Tx, groupId: string) {
   const [row] = await tx.select().from(lmsGroups).where(eq(lmsGroups.id, groupId)).for("update");
   if (!row || row.deletedAt || row.status === "ARCHIVED") throw new GroupServiceError("GROUP_NOT_FOUND");
@@ -226,6 +258,7 @@ export async function joinGroup(
   requestedMode: "SELF" | "MANUAL" = "SELF",
   requireStudyGroup = false,
   importSource: "MANUAL" | "CSV" = "MANUAL",
+  importNote?:string,
 ) {
   const groupId = uuid.parse(groupIdInput);
   const memberId = uuid.parse(memberIdInput);
@@ -236,7 +269,7 @@ export async function joinGroup(
     if (requireStudyGroup && (group.kind !== "STUDY_GROUP" || group.ownerScope !== "COLLEGE"))
       throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
     assertScope(context, group, mode, memberId);
-    await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
+    await assertGroupMemberActor(tx,context,group,mode,memberId);
     await assertTargetMembership(tx, group, memberId);
     // An ELECTIVE group without a currently active offering must not be
     // joined directly to bypass the shared slot's max_pick guard.
@@ -291,6 +324,7 @@ export async function joinGroup(
     await emitEvent(tx, {
       groupId, membershipId: memberId, fromState: existing?.state ?? null,
       toState: newState, source: mode === "SELF" ? "SELF" : importSource, context,
+      reason:importNote,
     });
     return saved!;
   });
@@ -365,7 +399,7 @@ export async function leaveGroup(
     if (requireStudyGroup && (group.kind !== "STUDY_GROUP" || group.ownerScope !== "COLLEGE"))
       throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
     assertScope(context, group, mode, memberId);
-    await assertPersistedGroupActor(tx, context, { collegeId: group.collegeId, mode, memberId });
+    await assertGroupMemberActor(tx,context,group,mode,memberId);
     // Legacy configFlag(..., true): self-leave is enabled unless explicitly false.
     if (mode === "SELF" && group.configJson.allowSelfLeave === false)
       throw new GroupServiceError("GROUP_SELF_LEAVE_DISABLED");
@@ -712,4 +746,66 @@ export async function setCollegeStudyMemberLock(
     });
     return updated!;
   });
+}
+
+/** Legacy elective allocation selector adapter. Every learner is processed in
+ * its own atomic group transaction so a failed row does not corrupt neighbors.
+ * The note is audit-only and never grants an unauthorized membership.
+ */
+export async function allocateGroupMembersFromLegacySelection(
+ context:RequestContext,groupIdInput:string,raw:unknown,
+) {
+ const selection=z.strictObject({
+  learnerIds:z.array(uuid).max(500).optional(),
+  rollNumbers:z.array(z.string().trim().min(1).max(128)).max(500).optional(),
+  fromClassId:uuid.optional(),
+  note:z.string().trim().max(500).optional(),
+ }).refine(v=>Boolean(v.learnerIds?.length||v.rollNumbers?.length||v.fromClassId),{
+  message:"Select learners, roll numbers or a class",
+ }).parse(raw);
+ const groupId=uuid.parse(groupIdInput);
+ const [group]=await getDb().select({
+  id:lmsGroups.id,collegeId:lmsGroups.collegeId,
+ }).from(lmsGroups).where(and(eq(lmsGroups.id,groupId),
+  isNull(lmsGroups.deletedAt))).limit(1);
+ if(!group?.collegeId)throw new GroupServiceError("GROUP_NOT_MANAGEABLE");
+ requirePermission(context,"academics.manage",{collegeId:group.collegeId});
+ const all=new Set(selection.learnerIds??[]);
+ if(selection.rollNumbers?.length) {
+  const found=await getDb().select({
+   membershipId:learnerProfiles.membershipId,roll:learnerProfiles.rollNumber,
+  }).from(learnerProfiles)
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProfiles.membershipId))
+   .where(and(eq(collegeMemberships.collegeId,group.collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+    inArray(learnerProfiles.rollNumber,selection.rollNumbers))).limit(501);
+  for(const row of found)all.add(row.membershipId);
+ }
+ if(selection.fromClassId){
+  const found=await getDb().select({
+   membershipId:learnerProgramEnrollments.membershipId,
+  }).from(sectionEnrollments)
+   .innerJoin(learnerProgramEnrollments,eq(
+    learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
+   .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
+   .where(and(eq(sectionEnrollments.sectionId,selection.fromClassId),
+    eq(sections.collegeId,group.collegeId),
+    eq(sectionEnrollments.status,"ACTIVE"),
+    eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(501);
+  for(const row of found)all.add(row.membershipId);
+ }
+ if(all.size>500)throw new GroupServiceError("GROUP_BULK_LIMIT_EXCEEDED");
+ const results:{membershipId:string;status:"IMPORTED"|"FAILED";reason?:string}[]=[];
+ for(const membershipId of all){
+  try{
+   await joinGroup(context,groupId,membershipId,"MANUAL",false,"CSV",
+    selection.note);
+   results.push({membershipId,status:"IMPORTED"});
+  }catch(error){
+   results.push({membershipId,status:"FAILED",
+    reason:error instanceof GroupServiceError?error.code:"GROUP_IMPORT_FAILED"});
+  }
+ }
+ return {requested:all.size,imported:results.filter(row=>row.status==="IMPORTED").length,
+  failed:results.filter(row=>row.status==="FAILED").length,results};
 }

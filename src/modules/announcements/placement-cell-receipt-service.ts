@@ -31,5 +31,19 @@ export async function markPlacementCellNoticeRead(context:RequestContext,rawId:u
  const [receipt]=await db.insert(placementCellAnnouncementReads).values({
   announcementId:id,collegeId:member.collegeId,firstReadByUserId:context.user.id,
  }).onConflictDoNothing().returning({announcementId:placementCellAnnouncementReads.announcementId});
- return {read:true,firstInCollege:Boolean(receipt)};
+ // The earliest reader is stable because the first-in-college receipt uses
+ // an ON CONFLICT DO NOTHING key. Later TPO viewers must not replace it.
+ const [first]=await db.select({
+  firstReadAt:placementCellAnnouncementReads.firstReadAt,
+  firstReadByUserId:placementCellAnnouncementReads.firstReadByUserId,
+ }).from(placementCellAnnouncementReads).where(and(
+  eq(placementCellAnnouncementReads.announcementId,id),
+  eq(placementCellAnnouncementReads.collegeId,member.collegeId),
+ )).limit(1);
+ return {read:true,firstInCollege:Boolean(receipt),
+  firstReadAt:first?.firstReadAt??null,
+  readScope:"PLACEMENT_CELL" as const,
+  currentViewerWasFirstReader:first?.firstReadByUserId===context.user.id,
+  // Per-user bell read state is deliberately separate from cell-wide receipt.
+  personalBellReceiptRecorded:false as const};
 }
