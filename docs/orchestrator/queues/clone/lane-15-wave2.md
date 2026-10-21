@@ -39,7 +39,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_faculty-content-edit-model.ts.md` (edit src/modules/courses/faculty-content-edit-model.ts; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_db06-history-staged.ts.md` (edit src/db/schema/db06-history-staged.ts; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_tpo_tpo-builtin-job-types-editor.tsx.md` (edit src/components/tpo/tpo-builtin-job-types-editor.tsx; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_people_college-faculty-detail-service.ts.md` (edit src/modules/people/college-faculty-detail-service.ts; 7 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_people_college-faculty-detail-service.ts.md` (edit src/modules/people/college-faculty-detail-service.ts; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-external.ts.md` (edit src/db/schema/placement-external.ts; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_electives.ts.md` (edit src/db/schema/electives.ts; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_messaging-receipts.ts.md` (edit src/db/schema/messaging-receipts.ts; 7 findings; best P2)

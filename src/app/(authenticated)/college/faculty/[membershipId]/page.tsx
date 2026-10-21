@@ -14,14 +14,15 @@ import {Button} from "@/components/ui/button";
 
 export default async function CollegeFacultyDetailPage({ params, searchParams }: {
   params: Promise<{ membershipId: string }>;
-  searchParams: Promise<{status?:string|string[];role?:string|string[]}>;
+  searchParams: Promise<{status?:string|string[];role?:string|string[];page?:string|string[];pageSize?:string|string[]}>;
 }) {
   const context = await getCurrentRequestContext();
   const { membershipId } = await params;
   const query=await searchParams;
+  const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
   let data: Awaited<ReturnType<typeof getCollegeFacultyDetail>>;
   try {
-    data = await getCollegeFacultyDetail(context, membershipId, {status:query.status ?? "ALL",role:query.role ?? "ALL"});
+    data = await getCollegeFacultyDetail(context, membershipId, {status:first(query.status)??"ALL",role:first(query.role)??"ALL",page:first(query.page)??1,pageSize:first(query.pageSize)??25});
   } catch (error) {
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
@@ -51,7 +52,10 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
       <h2 className="font-semibold text-foreground">Faculty teaching assignments</h2>
       <p className="mt-3 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·
-        {" "}{data.counts.distinctOfferings} distinct course offerings
+        {" "}{data.counts.distinctOfferings} distinct course offerings ·
+        {" "}{data.counts.distinctCourses} courses ·
+        {" "}{data.counts.distinctClasses} classes ·
+        {" "}{data.counts.distinctPrograms} programs
       </p>
       <p className="mt-2 max-w-2xl text-xs text-muted-foreground">College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure.</p>
       <details className="mt-4 min-w-0 border-y border-border py-2" open={data.filter.status!=="ALL"||data.filter.role!=="ALL"}>
@@ -77,6 +81,12 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             <option value="TA">Teaching Assistant</option>
           </Select>
         </label>
+          <label className="grid min-w-0 gap-1 text-[13px] font-semibold">
+            Rows
+            <Select name="pageSize" defaultValue={String(data.pagination.pageSize)}>
+              {[10,25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
+            </Select>
+          </label>
           <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto">Filter</Button>
         </form>
       </details>
@@ -105,9 +115,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             ]}
           />}
       </div>
-      {data.truncated ? <p className="mt-3 text-sm text-muted-foreground">
-        Showing the first 100 matching assignment rows; summary totals include all assignment states.
-      </p> : null}
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm">
+        <span>{data.pagination.total===0?0:(data.pagination.page-1)*data.pagination.pageSize+1}–{Math.min(data.pagination.total,data.pagination.page*data.pagination.pageSize)} of {data.pagination.total} teaching assignments</span>
+        <nav aria-label="Teaching assignment history pages" className="flex flex-wrap gap-3">
+          {data.pagination.page>1?<Link className="font-semibold text-link underline" href={`?status=${data.filter.status}&role=${data.filter.role}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page-1}`}>Previous</Link>:null}
+          <span>Page {data.pagination.page} of {Math.max(1,data.pagination.totalPages)}</span>
+          {data.pagination.page<data.pagination.totalPages?<Link className="font-semibold text-link underline" href={`?status=${data.filter.status}&role=${data.filter.role}&pageSize=${data.pagination.pageSize}&page=${data.pagination.page+1}`}>Next</Link>:null}
+        </nav>
+      </div>
       <p className="mt-3 text-xs text-muted-foreground">
         Assignment history includes ended deliveries. Hours, session duration and schedule conflicts are not inferred.
       </p>
