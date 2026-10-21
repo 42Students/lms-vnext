@@ -98,14 +98,14 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
   {opened?<div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Course / Lesson
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / Lesson
     <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
      className="min-h-11 w-full md:min-h-9">
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}
      </option>)}
     </Select></label>
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Audience
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
     <Select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
      className="min-h-11 w-full md:min-h-9">
      <option value="">All currently eligible sections (shared offering)</option>
@@ -113,10 +113,10 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
       {section.sectionName} ({section.sectionCode})
      </option>)}
     </Select></label>
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Title
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
     <Input required maxLength={200} value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Points
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
     <Input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
@@ -126,11 +126,11 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     Draft assignments are hidden until they are published.</p>
    <Disclosure title="Instructions and submission settings" className="min-w-0 border-t border-border py-2 sm:col-span-2" contentClassName="pt-3">
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">Deadline (IST, optional until publishing)
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Deadline (IST, optional until publishing)
     <Input type="datetime-local" value={dueAt} disabled={pending}
      onChange={e=>setDueAt(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
-   <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body sm:col-span-2">Instructions
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 sm:col-span-2 text-[var(--lms-neutral-400)]">Instructions
     <Textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="min-h-24 w-full"/></label>

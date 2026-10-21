@@ -106,13 +106,13 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
         <form method="get"
           action={isAssignment ? "/college/assignments" : "/college/quizzes"}
           className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)] [&>label]:min-w-[min(100%,13rem)]">
-          <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-52 flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Search title
             <Input name="q" type="search" maxLength={100}
               defaultValue={data.query.q} placeholder="Assessment title"
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
@@ -126,22 +126,22 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
           <details open={Boolean((data.query.scope && data.query.scope !== "ALL") || data.query.courseCode || data.query.cohortCode || data.query.programCode || data.query.periodCode || (data.query.duePresence && data.query.duePresence !== "ALL") || (data.query.dueWindow && data.query.dueWindow !== "ALL") || (!isAssignment && data.query.results !== "ALL"))} className="min-w-0 basis-full">
             <summary className="flex min-h-11 cursor-pointer items-center text-[var(--lms-font-base)] font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assessment directory filters</summary>
             <div className="mt-[var(--lms-space-3)] flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Exact course code
             <Input name="courseCode" type="search" maxLength={64} defaultValue={data.query.courseCode??""}
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Batch / cohort code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
               className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode??""}
               className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
               className="min-h-11 md:min-h-9">
@@ -149,7 +149,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               <option value="SECTION">Section-specific</option>
             </Select>
           </label>
-          {!isAssignment?<label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          {!isAssignment?<label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Quiz results
             <Select name="results" defaultValue={data.query.results}
               className="min-h-11 md:min-h-9">
@@ -157,7 +157,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               <option value="HIDDEN">Results hidden</option>
             </Select>
           </label>:null}
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Due-date configuration
             <Select name="duePresence" defaultValue={data.query.duePresence}
               className="min-h-11 md:min-h-9">
@@ -165,7 +165,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               <option value="UNSCHEDULED">No deadline</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Deadline window
             <Select name="dueWindow" defaultValue={data.query.dueWindow}
               className="min-h-11 md:min-h-9">
@@ -173,7 +173,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
               <option value="FUTURE">Deadline upcoming</option>
             </Select>
           </label>
-          <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
+          <label className="grid min-w-40 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Academic period code
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode??""}
               className="min-h-11 md:min-h-9"/>

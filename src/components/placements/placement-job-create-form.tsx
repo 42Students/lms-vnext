@@ -786,7 +786,7 @@ export function PlacementJobCreateForm({
 
           {companyMode === "EXISTING" ? (
             <div className="space-y-3">
-              <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
                 Find employer by name or website domain
                 <Input type="search" value={companySearch} maxLength={100}
                   onChange={event=>setCompanySearch(event.target.value)}
@@ -910,7 +910,7 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
-          <label className="sm:col-span-2">
+          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
             </span>
@@ -925,7 +925,7 @@ export function PlacementJobCreateForm({
               placeholder="Software Development Engineer"
             />
           </label>
-          <label className="sm:col-span-2">
+          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Description
             </span>
@@ -1130,13 +1130,13 @@ export function PlacementJobCreateForm({
         <div className="grid gap-4 pt-4 sm:grid-cols-2">
           <fieldset className="sm:col-span-2 grid gap-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
             <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
-            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] leading-4 font-semibold">Host college
+            <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Host college
               <Input name="poolHostCollege" maxLength={160} className={inputClass} />
             </label>
-            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] leading-4 font-semibold">Reporting time (IST)
+            <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Reporting time (IST)
               <Input name="poolReportingTime" type="datetime-local" className={inputClass} />
             </label>
-            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] leading-4 font-semibold">Travel instructions
+            <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Travel instructions
               <Textarea name="poolTravelNote" maxLength={1000} rows={2} className={inputClass} />
             </label>
             <p className="text-xs text-muted-foreground">Pool logistics are informational and do not create a round, venue booking or student travel authorization.</p>
@@ -1146,47 +1146,47 @@ export function PlacementJobCreateForm({
             <label className="flex min-h-11 min-w-0 items-center gap-2 break-words py-2 text-sm">
               <Checkbox name="studentsRegisterSeparately" /> Students also register on the company's portal
             </label>
-            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] leading-4 font-semibold">Portal name
+            <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Portal name
               <Input name="portalName" maxLength={160} className={inputClass} />
             </label>
-            <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] leading-4 font-semibold">Portal link (HTTPS)
+            <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Portal link (HTTPS)
               <Input name="portalUrl" type="url" maxLength={2000} placeholder="https://..." className={inputClass} />
             </label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
           </fieldset>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4">Skills the company wants (up to 30, comma-separated; 50 characters each)
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Skills the company wants (up to 30, comma-separated; 50 characters each)
             <Textarea name="skillsWanted" maxLength={1590} rows={2} className={inputClass} />
             <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4">Responsibilities
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
             <Textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Assessment URL
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment URL
             <Input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Assessment deadline (IST)
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
             <Textarea name="importantDates" rows={3} className={inputClass}/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Preferred degree
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred degree
             <Input name="preferredDegree" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Specialization
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Specialization
             <Input name="preferredSpecialization" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Graduation year
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Graduation year
             <Input name="preferredGraduationYear" type="number" min={1990} max={2050} className={inputClass}/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Minimum GPA (informational)
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Minimum GPA (informational)
             <Input name="preferredMinimumGpa" type="number" min={0} max={10} step="0.01" className={inputClass}/>
           </label>
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Preferred city
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred city
             <Input name="preferredCity" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Custom eligibility rules (up to 20; one Label | Value per line; informational)
             <Textarea name="customEligibilityRules" rows={3} className={inputClass}/>
           </label>
@@ -1203,7 +1203,7 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid min-w-0 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)]">
-          <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold leading-4">Department · Target Audience
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Department · Target Audience
             <Select className={inputClass} value={departmentFilter} onChange={event=>{
               setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
               setSelectedCohortIds([]);setSelectedSectionIds([]);
@@ -1328,7 +1328,7 @@ export function PlacementJobCreateForm({
               {selectedSectionIds.length>=100?<p className="text-sm text-muted-foreground">Maximum 100 classes selected. Deselect a class to choose another.</p>:null}
             </div>
           </fieldset>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Eligibility preset
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Eligibility preset
             <Select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
               <option value="OPEN">Open to all</option>
               <option value="CGPA_6">CGPA 6.0+</option>
@@ -1384,7 +1384,7 @@ export function PlacementJobCreateForm({
               </label>
             ),
           )}
-          <label className="sm:col-span-2">
+          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Passing years
             </span>
@@ -1398,7 +1398,7 @@ export function PlacementJobCreateForm({
             <Checkbox name="requireVerifiedEvidence" className="h-4 w-4 accent-primary"/>
             Only students whose marks are verified
           </label>
-          <label className="sm:col-span-2">
+          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Missing evidence
             </span>
@@ -1421,7 +1421,7 @@ export function PlacementJobCreateForm({
 
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <h2 className="font-semibold text-foreground">Interview rounds</h2>
-        <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+        <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
           Round template
           <Select name="roundPreset" value={roundPreset}
             onChange={event=>{

@@ -689,7 +689,7 @@ export function FacultyLessonAuthoring({
             {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
             {success ? <Alert tone="success" className="mb-4">{success}</Alert> : null}
             <div className="grid min-w-0 gap-4 md:grid-cols-2">
-              <label className="block">
+              <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 <FieldLabel>
                   Title
                 </FieldLabel>
@@ -706,14 +706,14 @@ export function FacultyLessonAuthoring({
               </label>
 
               {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
-                <label className="block min-w-0">
+                <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   <FieldLabel>Points</FieldLabel>
                   <Input type="number" min={0} max={1000} value={contentPoints}
                     onChange={event=>setContentPoints(event.target.value)} required/>
                 </label>:null}
 
               {mode === "YOUTUBE" ? (
-                <label className="block">
+                <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   <FieldLabel>
                     Actual video duration (seconds)
                   </FieldLabel>
@@ -733,7 +733,7 @@ export function FacultyLessonAuthoring({
               ) : null}
 
               {mode === "ASSIGNMENT" ? (
-                <label className="block">
+                <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   <FieldLabel>
                     Maximum points
                   </FieldLabel>
@@ -753,7 +753,7 @@ export function FacultyLessonAuthoring({
               ) : null}
 
               {mode === "QUIZ" ? (
-                <label className="block">
+                <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   <FieldLabel>
                     Maximum attempts
                   </FieldLabel>
@@ -776,7 +776,7 @@ export function FacultyLessonAuthoring({
             {mode === "RESOURCE" ||
             mode === "YOUTUBE" ||
             mode === "LIVE_CLASS" ? (
-              <label className="mt-4 block min-w-0">
+              <label className="mt-4 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 <FieldLabel>
                   {mode === "YOUTUBE"
                     ? "YouTube URL"
@@ -824,7 +824,7 @@ export function FacultyLessonAuthoring({
 
             {mode === "ASSIGNMENT" ||
             mode === "QUIZ" ? (
-              <label className="mt-4 block min-w-0">
+              <label className="mt-4 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 <FieldLabel>
                   Due date (IST, required before publishing)
                 </FieldLabel>
@@ -845,7 +845,7 @@ export function FacultyLessonAuthoring({
               <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 {mode === "ASSIGNMENT" || mode === "QUIZ" ? "Description (optional)" : "Notes (optional)"}
               </summary>
-            <label className="block min-w-0 pt-2">
+            <label className="block min-w-0 pt-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <FieldLabel>
                 {mode === "ASSIGNMENT" ||
                 mode === "QUIZ"
@@ -911,7 +911,7 @@ export function FacultyLessonAuthoring({
                         ) : null}
                       </div>
 
-                      <label className="mt-3 block">
+                      <label className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                         <FieldLabel>
                           Prompt
                         </FieldLabel>
@@ -938,7 +938,7 @@ export function FacultyLessonAuthoring({
                       </label>
 
                       <div className="mt-3 grid gap-3 md:grid-cols-2">
-                        <label className="block">
+                        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                           <FieldLabel>
                             Answer type
                           </FieldLabel>
@@ -985,7 +985,7 @@ export function FacultyLessonAuthoring({
                             </option>
                           </Select>
                         </label>
-                        <label className="block">
+                        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                           <FieldLabel>
                             Points
                           </FieldLabel>

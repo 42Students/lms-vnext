@@ -460,7 +460,7 @@ export function PlacementRoleOptions({
                 </option>
               </Select>
             </label>
-            <label className="lg:col-span-2">
+            <label className="lg:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <span className="mb-1 block text-xs font-semibold text-body">
                 Locations
               </span>

@@ -38,29 +38,29 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      <form method="get" className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-5">
     <input type="hidden" name="seasonId" value={selectedSeasonId??""}/>
     <input type="hidden" name="jobId" value={selectedJobId??""}/>
-    <label className="grid gap-1 text-sm">Department
-     <Select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
+     <Select name="departmentId" defaultValue={q.departmentId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-[var(--lms-font-base)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
       <option value="">All departments</option>
       {data.filters.departments.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-sm">Program
-     <Select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+     <Select name="programId" defaultValue={q.programId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-[var(--lms-font-base)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
       <option value="">All programs</option>
       {data.filters.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-sm">Batch
-     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+     <Select name="cohortId" defaultValue={q.cohortId??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-[var(--lms-font-base)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm">
       <option value="">All batches</option>
       {data.filters.cohorts.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
      </Select>
     </label>
-    <label className="grid gap-1 text-sm">Applied from
-     <Input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
+     <Input type="date" name="from" defaultValue={q.from??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-[var(--lms-font-base)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
     </label>
-    <label className="grid gap-1 text-sm">Applied to
-     <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied to
+     <Input type="date" name="to" defaultValue={q.to??""} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-[var(--lms-font-base)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 sm:text-sm"/>
     </label>
     <div className="flex min-w-0 flex-col items-stretch gap-2 md:col-span-2 md:flex-row md:items-center min-[992px]:col-span-5">
      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>

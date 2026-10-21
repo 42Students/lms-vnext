@@ -477,10 +477,10 @@ export function FacultyQuizQuestionEditor({
                     ) : null}
                   </div>
 
-                  <label className="mt-3 block min-w-0 text-[13px] font-semibold leading-4 text-body">
+                  <label className="mt-3 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Prompt
                     <Textarea
-                      className="mt-1.5"
+                      className="mt-[6px]"
                       value={question.prompt}
                       onChange={(event) =>
                         patchQuestion(
@@ -497,10 +497,10 @@ export function FacultyQuizQuestionEditor({
                   </label>
 
                   <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-[minmax(0,1fr)_8rem]">
-                    <label className="text-[13px] font-semibold leading-4 text-body">
+                    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                       Question type
                       <Select
-                        className="mt-1.5"
+                        className="mt-[6px]"
                         value={
                           question.type
                         }
@@ -520,10 +520,10 @@ export function FacultyQuizQuestionEditor({
                         </option>
                       </Select>
                     </label>
-                    <label className="text-[13px] font-semibold leading-4 text-body">
+                    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                       Points
                       <Input
-                        className="mt-1.5"
+                        className="mt-[6px]"
                         type="number"
                         min={1}
                         max={1000}

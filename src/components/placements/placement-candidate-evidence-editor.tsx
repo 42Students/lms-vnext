@@ -237,7 +237,7 @@ export function PlacementCandidateEvidenceEditor({
     ["passingYear", "Passing year", evidence?.passingYear, "1", "2200"],
   ] as const;
   const renderEvidenceField = ([name,label,value,step,max]: typeof evidenceFields[number]) => (
-    <label key={name} className="min-w-0">
+    <label key={name} className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold text-body">{label}</span>
       <Input className="min-h-11 w-full md:min-h-9" name={name} type="number" min={0}
         max={max} step={step} defaultValue={value==null?"":String(value)} />

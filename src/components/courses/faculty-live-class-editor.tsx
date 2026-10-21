@@ -110,7 +110,7 @@ export function FacultyLiveClassEditor({
         </p>
       </div>
       <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Action
           <Select value={action} disabled={pending}
             onChange={event => changeAction(event.target.value as typeof action)}>
@@ -120,7 +120,7 @@ export function FacultyLiveClassEditor({
           </Select>
         </label>
         {action === "CREATE" ? (
-          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Lesson
             <Select value={lessonId} disabled={pending || !choices.length}
               onChange={event => { setLessonId(event.target.value); setError(null); }}>
@@ -131,7 +131,7 @@ export function FacultyLiveClassEditor({
             </Select>
           </label>
         ) : (
-          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Published session
             <Select value={selectedId} disabled={pending || !sessions.length}
               onChange={event => preloadSession(event.target.value)}>
@@ -144,12 +144,12 @@ export function FacultyLiveClassEditor({
         )}
         {action !== "CANCEL" ? (
           <>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Title
               <Input value={title} maxLength={160} required disabled={pending}
                 onChange={event => { setTitle(event.target.value); setError(null); }} />
             </label>
-            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-5 text-body">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               HTTPS meeting link
               <Input type="url" value={meetingUrl} required disabled={pending}
                 placeholder="https://..."

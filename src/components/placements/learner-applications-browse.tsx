@@ -545,7 +545,7 @@ export function LearnerApplicationsBrowse({
             <p className="break-words text-sm text-body">
               {withdrawTarget.companyName} · {withdrawTarget.jobTitle}
             </p>
-            <label className="block text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+            <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Reason for withdrawal <span className="font-normal text-muted-foreground">(required)</span>
               <Textarea
                 value={withdrawReason}

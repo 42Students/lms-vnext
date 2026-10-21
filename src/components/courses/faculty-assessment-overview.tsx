@@ -100,7 +100,7 @@ export function FacultyAssessmentOverview({
         </ul>
       </Disclosure>
       <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">
-        <label className="text-[13px] font-semibold leading-4 text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Course / Section
           <Select
             value={courseId}
@@ -118,7 +118,7 @@ export function FacultyAssessmentOverview({
             ))}
           </Select>
         </label>
-        <label className="text-[13px] font-semibold leading-4 text-body">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select
             value={status}
@@ -135,10 +135,10 @@ export function FacultyAssessmentOverview({
             <option value="ARCHIVED">Archived</option>
           </Select>
         </label>
-        <label className="min-w-0 text-[13px] font-semibold leading-4 text-body sm:col-span-2 lg:col-span-1">
+        <label className="min-w-0 text-[13px] font-semibold leading-4 sm:col-span-2 lg:col-span-1 text-[var(--lms-neutral-400)]">
           Search assessments
           <Input
-            className="mt-1.5"
+            className="mt-[6px]"
             aria-label="Search assessments"
             placeholder="Title, lesson, Course or Section"
             value={search}
