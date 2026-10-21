@@ -34,8 +34,9 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   if(typeof input.collegeId!=="string"||
     input.collegeId!==context.adminScope?.collegeId)
     throw new Error("Foreign college search is not allowed");
-  delete input.collegeId;
  }
+ // A missing optional collegeId is still an unknown property to strict Zod.
+ delete input.collegeId;
  const query=superAdminReadQuerySchema.parse(input),
   selected=requireSuperAdminSelectedCollege(context,"people.manage"),db=getDb();
  const enrollmentFilter=role==="LEARNER"&&(query.programId||query.cohortId||query.departmentId||query.sectionId)
