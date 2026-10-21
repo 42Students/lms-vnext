@@ -40,7 +40,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
     <PageHeader title="Create project workspace"
       description="Every workspace starts from a template — pick one below." />
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."
-      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Project templates</Link>}/> :
+      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Project templates</Link>}/> :
       <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </div>;
 }

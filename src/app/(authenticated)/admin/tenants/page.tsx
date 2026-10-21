@@ -32,7 +32,7 @@ export default async function TenantDirectory({searchParams}:{
  if(!parsed) return <div className="min-w-0 space-y-4">
   <PageHeader title="Tenant Setup" />
   <ErrorState title="Invalid tenant filters" description="Search, organization or page is invalid."
-   action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+   action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
  </div>;
  let data:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDirectory>>;
  try{
@@ -44,7 +44,7 @@ export default async function TenantDirectory({searchParams}:{
    <PageHeader title="Tenant Setup"/>
    <ErrorState title="Tenant directory unavailable"
     description="Colleges and organizations could not be loaded. Try again with the same filters."
-    action={<Link href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry tenant directory</Link>}/>
+    action={<Link href={tenantLifecycleHref(parsed)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry tenant directory</Link>}/>
   </div>;
  }
  const url=(page:number)=>tenantLifecycleHref({...data.query,page});
@@ -90,7 +90,7 @@ export default async function TenantDirectory({searchParams}:{
     columns={[
       {key:"college",header:"College",mobilePriority:"primary",cell:tenant=><>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-primary-text underline md:min-h-9 underline-offset-4 hover:text-primary-hover active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          className="inline-flex min-h-11 min-w-0 items-center break-words font-semibold text-primary-text underline md:min-h-9 underline-offset-4 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           {tenant.name}
         </Link>
         <span className="mt-1 block break-all text-xs text-muted-foreground">{tenant.code}</span>
@@ -108,7 +108,7 @@ export default async function TenantDirectory({searchParams}:{
           className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Tenant details →</Link>},
     ]}
     empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."
-      action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>}
+      action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>}
   />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={url} label="Tenant pages" />
  </div>;
