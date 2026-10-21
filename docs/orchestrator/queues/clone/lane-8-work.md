@@ -32,7 +32,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_hr_hr-drive-draft-form.tsx.md` (edit src/components/hr/hr-drive-draft-form.tsx; 16 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_app_page.tsx.md` (edit src/app/page.tsx; 15 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_academics-actions.tsx.md` (edit src/components/academics/academics-actions.tsx; 14 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-cohort-mutation-model.ts.md` (edit src/modules/academics/college-cohort-mutation-model.ts; 14 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-cohort-mutation-model.ts.md` (edit src/modules/academics/college-cohort-mutation-model.ts; 14 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-batch-promotion-execute.ts.md` (edit src/modules/academics/college-batch-promotion-execute.ts; 14 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_app_authenticated_hr_drives_page.tsx.md` (edit src/app/(authenticated)/hr/drives/page.tsx; 13 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/NEW_docs_audit_gap2_lane-6_l12-u011-recruiter-notification-service.md.md` (new; 13 findings; best P1)
