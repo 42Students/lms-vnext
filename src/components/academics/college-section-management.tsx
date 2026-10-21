@@ -49,10 +49,10 @@ export function CollegeClassCreate({ cohorts, periods,
   const [cohortId, setCohortId] = useState("");
   const [programId,setProgramId]=useState("");
   const [programSearch,setProgramSearch]=useState("");
-  const uniquePrograms=[...new Map(cohorts.map(cohort=>[cohort.programId,{id:cohort.programId,name:cohort.programName}])).values()];
-  const visiblePrograms=uniquePrograms.filter(program=>program.name.toLowerCase().includes(programSearch.toLowerCase()));
+  const uniquePrograms=[...new Map(cohorts.map(cohort=>[cohort.programId,{id:cohort.programId,name:cohort.programName}])).values()]
+    .filter(program=>program.name.toLowerCase().includes(programSearch.trim().toLowerCase()));
   const filteredCohorts=cohorts.filter(cohort=>!programId||cohort.programId===programId);
-  const [academicPeriodId, setAcademicPeriodId] = useState("");
+  const [academicPeriodId, setAcademicPeriodId] = useState(periods.length === 1 ? periods[0]!.id : "");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [capacity, setCapacity] = useState("60");
@@ -98,12 +98,12 @@ export function CollegeClassCreate({ cohorts, periods,
          description:"Next, register or move students into this section."});
         router.refresh();
       } catch (error) {
-        if (error instanceof FriendlyFetchError && Object.keys(error.fieldErrors).length) {
-          setFieldErrors(error.fieldErrors);
-          const firstField = Object.keys(error.fieldErrors)[0];
-          formRef.current?.querySelector<HTMLElement>('[name="'+(firstField==="name"?"className":firstField)+'"]')?.focus();
-        }
-        setNotice(academicSetupErrorMessage(error, "Class creation failed."));
+        const message = academicSetupErrorMessage(error, "Class creation failed.");
+        setNotice(message);
+        if (/capacity|maximum|minimum/i.test(message)) setFieldErrors({ capacity: message });
+        else if (/batch|cohort/i.test(message)) setFieldErrors({ cohortId: message });
+        else if (/period/i.test(message)) setFieldErrors({ academicPeriodId: message });
+        else if (/name|section/i.test(message)) setFieldErrors({ name: message });
       }
     });
   }
@@ -113,21 +113,20 @@ export function CollegeClassCreate({ cohorts, periods,
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {!cohorts.length
-          ? "No planned or active batches in this college. Create a batch first."
+          ? <>No planned or active batches in this college. <Link href="/college/academics" className="font-semibold underline">Set up programs and batches</Link> first.</>
           : <>No usable academic periods in this college. Create a period first.{" "}
             <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
       : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-          <Input type="search" value={programSearch} onChange={event=>setProgramSearch(event.target.value)}
-            aria-label="Search programs" placeholder="Search programs" className="min-h-9" />
+          <Input type="search" aria-label="Search programs" placeholder="Search programs" value={programSearch} onChange={event=>setProgramSearch(event.target.value)} className="min-h-9 w-full" />
           <Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
            <option value="">Select program</option>
-           {visiblePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
+           {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
-          {fieldErrors.programId ? <span role="alert" className="text-xs text-error">{fieldErrors.programId}</span> : null}
+          {fieldErrors.programId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.programId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors.cohortId)} value={cohortId} onChange={event => setCohortId(event.target.value)}
@@ -137,7 +136,7 @@ export function CollegeClassCreate({ cohorts, periods,
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </Select>
-          {fieldErrors.cohortId ? <span role="alert" className="text-xs text-error">{fieldErrors.cohortId}</span> : null}
+          {fieldErrors.cohortId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.cohortId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
           <Select required name="academicPeriodId" aria-invalid={Boolean(fieldErrors.academicPeriodId)} value={academicPeriodId}
@@ -148,28 +147,28 @@ export function CollegeClassCreate({ cohorts, periods,
               {p.name} ({p.code})
             </option>)}
           </Select>
-          {fieldErrors.academicPeriodId ? <span role="alert" className="text-xs text-error">{fieldErrors.academicPeriodId}</span> : null}
+          {fieldErrors.academicPeriodId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.academicPeriodId}</span> : null}
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
           <Input required name="className" placeholder="e.g. CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors.name)} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-          {fieldErrors.name ? <span role="alert" className="text-xs text-error">{fieldErrors.name}</span> : null}
+          {fieldErrors.name ? <span role="alert" className="text-xs text-red-700">{fieldErrors.name}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
           <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum students (1–200)
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
           <Input required name="capacity" aria-invalid={Boolean(fieldErrors.capacity)} type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
-          {fieldErrors.capacity ? <span role="alert" className="text-xs text-error">{fieldErrors.capacity}</span> : null}
+          {fieldErrors.capacity ? <span role="alert" className="text-xs text-red-700">{fieldErrors.capacity}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
           <Input name="minSize" aria-invalid={Boolean(fieldErrors.minSize)} type="number" min={0} max={200} step={1} value={minSize}
             onChange={event => setMinSize(event.target.value)} className="min-h-11 w-full md:min-h-9" />
-          {fieldErrors.minSize ? <span role="alert" className="text-xs text-error">{fieldErrors.minSize}</span> : null}
+          {fieldErrors.minSize ? <span role="alert" className="text-xs text-red-700">{fieldErrors.minSize}</span> : null}
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
@@ -182,7 +181,7 @@ export function CollegeClassCreate({ cohorts, periods,
           </Button>
         </div>
       </form>}
-    {notice ? <p role={Object.keys(fieldErrors).length?"alert":"status"} className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body">{notice}</p> : null}
+    {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body">{notice}</p> : null}
     <p className="mt-2 text-xs text-muted-foreground">
       The server validates that the period belongs to the batch timeline and this college.
     </p>
@@ -236,8 +235,8 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false); setDiscardConfirm(false);
-        setNotice('Updated class “'+row.name+'”.');
-        showToast({tone:"success",title:'Updated class “'+row.name+'”.'});
+        setNotice('Updated class “'+name+'”.');
+        showToast({tone:"success",title:'Updated class “'+name+'”.'});
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Failed to update class."));
@@ -248,11 +247,11 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   return <div className="min-w-0">
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      className="min-h-11 w-full sm:w-auto md:min-h-9" aria-label={"Edit class “"+row.name+"”"}>
+      className="min-h-11 w-full sm:w-auto md:min-h-9" aria-label={"Edit class "+row.name}>
       Edit
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
-      title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={!changed}>
+      title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={false}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2">

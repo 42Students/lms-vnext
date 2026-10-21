@@ -4,14 +4,9 @@ const uuid = z.string().uuid();
 const name = z.string().trim().min(1, "Enter the class or section name").max(255);
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid class code");
-const capacity = z.number().int("Maximum must be a whole number from 1 to 200")
-  .min(1, "Maximum must be a whole number from 1 to 200")
-  .max(200, "Maximum must be a whole number from 1 to 200").nullable();
+const capacity = z.number().int("Maximum must be a whole number from 1 to 200.").min(1, "Maximum must be a whole number from 1 to 200.").max(200, "Maximum must be a whole number from 1 to 200.").nullable();
 const minSize = z.number().int().min(0).max(200).nullable().optional();
-const creationCapacity = z.number()
-  .int("Maximum must be a whole number from 1 to 200")
-  .min(1, "Maximum must be a whole number from 1 to 200")
-  .max(200, "Maximum must be a whole number from 1 to 200");
+const creationCapacity=z.number().int("Maximum must be a whole number from 1 to 200.").min(1,"Maximum must be a whole number from 1 to 200.").max(200,"Maximum must be a whole number from 1 to 200.");
 const description = z.string().trim().max(2000).nullable().optional();
 
 export const collegeSectionIdSchema = uuid;
@@ -25,7 +20,7 @@ export const createCollegeSectionSchema = z.object({
   description,
 }).strict().superRefine((input, ctx) => {
   if (input.minSize != null && input.minSize > input.capacity) {
-    ctx.addIssue({ code: "custom", path: ["minSize"], message: "Maximum cannot be less than minimum" });
+    ctx.addIssue({ code: "custom", path: ["capacity"], message: "Maximum students cannot be below minimum students." });
   }
 });
 
@@ -40,7 +35,7 @@ export const updateCollegeSectionSchema = z.object({
   confirm: z.literal(true),
 }).strict().superRefine((input, ctx) => {
   if (input.minSize != null && input.capacity != null && input.minSize > input.capacity) {
-    ctx.addIssue({ code: "custom", path: ["minSize"], message: "Minimum students cannot exceed capacity." });
+    ctx.addIssue({ code: "custom", path: ["capacity"], message: "Maximum students cannot be below minimum students." });
   }
 });
 
