@@ -77,7 +77,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [show,setShow]=useState(false);const [roundId,setRoundId]=useState(rounds[0]?.id??"");
  const [applicationId,setApplicationId]=useState(candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
- const [start,setStart]=useState("");const [duration,setDuration]=useState(60);
+ const [date,setDate]=useState(""),[time,setTime]=useState("");
+ const start=date&&time?date+"T"+time:"";
+ const validFiveMinuteSlot=/^\d{2}:(?:00|05|10|15|20|25|30|35|40|45|50|55)$/.test(time);
+ const [duration,setDuration]=useState(60);
  const [mode,setMode]=useState<"ON_CAMPUS"|"VIRTUAL">("VIRTUAL");
  const [venue,setVenue]=useState("");const [meetingUrl,setMeetingUrl]=useState("");
  const [interviewer,setInterviewer]=useState("");const [reason,setReason]=useState("");
@@ -149,7 +152,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  function open(row?:Appointment){
   setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
   setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
-  setStart(row?toLocal(row.scheduledAt):"");setDuration(row?.durationMinutes??60);
+  const prefill=row?toLocal(row.scheduledAt):"";
+  setDate(prefill.slice(0,10));setTime(prefill.slice(11,16));
+  setDuration(row?.durationMinutes??60);
   setMode(row?.mode==="ON_CAMPUS"?"ON_CAMPUS":"VIRTUAL");
   setVenue(row?.venue??"");setMeetingUrl(row?.meetingUrl??"");
   setInterviewer(row?.interviewer??"");setReason("");
@@ -189,7 +194,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   finally{savingLock.current=false;setBusy(false);}
  }
  async function save(){
-  if(!start||!applicationId||!roundId)return;
+  if(!start||!validFiveMinuteSlot||!applicationId||!roundId){
+   setError("Choose a date and a time in IST (5-minute increments).");
+   return;
+  }
   if(roundDescription.trim().length<10){
    setFieldErrors({roundDescription:"Please describe what this round is about"});
    setError("Please describe what this round is about");return;
@@ -370,7 +378,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
   <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
-    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!roundId||!applicationId||!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])||roundDescription.trim().length<10||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
+    <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!validFiveMinuteSlot||!roundId||!applicationId||!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])||roundDescription.trim().length<10||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
      {busy?"Saving…":editing?.status==="RESCHEDULE_REQUESTED"?"Apply new slot":editing?"Save changes":"Schedule and notify"}</Button>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
@@ -411,11 +419,20 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {fieldErrors.roundDescription?<span role="alert" className="text-error">{fieldErrors.roundDescription}</span>:null}
      </label>
     </div>
-    <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" step={300} required value={start}
-      onChange={e=>{setStart(e.target.value);setDirty(true);}} className="w-full"/></label>
+    <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-1">
+     <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      Date (IST)
+      <Input type="date" required disabled={busy} value={date}
+       onChange={e=>{setDate(e.target.value);setDirty(true);setFieldErrors({});}} className="w-full"/>
+     </label>
+     <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      Time (IST, 5-minute increments)
+      <Input type="time" step={300} required disabled={busy} value={time}
+       onChange={e=>{setTime(e.target.value);setDirty(true);setFieldErrors({});}} className="w-full"/>
+      {time&&!validFiveMinuteSlot?<span role="alert" className="text-xs text-error">Choose a time in 5-minute increments.</span>:null}
+     </label>
      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)
-      <Select value={String(duration)} onChange={e=>{setDuration(Number(e.target.value));setDirty(true);}} className="w-full">
+      <Select value={String(duration)} disabled={busy} onChange={e=>{setDuration(Number(e.target.value));setDirty(true);}} className="w-full">
         {!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])?<option value={duration}>{duration} minutes (existing)</option>:null}
         {INTERVIEW_DURATIONS.map(value=><option key={value} value={value}>{value} minutes</option>)}
       </Select></label>
