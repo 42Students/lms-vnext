@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {desc,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {projectTemplateLegacyEvents} from "@/db/schema";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -95,21 +98,22 @@ export async function SuperAdminTemplateSubviewPage({
   >;
 
   let historyPaging: ReturnType<typeof templateVersionHistoryPage> | null = null;
+  let historyLoadFailed=false;
   if (section === "versions" && !templateVersionHistoryQuerySchema.safeParse(historyQuery).success) {
     return <ErrorState title="Invalid version page" description="Choose a valid positive page number."
       action={<Link href={templateVersionHistoryHref(templateId, 1)}>First page</Link>} />;
   }
   try {
-    if (section === "versions") {
-      const history = await getSuperAdminTemplateVersionHistory(context, templateId, historyQuery);
-      detail = history.detail;
-      historyPaging = history.paging;
-    } else detail =
-      await getSuperAdminTemplateSubview(
-        context,
-        templateId,
-        section === "colleges",
-      );
+    detail=await getSuperAdminTemplateSubview(context,templateId,section==="colleges");
+    if(section==="versions"){
+      try{
+        const history=await getSuperAdminTemplateVersionHistory(context,templateId,historyQuery);
+        detail=history.detail;
+        historyPaging=history.paging;
+      }catch{
+        historyLoadFailed=true;
+      }
+    }
   } catch (error) {
     if (
       error instanceof ProjectsServiceError &&
@@ -125,12 +129,27 @@ export async function SuperAdminTemplateSubviewPage({
     return <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <ProjectAdminNav basePath="/admin/projects" active="templates"/>
       <PageHeader title="Template section"/>
-      <ErrorState title="Template section unavailable"
-        description="Template details could not be loaded. No version or college assignment data is shown."
+      <ErrorState title="Failed to load template"
+        description="Template could not be loaded. Review your access and try again."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/"+section}
-          className="font-semibold text-primary-text">Retry template section</Link>}/>
+          className="font-semibold text-primary-text">Retry</Link>}/>
     </div>;
   }
+
+  const legacyEvents = section==="versions" && !historyLoadFailed
+    ? await getDb().select({
+        id:projectTemplateLegacyEvents.id,
+        legacyEventId:projectTemplateLegacyEvents.legacyEventId,
+        legacyTemplateVersion:projectTemplateLegacyEvents.legacyTemplateVersion,
+        actionType:projectTemplateLegacyEvents.actionType,
+        notes:projectTemplateLegacyEvents.notes,
+        changedAt:projectTemplateLegacyEvents.changedAt,
+        snapshot:projectTemplateLegacyEvents.snapshot,
+      }).from(projectTemplateLegacyEvents)
+        .where(eq(projectTemplateLegacyEvents.templateId,templateId))
+        .orderBy(desc(projectTemplateLegacyEvents.changedAt),desc(projectTemplateLegacyEvents.id))
+        .limit(100)
+    : [];
 
   const sectionTitle =
     TEMPLATE_SUBVIEW_TABS.find(
@@ -556,7 +575,11 @@ export async function SuperAdminTemplateSubviewPage({
       ) : null}
 
       {section === "versions" ? (
-        detail.versions.length === 0 ? (
+        historyLoadFailed ? (
+          <ErrorState title="Failed to load version history"
+            description="Template details are available, but the version history could not be loaded."
+            action={<Link href={templateVersionHistoryHref(templateId,1)} className="font-semibold text-primary-text">Retry version history</Link>}/>
+        ) : detail.versions.length === 0 ? (
           <NoItems
             title="No version history"
             description="No version records are available for this template."
@@ -664,6 +687,21 @@ export async function SuperAdminTemplateSubviewPage({
                 </article>
               );
             })}
+            {legacyEvents.length>0?<section aria-label="Legacy template history" className="mt-5 space-y-3">
+              <h3 className="text-[16px] font-semibold">Legacy version events</h3>
+              <p className="text-sm text-muted-foreground">Historic actions retain their original version number, action type and source snapshot. They are not editable vNext blueprint versions.</p>
+              {legacyEvents.map(event=><details key={event.id} className="border-b border-border py-3">
+                <summary className="cursor-pointer font-semibold">
+                  Version {event.legacyTemplateVersion??"—"} · {event.actionType??"Updated"} · {event.changedAt?formatDate(event.changedAt):"Date unavailable"}
+                </summary>
+                <dl className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <DetailField label="Legacy event ID" value={event.legacyEventId??"—"}/>
+                  <DetailField label="Action" value={event.actionType??"Unknown"}/>
+                  <DetailField label="Notes" value={event.notes??"No notes recorded."}/>
+                </dl>
+                {event.snapshot?<pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-all rounded border border-border p-3 text-xs">{JSON.stringify(event.snapshot,null,2)}</pre>:null}
+              </details>)}
+            </section>:null}
             {historyPaging ? <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
               <span className="text-xs text-muted-foreground">25 versions per page</span>
               <Pagination label="Template version pages" page={historyPaging.page}
