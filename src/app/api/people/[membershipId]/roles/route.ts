@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { MEMBERSHIP_ROLE_LABELS, type MembershipRole } from "@/modules/identity/constants";
 import {
   addMembershipRoleWithRuntime,
   listMembershipRolesWithRuntime,
@@ -9,6 +10,13 @@ import {
 } from "@/modules/people/runtime";
 
 export const runtime = "nodejs";
+
+/** Presentation labels accompany the stable machine role values. */
+function roleLabels(roles: readonly string[]) {
+  return roles.map(role => ({
+    role, label: MEMBERSHIP_ROLE_LABELS[role as MembershipRole] ?? role,
+  }));
+}
 
 type RouteContext = {
   params: Promise<{
@@ -45,7 +53,7 @@ export async function GET(
       membershipId,
     );
 
-    return NextResponse.json({ roles });
+    return NextResponse.json({ roles, roleLabels:roleLabels(roles) });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -74,7 +82,7 @@ export async function POST(
       parsedBody.body,
     );
 
-    return NextResponse.json({ roles });
+    return NextResponse.json({ roles, roleLabels:roleLabels(roles) });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -103,7 +111,7 @@ export async function DELETE(
       parsedBody.body,
     );
 
-    return NextResponse.json({ roles });
+    return NextResponse.json({ roles, roleLabels:roleLabels(roles) });
   } catch (error) {
     return apiErrorResponse(error);
   }
