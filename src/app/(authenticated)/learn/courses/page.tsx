@@ -1,5 +1,7 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import Link from "next/link";
+import {redirect} from "next/navigation";
+import {learnerLegacyRouteQuery,resolveLearnerLegacyCourseDelivery} from "@/modules/courses/learner-course-legacy-route-model";
 import {Alert} from "@/components/ui/alert";
 import {
   LearnerCourseList,
@@ -18,8 +20,14 @@ import {
   listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
 
-export default async function LearnerCoursesPage() {
+export default async function LearnerCoursesPage({
+ searchParams,
+}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context = await getCurrentRequestContext();
+  const params=await searchParams;
+  const legacyRequested=Object.keys(params).some(key=>
+   ["legacyCourseId","legacyClassId","legacySemesterCourseId"].includes(key));
+  const rawAlias=legacyRequested?learnerLegacyRouteQuery.safeParse(params):null;
   let directoryError:string|null=null;
   const courses=await listLearnerCourseDeliveries(context,{includeHistorical:true})
    .catch(error=>{
@@ -28,6 +36,29 @@ export default async function LearnerCoursesPage() {
      :"Failed to load courses. Please try again.";
     return [];
    });
+
+  if(legacyRequested){
+    if(!rawAlias?.success||directoryError){
+      return <section className="min-w-0 space-y-4">
+        <PageHeader title="Courses"/>
+        <Alert tone="error" title="Cannot open the old course link">
+          {directoryError??"The old course link needs a valid numeric course ID and optional class/semester-course IDs."}
+          <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">View my courses</Link>
+        </Alert>
+      </section>;
+    }
+    const resolved=resolveLearnerLegacyCourseDelivery(courses,rawAlias.data);
+    if(resolved.kind==="RESOLVED")redirect("/learn/courses/"+encodeURIComponent(resolved.deliveryId));
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="Courses"/>
+      <Alert tone="warning" title="Old course link needs review">
+        {resolved.kind==="AMBIGUOUS"
+         ?"This course appears in more than one enrolled class or semester. Choose the class from the current Courses page."
+         :"No course in your selected college enrollment matches this old link."}
+        <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">Choose a course</Link>
+      </Alert>
+    </section>;
+  }
 
   let displays=new Map<string,{thumbnailUrl:string|null}>();
   try{

@@ -7,6 +7,7 @@ import {
   createTenantDomain,
   deleteTenantDomain,
   editTenantDomainHost,
+  ensureTenantDomainVerificationToken,
   listTenantDomains,
   resolveTenantFromHost,
   previewTenantHostResolution,
@@ -89,4 +90,11 @@ export function previewTenantHostResolutionWithRuntime(
  context:RequestContext,host:string,
 ){
  return previewTenantHostResolution(context,host,drizzleTenantDomainRepository);
+}
+
+/** Post-creation recovery if a legacy domain has no pending challenge. */
+export function ensureTenantDomainVerificationTokenWithRuntime(
+ context:RequestContext,domainId:string,
+){
+ return ensureTenantDomainVerificationToken(context,domainId,drizzleTenantDomainRepository);
 }
