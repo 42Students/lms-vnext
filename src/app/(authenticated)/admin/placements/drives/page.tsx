@@ -10,7 +10,7 @@ import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
-import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
+import { SuperAdminBulkDriveActions,SuperAdminDriveRowStatusAction } from "@/components/placements/super-admin-bulk-drive-actions";
 import { SuperAdminDriveArchive } from "@/components/placements/super-admin-drive-archive";
 import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-drive-duplicate";
 import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-drive-deadline";
@@ -80,17 +80,18 @@ export default async function SuperAdminDrivesPage({searchParams}:{
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
         <Link href={base} className={linkClass}>Open drive</Link>
         <Link href={base+"/applications"} className={linkClass}>View applications</Link>
-        <Link href={base+"/settings"} className={linkClass}>Edit / status</Link>
+        <Link href={base+"/settings"} className={linkClass}>Edit drive</Link>
+        <SuperAdminDriveRowStatusAction jobId={row.job.id} title={row.job.title} status={row.job.status}/>
       </div>
       <details className="min-w-0 w-full border-t border-border pt-2 text-sm">
         <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-          More actions · duplicate, deadline, delete
+          More actions · duplicate, deadline
         </summary>
         <div className="min-w-0 space-y-3 pt-3">
           <SuperAdminDriveDuplicate jobId={row.job.id} title={row.job.title}/>
           {row.job.status==="PUBLISHED"?<SuperAdminDriveDeadline
             jobId={row.job.id} deadline={row.job.applicationDeadline?.toISOString()??null}/>:null}
-          <SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/>
+          <div aria-label="Delete drive"><SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/></div>
         </div>
       </details>
     </div>;
