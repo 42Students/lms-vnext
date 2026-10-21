@@ -77,7 +77,7 @@ export function CollegeFacultyCsvImport(){
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
         <div className="min-w-0 space-y-3 pt-3">
           <p className="break-words font-mono text-xs leading-5">{header}</p>
-          <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents
+          <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;
           setCsv(event.target.value);setReport(null);setConfirmed(false);setError("");

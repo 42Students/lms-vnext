@@ -356,18 +356,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/attendance/faculty-attendance-workspace.tsx`
 - [x] `src/components/attendance/learner-attendance-workspace.tsx`
 - [x] `src/components/auth/login-form.tsx`
-- [ ] `src/components/auth/membership-chooser.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-course-overview.tsx`
-- [ ] `src/components/courses/admin-offering-learning-overview.tsx`
-- [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
+- [x] `src/components/auth/membership-chooser.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/admin-offering-learning-overview.tsx`
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
 - [ ] `src/components/courses/college-assessment-aggregate.tsx`
 - [ ] `src/components/courses/college-content-aggregate.tsx`
 - [ ] `src/components/courses/college-learner-progress-report.module.css`
