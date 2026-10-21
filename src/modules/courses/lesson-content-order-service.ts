@@ -39,6 +39,13 @@ import {
   lessonContentOrderRuntimeEnabled,
 } from "./lesson-content-order-readiness";
 
+/** Legacy lesson_content_class_sequence(content_id,class_id) resolves to
+ * (lessonContentId,deliveryId) only after the historical class ID is mapped
+ * through the verified college, offering and section identity crosswalk.
+ * A group-backed elective class is not itself a courseSectionDelivery.
+ * Current full-order runtime gate remains fail-closed until staged relation
+ * and cross-scope FK migration have been replayed and verified.
+ */
 export async function applyDeliveryContentOrderIfReady<
   T extends {
     id: string;
