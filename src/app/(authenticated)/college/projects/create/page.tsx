@@ -14,7 +14,7 @@ export default async function CollegeCreateProjectPage() {
     <PageHeader title="Create workspace" description="Select a college to continue."/>
     <ErrorState title="No college selected"
       description="Choose a college from the account switcher before creating a workspace."
-      action={<Link href="/college/projects" className="lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to workspaces</Link>}/>
+      action={<Link href="/college/projects" className="md:min-h-9 lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to workspaces</Link>}/>
   </div>;
   const templates=await listAssignedProjectTemplates(context,collegeId);
   return <div className="min-w-0 space-y-5 md:space-y-6">
