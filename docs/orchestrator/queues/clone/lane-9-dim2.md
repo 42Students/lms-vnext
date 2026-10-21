@@ -3,16 +3,16 @@
 300 files (1027 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: variant per legacy (primary #0a7c88 white radius 9 height 36 weight 650 size 14), secondary/ghost/danger, hover, focus-visible, disabled, loading spinner, icon-only size, link colour and underline.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/admin/batches/page.tsx`
-- [ ] `src/app/(authenticated)/admin/classes/page.tsx`
-- [ ] `src/app/(authenticated)/admin/electives/page.tsx`
-- [ ] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/admin/semesters/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/hr/conversations/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/classes/page.tsx`
+- [x] `src/app/(authenticated)/admin/electives/page.tsx`
+- [x] `src/app/(authenticated)/admin/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/admin/semesters/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/hr/conversations/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/announcements/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
