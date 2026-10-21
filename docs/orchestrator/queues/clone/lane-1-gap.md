@@ -65,8 +65,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/auth/handoff.js`
 - [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/campaign-unsubscribe/[token].js`
 - [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/profile.js`
-- [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/college-join/[token].js`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/company-join/[token].js`
+- [x] U027 (FE page) `docs/legacy-source/frontend/src/pages/college-join/[token].js`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/company-join/[token].js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/company-share/[token].js`
 - [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/e2e/superadmin-login.js`
 - [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/learn/profile.js`
