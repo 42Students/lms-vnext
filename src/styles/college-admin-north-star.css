@@ -19,7 +19,7 @@
   input[type="number"], input[type="date"], input[type="tel"],
   input[type="url"], input[type="password"], select, textarea
 ) {
-  border-radius: var(--college-control-radius);
+  border-radius: var(--lms-field-radius);
 }
 .lms-college-portal :is(a, button)[class*="rounded-md"] {
   border-radius: var(--college-control-radius);
