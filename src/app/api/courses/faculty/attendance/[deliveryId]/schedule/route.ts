@@ -15,7 +15,7 @@ export async function POST(request:Request,{params}:{
   try{
     const result=await commandFacultyAttendanceSchedule(
       await getCurrentRequestContext(),await params,await readFacultyAuthoringBody(request));
-    return NextResponse.json({result});
+    return NextResponse.json({result,message:"OK"});
   }catch(error){
     if(error instanceof FacultyAuthoringBodyError){
       const requestId=createRequestId();
