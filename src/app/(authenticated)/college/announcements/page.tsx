@@ -41,7 +41,7 @@ export default async function AnnouncementsPage({
       <section aria-label="Personal college notifications" className="space-y-3 border-t border-border pt-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Your college notifications</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Your college notifications</h2>
             <p className="mt-1 text-sm text-muted-foreground">{collegeNoticeUnreadLabel(ownInbox.unreadCount)}</p>
           </div>
           <Link href={unreadHref} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">

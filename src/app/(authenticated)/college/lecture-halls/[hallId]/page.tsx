@@ -76,7 +76,7 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
           </p> : <ul className="max-h-[40rem] min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)]">{result.sessions.map(item =>
             <li key={item.id} className="min-w-0 py-4">
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-                <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{item.title}</h3>
+                <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{item.title}</h3>
                 {item.hasConflict ? <StatusBadge tone="warning">Potential conflict</StatusBadge> :
                   <StatusBadge tone="neutral">Scheduled</StatusBadge>}
               </div>
