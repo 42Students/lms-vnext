@@ -46,7 +46,9 @@ export function formatAlert(input: {
     "Request ID: " + (input.requestId && /^(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(input.requestId) ? input.requestId : "-"),
     "Count: " + (input.count ?? 1),
     "Affected accounts: " + (input.affectedAccounts===null||input.affectedAccounts===undefined?
-      "Unknown":input.affectedAccounts),
+      "unknown":input.affectedAccounts),
+    ...(input.affectedAccounts===null||input.affectedAccounts===undefined
+      ? ["Blast radius: account identity unavailable; no verified HMAC/account marker."] : []),
     "Message: " + redactAlertText(input.message),
   ].join("\n");
 }
@@ -197,7 +199,8 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
         kind, environment, time: now, event: input.event, path, message,
         requestId: input.requestId, status: input.status, component: input.component,
         count: current ? Number(current.occurrenceCount) + 1 : 1,
-        affectedAccounts: radius?.total??(accountHash?1:null),
+        affectedAccounts:Number(radius?.total??0)>0
+          ? Number(radius!.total) : accountHash?1:null,
       }), { acknowledgeSignatureId: id });
       if (!delivered) {
         // A known signature was counted even if an optional spike/regression
