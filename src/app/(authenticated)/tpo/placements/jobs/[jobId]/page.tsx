@@ -8,6 +8,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
 import { can } from "@/modules/permissions/policy";
 import {tpoDriveTabHref} from "@/modules/placements/tpo-drive-tab-model";
+import {ErrorState} from "@/components/ui/error-state";
 
 export default async function TpoPlacementDrivePage({
   params,
@@ -26,19 +27,29 @@ export default async function TpoPlacementDrivePage({
   const [{ jobId }, query] = await Promise.all([params, searchParams]);
   const openPublish = (Array.isArray(query.publish) ? query.publish[0] : query.publish) === "1";
   // Unknown ids, other colleges' drives and malformed ids all render the same Not Found page.
+  let job:Awaited<ReturnType<typeof getPlacementJob>>;
   try {
-    await getPlacementJob(context, jobId);
+    job=await getPlacementJob(context, jobId);
   } catch (error) {
-    if (
-      error instanceof ZodError ||
-      error instanceof AuthorizationError ||
-      (error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND")
-    ) notFound();
-    throw error;
+    if(error instanceof ZodError||error instanceof AuthorizationError)
+      notFound();
+    if(error instanceof PlacementsServiceError&&error.code==="PLACEMENT_JOB_NOT_FOUND")
+      return <ErrorState title="Drive not found"
+        description="This drive is unavailable for the selected college."
+        action={<Link href="/tpo/placements/jobs" className="text-link underline">Go to Drives</Link>}/>;
+    return <ErrorState title="Could not load drive"
+      description="Please retry loading this drive."
+      action={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)} className="text-link underline">Retry</Link>}/>;
   }
   const tab=Array.isArray(query.tab)?query.tab[0]:query.tab;
-  if(tab&&["applicants","rounds","offers","drive-day","discussion","about"].includes(tab)){
-    redirect(tpoDriveTabHref(jobId,tab));
+  if(tab&&["applicants","rounds","offers","drive-day","discussion","about","overview"].includes(tab)){
+    redirect(tpoDriveTabHref(jobId,tab==="overview"?"about":tab));
+  }
+  // Legacy opens About for requests and drafts, Applicants for live/closed
+  // drives. The explicit publish workflow still stays in this root workspace.
+  if(!openPublish){
+    redirect(tpoDriveTabHref(jobId,
+      job.status==="PUBLISHED"||job.status==="CLOSED"?"applicants":"about"));
   }
   return (
     <div className="min-w-0 space-y-4">
