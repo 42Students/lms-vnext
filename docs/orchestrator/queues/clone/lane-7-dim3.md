@@ -59,12 +59,12 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/projects/project-workspace-readiness.tsx`
 - [x] `src/components/tpo/tpo-job-types-editor.tsx`
 - [x] `src/components/ui/error-state.tsx`
-- [ ] `src/components/tpo/tpo-safe-csv-download.tsx`
-- [ ] `src/components/tpo/tpo-students-selection.tsx`
-- [ ] `src/components/tpo/tpo-team-message-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/ui/alert.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/tpo/tpo-safe-csv-download.tsx`
+- [x] `src/components/tpo/tpo-students-selection.tsx`
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/ui/alert.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
 - [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/page.tsx`
