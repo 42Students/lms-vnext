@@ -37,13 +37,37 @@ function eventText(row:TpoAuditRow){
  const detail=row.detail.trim();
  return [action,detail,subject+": "+row.title].filter(Boolean).join(" · ");
 }
-/** Route known legacy drive URLs to their scoped vNext job detail.
- * The destination rechecks college access and returns 404 when unauthorized.
- */
+/** Legacy audit entities are untrusted metadata, not navigation grants.
+ * Only allow app-internal paths; each destination rechecks its college scope.
+ * Old numeric IDs cannot be inferred as modern tenant-scoped UUIDs. */
 function scopedAuditHref(href:string):string{
- if(!href.startsWith("/tpo/drives/"))return href;
- const id=href.slice("/tpo/drives/".length);
- return /^[a-f0-9-]{36}$/i.test(id)?"/tpo/placements/jobs/"+id:"/tpo/audit";
+ if(!href.startsWith("/")||href.startsWith("//")||href.includes("\\")||
+   /[\x00-\x1f\x7f]/.test(href))return "/tpo/audit";
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const segment=(prefix:string)=>{
+  if(!href.startsWith(prefix))return null;
+  const id=href.slice(prefix.length).split(/[?#/]/,1)[0];
+  return uuid.test(id)?encodeURIComponent(id):"";
+ };
+ const job=segment("/tpo/drives/");
+ if(job!==null)return job?"/tpo/placements/jobs/"+job:"/tpo/placements";
+ const recruiter=segment("/tpo/recruiters/");
+ if(recruiter!==null)return recruiter?"/tpo/recruiters/"+recruiter:"/tpo/recruiters";
+ if(href.startsWith("/tpo/students?")){
+  const params=new URLSearchParams(href.slice("/tpo/students?".length));
+  const id=params.get("student")??"";
+  return uuid.test(id)?"/tpo/students/"+encodeURIComponent(id)+"/history":"/tpo/students";
+ }
+ if(href.startsWith("/tpo/students/")){
+  const student=segment("/tpo/students/");
+  return student?"/tpo/students/"+student+"/history":"/tpo/students";
+ }
+ if(href.startsWith("/tpo/placements/jobs/")){
+  const modern=segment("/tpo/placements/jobs/");
+  return modern?"/tpo/placements/jobs/"+modern:"/tpo/placements";
+ }
+ if(["/tpo/audit","/tpo/students","/tpo/recruiters","/tpo/placements"].includes(href))return href;
+ return "/tpo/audit";
 }
 export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
  const [showAbout,setShowAbout]=useState(false),[showDetail,setShowDetail]=useState(false);
