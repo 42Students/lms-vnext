@@ -243,3 +243,61 @@ export async function executeObservedScheduledJobWithLease<T>(
     throw error;
   }
 }
+
+/**
+ * Additional legacy operational schedules requiring deployment bindings.
+ * They must be registered as external, authenticated workers, not setInterval
+ * timers in Next.js web replicas. Unlike TPO job contracts in
+ * tpo-scheduled-job-registry.ts, these remain unwired source specifications.
+ */
+export const LEGACY_LOG_MONITOR_SCHEDULES = {
+  deployHealth: {
+    cron: "*/5 * * * *", timeZone: "UTC", initialDelayMs: 3 * 60_000,
+    wired: false, description: "Compare rollout deploy health",
+  },
+  cloudLogPoll: {
+    cron: "*/2 * * * *", timeZone: "UTC", initialDelayMs: 60_000,
+    wired: false, description: "Poll Cloud Logging, checkpoint page cursors",
+  },
+  logDigestDaily: {
+    cron: "30 3 * * *", timeZone: "UTC",
+    wired: false, description: "09:00 IST daily log digest",
+  },
+  logDigestWeekly: {
+    cron: "30 3 * * 1", timeZone: "UTC",
+    wired: false, description: "09:00 IST Monday log digest",
+  },
+} as const;
+
+/** Safe legacy fallback for migrated due dates only. Callers should prefer a
+ * canonical persisted date, never reinterpret ambiguous local date strings,
+ * and skip a single malformed content row rather than abort the full batch. */
+export function resolveScheduledContentDueAt(
+  canonicalDueAt: Date | null,
+  legacyDueAt: string | null,
+): Date | null {
+  if (canonicalDueAt instanceof Date &&
+      Number.isFinite(canonicalDueAt.getTime())) return canonicalDueAt;
+  if (!legacyDueAt ||
+      !/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?(?:Z|[+-]\\d{2}:\\d{2})$/.test(legacyDueAt)) return null;
+  const parsed = new Date(legacyDueAt);
+  return Number.isFinite(parsed.getTime()) ? parsed : null;
+}
+
+/** Scheduler boundaries should report failure without terminating request
+ * handling, and simply retry a future tick. This is not permission to ignore
+ * lost leases inside a running worker: those stop all sends immediately. */
+export async function runObservedScheduledTick<T>(
+  store: ScheduledJobLeaseStore,
+  input: { jobName: string; holderId: string; ttlMs: number },
+  work: (guard: ScheduledJobFence) => Promise<T>,
+  observe: (event: ScheduledJobObservation) => void,
+): Promise<ScheduledJobRunResult<T> | { ran: false; reason: "TICK_FAILED" }> {
+  try {
+    return await executeObservedScheduledJobWithLease(store, input, work, observe);
+  } catch {
+    // Errors have already been surfaced by the observer using a safe code.
+    // Cloud Scheduler or a cron operator must separately surface alert state.
+    return { ran: false, reason: "TICK_FAILED" };
+  }
+}
