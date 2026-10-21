@@ -1,4 +1,7 @@
 import "server-only";
+import {eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {departments} from "@/db/schema";
 import {globalTpoRequestsQuerySchema,tpoRequestDateBounds} from "@/modules/placements/tpo-global-requests-model";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -28,8 +31,13 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     search: query.search,
     urgentOnly:query.urgentOnly ?? false,
     jobId:query.jobId,
+    proof:query.proof,branchId:query.branchId,
+    registration:query.registration,afterCollege:query.afterCollege,
     page: query.page,
     pageSize: query.pageSize,
   });
-  return { query, ...result };
+  const branches=await getDb().select({id:departments.id,name:departments.name})
+    .from(departments).where(eq(departments.collegeId,member.collegeId))
+    .orderBy(departments.name);
+  return { query, branches, ...result };
 }
