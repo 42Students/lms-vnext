@@ -112,14 +112,16 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const currentOrder=(row:ResourceRow)=>row.status==="ACTIVE"?
    stableOrder.indexOf(row.id):rows.length+row.sequence;
  return <section aria-label="Project resource directory" className="space-y-3">
-  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Resource counts">
-   {([["Total",rows.length],["Showing",filtered.length],["Links",links],
-     ["Files",files],["Other",other],["Drafts",drafts],["Archived",archive],
-     ["Pinned",pinnedCount]] as const)
-     .map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
+  {/* The admin library editor immediately above owns the legacy headline
+      and four metric chips; duplicating them in the read-only list would
+      produce two different-looking resource library headers. */}
+  {!legacySummary?<div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4" aria-label="Resource counts">
+   {([["Total",rows.length],["Showing",filtered.length],["Links",links],["Files",files],
+      ["Other",other],["Drafts",drafts],["Archived",archive],["Pinned",pinnedCount]] as const)
+      .map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
        <strong>{label}</strong><p className="mt-1 tabular-nums">{value}</p>
-     </div>)}
-  </div>
+      </div>)}
+  </div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
     <label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
