@@ -26,24 +26,29 @@ export function CollegeGroupDetailWrites({
   const [busy,setBusy]=useState(false);
   const [error,setError]=useState("");
   const [notice,setNotice]=useState("");
-  const [confirmation,setConfirmation]=useState<{body:Record<string,unknown>;prompt:string}|null>(null);
+  const [confirmation,setConfirmation]=useState<{body:Record<string,unknown>;prompt:string;kind:"GROUP"|"APPLY"|"CLEAR"}|null>(null);
   const hasSpace=capacity===null||activeCount<capacity;
-  function submit(body:Record<string,unknown>,prompt:string){
-    setError("");setNotice("");setConfirmation({body,prompt});
+  function submit(body:Record<string,unknown>,prompt:string,kind:"GROUP"|"APPLY"|"CLEAR"="GROUP"){
+    setError("");setNotice("");setConfirmation({body,prompt,kind});
   }
   async function commitChange(){
     if(!confirmation||busy)return;
-    const {body}=confirmation;
+    const {body,kind}=confirmation;
     setBusy(true);setError("");setNotice("");
     try {
-      const response=await fetch("/api/college/groups/"+encodeURIComponent(groupId)+"/detail-actions",{
-        method:"PATCH",headers:{"content-type":"application/json"},
-        body:JSON.stringify(body),
+      const response=await fetch("/api/college/groups/"+encodeURIComponent(groupId)+
+        (kind==="GROUP"?"/detail-actions":"/rule"),{
+        method:kind==="GROUP"?"PATCH":kind==="APPLY"?"POST":"DELETE",
+        headers:{"content-type":"application/json"},
+        body:JSON.stringify(kind==="GROUP"?body:{confirmed:true,expectedGroupVersion:groupVersion}),
       });
       const json=await response.json().catch(()=>({error:"GROUP_CHANGE_FAILED"})) as {groupVersion?:number;error?:string};
       if(!response.ok)throw new Error(json.error??"GROUP_CHANGE_FAILED");
       if(typeof json.groupVersion==="number")setGroupVersion(json.groupVersion);
-      setNotice("Group change saved and audited.");
+      setNotice(kind==="APPLY"?"Eligibility rule applied to the current learner roster.":
+        kind==="CLEAR"?"Eligibility rule cleared. Current group members were not removed.":
+        "Group change saved and audited.");
+      if(kind==="CLEAR"){setRuleJson("");setAutoRefresh(false);}
       setConfirmation(null);
       router.refresh();
     }catch(reason){setError(reason instanceof Error?reason.message:"Group action failed.");}
@@ -92,6 +97,16 @@ export function CollegeGroupDetailWrites({
       </label>
       <Switch label="Enable rule auto-refresh setting (does not execute a refresh now)"
         checked={autoRefresh} disabled={busy} onChange={e=>setAutoRefresh(e.target.checked)}/>
+      <div className="flex flex-wrap gap-2">
+       <Button variant="secondary" type="button" disabled={busy||groupStatus!=="ACTIVE"||!initialRule}
+        onClick={()=>submit({},"Apply this eligibility rule to eligible learners now? Review the preview before applying.","APPLY")}>
+        Apply rule
+       </Button>
+       <Button variant="secondary" type="button" disabled={busy||!initialRule}
+        onClick={()=>submit({},"Clear the eligibility rule? Existing members stay in the group.","CLEAR")}>
+        Clear rule
+       </Button>
+      </div>
       <Button variant="primary" type="button" loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={busy} onClick={saveRule}
         >
         {busy?"Saving…":"Confirm rule update"}

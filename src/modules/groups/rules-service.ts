@@ -83,10 +83,15 @@ export async function upsertGroupRule(context:RequestContext,groupIdInput:string
   });
 }
 
-export async function refreshGroupRule(context:RequestContext,groupIdInput:string) {
+/** A manual application requires a fresh group version; save-only never
+ * changes enrollment. The version check runs after the group row lock. */
+export async function refreshGroupRule(context:RequestContext,groupIdInput:string,
+ expectedGroupVersion?:number) {
   const groupId=uuid.parse(groupIdInput);
   return getDb().transaction(async tx => {
     const group=await requireGroupManagement(tx,context,groupId);
+    if(expectedGroupVersion!==undefined&&group.version!==expectedGroupVersion)
+      throw new GroupRuleServiceError("GROUP_RULE_STALE_VERSION");
     // Setting up a rule is allowed on a draft group. Materializing its
     // membership roster is not: only ACTIVE groups can enroll learners.
     if (group.status!=="ACTIVE")
@@ -219,6 +224,27 @@ export async function refreshGroupRule(context:RequestContext,groupIdInput:strin
       lastRunAt:now,lastRunMatched:matches.size,updatedAt:now,
     }).where(eq(lmsGroupRules.id,rule.id));
     return {matched:matches.size,active,added,removed,promoted,waitlisted,
-      skippedCapacity,skippedOverride};
+      skippedCapacity,skippedOverride,groupVersion:group.version+1};
   });
+}
+
+/** Clear the automatic rule, never deleting any historical/manual group
+ * membership. A reactivation of earlier RULE members needs a new rule + Apply.
+ * Every change remains scoped to this college's authorized group. */
+export async function clearGroupRule(context:RequestContext,groupIdInput:string,
+ expectedGroupVersion:number){
+ const groupId=uuid.parse(groupIdInput);
+ if(!Number.isSafeInteger(expectedGroupVersion)||expectedGroupVersion<0)
+   throw new GroupRuleServiceError("GROUP_RULE_STALE_VERSION");
+ return getDb().transaction(async tx=>{
+  const group=await requireGroupManagement(tx,context,groupId);
+  if(group.version!==expectedGroupVersion)
+   throw new GroupRuleServiceError("GROUP_RULE_STALE_VERSION");
+  const deleted=await tx.delete(lmsGroupRules).where(eq(lmsGroupRules.groupId,groupId))
+   .returning({id:lmsGroupRules.id});
+  if(deleted.length===0)return {cleared:false,groupVersion:group.version};
+  await tx.update(lmsGroups).set({version:sql`${lmsGroups.version}+1`,
+    updatedAt:new Date()}).where(eq(lmsGroups.id,groupId));
+  return {cleared:true,groupVersion:group.version+1};
+ });
 }

@@ -1,4 +1,6 @@
 import { resolveRegistrationWindow } from "./batch-registration-policy";
+/** Legacy ChoicesController lists these three literal values in this order.
+ * Hints are descriptive only; the persisted choice remains unchanged. */
 export const learnerPlacementChoices = [
   { value: "PLACEMENTS", label: "Placements", hint: "I want a job through campus drives" },
   { value: "HIGHER_STUDIES", label: "Higher studies", hint: "I'm going for a master's or similar" },
@@ -30,4 +32,14 @@ export function resolveLearnerRegistrationDisplay(
       window.open ? "OPEN" as const : "CLOSED" as const,
     deadline: window.deadline?.toISOString() ?? null, choice,
   };
+}
+
+/** A safe projection of the old GET /mine 204 convention. New consumers
+ * read {registration:{choice,stage,deadline}} instead of assuming an empty
+ * HTTP body means the learner cannot participate in the current cohort.
+ */
+export function legacyRegistrationChoiceOrEmpty(choice:string|null|undefined):
+ {choice:LearnerPlacementChoice}|null{
+ const known=learnerPlacementChoices.find(option=>option.value===choice);
+ return known?{choice:known.value}:null;
 }
