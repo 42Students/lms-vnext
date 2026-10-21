@@ -1,0 +1,5 @@
+# Lane chat-18 cross-lane handoffs
+
+- G2-5-012-095 | src/modules/placements/tpo-crm-service.ts | Add conflict-safe idempotency/version guard to moveTpoFollowup across browser tabs (currently dueAt update is guarded by doneAt IS NULL, but two simultaneous PATCH calls can both write/audit); client per-ID shared lock added to tpo-calendar-followup-actions.tsx.
+- G2-17-023-021/022/024 | src/components/placements/learner-placement-offers.tsx | Read allowlisted response error code and trusted currentStatus and pass them to learnerOfferActionErrorMessage(status, code, currentStatus); currently only response.status is supplied. Preserve indistinguishable 404 for unauthorized access.
+- G2-3-026-019 | src/modules/placements/public-recruiter-invite-accept-service.ts (or controlled migration endpoint) | If accepting historic firstName/lastName/phone/email bodies, call migrateLegacyRecruiterInviteAcceptance(raw, verifiedOtpRecipientEmail) only after authoritative OTP recipient lookup; direct public schema intentionally remains strict and does not accept claimed emails.
