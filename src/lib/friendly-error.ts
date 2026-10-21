@@ -53,6 +53,7 @@ const domainMessages: Readonly<Record<string, string>> = {
   FACULTY_HAS_ACTIVE_PROJECTS: "This faculty member mentors active project workspaces. Reassign those projects to another mentor before suspending or ending the membership.",
   PROJECT_CLASS_ROSTER_STALE: "The class roster changed while teams were being created. Refresh the roster, review the preview, and try again.",
   PROJECT_TEAM_PREVIEW_STALE: "The team preview changed. Review the current teams and try again.",
+  LEARNER_PROFILE_SECTION_STALE: "Index out of bounds. Please refresh and try again.",
   STALE_VERSION: FRIENDLY_MESSAGES.conflict,
   STALE_AUDIENCE: FRIENDLY_MESSAGES.conflict,
 };

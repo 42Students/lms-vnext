@@ -40,8 +40,10 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 export const recruiterCalendarQuerySchema = z
   .object({
-    from: z.iso.date(),
-    to: z.iso.date(),
+    // Accept legacy offset-aware ISO instants as well as the existing
+    // recruiter UI's IST-local calendar dates.
+    from: z.union([z.iso.date(),z.iso.datetime({offset:true})]),
+    to: z.union([z.iso.date(),z.iso.datetime({offset:true})]),
   })
   .strict()
   .superRefine((input, ctx) => {
@@ -77,17 +79,12 @@ export const recruiterCalendarQuerySchema = z
       return;
     }
 
-    const inclusiveDays = Math.floor(
-      (end.getTime() - start.getTime() + 1) /
-        DAY_MS,
-    );
-
-    if (inclusiveDays > 366) {
+    const endExclusive = input.to.includes("T") ? end.getTime() : end.getTime()+1;
+    if ((endExclusive - start.getTime()) > 120 * DAY_MS) {
       ctx.addIssue({
         code: "custom",
         path: ["to"],
-        message:
-          "Calendar requests cannot exceed 366 days",
+        message: "Choose a range of up to 120 days",
       });
     }
   });
@@ -132,8 +129,10 @@ export async function listRecruiterCalendarEvents(
     "to",
   );
 
+  // Date-only 'to' includes that entire IST day; an ISO instant is an
+  // exclusive upper bound, exactly as on the legacy recruiter controller.
   const endsBefore = new Date(
-    inclusiveEnd.getTime() + 1,
+    inclusiveEnd.getTime() + (input.to.includes("T") ? 0 : 1),
   );
 
   const authorizedRows =

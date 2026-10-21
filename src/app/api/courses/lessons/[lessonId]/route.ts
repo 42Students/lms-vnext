@@ -27,7 +27,17 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { lessonId } = await params;
-    const body = await request.json();
+    const body: unknown = await request.json();
+    // Lessons remain children of an immutable learning path/offering in vNext.
+    // An implicit legacy course reassignment could strand child contents,
+    // submissions and learner progress. Reject a move instead of dropping it.
+    if (body && typeof body === "object" &&
+        ["courseId","offeringId","learningPathId"].some(key=>key in body)) {
+      return NextResponse.json({
+        error:"LESSON_PARENT_IMMUTABLE",
+        message:"A lesson cannot be moved to a different course. Create a new lesson in the destination course.",
+      },{status:409,headers:{"Cache-Control":"private, no-store"}});
+    }
     const lesson = await updateCourseLesson(
       context,
       lessonId,

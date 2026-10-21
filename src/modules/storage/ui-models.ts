@@ -14,6 +14,8 @@ import {
   allowedMimeTypesFor,
   guessContentTypeFromName,
   validateStorageDeclaration,
+  legacyStorageSizeFailure,
+  maxBytesFor,
   type StorageFileKind,
 } from "./file-policy";
 import { STORAGE_FILE_ERROR_STATUS, type StorageFileErrorCode } from "./file-errors";
@@ -28,6 +30,7 @@ export {
   allowedMimeTypesFor,
   guessContentTypeFromName,
   validateStorageDeclaration,
+  legacyStorageSizeFailure,
 };
 export type { StorageFileKind };
 
@@ -144,11 +147,23 @@ const ERROR_MESSAGES: Record<StorageFileErrorCode, string> = {
   STORAGE_PARENT_NOT_AVAILABLE: "This item is not accepting files right now.",
   STORAGE_ALREADY_SUBMITTED: "This assignment has already been submitted.",
   STORAGE_FILES_REQUIRED: "Add at least one verified file before submitting.",
-  STORAGE_NOT_CONFIGURED: "File storage is not available right now. Try again later.",
+  STORAGE_NOT_CONFIGURED: "R2 storage is not configured. Contact your administrator or try again later.",
 };
 
 /** Maps an API error code to learner-safe copy; unknown codes get a generic message. */
-export function storageErrorMessage(code: string | null | undefined) {
+export function storageErrorMessage(
+  code: string | null | undefined,
+  context: {sizeBytes?:number;kind?:StorageFileKind;profileUpload?:boolean} = {},
+) {
+  // The API keeps a stable STORAGE_SIZE_INVALID code. UI callers with the
+  // original declared size can distinguish an empty file from a negative one.
+  if(code==="STORAGE_SIZE_INVALID" && context.sizeBytes!==undefined) {
+    return legacyStorageSizeFailure(context.sizeBytes,
+      maxBytesFor(context.kind??"assignment-submission")) ??
+      ERROR_MESSAGES.STORAGE_SIZE_INVALID;
+  }
+  if(code==="STORAGE_FORBIDDEN" && context.profileUpload)
+    return "Upload is only allowed for your own profile.";
   if (code && Object.hasOwn(ERROR_MESSAGES, code)) {
     return ERROR_MESSAGES[code as StorageFileErrorCode];
   }

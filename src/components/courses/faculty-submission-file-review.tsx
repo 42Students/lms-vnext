@@ -10,7 +10,11 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { fileStatusDescriptor, formatFileSize } from "@/modules/storage/ui-models";
 import { parseFileDownloadGrant, parseSubmissionFiles, storageApiError, type SubmissionFile } from "@/modules/courses/learner-storage-ui-model";
 
-/** Teaching scope is enforced by the server, not by the learner-provided submission ID. */
+/** Teaching scope is enforced by the server, not by the learner-provided submission ID.
+ * Legacy submissionAssets mixed files, URLs and written parts. vNext keeps
+ * each verified file attachment separate, while the review card renders the
+ * text answer and the sibling links panel renders all repository/website parts.
+ * No legacy numeric asset IDs are trusted as storage grants. */
 export function FacultySubmissionFileReview({ submissionId }: { submissionId: string }) {
   const [files, setFiles] = useState<SubmissionFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -80,11 +84,12 @@ export function FacultySubmissionFileReview({ submissionId }: { submissionId: st
     }
   }
 
-  return <section aria-label="Submitted files" className="mt-3 space-y-2">
-    <p className="text-sm font-semibold text-foreground">Submitted files</p>
+  return <section aria-label="Uploaded file attachments" className="mt-3 space-y-2">
+    <p className="text-sm font-semibold text-foreground">Uploaded file attachments</p>
+    <p className="text-xs text-muted-foreground">Text answers and website or repository links are shown in the other submission details. Every file part appears here separately.</p>
     {loading ? <PageLoading label="Loading submitted files" variant="row" count={2} /> : null}
     {!loading && !error && files.length === 0 ?
-      <EmptyState title="No submitted files" description="No submitted files are available." /> : null}
+      <EmptyState title="No uploaded file attachments" description="This submission may contain text or website links instead." /> : null}
     <ul className="space-y-2">
       {files.map(file => {
         const state = fileStatusDescriptor(file.status);

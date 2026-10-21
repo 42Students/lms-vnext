@@ -11,6 +11,7 @@ import { assertPersistedPlatformPermission } from "@/modules/permissions/persist
 import { requirePlacementManageScope } from "./scope";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { tpoStudentNudgeInputSchema } from "./tpo-student-nudge-send-model";
+import { sendZeptoMailTemplate } from "@/modules/notifications/zeptomail-email";
 
 /** TPO-students-04: private, tenant-scoped in-app delivery and transactional audit.
  * Repeating the same exact message to the same recipient on the same UTC day is
@@ -24,12 +25,13 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
  const now=new Date(),day=now.toISOString().slice(0,10);
  const membership=context.membership;
  if(!membership)throw new AuthorizationError("placements.manage");
- return getDb().transaction(async tx=>{
+ const stored=await getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId,
   });
   const recipients=await tx.select({
    membershipId:collegeMemberships.id,userId:collegeMemberships.userId,
+   email:users.email,displayName:users.displayName,
   }).from(collegeMemberships)
    .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
    .innerJoin(membershipRoles,and(
@@ -44,6 +46,7 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
   if(recipients.length!==input.learnerMembershipIds.length)
    throw new AuthorizationError("placements.manage");
   let sent=0,skipped=0;
+  const emailRecipients: Array<{email:string|null;displayName:string|null}> = [];
   for(const recipient of recipients){
    const [event]=await tx.insert(activityEvents).values({
     organizationId:college.organizationId,collegeId,
@@ -61,7 +64,33 @@ export async function sendTpoStudentNudges(context:RequestContext,raw:unknown){
     actionHref:"/learn/placements",
    });
    sent++;
+   emailRecipients.push({email:recipient.email,displayName:recipient.displayName});
   }
-  return {sent,skipped};
+  return {sent,skipped,emailRecipients};
  });
+ // Provider sends never execute inside a database transaction. Only
+ // recipients with a newly persisted idempotent event may be emailed.
+ // A tenant must explicitly enable this channel and provision a unique
+ // non-OTP template for each notification intent.
+ let emailAccepted=0,emailFailed=0,emailSkipped=0;
+ for(const recipient of stored.emailRecipients){
+  if(process.env.TPO_STUDENT_NUDGE_EMAIL_ENABLED!=="true"||!recipient.email){
+   emailSkipped++;
+   continue;
+  }
+  const outcome=await sendZeptoMailTemplate({
+   purpose:{kind:"TPO",templateName:"student_nudge_"+input.template.toLowerCase()},
+   toEmail:recipient.email,
+   recipientName:recipient.displayName??"Learner",
+   senderName:"Placement Cell",
+   mergeInfo:{learnerName:recipient.displayName??"Learner",
+    message:input.message,action:"Open LMS placements"},
+  });
+  if(outcome.accepted)emailAccepted++;
+  else emailFailed++;
+ }
+ // Legacy 'send to student' was fire-and-forget. Do not conflate an in-app
+ // write with acceptance by a separately provisioned email transport.
+ return {sent:stored.sent,skipped:stored.skipped,
+  inAppSent:stored.sent,emailAccepted,emailFailed,emailSkipped};
 }
