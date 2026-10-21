@@ -970,3 +970,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 - G2-3-017-018/-019/-020 | `src/modules/people/profile-validation.ts + normalized education DB schema` | Align server-level pursuing-year/percentage normalization with the picker; decide optional maxGrade and CGPA >10 legacy warnings without weakening placement eligibility checks.
 
 - G2-13-006-071/-073 | `src/modules/announcements/service.ts + src/app/(authenticated)/learn/my-placements/announcements/page.tsx` | Persist per-member unread/read receipt and trusted jobId fields, supply them to expanded learner notice projection; route must recheck target job authorization.
+
+- G2-11-007-059 | `src/modules/placements/tpo-company-team-service.ts + historical thread migration` | Import legacy normalized name-keyed threads into college+UUID company conversations with collision audit; never read by untrusted company name.
+- G2-20-009-018/-021 | `src/lib/api-error.ts + resource upload UI` | Map StorageFileError codes via storageFileFriendlyMessage(code,'resource') at correct route, distinguish 413 and 503; preserve safe generic error elsewhere.

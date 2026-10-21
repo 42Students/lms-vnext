@@ -175,3 +175,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u006-college-admin-project-templates.md.md` | Legacy ?search= URL now redirects to canonical ?q=; keeps clear filter. Exact load error title restored and authorization errors no longer shown as generic transient outage. No CI.
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-announcement-model.ts.md` | Notice projection accepts optional validated explicit jobId, author, unread, showUntil provenance and scoped internal drive link, without inferring from free text. DB per-membership read receipt and UI link integration remain required; no CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-company-team-conversation.tsx.md` | Confirmed canonical UUID live company team thread; added legacy name-key import boundary warning. Historical name-keyed threads need scoped DB crosswalk; not falsely fetched by companyName. Partial, no CI.
+- `docs/audit/gap-fix-work/packets/lane-13/src_modules_storage_file-errors.ts.md` | Added safe Resource-specific storage error messages for missing R2, file type, file size including 50MiB; retains 413 and current typed codes. Callers must consume mapper, no CI.
