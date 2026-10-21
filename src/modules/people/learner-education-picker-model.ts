@@ -49,8 +49,8 @@ export function learnerEducationValidationProblem(input:{
   return {field:"endYear",message:"A currently pursued qualification cannot end in the past"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
  for(const [field,year] of [["startYear",start],["endYear",end]] as const){
-  if(year && (!/^\d{4}$/.test(year)||Number(year)<1900||Number(year)>2100))
-   return {field,message:"Enter a valid four-digit academic year (1900–2100)"};
+  if(year && (!/^\d{4}$/.test(year)||Number(year)<1900||Number(year)>2200))
+   return {field,message:"Enter a valid four-digit academic year (1900–2200)"};
  }
 
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
@@ -112,7 +112,7 @@ export function learnerEducationChoices(catalog:LearnerEducationCatalog|null|und
   defaults.examsByType[educationType]??learnerQualifyingExamSuggestions(educationType));
  return {
   version:config.version,
-  educationTypes:uniqueConfigured(types,storedProgram?types:defaults.educationTypes),
+  educationTypes:types,
   programs:storedProgram&&!programs.includes(storedProgram)?[...programs,storedProgram]:programs,
   exams,
   gradingTypes:uniqueConfigured(config.gradingTypes,defaults.gradingTypes),
