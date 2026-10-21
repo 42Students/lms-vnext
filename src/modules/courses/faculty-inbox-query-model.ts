@@ -24,3 +24,14 @@ export function parseFacultyInboxQuery(raw: unknown) {
     invalid: cursor.invalid,
   };
 }
+
+export const facultyLegacyInboxTabs=["all","personal","college","department","faculty"] as const;
+export type FacultyLegacyInboxTab=(typeof facultyLegacyInboxTabs)[number];
+export function normalizeFacultyLegacyInboxTab(raw:unknown):{
+ tab:FacultyLegacyInboxTab;needsCanonicalRedirect:boolean;
+}{
+ if(raw===undefined)return {tab:"all",needsCanonicalRedirect:false};
+ if(typeof raw==="string"&&facultyLegacyInboxTabs.some(tab=>tab===raw))
+  return {tab:raw as FacultyLegacyInboxTab,needsCanonicalRedirect:false};
+ return {tab:"all",needsCanonicalRedirect:true};
+}

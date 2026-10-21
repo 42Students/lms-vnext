@@ -1,5 +1,8 @@
 "use client";
 import { Banner } from "@/components/ui/banner";
+import Link from "next/link";
+import {facultyCourseTabHref} from "@/modules/courses/faculty-course-navigation";
+import {ASSIGNMENT_METHOD_LABELS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 
 
 import {
@@ -31,6 +34,8 @@ type EditableAssessment = {
   maxPoints?: number;
   maxAttempts?: number;
   hasSubmissions?: boolean;
+  allowedMethods?:readonly AssignmentMethod[];
+  deliveryId?:string|null;
 };
 
 export function FacultyAssessmentEditor({
@@ -54,6 +59,11 @@ export function FacultyAssessmentEditor({
       ? String(assessment.maxPoints ?? 10)
       : String(assessment.maxAttempts ?? 1),
   );
+  const [methods,setMethods]=useState<AssignmentMethod[]>(assessment.allowedMethods?
+    normalizeAssignmentMethods(assessment.allowedMethods):[]);
+  const [success,setSuccess]=useState<string|null>(null);
+  useEffect(()=>{if(!success)return;const timer=window.setTimeout(()=>setSuccess(null),2000);
+    return ()=>window.clearTimeout(timer);},[success]);
   const [saving, setSaving] =
     useState(false);
   const [deleting, setDeleting] =
@@ -64,7 +74,8 @@ export function FacultyAssessmentEditor({
 
   const dirty = title !== assessment.title || description !== (assessment.description ?? "") ||
     dueAt !== authoringLocalDateTime(assessment.dueAt) ||
-    points !== String(assessment.kind === "ASSIGNMENT" ? (assessment.maxPoints ?? 10) : (assessment.maxAttempts ?? 1));
+    points !== String(assessment.kind === "ASSIGNMENT" ? (assessment.maxPoints ?? 10) : (assessment.maxAttempts ?? 1)) ||
+    Boolean(assessment.allowedMethods && methods.join("|")!==assessment.allowedMethods.join("|"));
   useEffect(() => {
     if (!open || !dirty) return;
     const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
@@ -109,6 +120,9 @@ export function FacultyAssessmentEditor({
       return;
     }
 
+    if(assessment.kind==="ASSIGNMENT"&&assessment.allowedMethods&&methods.length===0){
+      setError("Choose at least one submission method.");return;
+    }
     if (!confirmed) { setConfirmAction("SAVE"); return; }
     setConfirmAction(null);
     setError(null);
@@ -127,6 +141,7 @@ export function FacultyAssessmentEditor({
             description:description.trim() || null,
             dueAt: authoringDueInstant(dueAt),
             ...facultyAssessmentLimitPatch(assessment.kind,assessment.status,number),
+            ...(assessment.kind==="ASSIGNMENT"&&assessment.allowedMethods?{allowedMethods:methods}:{}),
           }),
         }),
       });
@@ -142,6 +157,7 @@ export function FacultyAssessmentEditor({
         setError("The save result could not be verified. Reload this Section before retrying.");
         return;
       }
+      setSuccess(assessment.kind==="ASSIGNMENT"?"Assignment updated successfully":"Quiz updated successfully");
       setOpen(false);
       router.refresh();
     } catch (caught) {
@@ -157,6 +173,9 @@ export function FacultyAssessmentEditor({
 
   async function deleteAssessment(confirmed = false) {
     if (saving || deleting || !facultyAssessmentCanArchive(assessment.kind,assessment.status)) return;
+    if(assessment.kind==="ASSIGNMENT"&&assessment.hasSubmissions){
+      setError("This assignment has submissions and cannot be deleted.");return;
+    }
     if (!confirmed) { setConfirmAction("ARCHIVE"); return; }
     setConfirmAction(null);
 
@@ -215,6 +234,8 @@ export function FacultyAssessmentEditor({
           setPoints(assessment.kind === "ASSIGNMENT"
             ? String(assessment.maxPoints ?? 10)
             : String(assessment.maxAttempts ?? 1));
+          setMethods(assessment.allowedMethods?normalizeAssignmentMethods(assessment.allowedMethods):[]);
+          setSuccess(null);
           setError(null);
           setConfirmAction(null);
           setOpen(true);
@@ -223,6 +244,7 @@ export function FacultyAssessmentEditor({
         Edit
       </Button>
 
+      {success?<Alert tone="success">{success}</Alert>:null}
       <Drawer
         open={open}
         onOpenChange={(next) => {
@@ -239,7 +261,7 @@ export function FacultyAssessmentEditor({
         }
         footer={
           <>
-            {facultyAssessmentCanArchive(assessment.kind,assessment.status) ? <Button
+            {facultyAssessmentCanArchive(assessment.kind,assessment.status) && !assessment.hasSubmissions ? <Button
               variant="danger"
               disabled={saving || deleting}
               loading={deleting}
@@ -336,6 +358,24 @@ export function FacultyAssessmentEditor({
               <span className="mt-1 block text-xs font-normal text-muted-foreground">The published Quiz attempt limit is locked. Quiz deadlines cannot change after learner attempts or closure.</span> : null}
           </label>
 
+
+          {assessment.kind==="ASSIGNMENT"&&assessment.allowedMethods&&!titleOnly?
+           <fieldset className="space-y-2 rounded-lg border border-border p-3">
+            <legend className="text-sm font-semibold">Allowed submission methods</legend>
+            {(Object.keys(ASSIGNMENT_METHOD_LABELS) as AssignmentMethod[]).map(method=>
+             <label key={method} className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={methods.includes(method)} disabled={saving}
+               onChange={event=>setMethods(current=>event.target.checked?
+                [...current,method]:current.filter(value=>value!==method))}
+               className="size-4 accent-[var(--lms-primary)]"/>
+              {ASSIGNMENT_METHOD_LABELS[method]}
+             </label>)}
+           </fieldset>:null}
+          {assessment.kind==="ASSIGNMENT"&&assessment.deliveryId?
+           <p className="text-sm leading-6">Files and lesson resources are managed separately in the
+            {" "}<Link href={facultyCourseTabHref(assessment.deliveryId,"blueprint")}
+             className="font-semibold text-primary-text underline">Course blueprint</Link>.
+            Saved submissions remain protected during resource edits.</p>:null}
           {error ? <Alert tone="error">{error}</Alert> : null}
         </form>
       </Drawer>

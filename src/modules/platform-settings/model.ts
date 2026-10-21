@@ -24,6 +24,23 @@ export type PlatformSettingItem = {
   scope: PlatformSettingScope;
 };
 
+/** The log is support-only and writes at provider-attempt granularity.
+ * A DLT template catalogue row is NOT evidence of a successful send. */
+export const PLATFORM_SMS_SUPPORT = {
+ pageHref:"/admin/sms-log",
+ searchEndpoint:"/api/admin/sms-log",
+ method:"POST",
+ acceptedLabel:"Provider accepted (handset delivery unconfirmed)",
+ failedLabel:"Failed",
+ recipientDisclosure:"Last four digits only",
+} as const;
+export type PlatformSmsAttemptOutcome="PROVIDER_ACCEPTED"|"FAILED";
+export type PlatformSmsSupportItem={
+ id:string;purpose:string;recipientSuffix:string|null;
+ outcome:PlatformSmsAttemptOutcome;providerMessageId:string|null;
+ safeFailureCode:string|null;createdAt:Date;
+};
+
 export type PlatformSmsTemplate = {
   key: string;
   purpose: string;
