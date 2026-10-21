@@ -247,30 +247,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/projects/learner-project-board-search.tsx`
 - [x] `src/components/projects/mentor-lane-board.tsx`
 - [x] `src/components/projects/mentor-meetings-calendar.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/project-activity-filtered-list.tsx`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/project-admin-submissions-page.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/projects/project-list.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-template-view.tsx`
-- [ ] `src/components/projects/project-workspace-readiness.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-archive-control.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/shell/legacy-mobile-footer.css`
-- [ ] `src/components/shell/sidebar-nav.tsx`
-- [ ] `src/components/shell/topbar/notification-actions.tsx`
-- [ ] `src/components/shell/tpo-topbar-messages.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/project-activity-filtered-list.tsx`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/project-admin-submissions-page.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/projects/project-list.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-template-view.tsx`
+- [x] `src/components/projects/project-workspace-readiness.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-archive-control.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/shell/legacy-mobile-footer.css`
+- [x] `src/components/shell/sidebar-nav.tsx`
+- [x] `src/components/shell/topbar/notification-actions.tsx`
+- [x] `src/components/shell/tpo-topbar-messages.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
 - [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
