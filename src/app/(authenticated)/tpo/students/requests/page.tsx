@@ -305,7 +305,7 @@ export default async function TpoStudentRequestsPage({
               Request queue
             </h2>
             <p className="mt-1 text-sm text-body">
-              {data.total} matching request
+              {data.total.toLocaleString("en-IN")} matching request
               {data.total === 1 ? "" : "s"}
               {" · "}showing {firstItem}–{lastItem}
             </p>
@@ -471,7 +471,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page - 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Previous
               </Link>
@@ -483,7 +483,7 @@ export default async function TpoStudentRequestsPage({
                   ...baseFilters,
                   page: data.page + 1,
                 })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               >
                 Next
               </Link>

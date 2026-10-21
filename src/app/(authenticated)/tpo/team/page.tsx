@@ -193,7 +193,7 @@ export default async function TpoTeamPage({searchParams}:{
     {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
      <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
       <span className="text-sm text-body">Page {conversations.page}</span>
-      {conversations.page>1?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
+      {conversations.page>1?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
        href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
         ...(search?{q:search}:{}),page:String(conversations.page-1)}).toString()}>Previous</Link>:null}
       {conversations.hasMore?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
