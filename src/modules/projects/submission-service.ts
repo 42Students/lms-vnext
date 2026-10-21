@@ -7,6 +7,7 @@ import {
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {legacyProjectDeliveryProjection} from "./legacy-project-delivery-projection";
 import {assertCurrentEvaluationActor} from "./evaluation-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {readProjectReadinessOverride} from "./readiness-override-service";
@@ -748,6 +749,7 @@ export async function listProjectSubmissions(
     a.version-b.version||a.id.localeCompare(b.id));
   return {
    submissions,reviews,deliveryEvents,history,
+   legacyDelivery:legacyProjectDeliveryProjection({submissions,reviews,deliveryEvents}),
    revisionCount:submissions.length,
    reviewCount:reviews.length,
    legacyRevisionCount:submissions.reduce((max,row)=>
