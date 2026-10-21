@@ -11,8 +11,8 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_tpo_announcements_page.tsx.part1of2.md` (edit src/app/(authenticated)/tpo/announcements/page.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_tpo_announcements_page.tsx.part2of2.md` (edit src/app/(authenticated)/tpo/announcements/page.tsx; 22 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_tpo_announcements_page.tsx.part1of2.md` (edit src/app/(authenticated)/tpo/announcements/page.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_tpo_announcements_page.tsx.part2of2.md` (edit src/app/(authenticated)/tpo/announcements/page.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_admin_features_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/features/page.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_app_authenticated_admin_features_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/features/page.tsx; 13 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_NEW_docs_audit_gap2_lane-8_project-template.md.part1of2.md` (new; 40 findings; best P2)

@@ -18,8 +18,6 @@ import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-und
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
 import {TpoNoticeUndoToast} from "@/components/tpo/tpo-notice-undo-toast";
 import {TpoNoticeDraftGuard} from "@/components/tpo/tpo-notice-draft-guard";
-import {TpoNoticeScheduleControls} from "@/components/tpo/tpo-notice-schedule-controls";
-import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -31,8 +29,8 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/modules/announcements/tpo-placement-read-service";
-import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
-import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
+import {tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
+import {TpoNoticeLiveAudienceProvider,TpoNoticeLiveReach,TpoNoticeLiveSubmitControls} from "@/components/tpo/tpo-notice-live-preview";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
 
@@ -79,21 +77,6 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const formMinDateTime=new Date(new Date().getTime()+330*60_000).toISOString().slice(0,16);
  const targetOptions=result.status==="READY"&&tab.data==="yours"?
   await listTpoNoticeTargetOptions(context).catch(()=>null):null;
- const isPreview=result.status==="READY"&&tab.data==="yours";
- const selected=query.success?announcementPreviewScope(query.data):null;
- const previewRequest=isPreview&&query.success?
-  (selected?previewTpoPlacementAudience(context,selected):
-   previewTpoCollegeAnnouncementVisibility(context)):null;
- const preview=previewRequest?
-  await previewRequest.then(value=>({value,failed:false as const}))
-   .catch(()=>({value:null,failed:true as const})):
-  {value:null,failed:false as const};
- const audience=preview.value;
- const retryPreviewHref=query.success?
-  "/tpo/announcements?"+new URLSearchParams({
-   tab:"yours",audience:query.data.audience,
-   ...(query.data.targetId?{targetId:query.data.targetId}:{}),
-  }).toString()+(query.data.targetIds?.length?query.data.targetIds.map(id=>"&targetIds="+encodeURIComponent(id)).join(""):""):"/tpo/announcements";
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
@@ -101,37 +84,15 @@ export default async function TpoAnnouncements({searchParams}:Props){
    actions={result.status==="READY" && tab.data==="yours"?
     <TpoNoticeComposerDialog initialOpen={Boolean(first(raw.audience)||first(raw.targetId)||raw.targetIds)}><section aria-labelledby="section-compose-a-college-notice" className="space-y-4">
    <h2 id="section-compose-a-college-notice" className="sr-only">Compose a college notice</h2>
-   <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
-   <form role="search" method="get" action="/tpo/announcements"
-     className="mt-4 flex min-w-0 flex-col items-stretch gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:flex-wrap sm:items-end"
-     aria-label="Announcement audience preview">
-     <Input type="hidden" name="tab" value="yours"/>
-     <TpoNoticeAudiencePicker
+   <p className="mt-1 text-sm text-body">Only active college members can see published notices. Email is unavailable (emailReady: false); no email or SMS is sent.</p>
+   <TpoNoticeLiveAudienceProvider formId="tpo-notice-create">
+   <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
+   <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 min-w-0 space-y-4">
+    <TpoNoticeAudiencePicker
       initialAudience={query.success?query.data.audience:"PLACEMENTS"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
-     <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Preview audience</Button>
-   </form>
-   {!query.success?<Alert tone="error">Choose a valid audience and target ID.</Alert>:null}
-   {preview.failed?<Alert tone="error">
-     Could not check the audience right now. Your selection is unchanged.
-     <Link href={retryPreviewHref} className="ml-2 font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry audience preview</Link>
-    </Alert>:null}
-   {audience?<Alert tone="info">
-     <p className="text-sm font-semibold text-foreground leading-[22px]">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
-     <p className="mt-1 text-sm text-body leading-[22px]">{selected?"Goes to "+audience.potentiallyVisibleMemberships+" students · "+(query.success?query.data.audience.toLowerCase().replaceAll("_"," "):"placements"):audience.potentiallyVisibleMemberships+" active college members could see this announcement."}</p>
-     <p className="mt-1 text-xs text-muted-foreground leading-5">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. The selected audience determines recipient visibility when targeted storage is ready.</p>
-   </Alert>:null}
-   {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)?
-    <Alert tone="warning">
-      Targeted announcement publishing is not ready. This audience preview cannot be published
-      until fixed recipient storage is registered. Choose COLLEGE only to publish to the whole college.
-    </Alert>:null}
-   <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
-   <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 min-w-0 space-y-4">
-    <Input type="hidden" name="audience" value={query.success?query.data.audience:"PLACEMENTS"}/>
-    {query.success&&query.data.targetId?<Input type="hidden" name="targetId" value={query.data.targetId}/>:null}
-    {query.success?query.data.targetIds?.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>):null}
+    <TpoNoticeLiveReach targetedReady={targetedReady}/>
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
      <Input name="title" required maxLength={200} placeholder="Omega pre-placement talk on Monday"
       className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]" />
@@ -162,10 +123,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
     <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin it to the top</label>
     <p className="text-xs text-muted-foreground">Students get a notice in the app. You can undo for 30 seconds after sending. Email and SMS are unavailable.</p>
-    <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
-      enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
-       canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
+    <TpoNoticeLiveSubmitControls minDateTime={formMinDateTime} targetedReady={targetedReady}/>
    </form>
+   </TpoNoticeLiveAudienceProvider>
   </section></TpoNoticeComposerDialog>:null}/>
   {first(raw.noticeSuccess)==="DELETED"?<InlineNotice tone="success" message="Deleted. Its notices were taken back."/>:null}
   {first(raw.noticeSuccess)==="SAVED"?<InlineNotice tone="success" message="Saved"/>:null}
@@ -224,7 +184,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </p>
     {(row.buttonUrl?.startsWith("https://")&&row.buttonLabel)||tab.data==="from-42"?
      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
-      {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl} rel="noopener noreferrer"
+      {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"
        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 font-[650] text-[var(--lms-link-text)] min-[768px]:min-h-[var(--lms-control-height)] md:min-h-9 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] hover:underline">
        {row.buttonLabel} ↗
       </a>:null}
