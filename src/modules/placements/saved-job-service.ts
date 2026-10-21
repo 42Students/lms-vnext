@@ -10,6 +10,9 @@ import { PlacementsServiceError } from "./errors";
 import { placementTableExists } from "./staged-tables";
 
 export class SavedJobsStorageUnavailableError extends Error {
+  // Existing saved-jobs collection route recognizes missing-relation code
+  // through its database unavailable adapter.
+  readonly code = "42P01";
   constructor() {
     super("SAVED_JOBS_NOT_CONFIGURED");
     this.name = "SavedJobsStorageUnavailableError";
