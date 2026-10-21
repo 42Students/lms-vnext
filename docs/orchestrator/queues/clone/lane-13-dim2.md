@@ -233,16 +233,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/hr/hr-drive-draft-form.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/college-legacy-drive-settings.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/college-legacy-drive-settings.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
 - [ ] `src/components/placements/learner-placement-offers.tsx`
 - [ ] `src/components/placements/learner-placement-requests.tsx`
