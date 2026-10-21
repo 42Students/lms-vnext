@@ -35,7 +35,9 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
  // Return fresh nested arrays even for malformed historical records.
  return result.success?result.data:{
   goal:fallback.goal.slice(0,2000),description:fallback.description.slice(0,4000),
-  deliverables:[],completionConditions:[],personas:[],
+  deliverables:fallback.deliverables.map(s=>s.trim().slice(0,500)).filter(Boolean).slice(0,50),
+  completionConditions:fallback.completionConditions.map(s=>s.trim().slice(0,500)).filter(Boolean).slice(0,50),
+  personas:fallback.personas.map(s=>s.trim().slice(0,500)).filter(Boolean).slice(0,50),
  };
 }
 /** A planned draft can be empty; active/published projects cannot be cleared
