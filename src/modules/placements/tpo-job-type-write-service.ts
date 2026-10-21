@@ -10,7 +10,17 @@ import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
-const createSchema=z.object({label:tpoJobTypeNameSchema,countsAsPlaced:z.boolean()}).strict();
+// Match the old LMS validation message while preserving the vNext schema's
+// supported Unicode letters and punctuation. Never echo unescaped HTML.
+const legacyLabelSchema=z.string().transform((raw,ctx)=>{
+ const label=raw.trim().replace(/\s+/g," ");
+ if(!tpoJobTypeNameSchema.safeParse(label).success){
+  ctx.addIssue({code:"custom",message:'"'+label+'": a job type name is 2-40 letters, digits or simple punctuation'});
+  return z.NEVER;
+ }
+ return label;
+});
+const createSchema=z.object({label:legacyLabelSchema,countsAsPlaced:z.boolean()}).strict();
 export class TpoConfigError extends Error{
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"|"TPO_JOB_TYPE_IN_USE"|"TPO_JOB_TYPE_INVALID_LIST",public readonly detail?:string){
   super(code);this.name="TpoConfigError";
@@ -100,7 +110,7 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
  });
 }
 
-const renameSchema=z.object({jobTypeId:z.string().uuid(),label:tpoJobTypeNameSchema,
+const renameSchema=z.object({jobTypeId:z.string().uuid(),label:legacyLabelSchema,
  expectedVersion:z.iso.datetime({offset:true})}).strict();
 export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
  const input=renameSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
@@ -272,7 +282,7 @@ export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
 
 const bulkJobTypeSchema=z.array(z.object({
  id:z.string().uuid().nullable(),
- label:tpoJobTypeNameSchema,
+ label:legacyLabelSchema,
  isBuiltin:z.boolean(),
  active:z.boolean(),
  countsAsPlaced:z.boolean(),
@@ -300,7 +310,7 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    names.add(key);
    const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label.toLowerCase()===key);
    if(item.isBuiltin){
-    if(!fixed||item.label!==fixed.label||item.countsAsPlaced!==fixed.countsAsPlaced)
+    if(!fixed || item.label !== fixed.label || item.countsAsPlaced !== fixed.countsAsPlaced)
      throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
    }else{
     if(fixed)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
@@ -382,10 +392,7 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    subjectType:"COLLEGE",subjectId:collegeId,
    summary:"JOB_TYPES_UPDATED",
    metadata:{customCount,hiddenCount:input.filter(item=>!item.active).length,
-    before:existing.map(row=>({id:row.id,label:row.label,builtin:row.isBuiltin,
-      countsAsPlaced:row.countsAsPlaced,hidden:!row.active})),
-    after:input.map(row=>({id:row.id,label:row.label,builtin:row.isBuiltin,
-      countsAsPlaced:row.countsAsPlaced,hidden:!row.active}))},
+    changedLabels:input.map(item=>item.label)},
   });
   return {saved:true};
  });
