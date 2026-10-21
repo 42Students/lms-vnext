@@ -34,7 +34,7 @@ export default async function CollegeClassesPage({
       .catch(() => ({ options: { cohorts: [], periods: [] }, error: true as const })),
   ]);
   const options = optionResult.options;
-  return <CollegeStructureDirectory data={classes} prepend={
+  return <CollegeStructureDirectory data={classes} classOptions={optionResult.error ? undefined : options} prepend={
     <div className="min-w-0 space-y-[var(--lms-space-3)]">
       {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-amber-300 bg-amber-50 p-3 text-sm">Could not load class options. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
         <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />}
