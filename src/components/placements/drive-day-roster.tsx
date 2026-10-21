@@ -206,7 +206,7 @@ export function DriveDayRoster({
               (index % 2 === 0 ? "border-r border-border " : "") +
               (index === 1 ? "xl:border-r xl:border-border " : "")}
           >
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+            <p className="m-0 text-xs font-semibold uppercase tracking-[0.06em] text-muted-foreground leading-5">
               {label}
             </p>
             <p className="mt-1 text-2xl font-semibold tabular-nums text-foreground">
@@ -231,7 +231,7 @@ export function DriveDayRoster({
 
         {rows.length === 0 ? (
           <div className="flex min-w-0 flex-col items-start gap-3 p-4 sm:p-6">
-            <p className="m-0 text-sm text-muted-foreground">{students.length === 0 ? "No students are assigned to this round yet." : "No student matches your search."}</p>
+            <p className="m-0 text-sm text-muted-foreground leading-[22px]">{students.length === 0 ? "No students are assigned to this round yet." : "No student matches your search."}</p>
             {query.trim() ? <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" onClick={() => setQuery("")}>Clear search</Button> : null}
           </div>
         ) : (
@@ -260,7 +260,7 @@ export function DriveDayRoster({
                       {student.attendance}
                     </StatusBadge>
                   </div>
-                  <p className="mt-1 text-sm text-body">
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     {student.rollNumber ??
                       "No roll number"}{" "}
                     · {student.roleTitle}

@@ -126,8 +126,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   }
 
   return <section className="min-w-0 space-y-4 border-t border-border pt-4">
-    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Program semester curriculum mappings</h2>
-    <p className="text-sm text-body leading-[22px]">Manage the courses assigned to each numbered semester.</p>
+    <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
+    <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select required value={programId} onChange={event => {
@@ -162,7 +162,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           Choose multiple courses; already-mapped courses are excluded. Selection is retained per semester.
         </span>
       </label>
-      {availableCourses.length===0?<p className="text-sm text-muted-foreground leading-[22px]">No unmapped courses available for this semester.</p>:null}
+      {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
       <div className="flex items-end sm:justify-end">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !termId || !selectedIds.length}>
           {TERM_MAPPING_COPY.addButton}
@@ -170,8 +170,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       </div>
       </form>
     </Disclosure> : null}
-    {!termId ? <p className="text-sm text-body leading-[22px]">Select a program and semester to view mapped courses.</p> :
-    currentMappings.length === 0 ? <p className="text-sm text-body leading-[22px]">No courses mapped to this semester.</p> :
+    {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
+    currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
       <DataTable
         caption="Semester course mappings"
         rows={currentMappings}
@@ -195,7 +195,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
               <span className="font-semibold">{row.courseName}</span>
               {row.staffingWarning&&<p role="status"
                 title={row.staffingTooltip??undefined}
-                className="mt-1 text-xs font-semibold text-warning leading-5">{row.staffingWarning}</p>}
+                className="mt-1 text-xs font-semibold text-warning">{row.staffingWarning}</p>}
             </div>},
           {key:"code",header:TERM_MAPPING_COPY.columns.courseCode,mobilePriority:"secondary",cell:row=>row.courseCode},
           {key:"credits",header:TERM_MAPPING_COPY.columns.credits,mobilePriority:"secondary",cell:row=>row.credits??"—"},
@@ -220,7 +220,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                     onChange={event=>setEditing({...editing,position:event.target.value})}
                     className="block min-h-[var(--lms-control-height)] w-24 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2"/>
                 </label>
-                <div className="grid min-w-0 grid-cols-2 gap-2 sm:col-span-2">
+                <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2 sm:col-span-2">
                   <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="submit" disabled={pending}
                     >Save</Button>
                   <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={pending} onClick={()=>setEditing(null)}
@@ -253,8 +253,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             )},
         ]}
       />}
-    {notice ? <p role="status" className="text-sm text-body leading-[22px]">{notice}</p> : null}
-    {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)] leading-[22px]">{error}</p> : null}
+    {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
+    {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     <ConfirmDialog open={confirm !== null} onOpenChange={value => { if (!value && !pending) setConfirm(null); }}
       title={confirm?.type === "REMOVE"
         ? TERM_MAPPING_COPY.removeTitle(data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course")
@@ -265,7 +265,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       confirmVariant={confirm?.type === "REMOVE" ? "danger" : "primary"}
       confirmLabel={confirm?.type === "REMOVE" ? TERM_MAPPING_COPY.removeButton : TERM_MAPPING_COPY.addButton}
       pending={pending} onConfirm={send}>
-      {error ? <p role="alert" className="min-w-0 break-words text-sm text-[var(--lms-error-text)] leading-[22px]">{error}</p> : null}
+      {error ? <p role="alert" className="min-w-0 break-words text-sm text-[var(--lms-error-text)]">{error}</p> : null}
     </ConfirmDialog>
   </section>;
 }

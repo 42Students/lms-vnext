@@ -193,10 +193,10 @@ export function LearnerPlacementAcademicEvidence({
     <section id="placement-academic-evidence" className="min-w-0 scroll-mt-24 border-b border-border pb-5">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border py-4 md:flex-row md:items-start md:justify-between">
         <div>
-          <h2 className="m-0 text-base font-semibold text-foreground">
+          <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
             Academic eligibility evidence
           </h2>
-          <p className="mt-1 text-sm text-body">
+          <p className="mt-1 text-sm text-body leading-[22px]">
             Used only for explainable placement eligibility checks.
           </p>
         </div>
@@ -283,7 +283,7 @@ export function LearnerPlacementAcademicEvidence({
         </Disclosure>
         <div className="min-w-0">
           {locked ? (
-            <p className="m-0 text-sm text-muted-foreground">
+            <p className="m-0 text-sm text-muted-foreground leading-[22px]">
               This evidence was verified by your college and cannot be overwritten by self-service.
             </p>
           ) : (

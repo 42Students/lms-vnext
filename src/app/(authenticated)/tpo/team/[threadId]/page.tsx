@@ -37,7 +37,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  if(!parsedPage.success)notFound();
  const result=await readTpoInternalConversation(context,parsed.data,parsedPage.data);
  if(result.status==="NOT_FOUND")notFound();
- if(result.status==="NOT_REGISTERED")return <div className="space-y-4">
+ if(result.status==="NOT_REGISTERED")return <div className="min-w-0 space-y-4">
    <PageHeader title="Conversations unavailable"/>
    <p role="status">Private messaging tables are not registered.</p>
    <Link href="/tpo/team" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link lms-inline-link">Back to team</Link>

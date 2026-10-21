@@ -60,7 +60,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
   <h3 className="text-base font-semibold">Instructions &amp; resources</h3>
   {loading?<LoadingState label="Loading instructor links…" />:null}
   {error&&removeId===null?<Alert tone="error">{error}</Alert>:null}
-  {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground">No instructor resources yet.</p>:null}
+  {!loading&&!error&&links.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No instructor resources yet.</p>:null}
   <ul className="divide-y divide-border">
    {links.map(link=><li key={link.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] py-[var(--lms-space-3)] text-sm md:flex-row md:items-center md:justify-between">
     <a href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words [overflow-wrap:anywhere] font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{link.title}</a>
@@ -82,7 +82,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
     className="w-full md:w-auto md:justify-self-end md:col-span-2" size="md">Add link</Button>
    </div>
   </Disclosure>:null}
-  <p className="text-xs text-muted-foreground">Only HTTPS links can be added here. File handouts require verified private storage.</p>
+  <p className="text-xs text-muted-foreground leading-5">Only HTTPS links can be added here. File handouts require verified private storage.</p>
   <ConfirmDialog
     open={removeId!==null}
     onOpenChange={nextOpen=>{if(!nextOpen&&!pending)setRemoveId(null);}}

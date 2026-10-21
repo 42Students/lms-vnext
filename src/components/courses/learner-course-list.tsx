@@ -377,7 +377,7 @@ export function LearnerCourseList({
                   <div className="min-w-0">
                     <Link
                     href={`/learn/courses/${row.course.deliveryId}/home`}
-                    className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                    className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 min-h-11 text-sm"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
                       <LearnerCourseCardImage key={learnerCourseImageResetKey(row.course.deliveryId,row.thumbnailUrl)} thumbnailUrl={row.thumbnailUrl} />
@@ -475,13 +475,13 @@ export function LearnerCourseList({
                           readOnly:row.readOnly,learningPathReady:row.learningPathReady,course:row.course,
                           nextItem:{kind:"ASSIGNMENT",lessonId:row.firstOverdue.lessonId,itemId:row.firstOverdue.itemId}
                         })!}
-                        className="mt-2 inline-flex min-h-11 w-full items-center justify-center break-words px-3 text-center text-sm font-semibold text-warning underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                        className="mt-2 inline-flex min-h-11 w-full items-center justify-center break-words px-3 text-center text-sm font-semibold text-warning underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                         Open overdue assignment: {row.firstOverdue.title}
                       </Link>
                     ) : null}
                     {learnerCourseNextItemHref(row) ? (
                       <Link href={learnerCourseNextItemHref(row)!}
-                        className="mt-2 flex min-h-11 w-full items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-center text-sm font-semibold text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                        className="mt-2 flex min-h-11 w-full items-center justify-center break-words rounded-[var(--lms-control-radius)] border border-primary bg-primary-subtle px-3 text-center text-sm font-[650] text-primary-text transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                         Continue at next learning item →
                       </Link>
                     ) : null}

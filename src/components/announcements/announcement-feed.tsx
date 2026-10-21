@@ -37,11 +37,11 @@ export function AnnouncementFeed({
         <div>
           <h2
             id="college-announcements"
-            className="text-lg font-semibold text-foreground"
+            className="text-lg font-semibold text-[var(--lms-heading)]"
           >
             College announcements
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
             Announcements are temporarily unavailable while the verified
             database rollout is pending.
           </p>
@@ -62,11 +62,11 @@ export function AnnouncementFeed({
         <div>
           <h2
             id="college-announcements"
-            className="text-lg font-semibold text-foreground"
+            className="text-lg font-semibold text-[var(--lms-heading)]"
           >
             College announcements
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
             Current announcements visible to your persisted college, role and
             class/program/department audience.
           </p>
@@ -97,7 +97,7 @@ export function AnnouncementFeed({
                       {item.senderType.replaceAll("_", " ")}
                     </StatusBadge>
                   </div>
-                  <h3 className="mt-2 text-base font-semibold text-foreground">
+                  <h3 className="mt-2 text-base font-semibold text-[var(--lms-heading)]">
                     {item.title}
                   </h3>
                 </div>
@@ -112,7 +112,7 @@ export function AnnouncementFeed({
                   }).format(item.createdAt)}
                 </time>
               </div>
-              <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
+              <p className="mt-3 whitespace-pre-wrap text-sm leading-[22px] text-body">
                 {item.message}
               </p>
               {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel) ?

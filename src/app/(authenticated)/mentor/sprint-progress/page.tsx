@@ -115,7 +115,7 @@ export default async function MentorSprintProgressPage({
       </div>
       {data.items.length === 0 ? <EmptyState title="No persisted sprint progress"
         description="No sprints matched the selected state and current mentor assignments. Unmaterialized or missing pre-migration work is not counted."
-        action={<Link href={hasFilters ? "/mentor/sprint-progress" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{hasFilters ? "Clear filters" : "Mentoring projects"}</Link>} />
+        action={<Link href={hasFilters ? "/mentor/sprint-progress" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{hasFilters ? "Clear filters" : "Mentoring projects"}</Link>} />
       : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
         <article key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-start justify-between gap-2">

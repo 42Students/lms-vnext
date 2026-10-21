@@ -664,7 +664,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             + Assignment · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
@@ -673,7 +673,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("QUIZ")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             + Quiz · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
@@ -813,7 +813,7 @@ export function FacultyLessonAuthoring({
                   <FacultyIstQuarterHourPicker label="Starts" value={startsAt} onChange={setStartsAt}/>
                   <FacultyIstQuarterHourPicker label="Ends" value={endsAt} onChange={setEndsAt}/>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground leading-5">
                   {FACULTY_IST_NOTE} Times use a 12-hour clock and 15-minute steps.
                 </p>
                 {(startsAt&&facultyIstQuarterHourIssue(startsAt)||
@@ -881,7 +881,7 @@ export function FacultyLessonAuthoring({
                       className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] py-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <p className="m-0 text-sm font-semibold text-foreground">
+                        <p className="m-0 text-sm font-semibold text-foreground leading-[22px]">
                           Question{" "}
                           {questionIndex + 1}
                         </p>
@@ -1165,7 +1165,7 @@ export function FacultyLessonAuthoring({
       )}
 
       {!mode && (!availableModes || availableModes.some((choice) => choice === "RESOURCE" || choice === "YOUTUBE" || choice === "LIVE_CLASS")) ? (
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="mt-3 text-xs text-muted-foreground leading-5">
           File/video upload authoring is hidden
           until signed Cloud Storage upload receipts
           are available.
@@ -1175,7 +1175,7 @@ export function FacultyLessonAuthoring({
         title="Discard this content draft?" confirmLabel="Discard draft"
         description="Any unsaved changes in this content form will be lost."
         onConfirm={discardDraft}>
-        <p className="text-sm text-body">Keep editing to preserve the details you entered.</p>
+        <p className="text-sm text-body leading-[22px]">Keep editing to preserve the details you entered.</p>
       </ConfirmDialog>
     </div>
   );

@@ -97,7 +97,7 @@ export function HrRecruiterBell(){
  const panelBody=<>
    {error?<ErrorState title="Notifications unavailable" description={state?error:"Couldn't load your notifications"}/>:null}
    {!state&&!error?<Skeleton label="Loading notifications" variant="row" count={3} className="mt-3"/>:
-    state?.status!=="READY"?<p className="mt-3 text-sm text-body">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
+    state?.status!=="READY"?<p className="mt-3 text-sm text-body leading-[22px]">{error?"Couldn't load your notifications":"Choose a college to view your notifications."}</p>:
     state.items.length===0?<EmptyState title={HR_BELL_EMPTY} description={HR_BELL_EMPTY_HELP}/>:
     <ScrollCue axis="y" label="Recruiter notifications" className="mt-3 min-w-0" viewportClassName="max-h-80"><ul role="list" aria-label="Recent recruiter notifications" className="min-w-0 space-y-[6px] px-3">{state.items.map(item=><li key={item.id}>
      <Link href={item.href} onClick={()=>setOpen(false)} className="grid min-h-11 min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-x-2 gap-y-1 rounded-[8px] sm:flex sm:gap-2 border border-[rgba(229,233,240,0.6)] bg-surface px-4 py-3 text-sm text-body transition-[background-color,border-color,box-shadow] duration-200 hover:border-[var(--lms-neutral-200)] hover:bg-[var(--lms-neutral-50)] hover:shadow-[0_1px_3px_rgba(0,0,0,0.04)] active:bg-[rgba(0,0,0,0.06)] active:shadow-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-[var(--lms-neutral-500)] motion-reduce:transition-none">
@@ -112,7 +112,7 @@ export function HrRecruiterBell(){
    onClick={()=>setOpen(value=>!value)}
    variant="secondary" className="relative !h-11 !w-11 !min-w-11 !p-0 md:!h-9 md:!w-9 md:!min-w-9 hover:!bg-[rgba(0,0,0,0.035)] active:!bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
    <ShellNavGlyph name="bell"/>
-   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-error)] px-1 text-[10px] leading-3 text-white">{unread>99?"99+":unread}</span>:null}
+   {unread>0?<span aria-hidden="true" className="absolute -right-1 -top-1 inline-flex min-h-4 min-w-4 items-center justify-center rounded-[var(--lms-radius-pill)] bg-[var(--lms-error)] px-1 text-xs leading-3 text-white">{unread>99?"99+":unread}</span>:null}
   </Button>
   {mobile ? <Drawer id="hr-topbar-mobile-notifications" open={open} onOpenChange={setOpen} title="Recruiter notifications" className={style.hrNotificationDrawer} bodyClassName={style.hrNotificationDrawerBody} footer={panelFooter}>
    {panelBody}

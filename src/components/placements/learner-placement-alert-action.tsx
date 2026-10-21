@@ -46,6 +46,6 @@ export function LearnerPlacementAlertAction({id,href,unread}:{
    </Link>:isUnread?<Button variant="link" className="max-md:min-h-11" type="button" onClick={()=>void markRead()} disabled={pending}>
       {pending?"Marking as read…":"Mark as read"}
    </Button>:null}
-  {error?<p role="alert" className="w-full text-xs font-semibold text-error">{error}</p>:null}
+  {error?<p role="alert" className="w-full text-xs font-semibold text-error leading-5">{error}</p>:null}
  </div>;
 }

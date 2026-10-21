@@ -29,7 +29,7 @@ export default async function MentorProjectReviewCompletenessPage({
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -37,11 +37,11 @@ export default async function MentorProjectReviewCompletenessPage({
       Projects access is disabled. Delivery history was not loaded.
     </section>:<>
       <p className="text-sm text-body leading-[22px]">
-        {data.total.toLocaleString("en-IN")} persisted final-delivery version{data.total===1?"":"s"}
+        {data.total} persisted final-delivery version{data.total===1?"":"s"}
         {" · "}Project state: {data.projectStatus}
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
-        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Delivery workspace</Link>}/>
+        description="There are no persisted final-delivery versions for this project. No review or feedback is inferred from missing history." action={<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Delivery workspace</Link>}/>
       :<ol aria-label="Recorded delivery review versions" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
           <div className="flex flex-wrap items-center justify-between gap-3">

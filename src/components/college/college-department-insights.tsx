@@ -105,7 +105,7 @@ export function CollegeDepartmentInsights({
           These settings are policy context, not department attendance percentages.
         </p>
         <Link href="/college/attendance/settings"
-          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Attendance policy settings</Link>
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Attendance policy settings</Link>
         </Alert>
       </Disclosure>
     ) : null}
