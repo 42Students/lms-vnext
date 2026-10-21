@@ -5,6 +5,7 @@ import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 export default function Loading() {
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Workspaces" description="Live projects, each run by a mentor with a team of students." />
+    <p role="status" className="text-sm text-muted-foreground">Opening projects</p>
     <GracefulPageLoading shape="directory" />
   </div>;
 }
