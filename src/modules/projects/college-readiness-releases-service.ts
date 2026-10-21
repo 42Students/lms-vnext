@@ -48,22 +48,30 @@ export async function listCollegeReadinessReleases(context:RequestContext,colleg
     ne(projectInstances.status,"ARCHIVED"))).for("share").limit(1);
   if(!owned)return [];
  const releases=await db.select({id:projectReleases.id,title:projectReleases.title,
-  status:projectReleases.status,sequence:projectReleases.sequence})
+  status:projectReleases.status,sequence:projectReleases.sequence,
+  targetDate:projectReleases.targetDate})
   .from(projectReleases).where(eq(projectReleases.projectId,id)).orderBy(asc(projectReleases.sequence));
  if(!releases.length)return [];
  const ids=releases.map(r=>r.id);
  const sprints=await db.select({id:projectSprints.id,releaseId:projectSprints.releaseId,
   status:projectSprints.status}).from(projectSprints).where(and(
    eq(projectSprints.projectId,id),inArray(projectSprints.releaseId,ids)));
- const points=await db.select({sprintId:projectTasks.sprintId,points:sql<number>`coalesce(sum(${projectTasks.estimatePoints}),0)::int`})
-  .from(projectTasks).where(eq(projectTasks.projectId,id)).groupBy(projectTasks.sprintId);
- const bySprint=new Map(points.map(row=>[row.sprintId,row.points]));
+ const points=await db.select({
+  sprintId:projectTasks.sprintId,
+  committed:sql<number>`coalesce(sum(${projectTasks.estimatePoints}),0)::int`,
+  completed:sql<number>`coalesce(sum(case when ${projectTasks.status}='DONE'
+    then ${projectTasks.estimatePoints} else 0 end),0)::int`,
+ }).from(projectTasks).where(eq(projectTasks.projectId,id))
+   .groupBy(projectTasks.sprintId);
+ const bySprint=new Map(points.map(row=>[row.sprintId,row]));
  return releases.map(release=>{
   const included=sprints.filter(s=>s.releaseId===release.id);
+  const committedPoints=included.reduce((sum,s)=>sum+(bySprint.get(s.id)?.committed??0),0);
+  const completedPoints=included.reduce((sum,s)=>sum+(bySprint.get(s.id)?.completed??0),0);
   return {...release,sprintCount:included.length,
    completedSprints:included.filter(s=>s.status==="COMPLETED").length,
-   points:included.reduce((sum,s)=>sum+(bySprint.get(s.id)??0),0),
-   targetDate:null as string|null};
+   points:committedPoints,committedPoints,completedPoints,
+   targetDate:release.targetDate};
  });
  });
 }
