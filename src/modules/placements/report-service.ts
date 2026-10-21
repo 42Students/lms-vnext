@@ -68,25 +68,7 @@ export const placementReportQuerySchema = z
     mode: z.enum(["ON_CAMPUS", "POOL", "OFF_CAMPUS"]).optional(),
     category: z.enum(["REGULAR", "DREAM", "SUPER_DREAM"]).optional(),
   })
-  .strict()
-  .superRefine((filters, ctx) => {
-    // Legacy POOL and SUPER_DREAM are not independently persisted. Returning
-    // zero rows for either would fabricate a valid empty result.
-    if (filters.mode === "POOL") {
-      ctx.addIssue({
-        code: "custom",
-        path: ["mode"],
-        message: "Pool-drive reporting needs a persisted pool classification; this filter is not available yet.",
-      });
-    }
-    if (filters.category === "SUPER_DREAM") {
-      ctx.addIssue({
-        code: "custom",
-        path: ["category"],
-        message: "Super-dream reporting needs a persisted category; this filter is not available yet.",
-      });
-    }
-  });
+  .strict();
 
 export type PlacementReportQuery = z.input<
   typeof placementReportQuerySchema
@@ -227,6 +209,10 @@ export async function getPlacementReportWorkspace(
       employmentType: placementJobs.employmentType,
       status: placementJobs.status,
       recruiterDriveMode: placementJobs.recruiterDriveMode,
+      // Legacy POOL / SUPER_DREAM are preserved in their original classifications.
+      // Falling back to the newer booleans is safe only for their matching values.
+      legacyDriveMode: placementJobs.legacyDriveMode,
+      legacyJobCategory: placementJobs.legacyJobCategory,
       isDream: placementJobs.isDream,
       jobTypeLabel: placementJobs.jobTypeLabel,
       // NULL is historical and unaudited; the policy model receives undefined.
@@ -273,32 +259,23 @@ export async function getPlacementReportWorkspace(
     throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
   }
 
-  // A company, mode or pay category filter changes drive facts, not the
-  // registered population. POOL/SUPER_DREAM are not persisted separately.
+  // Legacy classifications survive as import fields. Never substitute a
+  // different modern drive mode for POOL or invent a SUPER_DREAM category.
+  // These drive filters deliberately do not narrow the registered population.
   const jobs: PlacementReportJob[] = jobRows.filter((job) =>
     (!query.jobId || job.id === query.jobId) &&
     (!query.company || job.companyName.toLowerCase() === query.company.toLowerCase()) &&
-    (!query.mode || job.recruiterDriveMode === query.mode) &&
+    (!query.mode || (job.legacyDriveMode ?? job.recruiterDriveMode) === query.mode) &&
     (!query.category ||
-      (query.category === "DREAM" && job.isDream) ||
-      (query.category === "REGULAR" && !job.isDream))
+      (job.legacyJobCategory
+        ? job.legacyJobCategory === query.category
+        : query.category === "DREAM" ? job.isDream :
+          query.category === "REGULAR" && !job.isDream))
   );
 
-  if (jobs.length === 0) {
-    return {
-      collegeId: college.id,
-      seasons,
-      selectedSeasonId: selectedSeason.id,
-      selectedJobId: query.jobId ?? null,
-      selectedReportJobIds: [] as string[],
-      reportFilterKey: reportFilterKey(query),
-      jobs: jobRows,
-      report: summarizePlacementReports(emptyFacts),
-      noSeason: false,
-      registrationScopeNote:
-        "Placement registrations are recorded by academic batch, not by season.",
-    };
-  }
+  // Even when no drives match a company/mode/category filter, registered
+  // learners still form the denominator. Do not return a fabricated zero
+  // registration cohort before querying the independent registration ledger.
 
   /*
    * Scope every application/offer query through the stored job's college,
@@ -634,6 +611,7 @@ export async function getPlacementReportWorkspace(
     registrationScopeNote: !registrationsAvailable
       ? "Placement registration data is not available in this environment yet, so the registered pool and placement rate are shown as empty rather than estimated."
       : "Registrations are current batch-level choices, not season snapshots. " +
+       (jobs.length===0 ? "No matching drives; the registered cohort is still counted. " : "") +
       "The placement-rate denominator can therefore differ from historical " +
       "legacy season reports. Academic batch and branch filters narrow the " +
       "learner population and outcomes; drive/company/mode/category filters " +
