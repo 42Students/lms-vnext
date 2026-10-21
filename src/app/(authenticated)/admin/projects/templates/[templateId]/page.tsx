@@ -13,8 +13,12 @@ import { ProjectTemplateView } from "@/components/projects/project-template-view
 import { TemplateMetadataEditControl } from "@/components/projects/template-metadata-edit-control";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { getProjectTemplateDetail } from "@/modules/projects/template-service";
+import { getProjectTemplateDetail,resolveLegacyProjectTemplateBookmark } from "@/modules/projects/template-service";
 import { can } from "@/modules/permissions/policy";
+import {redirect} from "next/navigation";
+import {getDb} from "@/db/client";
+import {colleges} from "@/db/schema";
+import {eq} from "drizzle-orm";
 import { SuperAdminTemplatePreviewControl } from "@/components/admin/super-admin-template-preview-control";
 
 export default async function SuperAdminProjectTemplateDetailPage({
@@ -25,6 +29,10 @@ export default async function SuperAdminProjectTemplateDetailPage({
   const context = await getCurrentRequestContext();
   const { templateId } = await params;
   const id = projectTemplateIdSchema.safeParse(templateId);
+  if(!id.success&&can(context,"project-template.read")){
+    const resolved=await resolveLegacyProjectTemplateBookmark(context,templateId);
+    if(resolved)redirect("/admin/projects/templates/"+encodeURIComponent(resolved));
+  }
   if (!id.success) return <div className="min-w-0 space-y-5">
     <PageHeader title="Project template"/>
     <ErrorState title="No template in this link"
@@ -59,6 +67,9 @@ export default async function SuperAdminProjectTemplateDetailPage({
     </div>;
   }
 
+  const selectedCollegeName=context.adminScope?.collegeId?
+    (await getDb().select({name:colleges.name}).from(colleges)
+      .where(eq(colleges.id,context.adminScope.collegeId)).limit(1))[0]?.name??null:null;
   return (
     <div className="min-w-0 space-y-4 md:space-y-5">
       <ProjectAdminNav
@@ -112,6 +123,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
               selectedCollegeId={
                 context.adminScope?.collegeId ?? null
               }
+              selectedCollegeName={selectedCollegeName}
               allowGlobalActions={can(context, "project-template.manage")}
               blueprint={detail.currentVersion?.blueprint}
               assignedToSelectedCollege={

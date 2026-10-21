@@ -292,6 +292,7 @@ export function ProjectTemplateActions({
   status,
   selectedCollegeId,
   assignedToSelectedCollege,
+  selectedCollegeName,
   allowGlobalActions = true,
   blueprint,
 }: {
@@ -300,6 +301,7 @@ export function ProjectTemplateActions({
   status: string;
   selectedCollegeId: string | null;
   assignedToSelectedCollege: boolean;
+  selectedCollegeName?:string|null;
   allowGlobalActions?: boolean;
   blueprint?:{overview:{deliverables:readonly string[]};sprints:readonly unknown[];tasks:readonly unknown[]};
 }) {
@@ -355,10 +357,13 @@ export function ProjectTemplateActions({
         body,
       );
       showToast({
-        tone: "success",
-        title: label,
-        description:
-          title + " was updated successfully.",
+        tone:"success",
+        title:label==="Assign to college"?
+          "Assigned to "+(selectedCollegeName??"selected college"):
+          label==="Revoke college assignment"?
+          "Removed from "+(selectedCollegeName??"selected college"):label,
+        description:label==="Assign to college"||label==="Revoke college assignment"?
+          undefined:title+" was updated successfully.",
       });
       router.refresh();
     } catch (caught) {
@@ -370,7 +375,9 @@ export function ProjectTemplateActions({
         description:
           caught instanceof Error
             ? caught.message
-            : "The request could not be completed.",
+            : label==="Assign to college"||label==="Revoke college assignment"?
+              "Failed to update this college's template assignment":
+              "The request could not be completed.",
       });
     } finally {
       setPending(null);
