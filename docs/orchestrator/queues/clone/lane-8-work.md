@@ -11,8 +11,8 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-8/src_app_api_skills_route.ts.part1of2.md` (edit src/app/api/skills/route.ts; 20 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-8/src_app_api_skills_route.ts.part2of2.md` (edit src/app/api/skills/route.ts; 9 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-8/src_app_api_skills_route.ts.part1of2.md` (edit src/app/api/skills/route.ts; 20 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-8/src_app_api_skills_route.ts.part2of2.md` (edit src/app/api/skills/route.ts; 9 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_college-term-mapping-manager.tsx.part1of3.md` (edit src/components/academics/college-term-mapping-manager.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_college-term-mapping-manager.tsx.part2of3.md` (edit src/components/academics/college-term-mapping-manager.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_college-term-mapping-manager.tsx.part3of3.md` (edit src/components/academics/college-term-mapping-manager.tsx; 10 findings; best P3)
