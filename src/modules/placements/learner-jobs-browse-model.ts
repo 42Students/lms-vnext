@@ -15,6 +15,11 @@ export type BrowseJobShape = {
     responsibilities?:string|null;
     targetDepartmentName?:string|null;
     targetProgramName?:string|null;
+    targetDepartmentId?:string|null;
+    targetProgramId?:string|null;
+    /** Historical saved postings may be inactive but still readable. */
+    isActive?:boolean;
+    status?:string;
     applicationDeadline: string | null;
     publishedAt?: string | null;
   };
@@ -28,6 +33,8 @@ export type BrowseJobShape = {
     maximumAnnualCtcInr: number | null;
   };
   canApply: boolean;
+  /** Legacy visibleFlag: browsing eligibility, not permission to submit. */
+  visibleToLearner?:boolean;
   deadlinePassed: boolean;
 };
 
@@ -45,6 +52,10 @@ export type LearnerJobBrowseFilters = {
   employmentType: string;
   location: string;
   eligibleOnly: boolean;
+  /** Optional permitted-scoped administrative search facets. */
+  departmentId?:string;
+  programId?:string;
+  jobType?:string;
   closingSoon: boolean;
   availability: z.infer<typeof learnerDriveAvailabilitySchema>;
   sort: "deadline" | "ctc" | "title" | "newest";
@@ -57,7 +68,8 @@ export const DEFAULT_LEARNER_JOB_FILTERS: LearnerJobBrowseFilters = {
 
 /** A published drive is not necessarily open to THIS learner for a new application. */
 export function learnerDriveAvailability(item: BrowseJobShape): "open" | "not-open" | "closed" {
-  if (item.deadlinePassed) return "closed";
+  if (item.deadlinePassed || item.job.isActive===false ||
+      (item.job.status!==undefined && item.job.status!=="PUBLISHED")) return "closed";
   return item.canApply ? "open" : "not-open";
 }
 
@@ -111,7 +123,13 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
     // Eligibility may be true for a historical snapshot even after closure.
     // Never offer a closed drive as actionable in the eligible-only view.
-    if(filters.eligibleOnly&&(row.deadlinePassed||!row.canApply))return false;
+    // The legacy Eligible-only filter follows audience visibility, even if
+    // a visible role is temporarily closed or blocked for self-application.
+    if(filters.eligibleOnly && !(row.visibleToLearner ?? row.canApply))return false;
+    if(filters.departmentId && row.job.targetDepartmentId!==filters.departmentId)return false;
+    if(filters.programId && row.job.targetProgramId!==filters.programId)return false;
+    if(filters.jobType && visibleJobType(row).toLocaleLowerCase("en-IN")!==
+       filters.jobType.toLocaleLowerCase("en-IN"))return false;
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
         ? Date.parse(row.job.applicationDeadline) : Number.NaN;
