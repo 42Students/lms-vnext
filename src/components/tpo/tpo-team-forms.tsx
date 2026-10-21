@@ -118,10 +118,12 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
    <label className="grid gap-1 text-sm font-semibold">Find a colleague
      <Input value={memberQuery} disabled={busy} role="combobox" aria-expanded={memberChoices.length>0}
        aria-controls="tpo-team-member-choices" aria-autocomplete="list"
+       aria-activedescendant={memberChoices[highlighted] ? "tpo-team-member-"+memberChoices[highlighted].membershipId : undefined}
        onChange={event=>{setMemberQuery(event.target.value);setHighlighted(0);}}
        onKeyDown={event=>{
-        if(event.key==="ArrowDown"){event.preventDefault();setHighlighted(i=>Math.min(memberChoices.length-1,i+1));}
-        if(event.key==="ArrowUp"){event.preventDefault();setHighlighted(i=>Math.max(0,i-1));}
+        if(event.key==="ArrowDown"&&memberChoices.length>0){event.preventDefault();setHighlighted(i=>Math.min(memberChoices.length-1,i+1));}
+        if(event.key==="ArrowUp"&&memberChoices.length>0){event.preventDefault();setHighlighted(i=>Math.max(0,i-1));}
+        if(event.key==="Escape"){event.preventDefault();setMemberQuery("");setHighlighted(0);}
         if(event.key==="Enter"&&memberChoices[highlighted]){
           event.preventDefault();toggleMember(memberChoices[highlighted].membershipId);
         }
@@ -132,7 +134,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
      className="max-h-48 space-y-1 overflow-y-auto">
    {memberChoices.map((member,index)=>
 
-    <div key={member.membershipId} role="option" aria-selected={additional.includes(member.membershipId)}
+    <div key={member.membershipId} id={"tpo-team-member-"+member.membershipId} role="option" aria-selected={additional.includes(member.membershipId)}
       className={"flex min-h-11 items-center gap-2 rounded px-2 text-sm "+(highlighted===index?"bg-muted":"")}>
       <Checkbox checked={additional.includes(member.membershipId)} disabled={busy}
         onChange={()=>toggleMember(member.membershipId)} aria-label={"Add "+member.displayName}/>
