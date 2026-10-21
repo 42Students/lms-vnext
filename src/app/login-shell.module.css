@@ -167,7 +167,7 @@
   box-shadow: none;
   transition: background-color .15s ease, box-shadow .15s ease;
 }
-.card :global(button[type="submit"]:hover:not(:disabled)) { background: color-mix(in srgb, var(--auth-primary) 90%, #000); }
+.card :global(button[type="submit"]:hover:not(:disabled)) { background: color-mix(in srgb, var(--auth-primary) 90%, var(--lms-black)); }
 .card :global(button[type="submit"]:focus-visible) {
   outline: 3px solid rgba(10, 124, 136, .25);
   outline-offset: 2px;
@@ -229,13 +229,13 @@
 
 /* Exact legacy SCSS error and disabled field colors. The active keyboard outline remains visible. */
 .card :global(input[aria-invalid="true"]) {
-  border-color: #ef4444;
+  border-color: var(--lms-error);
   background: rgba(239, 68, 68, .06);
 }
 .card :global(input[aria-invalid="true"]:focus-visible) {
-  border-color: #ef4444;
+  border-color: var(--lms-error);
   box-shadow: 0 0 0 2px rgba(239, 68, 68, .2);
-  outline-color: #ef4444;
+  outline-color: var(--lms-error);
 }
 .card :global(input::placeholder) { color: #bbb9be; opacity: 1; }
 .card :global([role="tab"][aria-selected="true"]:focus-visible) {
@@ -263,7 +263,7 @@
   line-height: 20px;
 }
 .card :global(.login-form[data-step="code"] button:disabled:not([type="submit"])) {
-  color: #a9a7ae;
+  color: var(--lms-neutral-400);
   cursor: not-allowed;
 }
 .card :global([role="tablist"] + [role="tabpanel"]) {
