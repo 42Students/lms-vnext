@@ -7,17 +7,17 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { DataTable } from "@/components/ui/data-table";
 import { Dialog } from "@/components/ui/dialog";
-import { Dropdown } from "@/components/ui/dropdown";
-import { Menu, MenuItem } from "@/components/ui/menu";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 import { LECTURE_HALL_COPY, ROOM_TYPE_LABELS } from "@/modules/academics/lecture-hall-copy";
 
+function HallPlusIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>;}
+function HallEditIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9M16 4a2.8 2.8 0 0 1 4 4L9 19l-5 1 1-5L16 4Z"/></svg>;}
+function HallArchiveIcon(){return <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="4" rx="1"/><path d="M6 8v12h12V8M10 12h4"/></svg>;}
 export type HallRow = {
   id: string;
   name: string;
@@ -102,6 +102,24 @@ export function LectureHallManager({
   const [discardOpen, setDiscardOpen] = useState(false);
   const originalEditRef = useRef<string | null>(null);
   const [archiving, setArchiving] = useState<HallRow | null>(null);
+  const [search,setSearch]=useState("");
+  const normalizedSearch=search.trim().toLocaleLowerCase("en");
+  const visibleHalls=normalizedSearch?halls.filter(hall=>
+    [hall.name,hall.roomType,ROOM_TYPE_LABELS[hall.roomType],hall.departmentName??"",hall.description??""]
+      .some(value=>value.toLocaleLowerCase("en").includes(normalizedSearch))):halls;
+  function exportCsv(){
+    const escape=(value:string|number|null|undefined)=>{
+      const text=String(value??"");
+      const guarded=/^[=+\-@\t\r]/.test(text)?"'"+text:text;
+      return '"'+guarded.replace(/"/g,'""')+'"';
+    };
+    const csv=[["Name","Room Type","Capacity","Department","Description"].map(escape).join(","),
+      ...visibleHalls.map(hall=>[hall.name,ROOM_TYPE_LABELS[hall.roomType]??hall.roomType,hall.capacity,hall.departmentName??"",hall.description??""].map(escape).join(","))].join("\r\n");
+    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
+    const link=document.createElement("a");
+    link.href=url;link.download="lecture-halls.csv";document.body.appendChild(link);link.click();link.remove();
+    URL.revokeObjectURL(url);
+  }
 
   function snapshot(value: Draft) {
     return JSON.stringify({
@@ -257,7 +275,7 @@ export function LectureHallManager({
               {createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ?
                 <p id="create-hall-name-error" role="alert" className="mt-1 text-xs text-error">{createError}</p> : null}
             </div>
-            <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2">
+            <div className="grid min-w-0 grid-cols-2 gap-3">
               <div>
                 <label className={field} htmlFor="create-hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
                 <Select id="create-hall-type" required className="min-h-11 w-full md:min-h-9" value={createDraft.roomType}
@@ -279,40 +297,26 @@ export function LectureHallManager({
                 onChange={(event) => setCreateDraft({ ...createDraft, description: event.target.value })}/>
             </div>
             <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending}>
-              {LECTURE_HALL_COPY.createButton}
+              <HallPlusIcon /> {LECTURE_HALL_COPY.createButton}
             </Button>
           </form>
         </section>
         <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
-      {halls.length === 0 ? (
+      {visibleHalls.length === 0 ? (
         <EmptyState
-          title={emptyState?.title ?? "No lecture halls found."}
+          title={search?"No lecture halls match these filters.":emptyState?.title ?? "No lecture halls found."}
           description={emptyState?.description ?? "Add the rooms your college teaches in, so classes can be scheduled into them."}
         />
       ) : (
-        <DataTable empty={<EmptyState title="No lecture halls" description="No records to show."/>}
+        <DataTable mobileMode="scroll" empty={<EmptyState title="No lecture halls" description="No records to show."/>}
           columns={[
             { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="block min-w-0 break-words font-semibold text-foreground">{hall.name}</span> },
             { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
-            { key: "capacity", header: "Capacity", cell: (hall) => hall.capacity },
-            { key: "dept", header: LECTURE_HALL_COPY.columns.department, cell: (hall) => hall.departmentName ?? "—" },
+            { key: "capacity", header: "Capacity", className:"w-20", cell: (hall) => hall.capacity },
+            { key: "dept", header: LECTURE_HALL_COPY.columns.department, cell: (hall) => hall.departmentName ?? "-" },
             { key:"description",header:"Description",cell:(hall)=>
                <span title={hall.description??undefined} className="block max-w-44 truncate">{hall.description??"—"}</span> },
-            {
-              key: "upcoming",
-              header: "Upcoming classes",
-              cell: (hall) => (hall.upcomingClasses ? hall.upcomingClasses : "—"),
-            },
-            {
-              key: "status",
-              header: "Status",
-              cell: (hall) => (
-                <StatusBadge tone={hall.status === "ACTIVE" ? "success" : "neutral"}>
-                  {hall.status === "ACTIVE" ? "Active" : "Archived"}
-                </StatusBadge>
-              ),
-            },
             {
               key: "actions",
               header: "",
@@ -326,26 +330,16 @@ export function LectureHallManager({
                   </Link>
                   <Button type="button" variant="ghost" size="sm" disabled={pending}
                     aria-label={"Edit "+hall.name} title={"Edit "+hall.name}
-                    onClick={()=>open(hall)} className="min-h-11 md:min-h-9">✎ Edit</Button>
+                    onClick={()=>open(hall)} className="min-h-11 md:min-h-9"><HallEditIcon /></Button>
                   {hall.status==="ACTIVE"?<Button type="button" variant="ghost" size="sm"
                     aria-label={"Archive "+hall.name} title={"Archive "+hall.name}
                     disabled={pending} onClick={()=>setArchiving(hall)}
-                    className="min-h-11 text-error md:min-h-9">Archive</Button>:null}
-                  <Dropdown label="Lecture hall actions" trigger="Actions" mobileSheet align="end" triggerClassName="md:!min-h-9">
-                    <Menu className="w-full min-w-0">
-                      <MenuItem disabled={pending} onClick={() => open(hall)}>Edit</MenuItem>
-                      {hall.status === "ACTIVE" ? (
-                        <MenuItem disabled={pending} onClick={() => setArchiving(hall)}>Archive</MenuItem>
-                      ) : (
-                        <MenuItem disabled={pending} onClick={() => setStatus(hall, "ACTIVE")}>Restore</MenuItem>
-                      )}
-                    </Menu>
-                  </Dropdown>
+                    className="min-h-11 text-error md:min-h-9"><HallArchiveIcon /></Button>:<Button type="button" variant="ghost" size="sm" disabled={pending} aria-label={"Restore lecture hall "+hall.name} title={"Restore "+hall.name} onClick={()=>setStatus(hall,"ACTIVE")} className="min-h-11 md:min-h-9">Restore</Button>}
                 </div>
               ),
             },
           ]}
-          rows={halls}
+          rows={visibleHalls}
           getRowKey={(hall) => hall.id}
         />
       )}
@@ -385,7 +379,7 @@ export function LectureHallManager({
             {formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ?
               <p id="edit-hall-name-error" role="alert" className="mt-1 text-xs text-error">{formError}</p> : null}
           </div>
-          <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] md:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-2 gap-3">
             <div>
               <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
               <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
@@ -432,8 +426,8 @@ export function LectureHallManager({
       <ConfirmDialog
         open={archiving !== null}
         onOpenChange={(value) => !value && !pending && setArchiving(null)}
-        title="Archive lecture hall"
-        description={`Delete this room? ${archiving?.name ?? "This room"} will be archived, not physically deleted. Scheduled and past class history is preserved; upcoming scheduled sessions must be resolved first. You can restore this room later.`}
+        title="Archive this room?"
+        description={`A room with scheduled class sessions cannot be archived until they move to another room. ${archiving?.name ?? "This room"} will be archived, not deleted permanently. Past class history is preserved.`}
         confirmLabel="Archive hall" confirmVariant="danger"
         pending={pending}
         onConfirm={() => archiving && setStatus(archiving, "ARCHIVED")}
