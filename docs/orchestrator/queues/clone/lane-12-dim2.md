@@ -300,6 +300,6 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/ui/data-table.tsx`
 - [x] `src/components/ui/date-input.tsx`
 - [x] `src/components/ui/tabs.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
