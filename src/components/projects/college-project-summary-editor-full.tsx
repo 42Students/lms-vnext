@@ -110,13 +110,14 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
        <option key={v} value={v}>{v}</option>)}
+      <option value="ARCHIVED" disabled>Archived (use Archive action)</option>
     </Select></label>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
      disabled={hasTaskData} value={derivedProgress??form.progressPercent}
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
      {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
-    {field("Phase","phase",120)}{field("Due label","dueLabel",160)}{field("Course label","courseLabel",160)}
+    {field("Phase","phase",120)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class<Select className={style} value={form.sectionId}
      onChange={e=>change("sectionId",e.target.value)}>
       <option value="">No class</option>
@@ -146,7 +147,11 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
     <Textarea className={style+" min-h-24"} maxLength={4000} value={form[k]}
      onChange={e=>change(k,e.target.value)}/>
    </label>)}
-   <p className="text-xs text-muted-foreground">Activating requires a Mentor; completing requires an approved final submission.</p>
+   <p className="text-xs text-muted-foreground">
+     Activating requires a Mentor; completing requires an approved final submission.
+     Historical In progress, Ready and Blocked stages remain in the Phase field
+     while vNext uses the Planned/Active lifecycle.
+   </p>
    {dirty&&form.title.trim().length===0?<p role="alert" className="text-sm text-error">Title is required</p>:null}
    <Button type="button" disabled={busy} onClick={()=>void save()}
     >{busy?"Saving…":"Save changes"}</Button>

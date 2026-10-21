@@ -3,6 +3,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { DataTable } from "@/components/ui/data-table";
@@ -36,6 +37,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
  collegeId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];initialTemplateId?:string|null;
 }) {
   const router=useRouter();
+  const {showToast}=useToast();
   const [classes,setClasses]=useState<ClassChoice[]>([]);
   const [classQuery,setClassQuery]=useState("");
   const [classesRetry,setClassesRetry]=useState(0);
@@ -63,6 +65,24 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [preflightError,setPreflightError]=useState("");
   const [outcomeRestored,setOutcomeRestored]=useState(false);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
+  const reportKey="lms-project-cohort-report:"+collegeId;
+  // A cohort report is recoverable for seven days after navigating away, and
+  // never shared with another college's selected workspace.
+  useEffect(()=>{
+    setOutcome(null);setOutcomeRestored(false);
+    try{
+      const raw=window.localStorage.getItem(reportKey);
+      if(!raw)return;
+      const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome};
+      if(!saved.expiresAt||saved.expiresAt<Date.now()||!saved.report||
+        !Array.isArray(saved.report.individualResults)){
+        window.localStorage.removeItem(reportKey);return;
+      }
+      setOutcome(saved.report);setOutcomeRestored(true);
+    }catch{
+      // Storage can be disabled in private browsing; creation still works.
+    }
+  },[reportKey]);
   if(prevCollegeId!==collegeId){setPrevCollegeId(collegeId);setLoading(true);}
   useEffect(()=>{
     const controller=new AbortController();
@@ -185,11 +205,27 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
       }) as CohortCreationOutcome;
       setOutcome(result);
+      setOutcomeRestored(false);
+      if(mode==="INDIVIDUAL"){
+        try{
+          window.localStorage.setItem(reportKey,JSON.stringify({
+            expiresAt:Date.now()+7*24*60*60*1000,report:result,
+          }));
+        }catch{
+          showToast({tone:"info",title:"Creation report could not be saved",
+            description:"Export the displayed learner results before leaving this page."});
+        }
+      }
       created=true;
       if(result.created.length===0){
         setNotice("Nothing was created. Check existing workspaces before retrying.");
+        showToast({tone:"info",title:"Nothing was created",
+          description:"All matching workspaces may already exist. Review the cohort report before retrying."});
       }else{
         setNotice(result.created.length+" Project workspaces created.");
+        showToast({tone:"success",title:result.created.length===1?
+          "Workspace created":"Workspaces created",
+          description:result.created.length+" Project workspaces created."});
       }
       if(mode==="INDIVIDUAL" && result.created.length < result.requested-result.alreadyCovered){
         setNotice("Some workspaces were not created. Review the learner outcome report before retrying.");
@@ -200,7 +236,9 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       }
       router.refresh();
     } catch(e) {
-      setError("Nothing was created. "+classTeamCreationFeedback(e));
+      const failure=classTeamCreationFeedback(e);
+      setError("Nothing was created. "+failure);
+      showToast({tone:"error",title:"Nothing was created",description:failure});
     } finally {
       setPreflightLoading(false);
       // After a successful POST, keep Create locked until navigation unmounts this form.
@@ -335,7 +373,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
     {notice?<p role="status" className="text-sm leading-[22px]">{notice}</p>:null}
     {outcome&&mode==="INDIVIDUAL"?<section className="space-y-2 border-b border-border pb-5">
-      <h3 className="font-semibold">Latest cohort creation outcome</h3>
+      <h3 className="font-semibold">{outcomeRestored?
+        "Restored cohort creation outcome":"Latest cohort creation outcome"}</h3>
+      {outcomeRestored?<p className="text-xs text-body">
+        This report was kept for seven days on this device for the selected college.
+      </p>:null}
       <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
       <p role="status" className="text-sm leading-[22px]">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
