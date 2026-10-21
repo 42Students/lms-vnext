@@ -60,6 +60,8 @@ export type LearnerCourseListRow = {
     courseId: string;
     courseName: string;
     courseCode: string;
+    /** Legacy slug is informational; navigation uses authorized delivery UUID. */
+    courseSlug?: string | null;
     courseDescription: string | null;
     courseEnabled?:boolean;
     courseStatus?:string;
@@ -426,7 +428,8 @@ export function LearnerCourseList({
             {visibleRows.slice(0, visibleLimit).map((row, index, renderedRows) => {
               const elective =
                 String(row.course.offeringType).toUpperCase() === "ELECTIVE";
-              const blocked=row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0;
+              const blocked=row.readOnly||row.course.courseEnabled===false||
+                row.course.courseAllowedForDisplay===0;
               const previousElective =
                 index > 0 &&
                 String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
