@@ -68,14 +68,19 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
       .for("update",{of:collegeMemberships}).limit(1);
     if(!member||member.status==="ENDED")throw Error("PERSON_NOT_EDITABLE");
     if(input.kind==="FACULTY"){
-      if(input.primaryDepartmentId){
-        const [dept]=await tx.select({id:departments.id}).from(departments)
-          .where(and(eq(departments.id,input.primaryDepartmentId),
-            eq(departments.collegeId,own.collegeId))).limit(1);
-        if(!dept)throw Error("DEPARTMENT_NOT_FOUND");
-      }
-      const [found]=await tx.select({document:facultyProfiles.profileDocument})
-        .from(facultyProfiles).where(eq(facultyProfiles.membershipId,id)).for("update").limit(1);
+      const [found]=await tx.select({
+        document:facultyProfiles.profileDocument,
+        departmentId:facultyProfiles.primaryDepartmentId,
+      }).from(facultyProfiles).where(eq(facultyProfiles.membershipId,id)).for("update").limit(1);
+      // Keep an existing department on partial updates; require and scope
+      // the department when provisioning a Faculty member.
+      const departmentId=input.primaryDepartmentId===undefined
+        ? found?.departmentId??null : input.primaryDepartmentId;
+      if(!departmentId)throw Error("DEPARTMENT_REQUIRED");
+      const [dept]=await tx.select({id:departments.id}).from(departments)
+        .where(and(eq(departments.id,departmentId),
+          eq(departments.collegeId,own.collegeId))).limit(1);
+      if(!dept)throw Error("Department does not belong to the selected college");
       const original=facultyProfileDocumentSchema.parse(found?.document??{});
       const doc=facultyProfileDocumentSchema.parse({...original,
         about:{...original.about,description:input.bio},
@@ -83,11 +88,11 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
         address:{...original.address,currentAddress:input.address},
         contact:{...original.contact,contactMobile:input.contactPhone,contactMail:input.contactEmail}});
       await tx.insert(facultyProfiles).values({membershipId:id,profileDocument:doc,
-        primaryDepartmentId:input.primaryDepartmentId??null,
+        primaryDepartmentId:departmentId,
         academicTitle:input.academicTitle||null,employmentType:input.employmentType||null})
         .onConflictDoUpdate({target:facultyProfiles.membershipId,
           set:{profileDocument:doc,profileDocumentVersion:sql`${facultyProfiles.profileDocumentVersion}+1`,
-            primaryDepartmentId:input.primaryDepartmentId??null,
+            primaryDepartmentId:departmentId,
             academicTitle:input.academicTitle||null,employmentType:input.employmentType||null,updatedAt:new Date()}});
     }else{
       const [found]=await tx.select({document:learnerProfiles.profileDocument})
@@ -109,6 +114,7 @@ export async function saveCollegePersonEditor(context:RequestContext,rawId:unkno
       subjectType:"college_membership",subjectId:id,
       summary:input.kind==="FACULTY"?"Faculty profile updated":"Student profile updated",
       metadata:{role:input.kind}});
-    return {id,updated:true};
+    return {id,updated:true,
+      message:input.kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!"};
   });
 }
