@@ -6,7 +6,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
-import { expandIstSessions, findPreviewConflicts } from "./college-recurring-preview-model";
+import { expandIstSessions, findPreviewConflicts, type PreviewConflict } from "./college-recurring-preview-model";
 import { collegeRecurringExecuteSchema, recurringExecutionSummary } from "./college-recurring-execute-model";
 
 export class CollegeRecurringExecutionError extends Error {
@@ -83,21 +83,41 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
       ...slot, conflicts: findPreviewConflicts(slot, input, existing),
     }));
     const free = resolved.filter(slot => slot.conflicts.length === 0);
-    const skipped = resolved.filter(slot => slot.conflicts.length > 0).map(slot => ({
-      localDate: slot.localDate, reasons: slot.conflicts,
-    }));
+    const skipped: Array<{localDate:string;reasons:PreviewConflict[];error?:string}> =
+      resolved.filter(slot => slot.conflicts.length > 0).map(slot => ({
+        localDate: slot.localDate, reasons: slot.conflicts,
+      }));
     if (!free.length) throw new CollegeRecurringExecutionError("SCHEDULE_CONFLICT");
-    const created = await tx.insert(sectionScheduleEvents).values(free.map(slot => ({
-      sectionId: input.sectionId, title: input.title,
-      startsAt: new Date(slot.startsAt), endsAt: new Date(slot.endsAt),
-      facultyMembershipId: input.facultyMembershipId ?? null,
-      lectureHallId: input.lectureHallId ?? null,
-    }))).returning({id: sectionScheduleEvents.id});
-    if (input.deliveryId) {
-      await tx.insert(sectionScheduleEventCourses).values(created.map(row => ({
-        scheduleEventId: row.id, deliveryId: input.deliveryId!,
-      })));
+    const created: Array<{id:string;localDate:string}> = [];
+    // A nested Drizzle transaction uses a PostgreSQL SAVEPOINT. A unique or
+    // concurrent schedule constraint on one occurrence must not invalidate
+    // previously inserted dates. Keep the selected college's advisory lock,
+    // section CAS and final audit in the surrounding atomic transaction.
+    for (const slot of free) {
+      try {
+        const saved = await tx.transaction(async occurrenceTx => {
+          const [event] = await occurrenceTx.insert(sectionScheduleEvents).values({
+            sectionId: input.sectionId, title: input.title,
+            startsAt: new Date(slot.startsAt), endsAt: new Date(slot.endsAt),
+            facultyMembershipId: input.facultyMembershipId ?? null,
+            lectureHallId: input.lectureHallId ?? null,
+          }).returning({id:sectionScheduleEvents.id});
+          if (!event) throw new Error("Occurrence was not saved");
+          if (input.deliveryId) {
+            await occurrenceTx.insert(sectionScheduleEventCourses).values({
+              scheduleEventId:event.id,deliveryId:input.deliveryId,
+            });
+          }
+          return event;
+        });
+        created.push({id:saved.id,localDate:slot.localDate});
+      } catch {
+        // Report a date-local retryable failure; never render raw DB details.
+        skipped.push({localDate:slot.localDate,reasons:[],
+          error:"Could not save this date. Check conflicts and retry."});
+      }
     }
+    if (!created.length) throw new CollegeRecurringExecutionError("SCHEDULE_CONFLICT");
     // Advance the optimistic section token after creating this series.
     await tx.update(sections).set({
       updatedAt: sql<Date>`greatest(${sections.updatedAt} + interval '1 millisecond', clock_timestamp())`,
@@ -108,8 +128,13 @@ export async function executeCollegeRecurringSchedule(context: RequestContext, r
       organizationId:member.organizationId,collegeId:member.collegeId,
       subjectType:"section",subjectId:section.id,
       summary:"College Admin created recurring class sessions",
-      metadata:{count:created.length,skippedCount:skipped.length,from:input.from,to:input.to,deliveryId:input.deliveryId??null},
+      metadata:{count:created.length,skippedCount:skipped.length,
+        createdDates:created.map(item=>item.localDate),
+        failedDates:skipped.map(item=>item.localDate),
+        from:input.from,to:input.to,deliveryId:input.deliveryId??null},
     });
-    return {...recurringExecutionSummary(created.length,slots.length), skipped, sessionIds:created.map(row=>row.id)};
+    return {...recurringExecutionSummary(created.length,slots.length), skipped,
+      sessionIds:created.map(row=>row.id),
+      createdDates:created.map(row=>({localDate:row.localDate,sessionId:row.id}))};
   });
 }
