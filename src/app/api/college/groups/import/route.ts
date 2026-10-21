@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { confirmCollegeGroupCsv } from "@/modules/groups/college-group-import-service";
+import { confirmCollegeGroupCsv, confirmCollegeGroupManual } from "@/modules/groups/college-group-import-service";
 import { GroupCsvPreviewNotFoundError } from "@/modules/groups/college-group-csv-preview-service";
 
 export const runtime = "nodejs";
@@ -13,7 +13,11 @@ export async function POST(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const raw: unknown = await request.json();
-    return NextResponse.json(await confirmCollegeGroupCsv(context, raw));
+    const isManual = raw !== null && typeof raw === "object" &&
+      !Array.isArray(raw) && "identifierType" in raw;
+    return NextResponse.json(isManual
+      ? await confirmCollegeGroupManual(context, raw)
+      : await confirmCollegeGroupCsv(context, raw));
   } catch (error) {
     if (error instanceof GroupCsvPreviewNotFoundError)
       return NextResponse.json({ error: "GROUP_NOT_FOUND" }, { status: 404 });

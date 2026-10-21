@@ -1,6 +1,7 @@
 "use client";
 import { FileUpload } from "@/components/ui/file-upload";
 import { Textarea } from "@/components/ui/textarea";
+import { Select } from "@/components/ui/select";
 import { useRef, useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -23,6 +24,9 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   const csvRevision = useRef(0);
   const [result, setResult] = useState<Result | null>(null);
   const [imported, setImported] = useState<ImportResult | null>(null);
+  const [manualResult, setManualResult] = useState<ImportResult | null>(null);
+  const [manualText, setManualText] = useState("");
+  const [manualKind, setManualKind] = useState<"ROLL_NUMBER"|"MEMBERSHIP_ID"|"LEGACY_LEARNER_ID">("ROLL_NUMBER");
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
   const [reading, setReading] = useState(false);
@@ -94,6 +98,31 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       }
     });
   }
+  function confirmManual() {
+    const identifiers = manualText.split(/[\r\n,]+/).map(item=>item.trim()).filter(Boolean);
+    if (!identifiers.length || identifiers.length > 2000 || pending) {
+      setError("Provide between 1 and 2,000 learner identifiers."); return;
+    }
+    setError("");
+    setManualResult(null);
+    startTransition(async () => {
+      try {
+        const response = await fetch("/api/college/groups/import", {
+          method:"POST", headers:{"content-type":"application/json"},
+          body:JSON.stringify({groupId,identifierType:manualKind,identifiers}),
+        });
+        const payload:unknown=await response.json();
+        if (!response.ok) {
+          const code=payload && typeof payload==="object" && "error" in payload &&
+            typeof payload.error==="string" ? payload.error : "Manual import failed";
+          throw new Error(code);
+        }
+        setManualResult(payload as ImportResult);
+      } catch (cause) {
+        setError(cause instanceof Error ? cause.message : "Unable to import members");
+      }
+    });
+  }
   return <div className="min-w-0 space-y-4">
     <form onSubmit={preview} className="min-w-0 space-y-3 border-b border-border pb-4">
       <p className="text-sm text-body leading-[22px]">
@@ -157,6 +186,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <div className="max-h-[35rem] min-w-0 overflow-auto border-y border-border">
         <DataTable<ImportResult["results"][number]>
           caption="Confirmed group membership import"
+          empty={<EmptyState title="No results" description="No imported rows were returned."/>}
           rows={imported.results} getRowKey={row=>String(row.rowNumber)}
           columns={[
             {key:"row",header:"Row",cell:row=>row.rowNumber},
@@ -165,6 +195,42 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
           ]}/>
       </div>
     </section> : null}
+    <section aria-label="Manual group member import" className="min-w-0 space-y-3 border-t border-border pt-4">
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Add learners by ID or roll number</h2>
+      <p className="text-sm text-body">Enter up to 2,000 values, one per line or separated by commas.
+        Only active learners of this college can be added.</p>
+      <label className="block space-y-2 text-sm font-semibold">Identifier type
+        <Select value={manualKind} disabled={pending} onChange={event=>{
+          setManualKind(event.target.value as typeof manualKind);setManualResult(null);
+        }}>
+          <option value="ROLL_NUMBER">Roll number</option>
+          <option value="MEMBERSHIP_ID">Membership ID</option>
+          <option value="LEGACY_LEARNER_ID">Legacy learner ID</option>
+        </Select>
+      </label>
+      <label className="block space-y-2 text-sm font-semibold">Learner identifiers
+        <Textarea rows={5} value={manualText} disabled={pending} maxLength={524288}
+          onChange={event=>{setManualText(event.target.value);setManualResult(null);}}/>
+      </label>
+      <Button type="button" loading={pending} disabled={pending||!manualText.trim()}
+        onClick={confirmManual}>Confirm manual import</Button>
+      {manualResult ? <div className="min-w-0 space-y-3">
+        <h3 className="font-semibold">Manual import: {manualResult.added} added, {manualResult.waitlisted} waitlisted, {manualResult.errors} not added</h3>
+        {manualResult.errors>0?<a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(manualResult.errorCsv)}
+          download="manual-group-import-errors.csv" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+          Download errors
+        </a>:null}
+        <DataTable<ImportResult["results"][number]>
+          caption="Manual group import results"
+          empty={<EmptyState title="No results" description="No imported rows were returned."/>}
+          rows={manualResult.results} getRowKey={row=>String(row.rowNumber)}
+          columns={[
+            {key:"row",header:"Row",cell:row=>row.rowNumber},
+            {key:"identifier",header:"Identifier",cell:row=>row.email},
+            {key:"result",header:"Result",cell:row=>row.status.replaceAll("_"," ")},
+          ]}/>
+      </div> : null}
+    </section>
     <p className="text-xs leading-5 text-muted-foreground">
       Preview never writes memberships. Confirmed import rechecks active learner eligibility and
       capacity for each row and records partial successes without rolling them back.
