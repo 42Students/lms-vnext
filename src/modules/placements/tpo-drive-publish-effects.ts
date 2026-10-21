@@ -116,3 +116,16 @@ export async function notifyEligiblePublishedDrive(
   }
   return distinct.length;
 }
+
+/** Publish delivery policy choice for G2-3-023-021/-031. The legacy
+ * operation defaulted to APP+EMAIL, but email transport is deliberately not
+ * enabled until a permitted and audited adapter exists. Never claim that
+ * EMAIL was delivered merely because an in-app row was written.
+ * The lifecycle service rejects notifyByEmail=true before the DB write. */
+export const TPO_PUBLISH_DELIVERY_POLICY = {
+ allowedChannels:["APP"] as const,
+ legacyDefaultChannels:["APP","EMAIL"] as const,
+ emailAvailable:false,
+ emailUnavailableCode:"EMAIL_DELIVERY_UNAVAILABLE",
+ explanation:"Email notifications are not available. Eligible learners receive an in-app notice.",
+} as const;

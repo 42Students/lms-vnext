@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { courseApiError } from "./learner-course-api";
+import { useToast } from "@/components/ui/toast";
 
 export function ResourceProgressControl({
   contentId,
@@ -20,6 +21,7 @@ export function ResourceProgressControl({
   contentType?: "RESOURCE" | "LIVE_CLASS";
 }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const hydrated = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -53,18 +55,23 @@ export function ResourceProgressControl({
       );
 
       if (!response.ok) {
-        setError(
-          await courseApiError(response),
-        );
+        const explanation = await courseApiError(response);
+        const friendly = explanation || "Could not mark this as complete. Please try again.";
+        setError(friendly);
+        showToast({ tone: "error", title: "Could not mark this as complete. Please try again.",
+          description: friendly });
         return;
       }
 
       setComplete(true);
+      showToast({tone:"success",title:"Marked as complete"});
       setConfirmOpen(false);
       router.refresh();
       });
     } catch {
-      setError("Could not mark this as complete. Please try again.");
+      const fallback = "Could not mark this as complete. Please try again.";
+      setError(fallback);
+      showToast({tone:"error",title:fallback});
     }
   }
 
