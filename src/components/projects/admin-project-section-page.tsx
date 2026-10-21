@@ -14,6 +14,30 @@ import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope
 import { listProjectActivity } from "@/modules/projects/activity-service";
 import { ProjectActivityFilteredList } from "@/components/projects/project-activity-filtered-list";
 import { ErrorState } from "@/components/ui/error-state";
+import {ProjectAdminNav} from "./project-admin-nav";
+import {ProjectsServiceError} from "@/modules/projects/errors";
+
+function workspaceRecoveryPanel({
+ projectId,section,basePath,title,description,
+}:{
+ projectId:string;section:string;basePath:string;
+ title:string;description:string;
+}){
+ const retry=basePath+"/"+encodeURIComponent(projectId)+"/"+encodeURIComponent(section);
+ return <section className="min-w-0 space-y-4" role="alert">
+  <ProjectAdminNav basePath={basePath} active="workspaces"/>
+  <ErrorState title={title} description={description}
+    action={<div className="flex flex-wrap gap-3">
+      <Link href={retry} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Retry workspace
+      </Link>
+      <Link href={basePath} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Back to workspaces
+      </Link>
+    </div>}/>
+ </section>;
+}
+
 
 function isProjectWorkspaceSection(
   value: string,
@@ -43,30 +67,68 @@ export async function AdminProjectSectionPage({
   }
 
   const context = await getCurrentRequestContext();
-  if((section==="delivery"||section==="team")&&!isSuperAdmin(context)&&!context.membership?.collegeId){
-    return <section className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" role="alert">
-      <h2 className="font-semibold">Admin not assigned to a college</h2>
-      <p>You must be assigned to a college to view project workspaces.</p>
-      <Link href={basePath} className="text-link underline">Projects</Link>
+  if (!getProjectAdminCollegeId(context)) {
+    return <section className="min-w-0 space-y-4">
+      <ProjectAdminNav basePath={basePath} active="workspaces"/>
+      <ErrorState title="Admin not assigned to a college"
+        description="You must be assigned to a college to view project workspaces. Select a college in the header to continue."
+        action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+          Back to workspaces
+        </Link>}/>
     </section>;
   }
-  // Read failures never disclose a foreign-college workspace; only in-scope
-  // misses and unexpected load errors get the legacy recoverable inline state.
+  // A soft-deleted workspace may be inspected and recovered from Summary only.
+  // Every other section and all ordinary manage mutations remain inaccessible.
+  try{
+    await requireProjectManageAccess(
+      context,projectId,
+      {includeDeleted:section==="summary"},
+    );
+  }catch(error){
+    const missing=error instanceof ProjectsServiceError&&
+      ["PROJECT_NOT_FOUND","PROJECT_ACCESS_DENIED","PROJECT_INVALID_STATE"].includes(error.code);
+    return workspaceRecoveryPanel({
+      projectId,section,basePath,
+      title:missing?"Workspace not found":"Workspace could not be loaded",
+      description:missing?
+        "This workspace does not exist in the selected college, or you cannot access it.":
+        "Workspace access could not be verified. Refresh the page and retry.",
+    });
+  }
   let workspace: Awaited<ReturnType<typeof getProjectWorkspaceView>>;
   try {
-    await requireProjectManageAccess(context,projectId,{
-      includeDeleted:section==="summary",
-    });
-    workspace=await getProjectWorkspaceView(context,projectId);
-  } catch(error) {
-    if(!["delivery","team"].includes(section)||error instanceof ProjectsServiceError&&
-      error.code!=="PROJECT_NOT_FOUND")throw error;
-    const missing=error instanceof ProjectsServiceError&&error.code==="PROJECT_NOT_FOUND";
-    return <section role="alert" className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
-      <h2 className="font-semibold">{missing?"Workspace not found":"Workspace could not be loaded"}</h2>
-      {!missing?<p>Could not load workspace {section==="team"?"team":"delivery"}. No changes were made.</p>:null}
-      <Link href={basePath+"/"+encodeURIComponent(projectId)+"/"+encodeURIComponent(section)}
-        className="inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link>
+    workspace = await getProjectWorkspaceView(context, projectId);
+  } catch (error) {
+    // A summary/snapshot outage must not take away the entire Audit workspace.
+    // The project management permission and tenant scope were checked above.
+    if(section!=="audit"){
+      return workspaceRecoveryPanel({
+        projectId,section,basePath,title:"Workspace could not be loaded",
+        description:"Project workspace details are unavailable. Your navigation and selected college have been preserved. Retry loading the workspace.",
+      });
+    }
+    let events: Awaited<ReturnType<typeof listProjectActivity>> = [];
+    let activityUnavailable = false;
+    try {
+      events = await listProjectActivity(context, projectId);
+    } catch {
+      activityUnavailable = true;
+    }
+    return <section className="min-w-0 space-y-4">
+      <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm">
+        <p className="font-semibold">Workspace summary could not be loaded</p>
+        <p className="mt-1 text-body">
+          The workspace summary is unavailable, but the project audit can still be reviewed.
+        </p>
+        <Link href={basePath + "/" + encodeURIComponent(projectId) + "/audit?retry=1"}
+          className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Retry workspace
+        </Link>
+      </div>
+      {activityUnavailable ? <ErrorState title="Project activity could not be loaded"
+        description="Retry the workspace to load its audit events."/> :
+        <ProjectActivityFilteredList projectId={projectId} events={events}
+          now={new Date().toISOString()}/>}
     </section>;
   }
 
