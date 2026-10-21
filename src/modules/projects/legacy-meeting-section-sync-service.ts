@@ -28,7 +28,7 @@ const meetingSchema = z.strictObject({
 });
 
 const sectionSchema = z.strictObject({
-  expectedToken: z.string().regex(/^[a-f0-9]{64}$/, "Refresh the meeting section before saving"),
+  expectedMeetingsToken: z.string().regex(/^[a-f0-9]{64}$/, "Refresh the meeting section before saving"),
   meetings: z.array(meetingSchema).max(500),
 }).superRefine((value, ctx) => {
   const keys = new Set<string>();
@@ -73,7 +73,7 @@ export async function readLegacyProjectMeetingSection(context: RequestContext, p
     .orderBy(asc(projectMeetings.id)).limit(501);
   if (rows.length > 500) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   return {
-    expectedToken: sectionToken(rows),
+    expectedMeetingsToken: sectionToken(rows),
     meetings: rows.filter(row => row.meetingKey && !row.deletedAt).map(row => ({
       meetingKey: row.meetingKey!, title: row.title, agenda: row.agenda,
       startsAt: row.startsAt.toISOString(), endsAt: row.endsAt.toISOString(),
@@ -110,7 +110,7 @@ export async function synchronizeLegacyProjectMeetingSection(
       .where(eq(projectMeetings.projectId, scope.project.id))
       .orderBy(asc(projectMeetings.id)).for("update").limit(501);
     if (current.length > 500) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
-    if (sectionToken(current) !== input.expectedToken)
+    if (sectionToken(current) !== input.expectedMeetingsToken)
       throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
 
     const existingByKey = new Map(current.filter(row => row.meetingKey)
@@ -174,6 +174,6 @@ export async function synchronizeLegacyProjectMeetingSection(
       .where(eq(projectMeetings.projectId, scope.project.id))
       .orderBy(asc(projectMeetings.id)).limit(501);
     if (latest.length > 500) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
-    return {...counts, changed, expectedToken: sectionToken(latest)};
+    return {...counts, changed, expectedMeetingsToken: sectionToken(latest)};
   });
 }
