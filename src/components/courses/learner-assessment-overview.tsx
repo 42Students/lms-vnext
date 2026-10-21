@@ -47,6 +47,28 @@ import { learnerAssignmentPublishedGradeLabel } from "@/modules/courses/learner-
 import { learnerAssessmentSubmittedLinkHref } from "@/modules/courses/learner-assessment-submitted-link-model";
 import { learnerAssessmentSort, LEARNER_ASSESSMENT_SORT_OPTIONS, type LearnerAssessmentSort } from "@/modules/courses/learner-assessment-sort-model";
 
+type AssignmentResource = {
+  id: string;
+  kind: "INSTRUCTIONS" | "PDF" | "FILE" | "LINK";
+  title: string;
+  text?: string | null;
+  /** A server-authorized HTTPS URL; raw storage keys must not reach the client. */
+  href?: string | null;
+  downloadHref?: string | null;
+};
+
+function safeResourceHref(value: string | null | undefined): string | null {
+  if (!value || value !== value.trim() || /[\\\x00-\x1f\x7f]/.test(value)) return null;
+  try {
+    const parsed = new URL(value);
+    return parsed.protocol === "https:" && !parsed.username && !parsed.password
+      ? parsed.href
+      : null;
+  } catch {
+    return null;
+  }
+}
+
 type CourseChoice = {
   id: string;
   name: string;
@@ -79,6 +101,9 @@ export type LearnerAssignmentOverviewItem =
     gradePublished: boolean;
     pointsAwarded: number | null;
     feedback: string | null;
+    /** Populated only from a learner-authorized material projection. */
+    resources?: readonly AssignmentResource[];
+    submissionReadUnavailable?: boolean;
   };
 
 export type LearnerQuizOverviewItem =
@@ -90,6 +115,9 @@ export type LearnerQuizOverviewItem =
     resultsPublished: boolean;
     attemptsUsed: number;
     attemptsRemaining: number;
+    /** Latest score is optional until the server supplies the released grade. */
+    latestScore?: number | null;
+    latestMaxScore?: number | null;
     progressStatus:
       | "NOT_STARTED"
       | "COMPLETED"
@@ -113,6 +141,7 @@ export function LearnerAssessmentOverview({
   snapshotNowMs,
   fileUploadsEnabled = false,
   classScope="PRESENT",initialCourseId="",
+  loadError = false,
 }: {
   courses: readonly CourseChoice[];
   items: readonly Item[];
@@ -121,6 +150,8 @@ export function LearnerAssessmentOverview({
   fileUploadsEnabled?: boolean;
   classScope?:"NONE"|"PRESENT"|"UNAVAILABLE";
   initialCourseId?:string;
+  /** The server must distinguish read failure from a genuinely empty list. */
+  loadError?: boolean;
 }) {
   const router=useRouter();
   const [clock, setClock] = useState({ snapshotNowMs, elapsedMs: 0 });
@@ -138,6 +169,11 @@ export function LearnerAssessmentOverview({
     };
   }, [snapshotNowMs]);
 
+  const [lastGoodItems,setLastGoodItems] = useState<readonly Item[]>(items);
+  useEffect(() => {
+    if (!loadError) setLastGoodItems(items);
+  }, [items,loadError]);
+  const visibleItems = loadError && lastGoodItems.length > 0 ? lastGoodItems : items;
   const [courseId, setCourseId] =
     useState(initialCourseId);
   const activeCourseId = learnerAssessmentActiveCourse(courseId,courses);
@@ -152,12 +188,12 @@ export function LearnerAssessmentOverview({
 
   const filtered = useMemo(
     () =>
-      learnerAssessmentSort(items.filter(item =>
+      learnerAssessmentSort(visibleItems.filter(item =>
         (!activeCourseId || item.courseId === activeCourseId) &&
         learnerAssessmentMatchesSearch(item, search) &&
         learnerAssessmentMatchesState(item, stateFilter, currentNowMs),
       ),sort),
-    [activeCourseId, items, search, stateFilter, currentNowMs,sort],
+    [activeCourseId, visibleItems, search, stateFilter, currentNowMs,sort],
   );
 
   const totalPages = Math.max(
@@ -170,8 +206,8 @@ export function LearnerAssessmentOverview({
     currentPage * PAGE_SIZE,
   );
 
-  const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(items),[items]);
-  const scopedAttentionItems=learnerAssessmentScopedItems(items,activeCourseId);
+  const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(visibleItems),[visibleItems]);
+  const scopedAttentionItems=learnerAssessmentScopedItems(visibleItems,activeCourseId);
   const submittedQuizzes=scopedAttentionItems.filter(item=>item.kind==="QUIZ"&&item.attemptsUsed>0);
   const actionCounts=learnerAssessmentActionCounts(scopedAttentionItems,currentNowMs);
   const quickCounts=learnerAssessmentQuickCounts(scopedAttentionItems,currentNowMs);
@@ -184,16 +220,24 @@ export function LearnerAssessmentOverview({
 
   const selectedAssignment = useMemo(
     () => learnerAssessmentDrawerSelectionAllowed(selectedAssignmentKey,filtered)
-      ? items.find(
+      ? visibleItems.find(
           (item):item is LearnerAssignmentOverviewItem =>
             item.kind==="ASSIGNMENT" &&
             `${item.deliveryId}:${item.id}`===selectedAssignmentKey,
         )
       : undefined,
-    [items,filtered,selectedAssignmentKey],
+    [visibleItems,filtered,selectedAssignmentKey],
   );
 
-  if(items.length===0 && kind==="QUIZ" && classScope==="NONE"){
+  if (loadError && visibleItems.length === 0) {
+    return <Alert tone="error" role="alert" title={kind === "ASSIGNMENT"
+      ? "Couldn't refresh assignments"
+      : "Couldn't refresh quizzes"}>
+      <Button type="button" variant="secondary" className="mt-2 w-fit"
+        onClick={() => router.refresh()}>Retry</Button>
+    </Alert>;
+  }
+  if(visibleItems.length===0 && kind==="QUIZ" && classScope==="NONE"){
     return <EmptyState title="You haven't been added to a class yet"
       description="Quizzes appear once your college puts you in a class or section." />;
   }
@@ -203,7 +247,7 @@ export function LearnerAssessmentOverview({
       <Link href="/learn/allQuizzes" className="inline-flex min-h-11 w-fit items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry</Link>
     </Alert>;
   }
-  if (items.length === 0) {
+  if (visibleItems.length === 0) {
     return (
       <EmptyState
         title={
@@ -222,6 +266,12 @@ export function LearnerAssessmentOverview({
 
   return (
     <div className="min-w-0 space-y-[16px]">
+      {loadError ? <Alert tone="warning" role="status"
+        title={kind === "ASSIGNMENT" ? "Couldn't refresh assignments" : "Couldn't refresh quizzes"}>
+        <span>Showing the last loaded list. Submission actions are unavailable until a successful refresh.</span>
+        <Button type="button" variant="secondary" className="mt-2 w-fit"
+          onClick={() => router.refresh()}>Retry</Button>
+      </Alert> : null}
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
@@ -345,7 +395,7 @@ export function LearnerAssessmentOverview({
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
         <p role="status" className="min-w-0 text-sm text-muted-foreground">
           {learnerAssessmentPageSummary({
-            filteredCount:filtered.length,totalCount:items.length,
+            filteredCount:filtered.length,totalCount:visibleItems.length,
             currentPage,pageSize:PAGE_SIZE,label:kind==="ASSIGNMENT"?"assignments":"quizzes",
           })}
         </p>
@@ -392,7 +442,17 @@ export function LearnerAssessmentOverview({
               {key:"due",header:"Due Date",mobilePriority:"secondary" as const,
                 cell:(item)=>item.dueAt?formatDate(item.dueAt):"No deadline"},
               {key:"grade",header:"Grade",mobilePriority:"secondary" as const,
-                cell:(item)=>item.attemptsUsed===0?"–":item.resultsPublished?"View result":"Not released"},
+                cell:(item)=>{
+                  if (item.attemptsUsed === 0) return "–";
+                  if (!item.resultsPublished) return "Not released";
+                  const score = item.latestScore;
+                  const maximum = item.latestMaxScore;
+                  return typeof score === "number" && Number.isFinite(score) &&
+                    typeof maximum === "number" && Number.isFinite(maximum) && maximum >= 0 &&
+                    score >= 0 && score <= maximum
+                      ? `${score} / ${maximum}`
+                      : "View result";
+                }},
               {key:"actions",header:"Actions",mobilePriority:"action" as const,
                 cell:(item)=>{
                   const state=quizOverviewActionState(item,currentNowMs);
@@ -407,7 +467,7 @@ export function LearnerAssessmentOverview({
           />
         ) : null}
         {kind==="ASSIGNMENT" ? (
-        <div className="divide-y divide-border border-y border-border" aria-label="Assignment list">
+        <div className="space-y-3" aria-label="Assignment list">
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
@@ -421,7 +481,7 @@ export function LearnerAssessmentOverview({
             return (
               <article
                 key={`${item.deliveryId}-${item.id}`}
-                className="min-w-0 py-4 first:pt-2"
+                className="min-w-0 rounded-[12px] border border-border bg-white px-4 py-4 md:px-5"
               >
                 <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between md:gap-6">
                   <div className="min-w-0">
@@ -576,21 +636,71 @@ export function LearnerAssessmentOverview({
               </div>
             </div>
 
-            {selectedAssignment.description ? (
-              <section>
-                <h3 className="m-0 text-sm font-semibold text-foreground">
-                  Instructions & resources
-                </h3>
-                <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-body">
-                  {selectedAssignment.description}
-                </p>
-              </section>
-            ) : null}
+            <section aria-label="Instructions and resources" className="space-y-3">
+              <h3 className="m-0 text-sm font-semibold text-foreground">
+                Instructions & resources
+              </h3>
+              {selectedAssignment.description ? (
+                <article className="rounded-[var(--lms-control-radius)] border border-border p-3">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <span aria-hidden="true">▤</span> Instructions
+                  </div>
+                  <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                    {selectedAssignment.description}
+                  </p>
+                </article>
+              ) : null}
+              {(selectedAssignment.resources ?? []).map(resource => {
+                const openHref = safeResourceHref(resource.href);
+                const downloadHref = safeResourceHref(resource.downloadHref);
+                const isFile = resource.kind === "FILE" || resource.kind === "PDF";
+                return (
+                  <article key={resource.id} className="min-w-0 rounded-[var(--lms-control-radius)] border border-border p-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <strong className="block break-words text-sm text-foreground">
+                          <span aria-hidden="true">{resource.kind === "PDF" ? "▣" : isFile ? "▤" : resource.kind === "LINK" ? "↗" : "▤"} </span>
+                          {resource.title || resource.kind}
+                        </strong>
+                        <span className="block text-xs text-muted-foreground">{resource.kind === "PDF" ? "PDF" : resource.kind === "FILE" ? "File" : resource.kind === "LINK" ? "Link" : "Instructions"}</span>
+                      </div>
+                      {openHref ? (
+                        <ThirdPartyLink href={openHref} label={resource.kind === "PDF" ? "Open PDF" : isFile ? "Open file" : "Open link"} />
+                      ) : isFile || resource.kind === "LINK" ? (
+                        <span className="text-xs text-muted-foreground">File preview is unavailable right now.</span>
+                      ) : null}
+                      {isFile && downloadHref ? (
+                        <a href={downloadHref} target="_blank" rel="noopener noreferrer"
+                          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+                          Download
+                        </a>
+                      ) : null}
+                    </div>
+                    {resource.kind === "INSTRUCTIONS" && resource.text ? (
+                      <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{resource.text}</p>
+                    ) : null}
+                  </article>
+                );
+              })}
+              {!selectedAssignment.description && !selectedAssignment.resources?.length ? (
+                <p className="text-sm text-muted-foreground">No additional resources were provided.</p>
+              ) : null}
+              <Link href={`/learn/courses/${selectedAssignment.deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(selectedAssignment.lessonId)}&content=${encodeURIComponent(selectedAssignment.id)}`}
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+                Open assignment resources in Learning Path
+              </Link>
+            </section>
 
-            {selectedAssignment.submissionId && selectedAssignment.submissionType === "FILE" ?
+            {!loadError && !selectedAssignment.submissionReadUnavailable && selectedAssignment.submissionId && selectedAssignment.submissionType === "FILE" ?
               <AssignmentFileOpenControl key={selectedAssignment.submissionId}
                 submissionId={selectedAssignment.submissionId} enabled={fileUploadsEnabled} /> : null}
-            {selectedAssignment.submissionId ? (
+            {(loadError || selectedAssignment.submissionReadUnavailable) ? (
+              <Alert tone="error" role="alert" title="Submission status unavailable">
+                We couldn't check your submission. Retry before submitting any work.
+                <Button type="button" variant="secondary" className="mt-2 w-fit"
+                  onClick={() => router.refresh()}>Retry</Button>
+              </Alert>
+            ) : selectedAssignment.submissionId ? (
               <section className="min-w-0 space-y-3 border-t border-border pt-4">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
