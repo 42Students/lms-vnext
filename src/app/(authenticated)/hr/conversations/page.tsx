@@ -44,7 +44,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  if(!parsed.success)return <div className="min-w-0 space-y-3">
   <PageHeader title="Messages"/>
   <ErrorState title="Invalid conversation filters" description="Review the college and conversation filters."
-    action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/></div>;
+    action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/></div>;
  const result=await listHrConversations(context,parsed.data);
  const generalLookup=result.status==="READY"
   ?await listHrConversations(context,{
@@ -79,7 +79,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}
    actions={<Link href="/hr/notifications"
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>}/>
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(g=>({
@@ -99,7 +99,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 max-w-prose whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
-      <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+      <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
        View your drive request
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
@@ -157,7 +157,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </ol></ScrollCue>:null}
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
-        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
     </Disclosure>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body">
@@ -197,9 +197,9 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    </ol>:<EmptyState title="No matching conversations" description="No matching conversations with the placement cell for this college." action={<Link href={hrConversationsHref({collegeId:result.collegeId,q:"",unreadOnly:"false",sort:"LATEST",scope:"ALL",page:1})} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Reset</Link>}/>}
    {result.pages>1 ? <nav aria-label="Conversation pages" className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&>a]:w-full max-[767px]:[&>a]:justify-center">
     {result.page>1?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page-1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm">Previous</Link>:null}
     {result.page<result.pages?<Link href={hrConversationsHref({collegeId:result.collegeId,q:parsed.data.q,unreadOnly:parsed.data.unreadOnly,sort:parsed.data.sort,scope:parsed.data.scope,page:result.page+1})}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] text-sm">Next</Link>:null}
    </nav> : null}
   </>}
  </div>;
