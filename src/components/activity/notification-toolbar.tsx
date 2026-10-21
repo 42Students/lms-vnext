@@ -60,14 +60,14 @@ export function NotificationToolbar({
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
       <div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="Notification filter">
         <Link
-          href={baseHref + "?view=all" + (selectedCategory?"&category="+encodeURIComponent(selectedCategory):"")}
+          href={baseHref + "?view=all" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "all" ? "page" : undefined}
           className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </Link>
         <Link
-          href={baseHref + "?view=unread" + (selectedCategory?"&category="+encodeURIComponent(selectedCategory):"")}
+          href={baseHref + "?view=unread" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "unread" ? "page" : undefined}
           className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
@@ -93,7 +93,7 @@ export function NotificationToolbar({
             const active=item.id===(selectedCategory??"all");
             return <Link key={item.id} href={link} scroll={false}
               aria-current={active?"page":undefined}
-              aria-label={item.label+" ("+item.unread+" shown in loaded view)"}
+              aria-label={item.label+" ("+item.unread+" in loaded view)"}
               className={"inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+(
                 active?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:border-primary"
               )}>
