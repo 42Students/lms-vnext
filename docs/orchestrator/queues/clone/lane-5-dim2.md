@@ -363,81 +363,81 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/placements/placement-job-lifecycle-controls.tsx`
 - [x] `src/components/placements/placement-offer-controls.tsx`
 - [x] `src/components/placements/placement-recruiter-access.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
-- [ ] `src/components/placements/placement-role-options.tsx`
-- [ ] `src/components/placements/placement-season-manager.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/recruiter-resume-download.tsx`
-- [ ] `src/components/placements/report-bar-chart.tsx`
-- [ ] `src/components/placements/super-admin-platform-placement-policy.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-form.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
-- [ ] `src/components/placements/tpo-college-rules-control.tsx`
-- [ ] `src/components/placements/tpo-company-feedback-form.tsx`
-- [ ] `src/components/placements/tpo-company-interaction-form.tsx`
-- [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx`
-- [ ] `src/components/placements/tpo-company-person-editor.tsx`
-- [ ] `src/components/placements/tpo-delete-draft-action.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-cancel-form.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-drive-clone-action.tsx`
-- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
-- [ ] `src/components/placements/tpo-drive-deadline-form.tsx`
-- [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
-- [ ] `src/components/placements/tpo-drive-refresh-control.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-joining-update-form.tsx`
-- [ ] `src/components/placements/tpo-mark-own-notification-read.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
-- [ ] `src/components/placements/tpo-public-placement-content-editor.tsx`
-- [ ] `src/components/placements/tpo-public-placement-toggle.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/placements/tpo-remind-non-applicants.tsx`
-- [ ] `src/components/placements/tpo-report-invalid-filters.tsx`
-- [ ] `src/components/placements/tpo-report-presentation.tsx`
-- [ ] `src/components/placements/tpo-report-record-links.tsx`
-- [ ] `src/components/placements/tpo-report-saved-filters.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/placements/tpo-round-apply-control.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
-- [ ] `src/components/placements/tpo-round-reorder.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/placements/tpo-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/placements/tpo-selection-import.tsx`
-- [ ] `src/components/placements/tpo-sequential-request-review.tsx`
-- [ ] `src/components/placements/tpo-settings-nav.tsx`
-- [ ] `src/components/placements/tpo-trust-toggle.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/college-project-mentor-dialog.tsx`
-- [ ] `src/components/projects/college-project-student-roster-dialog.tsx`
-- [ ] `src/components/projects/college-project-summary-editor-full.tsx`
-- [ ] `src/components/projects/college-project-summary-editor.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/learner-task-progress-control.tsx`
-- [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/mentor-calendar-load-failure.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/placement-role-options.tsx`
+- [x] `src/components/placements/placement-season-manager.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/recruiter-resume-download.tsx`
+- [x] `src/components/placements/report-bar-chart.tsx`
+- [x] `src/components/placements/super-admin-platform-placement-policy.tsx`
+- [x] `src/components/placements/tpo-applicant-review-form.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-college-rules-control.tsx`
+- [x] `src/components/placements/tpo-company-feedback-form.tsx`
+- [x] `src/components/placements/tpo-company-interaction-form.tsx`
+- [x] `src/components/placements/tpo-company-lifecycle-editor.tsx`
+- [x] `src/components/placements/tpo-company-person-editor.tsx`
+- [x] `src/components/placements/tpo-delete-draft-action.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-drive-cancel-form.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-drive-clone-action.tsx`
+- [x] `src/components/placements/tpo-drive-close-preview-form.tsx`
+- [x] `src/components/placements/tpo-drive-deadline-form.tsx`
+- [x] `src/components/placements/tpo-drive-edit-form.tsx`
+- [x] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
+- [x] `src/components/placements/tpo-drive-refresh-control.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/tpo-joining-update-form.tsx`
+- [x] `src/components/placements/tpo-mark-own-notification-read.tsx`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`
+- [x] `src/components/placements/tpo-public-placement-content-editor.tsx`
+- [x] `src/components/placements/tpo-public-placement-toggle.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/placements/tpo-remind-non-applicants.tsx`
+- [x] `src/components/placements/tpo-report-invalid-filters.tsx`
+- [x] `src/components/placements/tpo-report-presentation.tsx`
+- [x] `src/components/placements/tpo-report-record-links.tsx`
+- [x] `src/components/placements/tpo-report-saved-filters.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/placements/tpo-round-apply-control.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/placements/tpo-round-reorder.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/placements/tpo-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-season-controls.tsx`
+- [x] `src/components/placements/tpo-selection-import.tsx`
+- [x] `src/components/placements/tpo-sequential-request-review.tsx`
+- [x] `src/components/placements/tpo-settings-nav.tsx`
+- [x] `src/components/placements/tpo-trust-toggle.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/college-project-mentor-dialog.tsx`
+- [x] `src/components/projects/college-project-student-roster-dialog.tsx`
+- [x] `src/components/projects/college-project-summary-editor-full.tsx`
+- [x] `src/components/projects/college-project-summary-editor.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-task-progress-control.tsx`
+- [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/mentor-calendar-load-failure.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
 - [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
 - [ ] `src/components/projects/mentor-product-backlog.tsx`
 - [ ] `src/components/projects/mentor-projects-unavailable.tsx`
