@@ -99,3 +99,100 @@ The old controller maps to existing course-assignment creation, validation, stor
 - G2-2-006-026 | `src/components/courses/college-assignment-create.tsx` | Align precise validation messages per field.
 - G2-2-006-028 | `src/components/courses/college-assignment-create.tsx` | Preserve legacy success semantics or explicitly migrate to staged-publish UX.
 - G2-2-006-029 | `src/components/courses/college-assignment-create.tsx` | Restore exact legacy toast variants if clone requirement includes operations feedback.
+
+## Packets U018 Deleted workspaces, parts 1–2 (Projects ownership)
+
+Source checked: current `/college/projects` page provides active/archived list; existing `instance-restore-service.ts` accepts `ARCHIVED` and requires primary mentor; neither exposes legacy deleted/partial-recovery semantics. Do not merge deleted with archived or promise recovered content. Existing Projects files and DB schema are outside lane-7-owned paths; all actionable packet findings handed off, not fixed.
+
+- G2-7-018-005 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Create standalone deleted list anatomy rather than showing active list
+- G2-7-018-006 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Build page Card and conditionally render states
+- G2-7-018-008 | `src/components/projects/project-admin-workspace-list.tsx` | Recreate 3 columns and Undo icon/button
+- G2-7-018-009 | `src/components/projects/project-archive-control.tsx` | Offer per-deleted-row restore with content-preservation warning
+- G2-7-018-012 | `src/modules/projects/admin-insights-service.ts` | Implement deleted page projection and true total count from soft-deleted records
+- G2-7-018-015 | `src/modules/projects/instance-restore-service.ts` | Reproduce mentorless restore as recoverable BLOCKED instead of hard failure, or flag deliberate stronger policy
+- G2-7-018-016 | `src/db/schema/projects.ts` | Track legacy recoverability and warn when old edits not recoverable
+- G2-7-018-021 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Implement post-restore page correction to prevent false empty page
+- G2-7-018-027 | `src/components/projects/project-archive-control.tsx` | Condition restore confirmation on actual recoverable snapshot ability
+- G2-7-018-029 | `src/components/projects/project-archive-control.tsx` | Preserve mentorless warning and restoration outcome handling
+- G2-7-018-033 | `src/components/projects/project-archive-control.tsx` | Provide partial legacy recovery warning and preserve user choice
+- G2-7-018-036 | `src/app/api/projects/[projectId]/restore/route.ts` | Differentiate soft-delete restore from archive restore, supply correct concurrency token
+- G2-7-018-038 | `src/modules/projects/instance-restore-service.ts` | Restore soft-deleted child records where applicable; migration/recoverability indicator
+- G2-7-018-041 | `src/db/schema/projects.ts` | Represent separate soft deletion from archived status or explicitly merge with migration semantics
+- G2-7-018-042 | `src/modules/projects/instance-restore-service.ts` | Implement content-preserving vs legacy partial recovery behavior
+- G2-7-018-043 | `src/modules/projects/instance-restore-service.ts` | Support mentorless blocked restore or mark policy change and give recovery path
+- G2-7-018-060 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Implement efficient tenant-indexed deleted count and list
+- G2-7-018-064 | `src/modules/projects/instance-restore-service.ts` | Decide mentorless recovery state transition explicitly
+- G2-7-018-066 | `src/db/schema/projects.ts` | Add explicit deleted state and recoverable-content marker or proven migration plan
+- G2-7-018-067 | `src/db/schema/projects.ts` | Map legacy identifiers, mentor and recoverable snapshot into deleted DTO
+- G2-7-018-068 | `src/modules/projects/instance-restore-service.ts` | Separate archived lifecycle and soft-deleted restore semantics in schema/service
+- G2-7-018-069 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Do not silently substitute Archived workspaces for Deleted workspaces
+- G2-7-018-070 | `src/modules/projects/instance-restore-service.ts` | Document intentional stronger guard if owner chooses it; provide manual recovery pathway
+- G2-7-018-025 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Use exact deleted-list failure wording and separate retry
+- G2-7-018-026 | `src/components/projects/project-archive-control.tsx` | Retain fallback string and detailed project error modal or actionable 409
+- G2-7-018-028 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Match title/description in shell
+- G2-7-018-030 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Use exact error banner and retry control
+- G2-7-018-031 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Prevent false No deleted workspaces empty state after fetch failure
+
+## Packets L17-U023 LearnerOfferController, parts 1–2 (Placements ownership)
+
+Source checked: actual canonical learner response is `POST /api/placements/offers/[offerId]/actions` with strict action validation; there is no requirement to recreate legacy numeric-ID accept endpoint. Existing placement offer service and schema are outside lane-7's wave-1 file ownership. Preserve the intentional vNext issued/accepted/declined status model until the Placements owner approves a crosswalk. Every finding follows with requested fix; these are **handoffs, not patches**.
+
+- G2-17-23-002 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Document old route→new route, int→UUID ID crosswalk and update any remaining old deep links/clients; do not expose unsafe numeric alias
+- G2-17-23-015 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Add explicit legacy numeric↔UUID offer ID reconciliation in migration/integration ledger; reject malformed identifiers before DB
+- G2-17-23-016 | `src/modules/placements/validation.ts` | Make accept intent explicit and reject absent/nonboolean legacy accept; never silently convert malformed payload into decline
+- G2-17-23-018 | `src/db/schema/placements.ts` | Crosswalk RELEASED→ISSUED and legacy SELECTED/PENDING_VERIFICATION separately; never conflate unpublished selection with issued offer
+- G2-17-23-020 | `src/db/schema/placements.ts` | Verify cascade correlation is durable/readable from both new offer and status-history records and historical reports, not just request result
+- G2-17-23-026 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Retain vNext strict validation; document legacy bug, never provide a compatibility adapter that interprets missing accept as DECLINE
+- G2-17-23-036 | `src/modules/placements/offer-service.ts` | Ensure denial for foreign offer uses indistinguishable response timing/status from nonexistent offer and no app ID leaks
+- G2-17-23-037 | `src/modules/placements/learner-offer-action-error-model.ts` | Use 409 business conflict (not legacy erroneous 404) and display appropriate "already accepted another offer" remediation
+- G2-17-23-038 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Canonicalize on strict schema so old controller and alternative controller cannot produce opposite outcome for malformed body
+- G2-17-23-047 | `src/db/schema/placements.ts` | Document application-vs-offer state ownership; ensure all reports and learner timeline reflect accepted/declined decision without legacy HIRED/REJECTED column
+- G2-17-23-048 | `src/modules/placements/offer-service.ts` | Crosswalk legacy six active statuses and statuses now modeled as SUBMITTED; prove all eligible sibling applications, not just one subset, transition correctly
+- G2-17-23-049 | `src/modules/placements/offer-service.ts` | Verify one-offer-per-application and LOI behavior, ensure accepted offer and sibling offer histories converge without stale open offer
+- G2-17-23-051 | `src/db/schema/placements.ts` | Ensure offer state, application history, timeline and cascade identifier are consistently joined; avoid double historical events on replay
+- G2-17-23-052 | `src/modules/placements/offer-service.ts` | Crosswalk old TPO bell/audit activity to vNext TPO inbox and learner activity, preserving college/actor/job/application/offer IDs
+- G2-17-23-055 | `src/modules/placements/learner-participation-guard.ts` | Product decision: when module/eligibility revoked after offer release, provide secure access to legally required pending response instead of silent lockout (or document intentional block)
+- G2-17-23-056 | `src/modules/placements/offer-service.ts` | Avoid offering an ID/status enumeration oracle in any compatibility route; require owner-scope before revealing offer state or deadline
+- G2-17-23-058 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Explicitly map old offer/application dual states to new issued state; detect inconsistent legacy-migrated rows before accepting
+- G2-17-23-061 | `src/modules/placements/offer-service.ts` | Confirm internship/LOI policy exception and cross-college accepted offers; show clear conflict rather than generic error
+- G2-17-23-062 | `src/modules/placements/offer-service.ts` | Create explicit old/new decision matrix for Dream, internship, LOI, placement category and uplift; avoid accidental blanket withdrawal
+- G2-17-23-077 | `src/modules/placements/offer-service.ts` | Benchmark worst-case student with many offers/interviews and ensure consistent lock ordering, bounded work, no timeout-induced partial writes
+- G2-17-23-079 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Resolve contradictory idempotency contract: either allow exact same-actor retry before expectedStatus rejection or intentionally return 409; cover deadline crossover
+- G2-17-23-080 | `src/db/schema/placements.ts` | Verify no deadlocks for simultaneous accept/decline/withdraw/interview updates and no dual accepted outcomes; preserve deterministic lock order
+- G2-17-23-081 | `src/db/schema/placements.ts` | Define one authoritative Asia/Kolkata business deadline converted to UTC instant; guard at lock time and format IST correctly
+- G2-17-23-083 | `src/modules/placements/offer-service.ts` | Reconcile durable event/outbox delivery semantics and post-commit notification guarantees; add audit event correlation IDs
+- G2-17-23-085 | `src/db/schema/placements.ts` | Maintain legacy id/type crosswalk in DB08 migration for records, reports and external links; do not cast numeric IDs to UUID
+- G2-17-23-086 | `src/db/schema/placements.ts` | Map SELECTED/PENDING_VERIFICATION/RELEASED and REVOKED separately to vNext issuance/withdrawal; validate archival cases before importing
+- G2-17-23-088 | `src/db/schema/placements.ts` | Ensure report timeline can relate offer, application, actor, status, cascade and notification from both models
+
+## Packets U014 AdminCourseBulkController, parts 1–2 (Courses ownership)
+
+Source checked: `src/modules/courses/super-admin-course-bulk-visibility.ts` updates nested lesson visibility, *not course flags*; the UI is `src/components/courses/super-admin-course-bulk-visibility.tsx` and resets selection outside the page. Do not call this functional parity until an actual course-status bulk contract is implemented. Both current files are outside lane-7's wave-1 write ownership; all findings handed off, not fixed.
+
+- G2-2-014-006 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Preserve cross-page selected IDs scoped to current college.
+- G2-2-014-007 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Report per COURSE updated/failed and reasons, not only content-level changes.
+- G2-2-014-008 | `src/components/courses/admin-course-overview.tsx` | Make visible chip reflect course learner visibility, not lesson content count alone.
+- G2-2-014-009 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Implement status/visibility bulk flags or document intentionally different feature.
+- G2-2-014-011 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Retain selected IDs across filter/page within same scope, clear on acting-college change.
+- G2-2-014-012 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Provide three independent nullable status controls and combination validation.
+- G2-2-014-019 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Continue to process authorized selected courses and return per-item failure instead of aborting whole batch.
+- G2-2-014-023 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Implement actual course status updates atomically per course; not a lesson visibility substitute.
+- G2-2-014-024 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Restore partial per-course active/enabled/allow-display update semantics.
+- G2-2-014-025 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Isolate unauthorized/invalid course and process remaining permitted IDs.
+- G2-2-014-026 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Add summary COURSE_BULK_STATUS_UPDATE event with original requested/updated/failed counts.
+- G2-2-014-028 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Provide college-admin bulk status functionality with central course permission.
+- G2-2-014-030 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Do not treat lesson-content hide as course hide; preserve course-level visibility and learner queries.
+- G2-2-014-032 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Preserve per-course partial completion semantics and response classification.
+- G2-2-014-043 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Do not apply 500-lesson content cap to course-status operation.
+- G2-2-014-044 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Implement true flag CAS/integer version for courses while preserving unrelated fields.
+- G2-2-014-046 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Wire proper course write service with per-item scope and audit.
+- G2-2-014-047 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Persist actual course status and mapping, not merely lesson content flags.
+- G2-2-014-048 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Use partial update query, preserve metadata and optimistic version.
+- G2-2-014-049 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | High-priority functional non-equivalence: name/API suggests course status but operation differs.
+- G2-2-014-050 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Restore selection across paginated catalog while isolating acting-college scopes.
+- G2-2-014-016 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Use configured N in both validation and message.
+- G2-2-014-017 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Validate partial flag updates; retain legacy error.
+- G2-2-014-018 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Support safe versioned legacy body mapping.
+- G2-2-014-020 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Include per-course requested/updated counts in summary.
+- G2-2-014-021 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Show sanitized per-course failure details and partial-success warning.
+- G2-2-014-015 | `src/app/api/admin/courses/bulk-status/route.ts` | Surface exact empty selection message.
