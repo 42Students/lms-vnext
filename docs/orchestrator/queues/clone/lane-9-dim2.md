@@ -131,7 +131,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/hr/recruiter-notification-bell.tsx`
 - [x] `src/components/hr/recruiter-round-inline-editor.tsx`
 - [x] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
 - [ ] `src/components/people/faculty-profile-skills.tsx`
 - [ ] `src/components/placements/college-application-detail-drawer.tsx`
 - [ ] `src/components/placements/college-application-pipeline-controls.tsx`
