@@ -36,7 +36,7 @@
 .suggestion { display:flex; align-items:center; min-height:44px; width:100%; padding:12px 16px; gap:8px; border-radius:8px; font-family:inherit; font-size:14px; font-weight:500; line-height:1.4; color:var(--topbar-ink); text-align:left; }
 .suggestion:hover { background:rgba(0,0,0,.035); color:var(--topbar-ink); }
 .suggestion:active { background:rgba(0,0,0,.06); }
-.suggestion:focus-visible { outline:1px solid var(--lms-neutral-500); outline-offset:1px; background:var(--lms-neutral-50); color:var(--topbar-ink); }
+.suggestion:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; background:var(--lms-neutral-50); color:var(--topbar-ink); }
 .new { display:inline-flex; height:36px; min-height:36px; width:82px; align-items:center; justify-content:center; gap:4px; flex:none; border-radius:var(--lms-control-radius); background:var(--lms-button-primary); color:var(--lms-white); font-family:inherit; font-size:14px; font-weight:650; line-height:1; white-space:nowrap; }
 .new:hover { background:var(--lms-button-primary-hover); color:var(--lms-white); }
 .actions { display:flex; align-items:center; gap:8px; flex:none; }
@@ -88,7 +88,7 @@
 }
 
 .recruiterBell > div > button > span { line-height:15px !important; }
-.searchBox:focus-visible,.iconButton:focus-visible,.new:focus-visible,.avatar:focus-visible { outline:2px solid var(--lms-button-primary); outline-offset:2px; }
+.searchBox:focus-visible,.iconButton:focus-visible,.new:focus-visible,.avatar:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; }
 @media (prefers-reduced-motion:no-preference) { .new,.iconButton,.avatar { transition:background-color .15s ease, color .15s ease; } }
 
 /* Header-owned quick-create menu: preserve legacy TPO action choices. */
@@ -113,7 +113,7 @@
 }
 .recruiterBell > div > section li, .learnerBell > div > section li { border-color:var(--lms-canvas-border); }
 .recruiterBell > div > section a:focus-visible, .learnerBell > div > section a:focus-visible {
-  outline:2px solid var(--lms-button-primary); outline-offset:2px;
+  outline:2px solid var(--lms-primary-text); outline-offset:3px;
 }
 .accountHeading { margin:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--lms-heading); font-size:13px; font-weight:600; }
 .accountSubheading { margin:4px 0 0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--topbar-placeholder); font-size:12px; }
@@ -146,7 +146,7 @@
 }
 
 /* Keep the command's two real children on measured tracks without reserving an empty column. */
-.searchBox button:focus-visible { outline:2px solid var(--lms-button-primary); outline-offset:2px; border-radius:4px; }
+.searchBox button:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; border-radius:4px; }
 .searchInput::-webkit-search-cancel-button { cursor:pointer; }
 
 /* Shared Button instances within the legacy command box keep its measured 36px field. */
@@ -233,8 +233,8 @@
 }
 .recruiterBell > div > section li a:focus-visible,
 .learnerBell > div > section li a:focus-visible {
-  outline:1px solid var(--lms-neutral-500);
-  outline-offset:1px;
+  outline:2px solid var(--lms-primary-text);
+  outline-offset:3px;
 }
 
 .recruiterBell > div > section time,
@@ -330,8 +330,8 @@
   box-shadow:none;
 }
 .topbarNotificationBody li button:focus-visible {
-  outline:1px solid var(--lms-neutral-500);
-  outline-offset:1px;
+  outline:2px solid var(--lms-primary-text);
+  outline-offset:3px;
 }
 
 @media (max-width:767px) {
@@ -372,7 +372,7 @@
 .orgTrigger:active { background:rgba(0,0,0,.035); }
 
 .orgTrigger:focus-visible {
-  outline:2px solid var(--lms-button-primary); outline-offset:2px;
+  outline:2px solid var(--lms-primary-text); outline-offset:3px;
 }
 
 .orgPopover {
@@ -408,8 +408,8 @@
 
 .orgPopover :global(select):focus-visible,
 .orgPopover :global(input):focus-visible {
-  outline:2px solid var(--lms-button-primary);
-  outline-offset:2px;
+  outline:2px solid var(--lms-primary-text);
+  outline-offset:3px;
 }
 
 .orgPopover :global(select):disabled,
@@ -490,7 +490,7 @@
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] a { transition:background .2s ease,border-color .2s ease,box-shadow .2s ease; }
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:hover { background:var(--lms-neutral-50); border-color:var(--lms-neutral-200); box-shadow:0 1px 3px rgba(0,0,0,.04); }
 .learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:active { background:rgba(0,0,0,.06); box-shadow:none; }
-.learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:focus-visible { outline:1px solid var(--lms-neutral-500); outline-offset:1px; }
+.learnerNotificationPopover ul[aria-label="Recent learner notifications"] a:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; }
 
 .learnerNotificationPopover [data-learner-notification-state] { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:32px 20px; text-align:center; font-size:14px; line-height:1.5; }
 
@@ -520,7 +520,7 @@
 
 .hrNotificationBody li a:hover { background:var(--lms-neutral-50); border-color:var(--lms-neutral-200); box-shadow:0 1px 3px rgba(0,0,0,.04); }
 .hrNotificationBody li a:active { background:rgba(0,0,0,.06); box-shadow:none; }
-.hrNotificationBody li a:focus-visible { outline:1px solid var(--lms-neutral-500); outline-offset:1px; }
+.hrNotificationBody li a:focus-visible { outline:2px solid var(--lms-primary-text); outline-offset:3px; }
 
 @media (prefers-reduced-motion:no-preference) { .hrNotificationPopover,.topbarNotificationPopover { animation:topbarNotificationPanelIn .2s ease-out; } }
 @media (prefers-reduced-motion:reduce) { .hrNotificationPopover,.hrNotificationBody li a { animation:none; transition:none; } }
