@@ -8,9 +8,9 @@ import { courseAssignments, courseLessons, courseLearningPaths,
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
-import { listAssignmentSubmissions } from "./assignment-submission-service";
+import { listAssignmentSubmissions,listAssignmentSubmissionsPage } from "./assignment-submission-service";
 import { CoursesServiceError } from "./errors";
-import { facultySubmissionListPage, facultySubmissionListQuerySchema, selectFacultyAssignmentSubmissions } from "./faculty-assignment-submissions-model";
+import { facultySubmissionListPage, facultySubmissionListQuerySchema, selectFacultyAssignmentSubmissions, facultySubmissionSqlPageWindow } from "./faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponse } from "./faculty-submission-review-model";
 
 export async function getFacultySubmissionReviewPage(context: RequestContext, raw: unknown) {
@@ -32,6 +32,23 @@ export async function getFacultySubmissionReviewPage(context: RequestContext, ra
     .limit(1);
   if (!assignment) throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_NOT_FOUND");
   if (assignment.status !== "PUBLISHED") throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+  // The unfiltered review is pageable in SQL, avoiding loading all
+  // submissions to render one drawer page. Authorization is checked before
+  // either the count or the SELECT can expose tenant-private rows.
+  if(query.filter==="ALL"){
+    const first=await listAssignmentSubmissionsPage(context,query.assignmentId,
+      query.deliveryId,{limit:20,offset:(query.page-1)*20});
+    const window=facultySubmissionSqlPageWindow(query.page,first.total);
+    const pageRows=window.page===query.page?first.submissions:
+      (await listAssignmentSubmissionsPage(context,query.assignmentId,query.deliveryId,{
+        limit:window.limit,offset:window.offset,
+      })).submissions;
+    return facultySubmissionReviewResponse({page:window.page,
+      pageSize:window.limit,total:window.total,totalPages:window.totalPages,
+      items:pageRows});
+  }
+  // Timing/grade filters must be applied before pagination; never paginate
+  // raw rows and then claim an incomplete page is the entire match set.
   const rows = await listAssignmentSubmissions(context,query.assignmentId,query.deliveryId);
   const selected = selectFacultyAssignmentSubmissions(rows,query.filter,assignment.dueAt);
   return facultySubmissionReviewResponse(facultySubmissionListPage(selected,query.page));
