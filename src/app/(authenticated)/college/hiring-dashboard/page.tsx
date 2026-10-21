@@ -11,6 +11,7 @@ import Link from "next/link";
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {CollegeHiringFunnel} from "@/components/placements/college-hiring-funnel";
 import {CollegeReportNavigation} from "@/components/placements/college-report-navigation";
+import {CollegeHiringDateFilters} from "@/components/placements/college-hiring-date-filters";
 
 /** Dedicated legacy Analytics surface: tenant-owned observed placement metrics. */
 export default async function CollegeHiringDashboardPage({
@@ -62,6 +63,7 @@ export default async function CollegeHiringDashboardPage({
         Placement Evidence by Department
       </Link>} />
     <CollegeReportNavigation/>
+    <CollegeHiringDateFilters filters={query.data}/>
     {workspace?<ReportFilters workspace={workspace} userId={context.user.id} path="/college/hiring-dashboard" />:null}
     {!workspace?<Alert tone="warning">
       Could not load hiring metrics. The college report is unavailable.
