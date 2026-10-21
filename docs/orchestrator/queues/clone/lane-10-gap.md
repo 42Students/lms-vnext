@@ -64,7 +64,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/tenants.js`
 - [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/verification.js`
 - [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterSelfController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCampaignUnsubscribeController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicCampaignUnsubscribeController.java`
 - [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FileUploadController.java`
 - [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/index.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/tasks.js`
