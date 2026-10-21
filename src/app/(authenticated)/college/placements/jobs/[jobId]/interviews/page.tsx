@@ -26,7 +26,13 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
     description={driveInterviewFilterError(await searchParams)} action={<Link href={`/college/placements/jobs/${encodeURIComponent(jobId)}/interviews`} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),
-    getCollegeRoundSlotAppointments(context,jobId),
+    getCollegeRoundSlotAppointments(context,jobId,{
+      appointmentPage:query.appointmentPage,
+      appointmentStatus:query.appointmentStatus,
+      appointmentMode:query.appointmentMode,
+      appointmentSearch:query.appointmentSearch,
+      preferredApplicationId:query.applicationId,
+    }),
   ]);
   const columns:DataTableColumn<(typeof data.items)[number]>[]=[
     {key:"round",header:"Round",mobilePriority:"primary",cell:item=><div>
@@ -82,6 +88,10 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       </label>
       <Button type="submit" className="min-h-11 w-full md:min-h-9">Filter interviews</Button>
     </form>
+    {appointments.candidateTotal>appointments.candidates.length?<p role="status" className="text-sm text-warning-text">
+      Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates in the scheduling selector. Open a candidate from their application details to include that specific learner.
+    </p>:null}
+    <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}</p>
     <CollegeInterviewAppointments jobId={jobId} rounds={appointments.rounds}
       candidates={appointments.candidates} appointments={filterDriveCandidateAppointments(
         appointments.interviews, {
@@ -91,6 +101,12 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         },
       )}
       preferredApplicationId={query.applicationId}/>
+    <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-b border-border pb-4 text-sm">
+      {appointments.appointmentPage>1?<Link href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
+      {appointments.appointmentPage<appointments.appointmentPages?<Link href={driveInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
+    </nav>
     <section aria-label="Persisted interview rounds" className="space-y-2">
       <p role="status" className="text-sm text-body leading-[22px]">{data.total} matching interview/GD rounds</p>
       <DataTable caption="Persisted interview rounds" columns={columns} rows={data.items}

@@ -1,6 +1,6 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,asc,eq,inArray,ne,lt,gt,notExists,sql} from "drizzle-orm";
+import {and,asc,eq,inArray,ne,lt,gt,gte,notExists,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -28,10 +28,52 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string){
   meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:null,
   version:s.version};
 }
-export async function getCollegeRoundSlotAppointments(ctx:RequestContext,raw:unknown){
+export type CollegeRoundSlotAppointmentFilters = {
+ appointmentPage?:number;
+ appointmentStatus?:"ALL"|"UPCOMING"|"COMPLETED"|"CANCELLED";
+ appointmentMode?:"ALL"|"ON_CAMPUS"|"VIRTUAL";
+ appointmentSearch?:string;
+ preferredApplicationId?:string;
+};
+/** Source-of-truth candidate appointments, filtered and paged before capping.
+ * Omitted filters retain the legacy 2,000-row API snapshot contract.
+ * The two drive interview pages pass appointmentPage for 50-row browsing.
+ */
+export async function getCollegeRoundSlotAppointments(
+ ctx:RequestContext,raw:unknown,filters:CollegeRoundSlotAppointmentFilters={},
+){
  const {collegeId,job}=await scope(ctx,raw);
  const db=getDb();
- const [rounds,candidates,bookings]=await Promise.all([
+ const now=new Date();
+ const done=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}
+    and ev.subject_type='placement_round_candidate_slot'
+    and ev.event_type='PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED')`;
+ const noShow=sql`exists(select 1 from ${activityEvents} ev where ev.subject_id=${slots.id}
+    and ev.subject_type='placement_round_candidate_slot'
+    and ev.event_type='PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW')`;
+ const status=filters.appointmentStatus;
+ const stateWhere=status==="CANCELLED"
+  ?or(eq(slots.status,"CANCELLED"),noShow)
+  :status==="COMPLETED"
+   ?and(eq(slots.status,"BOOKED"),not(noShow),or(done,lt(slots.startsAt,now)))
+   :status==="UPCOMING"
+    ?and(eq(slots.status,"BOOKED"),not(done),not(noShow),gte(slots.startsAt,now))
+    :undefined;
+ const search=filters.appointmentSearch?.trim().toLowerCase().slice(0,120)??"";
+ const roomVirtual=sql`${slots.room} like 'https://%'`;
+ const bookingWhere=and(
+  eq(slots.jobId,job.id),inArray(slots.status,["BOOKED","CANCELLED"]),
+  stateWhere,
+  filters.appointmentMode==="VIRTUAL"?roomVirtual:
+   filters.appointmentMode==="ON_CAMPUS"?not(roomVirtual):undefined,
+  search?(/^[0-9a-f-]+$/.test(search)?
+   sql`cast(${slots.applicationId} as text) like ${"%"+search+"%"}`:sql`false`):undefined,
+ );
+ const candidateWhere=and(
+  eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
+  eq(placementApplicationScreenings.status,"SHORTLISTED"),
+ );
+ const [rounds,candidates,candidateCount,appointmentCount]=await Promise.all([
   db.select({id:placementJobRounds.id,name:placementJobRounds.name,
    status:placementJobRounds.status,kind:placementJobRounds.kind})
    .from(placementJobRounds).where(and(eq(placementJobRounds.jobId,job.id),
@@ -44,25 +86,54 @@ export async function getCollegeRoundSlotAppointments(ctx:RequestContext,raw:unk
     eq(collegeMemberships.collegeId,collegeId)))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
-   .where(and(eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
-    eq(placementApplicationScreenings.status,"SHORTLISTED"))).orderBy(asc(users.displayName)).limit(1000),
-  db.select().from(slots).where(and(eq(slots.jobId,job.id),
-    inArray(slots.status,["BOOKED","CANCELLED"]))).orderBy(asc(slots.startsAt)).limit(2000),
+   .where(candidateWhere).orderBy(asc(users.displayName),asc(placementApplications.id)).limit(1000),
+  db.select({total:sql<number>`count(*)::int`}).from(placementApplications)
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+    eq(collegeMemberships.collegeId,collegeId)))
+   .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+   .where(candidateWhere),
+  db.select({total:sql<number>`count(*)::int`}).from(slots).where(bookingWhere),
  ]);
- const ids=bookings.map(b=>b.id);
+ // A candidate deep-linked from the private application drawer remains
+ // schedulable even when the name-sorted dropdown is beyond its 1,000-row cap.
+ if(filters.preferredApplicationId &&
+    /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(filters.preferredApplicationId) &&
+    !candidates.some(c=>c.applicationId===filters.preferredApplicationId)){
+  const preferred=await db.select({applicationId:placementApplications.id,
+   name:users.displayName,screening:placementApplicationScreenings.status})
+   .from(placementApplications)
+   .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+    eq(collegeMemberships.collegeId,collegeId)))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+   .where(and(candidateWhere,eq(placementApplications.id,filters.preferredApplicationId))).limit(1);
+  if(preferred[0])candidates.push(preferred[0]);
+ }
+ const candidateTotal=candidateCount[0]?.total??0;
+ const appointmentTotal=appointmentCount[0]?.total??0;
+ const appointmentPageSize=filters.appointmentPage===undefined?2000:50;
+ const appointmentPages=Math.max(1,Math.ceil(appointmentTotal/appointmentPageSize));
+ const requested=filters.appointmentPage;
+ const appointmentPage=requested!==undefined&&Number.isSafeInteger(requested)&&requested>0
+  ?Math.min(requested,appointmentPages):1;
+ const bookings=await db.select().from(slots).where(bookingWhere)
+  .orderBy(asc(slots.startsAt),asc(slots.id))
+  .limit(appointmentPageSize).offset((appointmentPage-1)*appointmentPageSize);
+ const ids=bookings.map(row=>row.id);
  const events=ids.length?await db.select({id:activityEvents.id,subjectId:activityEvents.subjectId,
   eventType:activityEvents.eventType,occurredAt:activityEvents.occurredAt})
   .from(activityEvents).where(and(eq(activityEvents.collegeId,collegeId),
-    eq(activityEvents.subjectType,"placement_round_candidate_slot"),
-    inArray(activityEvents.subjectId,ids),
-    inArray(activityEvents.eventType,["PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
-      "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW"])))
-  .orderBy(asc(activityEvents.occurredAt)): [];
+   eq(activityEvents.subjectType,"placement_round_candidate_slot"),
+   inArray(activityEvents.subjectId,ids),
+   inArray(activityEvents.eventType,["PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
+    "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW"])))
+  .orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id)):[];
  const outcomes=new Map<string,string>();
  for(const event of events)if(event.subjectId)outcomes.set(event.subjectId,
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");
  return {job,storageReady:true,rounds,candidates,
-  interviews:bookings.map(s=>viewSlot(s,outcomes.get(s.id)))};
+  candidateTotal,appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
+  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id)))};
 }
 
 export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){

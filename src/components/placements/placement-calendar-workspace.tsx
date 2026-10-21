@@ -285,7 +285,8 @@ function eventHref(
 
     const jobHref =
       base + encodeURIComponent(event.jobId);
-    if (audience === "COLLEGE_ADMIN" && event.kind === "INTERVIEW_SLOT" && event.applicationId) {
+    if ((audience === "COLLEGE_ADMIN" || audience === "SUPER_ADMIN") &&
+        event.kind === "INTERVIEW_SLOT" && event.applicationId) {
       return jobHref + "/applications?applicationId=" + encodeURIComponent(event.applicationId);
     }
 

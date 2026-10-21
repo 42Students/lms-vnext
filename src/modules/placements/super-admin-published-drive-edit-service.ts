@@ -33,8 +33,14 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
   if(job.updatedAt.getTime()!==Date.parse(cmd.expectedUpdatedAt))
    throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
   const deadline=new Date(cmd.applicationDeadline);
-  if(deadline.getTime()<=Date.now())throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
-  if(!isLegacyAssessmentDeadlineAfterApplication(job.legacyPostingDetails?.assessmentDeadline,deadline))
+  // Changing unrelated published fields must not force a historical, already
+  // elapsed application deadline into the future. Only a NEW deadline must
+  // satisfy live deadline and assessment chronology policies.
+  const deadlineUnchanged = job.applicationDeadline?.getTime() === deadline.getTime();
+  if(!deadlineUnchanged && deadline.getTime()<=Date.now())
+   throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
+  if(!deadlineUnchanged &&
+     !isLegacyAssessmentDeadlineAfterApplication(job.legacyPostingDetails?.assessmentDeadline,deadline))
    throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
    .where(and(eq(placementSeasons.id,job.seasonId),

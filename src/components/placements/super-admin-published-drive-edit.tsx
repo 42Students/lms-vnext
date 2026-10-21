@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState,type FormEvent} from "react";
+import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
@@ -31,6 +31,8 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
  const [confirmLeave,setConfirmLeave]=useState(false);
  const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const {pending,run}=useGuardedAction();
+ const formRef=useRef<HTMLFormElement>(null);
+ const [confirmSave,setConfirmSave]=useState(false);
  useEffect(()=>{
   if(!open||!dirty)return;
   const beforeUnload=(event:BeforeUnloadEvent)=>{
@@ -60,9 +62,25 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
   if(dirty){setLeaveHref(null);setConfirmLeave(true);}
   else setOpen(false);
  }
- async function save(event:FormEvent<HTMLFormElement>){
+ function reviewSave(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
+  if(pending)return;
   const data=new FormData(event.currentTarget);
+  const description=String(data.get("description")??"").trim();
+  if(!description.replace(/<[^>]*>/g,"").trim()){
+   setError("Please enter job description.");return;
+  }
+  const min=nullableNumber(data.get("minimumAnnualCtcInr"));
+  const max=nullableNumber(data.get("maximumAnnualCtcInr"));
+  if(min!==null&&max!==null&&max<min){
+   setError("Maximum CTC must be at least the minimum.");return;
+  }
+  setError("");
+  setConfirmSave(true);
+ }
+ async function save(){
+  if(!formRef.current||pending)return;
+  const data=new FormData(formRef.current);
   const description=String(data.get("description")??"").trim();
   if(!description.replace(/<[^>]*>/g,"").trim()){
    setError("Please enter job description.");return;
@@ -70,6 +88,7 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
   const enteredDeadline=String(data.get("deadline")??"");
   const applicationDeadline=enteredDeadline===istLocal(job.applicationDeadline)
    ? job.applicationDeadline : driveDeadlineIstToIso(enteredDeadline);
+  setConfirmSave(false);
   await run(async()=>{
    setError("");
    try{
@@ -105,7 +124,7 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
   <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
   {!open?<Button type="button" variant="secondary" onClick={()=>{setDirty(false);setOpen(true);}}>
    Edit published drive</Button>:
-   <form className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2" onChange={()=>setDirty(true)} onSubmit={e=>void save(e)}>
+   <form ref={formRef} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2" onChange={()=>setDirty(true)} onSubmit={reviewSave}>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title<Input name="title" required minLength={3} maxLength={100}
      defaultValue={job.title} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
@@ -129,6 +148,11 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={closeEditor}>Cancel</Button>
     </div>
    </form>}
+   <ConfirmDialog open={confirmSave} onOpenChange={setConfirmSave}
+    title="Save published drive changes?"
+    description="Review the edited fields and the mandatory reason. These changes are audited; existing applicant and offer decisions will not be rewritten."
+    confirmLabel="Save published changes" cancelLabel="Keep editing" pending={pending}
+    onConfirm={()=>void save()}/>
    <ConfirmDialog open={confirmLeave} onOpenChange={setConfirmLeave}
     title="Discard unsaved changes?" description="Your changes to this drive have not been saved."
     confirmLabel="Discard changes" cancelLabel="Keep editing"
