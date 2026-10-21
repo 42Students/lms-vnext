@@ -218,8 +218,8 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/admin/hr/page.tsx`
 - [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
 - [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx`
 - [ ] `src/app/(authenticated)/authenticated-print.css`
 - [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
 - [ ] `src/app/(authenticated)/college/branding/page.tsx`
