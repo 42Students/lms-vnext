@@ -43,6 +43,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  }|null>(null);
  const [success,setSuccess]=useState("");
  const [linkNotice,setLinkNotice]=useState("");
+ const [resumePreviewOpen,setResumePreviewOpen]=useState(false);
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  const endpoint="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
@@ -96,12 +97,18 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to re-screen this application.");}
   finally{setRescreening(false);}
  }
+ // Only a verified, same-origin private document endpoint can be embedded.
+ // The endpoint performs an independent authorization check.
+ const privateResumeUrl=detail?.resume.available &&
+  /^\/api\/(college|admin|tpo)\/verification\//.test(detail.resume.url??"")
+   ? detail.resume.url : null;
  const sections=[
   {label:"Pipeline history",rows:detail?.stageHistory??[]},
   {label:"Screening history",rows:detail?.screeningHistory??[]},
   {label:"Application history",rows:detail?.history??[]},
  ];
- return <Dialog open={true} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
+ return <>
+  <Dialog open={true} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
@@ -132,11 +139,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Resume and match score</h3>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
-       {detail.resume.available&&detail.resume.url?
-        <a href={detail.resume.url}  rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-[650] text-[var(--lms-teal-deep)] md:min-h-9 text-sm rounded-[var(--lms-control-radius)]">
-          Resume Preview · Open securely
-        </a>:null}
+       {privateResumeUrl ? (
+        <Button variant="secondary" type="button"
+         onClick={()=>setResumePreviewOpen(true)}
+         className="mt-2 min-h-11 md:min-h-9">
+         Resume Preview
+        </Button>
+       ) : null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
        <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
        <Button variant="secondary" type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
@@ -238,5 +247,29 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
       </Disclosure>)}
     </div>:null}
- </Dialog>;
+  </Dialog>
+  <Dialog open={resumePreviewOpen} onOpenChange={setResumePreviewOpen}
+   title="Resume Preview"
+   description="The verified private document loads through the authorized document endpoint."
+   className="max-w-[70rem]">
+   {privateResumeUrl ? (
+    <div className="min-w-0 space-y-3">
+     <iframe title="Verified resume document" src={privateResumeUrl}
+      sandbox="allow-downloads" referrerPolicy="no-referrer" loading="lazy"
+      className="h-[58vh] w-full rounded-[var(--lms-control-radius)] border border-border bg-white" />
+     <p className="text-xs text-muted-foreground">
+      If your browser cannot preview this file, use the secure link below.
+     </p>
+     <a href={privateResumeUrl} target="_blank" rel="noopener noreferrer"
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      Open verified resume in a new tab
+     </a>
+     <Button type="button" variant="secondary" onClick={()=>setResumePreviewOpen(false)}
+      className="ml-2 min-h-11 md:min-h-9">Close preview</Button>
+    </div>
+   ) : (
+    <p className="text-sm text-body">The verified resume is no longer available.</p>
+   )}
+  </Dialog>
+ </>;
 }
