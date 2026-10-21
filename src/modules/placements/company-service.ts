@@ -270,6 +270,7 @@ export async function createPlacementCompany(
       throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
     }
     let company=canonical??null;
+    let existed=Boolean(company);
     if(!company){
       const [created]=await tx.insert(placementCompanies).values({
         name:input.name,websiteUrl:input.websiteUrl??null,
@@ -284,6 +285,7 @@ export async function createPlacementCompany(
             input.name.trim().toLocaleLowerCase("en-US"))
           throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
         company=concurrent;
+        existed=true;
       }
     }
     // Never "enrich" the shared company name, URL, logo or ownership through
@@ -325,7 +327,7 @@ export async function createPlacementCompany(
       groupKey: "placement-companies:" + input.collegeId,
     });
 
-    return { company, relationship };
+    return { company, relationship, existed };
   });
 }
 
