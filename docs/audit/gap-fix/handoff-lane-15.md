@@ -111,3 +111,6 @@
 
 - Teacher attendance policy owner: G2-14-009-082. Additive 0170 replaces 168-hour SQL cap with schema's 8760-hour maximum. Recheck policy UI, role, cutoff calculations and migration replay before exposing year-long corrections; default stays 24h.
 - Quiz authoring/validation owner: G2-16-016-035. Legacy per-question 100 points already enforced by faculty authoring, but generic quiz-validation.ts, quizzes.ts and immutable migration 0007 accept up to 1000. Do NOT change SQL without synchronizing Zod/UI/schema for all writers, checking existing questions >100 and approving any downgrade. Migration 0007 unchanged.
+
+- College semester course model owner: G2-17-002-086. Curriculum DB allows legacy nullable/0..30 credits, but editable Zod currently 1..10. Preserve old read-only values or align approved write limits with legacy, warn on out-of-policy historic rows, and never reject reading existing semesters. Migration 0050 immutable.
+- Recruiter email provider/operations owner: G2-20-010-053. State and inbound hash tables already registered via 0135; before RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED=true, verify rollout guard against schema, signed inbound gateway, ZeptoMail credentials, reply expiry/replay and no plaintext token persistence. No duplicate migration.
