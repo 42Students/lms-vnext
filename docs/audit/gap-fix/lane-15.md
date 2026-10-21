@@ -216,3 +216,10 @@
 
 ## Packet 51 — saved job ownership integrity
 - `src_db_schema_placement-external.ts.md` | G2-19-012-048/G2-3-019-042: added same-college composite references for placementSavedJobs membership and job, with preflight migration 0169 (reject existing mismatches). Documented int learner/job→tenant verified membership/job UUID crosswalk, savedAt from known source timezone, preserved member+job uniqueness. | No historic MySQL saved jobs in greenfield; source ID remap and original createdAt provenance for future approved import. 0169 NOT EXECUTED.
+
+
+## Packet 52 — schema barrel and historical bug activity
+- `src_db_schema_index.ts.md` | G2-19-017-048/G2-3-021-041: existing DB07 staged projectMeetingAuditHistory is NOT promoted separately; it needs project owner migration, audit writer and scope FK replay alongside live project_task_comments/project_delivery_events to avoid duplicate tables. DB10 bug_report_activities already registered with UUID and restrict retention, activity actor provenance; old integer IDs need audited crosswalk if ever imported. | No legacy project meeting or bug activity data in greenfield; strict staged DB07 cutover. Registered project tables must not be redefined. Handoff, no DDL migration and no old migration edits.
+
+## Packet 53 — OTP account identity/preuser isolation
+- `src_db_schema_identity-auth-attempts.ts.md` | G2-20-018-023/036: retained existing real user FK, HMAC-only OTP fingerprints, five-minute expiry and bounded attempts; documented proposed isolated pre-registration proof intent rather than legacy learnerId=0 bypass or fake users. Deliberately retire old plaintext code/roll-number data, do not import raw OTPs. | Public pre-registration challenge workflow requires auth owner review, HMAC keyed nonce, rate cap and verified binding before user provisioning; no auto-migration of secrets. No SQL changes/activation.
