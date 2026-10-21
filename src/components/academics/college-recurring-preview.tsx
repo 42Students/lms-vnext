@@ -17,7 +17,7 @@ type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
 type FacultyOption = { id: string; displayName: string | null };
 type DeliveryOption = { id: string; sectionId: string; name: string; code: string };
-type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[] }>;
+type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: string; conflicts: string[]; eventType?:string }>;
   ready: number; blocked: number; notice: string };
 
 /** Recurring preview is always displayed in IST regardless of device timezone. */
@@ -44,13 +44,31 @@ export function CollegeRecurringPreview({
   const [requested,setRequested]=useState<number|null>(null);
   const [savedSessionIds,setSavedSessionIds]=useState<string[]>([]);
   const [discardOpen,setDiscardOpen]=useState(false);
+  const [leaveHref,setLeaveHref]=useState<string|null>(null);
+  const [navigationConfirmed,setNavigationConfirmed]=useState(false);
   const [dirty,setDirty]=useState(false);
   useEffect(()=>{
    if(!dirty)return;
    const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+   const intercept=(event:MouseEvent)=>{
+    if(navigationConfirmed||event.defaultPrevented||event.ctrlKey||event.metaKey||
+       event.altKey||event.shiftKey)return;
+    const target=event.target;
+    if(!(target instanceof Element))return;
+    const anchor=target.closest("a[href]");
+    if(!(anchor instanceof HTMLAnchorElement))return;
+    const next=new URL(anchor.href,window.location.href);
+    if(next.origin!==window.location.origin||
+       (next.pathname===window.location.pathname&&next.search===window.location.search&&
+       next.hash===window.location.hash))return;
+    event.preventDefault();event.stopPropagation();
+    setLeaveHref(next.pathname+next.search+next.hash);setDiscardOpen(true);
+   };
    window.addEventListener("beforeunload",warn);
-   return ()=>window.removeEventListener("beforeunload",warn);
-  },[dirty]);
+   document.addEventListener("click",intercept,true);
+   return ()=>{window.removeEventListener("beforeunload",warn);
+    document.removeEventListener("click",intercept,true);};
+  },[dirty,navigationConfirmed]);
   const [lastPreviewKey, setLastPreviewKey] = useState("");
   function previewKey() {
     return JSON.stringify({sectionId,from,to,weekdays,startTime,endTime,title,facultyId,hallId,deliveryId});
@@ -154,8 +172,8 @@ export function CollegeRecurringPreview({
     <section className="min-w-0 space-y-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h2 className="text-lg font-semibold">Create recurring class schedule</h2>
-         <p className="max-w-[75ch] text-sm text-body leading-[22px]">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p></div>
-        <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):cancel()}>Cancel</Button>
+         <p className="max-w-[75ch] text-sm text-body leading-[22px]">Choose a class and recurrence pattern, then preview the schedule. Preview does not create sessions. Confirmed execution rechecks every date and creates only conflict-free sessions.</p></div>
+        <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):router.push("/college/classes")}>Cancel scheduling</Button>
       </div>
       {errors && Object.values(errors).some(Boolean) ? <Alert tone="warning">
         Some schedule options could not be loaded: {Object.entries(errors).filter(([,failed])=>failed).map(([name])=>name).join(", ")}.
@@ -269,7 +287,7 @@ export function CollegeRecurringPreview({
         {previewChanged ? <Alert tone="warning">Schedule fields changed since the preview. Preview this pattern again before saving.</Alert> : null}
         <Button type="button" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || previewChanged || !title.trim() || result.ready===0}
           onClick={execute}>{pending?"Creating…":"Confirm and create "+result.ready+" sessions"}</Button>
-        {result.blocked>0 ? <Alert tone="warning">Conflicting dates will be skipped; clear dates may still be created.</Alert> : null}
+        {result.blocked>0 ? <Alert tone="warning">Conflicting dates will be skipped; clear dates may still be created. The final report lists every created and failed date.</Alert> : null}
         {result.slots.length === 0 ? <EmptyState title="No matching dates" description="No selected weekdays match this date range."/> : (
           <div className="max-h-[32rem] min-w-0 overflow-y-auto border-y border-[var(--lms-canvas-border)]">
             <DataTable<Result["slots"][number]>
@@ -280,6 +298,7 @@ export function CollegeRecurringPreview({
               columns={[
                 {key:"date",header:"Date (IST)",mobilePriority:"primary",cell:slot=>slot.localDate},
                 {key:"time",header:"Time (IST)",mobilePriority:"secondary",cell:recurringSlotTimeIst},
+                 {key:"type",header:"Session type",mobilePriority:"secondary",cell:slot=>slot.eventType??"Class session"},
                 {key:"conflicts",header:"Conflicts",mobilePriority:"secondary",cell:slot=>
                   slot.conflicts.length ?
                     slot.conflicts.map(reason=>reason.replaceAll("_"," ")).join(", ") :
@@ -292,7 +311,11 @@ export function CollegeRecurringPreview({
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard recurring schedule changes?"
         description="Your unsaved session pattern and preview will be lost."
-        confirmLabel="Discard changes" onConfirm={()=>{setDirty(false);setDiscardOpen(false);cancel();}}/>
+        cancelLabel="Keep editing" confirmLabel="Discard changes" onConfirm={()=>{
+           const href=leaveHref??"/college/classes";
+           setNavigationConfirmed(true);setDirty(false);setDiscardOpen(false);setLeaveHref(null);
+           router.push(href);
+         }}/>
       <ConfirmDialog open={confirming} onOpenChange={setConfirming}
         title="Create recurring sessions?"
         description={`Create ${result?.ready ?? 0} clear sessions? Conflicting dates will be skipped and listed after saving.`}
