@@ -12,7 +12,8 @@ const STATUS = {
 
 export function lectureHallErrorResponse(error: LectureHallError) {
   return NextResponse.json(
-    { error: error.code, ...(error.detail ?? {}) },
+    { error: error.code, ...(error.detail ?? {}),
+      ...(error.code === "HALL_NOT_FOUND" ? {message:"Lecture hall not found"} : {}) },
     { status: STATUS[error.code] },
   );
 }
