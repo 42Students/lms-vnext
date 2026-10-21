@@ -247,8 +247,8 @@ export async function resolveFacultyCourseDeliveryForLink(
  }).from(sections).where(inArray(sections.id,[...new Set(rows.map(row=>row.sectionId))]));
  const courseMeta=new Map(knownCourses.map(row=>[row.id,row]));
  const sectionMeta=new Map(knownSections.map(row=>[row.id,row]));
- const legacyCourse=/^[1-9]\\d{0,9}$/.test(course)?Number(course):null;
- const legacySection=/^[1-9]\\d{0,9}$/.test(section)?Number(section):null;
+ const legacyCourse=/^[1-9]\d{0,9}$/.test(course)?Number(course):null;
+ const legacySection=/^[1-9]\d{0,9}$/.test(section)?Number(section):null;
  const matches=rows.filter(row=>{
   const metadata=courseMeta.get(row.courseId);
   const keys=[row.deliveryId,row.courseId,row.courseCode,
