@@ -692,7 +692,7 @@ export function SuperAdminHrAccounts({
         action="/admin/recruiters"
         className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] print:hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto_auto_auto]"
       >
-        <label className="col-span-2 grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body lg:col-span-1">
+        <label className="col-span-2 grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold lg:col-span-1 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Search
           <Input
             className="min-h-11 md:min-h-9" name="q"
@@ -703,7 +703,7 @@ export function SuperAdminHrAccounts({
           />
         </label>
 
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select
             className="min-h-11 md:min-h-9" name="status"
@@ -718,7 +718,7 @@ export function SuperAdminHrAccounts({
 
         <Disclosure title="Rows per page" className="min-w-0"
           contentClassName="pb-2 pt-2">
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Rows per page
           <Select
             className="min-h-11 md:min-h-9" name="pageSize"
