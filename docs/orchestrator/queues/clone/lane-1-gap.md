@@ -42,7 +42,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U001 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminUserLifecycleController.java`
 - [x] U002 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AuthController.java`
 - [x] U003 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyProfileController.java`
-- [ ] U004 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerProfileController.java`
+- [x] U004 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerProfileController.java`
 - [ ] U005 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicE2eAuthController.java`
 - [ ] U006 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java`
 - [ ] U007 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminUserAdminController.java`
