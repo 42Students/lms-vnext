@@ -3,6 +3,18 @@ import {collegeAssessmentListQuerySchema,collegeAssessmentHref,type CollegeAsses
 import {buildCollegeDirectoryCsv} from "@/modules/academics/college-directory-export-model";
 
 export const COLLEGE_ASSESSMENT_EXPORT_CAP=1000;
+export const LEGACY_ASSESSMENT_PAGE_EXPORT_CAP=20;
+
+/** Legacy CSV exports local wall-clock, not UTC ISO. All vNext dates use
+ * Asia/Kolkata explicitly, avoiding deployment-zone-dependent results. */
+export function assessmentDeadlineWallClock(date:Date|null):string{
+ if(!date)return "";
+ if(!Number.isFinite(date.getTime()))return "";
+ return new Intl.DateTimeFormat("sv-SE",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).format(date);
+}
 export const collegeAssessmentExportQuerySchema=collegeAssessmentListQuerySchema.extend({
  exportMode:z.enum(["ALL","PAGE"]).default("ALL"),
 });
@@ -30,22 +42,24 @@ export function renderCollegeAssessmentCsv(kind:CollegeAssessmentKind,rows:reado
  ]),truncated,COLLEGE_ASSESSMENT_EXPORT_CAP);
 }
 
-/** Legacy page-only assignment export, preserving its column order and local wall clock. */
+/** Legacy page-only Quiz and Assignment exports preserve precisely their own
+ * headers and column order. Modern ALL exports remain opt-in and bounded. */
 export function renderCollegeAssessmentPageCsv(
  kind:CollegeAssessmentKind,rows:readonly CollegeAssessmentAggregateItem[],
 ){
- if(kind!=="ASSIGNMENT")return renderCollegeAssessmentCsv(kind,rows,false);
- const localDeadline=(date:Date|null)=>date?
-  new Intl.DateTimeFormat("sv-SE",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
-  }).format(date):"";
+ const pageRows=rows.slice(0,LEGACY_ASSESSMENT_PAGE_EXPORT_CAP);
+ if(kind==="QUIZ")return buildCollegeDirectoryCsv([
+  "Title","Course","Status","Points","Due",
+ ],pageRows.map(row=>[
+  row.title||"Untitled",row.courseName||row.courseCode,
+  row.status,String(row.points),assessmentDeadlineWallClock(row.dueAt),
+ ]),false,LEGACY_ASSESSMENT_PAGE_EXPORT_CAP);
  return buildCollegeDirectoryCsv([
   "Title","Course","Scope","Points","Deadline","Submitted","Total students","Graded",
- ],rows.map(row=>[
+ ],pageRows.map(row=>[
   row.title||"Untitled",row.courseName||row.courseCode,
   row.deliverySpecific?"Section-specific":"All eligible sections",
-  String(row.points),localDeadline(row.dueAt),
+  String(row.points),assessmentDeadlineWallClock(row.dueAt),
   String(row.submittedLearners),String(row.eligibleLearners),String(row.gradedLearners),
- ]),false,COLLEGE_ASSESSMENT_EXPORT_CAP);
+ ]),false,LEGACY_ASSESSMENT_PAGE_EXPORT_CAP);
 }

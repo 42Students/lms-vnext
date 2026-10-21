@@ -117,9 +117,17 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
   eq(placementTpoEmailCampaignRecipients.status,"PENDING")))
  .limit(500);
  const outbound=createOutboundProvider(readOutboundProviderConfig({
-  [draft.template_key]:{zeptoTemplateKey:config.provider},
+  [draft.template_key]:{
+    zeptoTemplateKey:config.provider,
+    // The authenticated campaign's saved sender is the legacy college
+    // display name. The provider still enforces verified From/Reply-To.
+    senderName:draft.sender_name.trim()||"Placement cell",
+  },
  }));
  const totals={sent:0,failed:0,skipped:0};
+ // A delivery receipt is not a proof of inbox delivery, and re-running a
+ // SENDING campaign after a crash would email the same recruiter twice.
+ // Unique (campaign, recipientKey) prevents duplicate address snapshots.
  for(const row of rows){
   const disposition=campaignRecipientDisposition({
    emailNorm:row.email,unsubscribedAt:row.unsubscribedAt,
@@ -176,7 +184,7 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
    v:1,collegeId:college.id,campaignId:id,recipientId:row.id,
    expiresAt:Date.now()+180*24*60*60*1000,
   },config.key);
-  const result=await outbound.send({
+  const outcome=await outbound.sendDetailed({
    channel:"EMAIL",recipient:row.email!,
    templateKey:draft.template_key,
    purpose:"tpo-recruiter-campaign:"+id,
@@ -189,6 +197,9 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     unsubscribeUrl:config.origin+"/campaign-unsubscribe/"+encodeURIComponent(token),
    },
   });
+  const result=outcome.status==="ACCEPTED";
+  // NOT_CONFIGURED and provider rejection are individual FAILED outcomes;
+  // no campaign or recipient is ever counted as SENT without acceptance.
   const [persistedOutcome]=await db.update(placementTpoEmailCampaignRecipients).set({
    status:result?"SENT":"FAILED",sentAt:result?new Date():null,
   }).where(and(eq(placementTpoEmailCampaignRecipients.id,row.id),
@@ -242,21 +253,62 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
    return {id:randomUUID(),batchId:id,recipientKey:row.recipientKey,
     channel:"EMAIL",templateKey:draft.template_key,purpose,status,
     reason:suppressed?(row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":
-      row.status==="SKIPPED_UNSUBSCRIBED"?"unsubscribed":"already-unsubscribed"):null};
+      row.status==="SKIPPED_UNSUBSCRIBED"?"unsubscribed":"already-unsubscribed"):
+      row.status==="FAILED"?"provider-rejected":
+      row.status==="QUEUED"?"provider-result-unknown":null};
   });
+  // PENDING means a worker stopped before claiming the recipient; QUEUED
+  // means the HTTP send might already have happened. Neither is safe to
+  // finalize or retry automatically. Keep the campaign SENDING for an
+  // operator-only reconciliation rather than claiming completion.
+  const unresolved=outcomes.some(row=>
+    row.status==="PENDING"||row.status==="QUEUED");
   if(receipts.length)await tx.insert(messagingDeliveryReceipts).values(receipts);
   const count=(status:"SENT"|"FAILED"|"SUPPRESSED"|"QUEUED")=>
    receipts.filter(row=>row.status===status).length;
   await tx.update(messagingDeliveryBatches).set({
    queued:count("QUEUED"),sent:count("SENT"),failed:count("FAILED"),
-   suppressed:count("SUPPRESSED"),finalizedAt:new Date(),
+   suppressed:count("SUPPRESSED"),finalizedAt:unresolved?null:new Date(),
   }).where(and(eq(messagingDeliveryBatches.id,id),
    eq(messagingDeliveryBatches.collegeId,college.id),
    eq(messagingDeliveryBatches.organizationId,college.organizationId)));
-  await tx.update(placementTpoEmailCampaigns).set({status:"SENT"})
+  if(!unresolved)await tx.update(placementTpoEmailCampaigns).set({status:"SENT"})
    .where(and(eq(placementTpoEmailCampaigns.collegeId,college.id),
      eq(placementTpoEmailCampaigns.id,id),
      eq(placementTpoEmailCampaigns.status,"SENDING")));
  });
  return totals;
+}
+
+/** Inspect uncertain status without resending any queued recipient. Only a
+ * separately authorized reconciliation workflow may resolve provider facts;
+ * this accessor never reads recipient addresses, message bodies or tokens. */
+export async function inspectTpoCampaignDeliveryState(context:RequestContext,rawId:unknown){
+ const id=z.string().uuid().parse(rawId);
+ const member=context.membership;
+ if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"TPO")||
+    context.user.platformStatus!=="ACTIVE")throw new AuthorizationError("placements.manage");
+ const college=await requirePlacementManageScope(context,member.collegeId);
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  const rows=await tx.select({
+   status:placementTpoEmailCampaignRecipients.status,
+  }).from(placementTpoEmailCampaignRecipients).where(and(
+   eq(placementTpoEmailCampaignRecipients.campaignId,id),
+   eq(placementTpoEmailCampaignRecipients.collegeId,college.id),
+  )).limit(501);
+  if(rows.length>500)throw new TpoCampaignDispatchError("NOT_READY");
+  const unknown=rows.filter(row=>row.status==="QUEUED").length;
+  const unclaimed=rows.filter(row=>row.status==="PENDING").length;
+  return {
+   unknown,unclaimed,
+   requiresReconciliation:unknown>0,
+   canReplay:false as const,
+   warning:unknown>0
+    ?"Delivery may already have been accepted for some queued recipients. Do not resend before reconciling provider receipts."
+    : unclaimed>0?"Delivery has not finished. Do not restart this campaign.":null,
+  };
+ });
 }
