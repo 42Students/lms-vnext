@@ -16,7 +16,7 @@ export function LearnerCourseTabs({
   activeTab: string;
   persistentQuery?: string;
 }) {
-  return <Tabs ariaLabel="Course workspace" value={activeTab} renderPanel={false}
+  return <Tabs ariaLabel="Course sections" value={activeTab} renderPanel={false}
     items={learnerCourseTabs.map(tab => ({
       value: tab.path,
       label: tab.label,
