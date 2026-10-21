@@ -19,7 +19,6 @@ import {
   placementApplicationRoundExceptions,
   placementApplications,
   placementApplicationScreenings,
-  placementApplicationStatusHistory,
   placementCompanies,
   placementCompanyRelationships,
   placementJobRoleOptions,
