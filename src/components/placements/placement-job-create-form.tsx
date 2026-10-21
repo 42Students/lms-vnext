@@ -690,7 +690,7 @@ export function PlacementJobCreateForm({
           "Draft form changes are saved locally on this device. Create draft to save them to the server."}
       </p>
       <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
         <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
           {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
