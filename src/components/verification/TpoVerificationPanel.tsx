@@ -27,6 +27,20 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  const [asOf]=useState(()=>new Date());
  const visible=filterTpoVerificationRows(rows,filters,asOf);
  const waiting=visible.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ // Shortcut totals are scoped to the authorized server page, not a college-wide count.
+ const pageMissing=rows.filter(row=>row.section==="EDUCATION"&&row.missingMarksheet).length;
+ const pageUpdates=rows.filter(row=>row.status==="UPDATE_PENDING").length;
+ const pageOverdue=rows.filter(row=>(row.status==="SUBMITTED"||row.status==="UPDATE_PENDING")&&
+  asOf.getTime()-row.submittedAt.getTime()>7*86400000).length;
+ const activeUpdate=params.get("waitingState")==="UPDATE_PENDING";
+ function toggleAttention(value:"MISSING_DOCUMENT"|"WAITING_OVER_WEEK"){
+  setFilters(old=>({...old,marksheets:"ANY",attention:old.attention===value?"ALL":value}));
+  setSelected(null);setSequenceIndex(null);
+ }
+ function toggleMissing(){
+  setFilters(old=>({...old,marksheets:old.marksheets==="MISSING"?"ANY":"MISSING",attention:"ALL"}));
+  setSelected(null);setSequenceIndex(null);
+ }
  // The legacy Send a message action targets distinct students, not each
  // Education/Identity section. The existing TPO endpoint independently
  // authorizes each recipient and writes an audited in-app notification.
@@ -58,15 +72,24 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
    <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>router.refresh()}>Refresh</Button>
    {serverTab==="WAITING"&&waiting.length>0?<Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
-    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</Button>:null}
-   {serverTab==="WAITING"?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
-    onClick={()=>navigate({tab:"WAITING",waitingState:"UPDATE_PENDING",page:"1"})}>Updates to verified details</Button>:null}
+    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Start with the first of {waiting.length}</Button>:null}
   </div>
+  {serverTab==="WAITING"?<div aria-label="Needs a closer look on this page" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3">
+   <span className="mr-1 text-sm font-semibold text-body">Needs a closer look:</span>
+   <Button variant="secondary" type="button" aria-pressed={filters.marksheets==="MISSING"}
+    onClick={toggleMissing} className="min-h-11 md:min-h-9">A marksheet missing · {pageMissing}</Button>
+   <Button variant="secondary" type="button" aria-pressed={activeUpdate}
+    onClick={()=>navigate({tab:"WAITING",waitingState:activeUpdate?"ALL":"UPDATE_PENDING",page:"1"})}
+    className="min-h-11 md:min-h-9">Updates to verified details · {pageUpdates}</Button>
+   <Button variant="secondary" type="button" aria-pressed={filters.attention==="WAITING_OVER_WEEK"}
+    onClick={()=>toggleAttention("WAITING_OVER_WEEK")} className="min-h-11 md:min-h-9">Waiting over a week · {pageOverdue}</Button>
+   <span className="w-full text-xs text-muted-foreground">Counts on this server-filtered page only. Select a shortcut again to clear it.</span>
+  </div>:null}
   <section aria-label="Verification filters" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2">
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Marksheets
     <Select value={filters.marksheets} onChange={e=>update("marksheets",e.target.value as TpoVerificationLocalFilters["marksheets"])}
      className="mt-1 block min-h-11 w-full min-w-0 md:min-h-9">
-     <option value="ANY">Any</option><option value="MISSING">Missing</option><option value="PRESENT">All uploaded</option>
+     <option value="ANY">All marksheet states</option><option value="MISSING">Some missing</option><option value="PRESENT">All uploaded</option>
     </Select>
    </label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Needs a closer look
@@ -79,13 +102,13 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    <p className="text-xs text-muted-foreground sm:col-span-2">Showing {visible.length} of {rows.length} records from the server-filtered authorized page. Status, section, batch and branch filters apply before pagination.</p>
   </section>
   {serverTab==="WAITING"&&visible.length>0?
-   <details className="border-b border-border pb-3">
-    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">Verify profiles / Send back for correction</summary>
+   <section aria-label="Act on verification checks" className="border-b border-border pb-3">
+    <p className="text-sm text-muted-foreground">Act on all {waiting.length} waiting checks in this view, or select individual Education and Identity checks below.</p>
     <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>
-   </details>:null}
+   </section>:null}
   {nudgeRows.length?<details className="border-b border-border pb-3">
    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text md:min-h-9 md:py-2">
-    Act on selected → Send a message
+    Send a message to students in this view
    </summary>
    <TpoStudentNudgePanel rows={nudgeRows}/>
   </details>:null}
