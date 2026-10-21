@@ -563,7 +563,7 @@ export function LearnerProfileWorkspace(props: {
           <Button className="w-full md:w-auto" variant="primary" onClick={openDetails}>Edit profile</Button>
         </div>
         <details className="mt-4 border-t border-border pt-2">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Profile image and resume availability</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Profile image and resume availability</summary>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="min-w-0 border-t border-border pt-3">
             <p className="m-0 text-sm font-semibold text-foreground">Profile image</p>
