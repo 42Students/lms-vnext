@@ -25,11 +25,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
 - [x] `src/app/(authenticated)/admin/companies/error.tsx`
 - [x] `src/app/(authenticated)/admin/companies/page.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/error.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
-- [ ] `src/app/(authenticated)/admin/courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/departments/page.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/error.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/admin/course-progress/students/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/departments/page.tsx`
 - [ ] `src/app/(authenticated)/admin/domains/page.tsx`
 - [ ] `src/app/(authenticated)/admin/electives/error.tsx`
 - [ ] `src/app/(authenticated)/admin/electives/page.tsx`
