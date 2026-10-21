@@ -151,7 +151,7 @@ export function PublicRecruiterJoinForm({
             <form className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>
-              <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Work email
                 <Input type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
                   onChange={event => setEmail(event.target.value)} maxLength={254}
@@ -162,7 +162,7 @@ export function PublicRecruiterJoinForm({
                     : "Your company email. Personal emails such as Gmail can't be used. You'll sign in with it."}
                 </span>
               </label>
-              <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Your name
                 <Input type="text" required autoComplete="name" value={name} maxLength={150}
                   onChange={event => setName(event.target.value)}
@@ -171,13 +171,13 @@ export function PublicRecruiterJoinForm({
               <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
                 <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Optional contact details</summary>
                 <div className="grid min-w-0 gap-4 pt-3 min-[768px]:grid-cols-2">
-              <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Designation (optional)
                 <Input type="text" value={designation} maxLength={100}
                   onChange={event => setDesignation(event.target.value)}
                   className="w-full min-w-0" />
               </label>
-              <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+              <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Mobile (optional)
                 <Input type="tel" autoComplete="tel" value={phone} maxLength={14}
                   onChange={event => setPhone(event.target.value)}
@@ -190,7 +190,7 @@ export function PublicRecruiterJoinForm({
               </details>
               {scope === "COLLEGE"&&knownCompany?<p role="status" className="text-sm font-semibold">You are joining as {knownCompany}.</p>:null}
               {scope === "COLLEGE"&&!knownCompany&&sentTo ? (
-                <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+                <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                   Company name
                   <Input type="text" value={companyName} maxLength={200}
                     onChange={event => setCompanyName(event.target.value)}
@@ -201,7 +201,7 @@ export function PublicRecruiterJoinForm({
                 <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Send me a code</Button>
               ) : (
                 <>
-                  <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+                  <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                     Code sent to {sentTo}
                     <Input value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
                       onChange={event => setCode(event.target.value)}

@@ -516,13 +516,13 @@ export function LearnerPlacementOffers({
           <p className="text-sm text-body">
             Recorded response deadline: {formatWhen(extensionOffer.expiresAt)} (IST)
           </p>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Requested new deadline (IST)
             <Input type="datetime-local" value={extensionAt}
               onChange={event=>setExtensionAt(event.target.value)}
               className="mt-1 w-full"/>
           </label>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Reason
             <Textarea rows={3} maxLength={2000} value={extensionReason}
               onChange={event=>setExtensionReason(event.target.value)}
@@ -557,7 +557,7 @@ export function LearnerPlacementOffers({
             Recorded CTC: {formatMoney(declineOffer.annualCtcInr) ?? "Not specified"}.
             The server rechecks the status and deadline on confirmation.
           </p>
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4" htmlFor="offer-decline-reason">
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]" htmlFor="offer-decline-reason">
             Reason (optional, up to 2000 characters)
           </label>
           <Textarea id="offer-decline-reason" rows={3} maxLength={2000} value={declineReason}

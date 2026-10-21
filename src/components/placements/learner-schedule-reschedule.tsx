@@ -36,21 +36,21 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   {open?<div className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
    <h4 className="font-semibold">Ask to reschedule</h4>
    <p className="text-sm text-body">The placement cell must approve your suggested time.</p>
-   <label className="text-sm">Reason (3–900 characters)
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (3–900 characters)
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"/></label>
    <label className="text-sm">Preferred date and time
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>
-   <label className="text-sm">Mode
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
     <Select value={nextMode} onChange={e=>setNextMode(e.target.value as typeof mode)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Online</option>
     </Select></label>
-   {nextMode==="ON_CAMPUS"?<label className="text-sm">Suggested venue
+   {nextMode==="ON_CAMPUS"?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested venue
     <Input required value={nextVenue} maxLength={500} onChange={e=>setNextVenue(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>:
-    <label className="text-sm">Suggested meeting URL
+    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested meeting URL
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)] md:min-h-9"/></label>}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

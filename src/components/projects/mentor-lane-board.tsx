@@ -124,19 +124,19 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    </div>
   </div>
   <div className="flex flex-wrap gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
-   <label className="text-sm font-semibold">Release
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Release
     <Select data-slot="select" value={release} onChange={e=>{setRelease(e.target.value);setSprint("");remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All releases</option>{releases.map(r=><option key={r.id} value={r.id}>{r.title}</option>)}
     </Select></label>
-   <label className="text-sm font-semibold">Sprint
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
     <Select data-slot="select" value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </Select></label>
    <Disclosure title="More board filters" defaultOpen={Boolean(scope==="all"||priority||assignee||statusFilter)} className="w-full min-w-0" contentClassName="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
-   <label className="text-sm font-semibold">Sprint scope
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint scope
     <Select data-slot="select" value={scope} aria-label="Board sprint scope"
       onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
       className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
@@ -144,14 +144,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <option value="all">All sprints (full history)</option>
     </Select>
    </label>
-   <label className="text-sm font-semibold">Priority
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority
     <Select data-slot="select" value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
     </Select>
    </label>
-   <label className="text-sm font-semibold">Assignee
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignee
     <Select data-slot="select" value={assignee} onChange={e=>{setAssignee(e.target.value);remember("assignee",e.target.value);}}
      className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
      <option value="">Everyone</option><option value="UNASSIGNED">Unassigned</option>
@@ -159,7 +159,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <option key={m.membershipId} value={m.membershipId}>{m.displayName??"Learner"}</option>)}
     </Select>
    </label>
-   <label className="text-sm font-semibold">Lane
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lane
     <Select data-slot="select" value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
       className="ml-2 min-h-11 min-[768px]:min-h-9 rounded border border-border bg-surface p-2">
       <option value="">All lanes</option>
@@ -223,7 +223,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
-      {canMove?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">Move task
+      {canMove?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Move task
        <Select data-slot="select" value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}

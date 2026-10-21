@@ -113,7 +113,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
       ))}
       {selected?.decision.allowed ? (
         <div className="mt-4 space-y-3">
-          <label className="block text-sm font-semibold text-foreground">
+          <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Reason for {selected.action.toLowerCase()} (required)
             <Textarea
               value={reason}
@@ -131,14 +131,14 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           </Alert>:null}
           {selected.action==="PUBLISH"?<fieldset className="space-y-1 text-sm">
             <legend>Tell students</legend>
-            <label className="flex gap-2"><input type="radio" name="publish-delivery"
+            <label className="flex gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><input type="radio" name="publish-delivery"
               checked={!notifyByEmail} onChange={()=>setNotifyByEmail(false)}/>
               App only</label>
-            <label className="flex gap-2 opacity-60"><input type="radio" name="publish-delivery"
+            <label className="flex gap-2 opacity-60 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><input type="radio" name="publish-delivery"
               checked={false} disabled/>
               App and email (email delivery not configured)</label>
           </fieldset>:null}
-          <label className="flex items-start gap-2 text-sm text-body">
+          <label className="flex items-start gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <input type="checkbox" checked={acknowledged}
               onChange={event=>setAcknowledged(event.target.checked)} disabled={pending}
               className="mt-1 h-4 w-4 accent-primary"/>

@@ -352,7 +352,7 @@ function SubmissionGradeCard({
         onSubmit={saveGrade}
         className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-[10rem_minmax(0,1fr)]"
       >
-        <label className="min-w-0">
+        <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Points
           </span>
@@ -370,7 +370,7 @@ function SubmissionGradeCard({
             required
           />
         </label>
-        <label className="min-w-0">
+        <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-xs font-semibold text-body">
             Feedback
           </span>
@@ -598,9 +598,9 @@ export function FacultyAssignmentReview({
 
       {!loading && submissions && submissions.length>0 ? (
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex md:flex-wrap">
-          <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48">
+          <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48 text-[var(--lms-neutral-400)]">
             Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
-            <Select className="min-h-11 text-base md:min-h-[var(--lms-control-height)] md:text-sm"
+            <Select className="min-h-11 text-[var(--lms-font-base)] md:min-h-[var(--lms-control-height)] md:text-sm"
               value={selectedSubmissionId??submissions[0].id}
               onChange={event=>setSelectedSubmissionId(event.target.value)}>
               {submissions.map(item=><option key={item.id} value={item.id}>

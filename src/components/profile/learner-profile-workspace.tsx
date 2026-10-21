@@ -793,18 +793,18 @@ export function LearnerProfileWorkspace(props: {
         }
       >
         <div className="grid gap-4 md:grid-cols-2">
-          <label className="text-sm font-semibold text-foreground">
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Alternate phone
-            <Input className="mt-1.5 min-h-11 md:min-h-9" inputMode="tel" autoComplete="tel-national"
+            <Input className="mt-[6px] min-h-11 md:min-h-9" inputMode="tel" autoComplete="tel-national"
               value={contactDraft.alternatePhone} maxLength={32}
               disabled={contactPending}
               onChange={(event) => setContactDraft(current => ({
                 ...current, alternatePhone: event.target.value,
               }))} />
           </label>
-          <label className="text-sm font-semibold text-foreground">
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Contact email
-            <Input className="mt-1.5 min-h-11 md:min-h-9" type="email" autoComplete="email"
+            <Input className="mt-[6px] min-h-11 md:min-h-9" type="email" autoComplete="email"
               value={contactDraft.contactEmail} maxLength={320}
               disabled={contactPending}
               onChange={(event) => setContactDraft(current => ({
@@ -833,8 +833,8 @@ export function LearnerProfileWorkspace(props: {
         <div className="space-y-[var(--lms-space-5)]">
           <fieldset className="grid gap-4">
             <legend className="text-sm font-semibold text-foreground">About</legend>
-            <label className="text-xs font-semibold text-body">Headline<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.headline} onChange={(event) => setDetailsDraft({ ...detailsDraft, headline: event.target.value })} /></label>
-            <label className="text-xs font-semibold text-body">About<Textarea className="mt-1.5" value={detailsDraft.bio} onChange={(event) => setDetailsDraft({ ...detailsDraft, bio: event.target.value })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Headline<Input className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.headline} onChange={(event) => setDetailsDraft({ ...detailsDraft, headline: event.target.value })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">About<Textarea className="mt-[6px]" value={detailsDraft.bio} onChange={(event) => setDetailsDraft({ ...detailsDraft, bio: event.target.value })} /></label>
           </fieldset>
 
           <fieldset className="grid gap-4 md:grid-cols-2">
@@ -854,32 +854,32 @@ export function LearnerProfileWorkspace(props: {
               ["twitterUrl", "Twitter"],
               ["googleScholarUrl", "Google Scholar"],
               ["researchGateUrl", "ResearchGate"],
-            ] as const).map(([key, label]) => <label key={key} className="text-xs font-semibold text-body">{label}<Input className="mt-1.5 min-h-11 md:min-h-9" data-learner-social-link={key} type="url" value={detailsDraft.socialProfiles[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, socialProfiles: { ...detailsDraft.socialProfiles, [key]: event.target.value } })} /></label>)}
+            ] as const).map(([key, label]) => <label key={key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{label}<Input className="mt-[6px] min-h-11 md:min-h-9" data-learner-social-link={key} type="url" value={detailsDraft.socialProfiles[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, socialProfiles: { ...detailsDraft.socialProfiles, [key]: event.target.value } })} /></label>)}
           </fieldset>
 
           <fieldset className="grid gap-4">
             <legend className="text-sm font-semibold text-foreground">Address</legend>
-            <label className="text-xs font-semibold text-body">Current address<Textarea className="mt-1.5" value={detailsDraft.address.currentAddress} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, currentAddress: event.target.value } })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Current address<Textarea className="mt-[6px]" value={detailsDraft.address.currentAddress} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, currentAddress: event.target.value } })} /></label>
             <div className="grid gap-4 md:grid-cols-3">
-              {(["city", "state", "pincode"] as const).map((key) => <label key={key} className="text-xs font-semibold capitalize text-body">{key}<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.address[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, [key]: event.target.value } })} /></label>)}
+              {(["city", "state", "pincode"] as const).map((key) => <label key={key} className="font-semibold capitalize text-[13px] leading-4 text-[var(--lms-neutral-400)]">{key}<Input className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.address[key]} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, [key]: event.target.value } })} /></label>)}
             </div>
-            <label className="text-xs font-semibold text-body">Permanent address<Textarea className="mt-1.5" value={detailsDraft.address.permanentAddress} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, permanentAddress: event.target.value } })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Permanent address<Textarea className="mt-[6px]" value={detailsDraft.address.permanentAddress} onChange={(event) => setDetailsDraft({ ...detailsDraft, address: { ...detailsDraft.address, permanentAddress: event.target.value } })} /></label>
           </fieldset>
 
           <fieldset className="grid gap-4 md:grid-cols-3">
             <legend className="text-sm font-semibold text-foreground">Personal details</legend>
-            <label className="text-xs font-semibold text-body">Gender<Select className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.personalDetails.gender} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, gender: event.target.value as LearnerProfileDocument["personalDetails"]["gender"] } })}>{["", "Male", "Female", "Other", "Prefer not to say"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
-            <label className="text-xs font-semibold text-body">Date of birth<Input className="mt-1.5 min-h-11 md:min-h-9" type="date" value={detailsDraft.personalDetails.dateOfBirth} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, dateOfBirth: event.target.value } })} /></label>
-            <label className="text-xs font-semibold text-body">Blood group<Select className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.personalDetails.bloodGroup} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, bloodGroup: event.target.value as LearnerProfileDocument["personalDetails"]["bloodGroup"] } })}>{["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Gender<Select className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.personalDetails.gender} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, gender: event.target.value as LearnerProfileDocument["personalDetails"]["gender"] } })}>{["", "Male", "Female", "Other", "Prefer not to say"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Date of birth<Input className="mt-[6px] min-h-11 md:min-h-9" type="date" value={detailsDraft.personalDetails.dateOfBirth} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, dateOfBirth: event.target.value } })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Blood group<Select className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.personalDetails.bloodGroup} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, bloodGroup: event.target.value as LearnerProfileDocument["personalDetails"]["bloodGroup"] } })}>{["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
           </fieldset>
 
           <fieldset className="grid gap-4 md:grid-cols-2">
             <legend className="text-sm font-semibold text-foreground">Identity</legend>
-            <label className="text-xs font-semibold text-body">Aadhaar number<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.identity.aadhaarNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, aadhaarNumber: event.target.value } })} /></label>
-            <label className="text-xs font-semibold text-body">PAN number<Input className="mt-1.5 min-h-11 md:min-h-9" value={detailsDraft.identity.panNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, panNumber: event.target.value } })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Aadhaar number<Input className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.identity.aadhaarNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, aadhaarNumber: event.target.value } })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">PAN number<Input className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.identity.panNumber} onChange={(event) => setDetailsDraft({ ...detailsDraft, identity: { ...detailsDraft.identity, panNumber: event.target.value } })} /></label>
           </fieldset>
 
-          <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Hobbies · comma-separated<Textarea className="mt-1.5" value={detailsDraft.hobbies.join(", ")} onChange={(event) => setDetailsDraft({ ...detailsDraft, hobbies: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
+          <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Hobbies · comma-separated<Textarea className="mt-[6px]" value={detailsDraft.hobbies.join(", ")} onChange={(event) => setDetailsDraft({ ...detailsDraft, hobbies: event.target.value.split(",").map((value) => value.trim()).filter(Boolean) })} /></label>
         </div>
       </Dialog>
 
@@ -893,25 +893,25 @@ export function LearnerProfileWorkspace(props: {
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
         </>}>
         {showcaseDraft?<div className="grid gap-4">
-          <label className="text-sm font-semibold text-body">Title
-            <Input className="mt-1 min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.title}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
+            <Input className="mt-[6px] min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.title}
               onChange={event=>setShowcaseDraft({...showcaseDraft,title:event.target.value})}/>
           </label>
-          <label className="text-sm font-semibold text-body">
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             {showcaseDraft.kind==="award"?"Issuing organization":"Journal or publisher"}
-            <Input className="mt-1 min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.organization}
+            <Input className="mt-[6px] min-h-11 md:min-h-9" maxLength={240} value={showcaseDraft.organization}
               onChange={event=>setShowcaseDraft({...showcaseDraft,organization:event.target.value})}/>
           </label>
-          <label className="text-sm font-semibold text-body">Date
-            <Input className="mt-1 min-h-11 md:min-h-9" type="date" value={showcaseDraft.date}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Date
+            <Input className="mt-[6px] min-h-11 md:min-h-9" type="date" value={showcaseDraft.date}
               onChange={event=>setShowcaseDraft({...showcaseDraft,date:event.target.value})}/>
           </label>
-          <label className="text-sm font-semibold text-body">Reference link
-            <Input className="mt-1 min-h-11 md:min-h-9" type="url" maxLength={1500} value={showcaseDraft.url}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reference link
+            <Input className="mt-[6px] min-h-11 md:min-h-9" type="url" maxLength={1500} value={showcaseDraft.url}
               onChange={event=>setShowcaseDraft({...showcaseDraft,url:event.target.value})}/>
           </label>
-          <label className="text-sm font-semibold text-body">Description
-            <Textarea className="mt-1" maxLength={1800} value={showcaseDraft.description}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
+            <Textarea className="mt-[6px]" maxLength={1800} value={showcaseDraft.description}
               onChange={event=>setShowcaseDraft({...showcaseDraft,description:event.target.value})}/>
           </label>
           {showcaseError?<p role="alert" className="text-sm text-error">{showcaseError}</p>:null}
@@ -928,19 +928,19 @@ export function LearnerProfileWorkspace(props: {
           </Button>
         </>}>
         <div className="grid gap-4">
-          <label className="text-sm font-semibold text-body">Role Preference (multiple)
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Role Preference (multiple)
             <Input value={jobPrefsDraft.rolePreferences.join(", ")} maxLength={800}
               placeholder="e.g. Software Engineer, Data Analyst"
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 rolePreferences:event.target.value.split(",").map(x=>x.trim()).filter(Boolean)}))}
               className="mt-1 min-h-11 md:min-h-9 w-full"/>
           </label>
-          <label className="text-sm font-semibold text-body">Specific Role Preference
-            <Input className="mt-1 min-h-11 md:min-h-9" value={jobPrefsDraft.specificRolePreference} maxLength={200}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Specific Role Preference
+            <Input className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.specificRolePreference} maxLength={200}
               onChange={event=>setJobPrefsDraft(current=>({...current,specificRolePreference:event.target.value}))}/>
           </label>
-          <label className="text-sm font-semibold text-body">Work Shift Preference
-            <Select className="mt-1 min-h-11 md:min-h-9" value={jobPrefsDraft.workShiftPreference}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Work Shift Preference
+            <Select className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.workShiftPreference}
               onChange={event=>setJobPrefsDraft(current=>({...current,
                 workShiftPreference:event.target.value as LearnerProfileDocument["jobPreferences"]["workShiftPreference"]}))}>
               <option value="">No preference</option>
@@ -950,8 +950,8 @@ export function LearnerProfileWorkspace(props: {
               <option value="FLEXIBLE">Flexible</option>
             </Select>
           </label>
-          <label className="text-sm font-semibold text-body">Preferred Employment City
-            <Input className="mt-1 min-h-11 md:min-h-9" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Preferred Employment City
+            <Input className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
               onChange={event=>setJobPrefsDraft(current=>({...current,preferredEmploymentCity:event.target.value}))}/>
           </label>
           <p className="text-xs text-muted-foreground">These preferences are learner-authored and do not change placement eligibility.</p>
@@ -974,25 +974,25 @@ export function LearnerProfileWorkspace(props: {
                 return <LearnerSkillCatalogInput key={field.key} value={value}
                   onChange={name=>setItemDraft(current=>({...current,name}))}/>;
               if(collection==="education"&&field.key==="educationType")
-                return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <Select className="mt-1.5 min-h-11 md:min-h-9" value={value}
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Select className="mt-[6px] min-h-11 md:min-h-9" value={value}
                     onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}>
                     <option value="">Choose education type</option>
                     {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
                   </Select>
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
-                return <label key={field.key} className="text-xs font-semibold text-body">{field.label}
-                  <Input className="mt-1.5 min-h-11 md:min-h-9 w-full"
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Input className="mt-[6px] min-h-11 md:min-h-9 w-full"
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
                     {learnerQualifyingExamSuggestions(String(itemDraft.educationType??"")).map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
-              if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body md:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
-              if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5 min-h-11 md:min-h-9" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
-              return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5 min-h-11 md:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
+              if (field.type === "textarea") return <label key={field.key} className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Textarea className="mt-[6px]" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
+              if (field.type === "select") return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Select className="mt-[6px] min-h-11 md:min-h-9" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
+              return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Input className="mt-[6px] min-h-11 md:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
             {collection==="education"?<label className="flex items-center gap-2 text-sm text-body md:col-span-2">
               <Checkbox checked={Boolean(itemDraft.isCurrentlyPursuing)}
@@ -1013,9 +1013,9 @@ export function LearnerProfileWorkspace(props: {
                     !Array.isArray(itemDraft.examDetails))?
                     itemDraft.examDetails as Record<string,string|number|boolean>:{};
                   const value=String(details[field.key]??"");
-                  return <label key={field.key} className="text-xs font-semibold text-body">
+                  return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
                     {field.label}
-                    <Input type="text" className="mt-1 min-h-11 md:min-h-9" maxLength={field.maxLength}
+                    <Input type="text" className="mt-[6px] min-h-11 md:min-h-9" maxLength={field.maxLength}
                       inputMode={field.key==="passingYear"?"numeric":undefined}
                       placeholder={field.key==="passingYear"?"YYYY":undefined}
                       value={value}

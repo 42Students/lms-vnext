@@ -65,7 +65,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
    :"Could not export shown rows. Try copying the report or refresh and try again.");
  }
  const advancedControls = (<>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold">Rows shown
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Rows shown
      <Select value={limit} onChange={e=>setLimit(Number(e.target.value))}
       className="min-h-11 md:min-h-9">
       {[25,50,100,500,1000].map(n=><option key={n} value={n}>{n}</option>)}
@@ -81,7 +81,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
       }} size="sm" className="min-h-11 md:min-h-9 print:hidden">
        Close filters
       </Button>
-      {headings.map((heading,index)=><label key={index} className="grid gap-1 text-[var(--lms-font-sm)] font-semibold">
+      {headings.map((heading,index)=><label key={index} className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
        {heading}
        <Input type="search" maxLength={100} value={columnFilters[index]??""}
         onChange={event=>{setColumnFilters(current=>({...current,[index]:event.target.value}));setLimit(100);}}
@@ -118,7 +118,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
   {rows.length===0?<EmptyState title="No report rows" description={emptyDescription}/>:<>
    <div data-report-toolbar className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-3">
-    <label className="grid min-w-0 w-full max-w-xl gap-1 text-[var(--lms-font-sm)] font-semibold">Search table
+    <label className="grid min-w-0 w-full max-w-xl gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search table
      <Input type="search" maxLength={100} value={search} onChange={e=>{setSearch(e.target.value);setLimit(100);}}
       className="min-h-11 md:min-h-9" placeholder="Search shown report rows"/>
     </label>
@@ -130,7 +130,7 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription,com
     {showing.length} shown of {ordered.length} matching rows ({rows.length} total). Sort with a column heading or the mobile sort control.
    </p>
    <div data-report-toolbar className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto] items-end gap-2 min-[768px]:hidden">
-    <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Sort rows by
+    <label className="grid flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sort rows by
      <Select value={sort??""} onChange={event=>{
        setSort(event.target.value===""?null:Number(event.target.value));
        setDescending(false);

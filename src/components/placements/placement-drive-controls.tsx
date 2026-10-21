@@ -1991,7 +1991,7 @@ export function PlacementDriveControls({
                                     </option>
                                   </Select>
                                 </label>
-                                <label className="md:col-span-2">
+                                <label className="md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                                   <FieldLabel>
                                     Candidate message
                                   </FieldLabel>
@@ -2024,7 +2024,7 @@ export function PlacementDriveControls({
                                     placeholder="Required for fail, hold or absent"
                                   />
                                 </label>
-                                <label className="md:col-span-2 xl:col-span-3">
+                                <label className="md:col-span-2 xl:col-span-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                                   <FieldLabel>
                                     Internal comment
                                   </FieldLabel>

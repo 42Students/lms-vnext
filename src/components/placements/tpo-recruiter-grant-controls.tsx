@@ -51,19 +51,19 @@ export function TpoRecruiterGrantForm({ companies }: {
       ) : (
         <>
           <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Company
+            <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company
               <Select value={relationshipId} disabled={busy}
                 onChange={(event) => {setRelationshipId(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 w-full md:min-h-9">
                 {companies.map((company) => <option key={company.relationshipId} value={company.relationshipId}>{company.name}</option>)}
               </Select>
             </label>
-            <label className="grid gap-1 text-sm font-semibold text-body">Existing user email
+            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Existing user email
               <Input type="email" value={email} disabled={busy}
                 onChange={(event) => {setEmail(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 md:min-h-9" required />
             </label>
-            <label className="grid gap-1 text-sm font-semibold text-body">Recruiter title (optional)
+            <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Recruiter title (optional)
               <Input type="text" value={title} maxLength={160} disabled={busy}
                 onChange={(event) => {setTitle(event.target.value);setError(null);setSuccess(null);}}
                 className="min-h-11 md:min-h-9" />
@@ -149,7 +149,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   finally{setBusy(false);}
  }
  return <div className="mt-2 grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-  <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">{ended?"Give access again":"Extend access"}
+  <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{ended?"Give access again":"Extend access"}
    <Select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
     className="min-h-11 w-full md:min-h-9">

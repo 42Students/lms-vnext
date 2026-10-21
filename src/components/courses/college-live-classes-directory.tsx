@@ -22,7 +22,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
       visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>}/>:null}
   <form method="get" action="/college/live-classes"
     className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] print:hidden">
-    <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Session, lesson or course
       <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
         className="min-h-11 min-w-0 md:min-h-9"/>
@@ -30,13 +30,13 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
     <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(data.query.courseCode||data.query.deliveryId||data.query.scope!=="ALL"||data.view!=="ALL"||data.from||data.to)||undefined}>
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
       <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-4">
-    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Course code (exact)
       <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""}
         placeholder="e.g. CS101"
         className="min-h-11 min-w-0 md:min-h-9"/>
     </label>
-    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Publication
       <Select name="status" defaultValue={data.query.status}
         className="min-h-11 md:min-h-9">
@@ -44,7 +44,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         <option value="PUBLISHED">Published</option><option value="ARCHIVED">Archived</option>
       </Select>
     </label>
-    <label className="grid min-w-48 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
+    <label className="grid min-w-48 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
       <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
         className="min-h-11 md:min-h-9">
         <option value="">All classes</option>
@@ -53,14 +53,14 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
         </option>)}
       </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session audience
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Session audience
       <Select name="scope" defaultValue={data.query.scope}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option>
         <option value="SECTION">Section-specific</option>
       </Select>
     </label>
-    <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Timing
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Timing
       <Select name="view" defaultValue={data.view}
         className="min-h-11 md:min-h-9">
         <option value="ALL">All sessions</option><option value="UPCOMING">Upcoming or ongoing</option>

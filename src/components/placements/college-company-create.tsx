@@ -51,15 +51,15 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   {notice?<p role="status" className="text-sm text-body leading-[22px]">{notice}</p>:null}
   {open?<form onSubmit={submit} className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-2">
     <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] md:col-span-2">Add company</h2>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Company name
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company name
       <Input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
         className={field} />
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Website (HTTPS, optional)
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Website (HTTPS, optional)
       <Input type="url" pattern="https://.*" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)}
         placeholder="https://example.com" className={field}/>
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Company email domain (optional)
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Company email domain (optional)
       <Input value={primaryDomain} maxLength={255} onChange={e=>setPrimaryDomain(e.target.value)}
         placeholder="example.com" className={field}/>
     </label>
