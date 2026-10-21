@@ -213,16 +213,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/placements/learner-own-drive-journey.tsx`
 - [x] `src/components/placements/learner-placement-academic-evidence.tsx`
 - [x] `src/components/placements/learner-placement-alert-action.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
-- [ ] `src/components/placements/learner-placement-registration.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-prep-assignment-cards.tsx`
-- [ ] `src/components/placements/learner-recent-placement-activity.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-bulk-offer-withdraw.tsx`
-- [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-registration.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-prep-assignment-cards.tsx`
+- [x] `src/components/placements/learner-recent-placement-activity.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
+- [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
 - [ ] `src/components/placements/placement-recruiter-access.tsx`
 - [ ] `src/components/placements/placement-report-ui.tsx`
 - [ ] `src/components/placements/placement-request-queue.tsx`

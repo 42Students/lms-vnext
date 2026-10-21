@@ -11,7 +11,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
     <section aria-labelledby="learner-placement-alerts"
       className="min-w-0 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 id="learner-placement-alerts" className="min-w-0 break-words text-base font-semibold text-foreground">
+        <h2 id="learner-placement-alerts" className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Your placement alerts
         </h2>
         <Link href={learnerAlertsHistoryHref(unreadOnly)}
@@ -19,7 +19,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
           Personal notification history →
         </Link>
       </div>
-      <p className="mt-2 text-sm text-body">
+      <p className="mt-2 text-sm text-body leading-[22px]">
         Your most recent persisted placement-related personal notifications.
         These are not a substitute for official college-wide placement notices or dispute decisions.
       </p>
@@ -41,7 +41,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
                   <p className="mt-1 whitespace-pre-wrap break-words text-[length:var(--lms-font-sm)] leading-[1.5] text-body md:text-[length:var(--lms-font-base)]">{alert.body}</p>
                 </div>
                 <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
-                  className="shrink-0 text-xs text-muted-foreground">{learnerAlertSafeDate(alert.createdAt).label}</time>
+                  className="shrink-0 text-xs text-muted-foreground leading-5">{learnerAlertSafeDate(alert.createdAt).label}</time>
               </div>
               <LearnerPlacementAlertAction id={alert.id} href={alert.actionHref} unread={alert.unread}/>
             </li>

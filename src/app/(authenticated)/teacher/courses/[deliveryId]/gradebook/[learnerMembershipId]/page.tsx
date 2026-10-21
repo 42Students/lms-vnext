@@ -29,7 +29,7 @@ export default async function FacultyLearnerGradebookPage({
     <PageHeader eyebrow="Faculty · Published learner scores"
       title={data.learner.displayName||data.learner.email||"Unnamed learner"}
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Published gradebook</Link>} />
+      actions={<Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Published gradebook</Link>} />
     <section className="border-b border-border pb-5" aria-label="Recorded score totals">
       <dl className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-3 md:grid-cols-3">
         <div><dt className="text-xs text-muted-foreground">Published scores</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.gradedCount}/{data.learner.publishedAssessments}</dd></div>

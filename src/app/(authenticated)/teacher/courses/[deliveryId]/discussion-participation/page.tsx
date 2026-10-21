@@ -16,7 +16,7 @@ export default async function FacultyDiscussionParticipationPage({
   return <div className="min-w-0 max-w-full space-y-4">
     <PageHeader eyebrow="Faculty · Section" title="Discussion participation"
       description={data.delivery.courseName+" · "+data.delivery.sectionName}
-      actions={<Link href={base+"/discussions"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Discussions</Link>} />
+      actions={<Link href={base+"/discussions"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Discussions</Link>} />
     <section aria-label="Recorded participation" className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-b border-border pb-4 lg:grid-cols-4">
       {([["Messages",data.counts.total],["Faculty messages",data.counts.faculty],
         ["Learner messages",data.counts.learner],["Pinned messages",data.counts.pinned]] as const)

@@ -345,10 +345,10 @@ export function LearnerPlacementRequests({
       <div className="border-b border-border py-4">
         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 className="m-0 text-base font-semibold text-foreground">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
               New request
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               Ask for schedule or offer exceptions without silently changing shared placement data. Approved requests apply their effect atomically.
             </p>
           </div>
@@ -370,11 +370,11 @@ export function LearnerPlacementRequests({
             Round reschedule <span aria-hidden="true" className="text-link">⌄</span>
           </summary>
           <div className="min-w-0 max-w-3xl px-2 pb-4">
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground leading-5">
             Creates a candidate-specific schedule exception; it never moves the shared round for everyone.
           </p>
           {rounds.length === 0 ? (
-            <p className="mt-4 text-sm text-body">
+            <p className="mt-4 text-sm text-body leading-[22px]">
               No scheduled shortlisted rounds are available for a reschedule request.
             </p>
           ) : (
@@ -425,7 +425,7 @@ export function LearnerPlacementRequests({
                 ))}
               </Select>
               {selectedRound ? (
-                <p className="m-0 text-xs text-muted-foreground">
+                <p className="m-0 text-xs text-muted-foreground leading-5">
                   Current effective time:{" "}
                   {when(
                     selectedRound.exception
@@ -516,13 +516,13 @@ export function LearnerPlacementRequests({
             Offer deadline extension <span aria-hidden="true" className="text-link">⌄</span>
           </summary>
           <div className="min-w-0 max-w-3xl px-2 pb-4">
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground leading-5">
             Only issued offers with an existing response deadline can be extended.
           </p>
           {offers.filter(
             (offer) => offer.expiresAt,
           ).length === 0 ? (
-            <p className="mt-4 text-sm text-body">
+            <p className="mt-4 text-sm text-body leading-[22px]">
               No issued offer with a deadline is available for an extension request.
             </p>
           ) : (
@@ -564,7 +564,7 @@ export function LearnerPlacementRequests({
                   ))}
               </Select>
               {selectedOffer ? (
-                <p className="m-0 text-xs text-muted-foreground">
+                <p className="m-0 text-xs text-muted-foreground leading-5">
                   Current deadline:{" "}
                   {when(
                     selectedOffer.expiresAt,
@@ -609,7 +609,7 @@ export function LearnerPlacementRequests({
 
       {requests.length > 0 ? (
         <div className="border-t border-border py-5">
-          <h3 className="m-0 text-sm font-semibold text-foreground">
+          <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
             Request history
           </h3>
           <div className="mt-3 divide-y divide-border border-y border-border">
@@ -625,7 +625,7 @@ export function LearnerPlacementRequests({
                         item.requestType,
                       )}
                     </p>
-                    <p className="mt-1 text-sm text-body">
+                    <p className="mt-1 text-sm text-body leading-[22px]">
                       {item.companyName} ·{" "}
                       {item.roleTitle}
                       {item.roundName
@@ -633,11 +633,11 @@ export function LearnerPlacementRequests({
                           item.roundName
                         : ""}
                     </p>
-                    <p className="mt-2 text-sm text-body">
+                    <p className="mt-2 text-sm text-body leading-[22px]">
                       {item.reason}
                     </p>
                     {item.decisionNote ? (
-                      <p className="mt-2 text-xs text-muted-foreground">
+                      <p className="mt-2 text-xs text-muted-foreground leading-5">
                         Reply:{" "}
                         {item.decisionNote}
                       </p>
@@ -680,7 +680,7 @@ export function LearnerPlacementRequests({
                     ) : null}
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-muted-foreground leading-5">
                   Sent{" "}
                   {requestRelativeTime(item.requestedAt)}
                   {item.decidedAt

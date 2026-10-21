@@ -45,7 +45,7 @@ export default async function MentorBoardReviewPage({
         Projects access is disabled; no tasks were loaded.
       </section>:<>
       <FilterBar title="Filters"><form method="get" action={base+"/board-review"} role="search" aria-label="Task board review filters"
-        className="grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto_auto]">
+        className="grid min-w-0 items-end gap-[8px] border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-[repeat(4,minmax(0,1fr))_auto_auto]">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search tasks or sprints
           <Input type="search" name="search" maxLength={100} defaultValue={data.query.search}
             className="min-h-11 w-full md:min-h-9"/>

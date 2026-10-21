@@ -104,15 +104,15 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   </ul>
   {editable&&(materials.length<20||editing)?<div className="grid gap-2 rounded-xl border border-border bg-surface p-3">
    <p className="text-sm font-semibold text-foreground">{editing?"Edit link material":"Add link material"}</p>
-   <label className="grid gap-1 text-xs font-semibold">Title
+   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Title
     <Input value={draft.title} maxLength={255} onChange={e=>setDraft(v=>({...v,title:e.target.value}))}
      className="min-h-11 md:min-h-9" disabled={busy}/>
    </label>
-   <label className="grid gap-1 text-xs font-semibold">HTTPS link
+   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">HTTPS link
     <Input type="url" value={draft.externalUrl} maxLength={2048} onChange={e=>setDraft(v=>({...v,externalUrl:e.target.value}))}
      className="min-h-11 md:min-h-9" disabled={busy}/>
    </label>
-   <label className="grid gap-1 text-xs font-semibold">Notes (optional)
+   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Notes (optional)
     <Textarea value={draft.notes} maxLength={2000} onChange={e=>setDraft(v=>({...v,notes:e.target.value}))}
      rows={2} className="min-h-28" disabled={busy}/>
    </label>
