@@ -52,6 +52,7 @@ function requireLearner(context: RequestContext) {
 export async function listLearnerPlacementJobs(
   context: RequestContext,
   now: Date = new Date(),
+  jobId?: string,
 ) {
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
@@ -135,6 +136,7 @@ export async function listLearnerPlacementJobs(
           membership.collegeId,
         ),
         eq(placementJobs.status, "PUBLISHED"),
+        jobId ? eq(placementJobs.id, jobId) : undefined,
         isNull(placementJobs.archivedAt),
         eq(
           placementCompanyRelationships.status,

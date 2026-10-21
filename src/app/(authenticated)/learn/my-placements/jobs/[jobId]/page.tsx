@@ -9,6 +9,7 @@ import {getOwnLearnerDriveJourney} from "@/modules/placements/learner-historical
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 import {learnerJobReturnToDrivesHref} from "@/modules/placements/learner-drives-return-model";
+import {placementJobIdSchema} from "@/modules/placements/validation";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
   return {
@@ -27,6 +28,9 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       applicationDeadline: row.job.applicationDeadline?.toISOString() ?? null,
       publishedAt: row.job.publishedAt?.toISOString() ?? null,
       stipendPerMonthInr:row.job.stipendPerMonthInr,
+      recruiterDriveMode:row.job.recruiterDriveMode,
+      campusPool:row.job.legacyPostingDetails?.campusPool??null,
+      candidatePreferences:row.job.legacyPostingDetails?.candidatePreferences??null,
     },
     roleOption: {
       id: row.roleOption.id,
@@ -61,19 +65,29 @@ export default async function LearnerPlacementJobDetailPage({
   params,searchParams,
 }: {
   params: Promise<{ jobId: string }>;
-  searchParams: Promise<{back?:string|string[]}>;
+  searchParams: Promise<{back?:string|string[];returnTo?:string|string[]}>;
 }) {
   const { jobId } = await params;
   const context = await getCurrentRequestContext();
+  const query=await searchParams;
+  const back=learnerJobReturnToDrivesHref(query.back??query.returnTo);
+  // Malformed and old integer URLs never reach a UUID database query.
+  if(!placementJobIdSchema.safeParse(jobId).success){
+   return <div className="space-y-4">
+    <PageHeader title="This job link isn't valid"
+     description="The link may be outdated. Browse current drives or find your application in My applications."/>
+    <div className="flex flex-wrap gap-4">
+     <Link href={back} className="text-sm font-semibold text-primary-text underline">Browse drives</Link>
+     <Link href="/learn/my-placements/applications" className="text-sm font-semibold text-primary-text underline">My applications</Link>
+    </div>
+   </div>;
+  }
   const [feed,savedJobs]=await Promise.all([
-    listLearnerPlacementJobs(context),listOwnPlacementSavedJobs(context),
+    listLearnerPlacementJobs(context,new Date(),jobId),listOwnPlacementSavedJobs(context),
   ]);
   const rows=feed.filter(row=>row.job.id===jobId);
   const journey=await getOwnLearnerDriveJourney(context,jobId);
   if(rows.length===0&&!journey)notFound();
-
-  const query=await searchParams;
-  const back=learnerJobReturnToDrivesHref(query.back);
   return <div className="min-w-0 space-y-5">
    {rows.length===0 && journey ? (
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."

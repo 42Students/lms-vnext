@@ -99,6 +99,8 @@ export function LearnerPlacementJobDetail({
           ) : null}
         </div>
       </section>
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.55fr)]">
+        <div className="min-w-0 space-y-5">
       {availability ? (
         <aside role="status" aria-label="Application availability"
           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
@@ -171,6 +173,27 @@ export function LearnerPlacementJobDetail({
           <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
             {item.job.description || "No additional description was published for this drive."}
           </p>
+          {item.job.campusPool ? (
+            <div className="mt-4 rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+              <p className="font-semibold text-foreground">Campus pool information</p>
+              <p className="mt-1">Host college: {item.job.campusPool.hostCollege}</p>
+              {item.job.campusPool.reportingTime?<p className="mt-1">Reporting: {item.job.campusPool.reportingTime}</p>:null}
+              {item.job.campusPool.travelNote?<p className="mt-1">{item.job.campusPool.travelNote}</p>:null}
+            </div>
+          ) : null}
+          {item.job.recruiterDriveMode==="OFF_CAMPUS" ? (
+            <p className="mt-3 text-sm text-body">Off-campus drive. Follow the employer's published instructions.</p>
+          ) : null}
+          {item.job.candidatePreferences? (
+           <div className="mt-4 space-y-1 text-sm text-body">
+            <h3 className="font-semibold text-foreground">Candidate preferences</h3>
+            {item.job.candidatePreferences.preferredDegree?<p>Degree: {item.job.candidatePreferences.preferredDegree}</p>:null}
+            {item.job.candidatePreferences.specialization?<p>Specialization: {item.job.candidatePreferences.specialization}</p>:null}
+            {item.job.candidatePreferences.graduationYear?<p>Passing year: {item.job.candidatePreferences.graduationYear}</p>:null}
+            {item.job.candidatePreferences.minGpa!==null?<p>Minimum GPA: {item.job.candidatePreferences.minGpa}</p>:null}
+            {item.job.candidatePreferences.city?<p>Preferred city: {item.job.candidatePreferences.city}</p>:null}
+           </div>
+          ):null}
           <h3 className="mt-6 text-base font-semibold text-foreground">Key dates</h3>
           <p className="mt-2 text-sm text-body leading-[22px]">Applications close: {learnerJobDeadlineLabel(item.job.applicationDeadline)}</p>
           <h3 className="mt-6 text-base font-semibold text-foreground">Company & role details</h3>
@@ -280,6 +303,8 @@ export function LearnerPlacementJobDetail({
         })}</ul>
       </section>
 
+        </div>
+        <aside className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 lg:sticky lg:top-24" aria-label="Application actions">
       <section id="job-role-options" className="scroll-mt-24 space-y-4" aria-labelledby="role-options-title">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <div>
@@ -297,6 +322,8 @@ export function LearnerPlacementJobDetail({
         </div>
         <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]} />
       </section>
+        </aside>
+      </div>
     </div>
   );
 }

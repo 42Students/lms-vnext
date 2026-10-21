@@ -159,12 +159,22 @@ export async function createPlacementJob(
   }
   requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   await requirePlacementManageScope(context, input.collegeId);
-  await loadActiveRelationship(
-    input.collegeId,
-    input.companyRelationshipId,
-  );
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Lock both relationship and company while the draft is inserted.
+    // A concurrently revoked company link must not be used by a new drive.
+    const [activeCompany]=await tx.select({id:placementCompanyRelationships.id})
+      .from(placementCompanyRelationships)
+      .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+      .where(and(
+       eq(placementCompanyRelationships.id,input.companyRelationshipId),
+       eq(placementCompanyRelationships.collegeId,input.collegeId),
+       eq(placementCompanyRelationships.status,"ACTIVE"),
+       isNull(placementCompanyRelationships.archivedAt),
+       eq(placementCompanies.status,"ACTIVE"),
+      )).for("share").limit(1);
+    if(!activeCompany)
+      throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
     const seasonConditions = [
       eq(
         placementSeasons.collegeId,
@@ -339,6 +349,17 @@ export async function updatePlacementJob(
     throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   const db = getDb();
   return db.transaction(async (tx) => {
+    // Preflight data is advisory: serialize draft updates and reject a
+    // concurrent save or publish rather than overwriting another editor.
+    const [live]=await tx.select({
+      status:placementJobs.status,updatedAt:placementJobs.updatedAt,
+    }).from(placementJobs).where(and(
+      eq(placementJobs.id,jobId),eq(placementJobs.collegeId,current.collegeId),
+    )).for("update").limit(1);
+    if(!live||live.status!=="DRAFT")
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
+    if(live.updatedAt.getTime()!==current.updatedAt.getTime())
+      throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
     const nextTitle =
       input.title ?? current.title;
     const [duplicateRole] = await tx
@@ -411,10 +432,14 @@ export async function updatePlacementJob(
           input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
         variableCtcLpa:input.variableCtcLpa===undefined?undefined:
           input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
-        updatedAt: new Date(),
+        updatedAt: sql`greatest(clock_timestamp(), date_trunc('milliseconds', ${placementJobs.updatedAt}) + interval '1 millisecond')`,
       })
-      .where(eq(placementJobs.id, jobId))
+      .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,current.collegeId),
+        eq(placementJobs.status,"DRAFT"),
+        sql`date_trunc('milliseconds', ${placementJobs.updatedAt})=${current.updatedAt.toISOString()}::timestamptz`,
+      ))
       .returning();
+    if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
 
     const [primaryRole] = await tx
       .update(placementJobRoleOptions)
