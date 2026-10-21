@@ -38,8 +38,12 @@ export default async function CollegeLectureHallsPage({
   const membership = context.membership;
   if (!membership) return <div className="min-w-0 space-y-4">
     <PageHeader title="Lecture Halls" />
-    <ErrorState title="Admin not assigned to a college"
-      description="Your account is not assigned to an active college. Contact your Super Admin to restore lecture hall management access." />
+    <Alert tone="warning" title="Admin not assigned to a college">
+      You must be assigned to a college to view and manage lecture halls. Contact your administrator.
+    </Alert>
+    <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      Choose a college in your account switcher →
+    </Link>
   </div>;
 
   // This dedicated management surface must not become available through the

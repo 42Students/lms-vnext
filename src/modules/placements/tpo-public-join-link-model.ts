@@ -53,11 +53,19 @@ export const tpoPublicJoinLinkToggleSchema=z.discriminatedUnion("scope", [
  z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
 ]);
 
-/** Legacy public URL slug format. Bad input is a non-throwing invalid link,
- * not a TPO settings error or an opportunity to probe link-token hashes. */
-export function isLegacyJobSlug(value:unknown):boolean {
- return typeof value==="string" && value.length>=4 && value.length<=32 &&
-  /^smr-[A-Za-z0-9\-_!@#$%&*]+$/.test(value);
+/** The historical Java validator accepts 1–28 suffix characters.
+ * This permissive compatibility test is NOT used to issue new job slugs. */
+export function isLegacyJobSlug(value:unknown):value is string {
+ return typeof value==="string" && value.length>=5 && value.length<=32 &&
+  /^smr-[A-Za-z0-9_!@#$%&*-]{1,28}$/.test(value);
+}
+
+/** New public external-JOB slugs are a distinct persisted capability, not a
+ * recruiter onboarding link. Malformed or historic unsafe slugs have no
+ * canonical live URL until explicitly mapped by the external-job service. */
+export function canonicalExternalJobLinkPath(slug:unknown):string|null {
+ return typeof slug==="string" && /^smr-[0-9a-f]{16}$/.test(slug)
+  ? "/jobs/external/"+encodeURIComponent(slug):null;
 }
 
 /** Legacy job external sharing and invitation links are distinct access
