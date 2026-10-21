@@ -7,6 +7,6 @@ export default function RouteError({ reset }: { error: Error & { digest?: string
   return <ErrorState
     title="Couldn't load round schedule conflicts"
     description="Data could not be retrieved; no zero count or conflict-free conclusion can be inferred from this failure."
-    action={<Button type="button" onClick={reset} className="w-full sm:w-auto">Retry</Button>}
+    action={<Button variant="secondary" type="button" onClick={reset} className="w-full sm:w-auto">Retry</Button>}
   />;
 }
