@@ -135,3 +135,14 @@
 - NEW `src/app/(authenticated)/mentor/courses/[courseId]/page.tsx` G2-12-004-009/010: redirect any legacy courseId segment to `/mentor/projects` with Next.js `redirect()`, no validation/toast. Do not alter generic mentor/not-found behavior.
 
 - Interactive `src/components/tpo/tpo-team-follow-controls.tsx`, `tpo-team-rename.tsx`, `tpo-team-message-actions.tsx`, `tpo-team-decision-toggle.tsx`, `tpo-team-ask-panel.tsx` G2-3-022-017/018: after successful authorized POST/PATCH show exact ADDED/OK/LEFT, EDITED/DELETED/DONE/CANCELLED feedback using role=status, never on speculative click or server render; preserve error and retry paths.
+
+- College shortlisted page/filter service G2-9-014-024: canonical `driveApplicationsParams` and pipeline query must receive department/program/batch UUID scope, render filter controls and clear-filters, retaining source/stage; companion `collegeShortlistedQuery` supports these URL keys now.
+- TPO profile data client G2-19-030-024: retain last successful profile in component state on refresh failure and show exact `Couldn't refresh profile. Showing the last profile we loaded.` only while cached card truly rendered; error.tsx cannot safely claim stale cached content by itself.
+
+- Project template catalogue loader G2-7-006-038: pass persisted template summary/overview into `TemplateCatalogueRow.summary` for exact three-column CSV; do not fabricate from section counts. Model/headers ready.
+
+- Faculty YouTube deletion component G2-12-008-022: consume `FACULTY_YOUTUBE_DELETE_FEEDBACK` in delete mutation handler after confirmed server success/failure, show accessible toast for durationMs=2000.
+- Shared `src/components/shell/sidebar-nav.tsx` G2-3-033-029: render blocked navigation feedback when route click fails/permission denies; mobile Drawer currently closes on link click and uses native focus recovery. Don't claim page opened until pathname changes; guard repeated pending link clicks.
+
+- Company identity/domain verification G2-9-034-093: define independent persisted verified domain evidence before syncing global company verification to domain flag; do NOT auto-mark domain owned just because a Super Admin marks company globally verified. Current service audits primaryDomain and domainProofNotInferred; schema/privileged verification reconciliation needs review.
+- Legacy project bulk mentor adapter G2-6-028-036: trusted admin client must resolve old integer mentorId to selected college's ACTIVE mentorMembershipId UUID, refuse ambiguous/out-of-tenant mappings, then POST new API; never cast old ID or bypass requirePermission.

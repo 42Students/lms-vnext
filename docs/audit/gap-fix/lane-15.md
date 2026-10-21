@@ -287,3 +287,15 @@
 
 - work2 #21 `college/jobs/[jobId]/archive/route.ts` | G2-9-013-055: documented explicit legacy soft-delete→confirmed archive translation, preview impact GET, same-origin POST and preserved downstream application/event history. Physical DELETE intentionally unavailable.
 - work2 #22 `tpo/team/[threadId]/page.tsx` | G2-3-022-017/018: documented exact verified action outcome mapping. Server page is not a mutation result surface, so fake toast on load skipped; child interactive controls must announce verified operation results, handoff recorded.
+
+- work2 #23 `college-shortlisted-query.ts` | G2-9-014-005/024: typed ASSESSMENT default and URL stage/status/source/department/program/batch UUID filters; deep-link HREF retains active filters and ignores defaults. Existing page already uses canonical driveApplicationsParams; form/query wiring for department/program/batch handed off.
+- work2 #24 `tpo/profile/error.tsx` | G2-19-030-023/024: restored legacy error heading and in-place Retry, no unsupported assertion that faculty record actually missing. Stale-profile warning only when real retained card exists, so handed to profile data component rather than claiming nonexistent cache.
+
+- work2 #25 `project-template-catalogue-model.ts` | G2-7-006-038: restores exact Title/Version/Summary CSV headers and filename remains caller-owned; optional summary field additive to avoid breaking existing consumers. Template loader must populate real summary, handed off.
+- work2 #26 `learner-application-detail-model.ts` | G2-5-015-025/037: immutable latest REJECTED transition uses prior recorded stage for exact Not shortlisted, Not cleared: Assessment/Interview, Waitlist ended labels; unknown stage neutral and no inferred rejection.
+
+- work2 #27 `faculty-content-edit-model.ts` | G2-12-008-022: exported exact historical YouTube deletion success/failure copy and 2-second toast duration; component must show only on verified API result, handed off.
+- work2 #28 `mobile-navigation.tsx` | G2-3-033-029: matched concise Open/Close menu accessible labels, disabled duplicate opening while native Drawer handles focus/Back/Escape/route close. Blocked link navigation feedback belongs shared SidebarNav handler; handed off rather than falsely claim success.
+
+- work2 #29 `super-admin-company-verification-service.ts` | G2-9-034-093: global verification audit now snapshots canonical primaryDomain and explicitly records that independent domain ownership is NOT inferred from company flag. Domain-proof consistency cannot be auto-propagated without separate verified domain evidence; handoff for approved schema/service migration.
+- work2 #30 `api/projects/reassign-mentor/route.ts` | G2-6-028-036: rejects obsolete numeric mentorId body with 400 MENTOR_MEMBERSHIP_ID_REQUIRED, retains membership-scoped bulk reassignment authority and roleLabel. Legacy tenant-checked ID crosswalk handed to adapter owner.

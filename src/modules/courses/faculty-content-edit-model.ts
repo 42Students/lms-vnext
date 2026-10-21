@@ -95,3 +95,12 @@ export function facultyContentSaveReceiptMatches(id:string, expected:ReturnType<
 export function facultyContentMaySave(pending:boolean,locked:boolean,dirty:boolean){
  return !pending && !locked && dirty;
 }
+
+/** Only show a deletion outcome after the server has confirmed the delete.
+ * Historical YouTube edit surface used this exact copy for 2000 milliseconds.
+ */
+export const FACULTY_YOUTUBE_DELETE_FEEDBACK = {
+ success:"YouTube video deleted successfully",
+ failure:"Failed to delete",
+ durationMs:2000,
+} as const;
