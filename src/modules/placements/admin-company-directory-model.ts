@@ -30,10 +30,27 @@ export function parseAdminCompanyDirectoryParams(
 ) {
   const validView = params.view === undefined || params.view === "GLOBAL" ||
     params.view === "COLLEGE";
+  // Compatibility for old company-list bookmarks. Public page numbers in
+  // vNext remain one-based; the explicit legacyPage alias is zero-based.
   const filters = Object.fromEntries(
-    Object.entries(params).filter(([key]) => key !== "view"),
+    Object.entries(params).filter(([key]) =>
+      key !== "view" && key !== "legacyPage" && key !== "unverified"),
   );
   if (filters.collegeId === "") delete filters.collegeId;
+  const legacyPage=params.legacyPage;
+  if (legacyPage !== undefined){
+    if(typeof legacyPage!=="string" || !/^(0|[1-9][0-9]*)$/.test(legacyPage)
+       || params.page !== undefined || Number(legacyPage)>9999){
+      return adminCompaniesQuerySchema.safeParse({...filters,legacyPage});
+    }
+    filters.page=String(Number(legacyPage)+1);
+  }
+  const unverified=params.unverified;
+  if(unverified!==undefined){
+    if((unverified!=="true"&&unverified!=="false")||params.verified!==undefined)
+      return adminCompaniesQuerySchema.safeParse({...filters,unverified});
+    filters.verified=unverified==="true"?"NOT_VERIFIED":"VERIFIED";
+  }
   return adminCompaniesQuerySchema.safeParse(
     validView ? filters : { ...filters, view: params.view },
   );
@@ -46,6 +63,10 @@ export type AdminCompanyRow = {
   industry?: string | null; about?: string | null; logoPublicUrl?: string | null;
   updatedAt?: Date;
   addedByType?: string;
+  // Optional because the company creator may be a different college from
+  // the relationship shown in this scope. Never infer it from collegeName.
+  addedByCollegeName?: string | null;
+  addedByCollegeId?: string | null;
   domains?: readonly string[]; aliases?: readonly string[];
   primaryDomain?:string|null; companyCollegeCount?:number; driveCount?:number;
   lastActiveAt?:Date|null; createdAt?:Date;
@@ -53,6 +74,9 @@ export type AdminCompanyRow = {
 export function projectAdminCompanies(rows: readonly AdminCompanyRow[]) {
   return {
     rows,
+    // Preserve one relationship per college while also exposing unique
+    // company identities for global curation views (first occurrence only).
+    companies: [...new Map<string,AdminCompanyRow>(rows.map(row=>[row.companyId,row] as const)).values()],
     distinctCompanies: new Set(rows.map(row => row.companyId)).size,
     relationships: rows.length,
     trustedRelationships: rows.filter(row => row.trusted).length,

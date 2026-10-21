@@ -11,7 +11,7 @@ export const learnerPlacementEventKinds=[
 ] as const;
 export type LearnerPlacementEventKind=typeof learnerPlacementEventKinds[number];
 const titles:Record<LearnerPlacementEventKind,string>={
- ROUND_SCHEDULED:"Placement round scheduled",ROUND_REMINDER:"Placement round reminder",
+ ROUND_SCHEDULED:"Interview Round Scheduled",ROUND_REMINDER:"Interview reminder",
  RESCHEDULE_DECIDED:"Reschedule request updated",OFFER_RELEASED:"Placement offer received",
  OFFER_EXPIRING:"Placement offer deadline approaching",OFFER_EXPIRED:"Placement offer expired",
  OFFER_WITHDRAWN:"Placement offer withdrawn",OFFER_ACCEPTED_REPORTED:"Offer acceptance reported",
@@ -50,12 +50,15 @@ export type LearnerPlacementEventContext={
  learnerName?:string;jobTitle?:string;companyName?:string;status?:string;
  applicationId?:string;jobId?:string;assessmentUrl?:string;
  interviewVenue?:string;rejectionReason?:string;
+ appliedAt?:string|Date|null;statusUpdatedAt?:string|Date|null;
+ interviewAt?:string|Date|null;interviewType?:string;interviewMode?:string;
+ roundDescription?:string;contactMobile?:string;contactPhone?:string;
 };
 const applicationStatusTitles:Record<string,string>={
- INTERVIEW:"Interview scheduled",REJECTED:"Application rejected",
- SHORTLISTED:"Application shortlisted",ASSESSMENT:"Assessment invitation",
- OFFERED:"Placement offer extended",HIRED:"Placement hiring confirmed",
- WAITLISTED:"Application waitlisted",
+ INTERVIEW:"Interview Round Scheduled",REJECTED:"Application Update",
+ SHORTLISTED:"Shortlisted",ASSESSMENT:"Online Assessment",
+ OFFERED:"Offer Extended",HIRED:"You\u0027re Hired!",
+ WAITLISTED:"Waitlisted",
 };
 function cleanEventDetail(value:string|undefined,max=120){
  return (value??"").replace(/[\r\n\u0000-\u001f]/g," ").trim().slice(0,max);
@@ -67,20 +70,80 @@ function safeAssessmentUrl(value:string|undefined){
   return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash&&url.hostname?url.href:null;
  }catch{return null;}
 }
+/** Legacy interview labels have a fixed vocabulary; custom rounds keep their label. */
+export function learnerPlacementRoundName(raw:string|undefined):string{
+ const name=cleanEventDetail(raw,80);
+ if(!name)return "Interview";
+ const standard:Record<string,string>={
+  screening:"Screening Round",technical:"Technical Round",hr:"HR Round",
+  managerial:"Managerial Round",final:"Final Round",
+ };
+ return standard[name.toLowerCase()]??name+" Round";
+}
+function eventDate(value:string|Date|null|undefined,withTime=false):string{
+ if(!value)return "";
+ const date=value instanceof Date?value:new Date(value);
+ if(!Number.isFinite(date.getTime()))return "";
+ const day=new Intl.DateTimeFormat("en-GB",{
+  day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata",
+ }).format(date);
+ if(!withTime)return day;
+ return day+" at "+new Intl.DateTimeFormat("en-US",{
+  hour:"2-digit",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata",
+ }).format(date);
+}
+const statusesThatNotify=new Set(["INTERVIEW","OFFERED","HIRED","ASSESSMENT",
+ "REJECTED","SHORTLISTED","WAITLISTED"]);
+
 export function learnerPlacementEventCopy(
  kind:LearnerPlacementEventKind,subject:string,context: LearnerPlacementEventContext={},
 ){
  const safeSubject=cleanEventDetail(subject,150);
  const status=cleanEventDetail(context.status,32).toUpperCase();
+ if(!learnerPlacementEventKinds.includes(kind)||
+    (kind==="APPLICATION_STATUS_CHANGED"&&status&&!statusesThatNotify.has(status))){
+  throw new Error("Unsupported learner placement event status");
+ }
  const title=kind==="APPLICATION_STATUS_CHANGED"?(applicationStatusTitles[status]??titles[kind]):titles[kind];
- const named=[cleanEventDetail(context.jobTitle),cleanEventDetail(context.companyName)]
-  .filter(Boolean).join(" at ");
- const detail=named||safeSubject;
- const extra=kind==="APPLICATION_STATUS_CHANGED"&&status==="REJECTED"
-   ?cleanEventDetail(context.rejectionReason,150):
-   kind==="ROUND_SCHEDULED"?cleanEventDetail(context.interviewVenue,150):"";
- const body=(detail?`${title}: ${detail}.`:`${title}. Open your placement workspace for details.`)+
-   (extra?` ${extra}.`:"");
+ const job=cleanEventDetail(context.jobTitle);
+ const company=cleanEventDetail(context.companyName);
+ const named=job&&company?job+" at "+company:job||company||safeSubject;
+ const applicationDate=eventDate(context.appliedAt??context.statusUpdatedAt);
+ const interviewDateTime=eventDate(context.interviewAt,true);
+ const roundName=learnerPlacementRoundName(context.interviewType);
+ const venue=cleanEventDetail(context.interviewVenue,200)||
+  "Details to follow — check the portal closer to the date.";
+ const rejectionReason=kind==="APPLICATION_STATUS_CHANGED"&&status==="REJECTED"
+  ?cleanEventDetail(context.rejectionReason,150):"";
+ const roundNotice=kind==="ROUND_SCHEDULED"||
+   (kind==="APPLICATION_STATUS_CHANGED"&&status==="INTERVIEW");
+ let body:string;
+ if(kind==="APPLICATION_STATUS_CHANGED"){
+  switch(status){
+   case "SHORTLISTED":body="You have been shortlisted for "+named+". Check dashboard for next steps.";break;
+   case "ASSESSMENT":body="You have been invited for the online assessment for "+named+
+     ". Check My Applications for the assessment link.";break;
+   case "REJECTED":body="Update regarding your application for "+named+"."+
+     (rejectionReason?" Reason: "+rejectionReason+".":"");break;
+   case "OFFERED":body="You've received an offer for "+named+". Check dashboard for details.";break;
+   case "HIRED":body="Congratulations! You've been hired for "+named+".";break;
+   case "WAITLISTED":body="Your application for "+named+
+     " has been moved to the waitlist. Check dashboard for updates.";break;
+   case "INTERVIEW":body=roundName+" for "+named+
+     " has been scheduled. Check dashboard for details.";break;
+   default:body="Your application for "+named+" has been updated.";
+  }
+ }else if(roundNotice){
+  body=roundName+" for "+named+" has been scheduled. Check dashboard for details.";
+ }else if(kind==="ROUND_REMINDER"&&interviewDateTime){
+  body="Your interview for "+named+" is tomorrow – "+interviewDateTime+". Be on time!";
+ }else{
+  body=named?title+": "+named+".":title+". Open your placement workspace for details.";
+ }
+ if(roundNotice){
+  body+=(interviewDateTime?" "+interviewDateTime+".":"")+
+   " "+venue+(venue.endsWith(".")?"":".");
+ }
  const actionHref=routes[kind]; // Never send a recipient to an unverified external assessment URL.
  return {
   title,body,actionHref,
@@ -92,8 +155,17 @@ export function learnerPlacementEventCopy(
    jobId:/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(context.jobId??"")?context.jobId:null,
    status:status||null,
    assessmentUrl:safeAssessmentUrl(context.assessmentUrl),
-   interviewVenue:cleanEventDetail(context.interviewVenue),
-   rejectionReason:cleanEventDetail(context.rejectionReason,150),
+   applicationDate,
+   interviewDate:eventDate(context.interviewAt),
+   interviewTime:context.interviewAt?eventDate(context.interviewAt,true).split(" at ").at(-1)??"": "",
+   roundName:roundNotice?roundName:null,
+   interviewVenue:roundNotice?venue:null,
+   interviewMode:roundNotice?cleanEventDetail(context.interviewMode,30):null,
+   roundDescription:roundNotice?cleanEventDetail(context.roundDescription,150):null,
+   contactPhone:kind==="APPLICATION_STATUS_CHANGED"&&
+    (status==="INTERVIEW"||status==="OFFERED")
+     ?cleanEventDetail(context.contactMobile||context.contactPhone,30):null,
+   rejectionReason:rejectionReason||null,
   },
  };
 }

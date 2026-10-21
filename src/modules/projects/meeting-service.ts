@@ -250,7 +250,7 @@ export async function listProjectMeetings(
       (options.pageSize !== undefined && (!Number.isSafeInteger(options.pageSize) || options.pageSize < 1 || options.pageSize > 100))) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
-  const escaped = search.replace(/[\\%_]/g, "\\\\$&");
+  const escaped = search.replace(/[\\%_]/g, "\\$&");
   const query = getDb().select().from(projectMeetings)
     .where(and(
       eq(projectMeetings.projectId, scope.project.id),
