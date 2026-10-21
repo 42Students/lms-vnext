@@ -27,5 +27,12 @@ Evidence file:line roots: meetings.js = docs/legacy-source/frontend/src/pages/su
 | G2-19-028-021 | F21 | meetings.js:35-44 sprint/task keys from workspace | meeting-service.ts:78-147 validates scoped UUID links | GAP | P2 | Convert keys to IDs | M |
 | G2-19-028-022 | F22 | meetings.js:68-72 meetingsList JSON workspace update | projects.ts:1104-1215 project_meetings UUID relational rows | GAP | P1 | Write field/status migration | M |
 | G2-19-028-023 | F23 | meetings.js:60-63 untouched save no-op | project-meeting-controls.tsx:405-480 dialog submit regardless touch | GAP | P2 | Disable unchanged save | M |
+| G2-19-028-024 | F04 | WorkspaceMeetingsEditor.jsx:32-37 linked/complete/requested counts | project-workspace.tsx:1500-1524 mentor Next meeting only | GAP | P2 | Show all four admin counters |
+| G2-19-028-025 | F06 | projectSectionFieldConfigs.js:210 optional meetingUrl | meeting-service.ts:314-316 URL required unless draft | GAP | P2 | Show conditional required hint |
+| G2-19-028-026 | F06 | projectSectionFieldConfigs.js:213-214 agenda and notes as separate textareas | project-meeting-controls.tsx:93-104 agenda, facilitation notes separately | GAP | P2 | Expose both controls in admin editor |
+| G2-19-028-027 | F07 | RepeatingItemEditor.jsx:272-274 Item N required fields message | project-meeting-controls.tsx:411-421 error generic per dialog | GAP | P2 | Use row-indexed validation |
+| G2-19-028-028 | F09 | RepeatingItemEditor.jsx:105-107 Undo remove before save | project-meeting-controls.tsx:831-872 Cancel permanently changes state | GAP | P2 | Support undo of unsaved row removal |
+| G2-19-028-029 | F12 | projectSectionFieldConfigs.js:192-205 ceremony General/Planning/Standup/Review/Retro | projects.ts:1192-1195 same five enums | MATCH | P3 | Retain ceremony enumeration |
+| G2-19-028-030 | F23 | meetings.js:48-53 reset/refill after save avoids blank editor | project-meeting-controls.tsx:470-479 router refresh closes dialog | GAP | P2 | Keep editor populated on revalidation |
 
-23 rows, all 23 facets; severities {"P2":17,"P1":4,"P3":2}. Main blockers: list-wide bulk edit and field coverage, versioned batch save, summary metrics and menu/copy differences. Preserve current room/organiser collision checks and tenant permissions.
+30 rows, all 23 facets; severities {"P2":17,"P1":4,"P3":2}. Main blockers: list-wide bulk edit and field coverage, versioned batch save, summary metrics and menu/copy differences. Preserve current room/organiser collision checks and tenant permissions.
