@@ -203,16 +203,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/courses/college-lesson-create-control.tsx`
 - [x] `src/components/courses/college-live-classes-directory.tsx`
 - [x] `src/components/courses/college-quiz-actions.tsx`
-- [ ] `src/components/courses/college-quiz-attempts.tsx`
-- [ ] `src/components/courses/college-quiz-create.tsx`
-- [ ] `src/components/courses/college-quiz-questions-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/college-quiz-attempts.tsx`
+- [x] `src/components/courses/college-quiz-create.tsx`
+- [x] `src/components/courses/college-quiz-questions-editor.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
 - [ ] `src/components/courses/faculty-course-workspace.tsx`
 - [ ] `src/components/courses/faculty-lesson-authoring.tsx`
 - [ ] `src/components/courses/faculty-live-class-editor.tsx`
