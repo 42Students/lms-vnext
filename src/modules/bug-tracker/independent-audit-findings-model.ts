@@ -3,8 +3,10 @@ export const FINDING_STATUSES=["NEW","CONFIRMED","IN_PROGRESS","FIXED_DEV","RELE
 export const FINDING_SEVERITIES=["CRITICAL","HIGH","MEDIUM","LOW"] as const;
 export const FINDING_KINDS=["BUG","SECURITY","DATA","UX","COPY","PERFORMANCE","ACCESSIBILITY"] as const;
 const values=<T extends string>(x:string|string[]|undefined):T[]=>x===undefined?[]:(Array.isArray(x)?x:[x]).flatMap(value=>value.split(",")).map(value=>value.trim()).filter(Boolean) as T[];
+export const INDEPENDENT_AUDIT_QUERY_MAX_LENGTH=120;
+export const INDEPENDENT_AUDIT_SEARCH_HELP="Search is limited to 120 characters.";
 const filter=z.strictObject({
- q:z.string().trim().max(120).default(""),
+ q:z.string().trim().max(INDEPENDENT_AUDIT_QUERY_MAX_LENGTH,INDEPENDENT_AUDIT_SEARCH_HELP).default(""),
  view:z.enum(["OPEN","RELEASE","ALL"]).default("OPEN"),
  statuses:z.array(z.enum(FINDING_STATUSES)).max(10),
  severities:z.array(z.enum(FINDING_SEVERITIES)).max(4),

@@ -4,7 +4,7 @@ import { recruiterInviteOtpSchema } from "./recruiter-invite-otp-policy";
 export const recruiterInviteAcceptanceBodySchema=z.object({
  code:recruiterInviteOtpSchema,
  name:z.string().trim().min(1).max(150).optional(),
- designation:z.string().trim().max(100).optional(),
+ designation:z.string().trim().max(150).optional(),
  mobile:z.string().trim().max(30)
    .regex(/^\+?[0-9() .-]*$/,"Enter a valid 10-digit mobile number, or leave it blank.")
    .refine(value=>{
@@ -23,7 +23,7 @@ const legacyRecruiterInviteAcceptanceSchema = z.object({
  code: recruiterInviteOtpSchema,
  firstName: z.string().trim().max(100).optional(),
  lastName: z.string().trim().max(100).optional(),
- designation: z.string().trim().max(100).optional(),
+ designation: z.string().trim().max(150).optional(),
  phone: z.string().trim().max(30).optional(),
  email: z.email().optional(),
 }).strict();
