@@ -38,7 +38,7 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
     <h2 className="text-base font-semibold text-[var(--lms-heading)]">Next action for this drive</h2>
     <div className="flex min-w-0 flex-wrap gap-2">
       {readyToApply?<Link href={root+"/rounds/"+encodeURIComponent(readyToApply.id)+"/results"}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-semibold text-white md:min-h-9">
         Apply {readyToApply.name} results · {readyToApply.count}
       </Link>:null}
       {toVerify>0?<a href="#selections-release-actions"
@@ -51,7 +51,7 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
       </a>:null}
       {shareableApplicants>0?<Link href={root+"/share-preview"}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
-        Share {shareableApplicants} applicants with company
+        Share {shareableApplicants} eligible applicants with company
       </Link>:null}
     </div>
     {!roundsResult.ok?<p className="text-xs text-muted-foreground">
