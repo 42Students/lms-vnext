@@ -192,6 +192,20 @@ async function findMembershipRoles(
   return rows.map((row) => row.role);
 }
 
+/** Source migration reference only; NEVER grant a role from this map.
+ * Resolve legacy userType/facultyType and numeric source identity against the
+ * verified college before creating persisted membership/system role rows.
+ */
+export const LEGACY_ACCOUNT_ROLE_DISPOSITION = {
+  SUPER_ADMIN: { kind: "SYSTEM", role: "SUPER_ADMIN" },
+  ADMIN: { kind: "MEMBERSHIP", role: "COLLEGE_ADMIN" },
+  TPO: { kind: "MEMBERSHIP", role: "TPO" },
+  MENTOR: { kind: "MEMBERSHIP", role: "MENTOR" },
+  FACULTY: { kind: "MEMBERSHIP", role: "FACULTY" },
+  LEARNER: { kind: "MEMBERSHIP", role: "LEARNER" },
+  RECRUITER: { kind: "RECRUITER_PROFILE", role: "RECRUITER" },
+} as const;
+
 /** Role shown first when a person holds several roles and has not picked one yet. */
 const ROLE_PRIORITY: readonly MembershipRole[] = ["COLLEGE_ADMIN", "TPO", "MENTOR", "FACULTY", "LEARNER"];
 
