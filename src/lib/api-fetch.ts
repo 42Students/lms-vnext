@@ -22,6 +22,14 @@ export class FriendlyFetchError extends Error {
     super(message);
     this.name = "FriendlyFetchError";
   }
+
+  /** Match legacy action decision without treating user cancellation as retry. */
+  get retryable():boolean{
+    if(this.code==="REQUEST_CANCELLED")return false;
+    if(this.retryAfterSeconds!==null)return true;
+    return this.status===0||this.status===408||this.status===425||
+      this.status===429||this.status===502||this.status===503||this.status===504;
+  }
 }
 
 /** A caller-initiated abort is not a network failure and must not trigger retry UI. */
@@ -102,7 +110,10 @@ export async function apiFetch<T = unknown>(
   } catch (reason) {
     // Explicit user/route cancellation is a silent, non-retryable outcome.
     // This must run before the global network-warning dispatcher.
-    if (!didTimeout && options.signal?.aborted) throw new ApiFetchCancelledError();
+    if (!didTimeout && (options.signal?.aborted ||
+      (reason instanceof Error && reason.name==="AbortError"))) {
+      throw new ApiFetchCancelledError();
+    }
     const status=reason instanceof FriendlyFetchError?reason.status:didTimeout?504:0;
     if(typeof window!=="undefined"){
       const path=typeof input==="string"?input:input instanceof URL?input.pathname:input instanceof Request?input.url:"";

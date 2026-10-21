@@ -92,6 +92,32 @@ export default async function LearnerProjectPage({
     redirect("/learn/projects");
   }
 
+  // Keep the audit tab independent of the eight-read workspace aggregation.
+  // Changing audit filters only fetches the currently authorized activity page,
+  // rather than reloading board, goals, sprints and submission state.
+  if(activeSection==="audit"){
+    const parsed=parseLearnerProjectActivityFilters({
+      category:activityCategory,from:activityFrom,to:activityTo,
+      beforeTime:activityBeforeTime,beforeId:activityBeforeId,
+    });
+    const result=parsed.success
+      ? await getProjectActivityPage(context,projectId,parsed.data)
+      : null;
+    return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+      <PageHeader title={access.project.title}
+        description="Project activity · recent updates from your team"/>
+      <LearnerProjectTabs projectId={projectId}/>
+      {result?<LearnerProjectActivity projectId={projectId}
+        events={result.events} hasMore={result.hasMore}
+        categoryInput={activityCategory} fromInput={activityFrom} toInput={activityTo}
+        beforeTimeInput={activityBeforeTime} beforeIdInput={activityBeforeId}/>:
+       <ErrorState title="Invalid activity filters"
+        description="Clear the selected activity filter or page cursor to continue."
+        action={<Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=activity"}
+         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear activity filters</Link>}/>}
+    </div>;
+  }
+
   // Malformed/stale Board filters must not silently become "show every task".
   // Resolve the project grant first so foreign identifiers never reveal detail.
   const invalidBoardFilters = activeSection === "tasks" && [
@@ -159,15 +185,15 @@ export default async function LearnerProjectPage({
     : workspace;
 
   return (
-    <div className="min-w-0 space-y-6">
-      {activeSection === "audit" ? <PageHeader title={workspace.project.title} /> : null}
-      <LearnerProjectTabs projectId={projectId} />
-      {activeSection === "overview" ? (
-        <Link href={"/learn/projects/" + encodeURIComponent(projectId) + "?tab=delivery"}
-          className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
-          Final delivery
-        </Link>
-      ) : null}
+    <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+      <div className="flex min-w-0 flex-col gap-3 border-b border-[var(--lms-canvas-border)] pb-2 sm:flex-row sm:items-center sm:justify-between">
+       <LearnerProjectTabs projectId={projectId} />
+       {activeSection==="overview"?<Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+        className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text md:min-h-9">
+         Final delivery
+       </Link>:null}
+      </div>
+
       {activeSection === "tasks" ? (
         <LearnerProjectBoardSearch projectId={projectId} search={search} priority={priority} status={status} taskSort={taskSort} mine={mine} sprintId={sprintId} sprints={workspace.sprints} releaseId={releaseId} releases={workspace.releases}
           shown={boardTasks.length} total={workspace.tasks.length} statusCounts={learnerBoardStatusCounts(workspace.tasks)} priorityCounts={learnerBoardPriorityCounts(workspace.tasks)} />

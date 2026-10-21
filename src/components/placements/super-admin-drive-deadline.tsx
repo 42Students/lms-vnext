@@ -5,15 +5,24 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
+/** Legacy picker displays YYYY-MM-DD HH:mm in the college's IST timezone. */
+function suggestedDeadlineInput(deadline:string|null){
+ const original=deadline?Date.parse(deadline):NaN;
+ const current=Date.now();
+ const future=Number.isFinite(original)&&original>current
+  ?original+86_400_000:current+7*86_400_000;
+ return new Date(future+330*60_000).toISOString().slice(0,16);
+}
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [pendingIso,setPendingIso]=useState<string|null>(null);
  const [savedIso,setSavedIso]=useState<string|null>(null);
  const inFlightRef=useRef(false);
+ const [dateDraft,setDateDraft]=useState(()=>suggestedDeadlineInput(deadline));
  function review(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(busy)return;
-  const values=new FormData(event.currentTarget),date=String(values.get("deadline")??"");
+  const date=dateDraft;
   const iso=new Date(date+"+05:30");
   if(!Number.isFinite(iso.getTime())||iso.getTime()<=Date.now()){
    setError("Choose a future deadline.");return;
@@ -43,8 +52,15 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
  return <div className="space-y-3"><form onSubmit={review} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
+  <p className="max-w-2xl text-xs leading-5 text-muted-foreground">
+    Choose a later date and time (YYYY-MM-DD HH:mm). If the previous deadline has passed,
+    the picker suggests seven days from today. This action only extends the application deadline.
+    Editing an unrelated drive field does not require extending an unchanged past deadline.
+    Important Dates are managed separately and are not automatically shifted.
+  </p>
   <label className="grid w-full max-w-md gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
-   <Input name="deadline" type="datetime-local" required className="w-full" onChange={()=>{setError("");setSavedIso(null);}}/>
+   <Input name="deadline" type="datetime-local" required className="w-full" value={dateDraft}
+     onChange={event=>{setDateDraft(event.target.value);setError("");setSavedIso(null);}}/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {savedIso?<p role="status" className="text-sm text-success">Deadline extended to {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(savedIso))}</p>:null}
@@ -55,6 +71,9 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
   title="Extend the published application deadline? This affects when students can apply."
   confirmLabel="Extend deadline" confirmVariant="primary" pending={busy}
   onConfirm={()=>void save()}>
+  <p className="text-sm text-body">Current: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
+  <p className="mt-2 text-sm text-body">New: {pendingIso?new Date(pendingIso).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"—"}</p>
+  <p className="mt-2 text-xs text-muted-foreground">Important Dates will not move when you extend the application deadline.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </ConfirmDialog>
  </div>;
