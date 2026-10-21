@@ -628,3 +628,70 @@ A server-scoped bulk grade publish changes access control, audit, pagination and
 - G2-19-027-098 | `src/components/courses/admin-course-overview.tsx` | Make bulk visibility reachable to college admins under same role policy and preserve selection/partial failures.
 
 Course catalogue status/visibility, optimistic updates and restoration are Courses/schema ownership. Legacy hidden and archived states cannot be conflated; migration and data-retention decisions required. **13/13 handed off, not fixed**.
+
+## Project workspace readiness — lane-7 handoff (2026-10-21)
+
+- G2-17-028-008 | `src/modules/projects/readiness-service.ts` | Add scoped per-task evidence coverage read (completed tasks with submission URL) to service/DTO and legacy-labeled metric with zero-completion special text
+- G2-17-028-011 | `src/modules/projects/readiness-service.ts` | Product decision: keep legacy readiness independent of release shipping or explicitly document change and update visible rule/warning; don't silently reinterpret gate
+- G2-17-028-018 | `src/modules/projects/readiness-override-service.ts` | Crosswalk nullable Boolean true/false/null to enum, and preserve clear semantics and active override display
+- G2-17-028-024 | `src/modules/projects/readiness-service.ts` | Use one scoped workspace view/readiness shape or BFF with embedded proof tasks; avoid an extra unsynchronized fetch for coverage
+- G2-17-028-025 | `src/modules/projects/readiness-override-service.ts` | Keep business intent equivalent through payload/status mapping, reject outside-scope IDs; align parent form behavior
+- G2-17-028-026 | `src/modules/projects/readiness-override-service.ts` | Ensure latest state and author/time still visible after migration, including cleared override and old records
+- G2-17-028-027 | `src/components/projects/project-readiness-workspace.tsx` | Render distinct `No college selected` shell/banner on missing selected scope; never suppress nav tabs
+- G2-17-028-029 | `src/modules/projects/readiness-service.ts` | Align readiness gate formula with legacy: verify task/sprint completion and submission conditions, make release policy decision before parity sign-off
+- G2-17-028-040 | `src/modules/projects/readiness-service.ts` | Clarify status normalization for migrated tasks; count submissions that are valid URLs, not whitespace or stale data; test zero tasks
+- G2-17-028-044 | `src/modules/projects/readiness-override-service.ts` | Preserve historical override read model or migrate records to append-only activity events (no data migration desired? confirm on live old data)
+- G2-17-028-045 | `src/modules/projects/readiness-service.ts` | Publish explicit DTO mapping including readinessState/reason and proofCoverage; avoid UI comparing non-equivalent flags
+- G2-17-028-047 | `src/components/projects/project-readiness-workspace.tsx` | Restore distinct missing legacy regions; record expected zero-count and override-off screenshots
+
+Project execution readiness is stricter than legacy submit-ready and uses append-only override events, not mutable workspace booleans. Model owner must decide semantics, audit migration and UI proof coverage. **12/12 handed off, not fixed**.
+
+## College attendance controller — lane-7 handoff (2026-10-21)
+
+- G2-2-009-010 | `src/components/attendance/admin-attendance-workspace.tsx` | On correction open refetch exact record state with server denial/error instead of relying on potentially stale grid.
+- G2-2-009-022 | `src/modules/attendance/admin-attendance-service.ts` | Add error state refusing correction when fresh marker record cannot be loaded.
+- G2-2-009-038 | `src/modules/attendance/admin-attendance-service.ts` | Align server to UI future-session policy, or explicitly approve pre-session corrections; prevent deep-link bypass.
+- G2-2-009-039 | `src/components/attendance/admin-attendance-workspace.tsx` | Add detail fetch skeleton/error and hard-disable correction until verified.
+- G2-2-009-044 | `src/components/attendance/admin-attendance-workspace.tsx` | Export aggregate attended/marked ratio identical to displayed legacy grid.
+- G2-2-009-063 | `src/components/attendance/admin-attendance-workspace.tsx` | Restore live record read/verification before allowing writes and exact modal UI.
+- G2-2-009-020 | `src/app/(authenticated)/college/attendance/page.tsx` | Show date-specific validation messages on any date-range client.
+- G2-2-009-019 | `src/app/(authenticated)/college/attendance/page.tsx` | Map invalid tenant scope to safe same error semantic.
+- G2-2-009-021 | `src/modules/attendance/admin-attendance-service.ts` | Provide exact invalid reason error to admin.
+- G2-2-009-023 | `src/components/attendance/admin-attendance-workspace.tsx` | Restore operation-specific failure copy.
+- G2-2-009-024 | `src/components/attendance/admin-attendance-workspace.tsx` | Keep action-specific success wording or document combined toast.
+- G2-2-009-025 | `src/components/attendance/admin-attendance-workspace.tsx` | Include chosen session timestamp in success acknowledgement.
+
+Attendance row correction permissions and fresh-record checks must be server-enforced, not only disabled client controls; consistent per-session CSV and exact success labels require Attendance owner. **12/12 handed off, not fixed**.
+
+## College project template detail — lane-7 handoff (2026-10-21)
+
+- G2-7-005-002 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Add primary use-template CTA to `/college/projects/create?templateId=<UUID>` preselecting assigned version.
+- G2-7-005-003 | `src/modules/projects/template-service.ts` | Bridge old integer-ID bookmarks via redirect/lookup if legacy deep-link migration required.
+- G2-7-005-019 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Restore use-template form launch; keep editing disabled.
+- G2-7-005-021 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Catch access/not found/database read separately; show legacy Retry and failure message.
+- G2-7-005-026 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Add deep link to full workspace create form, never lightweight duplicate modal.
+- G2-7-005-029 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Restore CTA to authoritative create route.
+- G2-7-005-031 | `src/modules/projects/template-service.ts` | Determine whether old catalog exposed all published templates; if so add read-only browsing or assignment explanation.
+- G2-7-005-053 | `src/db/schema/projects.ts + template migration` | Define template migration/model adapter for ID, lifecycle timestamp and all JSON section fields.
+- G2-7-005-056 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Restore only full create CTA, not preview or modal.
+- G2-7-005-057 | `src/modules/projects/template-service.ts` | Ensure scope/authorization and catalog visibility meet product requirements.
+- G2-7-005-022 | `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | Render true not-found/no-assignment state distinct from service errors.
+- G2-7-005-023 | `src/components/projects/project-admin-missing-college.tsx` | Restore exact no-college message and project nav.
+
+The project template detail already does scoped read-only assignment, but its create-deep-link must target an authorized form and assigned version. Projects owner must wire form/use CTA and explicit errors. **12/12 handed off, not fixed**.
+
+## College dashboard summary — lane-7 handoff (2026-10-21)
+
+- G2-2-013-009 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Map legacy enrolments with college via class, not merely active membership role.
+- G2-2-013-018 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Use individual settled COUNT queries for FOUR summary metrics; unaffected tiles must still load.
+- G2-2-013-020 | `src/modules/admin-ui/college-dashboard-cards-service.ts` | Allow permitted scoped Super Admin reader equivalent under selected acting-college context.
+- G2-2-013-022 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Preserve legacy count membership fallback or document deliberate status policy change.
+- G2-2-013-026 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Implement per-field fallback null; never replace failure with zero.
+- G2-2-013-035 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Isolate failures and preserve precision of '—' vs real zero.
+- G2-2-013-038 | `src/modules/admin-ui/college-dashboard-cards-model.ts` | Return partial counts and carry null per failing dimension.
+- G2-2-013-039 | `src/modules/admin-ui/college-setup-checklist-service.ts` | Separate summary dependency from unrelated setup metrics.
+- G2-2-013-014 | `src/app/(authenticated)/college/page.tsx` | Map new route failure to safe equivalent copy.
+- G2-2-013-015 | `src/app/(authenticated)/college/page.tsx` | Verify 401/redirect semantics for unauthenticated API/SSR clients.
+- G2-2-013-016 | `src/modules/admin-ui/college-dashboard-cards-service.ts` | Version old REST response envelope for clients, no success toast requirement.
+
+College dashboard summary totals require independent failures with nullable counts; do not fabricate zero for failed queries or broaden selected-college scope. Dashboard/Admin UI owner must decouple setup queries. **11/11 handed off, not fixed**.

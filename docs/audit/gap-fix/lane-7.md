@@ -67,3 +67,11 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-2_admin-assignment-publish-controller.md.md` | 13/13 findings reviewed and handed off with code target. No out-of-area Courses grade publish mutation/API edits, preserved permission/CAS requirements. **Handoff not fixed**, static source review only.
 
 - `NEW_docs_audit_gap2_lane-7_l19-u027-course-controller.md.md` | 13/13 findings reviewed and handed off with code target. No out-of-area Courses catalogue service/schema/UI edits, preserved permission/CAS requirements. **Handoff not fixed**, static source review only.
+
+- `NEW_docs_audit_gap2_lane-13_l17-u028-workspace-readiness.md.md` | All 12 findings read; exact-ID/project targets assigned to Projects readiness and override service/UI. No shared-files edited; release shipping gate and legacy evidence metric require product decision. **Handoff, not fixed**, no CI.
+
+- `NEW_docs_audit_gap2_lane-2_admin-attendance-controller.md.md` | All 12 findings read; exact-ID/project targets assigned to Attendance workspace/service/route. No shared-files edited; server-enforced future-session restrictions and record refetch require secure read API. **Handoff, not fixed**, no CI.
+
+- `NEW_docs_audit_gap2_lane-7_u005-college-admin-project-template-detail.md.md` | 12/12 findings reviewed with per-ID target handoff in Projects template read-only detail/UI/service. 0 files outside lane area edited. **Handoff, not fixed**, no code execution or CI.
+
+- `NEW_docs_audit_gap2_lane-2_admin-college-summary-controller.md.md` | 11/11 findings reviewed with per-ID target handoff in College Admin dashboard-card/setup-checklist services. 0 files outside lane area edited. **Handoff, not fixed**, no code execution or CI.
