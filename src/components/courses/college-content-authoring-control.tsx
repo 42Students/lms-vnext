@@ -11,6 +11,7 @@ import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
+import {FacultyLessonVideoManager} from "./faculty-lesson-video-manager";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;offeringId:string;lessonName:string;courseCode:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number;visibleToStudents:boolean};
@@ -73,6 +74,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [courseSearch,setCourseSearch]=useState("");
  const [discardOpen,setDiscardOpen]=useState(false);
  const [newResourceId,setNewResourceId]=useState<string|null>(null);
+ const [videoMode,setVideoMode]=useState<"UPLOAD"|"YOUTUBE">("UPLOAD");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
  const [listCourseId,setListCourseId]=useState(existingFilters?.courseId??"");
@@ -344,7 +346,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {!lessons.length&&<p role="status" className="text-sm leading-[22px]">Create a course offering, learning path and lesson before adding content.
     <Link href="/college/courses" className="ml-2 font-semibold text-link underline">Go to Courses</Link>
   </p>}
-  {open ? kind==="RESOURCE"?
+  {open && (kind!=="YOUTUBE"||videoMode==="YOUTUBE") ? kind==="RESOURCE"?
     <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
       title={editing?"Edit Content: "+title:"Add Resource"}
       description="Select a Course and Lesson to manage the resource."
@@ -372,6 +374,40 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    title={kind==="RESOURCE"?"Discard the changes to this resource?":"Discard lesson-content edits?"}
    description="Unsaved changes will be lost." confirmLabel="Discard changes"
    onConfirm={()=>{setDiscardOpen(false);setOpen(false);}}/>
+  {kind==="YOUTUBE"&&lessons.length>0?<section aria-label="Video content type" className="min-w-0 space-y-3 border-b border-border pb-4">
+   <fieldset className="flex flex-wrap items-center gap-4 border-0 p-0" aria-label="Video type">
+    <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
+    <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+     <input type="radio" name="college-content-video-type" value="UPLOAD"
+      checked={videoMode==="UPLOAD"} onChange={()=>setVideoMode("UPLOAD")}/>
+     Video (Upload)
+    </label>
+    <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+     <input type="radio" name="college-content-video-type" value="YOUTUBE"
+      checked={videoMode==="YOUTUBE"} onChange={()=>setVideoMode("YOUTUBE")}/>
+     YouTube Video
+    </label>
+   </fieldset>
+   {videoMode==="UPLOAD"?<>
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Course and Lesson
+     <Select aria-label="Lesson to upload video" value={lessonId}
+      onChange={event=>{setLessonId(event.target.value);setDeliveryId("");}}>
+      {lessons.map(lesson=><option value={lesson.id} key={lesson.id}>
+       {lesson.courseCode} · {lesson.name}</option>)}
+     </Select>
+    </label>
+    <label className="grid gap-1 text-[13px] font-semibold text-body">Audience
+     <Select value={deliveryId} aria-label="Video audience" onChange={event=>setDeliveryId(event.target.value)}>
+      <option value="">All currently eligible Sections for this Course</option>
+      {allowedDeliveries.map(section=><option key={section.deliveryId} value={section.deliveryId}>
+       {section.sectionName} · {section.sectionCode}</option>)}
+     </Select>
+    </label>
+    <p className="text-xs text-muted-foreground">Upload MP4, WebM, MOV or AVI with a short-lived signed grant. Video upload progress and processing status appear below. The file is unavailable to learners until verification finishes; failed replacements keep the previous file.</p>
+    <FacultyLessonVideoManager key={lessonId+":"+(deliveryId||"shared")} lessonId={lessonId}
+     deliveryId={deliveryId||null} nextContentSequence={nextOverride[lessonId]??selectedLesson?.nextSequence??0}/>
+   </>:<p className="text-xs text-muted-foreground">Use the YouTube video form to create a link. Uploaded video files remain private until verified.</p>}
+  </section>:null}
   {kind==="RESOURCE"&&materialsEnabled&&newResourceId?<section className="min-w-0 space-y-3 border-t border-border pt-3">
    <div className="flex flex-wrap items-center justify-between gap-2">
     <p className="text-sm font-semibold">Add materials to your new Resource</p>
