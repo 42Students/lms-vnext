@@ -96,6 +96,24 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      throw Error("Cannot move from "+from+" to "+next+
       ". Allowed next stages: "+(allowed.length?allowed.join(", "):"none")+".");
     }
+    // Reversals are permitted by the old LMS, but an accepted offer or a
+    // confirmed joining cannot be made to disappear by moving a display stage.
+    // Real offer cancellation and joining corrections happen in their own
+    // audited workflows before this pipeline is changed.
+    if(from==="OFFERED"&&next==="INTERVIEW"){
+     const live=await tx.select({id:placementOffers.id}).from(placementOffers)
+      .where(and(eq(placementOffers.applicationId,applicationId),
+       inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+     if(live.length)throw Error("Withdraw or resolve active offers before moving back to Interview.");
+    }
+    if(from==="HIRED"&&next==="OFFERED"){
+     const joined=await tx.select({id:placementJoiningOutcomes.id})
+      .from(placementJoiningOutcomes).innerJoin(placementOffers,
+       eq(placementOffers.id,placementJoiningOutcomes.offerId))
+      .where(and(eq(placementOffers.applicationId,applicationId),
+       eq(placementJoiningOutcomes.status,"JOINED"))).limit(1);
+     if(joined.length)throw Error("Correct the joined outcome before moving back to Offered.");
+    }
     if(["OFFERED","HIRED"].includes(next)){
      const offers=await tx.select({
       status:placementOffers.status,joining:placementJoiningOutcomes.status,

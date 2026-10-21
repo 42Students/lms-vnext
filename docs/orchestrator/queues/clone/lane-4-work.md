@@ -59,7 +59,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-placements-dashboard.tsx.md` (edit src/components/placements/learner-placements-dashboard.tsx; 11 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-round-apply-service.ts.md` (edit src/modules/placements/tpo-round-apply-service.ts; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-operations-overview.tsx.md` (edit src/components/placements/placement-operations-overview.tsx; 10 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-stage-action-model.ts.md` (edit src/modules/placements/college-stage-action-model.ts; 10 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-stage-action-model.ts.md` (edit src/modules/placements/college-stage-action-model.ts; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-page_read-service.ts.md` (edit src/modules/placements/public-page/read-service.ts; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_recruiter-placement-portfolio.tsx.md` (edit src/components/placements/recruiter-placement-portfolio.tsx; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-general-requests.tsx.md` (edit src/components/placements/learner-general-requests.tsx; 10 findings; best P1)
