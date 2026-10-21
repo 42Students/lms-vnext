@@ -8,5 +8,5 @@ export default function CollegeDashboardError({ reset }: {
 }) {
   return <ErrorState title="College dashboard unavailable"
     description="The college setup evidence could not be loaded. Missing data is not displayed as zero."
-    action={<Button type="button" variant="secondary" onClick={reset}>Retry</Button>} />;
+    action={<Button type="button" variant="secondary" onClick={reset} className="w-full md:w-auto">Retry</Button>} />;
 }
