@@ -11,6 +11,7 @@ import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
 import {facultyReportIsIncomplete} from "@/modules/courses/faculty-report-completeness";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
+import { FacultyReportBackAction } from "@/components/courses/faculty-report-back-action";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -56,33 +57,15 @@ export default async function FacultyAssignmentReportPage({
         <a className="ml-2 font-semibold text-primary-text underline"
           href={"/teacher/report/assignment/"+encodeURIComponent(contentId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}>Retry roster</a>
       </Banner>:null}
-      <PageHeader title={assignment.title} description={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
-        actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <Link href="/teacher/allAssignments" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-        ← My Assignments
-      </Link>
-          <FacultyReportCsvDownload
-          href={facultyReportCsvHref({
-            kind:"assignment",assessmentId:assignment.id,deliveryId:assignment.deliveryId,
-          })}
-        />
-        <Link
-          href={facultySubmissionListHref({
-            assignmentId:assignment.id,deliveryId:assignment.deliveryId,
-            filter:"ALL",page:1,
-          })}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
-          Filter submissions and export
-        </Link>
-        </div>}
-      />
-
+      <nav aria-label="Assignment report navigation and download" className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <FacultyReportBackAction fallback="/teacher/allAssignments"/>
       <FacultyReportDownload
         kind="assignment"
+        rosterUnavailable={report.rosterUnavailable}
         incomplete={facultyReportIsIncomplete({kind:"assignment",eligibleLearners:metrics.eligibleLearners,
           submitted:metrics.submitted,graded:metrics.graded})}
-        title={assignment.title}
-        subtitle={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
+        title={assignment.title?.trim()||"Untitled assignment"}
+        subtitle={assignment.courseName}
         summary={[
           "Submitted: " + (report.rosterUnavailable ? "Roster unavailable" : metrics.submitted + "/" + metrics.eligibleLearners),
           "Average score: " + (metrics.averagePercent === null ? "Unknown" : metrics.averagePercent + "%"),
@@ -103,16 +86,23 @@ export default async function FacultyAssignmentReportPage({
           { title: "Not submitted", rows: missingLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
+      </nav>
+      <PageHeader title={assignment.title?.trim()||"Untitled assignment"}
+        description={assignment.courseName}/>
+      <div className="flex min-w-0 flex-wrap items-center gap-3 text-xs text-muted-foreground">
+        <span>Class: {assignment.sectionName||"—"}</span>
+        <span>Lesson: {assignment.lessonName||"—"}</span>
+      </div>
       <dl aria-label="Assignment report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Submitted", report.rosterUnavailable ? "—" : `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
-          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
+          ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-US", { month:"short", day:"numeric", year:"numeric", timeZone:"Asia/Kolkata" }).format(assignment.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="min-w-0 py-4">
             <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>
-            <dd className="mt-1 break-words text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</dd>
+            <dd className={"mt-1 break-words text-xl font-semibold leading-7 tabular-nums "+(label==="Average score"&&metrics.averagePercent!==null&&metrics.averagePercent<60?"text-warning":"text-[var(--lms-heading)]")}>{value}</dd>
           </div>
         ))}
       </dl>
@@ -121,16 +111,16 @@ export default async function FacultyAssignmentReportPage({
           Score distribution
         </h2>
         {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
-          No grades yet. Grade a submission to populate this score distribution.
+          No graded scores to chart yet.
         </p>:null}
-        <div
+        {metrics.graded>0?<div
           className="mt-4 space-y-3"
-          role="group"
-          aria-label={`Score distribution across ${metrics.graded} graded submissions`}
+          role="img"
+          aria-label={`Score distribution across ${metrics.graded} graded submissions: ${distribution.map(bucket=>bucket.label+" "+bucket.count).join(", ")}`}
         >
-          {distribution.map((bucket) => {
+          {distribution.filter(bucket=>bucket.count>0).map((bucket) => {
             const total = Math.max(metrics.graded, 1);
-            const width = Math.round((bucket.count / total) * 100);
+            const width = Math.max(6,Math.round((bucket.count / total) * 100));
             return (
               <Disclosure key={bucket.label} title={<span className={styles.distribution+" min-w-0 flex-1"}>
                 <span className={styles.distributionLabel}>{bucket.label}</span>
@@ -152,50 +142,29 @@ export default async function FacultyAssignmentReportPage({
               </Disclosure>
             );
           })}
-        </div>
+        </div>:null}
       </section>
 
       <section aria-labelledby="section-submission-timing" className="border-b border-[var(--lms-canvas-border)] py-4">
         <h2 id="section-submission-timing" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Submission timing
         </h2>
+        {metrics.submitted===0?<p className="mt-3 text-sm text-muted-foreground">No submitted assignments to chart yet.</p>:
+         <div role="img" aria-label={metrics.onTime+" on time, "+metrics.late+" late"}
+          className="mt-4 flex h-4 min-w-0 overflow-hidden rounded-[3px] bg-[var(--lms-neutral-100)]">
+           {metrics.onTime>0?<span title={metrics.onTime+" on time"} aria-hidden="true" className="bg-[var(--lms-primary)]"
+            style={{width:(100*metrics.onTime/Math.max(metrics.submitted,1))+"%"}}/>:null}
+           {metrics.late>0?<span title={metrics.late+" late"} aria-hidden="true" className="bg-warning"
+            style={{width:(100*metrics.late/Math.max(metrics.submitted,1))+"%"}}/>:null}
+         </div>}
         <dl className="mt-3 grid min-w-0 grid-cols-3 gap-x-4 border-y border-[var(--lms-canvas-border)]">
-          {[
-            ["On time", metrics.onTime],
-            ["Late", metrics.late],
-            ["Not submitted", metrics.missing],
-          ].map(([label, value]) => (
-            <div
-              key={label}
-              className="min-w-0 py-4"
-            >
-              <dt className="text-xs font-semibold leading-5 text-muted-foreground">
-                {label}
-              </dt>
-              <dd className="mt-1 text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">
-                {value}
-              </dd>
-            </div>
-          ))}
+          {([["On time",metrics.onTime],["Late",metrics.late],["Not submitted",metrics.missing]] as const)
+           .map(([label,value])=><div key={label} className="min-w-0 py-3">
+             <dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
+             <dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{value}</dd>
+           </div>)}
         </dl>
-      </section>
-
-      <FacultyReportStudentTable title="Student scores" emptyMessage="No one has submitted this assignment yet." rows={submissions.map((submission) => {
-        const scored = submission.gradingStatus === "GRADED" &&
-          submission.pointsAwarded !== null &&
-          assignment.maxPoints > 0;
-        return {
-          id: submission.id,
-          name: facultyReportLearnerName(submission.learnerDisplayName),
-          score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
-          percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
-          submittedAt: submission.submittedAt.toISOString(),
-          note: (assignment.dueAt && submission.submittedAt > assignment.dueAt ? "Late" : "On time") +
-            (submission.gradePublished ? " · Published" : " · Private"),
-        };
-      })} />
-
-      <section aria-labelledby="section-not-submitted" className="border-b border-[var(--lms-canvas-border)] py-4">
+<div aria-labelledby="section-not-submitted" className="mt-4 border-t border-[var(--lms-canvas-border)] pt-3">
         <h2 id="section-not-submitted" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Not submitted
         </h2>
@@ -217,8 +186,35 @@ export default async function FacultyAssignmentReportPage({
             ))}
           </ul>
         )}
+</div>
+
       </section>
 
+      <FacultyReportStudentTable title="Student scores" emptyMessage="No one has submitted this assignment yet." rows={submissions.map((submission) => {
+        const scored = submission.gradingStatus === "GRADED" &&
+          submission.pointsAwarded !== null &&
+          assignment.maxPoints > 0;
+        return {
+          id: submission.id,
+          name: facultyReportLearnerName(submission.learnerDisplayName),
+          score: scored ? submission.pointsAwarded + "/" + assignment.maxPoints : "Not graded",
+          percent: scored ? Math.round((submission.pointsAwarded! / assignment.maxPoints) * 100) : null,
+          submittedAt: submission.submittedAt.toISOString(),
+          note: (assignment.dueAt && submission.submittedAt > assignment.dueAt ? "Late" : "On time") +
+            (submission.gradePublished ? " · Published" : " · Private"),
+        };
+      })} />
+
+      <section aria-label="Additional assignment report tools" className="flex min-w-0 flex-wrap items-center gap-3 border-t border-[var(--lms-canvas-border)] pt-3">
+        <FacultyReportCsvDownload href={facultyReportCsvHref({
+          kind:"assignment",assessmentId:assignment.id,deliveryId:assignment.deliveryId,
+        })}/>
+        <Link href={facultySubmissionListHref({assignmentId:assignment.id,
+          deliveryId:assignment.deliveryId,filter:"ALL",page:1})}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9">
+          Filter submissions and export
+        </Link>
+      </section>
       <section aria-labelledby="section-view-submissions" id="submissions" className="scroll-mt-16 border-b border-[var(--lms-canvas-border)] py-4">
         <h2 id="section-view-submissions" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">View submissions</h2>
         <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
