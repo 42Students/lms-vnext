@@ -59,6 +59,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
         and other.job_id<>${job.id} and o.status='ACCEPTED')`:
     input.flag==="ADDED_BY_COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:undefined;
    const scope=and(eq(placementApplications.jobId,job.id),
+    sql`${placementApplications.legacyWasDeleted} is distinct from true`,
     flagScope,
     since?gte(placementApplications.submittedAt,since):undefined,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
@@ -190,3 +191,7 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,flag:input.flag,...projection};
 }
+
+// Organization-wide access is a separate explicitly authorized Super Admin surface.
+// TPO job pipelines must never change tenant scope as a side effect of reporting.
+export {searchOrganizationPlacementApplications,getOrganizationApplicationStats} from "./organization-application-search-service";
