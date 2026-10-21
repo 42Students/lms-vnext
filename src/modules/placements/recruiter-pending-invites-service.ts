@@ -80,7 +80,7 @@ export async function respondToOwnRecruiterPendingInvite(
    .where(and(
     eq(placementRecruiterCollegeGrants.id,grantId),
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
-   )).for("update").limit(1);
+   )).for("update",{of:placementRecruiterCollegeGrants}).limit(1);
   if(!row||row.companyId!==actor.companyId||
     row.collegeStatus!=="ACTIVE"||row.relationshipStatus!=="ACTIVE"||
     row.profileStatus!=="ACTIVE"||row.platformStatus!=="ACTIVE")
@@ -98,10 +98,10 @@ export async function respondToOwnRecruiterPendingInvite(
   const [updated]=await tx.update(placementRecruiterCollegeGrants).set({
    status:next,
    pendingRecruiterLeadId:null,
-   ...input.action==="DECLINE"?{
+   ...(input.action==="DECLINE"?{
     revokedAt:now,revokedByUserId:context.user.id,
     revokedByType:"RECRUITER",revokeReason:"Declined recruiter college invitation",
-   }:{},
+   }:{}),
    updatedAt:now,
    version:sql`${placementRecruiterCollegeGrants.version}+1`,
   }).where(and(
