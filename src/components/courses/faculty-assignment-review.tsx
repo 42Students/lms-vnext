@@ -393,6 +393,7 @@ function SubmissionGradeCard({
             Points
           </span>
           <Input
+            aria-label={"Points for "+learnerLabel(submission)}
             placeholder="Grade points"
             type="number"
             min={0}
@@ -405,6 +406,7 @@ function SubmissionGradeCard({
             }
             required
           />
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">Max is {maxPoints}</span>
         </label>
         <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-xs font-semibold text-body">
