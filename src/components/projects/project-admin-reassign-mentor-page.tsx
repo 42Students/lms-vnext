@@ -14,7 +14,9 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import {ErrorState} from "@/components/ui/error-state";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Disclosure } from "@/components/ui/disclosure";
-import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref} from "@/modules/projects/admin-reassign-mentor-query-model";
+import {parseProjectAdminReassignMentorQuery,projectAdminReassignMentorHref,
+ resolveLegacyReassignMentorBookmark} from "@/modules/projects/admin-reassign-mentor-query-model";
+import {findLegacyReassignmentMentorMembership} from "@/modules/projects/mentor-reassignment-legacy-lookup-service";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
@@ -33,7 +35,25 @@ export async function ProjectAdminReassignMentorPage({
     string | string[] | undefined
   >;
 }) {
-  const parsed=parseProjectAdminReassignMentorQuery(searchParams);
+  const context=await getCurrentRequestContext();
+  let recovered:Awaited<ReturnType<typeof resolveLegacyReassignMentorBookmark>>;
+  try{
+   recovered=await resolveLegacyReassignMentorBookmark(searchParams,id=>
+     findLegacyReassignmentMentorMembership(context,collegeId,id));
+  }catch{
+   return <ErrorState title="Mentor bookmark could not be resolved"
+     description="The selected college's mentor identity mapping is unavailable. Retry before changing the mentor filter."
+     action={<Link href={basePath+"/reassign-mentor"}
+      className="text-link underline">Open mentor directory</Link>}/>;
+  }
+  if(!recovered.ok)return <div className="min-w-0 space-y-4">
+   <PageHeader title="Bulk mentor reassignment"/>
+   <ErrorState title="Mentor bookmark could not be resolved"
+    description="This historic mentor ID has no active, verified match in the selected college. Choose a mentor from the current directory."
+    action={<Link href={basePath+"/reassign-mentor"}
+      className="text-link underline">Choose a current mentor</Link>}/>
+  </div>;
+  const parsed=parseProjectAdminReassignMentorQuery(recovered.params);
   if(!parsed.success)return <div className="min-w-0 space-y-[16px]">
     <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
     <ProjectAdminNav basePath={basePath} active="workspaces" />
@@ -44,8 +64,6 @@ export async function ProjectAdminReassignMentorPage({
   </div>;
   const {fromMentorId,projectId:initialProjectId,mentorSearch,...filters}=parsed.data;
   const query:ProjectAdminCollectionQuery={...filters,fromMentorId};
-  const context=await getCurrentRequestContext();
-
   // The roster, eligible mentors and workload must all be verified before
   // presenting mutation controls. A failed dependency is not an empty list.
   const [projectsRead,mentorsRead,workloadRead]=await Promise.allSettled([
