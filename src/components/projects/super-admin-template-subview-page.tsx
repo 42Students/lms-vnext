@@ -122,7 +122,7 @@ export async function SuperAdminTemplateSubviewPage({
     // template subview or accidentally present an empty global template.
     // The retry points back to the same authorized route, without exposing
     // exception text or version JSON to an unverified viewer.
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <ProjectAdminNav basePath="/admin/projects" active="templates"/>
       <PageHeader title="Template section"/>
       <ErrorState title="Template section unavailable"
