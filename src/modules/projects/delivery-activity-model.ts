@@ -35,3 +35,41 @@ export function projectDeliveryActivity(input: {
       : {}),
   };
 }
+
+/** Only call after an authorized, project-scoped history query. This is a
+ * separate detailed view: do not copy feedback, actor names, or evidence URLs
+ * into public activity metadata or generate file grants from legacy keys.
+ */
+export type ProjectDeliveryHistorySource = {
+ projectId:string; submissionId:string; eventId:string;action:ProjectDeliveryEvent;
+ occurredAt:Date; actorName:string|null; actorRole:string|null;
+ version:number;feedback:string|null; evidenceFileIds:readonly string[];
+};
+export const PROJECT_SUBMISSION_HISTORY_MESSAGE="Project submission history retrieved";
+export const PROJECT_DELIVERY_HISTORY_MESSAGE="Project delivery history retrieved";
+
+export function projectDeliveryHistoryProjection(
+ rows:readonly ProjectDeliveryHistorySource[], authorizedProjectId:string,
+ options:{includeFeedback:boolean},
+) {
+ const ordered=rows.filter(row=>row.projectId===authorizedProjectId &&
+  Number.isSafeInteger(row.version) && row.version>=0 &&
+  row.occurredAt instanceof Date && Number.isFinite(row.occurredAt.getTime()))
+  .sort((a,b)=>a.occurredAt.getTime()-b.occurredAt.getTime() ||
+   a.version-b.version || a.eventId.localeCompare(b.eventId));
+ return {
+  message:PROJECT_DELIVERY_HISTORY_MESSAGE,
+  emptyMessage:"No project delivery history recorded yet.",
+  total:ordered.length,
+  revisions:new Set(ordered.map(row=>row.version)).size,
+  items:ordered.map(row=>({
+   eventId:row.eventId,submissionId:row.submissionId,
+   action:row.action,version:row.version,occurredAt:row.occurredAt,
+   actorName:row.actorName,actorRole:row.actorRole,
+   feedback:options.includeFeedback?row.feedback:null,
+   // Grant only verified IDs using a separate authorized download endpoint.
+   evidenceFileIds:row.evidenceFileIds.filter(id=>
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)),
+  })),
+ };
+}

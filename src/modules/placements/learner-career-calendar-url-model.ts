@@ -12,7 +12,7 @@ export function readLearnerCalendarUrl(query:string,fallbackDay:string):LearnerC
   const validDate=date.safeParse(get("date"));
   const validView=learnerCalendarUrlStateSchema.shape.view.safeParse(get("view"));
   const validKind=learnerCalendarUrlStateSchema.shape.kind.safeParse(get("kind"));
-  return {date:validDate.success?validDate.data:date.parse(fallbackDay),view:validView.success?validView.data:"agenda",kind:validKind.success?validKind.data:"ALL"};
+  return {date:validDate.success?validDate.data:date.parse(fallbackDay),view:validView.success?validView.data:"month",kind:validKind.success?validKind.data:"ALL"};
 }
 export function learnerCalendarHref(raw:unknown, surface: "calendar" | "schedule" = "calendar"){
   const state=learnerCalendarUrlStateSchema.parse(raw);
@@ -22,4 +22,13 @@ export function learnerCalendarSelectedEvents(rounds:readonly CareerCalendarSour
   const state=learnerCalendarUrlStateSchema.parse(raw);
   const events=careerCalendarEvents(rounds).filter(x=>state.kind==="ALL"||x.kind===state.kind);
   return careerCalendarPeriod(events,state.date,state.view).events;
+}
+
+/** Old /learn/my-placements/calendar links were intentional email targets.
+ * Always make the month view explicit when linking back from moved pages,
+ * while preserving a validated calendar date/kind and any explicit view.
+ */
+export function legacyLearnerCalendarDestination(query:string,fallbackDay:string):string{
+ const state=readLearnerCalendarUrl(query,fallbackDay);
+ return learnerCalendarHref(state,"calendar");
 }

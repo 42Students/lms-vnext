@@ -3,10 +3,11 @@ export function facultyProfileNeedsReload(code:string|undefined){
  return code==="FACULTY_PROFILE_VERSION_CONFLICT";
 }
 export function facultyProfileSaveFailure(code:string|undefined,status:number):string {
- if(code==="FACULTY_PROFILE_VERSION_CONFLICT")return "Your profile changed since you opened it. Reload the latest version before editing again.";
+ if(code==="FACULTY_PROFILE_VERSION_CONFLICT")return "Profile was updated elsewhere. Please refresh and try again.";
+ if(code==="INVALID_BODY"||code==="MALFORMED_REQUEST"||code==="REQUEST_BODY_MISSING")return "Request body is missing or malformed";
  if(code==="PRIVATE_IDENTITY_STORAGE_NOT_READY")return "Private profile storage is not available. Nothing was saved.";
  if(code==="REQUEST_TOO_LARGE"||status===413)return "This profile change is too large. Shorten the text or remove extra records.";
- if(status===409)return "Your profile was updated in another session. Reload and review the latest profile before editing again.";
+ if(status===409)return "Profile was updated elsewhere. Please refresh and try again.";
  if(status===403)return "Your permission to edit this profile is unavailable. No changes were saved.";
  if(status===401)return "Your sign-in has expired. Sign in again before editing your profile.";
  if(status===429)return "Profile requests are being limited. Avoid repeated saves and try again later.";
@@ -45,7 +46,16 @@ export function facultyProfileReloadRequired(code:string|undefined,status:number
 }
 
 /** Success labels disclose section and optimistic revision only, never profile values. */
-export function facultyProfileSavedStatus(section:string,version:number):string{
- const label=facultyProfileSaveSectionLabel(section);
- return label+" saved (revision "+version+").";
+export function facultyProfileSavedStatus(
+ section:string,version:number,action:"ADD"|"UPDATE"|"DELETE"="UPDATE",
+):string{
+ // Legacy titles are action-specific. The optimistic version is displayed
+ // separately so all mutations do not misleadingly say "saved".
+ void section;
+ void version;
+ return action==="ADD"?"Added successfully":
+  action==="DELETE"?"Deleted successfully":"Updated successfully";
+}
+export function facultyProfileSavedRevisionLabel(section:string,version:number):string{
+ return facultyProfileSaveSectionLabel(section)+" · revision "+version;
 }
