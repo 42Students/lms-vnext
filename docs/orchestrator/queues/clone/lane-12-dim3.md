@@ -4,14 +4,14 @@
 Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/app/(authenticated)/tpo/students/error.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
 - [ ] `src/components/projects/project-admin-audit-page.tsx`
 - [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
 - [ ] `src/components/placements/tpo-round-apply-control.tsx`

@@ -30,7 +30,7 @@ export default async function CompanySharePage({
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
    <p className="max-w-prose break-words text-sm leading-6 text-body">Ask the placement cell for the code sent separately with this company share link.</p>
-   {access==="invalid"?<p role="alert" className="text-sm text-error leading-[1.6]">
+   {access==="invalid"?<p role="alert" className="text-sm text-error leading-[22px]">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
     <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
@@ -46,7 +46,7 @@ export default async function CompanySharePage({
  if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
   <section role="alert" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="This link is not valid any more." />
-   <p className="text-sm text-body">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
+   <p className="text-sm text-body leading-[22px]">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
    <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Home</Link>
   </section>
  </main>;
@@ -65,7 +65,7 @@ export default async function CompanySharePage({
   </div>
   <div className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
   <section aria-label="Shared applicant summary" className="min-w-0 space-y-2 border-b border-[var(--lms-canvas-border)] pb-4">
-   <p className="text-sm text-muted-foreground">42Students · Company applicant share</p>
+   <p className="text-sm text-muted-foreground leading-[22px]">42Students · Company applicant share</p>
    <PageHeader title={"Shared with "+result.companyName} />
    <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-base font-medium leading-6 text-foreground">{result.title}</p>
    <p className="max-w-3xl break-words text-sm leading-6 text-body">
@@ -78,7 +78,7 @@ export default async function CompanySharePage({
    <p className="max-w-3xl break-words text-xs leading-5 text-muted-foreground">
     Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
    </p>
-   {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body leading-[1.6]">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
+   {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body leading-[22px]">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:flex-wrap md:items-end">
@@ -89,13 +89,13 @@ export default async function CompanySharePage({
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply search</Button>
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
-  <p role="status" className="text-sm text-body leading-[1.6]">
+  <p role="status" className="text-sm text-body leading-[22px]">
    {result.total.toLocaleString("en-IN")} shortlisted applicants · Page {result.page} of {result.totalPages}
   </p>
   <DataTable columns={tableColumns} rows={result.rows}
    getRowKey={row=>row.applicationId} caption="Shared applicants"
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
-    <p className="text-sm text-body">No current shortlist records on this page.</p>
+    <p className="text-sm text-body leading-[22px]">No current shortlist records on this page.</p>
     {result.search?<Link href={companyShareApplicantHref(token,1,"")}
       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
    </div>}/>
