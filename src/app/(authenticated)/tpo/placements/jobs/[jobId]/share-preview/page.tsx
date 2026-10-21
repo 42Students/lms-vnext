@@ -60,9 +60,9 @@ export default async function TpoShortlistSharePreviewPage({
       description="Read-only, current submitted/shortlisted candidates. This is a TPO report, not a sent share or authorization for an external recipient."
       actions={<>
         <Link href={"/tpo/placements/jobs/" + encodeURIComponent(data.job.id) + "/shortlist"}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Current internal shortlist</Link>
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Current internal shortlist</Link>
         <a href={tpoFilteredSharePreviewExportHref(data.job.id,parsed.data.q)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Export capped CSV</a>
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Export capped CSV</a>
       </>}
     />
     <form action={path} method="get" className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-4 sm:flex-row sm:items-end sm:gap-3">
