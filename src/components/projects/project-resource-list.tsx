@@ -109,6 +109,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const archive=rows.filter(row=>row.status==="ARCHIVED").length;
  const drafts=rows.filter(row=>row.status==="DRAFT").length;
  const pinnedCount=rows.filter(row=>row.pinned).length;
+ // The editor already shows its own resource summary for managers.
+ const legacySummary=mode!=="LEARNER";
  const currentOrder=(row:ResourceRow)=>row.status==="ACTIVE"?
    stableOrder.indexOf(row.id):rows.length+row.sequence;
  return <section aria-label="Project resource directory" className="space-y-3">
