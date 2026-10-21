@@ -40,3 +40,6 @@
 - `src/components/tpo/*` data grid column picker + service sorting (TPO UI and placements lane) | G2-11-012-010/-011/-102 | Table now uses real columns and backend-supported Company/Deadline sorting and compact/full switch; full legacy draggable/optional per-column picker and numeric applied/pay sort require persistent user column preferences and explicit server sort schema, not cosmetic fake controls.
 
 - `src/db/schema/activity.ts` authored-notice/outbox worker and its delivery producer | G2-18-012-035/-036, G2-17-026-044 | Lane-12 personal inbox now checks BOTH parent activity-event metadata and recipient deliveryStatus/deletedAt/scheduledAt; for scheduled receipt rows the worker must set deliveryStatus=SENT and deliveredAt together with commit-safe recipient fanout. Legacy archived class/course notices remain admin-recallable via stored college relations, never via untrusted tenant IDs.
+
+- `src/modules/placements/tpo-crm-service.ts` / G2-11-019-031/035: No-answer follow-up due currently two days; legacy tomorrow 10 AM IST. Keep transaction and existing-open-follow-up protections when aligning.
+- `src/modules/placements/tpo-recruiter-invite-service.ts` / G2-11-019-047: Public acceptance requires linked company relationship; legacy Invite permitted an email-only lead. Offer scoped relationship association before issuing, not an unverifiable invite.

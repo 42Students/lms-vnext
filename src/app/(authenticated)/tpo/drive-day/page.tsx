@@ -25,6 +25,7 @@ import {filterTpoLiveRoundSearch,tpoLiveRoundSearchSchema} from "@/modules/place
 import { tpoDriveDaySortSchema, sortTpoDriveDayRows } from "@/modules/placements/tpo-drive-day-sort-model";
 import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/placements/tpo-drive-day-issue-filter-model";
 import { getTpoLiveDriveDaySummary } from "@/modules/placements/tpo-live-drive-day-service";
+import { TpoDriveDayTodayList } from "@/components/tpo/tpo-drive-day-today-list";
 
 function formatWhen(
   value: Date | null,
@@ -90,18 +91,14 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
       <div className="min-w-0 space-y-[var(--lms-space-6)]">
         <PageHeader title="Drive day"
           description="Today's on-campus interview rounds, followed by live attendance attention." />
-        <section aria-label="Today's on-campus rounds" className="space-y-3 border-b border-border pb-4">
-          <h2 className="text-lg font-semibold">Today&apos;s on-campus rounds</h2>
-          {todayError ? <Alert tone="error">Could not load today&apos;s drive-day assignments. <Link href="/tpo/drive-day" className="font-semibold text-link underline">Retry</Link></Alert> :
-           todayRounds.length===0 ? <EmptyState title="No on-campus rounds scheduled today" description="No published on-campus drive rounds are scheduled for today in your college."/> :
-           <div className="divide-y divide-border">{todayRounds.map(round=><div key={round.id} className="flex flex-col justify-between gap-2 py-3 sm:flex-row sm:items-center">
-             <div><h3 className="font-semibold">{round.companyName} · {round.name}</h3>
-               <p className="text-sm text-body">{round.jobTitle} · {formatWhen(round.scheduledAt,"Asia/Kolkata")} · {round.venue??"Venue not recorded"}</p>
-               <StatusBadge tone={round.status==="COMPLETED"?"success":"info"}>{round.status}</StatusBadge></div>
-             <Link href={"/tpo/drive-day/"+encodeURIComponent(round.id)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open round</Link>
-           </div>)}</div>}
-          {todayRounds.length===100?<p className="text-xs text-muted-foreground">Showing the first 100 scheduled rounds. Narrow the scope in the placement calendar for other rounds.</p>:null}
-        </section>
+        <TpoDriveDayTodayList
+          rows={todayRounds.map(round => ({
+            ...round,
+            scheduledAt: round.scheduledAt?.toISOString() ?? null,
+          }))}
+          failed={todayError}
+          cacheKey={context.user.id + ":" + context.membership.collegeId + ":" + window.start.toISOString().slice(0, 10)}
+        />
         {!snapshot?<Alert tone="error">Could not load today&apos;s drive-day assignments. <Link href="/tpo/drive-day" className="font-semibold text-link underline">Retry</Link></Alert>:null}
         <h2 className="text-lg font-semibold">Rounds happening now</h2>
         <form action="/tpo/drive-day" method="get" className="grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 sm:items-end xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]" aria-label="Filter drive day">
