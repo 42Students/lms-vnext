@@ -323,6 +323,29 @@ export async function getLatestPlacementOfferForApplication(
  return offer??null;
 }
 
+/** Scoped, chronological offer history for one application, retaining
+ * superseded, declined, withdrawn and expired versions beside the latest.
+ * A learner may only inspect their own offers; staff require college scope.
+ */
+export async function listPlacementOfferHistoryForApplication(
+ context:RequestContext,applicationIdInput:string,
+){
+ const applicationId=placementApplicationIdSchema.parse(applicationIdInput);
+ const current=await loadApplicationContext(applicationId);
+ if(context.membership?.id===current.application.membershipId&&
+    hasMembershipRole(context,"LEARNER")){
+  await requireLearnerPlacementAccess(context);
+ }else{
+  await requirePlacementManageScope(context,current.job.collegeId);
+ }
+ return getDb().select({
+  offer:placementOffers,joining:placementJoiningOutcomes,
+ }).from(placementOffers)
+  .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
+  .where(eq(placementOffers.applicationId,applicationId))
+  .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id));
+}
+
 export async function issuePlacementOffer(
   context: RequestContext,
   applicationIdInput: string,
@@ -1592,7 +1615,7 @@ export async function listOwnPlacementOffers(
       ),
     )
     .orderBy(
-      desc(placementOffers.issuedAt),
+      desc(placementOffers.issuedAt),desc(placementOffers.id),
     );
 }
 
@@ -1675,7 +1698,7 @@ export async function listPlacementJobOffers(
     )
     .orderBy(
       asc(users.displayName),
-      desc(placementOffers.issuedAt),
+      desc(placementOffers.issuedAt),desc(placementOffers.id),
     );
 }
 
