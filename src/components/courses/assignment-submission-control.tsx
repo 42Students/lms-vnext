@@ -261,7 +261,7 @@ export function AssignmentSubmissionControl({
               setSubmissionType("LINK")
             }
           >
-            External Link
+            Website / External Link
           </FilterChip>
           <FilterChip type="button" className="col-span-2 min-h-11 w-full md:col-span-1 md:w-auto md:min-h-9" disabled={!methodsLoaded || submitting ||
               (multipartEnabled ? !(mayWrite&&mayLink) && !(fileUploadsEnabled&&mayUpload) : !fileUploadsEnabled || !mayUpload)}
