@@ -97,6 +97,27 @@ function keepTpoNeedsSummary(
 }
 
 
+/** The primary event feed is kept separately from the TPO needs summary.
+ * Reuse only a bounded successful read of the SAME principal, college,
+ * window and filters. Revoked access is never cached: authorization errors
+ * are rethrown by the live read before this function is reached. */
+const lastGoodTpoCalendar=new Map<string,{
+  savedAt:number;value:Awaited<ReturnType<typeof listPlacementCalendarEvents>>;
+}>();
+function preserveTpoCalendarEvents(key:string,
+  value:Awaited<ReturnType<typeof listPlacementCalendarEvents>>|null,now:Date){
+  if(value){
+    if(lastGoodTpoCalendar.size>=100)lastGoodTpoCalendar.clear();
+    lastGoodTpoCalendar.set(key,{savedAt:now.getTime(),value});
+    return {value,stale:false};
+  }
+  const previous=lastGoodTpoCalendar.get(key);
+  if(previous&&now.getTime()-previous.savedAt<=15*60_000)
+    return {value:previous.value,stale:true};
+  if(previous)lastGoodTpoCalendar.delete(key);
+  return {value:null,stale:false};
+}
+
 type CalendarSearchParams = {
   date?: string | string[];
   view?: string | string[];
@@ -548,7 +569,11 @@ export async function PlacementCalendarWorkspace({
       if (error instanceof AuthorizationError) throw error;
       return null;
     });
-  const response = loadedResponse ?? {
+  const mainSnapshot=audience==="TPO"?preserveTpoCalendarEvents(
+    JSON.stringify([context.user.id,collegeId,window.from,window.to,
+      state.company,state.kind,state.roundKind,state.kinds]),
+    loadedResponse,now):{value:loadedResponse,stale:false};
+  const response = mainSnapshot.value ?? {
     from: window.from, to: window.to,
     events: [], days: [], summary: summarizePlacementCalendar([], now),
   };
@@ -701,7 +726,7 @@ export async function PlacementCalendarWorkspace({
       />
 
       {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
-        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
+        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {mainSnapshot.stale ? "This refresh failed. Showing the last successful calendar events for this account and filter (up to 15 minutes old)." : needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
       </Banner>:null}
 
       {calendarFollowupsWritable ? (
