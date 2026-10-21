@@ -142,7 +142,7 @@ export default async function MentorTaskReviewsPage({
             description={data.total > 0
               ? "This page is outside the matching result range. Return to page 1."
               : "No submitted tasks currently need review in your assigned projects. Older reviewed submissions are not pending."}
-            action={data.total === 0 ? <Link href={hasFilters ? "/mentor/task-reviews" : "/mentor/task-review-history"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">{hasFilters ? "Clear filters" : "Reviewed task history"}</Link> : undefined} />
+            action={data.total === 0 ? <Link href={hasFilters ? "/mentor/task-reviews" : "/mentor/task-review-history"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{hasFilters ? "Clear filters" : "Reviewed task history"}</Link> : undefined} />
         : <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <article key={item.id} className="py-[var(--lms-space-3)]">
             <p className="text-sm font-semibold text-foreground leading-[22px]">{item.taskTitle}</p>
