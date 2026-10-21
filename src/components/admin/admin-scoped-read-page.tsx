@@ -60,8 +60,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    <div className="flex items-start gap-3">
     <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" className="mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>
     <div className="min-w-0 space-y-1">
-     <strong className="block font-semibold">Select a college to continue</strong>
-     <p>{title==="Faculty Assignments"?"Choose a college in the header above to see its faculty assignments.":title==="Registered Faculty"?"Choose a college in the header above to see its faculty.":title==="Registered Students"?"Choose a college in the header above to see its students.":"Choose a college in the header above to continue."}</p>
+     <strong className="block font-semibold">{title==="Registered Students"?"Select a College to manage Learners":title==="Registered Faculty"?"Select a College to manage Faculty":"Select a college to continue"}</strong>
+     <p>{title==="Registered Students"?"Learners are treated as college-scoped in Superadmin to prevent cross-tenant edits.":title==="Registered Faculty"?"Faculty is treated as college-scoped in Superadmin to prevent cross-tenant edits.":title==="Faculty Assignments"?"Choose an Organization + College in the header above to view faculty assignments.":title.includes("Analytics")?"Hiring metrics are college-scoped. Pick an Organization + College in the header above.":"Choose a college in the header above to continue."}</p>
     </div>
    </div>
   </Alert>
@@ -71,10 +71,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   .catch(()=>({ok:false as const}));
  if(!directory.ok)return <div className="min-w-0 space-y-5">
   {heading("Super Admin")}
-  <ErrorState title="Directory unavailable"
-   description="The selected college's directory could not be loaded. Your filters have not changed."
-   action={<Link href={superAdminReadHref(path,parsed.data)}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry loading directory</Link>}/>
+  <Alert tone="error" title={title==="Registered Students"?"Could not load student roster":title==="Registered Faculty"?"Could not load faculty":title==="Faculty Assignments"?"Could not load faculty assignments":"Could not load directory"}>
+   <div className="flex flex-wrap items-center justify-between gap-3">
+    <p>The selected college&apos;s records could not be loaded. Your filters have not changed.</p>
+    <Link href={superAdminReadHref(path,parsed.data)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
+   </div>
+  </Alert>
  </div>;
  const data=directory.value;
  const directoryKind=peopleFilters?.kind??(title==="Registered Students"?"LEARNER":title==="Registered Faculty"?"FACULTY":null);
@@ -90,8 +92,9 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   const match=facultyTypes.find(([code])=>code===raw.toUpperCase().replace(/ /g,"_"));
   return match?.[1]??humanStatus(raw);
  };
- const filtersActive=Boolean(data.query.status!=="ALL"||data.query.departmentId||
+ const structuredFiltersActive=Boolean(data.query.status!=="ALL"||data.query.departmentId||
   data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType);
+ const filtersActive=structuredFiltersActive||Boolean(data.query.q);
  const clearFilterHref=superAdminReadHref(path,{...data.query,status:"ALL",page:1,
   departmentId:undefined,programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined});
  const clearSearchHref=superAdminReadHref(path,{...data.query,q:"",page:1});
@@ -99,7 +102,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.sectionId||data.query.cohortId||data.query.programId?"No students match these filters.":"No students found. Register students to get started."):
   directoryKind==="FACULTY"?
   (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.employmentType?"No faculty match these filters.":"No faculty found. Register faculty members to get started."):
-  title==="Faculty Assignments"?"No assignments found.":"No matching records";
+  title==="Faculty Assignments"?(data.query.q||data.query.sectionId||data.query.status!=="ALL"?"No assignments match these filters.":"No faculty assignments found."):"No matching records";
  // Explicit legacy headings restore navigable columns while the authorized
  // server directory continues to own filtering, identity and pagination.
  const teachingRoleLabel=(value:string)=>value==="PRIMARY"?"Primary Instructor":
@@ -283,7 +286,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </form>
   {directoryKind&&filtersActive?<div className="flex flex-wrap items-center gap-3 print:hidden">
     <span className="text-xs text-muted-foreground">Filters applied within your selected college</span>
-    <Link href={clearFilterHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear filters</Link>
+    {structuredFiltersActive?<Link href={clearFilterHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear filters</Link>:null}
     {data.query.q?<Link href={clearSearchHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear Search</Link>:null}
    </div>:null}
 
@@ -299,7 +302,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{title==="Registered Faculty"?data.total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
@@ -307,7 +310,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{title==="Registered Faculty"?data.total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
   {compactReadLayout?<>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
@@ -335,7 +338,10 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </> : scopedColumns?<>
    {title==="Faculty Assignments"?<h2 className="text-lg font-semibold">Current teaching assignments</h2>:null}
     <DataTable columns={scopedColumns} rows={data.items} getRowKey={row=>row.id}
-      caption={title} empty={<EmptyState title={emptyRosterTitle} description="Try changing the search or filters to see other records."/>}/>
+      caption={title} mobileMode="scroll" className="min-w-0 text-[13px]"
+      empty={<EmptyState title={emptyRosterTitle}
+       description={directoryKind==="LEARNER"&&!filtersActive?"Register students to get started.":"Try changing the search or filters to see other records."}
+       action={filtersActive?<Link href={path} className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>
     {data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.employmentType||data.query.sectionId?
      <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear Search</Link>:null}
