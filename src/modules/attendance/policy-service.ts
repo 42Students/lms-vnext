@@ -220,3 +220,45 @@ export async function updateCollegeAttendancePolicyField(context:RequestContext,
     return {policy:updated,hasCollegeOverride:true,changed:true};
   });
 }
+
+/** Delete the ENTIRE college override, unlike updating an individual field
+ * to the numeric default. Both values are compared under the same policy
+ * advisory lock before resetting inheritance; the change is audited.
+ */
+export async function resetCollegeAttendancePolicyOverride(context:RequestContext,raw:unknown){
+ const input=z.strictObject({
+  collegeId:z.string().uuid(),
+  expectedCorrectionWindowHours:z.number().int().min(1).max(8760),
+  expectedEligibilityThresholdPercent:z.number().int().min(1).max(100),
+  confirmed:z.literal(true),
+ }).parse(raw);
+ const college=await requireAttendanceCollege(context,input.collegeId);
+ return getDb().transaction(async tx=>{
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${"attendance-policy:"+college.id}))`);
+  const [stored]=await tx.select({
+   correctionWindowHours:attendancePolicies.correctionWindowHours,
+   eligibilityThresholdPercent:attendancePolicies.eligibilityThresholdPercent,
+  }).from(attendancePolicies).where(eq(attendancePolicies.collegeId,college.id))
+   .for("update").limit(1);
+  const before=stored??DEFAULT_ATTENDANCE_POLICY;
+  if(before.correctionWindowHours!==input.expectedCorrectionWindowHours||
+     before.eligibilityThresholdPercent!==input.expectedEligibilityThresholdPercent)
+   throw new CoursesServiceError("ATTENDANCE_STALE_VERSION");
+  if(!stored)return {policy:DEFAULT_ATTENDANCE_POLICY,hasCollegeOverride:false,changed:false};
+  await tx.delete(attendancePolicies).where(eq(attendancePolicies.collegeId,college.id));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:context.user.id,
+   actorMembershipId:context.membership?.collegeId===college.id?context.membership.id:null,
+   module:"COURSES",eventType:"ATTENDANCE_POLICY_UPDATED",
+   subjectType:"attendance_policy",subjectId:college.id,
+   summary:"Attendance policy reset to default",
+   metadata:{
+    action:"RESET_COLLEGE_OVERRIDE",
+    before,after:DEFAULT_ATTENDANCE_POLICY,
+   },
+   occurredAt:new Date(),
+  });
+  return {policy:DEFAULT_ATTENDANCE_POLICY,hasCollegeOverride:false,changed:true};
+ });
+}
