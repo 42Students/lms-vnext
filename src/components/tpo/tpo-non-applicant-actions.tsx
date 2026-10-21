@@ -10,7 +10,7 @@ type Student={membershipId:string;displayName:string|null};
 type Role={id:string;title:string};
 export function TpoNonApplicantActions({jobId,roles,students,canAdd,reminder}:{
  jobId:string;roles:readonly Role[];students:readonly Student[];
- canAdd:boolean;reminder:{previewToken:string|null;count:number;allowed:boolean;alreadySent:boolean};
+ canAdd:boolean;reminder:{previewToken:string|null;count:number;allowed:boolean;alreadySent:boolean;reason?:string|null};
 }){
  const router=useRouter(),locked=useRef(false);
  const [roleId,setRoleId]=useState(roles[0]?.id??"");
@@ -67,7 +67,10 @@ export function TpoNonApplicantActions({jobId,roles,students,canAdd,reminder}:{
     Remind {reminder.count} not-applied student(s)
    </Button>
   </div>
-  <p className="text-xs text-muted-foreground">Reminders are at most once per IST day for this drive and are deduplicated in the database.</p>
+  <p className="text-xs text-muted-foreground">Reminders are limited to once per 20 hours for this drive and deduplicated in the database.</p>
+  {reminder.reason?<p role="status" className="text-sm text-muted-foreground">
+   Reminder unavailable: {reminder.reason}
+  </p>:null}
   <div className="min-w-0 overflow-x-auto border border-border">
    <table className="w-full min-w-[420px] text-left text-sm">
     <thead><tr className="border-b border-border">

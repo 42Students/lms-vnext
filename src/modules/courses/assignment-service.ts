@@ -236,7 +236,14 @@ export async function getCourseAssignmentForAdmin(context:RequestContext,assignm
  const [submissions]=await getDb().select({total:sql<number>`count(*)::integer`})
   .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId));
  const submissionCount=Number(submissions?.total??0);
- return {...row,hasSubmissions:submissionCount>0,submissionCount};
+ // Once submissions exist, freeze points, deadline, instructions and methods.
+ // Title and display order remain editable without changing learner work.
+ const editableFields=submissionCount>0?["title","sequence"] as const:
+   ["title","description","dueAt","maxPoints","allowedMethods","sequence"] as const;
+ return {...row,hasSubmissions:submissionCount>0,submissionCount,
+   editableFields,lockedReason:submissionCount>0
+     ?"Submissions received. Points, deadline, instructions and submission methods cannot be changed."
+     :null};
 }
 
 export async function createCourseAssignment(
@@ -342,7 +349,10 @@ export async function updateCourseAssignment(
       if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
       const [submission]=await tx.select({id:assignmentSubmissions.id})
         .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
-      if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
+      // Existing learner submissions lock assessment terms, not harmless metadata.
+      if(submission&&(input.description!==undefined||input.dueAt!==undefined||
+        input.maxPoints!==undefined||input.allowedMethods!==undefined))
+        throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
       if(input.expectedUpdatedAt!==undefined&&new Date(input.expectedUpdatedAt).getTime()!==locked.updatedAt.getTime())
         throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
       return tx.update(courseAssignments)

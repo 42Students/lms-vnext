@@ -8,7 +8,7 @@ const item=z.object({
  points:z.number(),
  sequence:z.number(),
  options:z.array(z.object({
-  text:z.string(),correct:z.boolean().optional(),sequence:z.number(),
+  id:z.string().uuid().optional(),text:z.string(),correct:z.boolean().optional(),sequence:z.number(),
  }).passthrough()),
 }).passthrough();
 const detailSchema=z.object({quiz:z.object({questions:z.array(item)}).passthrough()}).passthrough();
@@ -19,7 +19,7 @@ export function facultyAuthoringQuestionsFromResponse(input:unknown){
  return [...parsed.quiz.questions].sort((a,b)=>a.sequence-b.sequence).map((q,i)=>({
   type:q.type,prompt:q.prompt,points:q.points,sequence:i,
   options:[...q.options].sort((a,b)=>a.sequence-b.sequence).map((option,j)=>({
-   text:option.text,correct:option.correct??false,sequence:j,
+   id:option.id,text:option.text,correct:option.correct??false,sequence:j,
   })),
  }));
 }

@@ -34,7 +34,8 @@ export default async function TpoRegisteredNonApplicants({
   <TpoNonApplicantActions jobId={jobId} roles={result.roles}
    students={result.students} canAdd={result.canAdd}
    reminder={{previewToken:reminder.previewToken,count:reminder.count,
-    allowed:reminder.allowed,alreadySent:reminder.alreadySent}}/>
+    allowed:reminder.allowed,alreadySent:reminder.alreadySent,
+    reason:reminder.reason}}/>
   {!result.students.length?<EmptyState title="No registered, eligible students awaiting an application"
    description="Every currently eligible registered student has applied, or none are available for this page."/>:null}
   <nav aria-label="Non-applicant pages" className="flex flex-wrap items-center justify-between gap-3">
