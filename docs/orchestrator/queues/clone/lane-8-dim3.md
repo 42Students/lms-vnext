@@ -88,16 +88,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/admin/tenant-settings-editor.tsx`
 - [x] `src/components/courses/college-learning-directory.tsx`
 - [x] `src/components/courses/faculty-live-class-editor.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/project-create-control.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/shell/topbar/tpo-notification-cluster.tsx`
-- [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-mobile-footer.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/project-create-control.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/shell/topbar/tpo-notification-cluster.tsx`
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`
+- [x] `src/components/tpo/tpo-mobile-footer.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
