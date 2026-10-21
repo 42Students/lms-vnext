@@ -92,6 +92,7 @@ async function loadSprint(
       and(
         eq(projectSprints.id, sprintId),
         eq(projectSprints.projectId, projectId),
+        isNull(projectSprints.deletedAt),
       ),
     )
     .limit(1);
@@ -178,6 +179,7 @@ export async function startProjectSprint(
           and(
             eq(projectSprints.id, sprintId),
             eq(projectSprints.projectId, scope.project.id),
+            isNull(projectSprints.deletedAt),
           ),
         )
         .for("update")
@@ -204,6 +206,7 @@ export async function startProjectSprint(
               scope.project.id,
             ),
             eq(projectSprints.status, "ACTIVE"),
+            isNull(projectSprints.deletedAt),
             ne(projectSprints.id, sprint.id),
           ),
         )
@@ -310,6 +313,7 @@ export async function completeProjectSprint(
         and(
           eq(projectSprints.id, sprintId),
           eq(projectSprints.projectId, scope.project.id),
+          isNull(projectSprints.deletedAt),
         ),
       )
       .for("update")
@@ -418,6 +422,7 @@ export async function reopenProjectSprint(
           and(
             eq(projectSprints.id, sprintId),
             eq(projectSprints.projectId, scope.project.id),
+            isNull(projectSprints.deletedAt),
           ),
         )
         .for("update")
@@ -459,6 +464,7 @@ export async function reopenProjectSprint(
           and(
             eq(projectSprints.projectId, scope.project.id),
             eq(projectSprints.status, "ACTIVE"),
+            isNull(projectSprints.deletedAt),
             ne(projectSprints.id, sprint.id),
           ),
         )
@@ -559,7 +565,8 @@ export async function updateProjectTaskStatus(
 
     const [sprint] = await tx.select({ status: projectSprints.status })
       .from(projectSprints)
-      .where(and(eq(projectSprints.id, candidate.sprintId), eq(projectSprints.projectId, scope.project.id)))
+      .where(and(eq(projectSprints.id, candidate.sprintId), eq(projectSprints.projectId, scope.project.id),
+        isNull(projectSprints.deletedAt)))
       .for("update").limit(1);
     if (!sprint || sprint.status !== "ACTIVE") {
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
@@ -677,6 +684,7 @@ export async function unshipProjectRelease(
         and(
           eq(projectSprints.projectId, scope.project.id),
           eq(projectSprints.releaseId, release.id),
+          isNull(projectSprints.deletedAt),
           ne(projectSprints.status, "PLANNED"),
         ),
       )
@@ -792,6 +800,7 @@ export async function shipProjectRelease(
       .where(and(
         eq(projectSprints.projectId, scope.project.id),
         eq(projectSprints.releaseId, release.id),
+      isNull(projectSprints.deletedAt),
       ))
       .limit(1);
     if (!firstSprint) {
@@ -805,6 +814,7 @@ export async function shipProjectRelease(
         and(
           eq(projectSprints.projectId, scope.project.id),
           eq(projectSprints.releaseId, release.id),
+          isNull(projectSprints.deletedAt),
           ne(projectSprints.status, "COMPLETED"),
         ),
       )
