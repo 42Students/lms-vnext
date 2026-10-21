@@ -91,7 +91,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     <Input type="search" autoComplete="off" disabled={pending} placeholder="Pick colleges"
      value={collegeSearch} onChange={e=>setCollegeSearch(e.target.value)}/>
    </label>
-   {selected.length>0?<div className="flex flex-wrap gap-2" aria-label="Picked placement cells">
+   {selected.length>0?<div role="group" className="flex flex-wrap gap-2" aria-label="Picked placement cells">
     {selected.map(id=><Button type="button" size="sm" variant="secondary" disabled={pending} key={id}
      onClick={()=>{setAudienceTouched(true);setSelected(prev=>prev.filter(item=>item!==id));}}
      aria-label={"Remove "+(colleges.find(row=>row.id===id)?.label??"placement cell")}>

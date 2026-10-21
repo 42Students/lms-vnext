@@ -774,12 +774,12 @@ export function FacultyAttendanceWorkspace({
               ) : <Button type="button" variant="secondary" disabled aria-label="Download Report unavailable with no attendance data">Download Report</Button>}
                 </div>
               </div>
-              <p className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" aria-label="Attendance legend">
+              <div role="group" className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" aria-label="Attendance legend">
                 <StatusBadge tone="success">P = Present</StatusBadge>
                 <StatusBadge tone="error">A = Absent</StatusBadge>
                 <StatusBadge tone="warning">— = Not marked yet</StatusBadge>
                 <StatusBadge tone="neutral">✖ = No class</StatusBadge>
-              </p>
+              </div>
               <Table scrollLabel="Faculty attendance monthly grid" className="min-w-[48rem]">
                 <caption className="sr-only">Attendance by student and day for {monthLabel}</caption>
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
