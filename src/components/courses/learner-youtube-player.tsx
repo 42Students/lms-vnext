@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
+import {StatusBadge} from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
   getYouTubeVideoId,
@@ -154,6 +155,7 @@ export function LearnerYouTubePlayer({
 
   const videoId =
     getYouTubeVideoId(externalUrl);
+  const missingResource=!externalUrl.trim();
 
   useEffect(() => {
     mountedRef.current = true;
@@ -438,10 +440,12 @@ export function LearnerYouTubePlayer({
     readOnly,
   ]);
 
+  // An unpublished legacy content row with no URL has nothing to embed.
+  if(missingResource)return null;
   if (!videoId) {
     return (
       <div className="mt-4 space-y-2">
-        <Alert tone="error">This YouTube URL cannot be played inline.</Alert>
+        <Alert tone="error">Video unavailable. It may be region-blocked or removed.</Alert>
         <a
           href={externalUrl}
           
@@ -465,16 +469,13 @@ export function LearnerYouTubePlayer({
       </div>
 
       <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-        <span>
-          {readOnly
-            ? "Past semester · progress is read only"
-            : isCompleted
-              ? "Completed"
-              : ready
-              ? "Resume saved automatically"
-              : loadFailed
-                  ? "Inline player unavailable"
-                  : "Loading player…"}
+        <span className="flex flex-wrap items-center gap-2">
+          <StatusBadge tone={isCompleted?"success":savedSeconds>0?"info":"neutral"}>
+            {isCompleted?"Completed":savedSeconds>0?"In progress":"Not started"}
+          </StatusBadge>
+          {readOnly?"Past semester · progress is read only":
+           ready?"Resume saved automatically":
+           loadFailed?"Video unavailable. It may be region-blocked or removed.":"Loading player…"}
         </span>
         <span>
           Saved at{" "}
@@ -485,6 +486,9 @@ export function LearnerYouTubePlayer({
         </span>
       </div>
 
+      {loadFailed ? (
+        <Alert tone="warning" className="mt-2">Video unavailable. It may be region-blocked or removed.</Alert>
+      ) : null}
       {loadFailed ? (
         <a
           href={externalUrl}
