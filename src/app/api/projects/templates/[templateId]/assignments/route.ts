@@ -127,8 +127,8 @@ export async function GET(_request:Request,{params}:RouteContext){
  try{
   const {templateId}=await params;
   const context=await getCurrentRequestContext();
-  requirePermission(context,"project-template.manage");
-  if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+  requirePermission(context,"project-template.assign");
+  if(context.adminScope?.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const detail=await getProjectTemplateDetail(context,templateId);
   return NextResponse.json({
