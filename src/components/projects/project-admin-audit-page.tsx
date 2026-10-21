@@ -309,7 +309,7 @@ export async function ProjectAdminAuditPage({
             /archive|delete|revoke|remove|unassign/i.test(g.latest.event.eventType))
             .reduce((sum,g)=>sum+g.count,0)},
         ]).map(item=><div key={item.label} className="p-4">
-          <p className="text-xs font-semibold text-muted-foreground">{item.label}</p>
+          <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{item.label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
         </div>)}
       </section>
@@ -338,7 +338,7 @@ export async function ProjectAdminAuditPage({
         }
       />
 
-      <p className="text-xs leading-5 text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[20px]">
         This view reflects persisted vNext Project activity events. Legacy-only audit actions remain tracked as W03 parity work until their producers are implemented against the shared activity taxonomy.
       </p>
     </div>

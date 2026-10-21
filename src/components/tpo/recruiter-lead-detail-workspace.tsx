@@ -449,24 +449,24 @@ export function RecruiterLeadDetailWorkspace({
               {lead.notNowUntil ? " Revisit on " + new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(lead.notNowUntil+"T12:00:00+05:30")) : ""}
             </div>
           ) : null}
-          {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">{actionToast}</p>:null}
-          {actionError ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-destructive">{actionError}</p> : null}
+          {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm leading-[22px]">{actionToast}</p>:null}
+          {actionError ? <p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-destructive leading-[22px]">{actionError}</p> : null}
 
           {lead.companyName?<Disclosure title="Company" ariaLabel="Company" className="border-b border-border py-3">
              <section aria-label="Company" className="min-w-0 space-y-2">
-             <p className="mt-2 text-sm font-medium">{lead.companyName}</p>
+             <p className="mt-2 text-sm font-medium leading-[22px]">{lead.companyName}</p>
              {companySummary?<div className="mt-3 space-y-2 text-sm text-body">
                <p>{companySummary.drivesRan} drives that ran · {companySummary.acceptedOfferDrives} accepted-offer drives</p>
-               <p className="text-xs text-muted-foreground">Applied and offers below are stored drive counts, not verified placements.</p>
+               <p className="text-xs text-muted-foreground leading-[20px]">Applied and offers below are stored drive counts, not verified placements.</p>
                <ul className="space-y-1">
                  {companySummary.drives.slice(0,5).map(drive=><li key={drive.id}>
                    <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
                    {" · "+drive.applied+" applied · "+drive.offers+" offers"}
                  </li>)}
                </ul>
-             </div>:companyError?<p role="status" className="mt-2 text-xs text-warning">{companyError}</p>:
-               <p role="status" className="mt-2 text-xs text-muted-foreground">Loading company drives…</p>}
-             <p className="mt-1 text-xs text-muted-foreground">
+             </div>:companyError?<p role="status" className="mt-2 text-xs text-warning leading-[20px]">{companyError}</p>:
+               <p role="status" className="mt-2 text-xs text-muted-foreground leading-[20px]">Loading company drives…</p>}
+             <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
              <Link href={"/tpo/companies?name="+encodeURIComponent(lead.companyName)}
@@ -477,7 +477,7 @@ export function RecruiterLeadDetailWorkspace({
            </Disclosure>:null}
            <div className="grid min-w-0 gap-5 lg:grid-cols-2">
             <section className="space-y-3 border-b border-border py-5">
-              <h2 className="text-lg font-semibold">Contact</h2>
+              <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Contact</h2>
               <dl className="space-y-3 text-sm [&_dd]:min-w-0 [&_dd]:break-words">
                 <div><dt className="text-muted-foreground">Email</dt>
                   <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{lead.emailNorm}</a>
@@ -502,12 +502,12 @@ export function RecruiterLeadDetailWorkspace({
                   >
                     {lead.inviteSentAt ? "Create new invite link" : "Create invite link"}
                   </Button>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-muted-foreground leading-[20px]">
                     The link expires after seven days. Creating a new link invalidates the previous one.
                     Automatic email delivery is not available; use the email draft or copy the message.
                   </p>
                   {lead.unsubscribedAt||lead.manualStage==="NOT_NOW"?
-                    <p role="status" className="text-xs text-warning">This person said they are not hiring from your college this season or unsubscribed.</p>:null}
+                    <p role="status" className="text-xs text-warning leading-[20px]">This person said they are not hiring from your college this season or unsubscribed.</p>:null}
                   {inviteLink ? (
                     <label className="block text-[length:var(--lms-font-sm)] leading-4 font-semibold">
                       Invite link
@@ -520,7 +520,7 @@ export function RecruiterLeadDetailWorkspace({
                     </label>
                   ) : null}
                   {inviteMessage ? <div className="space-y-2">
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-muted-foreground leading-[20px]">
                       Valid until {formatDateTimeIst(inviteExpiresAt)}.
                     </p>
                     <label className="block text-[length:var(--lms-font-sm)] leading-4 font-semibold">Invitation preview
@@ -548,11 +548,11 @@ export function RecruiterLeadDetailWorkspace({
                     </div>
                   </div>:null}
                   {inviteNotice ? (
-                    <p role="status" className="text-xs text-muted-foreground">{inviteNotice}</p>
+                    <p role="status" className="text-xs text-muted-foreground leading-[20px]">{inviteNotice}</p>
                   ) : null}
                 </div>
               ) : (
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground leading-[20px]">
                   {lead.recruiterUserId
                     ? "This contact is already linked to a recruiter account."
                     : "Invitation not available."}
@@ -561,7 +561,7 @@ export function RecruiterLeadDetailWorkspace({
             </section>
 
             <section className="space-y-4 border-b border-border py-5">
-              <h2 className="text-lg font-semibold">Log activity</h2>
+              <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Log activity</h2>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
                   {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
@@ -615,12 +615,12 @@ export function RecruiterLeadDetailWorkspace({
                     </li>
                   ))}
                 </ol>
-              ) : <p className="text-sm text-muted-foreground">Nothing logged yet. A call, email, meeting or note logged above shows up here.</p>}
+              ) : <p className="text-sm text-muted-foreground leading-[22px]">Nothing logged yet. A call, email, meeting or note logged above shows up here.</p>}
             </section>
           </div>
 
           <section className="space-y-4 border-b border-border py-5">
-            <h2 className="text-lg font-semibold">Follow-ups</h2>
+            <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Follow-ups</h2>
             <form className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] lg:items-end"
               onSubmit={e => void addFollowup(e)}>
               <div className="flex min-w-0 flex-wrap gap-2 sm:col-span-2 lg:col-span-3">
@@ -663,7 +663,7 @@ export function RecruiterLeadDetailWorkspace({
                   </li>
                 ))}
               </ul>
-            ) : <p className="text-sm text-muted-foreground">No next step yet. Add a follow-up above.</p>}
+            ) : <p className="text-sm text-muted-foreground leading-[22px]">No next step yet. Add a follow-up above.</p>}
           </section>
 
           <Dialog open={editing && confirmation===null} onOpenChange={next=>{if(!next)closeEdit();}}
@@ -684,7 +684,7 @@ export function RecruiterLeadDetailWorkspace({
                   </Select>
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
-                {duplicateLead?<p role="status" className="text-sm">
+                {duplicateLead?<p role="status" className="text-sm leading-[22px]">
                  Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
                   className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open {duplicateLead.name}</Link>
                 </p>:null}

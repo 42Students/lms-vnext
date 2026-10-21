@@ -85,8 +85,8 @@ export async function ProjectAdminReassignMentorPage({
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
               className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
               <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
-              <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
-              <p className="text-sm">{row.atRisk} at risk</p>
+              <p className="text-sm leading-[22px]">{row.activeWorkspaces} active workspaces</p>
+              <p className="text-sm leading-[22px]">{row.atRisk} at risk</p>
               {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
                 <StatusBadge tone="warning">Overloaded</StatusBadge> : null}
             </Link>;
@@ -107,7 +107,7 @@ export async function ProjectAdminReassignMentorPage({
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9">Find mentor</Button>
         {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-[650] text-[var(--lms-link-text)] hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:underline">Clear mentor search</Link>:null}
-        <p className="min-w-0 text-xs text-muted-foreground md:col-span-full">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
+        <p className="min-w-0 text-xs text-muted-foreground md:col-span-full leading-[20px]">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
       </form>
       <div className="min-w-0"><ProjectAdminFilters query={query} /></div>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]">
