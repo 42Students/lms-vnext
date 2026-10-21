@@ -70,10 +70,10 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
     {results?<section className="space-y-4 border-b border-border pb-4 md:pb-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0"><h2 className="break-words font-semibold text-lg leading-7 text-[var(--lms-heading)]">{results.round.name}</h2>
-        <p className="mt-1 text-sm text-body">{results.round.kind} · {counts?.all??0} eligible, shared candidates</p></div>
+        <p className="mt-1 text-sm text-body leading-[22px]">{results.round.kind} · {counts?.all??0} eligible, shared candidates</p></div>
         <StatusBadge tone={results.round.status==="APPLIED"?"success":results.round.status==="STAGED"?"warning":"neutral"}>{results.round.status}</StatusBadge>
       </div>
-      {results.round.kind==="TALK"?<p className="text-sm text-muted-foreground">Informational rounds do not collect outcomes.</p>:<>
+      {results.round.kind==="TALK"?<p className="text-sm text-muted-foreground leading-[22px]">Informational rounds do not collect outcomes.</p>:<>
        <Tabs renderPanel={false} ariaLabel="Outcome" value={query.data.outcome}
         items={filters.map(filter=>({value:filter,label:filter.replaceAll("_"," "),count:countValues[filter],
           href:recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:filter})}))}/>
@@ -84,7 +84,7 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
            scorePercent:row.scorePercent,waitlistRank:row.waitlistRank,
          }))}
        />:<EmptyState title="No matching candidates" description="No shared candidates match this outcome." action={<Link href={recruiterResultTableHref({jobId:workspace.job.id,roundId:results.round.id,outcome:"ALL"})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">ALL</Link>}/>}
-       <p className="text-xs text-muted-foreground">STAGED results are awaiting placement-cell review; APPLIED results are recorded decisions. This read-only table does not submit or notify applicants.</p>
+       <p className="text-xs text-muted-foreground leading-5">STAGED results are awaiting placement-cell review; APPLIED results are recorded decisions. This read-only table does not submit or notify applicants.</p>
       </>}
     </section>:null}
    </>}

@@ -54,7 +54,7 @@ export default async function CollegeProjectTemplatesPage({
   const columns:DataTableColumn<(typeof visible)[number]>[]=[
     {key:"template",header:"Template",mobilePriority:"primary",cell:template=><div>
       <p className="font-semibold">{template.title}</p>
-      {template.summary?<p className="mt-1 max-w-lg text-xs text-muted-foreground">{template.summary}</p>:null}
+      {template.summary?<p className="mt-1 max-w-lg text-xs text-muted-foreground leading-5">{template.summary}</p>:null}
     </div>},
     {key:"version",header:"Version",cell:template=><StatusBadge tone="neutral">Version {template.version}</StatusBadge>},
     {key:"sections",header:"Sections",cell:template=>{

@@ -30,7 +30,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
   const columns:DataTableColumn<(typeof data.items)[number]>[]=[
     {key:"round",header:"Round",mobilePriority:"primary",cell:item=><div>
       <p className="font-semibold">{item.name}</p>
-      <p className="text-xs text-muted-foreground">{item.kind} · Round {item.sequence}</p>
+      <p className="text-xs text-muted-foreground leading-5">{item.kind} · Round {item.sequence}</p>
     </div>},
     {key:"time",header:"Time",cell:item=>driveRoundTime(item.scheduledAt,item.timezone)},
     {key:"venue",header:"Venue",cell:item=>item.venue??"Not recorded"},
@@ -60,7 +60,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
       candidates={appointments.candidates} appointments={appointments.interviews}
       preferredApplicationId={query.applicationId}/>
     <section aria-label="Persisted interview rounds" className="space-y-2">
-      <p role="status" className="text-sm text-body">{data.total} matching interview/GD rounds</p>
+      <p role="status" className="text-sm text-body leading-[22px]">{data.total} matching interview/GD rounds</p>
       <DataTable caption="Persisted interview rounds" columns={columns} rows={data.items}
         getRowKey={item=>item.id} empty={<EmptyState title="No matching interview rounds" description={data.total===0?"No persisted interview or GD rounds match these filters.":"No rows on this page; select an earlier page."} action={<Link href={data.total===0?driveInterviewsHref(jobId,{...query,kind:"ALL",status:"ALL",page:1}):driveInterviewsHref(jobId,{...query,page:Math.max(1,query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear filters":"Previous page"}</Link>}/>} />
     </section>
@@ -70,7 +70,7 @@ export default async function CollegeDriveInterviewsPage({params,searchParams}:{
         {query.page<data.totalPages?<Link href={driveInterviewsHref(jobId,{...query,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link hover:underline md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
       </div>
     </nav>
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       Interview appointments use the registered candidate-slot schedule. Confirmed outcomes are stored as immutable audit events.
     </p>
   </div>;

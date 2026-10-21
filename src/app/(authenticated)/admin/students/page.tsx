@@ -73,7 +73,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       <h2 id="bulk-register-students-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Bulk Register Students</h2>
       <SuperAdminStudentImportHistory runs={importRuns}/>
     </div>
-    <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
+    <p className="text-sm text-body leading-[22px]">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
     <details className="min-w-0">
       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Show CSV import form</summary>
       <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>

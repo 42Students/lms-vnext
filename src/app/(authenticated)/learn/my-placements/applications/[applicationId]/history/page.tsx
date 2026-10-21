@@ -44,7 +44,7 @@ export default async function LearnerApplicationHistoryPage({
       />
       <section className="border-b border-border py-4 sm:py-6">
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status history</h2>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
+        <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">
           Only recorded application status changes are shown. Screening
           and round decisions remain in your application details.
         </p>
@@ -55,12 +55,12 @@ export default async function LearnerApplicationHistoryPage({
             {history.events.map((event) => (
               <li key={event.id} className="min-w-0 py-3 first:pt-0 last:pb-0 sm:py-4">
                 <div className="flex min-w-0 flex-col gap-1 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-                  <p className="m-0 min-w-0 break-words text-sm font-semibold text-foreground">{event.label}</p>
+                  <p className="m-0 min-w-0 break-words text-sm font-semibold text-foreground leading-[22px]">{event.label}</p>
                   <time className="shrink-0 text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>
                     {dateInIst(event.occurredAt)}
                   </time>
                 </div>
-                <p className="mt-2 text-sm text-body">
+                <p className="mt-2 text-sm text-body leading-[22px]">
                   {event.fromStatus
                     ? event.fromStatus.replaceAll("_", " ") + " → "
                     : "Initial status: "}
@@ -70,7 +70,7 @@ export default async function LearnerApplicationHistoryPage({
             ))}
           </ol>
         )}
-        <p className="mt-4 text-xs text-muted-foreground">
+        <p className="mt-4 text-xs text-muted-foreground leading-5">
           Internal actor identifiers and private change notes are not shown.
         </p>
       </section>

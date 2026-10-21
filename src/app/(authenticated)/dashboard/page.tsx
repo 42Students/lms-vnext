@@ -54,13 +54,13 @@ function MetricCard({
 }) {
   const content = (
     <>
-      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+      <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground leading-5">
         {label}
       </p>
       <p className="mt-2 break-words text-2xl font-semibold tracking-tight tabular-nums text-foreground min-[768px]:text-3xl">
         {value}
       </p>
-      <p className="mt-2 break-words text-sm leading-6 text-body">
+      <p className="mt-2 break-words text-sm leading-[22px] text-body">
         {description}
       </p>
     </>
