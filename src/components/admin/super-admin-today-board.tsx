@@ -8,7 +8,9 @@ import {SUPER_ADMIN_TODAY_LABELS,type SuperAdminTodayMetrics} from "@/modules/co
 /** Scope comes exclusively from the parent dashboard's authenticated server
  * read. Refresh re-executes that read; it never accepts a client college ID. */
 type Metric={title:string;count:number|null;href:string;icon:number;
- tone:"danger"|"warn"|"info";empty:string;detail:string};
+ tone:"danger"|"warn"|"info";empty:string;detail:string;
+ rows?:readonly {primary:string;secondary:string;href?:string}[];
+ moreCount?:number;moreLabel?:string};
 function LegacyAttentionIcon({kind}:{kind:number}){
  return <svg aria-hidden="true" width={19} height={19} viewBox="0 0 24 24"
   fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
@@ -50,6 +52,16 @@ function AttentionCard({item,loading,failed}:{item:Metric;loading:boolean;failed
      Couldn't load this. Refresh to try again.
    </p>:clear?<p className="flex items-start gap-2 text-sm text-[#237804]"><CheckIcon/>{item.empty}</p>:
     <><p className="text-sm text-body leading-5">{item.detail}</p>
+      {item.rows?.length?<ul className="divide-y divide-border border-y border-border text-sm" aria-label={item.title+" preview"}>
+       {item.rows.map((row,index)=><li key={index} className="min-w-0 py-2">
+        {row.href?<Link href={row.href} className="font-semibold text-link underline">
+         {row.primary}</Link>:<strong className="text-[var(--lms-heading)]">{row.primary}</strong>}
+        <p className="mt-1 text-xs leading-5 text-body">{row.secondary}</p>
+       </li>)}
+       {(item.moreCount??0)>0?<li className="py-2 text-xs font-semibold">
+        <Link href={item.href} className="text-link underline">and {item.moreCount} more{item.moreLabel?" "+item.moreLabel:""}</Link>
+       </li>:null}
+      </ul>:null}
       <Link href={item.href} className="inline-flex min-h-9 items-center font-semibold text-link underline">
        {item.icon===0?"Open attendance":item.icon===3?"Faculty assignment":
         item.icon===5?"Quizzes":"Review "+item.title.toLowerCase()}
@@ -62,30 +74,54 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
  const router=useRouter();
  const [refreshing,startRefresh]=useTransition();
  const refreshInFlight=useRef(false);
+ const pendingRows=data?.attendancePendingRows??[];
+ const riskRows=data?.attendanceRiskRows??[];
+ const gradingRows=data?.gradingRows??[];
+ const unstaffedRows=data?.unstaffedRows??[];
+ const quizRows=data?.dueQuizRows??[];
+ const setupRows=data?.setupGapRows??[];
  const metrics:Metric[]=[
   {title:SUPER_ADMIN_TODAY_LABELS[0],count:data?.attendanceNotTaken??null,
    href:"/admin/academics",icon:0,tone:"danger",
    empty:"Every class held in the last 7 days has attendance.",
-   detail:"Elapsed scheduled classes without a marked attendance session. Review the attendance list before treating an ended class as held."},
-  {title:SUPER_ADMIN_TODAY_LABELS[1],count:null,href:"/admin/academics",
-   icon:1,tone:"danger",empty:"No student is under 75% in the last 30 days.",
-   detail:"Attendance-at-risk totals have not yet been supplied by the current college-scoped Today service."},
-  {title:SUPER_ADMIN_TODAY_LABELS[2],count:null,href:"/admin/courses",
+   detail:"Last 7 days · ended scheduled classes with no marked attendance session.",
+   rows:pendingRows.map(row=>({primary:row.title+" · "+row.section,
+    secondary:row.when+" · "+row.faculty})),
+   moreCount:Math.max(0,(data?.attendanceNotTaken??0)-pendingRows.length)},
+  {title:"Under "+(data?.attendanceThreshold??75)+"% attendance",
+   count:data?.attendanceAtRisk??null,href:"/admin/academics",
+   icon:1,tone:"danger",empty:"No student is under "+(data?.attendanceThreshold??75)+"% in the last 30 days.",
+   detail:"Last 30 days · marked sessions only. The rate includes implicit Present attendance.",
+   rows:riskRows.map(row=>({primary:(row.displayName||"Student")+" · "+(row.rollNumber||"No roll number"),
+    secondary:row.percent+"% · "+row.className+" · "+row.held+" held · "+row.absent+" absent"})),
+   moreCount:Math.max(0,(data?.attendanceAtRisk??0)-riskRows.length)},
+  {title:SUPER_ADMIN_TODAY_LABELS[2],count:data?.gradingBacklog??null,href:"/admin/courses",
    icon:2,tone:"warn",empty:"No assignment submission is waiting for a grade.",
-   detail:"The graded submission backlog is not yet available in the current Today service."},
+   detail:"Submitted assignments awaiting grading, grouped by course.",
+   rows:gradingRows.map(row=>({primary:row.course+" ("+row.code+")",
+    secondary:row.pending+" ungraded"+(row.oldest?" · Oldest "+row.oldest:"")})),
+   moreCount:Math.max(0,(data?.gradingBacklog??0)-
+    gradingRows.reduce((total,row)=>total+row.pending,0)),moreLabel:"submissions"},
   {title:SUPER_ADMIN_TODAY_LABELS[3],count:data?.coursesWithoutTeacher??null,
    href:"/admin/courses",icon:3,tone:"warn",
    empty:"Every current-semester course has a teacher for every section.",
-   detail:"Students see these courses without a teacher assigned. Review the current-semester staffing queue."},
-  {title:SUPER_ADMIN_TODAY_LABELS[4],count:null,href:"/admin/academics",
+   detail:"Active section courses missing a primary faculty assignment.",
+   rows:unstaffedRows.map(row=>({primary:row.course,
+    secondary:row.section+" · "+row.semester})),
+   moreCount:Math.max(0,(data?.coursesWithoutTeacher??0)-unstaffedRows.length)},
+  {title:SUPER_ADMIN_TODAY_LABELS[4],count:data?.setupGaps??null,href:"/admin/academics",
    icon:4,tone:"warn",empty:"Batches, sections, students and courses are all connected.",
-   detail:"The full batches, sections, learners and lessons gap register has not yet been supplied by the current service."},
+   detail:"Structure gaps in active batches, sections, learner enrolments and lessons.",
+   rows:setupRows.filter(row=>row.count>0).map(row=>({
+    primary:row.label,secondary:row.count+" need attention",href:row.href})),
+   moreCount:0},
   {title:SUPER_ADMIN_TODAY_LABELS[5],count:data?.quizzesClosingThisWeek??null,
    href:"/admin/courses",icon:5,tone:"info",
    empty:"No quiz closes in the next 7 days.",
-   detail:data?.quizDeadlineLabels?.length?
-    "Upcoming: "+data.quizDeadlineLabels.join("; "):
-    "Quizzes with deadlines this week need a review of learner participation and release settings."},
+   detail:"Published quizzes with deadlines in the next 7 days.",
+   rows:quizRows.map(row=>({primary:row.title+" · "+row.course,
+    secondary:(row.when??"No deadline")+" · "+row.section})),
+   moreCount:Math.max(0,(data?.quizzesClosingThisWeek??0)-quizRows.length)},
  ];
  // Never interpret unknown/null metrics as zero. In particular, an all-clear
  // banner cannot appear while the setup and grading evidence is unavailable.
