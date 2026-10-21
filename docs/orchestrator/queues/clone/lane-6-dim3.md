@@ -4,14 +4,14 @@
 Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/page.tsx`
-- [ ] `src/app/placements/page.tsx`
-- [ ] `src/components/admin/super-admin-placement-oversight-nav.tsx`
-- [ ] `src/components/courses/college-content-aggregate.tsx`
-- [ ] `src/components/placements/drive-day-roster.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/(authenticated)/tracker/page.tsx`
+- [x] `src/app/placements/page.tsx`
+- [x] `src/components/admin/super-admin-placement-oversight-nav.tsx`
+- [x] `src/components/courses/college-content-aggregate.tsx`
+- [x] `src/components/placements/drive-day-roster.tsx`
 - [ ] `src/components/placements/public-recruiter-join-form.tsx`
 - [ ] `src/components/projects/project-admin-submissions-page.tsx`
 - [ ] `src/components/ui/filter-bar.tsx`

@@ -202,7 +202,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
                    visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
                     "Materials: "+(item.materialsCount??"Unavailable")}}/>
                   <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
-                    className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text hover:text-primary-hover hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                    className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                     {item.courseName} ({item.courseCode})
                   </Link>
                   <p className="break-words text-sm text-body">{item.cohortName} · {item.periodName}</p>
