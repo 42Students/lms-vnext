@@ -195,7 +195,7 @@ export default async function TpoReportsPage({
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 sm:w-auto md:min-h-9 text-sm font-[650] text-white hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             Open management view
           </Link>
@@ -289,15 +289,15 @@ export default async function TpoReportsPage({
        <h2 className="font-semibold">Placement journey</h2>
        <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
          <strong className="block">Looking for a job</strong>
          <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
         </Link>
-        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
          <strong className="block">Placed</strong>
          <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
         </Link>
-        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
          <strong className="block">Accepted</strong>
          <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
         </Link>
