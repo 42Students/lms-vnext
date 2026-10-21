@@ -23,6 +23,7 @@ export async function GET(request:Request,{params}:{
   const page=await getProjectActivityPage(await getCurrentRequestContext(),projectId,parsed.data);
   const last=page.events.at(-1);
   return NextResponse.json({
+    message:page.message,
     events:page.events.map(({cursorOccurredAt,...event})=>event),
     hasMore:page.hasMore,
     nextCursor:last&&page.hasMore?{time:last.cursorOccurredAt,id:last.id}:null,
