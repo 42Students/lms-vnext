@@ -677,11 +677,12 @@ export async function PlacementCalendarWorkspace({
      Boolean(item.room&&item.room===other.room)||
      Boolean(item.interviewer&&item.interviewer===other.interviewer)))).length;
   const adminMetricKnown=Boolean(bookings&&(!bookings.failed||bookings.stale));
+  const bookMetric=(count:number):string|number=>bookings?.truncated?count+"+":count;
   const adminMetrics=[
-   ["Scheduled",bookedInterviews.length],
-   ["Today",bookedInterviews.filter(event=>placementCalendarDayKey(new Date(event.startsAt))===today).length],
-   ["Companies",new Set(bookedInterviews.map(event=>event.companyName)).size],
-   ["Conflicts",bookedConflictCount],
+   ["Scheduled",bookMetric(bookedInterviews.length)],
+   ["Today",bookMetric(bookedInterviews.filter(event=>placementCalendarDayKey(new Date(event.startsAt))===today).length)],
+   ["Companies",bookMetric(new Set(bookedInterviews.map(event=>event.companyName)).size)],
+   ["Conflicts",bookMetric(bookedConflictCount)],
   ] as const;
 
   const previous =
