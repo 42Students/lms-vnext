@@ -21,7 +21,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-6_superadmin-sections-lecture-halls.md.md` (new; 21 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_shell_admin-scope-switcher.tsx.md` (edit src/components/shell/admin-scope-switcher.tsx; 17 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_verification_CollegeVerificationPanel.tsx.md` (edit src/components/verification/CollegeVerificationPanel.tsx; 17 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-2_admin-course-bulk-controller.md.md` (new; 16 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-2_admin-course-bulk-controller.md.md` (new; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_app_authenticated_admin_module-access_page.tsx.md` (edit src/app/(authenticated)/admin/module-access/page.tsx; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_modules_placements_college-application-detail-service.ts.md` (edit src/modules/placements/college-application-detail-service.ts; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-8_tpo-applicant-controller.md.md` (new; 14 findings; best P2)
