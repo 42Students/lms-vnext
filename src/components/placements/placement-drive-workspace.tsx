@@ -351,11 +351,11 @@ export async function PlacementDriveWorkspace({
                   className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
                   Export applicants
                 </Link>
-                {<Link
+                <Link
                   href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
                   className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
                   Share with company
-                </Link>}
+                </Link>
                 {["CLOSED","CANCELLED","REJECTED"].includes(job.status)
                   ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
               </div>
@@ -453,7 +453,7 @@ export async function PlacementDriveWorkspace({
         ["Requests","#drive-request-actions"],["Settings",isSuperAdminDrive?driveHref+"/settings":"#draft-drive-editor"],
        ] as const).map(([label,href])=><Link key={label} href={href}
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link hover:bg-primary-subtle md:min-h-9">{label}</Link>)}
-      </nav>
+      </nav>:null}
       {isTpo?<TpoDriveRefreshControl/>:null}
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
