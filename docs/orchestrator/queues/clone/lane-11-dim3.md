@@ -71,23 +71,23 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/tpo/tpo-timed-debar-control.tsx`
 - [x] `src/components/tracker/tracker-issue-saved-views.tsx`
 - [x] `src/components/ui/legacy-overlays.css`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
-- [ ] `src/components/admin/college-at-glance-panel.tsx`
-- [ ] `src/components/college/college-legacy-group-tabs.tsx`
-- [ ] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/projects/project-admin-nav.tsx`
-- [ ] `src/components/shell/learner-topbar-tools.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [x] `src/components/admin/college-at-glance-panel.tsx`
+- [x] `src/components/college/college-legacy-group-tabs.tsx`
+- [x] `src/components/courses/assignment-file-submission-control.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/projects/project-admin-nav.tsx`
+- [x] `src/components/shell/learner-topbar-tools.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/ui/dropdown.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
 - [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
 - [ ] `src/components/academics/college-cohort-management.tsx`
