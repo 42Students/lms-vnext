@@ -1,0 +1,9 @@
+# Learner general placement requests — source bridge (lane 14)
+
+Old StudentRequest BIGINT ID, integer learner/job/application IDs, source type and JSON payload must resolve to a verified college-scoped membership and authorized job/application (or separate specific request domain) before a native placement_learner_general_requests row is created. Never cast source ints directly to UUIDs, merge foreign college records, or inject source payload into current access controls. Existing unique pending target and CAS token remain current-system rules.
+
+Old PENDING/APPROVED/REJECTED/AUTO_APPROVED differ from current PENDING/APPROVED/REJECTED/CANCELLED. Preserve original status as legacyStatus; AUTO_APPROVED may map to APPROVED for presentation only once explicit system decision provenance and idempotent service transition are approved. A nonpending native request requires actual decidedAt/decidedByUserId: **never fake an actor** to satisfy the constraint. CANCELLED is a vNext-only user action and should not be mislabeled as old AUTO_APPROVED.
+
+Source escalateAt is retained as an optional timestamp. An escalation worker should inspect eligible PENDING rows under tenant/recipient locks, recording actions in events; the index alone does not run a scheduler. Legacy free text reason validation (<1000 characters) differs from current 3..2000. Keep native 2000 bound until current rows and client model are reviewed; map exact legacy error copy at the API/UI boundary for legacy-compat workflow, rather than silently cutting stored reasons.
+
+Migration 0233 is an unregistered additive proposal; no data import, escalation or tests executed.
