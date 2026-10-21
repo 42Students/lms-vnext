@@ -87,7 +87,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-task-comments.tsx.md` (edit src/components/projects/project-task-comments.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_task-comment-service.ts.md` (edit src/modules/projects/task-comment-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_app_api_projects_class-team-workspaces_route.ts.md` (edit src/app/api/projects/class-team-workspaces/route.ts; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_admin-insights-service.ts.md` (edit src/modules/projects/admin-insights-service.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_admin-insights-service.ts.md` (edit src/modules/projects/admin-insights-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_template-version-history-service.ts.md` (edit src/modules/projects/template-version-history-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_activity-service.ts.md` (edit src/modules/projects/activity-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-6_l12-u026-project-workspace-controller.md.md` (new; 3 findings; best P1)
