@@ -43,7 +43,9 @@ export default async function FacultyNotificationsPage({
   const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
-  const [page, unreadCount, announcementRead] = await Promise.all([
+  // The legacy inbox keeps college announcements visible when the personal
+  // feed fails. Isolate all three reads, but never swallow permission failures.
+  const [personalRead, countRead, announcementsResult] = await Promise.allSettled([
     invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
@@ -55,13 +57,20 @@ export default async function FacultyNotificationsPage({
     countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context)
-          .then(items => ({ available: true as const, items }))
-          .catch(error => {
-            if (error instanceof AuthorizationError) throw error;
-            return { available: false as const, items: [] };
-          })
-      : Promise.resolve({ available: false as const, items: [] }),
+      : Promise.resolve([]),
   ]);
+  for (const read of [personalRead, countRead, announcementsResult]) {
+    if (read.status === "rejected" && read.reason instanceof AuthorizationError)
+      throw read.reason;
+  }
+  const personalFailed = personalRead.status === "rejected" ||
+    countRead.status === "rejected";
+  const page = personalRead.status === "fulfilled"
+    ? personalRead.value : { items: [], nextCursor: null };
+  const unreadCount = countRead.status === "fulfilled" ? countRead.value : 0;
+  const announcementRead = announcementsResult.status === "fulfilled"
+    ? { available: announcementsEnabled, items: announcementsResult.value }
+    : { available: false, items: [] as Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>> };
   const announcements = announcementRead.items.filter(item =>
     scopeTab === "all" ||
     (scopeTab !== "personal" && item.receiverType.toLowerCase() === scopeTab),
@@ -99,6 +108,14 @@ export default async function FacultyNotificationsPage({
          {id:"faculty",label:"Faculty",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="faculty").length},
          {id:"personal",label:"Personal",unread:page.items.length},
         ]}/>
+      {personalFailed && (scopeTab === "all" || scopeTab === "personal") ? (
+        <Alert tone="warning">
+          Some notifications could not be loaded
+          <Link href={FACULTY_INBOX + "?view=" + view +
+            (scopeTab !== "all" ? "&tab=" + encodeURIComponent(scopeTab) : "")}
+            className="ml-2 font-semibold text-primary-text underline">Retry</Link>
+        </Alert>
+      ) : null}
       {scopeTab === "all" || scopeTab === "personal" ? (
       <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
         <h2 id="faculty-personal-notifications" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
