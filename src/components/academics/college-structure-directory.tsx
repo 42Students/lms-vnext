@@ -12,6 +12,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeDirectoryPageSize, CollegeDirectoryRefresh } from "./college-directory-page-size";
+import { CollegeClassFilterSelectors } from "./college-class-filter-selectors";
 import {
   classCapacityLabel,
   collegeStructureHref,
@@ -57,12 +58,15 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {classes ? "Class, batch or program" : "Elective, program or description"}
           <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={data.query.q}
-            className="min-h-11 min-w-0 md:min-h-9" placeholder="Search registered records" />
+            className="min-h-11 min-w-0 md:min-h-9" placeholder={classes ? "Search class, program, batch or capacity" : "Search registered records"} />
         </label>}
         action={<Button type="submit" form="college-structure-directory-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-structure-directory-filters" method="get" action={path} className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 lg:grid-cols-4">
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {classes
+            ? <CollegeClassFilterSelectors programs={data.programs} cohorts={classOptions?.cohorts ?? []}
+                programId={data.query.programId ?? ""} cohortCode={data.query.cohortCode ?? ""}/>
+            : <div className="contents">          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 min-w-0 md:min-h-9">
@@ -83,6 +87,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               <option value="ALL">All</option>
             </Select>
           </label>
+            </div>}
           {data.kind === "ELECTIVES" ? (
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Semester
@@ -124,7 +129,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="hidden gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Batch code
               <Input name="cohortCode" type="text" maxLength={64}
                 defaultValue={data.query.cohortCode ?? ""} placeholder="Exact batch code"
@@ -379,7 +384,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
            <p>
             {data.total === 0
               ? classes
-                ? "No recorded college classes match these filters. Classes are not inferred from batches."
+                ? (data.query.q || data.query.programId || data.query.cohortCode || data.query.status !== "ALL" ? "No classes match these filters." : "No classes are registered yet. Create a new class or section.")
                 : "No electives match these filters."
               : "No rows on this page. Choose an earlier page."}
            </p>
@@ -391,23 +396,25 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               getRowKey={item=>item.id}
               empty={<p>No classes match these filters.</p>}
               columns={[
-                {key:"class",header:"Class",mobilePriority:"primary",cell:item=><>
+                {key:"class",header:"Class/Section Name",mobilePriority:"primary",cell:item=><>
                   <Link href={"/college/academics/sections/"+encodeURIComponent(item.id)}
                     className="font-semibold text-primary-text hover:underline">{item.name}</Link>
                   <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
                 </>},
-                {key:"program",header:"Program / batch",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName ?? `Name unavailable (ID ${item.linkedProgramId ?? "unknown"})`} · {item.cohortName ?? `Name unavailable (ID ${item.cohortId})`}</span>},
-                {key:"period",header:"Academic period",mobilePriority:"secondary",cell:item=>item.periodName},
-                {key:"capacity",header:"Capacity",mobilePriority:"secondary",cell:item=>classCapacityLabel(item.capacity)},
-                {key:"enrollment",header:"Active enrollments",mobilePriority:"secondary",cell:item=>item.activeLearners === null
-                  ? <span role="status" className="text-amber-700">Unavailable</span> : item.activeLearners},
-                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{item.status}</StatusBadge>},
-                {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
+                {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
+                   item.programName ?? `Name unavailable (ID ${item.linkedProgramId ?? "unknown"})`},
+                 {key:"batch",header:"Batch",mobilePriority:"secondary",cell:item=>
+                   <span title={"Academic period: "+item.periodName}>{item.cohortName ?? `Name unavailable (ID ${item.cohortId})`}</span>},
+                 {key:"capacity",header:"Max Students",mobilePriority:"secondary",cell:item=>classCapacityLabel(item.capacity)},
+                 {key:"description",header:"Description",mobilePriority:"secondary",cell:item=>
+                   <span className="block max-w-[180px] truncate" title={item.description ?? ""}>{item.description || "—"}</span>},
+                 {key:"enrollment",header:"Students",mobilePriority:"secondary",cell:item=>item.activeLearners === null
+                   ? <span role="status" className="text-amber-700">Unavailable</span> : item.activeLearners},
+                 {key:"manage",header:"Actions",mobilePriority:"action",className:"md:min-w-[250px]",cell:item=>
                   <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
                     <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
-                      aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
+                      title={"Schedule sessions for "+item.name} aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
                     <CollegeClassRowActions row={item} cohorts={classOptions?.cohorts} periods={classOptions?.periods}/>
                     <CollegeSectionLifecycleAction row={{
                       id:item.id,name:item.name,status:item.status,
@@ -476,7 +483,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
         {classes
-          ? "Active enrollments count persisted section enrollments for active learner memberships. Class capacity is configured capacity, not occupancy or attendance; scheduling conflicts and recurring series creation are not available here."
+          ? "Students count active learner memberships enrolled in each class; unavailable counts are not zero. Class scheduling and lifecycle changes retain dependency checks."
           : "Offered-course counts represent nondeleted active elective offerings with college-owned courses. Slots do not prove that the elective feature is enabled or that learner selections are open. Selection finalization and capacity enforcement are not implemented here."}
  
       </p>
