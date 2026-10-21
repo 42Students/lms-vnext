@@ -118,12 +118,12 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/layout.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/error.tsx`
+- [x] `src/app/(authenticated)/teacher/layout.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/profile/contacts/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
