@@ -35,6 +35,9 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    setError("Choose a valid future date and time in IST.");return;
   }
   const when=new Date(date+":00+05:30");
+  if(!Number.isFinite(when.getTime())){
+   setError("Choose a valid future date and time in IST.");return;
+  }
   const parts=new Intl.DateTimeFormat("en-US",{
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
