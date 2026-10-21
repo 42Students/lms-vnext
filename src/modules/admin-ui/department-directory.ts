@@ -6,6 +6,12 @@
 export type DepartmentDirectoryRow = {
   id: string;
   name: string;
+  /** Legacy search metadata, supplied by the authorized college reader only. */
+  collegeId?:string;
+  collegeName?:string|null;
+  deptChairId?:string|null;
+  deptViceChairId?:string|null;
+  legacyDepartmentId?:number|null;
   createdAt: string;
   usage: {
     programs: number;
@@ -18,10 +24,26 @@ export function filterDepartmentRows(
   rows: readonly DepartmentDirectoryRow[],
   search: string,
 ): DepartmentDirectoryRow[] {
-  const q = search.trim().toLocaleLowerCase("en-IN");
-  return rows.filter((row) =>
-    row.name.toLocaleLowerCase("en-IN").includes(q),
-  ).sort((a, b) => a.name.localeCompare(b.name, "en-IN"));
+  const normalize=(value:string)=>value.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase("en-IN").trim();
+  const q=normalize(search);
+  if(!q)return [...rows]; // Legacy no-search selection follows source order.
+  const synonyms:Readonly<Record<string,string>>={
+    cse:"computer science",ece:"electronics",eee:"electrical",mech:"mechanical",
+    civil:"civil engineering",chem:"chemical",bio:"biotechnology",
+    maths:"mathematics",physics:"physics",chemistry:"chemistry",
+  };
+  const candidates=[q,...Object.entries(synonyms)
+    .filter(([alias,meaning])=>q===alias||q===meaning)
+    .map(([alias,meaning])=>q===alias?meaning:alias)];
+  return rows.filter(row=>{
+    const searchable=normalize([row.name,row.collegeName??""].join(" "));
+    return candidates.some(term=>searchable.includes(term));
+  }).sort((a,b)=>{
+    const aName=normalize(a.name),bName=normalize(b.name);
+    const aRank=aName===q?0:aName.startsWith(q)?1:2;
+    const bRank=bName===q?0:bName.startsWith(q)?1:2;
+    return aRank-bRank||a.name.localeCompare(b.name,"en-IN")||a.id.localeCompare(b.id);
+  });
 }
 
 export function pageDepartmentRows(
@@ -29,9 +51,9 @@ export function pageDepartmentRows(
   page: number,
   pageSize = 10,
 ) {
-  const size = Math.max(1, Math.min(100, Math.trunc(pageSize) || 10));
+  const size = Number.isFinite(pageSize)?Math.max(1, Math.min(100, Math.trunc(pageSize) || 10)):10;
   const pageCount = Math.max(1, Math.ceil(rows.length / size));
-  const currentPage = Math.min(pageCount, Math.max(1, Math.trunc(page) || 1));
+  const currentPage = Number.isFinite(page)?Math.min(pageCount, Math.max(1, Math.trunc(page) || 1)):1;
   return {
     page: currentPage,
     pages: pageCount,
@@ -52,7 +74,7 @@ export function departmentRowsCsv(
   rows: readonly DepartmentDirectoryRow[],
 ): string {
   const columns = [
-    "ID", "Department Name", "Programs", "Courses", "Faculty",
+    "id", "name", "programs", "courses", "faculty",
   ];
   const data = rows.map((row) => [
     row.id,

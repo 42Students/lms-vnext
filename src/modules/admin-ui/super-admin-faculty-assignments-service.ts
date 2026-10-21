@@ -11,6 +11,16 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 const sectionDepartment=alias(departments,"admin_faculty_section_department");
+
+/** Legacy faculty-teaching DTO projection:
+ * Faculty -> collegeMemberships + users, Course -> courses via offering,
+ * Class -> sections via courseSectionDeliveries, Batch -> cohorts, Semester
+ * -> academicPeriods, Academic Year -> importedAcademicYear then cohort
+ * historical labels. ACTIVE/No describes the grant lifecycle; deliveryEnded
+ * is reported separately and never silently reactivates a closed delivery.
+ * All joins remain tied to the selected college; orphaned foreign records
+ * cannot be exposed as guessed user/tenant relationships. */
+
 /** Legacy shows Sem N only when a term number can be established from an
  * explicit semester code/name. Do not invent it from the year or cohort. */
 function legacySemester(periodName:string,periodCode:string){
@@ -33,11 +43,14 @@ function requireAssignmentCollege(context:RequestContext){
 }
 /** Both selected Super Admin and authorized College Admin may see their
  * own college. Never trust query-provided collegeId for tenant scope. */
-export async function listAdminFacultyAssignments(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
+export async function listAdminFacultyAssignments(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult & {rangeStart:number;rangeEnd:number}>{
  const query=superAdminReadQuerySchema.parse(raw),selected=requireAssignmentCollege(context),db=getDb();
  const active=and(isNull(courseTeachingAssignments.endedAt),isNull(courseSectionDeliveries.endedAt));
  const source=db.select({
   id:aliasedColumn(courseTeachingAssignments.id,"admin_teacher_assignment_id"),
+  membershipId:courseTeachingAssignments.membershipId,
+  courseId:courses.id,
+  cohortId:cohorts.id,
   role:courseTeachingAssignments.role,startedAt:courseTeachingAssignments.startedAt,
   legacyActive:courseTeachingAssignments.legacyWasActive,
   deletedAt:courseTeachingAssignments.deletedAt,
@@ -95,18 +108,25 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
   .orderBy(desc(source.id))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(value)+" IST";
- return {query:{...query,page},total,totalPages,items:rows.map(row=>({
-  id:row.id,title:row.teacherName||"Unnamed faculty",subtitle:row.courseName+" ("+row.courseCode+")",
+ return {query:{...query,page},total,totalPages,
+  rangeStart:total===0?0:(page-1)*query.pageSize+1,
+  rangeEnd:Math.min(total,page*query.pageSize),
+  items:rows.map(row=>({
+  id:row.id,title:row.teacherName?.trim()||"Faculty name unavailable (ID "+row.membershipId+")",
+  subtitle:(row.courseName?.trim()||"Course name unavailable (ID "+row.courseId+")")+" ("+row.courseCode+")",
   revision:row.updatedAt.toISOString(),
   status:row.deletedAt||row.teachingEnded||row.deliveryEnded||row.legacyActive===false?"ENDED":"ACTIVE",
-  details:["Class: "+row.sectionName,
-   "Batch: "+row.cohortName,
+  details:["Class: "+(row.sectionName?.trim()||"Class name unavailable (ID "+row.sectionId+")"),
+   "Batch: "+(row.cohortName||"Batch ID "+row.cohortId),
    "Course image: "+(row.courseImageUrl??"Not set"),
    "Semester: "+legacySemester(row.periodName,row.periodCode),
    "Year: "+legacyAcademicYear([row.importedAcademicYear,row.cohortAcademicYear,row.cohortLegacyYear,row.legacyAcademicYear]),
+   "Semester tag: "+legacySemester(row.periodName,row.periodCode),
    "Teaching role: "+(row.role??"PRIMARY"),
-   "Active: "+(row.deletedAt||row.legacyActive===false||row.teachingEnded||row.deliveryEnded?"No":"Yes"),
-   "Metadata incomplete: "+(!row.teacherName||!row.courseName||!row.sectionName?"Yes":"No"),
+   "Role tag: "+(row.role==="CO_TEACHER"?"CO_TEACHER · Blue":row.role==="TA"?"TA · Orange":"PRIMARY · Green"),
+   "Active: "+(row.deletedAt||row.legacyActive===false||row.teachingEnded?"No":"Yes"),
+   ...(row.deliveryEnded?["Delivery closed; teaching grant retained separately"]:[]),
+   "Metadata incomplete: "+(!row.teacherName?.trim()||!row.courseName?.trim()||!row.sectionName?.trim()?"Yes":"No"),
    ...(row.startDate?["Start date: "+row.startDate]:[]),
    ...(row.endDate?["End date: "+row.endDate]:[]),
    ...(row.deletedAt?["Deleted (retained): "+format(row.deletedAt)]:[]),

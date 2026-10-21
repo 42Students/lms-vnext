@@ -8,8 +8,8 @@ import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/t
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {Textarea} from "@/components/ui/textarea";
-export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
- threadId:string;unread:boolean;actorUserId:string;
+export function TpoRecruiterMessageReply({threadId,unread,actorUserId,accessEnded=false}:{
+ threadId:string;unread:boolean;actorUserId:string;accessEnded?:boolean;
 }){
  const router=useRouter();
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false);
@@ -59,7 +59,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   persistDraft("");setDiscardReview(false);
  }
  async function post(mode:"messages"|"read"){
-  if(pending.current||busy||(mode==="messages"&&!body.trim()))return;
+  if(pending.current||busy||(mode==="messages"&&(!body.trim()||accessEnded)))return;
   pending.current=true;setBusy(true);setError("");setSuccess("");
   try{
    await apiFetch("/api/placements/tpo/messages/threads/"+
@@ -76,6 +76,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   }finally{pending.current=false;setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Reply to recruiter">
+  {accessEnded?<p role="status" className="text-sm text-warning">Recruiter access ended. Sending is unavailable until access is restored.</p>:null}
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Reply</h2>
   <Disclosure title="Quick replies" className="min-w-0" contentClassName="pt-2">
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
@@ -87,14 +88,14 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <form aria-busy={busy} onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
     <Textarea className="mt-1 min-h-28 w-full"
-      maxLength={4000} required aria-label="Message" placeholder="Write a message" value={body}
+      maxLength={4000} required disabled={accessEnded} aria-label="Message" placeholder="Write a message" value={body}
       onFocus={restoreDraft} onChange={e=>persistDraft(e.target.value)}
       onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey&&!e.nativeEvent.isComposing){
        e.preventDefault();if(body.trim()&&!busy)void post("messages");}}}/>
    </label>
    <p className="text-xs text-muted-foreground leading-[20px]" aria-live="polite">Enter to send · Shift + Enter for a new line · {body.length}/4000</p>
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-    <Button variant="secondary" type="button" disabled={busy||!body.trim()} onClick={discardDraft}
+    <Button variant="secondary" type="button" disabled={busy||accessEnded||!body.trim()} onClick={discardDraft}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Discard draft</Button>
     <Button variant="primary" type="submit" disabled={busy||!body.trim()}
      className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
