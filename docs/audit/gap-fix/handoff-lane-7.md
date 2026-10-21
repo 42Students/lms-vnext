@@ -813,3 +813,25 @@ Cross-college request proof links must remain signed/verified; blanket bulk deci
 - G2-11-029-020 | `src/components/projects/super-admin-template-plan-editor.tsx` | Match toast/modal presentation and exact feedback.
 
 Template editor must not silently drop concurrent sprints or tasks. Projects owner must preserve optimistic CAS, add unsaved-change guard and align modal copy. **6/6 handed off, not fixed**.
+
+## Telegram alert callbacks — lane-7 handoff (2026-10-21)
+
+- G2-6-024-005 | `src/modules/log-alerts/telegram-webhook.ts` | Add editMessageText or equivalent visible acknowledgment state and remove active button to avoid repeated clicks.
+- G2-6-024-020 | `src/modules/log-alerts/telegram-webhook.ts` | Persist state AND edit original message, keeping provider update consistent with durable triage.
+- G2-6-024-049 | `src/modules/log-alerts/telegram-webhook.ts` | Restore durable visible original-message acknowledgment and answer unknown-but-authentic callbacks.
+- G2-6-024-015 | `src/app/api/webhooks/telegram/route.ts` | Align intended provider retry semantics and document intentionally stricter validation.
+- G2-6-024-016 | `src/modules/log-alerts/telegram-webhook.ts` | Clone both ephemeral acknowledgment and durable original-message text update.
+- G2-6-024-017 | `src/modules/log-alerts/telegram-webhook.ts` | Ensure Telegram confirmation remains visible after callback, not only transient popup.
+
+Telegram provider acknowledgments must be authentic and persisted before editing the provider's original message. Provider calls/retries are Notifications ownership. **6/6 handed off, not fixed**.
+
+## Job important-date DTO — lane-7 handoff (2026-10-21)
+
+- G2-18-021-057 | `src/modules/placements/placement-legacy-posting-model.ts` | Write migration for JSON `date`→`at` with type/dateType, preserving insertion order and malformed-row reports.
+- G2-18-021-058 | `src/modules/placements/placement-legacy-posting-model.ts` | Map old integer job identity and company display snapshot into UUID job and relationships.
+- G2-18-021-059 | `src/modules/placements/placement-legacy-posting-model.ts` | Add subtype migration/schema projection, never infer from free-text after migration.
+- G2-18-021-060 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Preserve applied-job history event visibility after deadline for learner career continuity.
+- G2-18-021-061 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Make calendar multi-source: job important dates, existing booked rounds, blocked college dates with consistent legend, ICS and event links.
+- G2-18-021-062 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Choose role-specific data providers and preserve tenant boundaries, not a single global job date query.
+
+Importing numeric legacy job date records and learner visible/applied event union belongs to Placements + schema, with strict college/role authorization. No migration performed. **6/6 handed off, not fixed**.

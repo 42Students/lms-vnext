@@ -95,3 +95,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_l11-u023-tpo-requests.md.md` | 6/6 findings inspected against src/app/(authenticated)/tpo/requests/page.tsx; exact ID, requested fix and target in handoff. Zero edits to out-of-area TPO Requests UI/service. **Handed off, not fixed**; no app/CI execution.
 
 - `NEW_docs_audit_gap2_lane-6_l11-u029-superadmin-template-sprints.md.md` | 6/6 findings inspected against src/components/projects/super-admin-template-plan-editor.tsx; exact ID, requested fix and target in handoff. Zero edits to out-of-area Super Admin template sprints UI/service. **Handed off, not fixed**; no app/CI execution.
+
+- `NEW_docs_audit_gap2_lane-6_telegram-webhook-controller.md.md` | 6/6 findings read and assigned per-ID to owning file(s), zero edits to Telegram alert callbacks out-of-lane service/schema. **Handoff, not fixed**; user-requested static review only, no CI.
+
+- `NEW_docs_audit_gap2_lane-7_l18-u021-job-important-date-event-dto.md.md` | 6/6 findings read and assigned per-ID to owning file(s), zero edits to Job important-date DTO out-of-lane service/schema. **Handoff, not fixed**; user-requested static review only, no CI.
