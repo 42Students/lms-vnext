@@ -10,7 +10,7 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
 
 export const superAdminStudentProgressQuery=z.strictObject({offeringId:z.uuid()});
 export type StudentCourseProgressRow={
- membershipId:string;studentName:string;videos:number;assignments:number;quizzes:number;
+ membershipId:string;studentName:string;rollNumber:string|null;videos:number;assignments:number;quizzes:number;
  totalVideos:number;totalAssignments:number;totalQuizzes:number;
 };
 export type StudentCourseProgressTotals={videos:number;assignments:number;quizzes:number};
@@ -75,7 +75,9 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
   where p.offering_id=${offeringId}::uuid and p.status='PUBLISHED'
    and l.status='ACTIVE' and q.status in ('PUBLISHED','CLOSED')
  )
+ select * from (
  select r.membership_id as "membershipId",r.student_name as "studentName",
+ (select lp.roll_number from learner_profiles lp where lp.membership_id=r.membership_id) as "rollNumber",
  (select count(distinct pr.lesson_content_id)::int
   from learner_content_progress pr
   join published_items pi on pi.id=pr.lesson_content_id
@@ -95,6 +97,7 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  (select count(distinct attempt.quiz_id)::int from quiz_attempts attempt
   join published_quizzes pq on pq.id=attempt.quiz_id
   where attempt.membership_id=r.membership_id
+   and attempt.submitted_at is not null
    and (pq.delivery_id is null or pq.delivery_id=attempt.delivery_id)
    and exists (
     select 1 from eligible_deliveries ed
@@ -109,13 +112,17 @@ export async function getSuperAdminStudentCourseProgress(context:RequestContext,
  (select count(*)::int from published_quizzes pq where pq.delivery_id is null
    or exists (select 1 from eligible_deliveries ed
     where ed.membership_id=r.membership_id and ed.delivery_id=pq.delivery_id)) as "totalQuizzes"
- from roster r order by r.student_name,r.membership_id
+ from roster r
+ ) progress
+ order by case when ("totalVideos"+"totalAssignments"+"totalQuizzes")=0 then 0
+  else (videos+assignments+quizzes)*100.0/("totalVideos"+"totalAssignments"+"totalQuizzes") end asc,
+  "studentName" asc,"membershipId" asc
  limit 501
  `);
- type DbRow={membershipId:string;studentName:string;videos:number;assignments:number;quizzes:number;
+ type DbRow={membershipId:string;studentName:string;rollNumber:string|null;videos:number;assignments:number;quizzes:number;
   totalVideos:number;totalAssignments:number;totalQuizzes:number};
  const rows=(result.rows as unknown as DbRow[]).slice(0,500).map(row=>({
-  membershipId:row.membershipId,studentName:row.studentName,
+  membershipId:row.membershipId,studentName:row.studentName,rollNumber:row.rollNumber,
   videos:Number(row.videos),assignments:Number(row.assignments),quizzes:Number(row.quizzes),
   totalVideos:Number(row.totalVideos),totalAssignments:Number(row.totalAssignments),
   totalQuizzes:Number(row.totalQuizzes),
