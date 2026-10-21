@@ -14,5 +14,5 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L17-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NotificationController.java`
 - [x] L18-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/QuizAttempt.java`
 - [x] L18-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NewProgramController.java`
-- [ ] L19-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java`
+- [x] L19-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoHubController.java`
 - [ ] L20-U031 (Cross-cutting area) `cross/20: Public pages, marketing pages, privacy/terms, demo requests, unsubscribe pages, invites`
