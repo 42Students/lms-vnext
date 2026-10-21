@@ -12,6 +12,14 @@ import {
 import { createCourseTeachingAssignment, listCourseFacultyAcrossDeliveries } from "@/modules/courses/teaching-assignment-service";
 
 export const runtime = "nodejs";
+/** Legacy faculty-course association crosswalk:
+ * getByFaculty/course => GET courseId or courseSlug scoped delivery roster;
+ * findByFacultyCourseClass => delivery/section-scoped lookup (never ID cast);
+ * create => POST deliveryId for teacher role, or sectionId for advisor;
+ * createBulk => POST {assignments:[]} atomically;
+ * deactivate => PATCH {assignmentId,action:"DEACTIVATE"} retaining history.
+ * Legacy numeric class/faculty IDs require authorized membership resolution.
+ */
 
 export async function GET(request: Request) {
   try {

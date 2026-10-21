@@ -7,6 +7,10 @@ import { addCollegeTermMapping, addCollegeTermMappings, reorderCollegeTermMappin
 import { collegeTermCourseFullOrderSchema, TERM_MAPPING_COPY } from "@/modules/academics/college-term-mapping-model";
 
 export const runtime = "nodejs";
+/** Legacy addCourse -> POST, addCourses -> POST {mappings}, reorderCourses
+ * -> PUT full ordered set; update/unmap -> PATCH/DELETE /[mappingId].
+ * Semester-scoped GET is the college term mapping directory.
+ */
 
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request))
@@ -20,6 +24,7 @@ export async function POST(request: Request) {
       : await addCollegeTermMapping(context, input);
     const inserted = bulk ? (row as unknown[]).length : 1;
     return NextResponse.json({ mapping: row,
+      action: bulk ? "BULK_ADD" : "ADD", insertedCount: inserted,
       message:TERM_MAPPING_COPY.addedMessage(inserted),
       ...(bulk ? { skippedCount: input.mappings.length - inserted } : {}) },
       { status: bulk && inserted === 0 ? 200 : 201 });

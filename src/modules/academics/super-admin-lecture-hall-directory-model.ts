@@ -41,6 +41,11 @@ export function superAdminLectureHallHref(query: SuperAdminLectureHallFilters) {
   return "/admin/lecture-halls" + (params.size ? "?" + params.toString() : "");
 }
 
+/** Legacy Ant Table footer: a–b of total even for an empty page. */
+export function superAdminLectureHallRange(total:number,page:number,pageSize:number,visible:number) {
+  const first = visible > 0 ? (page - 1) * pageSize + 1 : 0;
+  return { first, last: visible > 0 ? first + visible - 1 : 0, total };
+}
 export function superAdminLectureHallPages(total:number,pageSize:number) {
   const rows = Number.isFinite(total) && total > 0 ? Math.floor(total) : 0;
   const size = Number.isSafeInteger(pageSize) && pageSize > 0 ? pageSize : 10;

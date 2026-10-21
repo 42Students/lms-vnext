@@ -1,7 +1,8 @@
 import { z } from "zod";
 
 /** GET-only filters; the college is always resolved from the signed-in membership. */
-export const COLLEGE_LECTURE_HALL_PAGE_SIZE = 25;
+export const COLLEGE_LECTURE_HALL_PAGE_SIZE = 10;
+export const COLLEGE_LECTURE_HALL_PAGE_SIZES = [10, 20, 50, 100] as const;
 
 export const collegeLectureHallFiltersBaseSchema = z.object({
   q: z.string().trim().max(100).default(""),
@@ -20,6 +21,8 @@ export const collegeLectureHallFiltersBaseSchema = z.object({
   maximumCapacity: z.coerce.number().int().min(1).max(5000).optional(),
   upcoming: z.enum(["ALL","YES","NO"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  pageSize: z.coerce.number().int().refine(n => COLLEGE_LECTURE_HALL_PAGE_SIZES.some(size => size === n),
+    "Choose 10, 20, 50 or 100 rooms").default(COLLEGE_LECTURE_HALL_PAGE_SIZE),
 }).strict();
 
 export function withCollegeLectureHallCapacityCheck<T extends z.ZodType<{ minimumCapacity?: number; maximumCapacity?: number }>>(schema: T) {
@@ -58,12 +61,13 @@ export function collegeLectureHallHref(query: CollegeLectureHallFilters) {
   if (query.maximumCapacity !== undefined) params.set("maximumCapacity", String(query.maximumCapacity));
   if (query.upcoming !== "ALL") params.set("upcoming",query.upcoming);
   if (query.page !== 1) params.set("page", String(query.page));
+  if (query.pageSize !== COLLEGE_LECTURE_HALL_PAGE_SIZE) params.set("pageSize", String(query.pageSize));
   const suffix = params.toString();
   return "/college/lecture-halls" + (suffix ? "?" + suffix : "");
 }
 
-export function collegeLectureHallTotalPages(total: number) {
-  return Math.max(1, Math.ceil(total / COLLEGE_LECTURE_HALL_PAGE_SIZE));
+export function collegeLectureHallTotalPages(total: number, pageSize = COLLEGE_LECTURE_HALL_PAGE_SIZE) {
+  return Math.max(1, Math.ceil(total / pageSize));
 }
 
 export function hasCollegeLectureHallFilters(query: CollegeLectureHallFilters) {

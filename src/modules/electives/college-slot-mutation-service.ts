@@ -61,6 +61,11 @@ export async function listCollegeElectiveSlotOptions(context: RequestContext) {
   return { programs: programRows, periods: periodRows };
 }
 
+/** Legacy /api/v1/electives/admin/slots POST -> create (scoped college),
+ * PUT /slots/{id} -> updateCollegeElectiveSlot(UUID, expectedVersion).
+ * Legacy /archive maps to the status transition endpoint, not hard delete.
+ * The group actor and tenant resolution are still checked transactionally.
+ */
 export async function createCollegeElectiveSlot(
   context: RequestContext,
   raw: unknown,
@@ -105,7 +110,8 @@ export async function createCollegeElectiveSlot(
       organizationId: member.organizationId, collegeId: member.collegeId,
       subjectType: "elective_slot", subjectId: slot.id,
       summary: "Elective slot created",
-      metadata: { programId: slot.programId, semesterNumber: slot.semesterNumber },
+      metadata: { programId: slot.programId, semesterNumber: slot.semesterNumber,
+        legacyAction: "CREATE_SLOT", idKind: "UUID", groupActorVerified: true },
     });
     return slot;
   });
@@ -201,6 +207,7 @@ export async function updateCollegeElectiveSlot(
         previousProgramId: slot.programId, programId: saved.programId,
         previousSemester: slot.semesterNumber, semester: saved.semesterNumber,
         previousAcademicYear: slot.academicYear, academicYear: saved.academicYear,
+        legacyAction: "UPDATE_SLOT", idKind: "UUID", groupActorVerified: true,
       },
     });
     return saved;

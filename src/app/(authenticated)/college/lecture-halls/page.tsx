@@ -73,7 +73,7 @@ export default async function CollegeLectureHallsPage({
     );
   }
 
-  const pageSize = 10; // Legacy table uses ten rows per page.
+  const pageSize = query.pageSize; // Legacy starts at 10; chooser supports 10/20/50/100.
   const [hallsResult, departmentsResult] = await Promise.allSettled([
     listLectureHalls(context, {
       collegeId: membership.collegeId,
@@ -192,6 +192,12 @@ export default async function CollegeLectureHallsPage({
                 <option value={query.departmentId}>Selected department (unavailable in lookup)</option> : null}
               {departments.map((dept) =>
                 <option key={dept.id} value={dept.id}>{dept.name}</option>)}
+            </Select>
+          </label>
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Rows per page
+            <Select name="pageSize" defaultValue={query.pageSize} className="min-h-[var(--lms-control-height)]">
+              {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
             </Select>
           </label>
           <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
