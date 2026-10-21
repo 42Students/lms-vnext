@@ -42,3 +42,4 @@ export async function getSuperAdminHiringReportFilters(context:RequestContext){
   :null;
  return {jobs,departments:depts,programs:progs,batches,failedFilters,filtersError};
 }
+
