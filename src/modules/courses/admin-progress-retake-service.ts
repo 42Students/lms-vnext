@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {academicPeriods,activityEvents,collegeMemberships,colleges,courseLearningPaths,
@@ -68,7 +68,7 @@ async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,member
  // course-wide retake. The learner must also be an active member of a
  // delivery for this exact offering. An elective-backed delivery uses its
  // group roster exclusively and must never fall back to the host section.
- const [sectionRoster]=await tx.select({id:courseSectionDeliveries.id})
+ const sectionRoster=await tx.select({id:courseSectionDeliveries.id})
   .from(courseSectionDeliveries)
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
   .innerJoin(sections,and(
@@ -90,10 +90,8 @@ async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,member
    isNull(courseSectionDeliveries.endedAt),
    sql`not exists (select 1 from elective_offerings eo
      where eo.backed_delivery_id = ${courseSectionDeliveries.id})`,
-  )).limit(1);
- let electiveRoster=false;
- if(!sectionRoster){
-  const [elective]=await tx.select({id:courseSectionDeliveries.id})
+  )).limit(1001);
+ const electiveRoster=await tx.select({id:courseSectionDeliveries.id})
    .from(courseSectionDeliveries)
    .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
    .innerJoin(electiveOfferings,and(
@@ -126,11 +124,16 @@ async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,member
     isNull(courseSectionDeliveries.endedAt),
     sql`(${electiveSlots.academicPeriodId} is null or
       ${electiveSlots.academicPeriodId} = ${courseOfferings.academicPeriodId})`,
-   )).limit(1);
-  electiveRoster=Boolean(elective);
- }
- if(!sectionRoster&&!electiveRoster)
+   )).limit(1001);
+ const eligibleDeliveryIds=[...new Set([...sectionRoster,...electiveRoster].map(row=>row.id))];
+ if(eligibleDeliveryIds.length===0)
   throw new AuthorizationError("courses.manage");
+ if(sectionRoster.length>1000||electiveRoster.length>1000||
+    eligibleDeliveryIds.length>1000)
+  throw new CourseProgressRetakeError("RETAKE_TOO_MANY_ITEMS");
+ // A learner's retake never creates records for another Section of the same
+ // Course Offering. Shared content is eligible alongside exactly the active
+ // Section/elective delivery content that the learner can currently see.
  const rows=await tx.selectDistinct({
   id:lessonContents.id,durationSeconds:lessonContents.durationSeconds,
  }).from(lessonContents)
@@ -138,6 +141,8 @@ async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,member
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
   .where(and(eq(courseOfferings.id,offeringId),
+    or(isNull(lessonContents.deliveryId),
+       inArray(lessonContents.deliveryId,eligibleDeliveryIds)),
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
     eq(courseLessons.visibleToStudents,true),
