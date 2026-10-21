@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function ScopedMembershipLifecycleActions({membershipId,displayName,status,roleLabel}:{
  membershipId:string;displayName:string;status:string;roleLabel?:"Student"|"Faculty";
@@ -13,6 +14,9 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
  const [open,setOpen]=useState(false);
  const [confirming,setConfirming]=useState<"SUSPEND"|"REACTIVATE"|null>(null);
  const [busy,setBusy]=useState(false);
+ const [retireOpen,setRetireOpen]=useState(false);
+ const [retireImpact,setRetireImpact]=useState<{canEnd:boolean;courses:number;schedules:number;projects:number;otherRoles:boolean}|null>(null);
+ const [retireBusy,setRetireBusy]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const [notice,setNotice]=useState<string|null>(null);
  const targetLabel=roleLabel??"College membership";
@@ -40,6 +44,39 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update membership");}
   finally{setBusy(false);}
+ }
+ async function prepareRetirement(){
+  if(busy||retireBusy)return;
+  setRetireBusy(true);setRetireImpact(null);setError(null);
+  try{
+   const response=await fetch("/api/admin/faculty/memberships/"+
+     encodeURIComponent(membershipId)+"/retire",{cache:"no-store"});
+   if(!response.ok)throw new Error("Could not check faculty dependencies.");
+   const impact=await response.json() as {canEnd:boolean;courses:number;schedules:number;projects:number;otherRoles:boolean};
+   setRetireImpact(impact);
+   setRetireOpen(true);
+  }catch(cause){setError(cause instanceof Error?cause.message:"Could not check faculty dependencies.");}
+  finally{setRetireBusy(false);}
+ }
+ async function retireFaculty(){
+  if(retireBusy||!retireImpact?.canEnd)return;
+  setRetireBusy(true);setError(null);
+  try{
+   const response=await fetch("/api/admin/faculty/memberships/"+
+     encodeURIComponent(membershipId)+"/retire",{
+      method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({confirmed:true}),
+   });
+   if(!response.ok)throw new Error(response.status===409?
+     "Faculty assignments or other roles remain. Review dependencies and retry.":
+     "Could not retire this faculty membership.");
+   const result=await response.json() as {status:string};
+   if(result.status!=="ENDED")throw new Error("The server did not confirm retirement.");
+   setRetireOpen(false);setRetireImpact(null);
+   setNotice("Faculty membership ended. Course, project and identity history remain intact.");
+   router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Could not retire faculty.");}
+  finally{setRetireBusy(false);}
  }
  return <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
   {status==="ACTIVE"?<>
@@ -72,6 +109,38 @@ export function ScopedMembershipLifecycleActions({membershipId,displayName,statu
    Reactivate
   </Button>:
     <p className="text-xs text-muted-foreground">Ended membership · read only</p>}
+  <div className="flex flex-wrap items-center gap-3">
+   <Link href="/admin/otp-lockout" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+    Clear OTP lockout
+   </Link>
+   {roleLabel==="Faculty"&&status!=="ENDED"?<Button variant="danger" type="button"
+     disabled={busy||retireBusy} onClick={()=>void prepareRetirement()}>
+     {retireBusy?"Checking dependencies…":"Retire Faculty"}
+   </Button>:null}
+  </div>
+  {roleLabel==="Student"?<p className="text-xs text-muted-foreground">
+    Legacy permanent Delete is replaced by a college-scoped membership lifecycle.
+    Student records, attendance and grades cannot be erased through this action.
+   </p>:null}
+  <ConfirmDialog open={retireOpen} onOpenChange={value=>{if(!value&&!retireBusy)setRetireOpen(false);}}
+    title={"Retire faculty "+displayName+"?"} confirmLabel="Retire Faculty"
+    pending={retireBusy} confirmVariant="danger" confirmDisabled={!retireImpact?.canEnd}
+    onConfirm={()=>void retireFaculty()}>
+    <div className="space-y-2 text-sm text-body">
+      <p>This ends the selected faculty membership only. It does not delete their
+      shared account, teaching history or grades.</p>
+      {retireImpact?<p role="status">
+        Dependencies: {retireImpact.courses} active teaching assignments;
+        {" "}{retireImpact.schedules} future classes;
+        {" "}{retireImpact.projects} active projects;
+        {" "}{retireImpact.otherRoles?"other membership roles remain":"no other roles"}.
+      </p>:null}
+      {retireImpact&&!retireImpact.canEnd?<p role="alert" className="text-error">
+        Retirement is blocked until assignments and other roles are resolved.
+      </p>:null}
+      {error?<p role="alert" className="text-error">{error}</p>:null}
+    </div>
+  </ConfirmDialog>
   <ConfirmDialog open={confirming!==null} onOpenChange={value=>{if(!value&&!busy)setConfirming(null);}}
    title={confirming==="SUSPEND"?"Suspend "+targetLabel+"?":"Reactivate "+targetLabel+"?"}
    description={(confirming==="SUSPEND"?"Suspend ":"Reactivate ")+displayName+

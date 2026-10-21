@@ -165,22 +165,11 @@ export async function getOwnTpoProfile(
     membershipStatus: own.membershipStatus,
     roles: [...new Set(rows.map((row) => row.role))],
     departmentName: own.departmentName,
-    contactMail: own.contactMail,
-    contactMobile: own.contactMobile,
     // A private object key must be signed by a separately authorized media
     // endpoint. Never hand this key or an unverified external URL to the UI.
     profileImageAvailable: Boolean(own.avatarObjectPath),
     profileImageUrl: null as string | null,
     avatarInitials: (own.displayName ?? "").trim().split(/\s+/).slice(0,2)
       .map(part=>part[0]?.toUpperCase()??"").join("") || "?",
-    website: (() => {
-      const raw=own.profileDocument?.website;
-      if(typeof raw!=="string")return null;
-      try{
-        const url=new URL(raw);
-        return url.protocol==="https:" && !url.username && !url.password && url.hostname
-          ? url.toString():null;
-      }catch{return null;}
-    })(),
   };
 }
