@@ -23,15 +23,31 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [results,setResults]=useState<Result[]>([]);
- let count=0,issue="";
- try{if(csv.trim())count=parseFacultyBulkCsv(csv).length;}
+ const [previewVersion,setPreviewVersion]=useState(-1);
+ let parsedRows:ReturnType<typeof parseFacultyBulkCsv> = [],issue="";
+ try{if(csv.trim())parsedRows=parseFacultyBulkCsv(csv);}
  catch(cause){issue=cause instanceof Error?cause.message:"Invalid faculty file";}
+ const count=parsedRows.length;
+ const rowIssues:string[]=[];
+ const mobileRows=new Map<string,number>(),emailRows=new Map<string,number>();
+ parsedRows.forEach((row,index)=>{
+   const rowNumber=index+1;
+   const earlierMobile=mobileRows.get(row.phoneE164);
+   if(earlierMobile!==undefined)rowIssues.push("Record "+rowNumber+": Duplicate mobile in file (record "+earlierMobile+").");
+   else mobileRows.set(row.phoneE164,rowNumber);
+   if(row.email){
+     const normalized=row.email.trim().toLowerCase();
+     const earlierEmail=emailRows.get(normalized);
+     if(earlierEmail!==undefined)rowIssues.push("Record "+rowNumber+": Duplicate email in file (record "+earlierEmail+").");
+     else emailRows.set(normalized,rowNumber);
+   }
+ });
  async function fileSelected(file:File|null){
   const version=++fileVersion.current;
   loadedCsv.current=null;
   // Never let a rejected or slow replacement upload reuse the previously
   // validated CSV while displaying the new filename.
-  setCsv("");setResults([]);setError("");setFilename(file?.name??"");
+  setCsv("");setResults([]);setError("");setPreviewVersion(-1);setFilename(file?.name??"");
   if(!file)return;
   if(!file.name.toLowerCase().endsWith(".csv")){setError("Choose a .csv faculty file.");return;}
   if(file.size>1_500_000){setError("The CSV file exceeds 1.5 MB.");return;}
@@ -54,13 +70,14 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
    busy,count,issue,error,filename,snapshotVersion:version,
    currentVersion:fileVersion.current,csvMatchesLoaded:Boolean(loaded)&&inputCsv===csv,
   });
-  if(!allowed())return;
+  if(!allowed()||previewVersion!==version||rowIssues.length>0)return;
   // React state updates do not synchronously disable the button. Reserve
   // the action through confirmation and the network call to reject double
   // clicks, while allowing cancel or a different file to release the guard.
   submissionInProgress.current=true;
   try{
-   if(!(await askConfirm("Onboard "+count+" faculty from this file?"))||!allowed())return;
+   if(!(await askConfirm("Create "+count+" faculty from this locally previewed file? The server will check identities as it creates them. Some rows may fail; there is no server-only validation preview."))||
+      !allowed()||previewVersion!==version||rowIssues.length>0)return;
    setBusy(true);setError("");setResults([]);
    try{
     const response=await fetch("/api/admin/faculty/bulk-import",{
@@ -87,7 +104,10 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
  return <section className="min-w-0 space-y-3 pb-2">
   {dialog}
   <h3 className="font-semibold text-foreground">Bulk register faculty</h3>
-  <p className="text-sm text-body">Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional). Existing identities are verified by the server.</p>
+  <p className="text-sm text-body">
+    Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional).
+    Local preview does not check existing college accounts. The server validates each identity during creation; partial imports are possible.
+  </p>
   <div className="flex min-w-0 flex-col items-stretch gap-3 print:hidden sm:flex-row sm:flex-wrap sm:items-center">
    <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden" onClick={downloadSample}>Download sample CSV</Button>
    <FileUpload label="Choose CSV" accept=".csv,text/csv" maxBytes={1_500_000} disabled={busy}
@@ -95,11 +115,32 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
      onFiles={files=>void fileSelected(files?.[0]??null)}/>
   </div>
   {filename?<p className="text-xs text-muted-foreground print:hidden">File: {filename}</p>:null}
-  {count>0?<p role="status" className="text-sm text-body">{count} rows validated locally; review before creating.</p>:null}
+  {count>0?<p role="status" className="text-sm text-body">
+    Parsed {count} row(s). Review the local preview before creating Faculty accounts.
+  </p>:null}
   {(issue||error)?<Alert tone="error">{error||issue}</Alert>:null}
-  <Button type="button" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden" loading={busy} onClick={()=>void submit()} disabled={busy||!count||Boolean(issue||error)||!filename}>
-    {busy?"Importing…":"Validate and Create"}
-  </Button>
+  {rowIssues.length>0?<Alert tone="error">
+    <p>Resolve duplicate rows before creating faculty accounts:</p>
+    <ul className="list-disc pl-5">{rowIssues.slice(0,25).map((problem,index)=><li key={index}>{problem}</li>)}</ul>
+    {rowIssues.length>25?<p>{rowIssues.length-25} additional issues remain.</p>:null}
+  </Alert>:null}
+  <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+    <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
+      disabled={busy||!count||Boolean(issue||error)||rowIssues.length>0||!filename}
+      onClick={()=>setPreviewVersion(fileVersion.current)}>Preview CSV</Button>
+    <Button type="button" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden"
+      loading={busy} onClick={()=>void submit()}
+      disabled={busy||!count||Boolean(issue||error)||rowIssues.length>0||!filename||
+        previewVersion!==fileVersion.current}>
+      {busy?"Importing…":"Create faculty"}
+    </Button>
+  </div>
+  {previewVersion===fileVersion.current&&count>0&&rowIssues.length===0?(
+    <Alert tone="warning" role="status">
+      {count} rows passed local duplicate and format checks only. No server-side duplicate or department preflight has run.
+      Create faculty will begin irreversible onboarding after confirmation.
+    </Alert>
+  ):null}
   {results.length>0?<div className="space-y-2">
    <p role="status" className="text-sm text-body">{results.filter(x=>x.status==="CREATED").length} created, {results.filter(x=>x.status==="FAILED").length} failed, {results.filter(x=>x.status==="SKIPPED").length} skipped.</p>
    <div className="max-h-80 overflow-auto print:max-h-none print:overflow-visible">
