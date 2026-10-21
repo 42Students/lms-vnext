@@ -18,11 +18,31 @@ export const legacySuperAdminPaths:Readonly<Record<string,string>>={
  calendar:"/admin/placements/calendar",interviews:"/admin/placements/interviews",
  "hiring-dashboard":"/admin/placements/analytics",
  "placement-operations":"/admin/placements",placements:"/admin/placements",
- projects:"/admin/projects","project-templates":"/admin/projects/templates",
+ projects:"/admin/projects/templates","project-templates":"/admin/projects/templates",
 };
-export function legacySuperAdminDestination(pathSegments:readonly string[],type?:string){
- if(pathSegments.length!==1)return null; // Never forge nested IDs or paths.
- const slug=pathSegments[0]?.toLowerCase()??"";
+/**
+ * Static historical bookmarks can map without database access. A template or
+ * workspace ID must be translated and authorized by the server route's scoped
+ * lookup; NEVER concatenate untrusted dynamic segments into canonical paths.
+ */
+export function legacySuperAdminDestination(
+ pathSegments:readonly string[],
+ type?:string,
+):string|null {
+ if(pathSegments.length===0)return null;
+ const normalized=pathSegments.map(segment=>segment.toLowerCase());
+ const slug=normalized[0]??"";
+ if(slug==="projects"&&normalized.length===2){
+  switch(normalized[1]){
+   case "at-risk":return "/admin/projects/at-risk";
+   case "audit":return "/admin/projects/audit";
+   case "readiness":return "/admin/projects/readiness";
+   case "templates":return "/admin/projects/templates";
+   case "workspaces":return "/admin/projects";
+   default:return null;
+  }
+ }
+ if(pathSegments.length!==1)return null;
  if(slug==="lesson-content"){
   const contentType=(type??"video").toLowerCase();
   if(contentType==="video"||contentType==="videos")return "/admin/videos";
