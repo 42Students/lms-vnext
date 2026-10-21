@@ -54,9 +54,9 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   const email=contactEmail.trim();
   const phone=contactPhone.trim();
   const contactErrors:Partial<Record<FieldName,string>>={};
-  if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
    contactErrors.contactEmail="Must be a valid email";
-  if(phone&&!/^[+()\\d][\\d\\s().-]{6,29}$/.test(phone))
+  if(phone&&!/^[+()\d][\d\s().-]{6,29}$/.test(phone))
    contactErrors.contactPhone="Enter a valid phone number";
   if(Object.keys(contactErrors).length){
    setFieldErrors(contactErrors);setError("Check the highlighted company details.");return;
@@ -92,7 +92,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
       // The identity/link write succeeded but the second private contact write
       // did not. Never retry POST and imply that the entire transaction failed.
       setNotice("Company created, but contact details were not saved. Open its History to edit the college contact and notes.");
-      showToast({tone:"warning",title:"Company created",
+      showToast({tone:"info",title:"Company created",
         description:"College contact details were not saved. Edit them in History."});
     }else{
       setError(cause instanceof FriendlyFetchError?cause.message:
