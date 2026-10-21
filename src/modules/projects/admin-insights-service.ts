@@ -161,6 +161,8 @@ export async function listProjectAdminSnapshots(
           summary: projectInstances.summary,courseLabel:projectInstances.courseLabel,
           phase:projectInstances.phase,dueLabel:projectInstances.dueLabel,
           status: projectInstances.status,
+          legacyStatus:projectInstances.legacyStatus,
+          blocker:projectInstances.blocker,
           updatedAt: projectInstances.updatedAt,
           createdAt: projectInstances.createdAt,
           archivedAt: projectInstances.archivedAt,
@@ -452,8 +454,10 @@ export async function listProjectAdminSnapshots(
       deriveProjectRiskReasons({
         projectStatus: project.status,
         inactiveDays: ageDays,
-        latestSubmissionStatus:
-          latestSubmission?.status ?? null,
+        latestSubmissionStatus:latestSubmission?.status??null,
+        hasBlockedTask:Boolean(project.blocker?.trim())||
+          project.legacyStatus==="BLOCKED"||
+          projectTasksRows.some(task=>task.status==="BLOCKED"),
       });
 
     const executionComplete = execution.complete;
@@ -476,7 +480,10 @@ export async function listProjectAdminSnapshots(
       lastActivityAt,
       inactiveDays: ageDays,
       riskReasons,
-      riskSeverity: riskReasons.length >= 2 ? "RISK" : riskReasons.length === 1 ? "WATCH" : "NONE",
+      riskSeverity:riskReasons.length>=3?"HIGH_RISK":
+        riskReasons.length===2?"AT_RISK":
+        riskReasons.length===1?"WATCH":"NONE",
+      riskSignalCount:riskReasons.length,
     };
   });
 
@@ -655,7 +662,6 @@ export async function listProjectAdminRiskQueue(
         .from(projectInstances)
         .where(where)
         .orderBy(
-          query.riskSort==="INACTIVE_DESC"?desc(lastActivityAt):
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
           query.riskSort==="INACTIVE"?asc(lastActivityAt):
             sql`${reasonCount} desc`,
