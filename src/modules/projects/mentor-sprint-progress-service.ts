@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, ilike, inArray, ne, or, sql } from "drizzle-orm";
+import { and, asc, count, eq, ilike, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   projectInstances, projectReleases, projectSprints, projectTasks,
@@ -56,16 +56,19 @@ export async function getMentorSprintProgress(
   const escaped = query.search.replace(/[\\%_]/g, "\\$&");
   const filters = and(
     inArray(projectSprints.projectId, ids),
+    isNull(projectSprints.deletedAt),
     query.projectId?eq(projectSprints.projectId,query.projectId):undefined,
     query.taskAttention==="ALL"?undefined:
       query.taskAttention==="NO_TASKS"?sql`not exists(
         select 1 from project_tasks mentor_existing_task
         where mentor_existing_task.sprint_id=${projectSprints.id}
           and mentor_existing_task.project_id=${projectSprints.projectId}
+          and mentor_existing_task.deleted_at is null
       )`:sql`exists(
         select 1 from project_tasks mentor_pending_task
         where mentor_pending_task.sprint_id=${projectSprints.id}
           and mentor_pending_task.project_id=${projectSprints.projectId}
+          and mentor_pending_task.deleted_at is null
           and mentor_pending_task.status=${query.taskAttention}::text
       )`,
     eq(projectInstances.collegeId, membership.collegeId),
@@ -118,6 +121,7 @@ export async function getMentorSprintProgress(
       .where(and(
         inArray(projectTasks.sprintId, sprintIds),
         inArray(projectTasks.projectId, ids),
+        isNull(projectTasks.deletedAt),
       ))
       .groupBy(projectTasks.sprintId, projectTasks.status);
   const bySprint = new Map<string, {status: string; total: number}[]>();

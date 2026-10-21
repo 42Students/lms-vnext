@@ -1,7 +1,7 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,count,desc,eq,ne} from "drizzle-orm";
+import {and,count,desc,eq,isNull,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   projectInstances,projectSubmissions,projectReleases,projectSprints,projectTasks,
@@ -35,9 +35,9 @@ async function facts(db:ReturnType<typeof getDb>,projectId:string,projectStatus:
     .from(projectSubmissions).where(eq(projectSubmissions.projectId,projectId))
     .orderBy(desc(projectSubmissions.version)).limit(1);
   const [tasks]=await db.select({n:count()}).from(projectTasks)
-    .where(and(eq(projectTasks.projectId,projectId),ne(projectTasks.status,"DONE")));
+    .where(and(eq(projectTasks.projectId,projectId),ne(projectTasks.status,"DONE"),isNull(projectTasks.deletedAt))));
   const [sprints]=await db.select({n:count()}).from(projectSprints)
-    .where(and(eq(projectSprints.projectId,projectId),ne(projectSprints.status,"COMPLETED")));
+    .where(and(eq(projectSprints.projectId,projectId),ne(projectSprints.status,"COMPLETED"),isNull(projectSprints.deletedAt))));
   const [releases]=await db.select({n:count()}).from(projectReleases)
     .where(and(eq(projectReleases.projectId,projectId),ne(projectReleases.status,"SHIPPED")));
   return closeoutChecklist({
@@ -78,9 +78,9 @@ export async function completeMentorProject(
       .from(projectSubmissions).where(eq(projectSubmissions.projectId,locked.id))
       .orderBy(desc(projectSubmissions.version)).limit(1);
     const [tasks]=await tx.select({n:count()}).from(projectTasks)
-      .where(and(eq(projectTasks.projectId,locked.id),ne(projectTasks.status,"DONE")));
+      .where(and(eq(projectTasks.projectId,locked.id),ne(projectTasks.status,"DONE"),isNull(projectTasks.deletedAt))));
     const [sprints]=await tx.select({n:count()}).from(projectSprints)
-      .where(and(eq(projectSprints.projectId,locked.id),ne(projectSprints.status,"COMPLETED")));
+      .where(and(eq(projectSprints.projectId,locked.id),ne(projectSprints.status,"COMPLETED"),isNull(projectSprints.deletedAt))));
     const [releases]=await tx.select({n:count()}).from(projectReleases)
       .where(and(eq(projectReleases.projectId,locked.id),ne(projectReleases.status,"SHIPPED")));
     const checklist=closeoutChecklist({
