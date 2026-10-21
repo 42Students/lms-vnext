@@ -1,6 +1,6 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,asc,eq,inArray,ne,lt,gt} from "drizzle-orm";
+import {and,asc,eq,inArray,ne,lt,gt,notExists} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -13,7 +13,7 @@ import {collegeInterviewActionSchema} from "./college-interview-action-model";
 async function scope(ctx:RequestContext,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(ctx),jobId=collegeDriveIdSchema.parse(raw);
  const [job]=await getDb().select({id:placementJobs.id,title:placementJobs.title,
-  status:placementJobs.status}).from(placementJobs).where(and(eq(placementJobs.id,jobId),
+  status:placementJobs.status,companyRelationshipId:placementJobs.companyRelationshipId}).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw Error("Placement drive not found");
  return {collegeId,job};
@@ -82,14 +82,9 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
   if(cmd.action==="SCHEDULE"||cmd.action==="EDIT"){
    const a=cmd.appointment;
    const start=new Date(a.scheduledAt),end=new Date(start.getTime()+a.durationMinutes*60_000);
-   if(start<=new Date())throw Error("Schedule an upcoming interview.");
-   const [round]=await tx.select({id:placementJobRounds.id,status:placementJobRounds.status})
-    .from(placementJobRounds).where(and(eq(placementJobRounds.id,a.roundId),
-      eq(placementJobRounds.jobId,job.id),eq(placementJobRounds.kind,"INTERVIEW")))
-    .for("update").limit(1);
-   if(!round||!["SCHEDULED","PENDING"].includes(round.status))
-    throw Error("Interview round is not schedulable.");
-   const [app]=await tx.select({id:placementApplications.id,userId:collegeMemberships.userId})
+   if(start<=new Date())throw Error("The selected date and time is in the past");
+   const [app]=await tx.select({id:placementApplications.id,userId:collegeMemberships.userId,
+    membershipId:placementApplications.membershipId})
     .from(placementApplications)
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
       eq(collegeMemberships.collegeId,collegeId)))
@@ -99,14 +94,63 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
       eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
       eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!app)throw Error("Only an eligible shortlisted applicant can be scheduled.");
+   // Serialize same-learner bookings across every drive/round by college
+   // membership before taking the round lock or checking any overlaps.
+   const [lockedLearner]=await tx.select({id:collegeMemberships.id})
+    .from(collegeMemberships)
+    .where(and(eq(collegeMemberships.id,app.membershipId),
+      eq(collegeMemberships.collegeId,collegeId))).for("update").limit(1);
+   if(!lockedLearner)throw Error("Candidate is no longer in this college.");
+   const [round]=await tx.select({id:placementJobRounds.id,status:placementJobRounds.status})
+    .from(placementJobRounds).where(and(eq(placementJobRounds.id,a.roundId),
+      eq(placementJobRounds.jobId,job.id),eq(placementJobRounds.kind,"INTERVIEW")))
+    .for("update").limit(1);
+   if(!round||!["SCHEDULED","PENDING"].includes(round.status))
+    throw Error("Interview round is not schedulable.");
+
    const room=a.mode==="VIRTUAL"?a.meetingUrl!:a.venue!;
-   const overlapping=await tx.select({id:slots.id,applicationId:slots.applicationId,room:slots.room})
-    .from(slots).where(and(eq(slots.jobId,job.id),eq(slots.status,"BOOKED"),
-      lt(slots.startsAt,end),gt(slots.endsAt,start)));
    const oldId=cmd.action==="EDIT"?cmd.interviewId:null;
+   const normalizedRoom=room.trim().toLocaleLowerCase("en-IN");
+   const normalizedPanel=a.interviewer?.trim().toLocaleLowerCase("en-IN")??"";
+   // Completed/no-show bookings remain BOOKED for history but are not active.
+   const activeSlot=notExists(tx.select({id:activityEvents.id}).from(activityEvents)
+    .where(and(eq(activityEvents.subjectId,slots.id),
+     eq(activityEvents.subjectType,"placement_round_candidate_slot"),
+     inArray(activityEvents.eventType,[
+      "PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED","PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW",
+     ]))));
+   if(cmd.action==="SCHEDULE"){
+    const [prior]=await tx.select({id:slots.id}).from(slots)
+     .where(and(eq(slots.applicationId,a.applicationId),eq(slots.status,"BOOKED"),
+      activeSlot)).limit(1);
+    if(prior)throw Error(
+     "Cannot schedule a new round while a previous round is still active (status: SCHEDULED). Please mark the current round as Completed or Cancel it first.",
+    );
+   }
+   // Whole-college conflict query, not the first 2000 job-specific rows.
+   // Preserve the 15-minute calendar conflict buffer for candidate, room
+   // and same-company interviewer; unchanged EDIT row is excluded.
+   const bufferMs=15*60_000;
+   const overlapping=await tx.select({
+     id:slots.id,applicationId:slots.applicationId,room:slots.room,
+     panel:slots.panel,membershipId:placementApplications.membershipId,
+     companyRelationshipId:placementJobs.companyRelationshipId,
+   }).from(slots)
+    .innerJoin(placementJobs,and(eq(placementJobs.id,slots.jobId),
+      eq(placementJobs.collegeId,collegeId)))
+    .leftJoin(placementApplications,eq(placementApplications.id,slots.applicationId))
+    .where(and(eq(slots.status,"BOOKED"),activeSlot,
+      lt(slots.startsAt,new Date(end.getTime()+bufferMs)),
+      gt(slots.endsAt,new Date(start.getTime()-bufferMs))));
+   if(overlapping.some(x=>x.id!==oldId&&x.membershipId===app.membershipId))
+    throw Error("This candidate already has an interview that overlaps with the requested time. Please choose a different slot.");
    if(overlapping.some(x=>x.id!==oldId&&
-      (x.applicationId===a.applicationId||x.room.trim().toLowerCase()===room.trim().toLowerCase())))
+      x.room.trim().toLocaleLowerCase("en-IN")===normalizedRoom))
     throw Error("The candidate or room already has an overlapping interview.");
+   if(normalizedPanel&&overlapping.some(x=>x.id!==oldId&&
+      x.companyRelationshipId===job.companyRelationshipId&&
+      x.panel?.trim().toLocaleLowerCase("en-IN")===normalizedPanel))
+    throw Error("This interviewer already has an overlapping interview scheduled for this company. Please choose a different slot or interviewer.");
    if(cmd.action==="SCHEDULE"){
     const [saved]=await tx.insert(slots).values({
      jobId:job.id,roundId:a.roundId,applicationId:a.applicationId,
