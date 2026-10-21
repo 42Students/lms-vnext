@@ -9,9 +9,12 @@ export async function GET(request:Request){
   const params=exportParams(new URL(request.url).searchParams);
   if(params===null)return Response.json({error:"Invalid export filters"},{status:400});
   const result=await exportCollegeAssessments(await getCurrentRequestContext(),"ASSIGNMENT",params);
+  const filename=result.exportMode==="PAGE"?
+   "assignments-college-"+result.collegeId+"-page-"+result.page+".csv":
+   "college-assignments.csv";
   return new Response(result.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="college-assignments.csv"',
+   "Content-Disposition":'attachment; filename="'+filename+'"',
    "Cache-Control":"private, no-store",
    "X-Export-Truncated":String(result.truncated),
    "X-Export-Row-Cap":String(result.cap),
