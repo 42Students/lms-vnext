@@ -138,6 +138,9 @@ export async function executeScheduledJobWithLease<T>(
 
   await fence.assertCurrent();
   const result = await work(fence);
+  // An expired or stolen lease must never be reported as a completed tick.
+  // Side-effecting callbacks still assert the fence in each DB transaction.
+  await fence.assertCurrent();
   return { ran: true, result };
 }
 
