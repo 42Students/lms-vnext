@@ -100,7 +100,7 @@ function auditRows(
     type: event.type,
     actorUserId,
     actorAccessId: null,
-    actorName: null,
+    actorName: "Engineering",
     fromValue: event.previous,
     toValue: event.next,
     note:
@@ -174,6 +174,9 @@ export async function listBugTrackerIssuesForAdmin(
       sql`position(${term}::text in lower(${db10BugReports.description})) > 0`,
     )!);
   }
+  // Count the full authorized filter set, not only the current cursor window.
+  // Keep the legacy pageable count while preserving stable UUID keyset paging.
+  const totalConditions=[...conditions];
   if (input.beforeCreatedAt && input.beforeId) {
     const time = input.beforeCreatedAt;
     const id = input.beforeId;
@@ -202,11 +205,18 @@ export async function listBugTrackerIssuesForAdmin(
     )
     .limit(input.limit + 1);
 
+  const [countRow]=await getDb().select({total:count()}).from(db10BugReports)
+    .leftJoin(colleges,eq(colleges.id,db10BugReports.collegeId))
+    .where(totalConditions.length?and(...totalConditions):undefined);
   const hasMore = rows.length > input.limit;
   const items = rows.slice(0, input.limit).map((row) => serializeListRow(row.report));
   const last = items[items.length - 1];
   return {
     items,
+    total: Number(countRow?.total??0),
+    totalElements: Number(countRow?.total??0),
+    pageSize: input.limit,
+    sort: input.sort,
     nextCursor: hasMore && last
       ? { beforeCreatedAt: last.createdAt, beforeId: last.id }
       : null,
@@ -283,8 +293,13 @@ export async function getBugTrackerIssueForAdmin(
 
   const activityRows=activityResult.status==="fulfilled"?activityResult.value:[];
   const attachmentRows=attachmentResult.status==="fulfilled"?attachmentResult.value:[];
-  const activities=activityRows.slice(0,50);
-  const attachments=attachmentRows.slice(0,50);
+  const activities=activityRows.slice(0,50).map(item=>({
+    ...item,
+    actorName:item.actorName?.trim()||(item.actorUserId?"Engineering":row.report.reporterName||"Reporter"),
+  }));
+  // Gallery uses the historical attachment order (oldest first) within each
+  // bounded page. The cursor stays on the last raw DESC row for stable paging.
+  const attachments=attachmentRows.slice(0,50).reverse();
   const lastAttachment=attachments.at(-1);
   const last=activities.at(-1);
   // Audit the *successful* account-based view, never raw IP, headers,
@@ -302,6 +317,8 @@ export async function getBugTrackerIssueForAdmin(
   return { report:row.report,activities,attachments,
     activityUnavailable:activityResult.status==="rejected",
     attachmentsUnavailable:attachmentResult.status==="rejected",
+    activityOrder:"newest-first" as const,
+    attachmentOrder:"oldest-first-within-page" as const,
     nextAttachmentCursor:attachmentRows.length>50 && lastAttachment ? {
       attachmentBeforeCreatedAt:lastAttachment.createdAt.toISOString(),attachmentBeforeId:lastAttachment.id,
     }:null,
