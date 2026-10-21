@@ -153,7 +153,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
           <a
             key={section.id}
             href={`#${section.id}`}
-            className="relative inline-flex min-h-11 min-[768px]:min-h-[29px] shrink-0 items-center justify-center whitespace-nowrap border-0 px-0 pb-[13px] pt-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 after:transition-[width,opacity] after:duration-200 hover:text-[var(--lms-primary)] hover:after:w-full hover:after:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:after:transition-none"
+            className="relative inline-flex min-h-11 min-[768px]:min-h-[29px] shrink-0 items-center justify-center whitespace-nowrap border-0 px-0 pb-[13px] pt-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] after:pointer-events-none after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-0 after:-translate-x-1/2 after:bg-[var(--lms-primary)] after:opacity-0 after:transition-[width,opacity] after:duration-200 hover:text-[var(--lms-primary-text)] hover:after:w-full hover:after:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:after:transition-none"
           >
             {section.title}
           </a>
