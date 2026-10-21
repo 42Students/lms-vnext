@@ -24,6 +24,7 @@ import { Alert } from "@/components/ui/alert";
 import {
   adminAttendanceCellState,
   adminAttendancePercent,
+  adminAttendanceDayRatio,
   attendanceCsvCell,
   attendanceIndiaDay,
   attendanceMonthDays,
@@ -234,10 +235,10 @@ export function AdminAttendanceWorkspace({
   const markedSessions=heldSessions.filter(session=>session.attendanceStatus==="MARKED");
   // Count only authorized visible learners and their individually marked sessions.
   const totalMarks=(data.grid?.roster??[]).reduce((sum,learner)=>sum+
-    markedSessions.filter(session=>adminAttendanceCellState(session,
+    heldSessions.filter(session=>adminAttendanceCellState(session,
       recordMap.get(session.id+":"+learner.membershipId)).counted).length,0);
   const presentMarks=(data.grid?.roster??[]).reduce((sum,learner)=>sum+
-    markedSessions.filter(session=>adminAttendanceCellState(session,
+    heldSessions.filter(session=>adminAttendanceCellState(session,
       recordMap.get(session.id+":"+learner.membershipId)).present).length,0);
   const absentMarks=totalMarks-presentMarks;
   const monthPercent=totalMarks>0?Math.round(100*presentMarks/totalMarks):null;
@@ -251,12 +252,9 @@ export function AdminAttendanceWorkspace({
   }
 
   function dailyMarkedRatio(learner: Learner, sessions: Session[]) {
-    const counted=sessions.filter(session=>session.attendanceStatus==="MARKED");
-    const absent=counted.filter(session=>{
-      const record=recordMap.get(session.id+":"+learner.membershipId);
-      return record && record.status!=="PRESENT";
-    }).length;
-    return {counted:counted.length,attended:counted.length-absent};
+    return adminAttendanceDayRatio(
+      learner.membershipId, sessions, data.grid?.records ?? [],
+    );
   }
 
   function openCorrectionTarget(next:CellTarget){
@@ -492,7 +490,7 @@ export function AdminAttendanceWorkspace({
                   <div><dt>Active days</dt><dd className="font-semibold">{activeDays}</dd></div>
                   <div><dt>Not marked</dt><dd className="font-semibold">{notMarkedCount}</dd></div>
                 </dl>
-                <p className="mt-2 text-xs text-body">{presentMarks} present marks across {markedSessions.length} marked sessions</p>
+                <p className="mt-2 text-xs text-body">{presentMarks} present records across {heldSessions.length} held sessions</p>
               </div>
               <Button
                 variant="secondary"

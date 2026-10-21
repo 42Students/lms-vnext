@@ -91,7 +91,10 @@ export function adminAttendanceCellState(
   // A session marked by faculty defaults every learner to PRESENT.
   // Only non-present learner exceptions have attendance_records rows.
   const facultyMarked = session.attendanceStatus === "MARKED";
-  if (!facultyMarked && !record) {
+  // Legacy absence rows counted even when the original attendance-marked
+  // flag was absent. This is per learner, not a default for the entire class.
+  const counted = facultyMarked || Boolean(record);
+  if (!counted) {
     return { code: "—", label: "Not marked", counted: false, present: false };
   }
   const status = record?.status ?? "PRESENT";
@@ -106,8 +109,8 @@ export function adminAttendanceCellState(
   return {
     code: state?.[0] ?? "?",
     label: state?.[1] ?? status,
-    counted: facultyMarked,
-    present: facultyMarked && status === "PRESENT",
+    counted,
+    present: counted && status === "PRESENT",
   };
 }
 
@@ -137,4 +140,21 @@ export function attendanceCsvCell(value: string | number | null | undefined) {
   const raw = String(value ?? "");
   const safe = /^[\s]*[=+\-@\t\r]/.test(raw) ? "'" + raw : raw;
   return '"' + safe.replaceAll('"', '""') + '"';
+}
+
+/** Legacy multi-session dates show attended/marked for this learner only. */
+export function adminAttendanceDayRatio(
+  membershipId: string, sessions: readonly Session[], records: readonly Record[], now = new Date(),
+) {
+  const perEvent = new Map(records.filter(row => row.membershipId === membershipId)
+    .map(row => [row.scheduleEventId, row]));
+  let attended = 0;
+  let counted = 0;
+  for (const session of sessions) {
+    const state = adminAttendanceCellState(session, perEvent.get(session.id), now);
+    if (!state.counted) continue;
+    counted += 1;
+    if (state.present) attended += 1;
+  }
+  return { attended, counted };
 }

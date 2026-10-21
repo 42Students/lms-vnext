@@ -78,7 +78,10 @@ export async function listKnownErrorsForAdmin(context: RequestContext, raw: unkn
     ...row,
     // PostgreSQL bigint is not safely JSON-serializable as JS number.
     occurrenceCount: row.occurrenceCount.toString(),
-    affectedAccounts: countBySignature.get(row.id) ?? 0,
+    // No verified account marker is an unknown blast radius, not proof
+    // that the alert affected zero accounts. Preserve legacy nullable count.
+    affectedAccounts: countBySignature.get(row.id) ?? null,
+    distinctAccountCount: countBySignature.get(row.id) ?? null,
     // No raw log sample, stack, paths, tokens, account IDs or HMACs in response.
   }));
 }
