@@ -38,7 +38,7 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
   finally{inFlight.current=false;setPending(false);}
  }
  return <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-   <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Triage status
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Triage status
     <Select value={status} disabled={pending} className="min-h-11 w-full md:min-h-9" onChange={e=>{setStatus(e.target.value as BugStatus);setFeedback("");}}
     >
       {BUG_STATUSES.map(item=><option key={item} value={item}>{item}</option>)}

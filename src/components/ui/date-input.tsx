@@ -377,7 +377,7 @@ export function DateInput({
             </CalendarGrid>}
             {mode === "datetime-local"
               ? <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2 border-t border-[var(--lms-neutral-200)] pt-3 max-[767px]:flex-col max-[767px]:items-stretch">
-                  <label className="grid min-w-0 flex-1 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                  <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Time
                     <Input type="time" step={Number(props.step ?? 60)} value={draftTime}
                       min={dateTimeMin.slice(0, 10) === draftDate ? dateTimeMin.slice(11, 16) : undefined}

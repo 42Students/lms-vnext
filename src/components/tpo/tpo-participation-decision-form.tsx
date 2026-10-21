@@ -72,7 +72,7 @@ export function TpoParticipationDecisionForm({
 
   return (
     <form onSubmit={submit} className="min-w-0 space-y-5">
-      <label className="grid gap-2 text-sm font-semibold text-body">
+      <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
         Learner-level eligibility
         <Select
           value={status}
@@ -111,7 +111,7 @@ export function TpoParticipationDecisionForm({
       ) : null}
 
       {status !== "NOT_DECIDED" ? (
-        <label className="grid gap-2 text-sm font-semibold text-body">
+        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Internal note (optional)
           <Textarea
             rows={3}

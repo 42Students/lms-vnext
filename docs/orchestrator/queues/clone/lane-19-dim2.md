@@ -233,54 +233,54 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/tpo-job-types-editor.tsx`
 - [x] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-notice-schedule-controls.tsx`
-- [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-prep-percentage-editor.tsx`
-- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-student-note-editor.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
-- [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`
-- [ ] `src/components/tpo/tpo-students-selection.tsx`
-- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
-- [ ] `src/components/tpo/tpo-team-away-form.tsx`
-- [ ] `src/components/tpo/tpo-team-handover.tsx`
-- [ ] `src/components/tpo/tpo-team-message-actions.tsx`
-- [ ] `src/components/tpo/tpo-team-rename.tsx`
-- [ ] `src/components/tpo/tpo-team-search.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/tracker/audit-finding-status-action.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/ui/checkbox.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/form-field.tsx`
-- [ ] `src/components/ui/input.tsx`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/ui/otp-input.tsx`
-- [ ] `src/components/ui/page-size-select.tsx`
-- [ ] `src/components/ui/password-input.tsx`
-- [ ] `src/components/ui/radio.tsx`
-- [ ] `src/components/ui/range-slider.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/textarea.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-notice-schedule-controls.tsx`
+- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-prep-percentage-editor.tsx`
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
+- [x] `src/components/tpo/tpo-student-note-editor.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/tpo/tpo-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-students-assign-prep.tsx`
+- [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
+- [x] `src/components/tpo/tpo-students-selection.tsx`
+- [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx`
+- [x] `src/components/tpo/tpo-team-away-form.tsx`
+- [x] `src/components/tpo/tpo-team-handover.tsx`
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`
+- [x] `src/components/tpo/tpo-team-rename.tsx`
+- [x] `src/components/tpo/tpo-team-search.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/tracker/audit-finding-status-action.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/ui/checkbox.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/form-field.tsx`
+- [x] `src/components/ui/input.tsx`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/ui/otp-input.tsx`
+- [x] `src/components/ui/page-size-select.tsx`
+- [x] `src/components/ui/password-input.tsx`
+- [x] `src/components/ui/radio.tsx`
+- [x] `src/components/ui/range-slider.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/textarea.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
 
 
 ## Dimension sweep: lane chat-19 owns "Wording: titles, labels, buttons, messages (part 3 of 3)" across the whole codebase

@@ -94,14 +94,14 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
   <p role="status" className="break-words text-sm text-body">{picked.length} selected from the current filtered roster (up to 200 per review).</p>
   {drives.length===0?<p role="status" className="text-sm text-body">No draft or published drives can be changed here.</p>:null}
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
-   <label className="grid min-w-0 gap-1 text-sm">Drive
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={jobId} disabled={pending} onChange={e=>{setJobId(e.target.value);setResults([]);}}
      >
      <option value="">Choose a drive</option>
      {drives.map(job=><option key={job.id} value={job.id}>{job.name} · {job.status}</option>)}
     </Select>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm">Action
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={decision} disabled={pending} onChange={e=>{setDecision(e.target.value as typeof decision);setResults([]);}}
      >
      <option value="INCLUDE">Show / Include</option>
@@ -110,7 +110,7 @@ export function TpoStudentsDriveVisibility({learners,drives}:{learners:readonly 
     </Select>
    </label>
   </div>
-  <label className="grid min-w-0 gap-1 text-sm">Reason
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
    <Textarea className="w-full min-w-0" value={reason} disabled={pending} onChange={e=>setReason(e.target.value)} maxLength={500}
     />
   </label>

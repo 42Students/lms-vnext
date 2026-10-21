@@ -50,14 +50,14 @@ export function TpoStudentsAssignPrep(){
   {loading?<p role="status" className="text-sm text-body">Loading preparation courses…</p>:null}
   {!loading&&courses.length===0&&!error?<p role="status" className="text-sm text-body">No preparation courses are available for assignment.</p>:null}
   <div className="grid min-w-0 gap-3 md:grid-cols-2">
-   <label className="grid min-w-0 gap-1 text-sm">Preparation course
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Preparation course
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={offeringId} onChange={e=>{setOfferingId(e.target.value);setError("");}} disabled={pending||loading}
      >
      <option value="">Choose a course</option>
      {courses.map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
     </Select>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm">Due date and time (IST, optional)
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date and time (IST, optional)
     <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="datetime-local" disabled={pending} value={dueAt} onChange={e=>{setDueAt(e.target.value);setError("");}} />
    </label>
   </div>

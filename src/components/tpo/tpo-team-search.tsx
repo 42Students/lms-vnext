@@ -22,7 +22,7 @@ export function TpoTeamSearch({value}:{value:string}){
    if(timer.current)clearTimeout(timer.current);
   };
  },[]);
- return <label className="block min-w-0 text-sm font-semibold text-body">
+ return <label className="block min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
   Search conversations
   <Input ref={ref} type="search" name="q" maxLength={120} defaultValue={value}
    placeholder="Search (press /)"

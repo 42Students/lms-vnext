@@ -122,12 +122,12 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
     </section>
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>
      <section className="space-y-2"><h3 className="font-semibold">Send {row.section==="EDUCATION"?"Education":"Identity"} back</h3>
-      <label className="block text-sm">Reason
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason
        <Select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full" value={reason} onChange={e=>setReason(e.target.value)}>
         {reasonChoices.map(item=><option key={item} value={item}>{item}</option>)}
         <option value="">Or write what needs to change</option>
        </Select></label>
-      <label className="block text-sm">Additional details
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Additional details
        <Textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
