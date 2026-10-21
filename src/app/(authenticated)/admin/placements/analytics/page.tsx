@@ -12,6 +12,7 @@ import {DateInput} from "@/components/ui/date-input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
@@ -43,7 +44,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
-  <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
+  <Alert tone="warning" title="Select a college to continue">Hiring metrics are college-scoped. Pick an Organization + College in the header above.</Alert>
  </div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const [reportResult,filterResult]=await Promise.allSettled([
@@ -87,7 +88,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  type Row=(typeof data.rows)[number];
  const columns:DataTableColumn<Row>[]=[
   {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.companyName},
-  {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Drive",mobilePriority:"secondary",cell:row=>
+  {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Job",mobilePriority:"secondary",cell:row=>row.jobId.startsWith("total:")?<strong>Company total</strong>:
    <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
     className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
      {row.jobTitle}</Link>},
@@ -96,10 +97,10 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     cell:(row:Row)=><span className="tabular-nums">{row[key]}</span>,
   })),
  ];
- const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
+ const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string;companyName?:string|null}[])=>(
   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-w-0">
-   <option value="">All {label.toLowerCase()}{label==="Job"?"s":""}</option>{q[key]&&!values.some(item=>item.id===q[key])?<option value={q[key]}>Current selected {label.toLowerCase()}</option>:null}{values.map(item=><option key={item.id} value={item.id}>{label==="Job"?item.name.slice(0,30)+(item.name.length>30?"…":"")+(("companyName" in item&&item.companyName)?" - "+item.companyName:""):item.name}</option>)}</Select></label>
+   <option value="">{label==="Job"?"All jobs":"All"}</option>{q[key]&&!values.some(item=>item.id===q[key])?<option value={q[key]}>Current selected {label.toLowerCase()}</option>:null}{values.map(item=><option key={item.id} value={item.id}>{label==="Job"?item.name.slice(0,30)+(item.name.length>30?"…":"")+(item.companyName?" - "+item.companyName:""):item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
@@ -134,7 +135,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
       <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="w-full"/></label>
     </div>
    </details>
-   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear all</Link>
+   {params.size?<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear all</Link>:null}
   </form>
   {params.size?<p role="status" className="max-w-full break-words text-xs text-muted-foreground">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
   <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
