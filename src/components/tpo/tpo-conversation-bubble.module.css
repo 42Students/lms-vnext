@@ -9,7 +9,7 @@
   margin-right: auto;
   padding: 9px 12px !important;
   border: 1px solid #e3e8ef !important;
-  border-radius: 5px 13px 13px 13px !important;
+  border-radius: 6px 12px 12px 12px !important;
   background: #fff !important;
   color: #2e3c52 !important;
   line-height: 1.5;
@@ -21,7 +21,7 @@
   margin-right: 0;
   margin-left: auto;
   border-color: #cce1fb !important;
-  border-radius: 13px 5px 13px 13px !important;
+  border-radius: 12px 6px 12px 12px !important;
   background: #edf6ff !important;
   color: #20344f !important;
 }
