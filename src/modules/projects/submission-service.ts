@@ -266,6 +266,16 @@ export async function updateProjectSubmissionDraft(
       );
     }
 
+    const unchanged=submission.summary===input.summary&&
+      (input.sourceUrl===undefined||submission.sourceUrl===input.sourceUrl)&&
+      (input.demoUrl===undefined||submission.demoUrl===input.demoUrl)&&
+      (input.notes===undefined||submission.notes===input.notes)&&
+      (input.attachments===undefined||
+        JSON.stringify(submission.attachments)===JSON.stringify(input.attachments));
+    // Browser retries of an already-acknowledged draft are read-only; do not
+    // emit spurious revision/audit events or erase sibling attachment edits.
+    if(unchanged)return submission;
+
     // The submission row is held FOR UPDATE, so a second device observes the
     // first writer's revision before applying a stale edit. Millisecond
     // precision matches the browser's ISO token and Drizzle Date values.
@@ -298,10 +308,10 @@ export async function updateProjectSubmissionDraft(
     const [updated] = await tx
       .update(projectSubmissions)
       .set({
-        summary: input.summary,
-        sourceUrl: input.sourceUrl ?? null,
-        demoUrl: input.demoUrl ?? null,
-        notes: input.notes ?? null,
+        summary:input.summary,
+        ...(input.sourceUrl!==undefined?{sourceUrl:input.sourceUrl??null}:{}),
+        ...(input.demoUrl!==undefined?{demoUrl:input.demoUrl??null}:{}),
+        ...(input.notes!==undefined?{notes:input.notes}:{}),
         ...(input.attachments!==undefined?{attachments:input.attachments}:{}),
         // Ensure a unique revision even if two saves arrive in one millisecond.
         updatedAt: nextProjectDraftUpdatedAt(submission.updatedAt),
@@ -718,5 +728,11 @@ export async function listProjectSubmissions(
   }
   history.sort((a,b)=>a.occurredAt.localeCompare(b.occurredAt)||
     a.version-b.version||a.id.localeCompare(b.id));
-  return {submissions,reviews,deliveryEvents,history};
+  return {
+   submissions,reviews,deliveryEvents,history,
+   revisionCount:submissions.length,
+   reviewCount:reviews.length,
+   legacyRevisionCount:submissions.reduce((max,row)=>
+      Math.max(max,row.legacyRevisionCount??0),0),
+  };
 }
