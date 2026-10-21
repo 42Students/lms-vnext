@@ -113,6 +113,6 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         label={title + " pages"} showBoundaryLinks={false} />
     </div>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }

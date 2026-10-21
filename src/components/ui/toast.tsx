@@ -24,8 +24,8 @@ export function enqueueToast(current: readonly ToastItem[], incoming: ToastItem,
 type ToastInput = Omit<ToastItem, "id">;
 type ToastContextValue = { showToast: (toast: ToastInput) => void };
 const ToastContext = createContext<ToastContextValue | null>(null);
-const toneClasses = { success: "border-success", error: "border-error", info: "border-primary" } as const;
-const dotClasses = { success: "bg-success", error: "bg-error", info: "bg-primary" } as const;
+const toneClasses = { success: "border-success", error: "border-error", info: "border-info" } as const;
+const dotClasses = { success: "bg-success", error: "bg-error", info: "bg-info" } as const;
 
 export function clearEvictedToastTimers(
   evictedIds: readonly string[],

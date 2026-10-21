@@ -20,46 +20,46 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/projects/legacy-project-board.module.css`
 - [x] `src/components/projects/mentor-release-editor.tsx`
 - [x] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-workspace-readiness.module.css`
-- [ ] `src/components/shell/legacy-mobile-footer.css`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tracker/tracker-quick-report-launcher.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/list-toolbar.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/toast.tsx`
-- [ ] `src/components/profile/learner-skill-catalog-input.tsx`
-- [ ] `src/components/projects/mentor-delivery-lock-control.tsx`
-- [ ] `src/components/projects/project-admin-nav.tsx`
-- [ ] `src/components/projects/project-participant-list-controls.tsx`
-- [ ] `src/components/shell/account-actions.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/styles/college-admin-north-star.css`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/admin/college-at-glance-panel.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/ui/empty-state.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/projects/project-workspace-readiness.module.css`
+- [x] `src/components/shell/legacy-mobile-footer.css`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tracker/tracker-quick-report-launcher.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/list-toolbar.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/toast.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx`
+- [x] `src/components/projects/project-admin-nav.tsx`
+- [x] `src/components/projects/project-participant-list-controls.tsx`
+- [x] `src/components/shell/account-actions.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/styles/college-admin-north-star.css`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/admin/college-at-glance-panel.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/ui/empty-state.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
 - [ ] `src/components/tpo/tpo-team-handover.tsx`
 - [ ] `src/components/tracker/known-errors-workspace.tsx`
