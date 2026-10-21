@@ -27,7 +27,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_learner-class-schedule.tsx.md` (edit src/components/academics/learner-class-schedule.tsx; 40 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_app_api_academics_programs_route.ts.md` (edit src/app/api/academics/programs/route.ts; 38 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-academic-directory.tsx.md` (edit src/components/academics/college-academic-directory.tsx; 37 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_skills_catalog-service.ts.md` (edit src/modules/skills/catalog-service.ts; 31 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_skills_catalog-service.ts.md` (edit src/modules/skills/catalog-service.ts; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-structure-directory.tsx.md` (edit src/components/academics/college-structure-directory.tsx; 29 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_academics-actions.tsx.md` (edit src/components/academics/academics-actions.tsx; 28 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_college-batch-promotion-service.ts.md` (edit src/modules/academics/college-batch-promotion-service.ts; 26 findings; best P2)
