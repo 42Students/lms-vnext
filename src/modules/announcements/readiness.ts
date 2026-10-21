@@ -11,3 +11,16 @@
 export function announcementsRuntimeEnabled() {
   return process.env.DB10_ANNOUNCEMENTS_READY === "DB10_VERIFIED";
 }
+
+/** Separate an operator-disabled module from a ready module whose database
+ * list query failed. Failed loads must never be rendered as empty success.
+ * This helper handles presentation only; it cannot swallow authorization
+ * errors or replace the permission-checked announcement service.
+ */
+export function announcementReadPresentation(input:{
+ enabled:boolean;readFailed:boolean;availableCount:number;
+}):{status:"DISABLED"|"RETRY"|"READY";message:string}{
+ if(!input.enabled)return {status:"DISABLED",message:"College-wide announcements are unavailable."};
+ if(input.readFailed)return {status:"RETRY",message:"Could not load announcements. Retry."};
+ return {status:"READY",message:input.availableCount===0?"No announcements yet.":"Announcements loaded."};
+}
