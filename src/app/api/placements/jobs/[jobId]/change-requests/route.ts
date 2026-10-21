@@ -12,6 +12,7 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {readTpoInternalConversation} from "@/modules/placements/tpo-team-conversation-service";
 import {postTpoInternalMessage} from "@/modules/placements/tpo-team-internal-reply-service";
@@ -30,6 +31,9 @@ async function scopedDriveThreads(context:Awaited<ReturnType<typeof getCurrentRe
  if(!context.membership||!hasPlacementTeamMembership(context))
   throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,context.membership.collegeId);
+ await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"placements.manage",{
+  organizationId:college.organizationId,collegeId:college.id,
+ }));
  const jobId=z.string().uuid().parse(rawJobId);
  const [job]=await getDb().select({id:placementJobs.id})
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),
