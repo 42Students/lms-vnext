@@ -133,7 +133,7 @@ export default async function TpoTeamPage({searchParams}:{
          <dd className="font-semibold">
           {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
            <Link href={href} title={"Open "+label.toLowerCase()+" records"}
-            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{count}</Link>}
+            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-[767px]:min-h-11 max-[767px]:inline-flex max-[767px]:items-center">{count}</Link>}
          </dd>
         </div>)}
        </dl>:null}
@@ -163,14 +163,14 @@ export default async function TpoTeamPage({searchParams}:{
       {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":key==="DECISIONS"?"Decisions":key==="ASKS"?"Asks":"@ Me"} ({conversationCounts[key]})
      </Link>)}
     </nav>:null}
-    <Link href="/tpo/team/everyone" className="mt-3 block border-b border-border py-4 font-semibold text-link lms-inline-link">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
+    <Link href="/tpo/team/everyone" className="mt-3 block border-b border-border py-4 font-semibold text-link lms-inline-link max-[767px]:min-h-11">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
     {conversations?.status==="READY"?<Disclosure title="Start a private placement team conversation" className="mt-3 border-b border-border" contentClassName="pb-3"><TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&
       (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/></Disclosure>:null}
     {conversations?.status==="FAILED"?<Alert tone="error">
      Could not load conversations right now. Your search has been kept.
-     <Link className="ml-2 font-semibold text-link underline lms-inline-link" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
+     <Link className="ml-2 font-semibold text-link underline lms-inline-link max-[767px]:min-h-11 max-[767px]:inline-flex max-[767px]:items-center" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
     </Alert>:null}
     {conversations?.status==="NOT_REGISTERED"?
       <Alert tone="warning">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</Alert>:
@@ -178,14 +178,14 @@ export default async function TpoTeamPage({searchParams}:{
       visibleConversations.length?<ul className="mt-3 divide-y divide-border">{visibleConversations.map(row=>
        <li key={row.id} className="min-w-0 py-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-[767px]:min-h-11 max-[767px]:inline-flex max-[767px]:items-center" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
            tone="neutral">
           {row.unreadCount} unread
          </Badge>:null}
         </div>
-        <p className="mt-1 truncate text-xs text-body">With {row.counterpartName??"Team member"} · Private conversation</p>
-        {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
+        <p className="mt-1 truncate text-xs text-body min-w-0">With {row.counterpartName??"Team member"} · Private conversation</p>
+        {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground min-w-0">{row.searchSnippet??row.lastPreview}</p>:null}
         {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:

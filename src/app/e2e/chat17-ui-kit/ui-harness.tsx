@@ -47,7 +47,7 @@ function UIKitTestSurface() {
       <Button onClick={() => setDialogOpen(true)}>Open harness dialog</Button>
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}
         title="Harness confirmation" description="Keyboard focus and Back button test."
-        footer={<Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => setDialogOpen(false)}>Close harness dialog</Button>}>
+        footer={<Button className="min-h-11 w-full md:w-auto md:min-h-9" onClick={() => setDialogOpen(false)}>Close harness dialog</Button>}>
         <p>Dialog body with keyboard focus.</p>
         <Input aria-label="Dialog input" className="mt-[6px] w-full min-w-0" placeholder="Type here"/>
       </Dialog>
@@ -228,7 +228,7 @@ function UIKitTestSurface() {
       </Disclosure>
     </section>
 
-    <section aria-label="Toast fixture" className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+    <section aria-label="Toast fixture" className="flex flex-col gap-2 md:flex-row md:flex-wrap md:items-center">
       <h2 className="m-0 mb-3 break-words text-[16px] font-semibold leading-6 text-[var(--lms-heading)]">Toast fixture</h2>
       <Button onClick={() => showToast({tone:"success",title:"Saved harness result"})}>
         Show success notice
