@@ -3,7 +3,7 @@ import {Select} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Switch} from "@/components/ui/selection-controls";
 
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
@@ -18,6 +18,8 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [choice,setChoice]=useState<CollegeChoice>(collegeRuleSelection(stored));
  const [locked,setLocked]=useState(stored?.locked??false);
  const [confirm,setConfirm]=useState(false);
+ const savingRef=useRef(false);
+ const reviewingRef=useRef(false);
  const [busy,setBusy]=useState(false);
  const [feedback,setFeedback]=useState("");
  const [feedbackTone,setFeedbackTone]=useState<"success"|"error">("success");
@@ -35,7 +37,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const disabled=busy||impactBusy||confirm||!dirty||(ancestorLocked&&choice!=="INHERIT");
  const turningOff=choice==="OFF"&&(observed===null||observed.enabled);
  const projectsOff=turningOff&&module==="projects",placementsOff=turningOff&&module==="placements";
- const canSave=students!==null&&(students<100||acknowledgedPopulation)&&(impactCounts!==null||ackUnknown);
+ const canSave=(!turningOff||students!==null&&(students<100||acknowledgedPopulation)&&(impactCounts!==null||ackUnknown));
  const moduleLabel=module==="projects"?"Projects":module==="placements"?"Placements":"Electives";
  async function recheck(){
   setBusy(true);setFeedback("");
@@ -50,7 +52,8 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   finally{setBusy(false);}
  }
  async function reviewChange(){
-  if(disabled)return;
+  if(disabled||reviewingRef.current||savingRef.current)return;
+  reviewingRef.current=true;
   setFeedback("");setRetryFailure(false);setImpactBusy(true);setImpact(null);
   setImpactCounts(null);setStudents(null);setAckUnknown(false);setAcknowledgedPopulation(false);
   try{
@@ -91,10 +94,11 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   }catch(error){
    setFeedbackTone("error");
    setFeedback(error instanceof Error?error.message:"Could not review impact for this college.");
-  }finally{setImpactBusy(false);}
+  }finally{reviewingRef.current=false;setImpactBusy(false);}
  }
  async function save(){
-  if(!canSave||busy||!dirty)return;
+  if(!canSave||busy||!dirty||savingRef.current||reviewingRef.current)return;
+  savingRef.current=true;
   setBusy(true);setFeedback("");setRetryFailure(false);
   try{
    const response=await fetch(endpoint,{method:"PUT",headers:{"content-type":"application/json"},
@@ -124,33 +128,40 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    showToast({tone:"success",title:lockChanged?(choice!=="INHERIT"&&locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
     :moduleLabel+" updated for "+collegeName});
    setFeedbackTone("success");setFeedback("Stored policy verified for "+collegeName+".");
+   setConfirm(false);
    router.refresh();
   }catch{
    setFeedbackTone("error");
    setFeedback("Connection or verification failed. The change might have saved; recheck stored policy before retrying.");
    setRetryFailure(true);
-  }finally{setBusy(false);setConfirm(false);}
+  }finally{savingRef.current=false;setBusy(false);}
  }
- return <section aria-label="College feature policy" aria-busy={busy||impactBusy} className="mt-3 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
-  {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup.</Alert>:null}
+ return <section aria-label={"College feature policy for "+moduleLabel} aria-busy={busy||impactBusy} className="mt-3 min-w-0 space-y-3 border-t border-border pt-3 print:hidden">
+  {ancestorLocked?<Alert tone="warning">Locked by a broader policy. Only Inherit is available for cleanup. <a href="/admin/module-access" className="font-semibold text-primary-text underline">Open Module Access</a> to review the inherited rule.</Alert>:null}
+  {feedback?<Alert tone={feedbackTone} role={feedbackTone==="error"?"alert":"status"}>
+   <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+    <span>{feedback}</span>
+    <Button type="button" variant="secondary" size="sm" className="min-h-9" onClick={()=>setFeedback("")}>Dismiss</Button>
+   </div>
+  </Alert>:null}
   <div role="group" aria-label="Quick college module override" className="flex flex-wrap items-center gap-2">
    <span className="text-sm font-semibold text-body">Quick override</span>
    <Button size="sm" variant={choice==="ON"?"primary":"secondary"} aria-pressed={choice==="ON"}
-    disabled={busy||impactBusy||confirm||ancestorLocked} onClick={()=>{setChoice("ON");setFeedback("");}}>Turn on</Button>
+    disabled={busy||impactBusy||confirm||ancestorLocked} aria-label={"Turn on "+moduleLabel+" for selected college"} onClick={()=>{setChoice("ON");setFeedback("");}}>Turn on</Button>
    <Button size="sm" variant={choice==="OFF"?"primary":"secondary"} aria-pressed={choice==="OFF"}
-    disabled={busy||impactBusy||confirm||ancestorLocked} onClick={()=>{setChoice("OFF");setFeedback("");}}>Turn off</Button>
+    disabled={busy||impactBusy||confirm||ancestorLocked} aria-label={"Turn off "+moduleLabel+" for selected college"} onClick={()=>{setChoice("OFF");setFeedback("");}}>Turn off</Button>
    {choice==="INHERIT"?<span className="text-xs text-muted-foreground">Inherits broader policy</span>:null}
   </div>
   <Disclosure title="Advanced rule: inheritance and lock" contentClassName="pt-3">
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-end">
    <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">College stored value
-    <Select className="min-h-11 w-full sm:min-h-9" value={choice} disabled={busy||impactBusy||confirm}
+    <Select className="min-h-11 w-full sm:min-h-9" aria-label={moduleLabel+" stored rule for "+collegeId} value={choice} disabled={busy||impactBusy||confirm}
      onChange={e=>{setChoice(e.target.value as CollegeChoice);setFeedback("");}}>
      <option value="INHERIT">Inherit</option><option value="ON" disabled={ancestorLocked}>On</option><option value="OFF" disabled={ancestorLocked}>Off</option>
     </Select>
    </label>
    <div className="flex min-h-11 min-w-0 items-center sm:min-h-9">
-    <Switch label="Lock this college rule" checked={locked}
+    <Switch label={"Lock "+moduleLabel+" rule for selected college"} checked={locked}
      disabled={busy||impactBusy||confirm||ancestorLocked||choice==="INHERIT"} onChange={e=>{setLocked(e.target.checked);setFeedback("");}}/>
    </div>
   </div>
@@ -168,7 +179,6 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    </Button>:null}
   </div>
   {impactBusy?<p role="status" className="m-0 text-xs leading-5 text-muted-foreground">Checking the selected college, active learner population and module impact…</p>:null}
-  {feedback?<Alert tone={feedbackTone} role={feedbackTone==="error"?"alert":"status"}>{feedback}</Alert>:null}
   <ConfirmDialog open={confirm} onOpenChange={next=>{if(!busy)setConfirm(next);}}
    title={projectsOff?"Turn off Projects?":placementsOff?"Turn off Placements for "+collegeName+"?":lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
