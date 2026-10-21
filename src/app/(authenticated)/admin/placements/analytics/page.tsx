@@ -108,7 +108,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </Banner>:null}
   <dl className="grid min-w-0 grid-cols-2 gap-0 border-y border-border sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="min-w-0 border-b border-r border-border px-[var(--lms-space-3)] py-[var(--lms-space-3)]"><dt className="text-[13px] font-semibold leading-4 capitalize text-[var(--lms-neutral-400)]">{hiringMetricLabel(key)}</dt>
-    <dd className="mt-2 text-[24px] font-semibold leading-[1.3] tabular-nums text-[var(--lms-heading)]">{totals[key]}</dd></div>)}</dl>
+    <dd className="mt-2 text-[16px] font-semibold leading-6 tabular-nums text-[var(--lms-heading)]">{totals[key]}</dd></div>)}</dl>
   <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Hiring Funnel</h2>
