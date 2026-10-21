@@ -267,6 +267,11 @@ export async function createProjectInstance(
           title: input.title,
           sectionId: input.sectionId??null,
           status: input.initialStatus,
+          phase: input.phase || "Planning",
+          progressPercent: input.progressPercent,
+          dueLabel: input.dueLabel || null,
+          blocker: input.blocker || null,
+          nextAction: input.nextAction || null,
           summary:
             input.summary ??
             assigned.templateSummary ??
