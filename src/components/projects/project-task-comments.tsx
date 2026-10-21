@@ -17,6 +17,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
 }){
  const router=useRouter();
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
+ const [open,setOpen]=useState(false);
  const [kind,setKind]=useState<ProjectTaskCommentKind>("NOTE");
  const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
@@ -28,6 +29,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    ? lastPosted.updatedAt : updatedAt;
  const url="/api/projects/"+encodeURIComponent(projectId)+"/tasks/"+encodeURIComponent(taskId)+"/comments";
  async function show(){
+  setOpen(true);
   setBusy(true);setError(null);
   try{
    const result=await fetch(url,{cache:"no-store",credentials:"same-origin"});
