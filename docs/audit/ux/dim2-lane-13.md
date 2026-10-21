@@ -12,3 +12,13 @@
 | `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx` | 27 | 375 min 44px touch ↔ 9 min-h-11 (44px); 768 at 768px ↔ 20 md:/min-[768px] rules; 1280 non-overflow ↔ 13 min-w-0/max-w-full containers | none |
 | `src/app/(authenticated)/admin/colleges/page.tsx` | 15 | 375 min 44px touch ↔ 7 min-h-11 (44px); 768 at 768px ↔ 11 md:/min-[768px] rules; 1280 non-overflow ↔ 6 min-w-0/max-w-full containers | none |
 | `src/app/(authenticated)/admin/companies/page.tsx` | 56 | 375 min 44px touch ↔ 21 min-h-11 (44px); 768 at 768px ↔ 28 md:/min-[768px] rules; 1280 non-overflow ↔ 12 min-w-0/max-w-full containers | none |
+| `src/app/(authenticated)/admin/course-progress/page.tsx` | 21 | 375 ≥44px ↔ 8 min-h-11=44px; 768 transition ↔ 11 md:768px rules; 1280/375 fit ↔ 8 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/course-progress/students/page.tsx` | 9 | 375 ≥44px ↔ 2 min-h-11=44px; 768 transition ↔ 7 md:768px rules; 1280/375 fit ↔ 7 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/electives/page.tsx` | 23 | 375 ≥44px ↔ 8 min-h-11=44px; 768 transition ↔ 9 md:768px rules; 1280/375 fit ↔ 7 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/features/[collegeId]/page.tsx` | 30 | 375 ≥44px ↔ 13 min-h-11=44px; 768 transition ↔ 20 md:768px rules; 1280/375 fit ↔ 8 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/features/[collegeId]/students/[membershipId]/history/page.tsx` | 24 | 375 ≥44px ↔ 9 min-h-11=44px; 768 transition ↔ 8 md:768px rules; 1280/375 fit ↔ 8 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx` | 32 | 375 ≥44px ↔ 12 min-h-11=44px; 768 transition ↔ 21 md:768px rules; 1280/375 fit ↔ 13 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/features/page.tsx` | 44 | 375 ≥44px ↔ 14 min-h-11=44px; 768 transition ↔ 15 md:768px rules; 1280/375 fit ↔ 16 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/inbound-mail/page.tsx` | 23 | 375 ≥44px ↔ 6 min-h-11=44px; 768 transition ↔ 15 md:768px rules; 1280/375 fit ↔ 15 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/lecture-halls/page.tsx` | 33 | 375 ≥44px ↔ 13 min-h-11=44px; 768 transition ↔ 18 md:768px rules; 1280/375 fit ↔ 20 zero-min/maximum-width rules | none |
+| `src/app/(authenticated)/admin/lessons/page.tsx` | 29 | 375 ≥44px ↔ 11 min-h-11=44px; 768 transition ↔ 17 md:768px rules; 1280/375 fit ↔ 17 zero-min/maximum-width rules | none |
