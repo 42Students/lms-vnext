@@ -69,6 +69,52 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   const resetHref=root+"/schedule";
   const candidateRows=appointments?.interviews??[];
   const candidateCount=appointments?.appointmentTotal??0;
+  // These conflicts are deliberately limited to this drive's authorized
+  // appointment page. Venue/learner/panel overlaps are not asserted as a
+  // system-wide conflict scan over unrequested candidates or other drives.
+  const conflictIds=new Set<string>();
+  for(let i=0;i<candidateRows.length;i++){
+    const left=candidateRows[i]!;
+    const leftFrom=Date.parse(left.scheduledAt);
+    const leftTo=leftFrom+left.durationMinutes*60_000;
+    if(left.status!=="SCHEDULED"||!Number.isFinite(leftFrom))continue;
+    for(let j=i+1;j<candidateRows.length;j++){
+      const right=candidateRows[j]!;
+      const rightFrom=Date.parse(right.scheduledAt);
+      const rightTo=rightFrom+right.durationMinutes*60_000;
+      if(right.status!=="SCHEDULED"||!Number.isFinite(rightFrom)||
+         leftFrom>=rightTo||rightFrom>=leftTo)continue;
+      const sameApplicant=Boolean(left.applicationId&&
+        left.applicationId===right.applicationId);
+      const sameVenue=Boolean(left.venue&&right.venue&&
+        left.venue.trim().toLowerCase()===right.venue.trim().toLowerCase());
+      const samePanel=Boolean(left.interviewer&&right.interviewer&&
+        left.interviewer.trim().toLowerCase()===right.interviewer.trim().toLowerCase());
+      if(sameApplicant||sameVenue||samePanel){
+        conflictIds.add(left.id);conflictIds.add(right.id);
+      }
+    }
+  }
+  const visibleCandidateRows=conflictsOnly
+    ?candidateRows.filter(item=>conflictIds.has(item.id)):candidateRows;
+  const addConflictParam=(href:string)=>conflictsOnly
+    ?href+(href.includes("?")?"&":"?")+"conflictsOnly=1":href;
+  const conflictHref=conflictsOnly
+    ?refreshHref:refreshHref+(refreshHref.includes("?")?"&":"?")+"conflictsOnly=1";
+  const csvCell=(value:string|number|null|undefined)=>{
+    const raw=String(value??"");
+    // Prevent spreadsheet formula execution when exported text is opened.
+    const safe=/^\s*[=+\-@]/.test(raw)?"'"+raw:raw;
+    return '"'+safe.replaceAll('"','""')+'"';
+  };
+  const appointmentCsv=[
+    ["Appointment ID","Application ID","Round ID","Start (UTC)","Duration (minutes)",
+      "Mode","Venue","Panel","Status"].map(csvCell).join(","),
+    ...visibleCandidateRows.map(item=>
+      [item.id,item.applicationId,item.roundId,item.scheduledAt,item.durationMinutes,
+       item.mode,item.venue,item.interviewer,item.status].map(csvCell).join(",")),
+  ].join("\r\n")+"\r\n";
+  const exportHref="data:text/csv;charset=utf-8,"+encodeURIComponent("\uFEFF"+appointmentCsv);
   const nowMs=Date.now();
   const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
     timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
