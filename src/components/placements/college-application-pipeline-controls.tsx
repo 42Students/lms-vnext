@@ -1,31 +1,35 @@
 "use client";
+import Link from "next/link";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
-import {COLLEGE_APPLICATION_STAGES} from "@/modules/placements/college-stage-action-model";
+import {useToast} from "@/components/ui/toast";
+import {COLLEGE_APPLICATION_STAGES,COLLEGE_APPLICATION_TRANSITIONS} from "@/modules/placements/college-stage-action-model";
 import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
 import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
- status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null};
-const transitions:Record<string,readonly string[]>={
- APPLIED:["SHORTLISTED","ASSESSMENT","REJECTED"],
- SHORTLISTED:["ASSESSMENT","INTERVIEW","WAITLISTED","REJECTED"],
- ASSESSMENT:["INTERVIEW","WAITLISTED","REJECTED"],
- INTERVIEW:["WAITLISTED","OFFERED","REJECTED"],
- WAITLISTED:["OFFERED","REJECTED"],OFFERED:["HIRED","REJECTED"],HIRED:[],REJECTED:[],
-};
+ status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null;
+ allowedNextStages?:readonly string[];stageMovedByName?:string|null;stageMovedAt?:string|null;};
+const transitions=COLLEGE_APPLICATION_TRANSITIONS;
 export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements"}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements"}){
  const router=useRouter();
+ const {showToast}=useToast();
+ // A late network reply from the previous selected college must not open a
+ // drawer or change row selections in the new workspace.
+ const scopeEpoch=useRef(0);
+ const activeScope=jobId+"|"+basePath;
+ const filterScope=JSON.stringify({...query,page:1});
+ const [failedDetailId,setFailedDetailId]=useState<string|null>(null);
  const [selected,setSelected]=useState<string[]>([]);
  const [allMatching,setAllMatching]=useState(false);
  const [detailId,setDetailId]=useState<string|null>(null);
@@ -38,21 +42,36 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  const [error,setError]=useState("");
  const [outcome,setOutcome]=useState<{moved:number;skipped:number;
   results:Array<{applicationId:string;status:string;reason?:string}>}|null>(null);
- const [email,setEmail]=useState(false);
+ useEffect(()=>{
+  scopeEpoch.current+=1;
+  setSelected([]);setAllMatching(false);setDetailId(null);setDetailPayload(null);
+  setDialog(false);setBusy(false);setError("");setOutcome(null);setFailedDetailId(null);
+ },[activeScope]);
+ useEffect(()=>{
+  // A "select all matching" command is never carried over to a changed filter.
+  setAllMatching(false);
+ },[filterScope]);
  const eligible=rows.filter(r=>r.status==="SUBMITTED");
  const allPage=eligible.length>0&&eligible.every(r=>selected.includes(r.id));
  const selectedCount=allMatching?total:selected.length;
  const rowMap=useMemo(()=>new Map(rows.map(r=>[r.id,r])),[rows]);
  function toggle(id:string){setAllMatching(false);setSelected(current=>current.includes(id)?current.filter(x=>x!==id):[...current,id]);}
  async function openDetail(id:string){
-  setError("");
+  const epoch=scopeEpoch.current;
+  setError("");setFailedDetailId(null);
   try{
    const body=await apiFetch<CollegeApplicationDetail>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
     "/applications/"+encodeURIComponent(id),{cache:"no-store"});
-   if(!body?.application)throw Error("Could not load this application. Please try again.");
+   if(scopeEpoch.current!==epoch)return;
+   if(!body?.application||body.application.id!==id)
+    throw Error("Could not load this application. Please try again.");
    setDetailPayload(body);
    setDetailId(id);
-  }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
+  }catch(reason){
+   if(scopeEpoch.current!==epoch)return;
+   setFailedDetailId(id);
+   setError(reason instanceof Error?reason.message:friendlyApiError({}));
+  }
  }
  function selectRow(row:Row,next:string){
   setAllMatching(false);setSelected([row.id]);setTarget(next);setAction(next==="REINSTATE"?"REINSTATE":"MOVE");
@@ -63,19 +82,30 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
  }
  async function save(){
   if(!selectedCount||reason.trim().length<3||busy)return;
+  const epoch=scopeEpoch.current;
   setBusy(true);setError("");setOutcome(null);
   try{
    const payload=await apiFetch<{moved?:number;skipped?:number;results?:Array<{applicationId:string;status:string;reason?:string}>}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,applicationIds:allMatching?[]:selected,
       matchingFilter:allMatching?query:undefined,stage:action==="MOVE"?target:undefined,
-      reason:reason.trim(),notifyByEmail:email,confirmed:true}),
+      reason:reason.trim(),notifyByEmail:false,confirmed:true}),
    });
-   setOutcome({moved:payload.moved??0,skipped:payload.skipped??0,results:payload.results??[]});
+   if(scopeEpoch.current!==epoch)return;
+   const moved=payload.moved??0,skipped=payload.skipped??0;
+   setOutcome({moved,skipped,results:payload.results??[]});
    setAllMatching(false);
    setSelected(payload.results?.filter(r=>r.status==="skipped").map(r=>r.applicationId).slice(0,100)??[]);
+   showToast({tone:skipped?"info":"success",
+    title:skipped?moved+" updated, "+skipped+" skipped":"Application status updated",
+    description:skipped?"Review skipped applicants and retry after refreshing.":"Candidates were notified in-app."});
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
+  }catch(e){
+   if(scopeEpoch.current!==epoch)return;
+   setError(e instanceof Error?e.message:friendlyApiError({}));
+  }finally{
+   if(scopeEpoch.current===epoch)setBusy(false);
+  }
  }
  const columns:DataTableColumn<Row>[]=[
   {key:"selected",header:"Select",mobilePriority:"action",cell:row=>
@@ -100,6 +130,11 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    <Disclosure title="Manage" className="min-w-0 md:min-w-44"><div className="flex min-w-0 flex-col items-stretch gap-2 pb-2">
     <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)} className="min-h-11 w-full md:w-auto md:min-h-9"
      >Details</Button>
+    {row.stage==="INTERVIEW"&&basePath==="/college/placements"?
+     <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
+      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">
+      Schedule Interview
+     </Link>:null}
     {row.stage==="REJECTED"?
      <Button type="button" disabled={busy||row.status!=="SUBMITTED"}
       variant="secondary" onClick={()=>selectRow(row,"REINSTATE")} className="min-h-11 w-full md:w-auto md:min-h-9"
@@ -109,8 +144,14 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
       className="min-h-11 w-full max-w-full text-base md:min-h-9 md:text-sm">
       <option value="">Move to...</option>
-      {(transitions[row.stage]??[]).map(stage=><option key={stage} value={stage}>{stage}</option>)}
+      {(row.allowedNextStages??transitions[row.stage]??[]).filter(stage=>stage!=="REJECTED")
+       .map(stage=><option key={stage} value={stage}>{stage}</option>)}
      </Select>}
+    {row.status==="SUBMITTED"&&(row.allowedNextStages??transitions[row.stage]??[]).includes("REJECTED")?
+     <Button type="button" variant="danger" disabled={busy}
+      onClick={()=>selectRow(row,"REJECTED")} className="min-h-11 w-full md:w-auto md:min-h-9">
+      Reject
+     </Button>:null}
    </div></Disclosure>},
  ];
  return <section className="space-y-4">
@@ -136,8 +177,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    <Button type="button" disabled={!selectedCount||busy} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>chooseBulk(target)}
     >
     Act on {selectedCount} selected</Button>
-   <span className="text-body sm:col-span-2 lg:col-span-5">Changes are tracked with per-row results and students receive in-app notifications.</span>
+   <span className="text-body sm:col-span-2 lg:col-span-5">Changes are tracked with per-row results. Students receive in-app notifications; email is not available.</span>
   </div>
+
+  {error&&!dialog?<div role="alert" className="flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
+   <span className="min-w-0 flex-1">{error}</span>
+   {failedDetailId?<Button type="button" variant="secondary" disabled={busy}
+    onClick={()=>void openDetail(failedDetailId)}>Retry details</Button>:null}
+   <Button type="button" variant="secondary" onClick={()=>router.refresh()}>Reload applications</Button>
+  </div>:null}
   <DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
    caption="Applications pipeline" empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
@@ -145,8 +193,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
   <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title="Application status update" dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
-    <Button type="button" disabled={busy||email||reason.trim().length<3||!selectedCount}
-      onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
+    <Button type="button" variant={target==="REJECTED"?"danger":"primary"}
+      disabled={busy||reason.trim().length<3||!selectedCount}
+      onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":
+       target==="REJECTED"?"Reject "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
    </div>}>
     <p className="text-base font-semibold">{action==="REINSTATE"?"Reinstate this application?":
       target==="REJECTED"?"Reject selected applications":"Move applications to "+target}</p>
@@ -160,11 +210,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reason
      <Textarea rows={3} minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
       className="w-full text-base sm:text-sm"/></label>
-    <label className="flex items-center gap-2 text-sm">
-     <Checkbox checked={email} onChange={e=>setEmail(e.target.checked)}/>
-     Also notify candidates by email (currently unavailable)
-    </label>
-    {email?<p role="alert" className="text-sm text-error leading-[22px]">Email delivery is not registered for College Admin stage moves. Uncheck email to use in-app notifications.</p>:null}
+    {target==="ASSESSMENT"?<p className="text-sm text-body">Assessment links are managed through the drive's registered rounds. This status update does not send or save an assessment URL.</p>:null}
+    {target==="INTERVIEW"?<p className="text-sm text-body">Moving a candidate to Interview does not schedule an appointment. Use Schedule Interview in the applicant row after the update.</p>:null}
+    {target==="OFFERED"||target==="HIRED"?<p className="text-sm text-body">An existing issued offer is required for Offered, and accepted offer plus confirmed joining are required for Hired. This action does not create an offer or joining outcome.</p>:null}
+    <p className="text-xs text-muted-foreground">Successful updates send in-app notifications only. Email delivery is unavailable.</p>
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
     {outcome&&outcome.results.length>5?<p id="pipeline-outcome-scroll-cue" className="text-xs text-muted-foreground leading-5">More outcomes below ↓</p>:null}
     {outcome?<div role="status" tabIndex={0} aria-label="Bulk application outcomes" aria-describedby={outcome.results.length>5?"pipeline-outcome-scroll-cue":undefined}
