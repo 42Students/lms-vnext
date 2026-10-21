@@ -1,9 +1,11 @@
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   index,
   integer,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   uuid,
@@ -55,7 +57,7 @@ export const attendancePolicies = pgTable(
     ),
     check(
       "attendance_policies_correction_window_ck",
-      sql`${table.correctionWindowHours} between 1 and 8760`,
+      sql`${table.correctionWindowHours} between 1 and 168`,
     ),
   ],
 );
@@ -63,6 +65,12 @@ export const attendancePolicies = pgTable(
 export const attendanceSessions = pgTable(
   "attendance_sessions",
   {
+    /** Numeric source schedule key; not a native event FK. */
+    legacyClassScheduleId: integer("legacy_class_schedule_id"),
+    legacyAttendanceMarkedAt: timestamp("legacy_attendance_marked_at", { withTimezone: true }),
+    legacyClassId: integer("legacy_class_id"),
+    legacyCourseId: integer("legacy_course_id"),
+    legacyFacultyId: integer("legacy_faculty_id"),
     scheduleEventId: uuid("schedule_event_id")
       .primaryKey()
       .references(() => sectionScheduleEvents.id, {
@@ -111,6 +119,14 @@ export const attendanceRecords = pgTable(
   "attendance_records",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Source attend rows are absences only and may have unknown original actor. */
+    legacyAttendId: integer("legacy_attend_id"),
+    legacyClassScheduleId: integer("legacy_class_schedule_id"),
+    legacyStudentId: text("legacy_student_id"),
+    legacyAttendanceStatus: varchar("legacy_attendance_status", { length: 20 }),
+    legacyAbsenceReason: text("legacy_absence_reason"),
+    legacyMarkedById: integer("legacy_marked_by_id"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     scheduleEventId: uuid("schedule_event_id")
       .notNull()
       .references(() => sectionScheduleEvents.id, {

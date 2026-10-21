@@ -1,0 +1,7 @@
+# Historic interview migration crosswalk (lane-14)
+
+Legacy Interview ID, organization, job, application, learner, scheduler ID are integer source keys. Resolve all within an authorized college x role scope before linking native slot, job round and application UUIDs; never cast or infer cross-tenant access. The native booking state AVAILABLE/BOOKED/CANCELLED is distinct from six legacy InterviewStatus values. Source NO_SHOW is preserved separately as interviewOutcome and must be admin-reviewed without leaking private feedback.
+
+Legacy five Interview types, online/offline mode, location, 255-character interviewer, round description, duration 15–480 (old default 60), original times, original version, prior scheduled time/changedAt are historic fields, not current scheduling authority. Source naive times need verified timezone conversion. Private rating/comments/recommendation/request JSON still need restricted per-role read model; do not expose them as public candidate slot metadata.
+
+Per-round booked uniqueness was insufficient: 0224 adds a partial unique application_id predicate across all rounds. Existing bookings MUST be preflighted before registering this migration; application transfers and legitimate reschedule transitions require atomic release/booking. This index does not prohibit overlapping intervals for rooms or panels, so the TPO/HR writer still needs transactionally locked duration-aware checks. Upcoming/past, NO_SHOW and RESCHEDULE_REQUESTED tabs, and old application/learner URL redirects require service work. No migration executed.
