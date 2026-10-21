@@ -20,6 +20,7 @@ import {
 
 import {
   TPO_AUDIT_KINDS,
+  tpoAuditAboutCategory,
   summarizeTpoAuditKinds,
   tpoAuditActorLabel,
   type TpoAuditKind,
@@ -31,6 +32,37 @@ import { placementTableExists } from "./staged-tables";
 
 const dateSchema = z.iso.date();
 
+/** Original LMS filterModel stores a checklist as f_key=a,b.
+ * Each item is URI-encoded separately; server callers can also pass arrays.
+ * Validate and bound the options before using parameterized SQL.
+ */
+const auditFacetSchema = z.preprocess((raw) => {
+  if (raw === undefined || raw === null || raw === "") return [];
+  const values = Array.isArray(raw) ? raw : String(raw).split(",");
+  return values.map((item) => {
+    const value = String(item).trim();
+    try { return decodeURIComponent(value); } catch { return value; }
+  }).filter(Boolean);
+}, z.array(z.string().trim().min(1).max(120)).max(40).default([]));
+
+/** Legacy TPO entity to vNext recorded-source crosswalk.
+ * DRIVE / RECRUITER_LEAD / SETTINGS / BULK => activity_events.
+ * STUDENT => application and screening histories.
+ * ROUND => round events and round results.
+ * OFFER => offer and joining histories; SHARE => share events.
+ * Readers preserve all source IDs. One business mutation can generate both
+ * an activity row and a domain-history row: counts are rows, not unique acts.
+ * The writers are responsible for atomic persistence; this read query cannot
+ * synthesize operations that were never recorded. No old-LMS data migration.
+ */
+export const TPO_AUDIT_SOURCE_CROSSWALK = {
+  ACTIVITY: ["DRIVE", "RECRUITER_LEAD", "SETTINGS", "BULK", "GENERAL"],
+  APPLICATION: ["STUDENT", "DRIVE"],
+  SCREENING: ["STUDENT", "ROUND"],
+  ROUND: ["ROUND"], RESULT: ["ROUND"], OFFER: ["OFFER"],
+  JOINING: ["OFFER"], SHARE: ["SHARE"],
+} as const;
+
 export const tpoAuditQuerySchema = z
   .object({
     kind: z
@@ -38,8 +70,13 @@ export const tpoAuditQuerySchema = z
       .default("ALL"),
     from: dateSchema.optional(),
     to: dateSchema.optional(),
-    q: z.string().trim().max(120).default(""),
-    who:z.string().trim().max(100).default(""),
+    q: z.string().trim().max(120, "Search is limited to 120 characters").default(""),
+    who: z.string().trim().max(120, "Actor search is limited to 120 characters").default(""),
+    // Legacy checklist filters: OR inside each facet, AND between facets.
+    f_about: auditFacetSchema,
+    f_event: auditFacetSchema,
+    f_who: auditFacetSchema,
+    f_when: auditFacetSchema,
     page: z.coerce
       .number()
       .int()
@@ -83,6 +120,15 @@ export type TpoAuditRow = {
   jobId: string | null;
   entityHref?: string | null;
   actorName: string;
+  /** Old audit-log field names, deliberately keeping private actor IDs out. */
+  actorType: "USER" | "SYSTEM";
+  actorId: null;
+  action: string;
+  entityType: string;
+  entityId: string | null;
+  createdAt: string;
+  sourceKind: TpoAuditKind;
+  sourceId: string;
 };
 
 type AuditSource = {
@@ -106,6 +152,7 @@ type AuditDbRow = {
   subjectType:string|null;
   subjectId:string|null;
   actorName: string | null;
+  actorIdPresent: boolean;
 };
 
 /**
@@ -396,6 +443,49 @@ function auditDateFilters(
     );
   }
 
+  // Original LMS: OR within each filter checklist; AND between checklists.
+  // Every value is a bound SQL parameter, including multi-value URL facets.
+  const aboutText = sql`upper(coalesce(record.event_type, '') || ' ' || coalesce(record.subject_type, ''))`;
+  const about = sql`case
+    when record.kind = 'SHARE' or ${aboutText} like '%SHARE%' or ${aboutText} like '%DOWNLOAD%' then 'SHARE'
+    when ${aboutText} like '%BULK%' then 'BULK'
+    when ${aboutText} like '%SETTINGS%' or ${aboutText} like '%RULES%' or ${aboutText} like '%CONFIG%' then 'SETTINGS'
+    when ${aboutText} like '%RECRUITER%' or ${aboutText} like '%LEAD%' then 'RECRUITER_LEAD'
+    when ${aboutText} like '%STUDENT%' or ${aboutText} like '%LEARNER%' then 'STUDENT'
+    when record.kind in ('OFFER', 'JOINING') or ${aboutText} like '%OFFER%' then 'OFFER'
+    when record.kind in ('ROUND', 'RESULT') or ${aboutText} like '%ROUND%' or ${aboutText} like '%RESULT%' then 'ROUND'
+    when ${aboutText} like '%DRIVE%' or ${aboutText} like '%JOB%' or ${aboutText} like '%APPLICATION%' then 'DRIVE'
+    else 'GENERAL' end`;
+  if (query.f_about.length) {
+    conditions.push(sql`${about} in (${sql.join(query.f_about.map((value) => sql`${value.toUpperCase()}`), sql`, `)})`);
+  }
+  if (query.f_event.length) {
+    const actions = query.f_event.map((value) => sql`(
+      lower(record.event_type) = ${value.toLowerCase()}
+      or lower(replace(replace(record.event_type, '_', ' '), '.', ' ')) = ${value.toLowerCase()}
+      or lower(record.detail) = ${value.toLowerCase()}
+    )`);
+    conditions.push(sql`(${sql.join(actions, sql` or `)})`);
+  }
+  if (query.f_who.length) {
+    const actors = query.f_who.map((value) => sql`lower(coalesce(
+      nullif(trim(actor.display_name), ''),
+      case when record.actor_user_id is null then 'System'
+        else 'Account no longer available' end)) = ${value.toLowerCase()}`);
+    conditions.push(sql`(${sql.join(actors, sql` or `)})`);
+  }
+  if (query.f_when.length) {
+    const localTime = sql`(record.occurred_at at time zone 'Asia/Kolkata')`;
+    const localNow = sql`(now() at time zone 'Asia/Kolkata')`;
+    const when: SQL[] = [];
+    for (const value of query.f_when) {
+      if (value === 'TODAY') when.push(sql`${localTime} >= date_trunc('day', ${localNow})`);
+      else if (value === 'WEEK') when.push(sql`${localTime} > ${localNow} - interval '7 days'`);
+      else if (value === 'MONTH') when.push(sql`${localTime} > ${localNow} - interval '30 days'`);
+      else if (value === 'OLDER') when.push(sql`${localTime} <= ${localNow} - interval '30 days'`);
+    }
+    conditions.push(when.length ? sql`(${sql.join(when, sql` or `)})` : sql`false`);
+  }
   if (query.who) conditions.push(sql`position(lower(${query.who}) in lower(coalesce(actor.display_name,''))) > 0`);
   if (query.q) {
     conditions.push(sql`
@@ -501,6 +591,9 @@ export async function getTpoAuditLog(
       pageSize: query.pageSize,
       totalPages: 1,
       unavailableSources,
+      snapshotLimit: query.from || query.to ? 5000 : 500,
+      exportTruncated: false,
+      matchedCount: 0,
     };
   }
 
@@ -541,7 +634,8 @@ export async function getTpoAuditLog(
           record.job_id::text as "jobId",
           record.subject_type as "subjectType",
           record.subject_id as "subjectId",
-          actor.display_name::text as "actorName"
+          actor.display_name::text as "actorName",
+          (record.actor_user_id is not null) as "actorIdPresent"
         from audit record
         left join users actor on actor.id = record.actor_user_id
         ${where}
@@ -578,7 +672,18 @@ export async function getTpoAuditLog(
       jobId: row.jobId,
       entityHref:row.subjectType&&row.subjectId?tpoAuditEntityHref(row.subjectType,row.subjectId):
        row.jobId?tpoAuditEntityHref("placement_job",row.jobId):null,
-      actorName: tpoAuditActorLabel(row.actorName),
+      actorName: row.actorName?.trim() || (row.actorIdPresent
+        ? "Account no longer available"
+        : tpoAuditActorLabel(null, "SYSTEM")),
+      actorType: row.actorIdPresent ? "USER" : "SYSTEM",
+      actorId: null,
+      action: row.eventType,
+      entityType: tpoAuditAboutCategory(row.eventType, row.subjectType),
+      entityId: row.subjectType === "placement_job" ? row.subjectId : row.jobId,
+      createdAt: row.occurredAt instanceof Date
+        ? row.occurredAt.toISOString() : new Date(row.occurredAt).toISOString(),
+      sourceKind: row.kind,
+      sourceId: row.id,
     }));
 
   return {
@@ -594,6 +699,9 @@ export async function getTpoAuditLog(
       ),
     ),
     unavailableSources,
+    snapshotLimit: query.from || query.to ? 5000 : 500,
+    exportTruncated: summary.total > (query.from || query.to ? 5000 : 500),
+    matchedCount: summary.total,
   };
 }
 
