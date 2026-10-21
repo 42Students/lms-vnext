@@ -278,3 +278,6 @@
 
 - work2 #15 `learner-notification-membership-service.ts` | G2-18-004-037: retained active college membership requirement without imposing current section/class prerequisite; exported classless notice hint. UI handoff for display rather than hiding college/direct notices.
 - work2 #16 `api/activity/route.ts` | G2-18-024-025: provided legacy-compatible actorNames/targetNames dictionaries from authorized response items; retained truthful vNext cursor. Skipped page/size/global total since unbounded offset totals cannot be derived accurately from cursor response; adapter handoff.
+
+- work2 #17 `tpo-company-detail-read-service.ts` | G2-11-007-066: preserved strict canonical UUID/relationship detail route while documenting separate job-only college-scoped company-memory route. No unsafe synthetic recruiter relationship; route owner handoff for name-based legacy bookmark.
+- work2 #18 `tpo-builtin-job-types-editor.tsx` | G2-3-011-023: exact `Job types were not saved` failure, server reason, dismiss and Retry with fresh version via router.refresh; retains controls and no stale blind resubmission.

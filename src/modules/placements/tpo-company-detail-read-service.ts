@@ -12,7 +12,12 @@ import { getTpoCompanyLifecycle } from "./tpo-company-lifecycle-service";
 import { projectTpoCompanyRelationshipSummary } from "./tpo-company-relationship-summary-model";
 import { projectTpoCompanyHiringPulse } from "./tpo-company-hiring-pulse-model";
 
-/** Strictly read-only canonical company view from persisted college relationship. */
+/** Strictly read-only canonical company view from persisted college relationship.
+ * Job-only legacy company-name memory is a DIFFERENT resource: its route must
+ * resolve authorized in-college jobs/leads by normalized name, never invent a
+ * canonical company UUID or require an active recruiter relationship merely
+ * to show historical drives. This UUID detail route remains fail-closed.
+ */
 export async function getTpoCompanyDetailReadOnly(context: RequestContext, rawCompanyId: unknown) {
   const companyId = z.string().uuid().parse(rawCompanyId);
   const membership = context.membership;

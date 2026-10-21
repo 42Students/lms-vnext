@@ -128,3 +128,5 @@
 
 - `src/app/(authenticated)/learn/notifications/page.tsx` G2-18-004-037: show `LEARNER_NO_CURRENT_CLASS_NOTICES_HINT` when class enrollment absent but keep college, cohort and direct notices visible to authorized learner membership.
 - Legacy Super Admin audit adapter G2-18-024-025: current activity route is cursor-paginated; actorNames/targetNames dictionaries now supplied. For old page/size/total API, implement separately authenticated, scope-checked count+offset adapter (not false total from cursor) if required by old consumers.
+
+- Legacy TPO company memory route G2-11-007-066: implement separate college-scoped job/lead name lookup for job-only entries not yet tied to a canonical recruiter-company relationship; never require fictitious association or leak ungranted companies. Canonical `getTpoCompanyDetailReadOnly` remains strict for UUID identities.
