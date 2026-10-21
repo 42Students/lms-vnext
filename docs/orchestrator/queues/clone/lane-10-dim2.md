@@ -153,16 +153,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/college/projects/workspaces/new/error.tsx`
 - [x] `src/app/(authenticated)/college/quizzes/error.tsx`
 - [x] `src/app/(authenticated)/college/resources/error.tsx`
-- [ ] `src/app/(authenticated)/college/semester-courses/error.tsx`
-- [ ] `src/app/(authenticated)/college/semesters/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/import/error.tsx`
-- [ ] `src/app/(authenticated)/college/students/register/error.tsx`
-- [ ] `src/app/(authenticated)/college/verification/error.tsx`
-- [ ] `src/app/(authenticated)/college/videos/error.tsx`
-- [ ] `src/app/(authenticated)/hr/activity/error.tsx`
+- [x] `src/app/(authenticated)/college/semester-courses/error.tsx`
+- [x] `src/app/(authenticated)/college/semesters/error.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/students/error.tsx`
+- [x] `src/app/(authenticated)/college/students/import/error.tsx`
+- [x] `src/app/(authenticated)/college/students/register/error.tsx`
+- [x] `src/app/(authenticated)/college/verification/error.tsx`
+- [x] `src/app/(authenticated)/college/videos/error.tsx`
+- [x] `src/app/(authenticated)/hr/activity/error.tsx`
 - [ ] `src/app/(authenticated)/hr/activity/page.tsx`
 - [ ] `src/app/(authenticated)/hr/calendar/error.tsx`
 - [ ] `src/app/(authenticated)/hr/calendar/page.tsx`
