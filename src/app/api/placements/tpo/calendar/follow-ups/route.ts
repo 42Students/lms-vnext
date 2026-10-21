@@ -10,6 +10,10 @@ import { calendarFollowupCreateSchema } from "@/modules/placements/tpo-calendar-
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 
 export const runtime = "nodejs";
+/** Old POST /api/v1/tpo/recruiter-leads/{leadId}/follow-ups maps to
+ * POST /api/placements/tpo/calendar/follow-ups with {leadId,dueAt,note}.
+ * College/lead ownership and missing-lead 404 remain enforced.
+ */
 
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
@@ -33,7 +37,7 @@ export async function POST(request: Request) {
       note: input.note,
     });
     return NextResponse.json(
-      { followup: { id: followup.id, dueAt: followup.dueAt.toISOString() } },
+      { followup: { id: followup.id, leadId: input.leadId, dueAt: followup.dueAt.toISOString() } },
       { status: 201 },
     );
   } catch (error) {

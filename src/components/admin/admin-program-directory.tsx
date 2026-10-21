@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition, useSyncExternalStore, type FormEven
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
-import {deriveSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
+import {availableSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
 import { ProgramActions } from "@/components/academics/academics-actions";
 import { createCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { Button } from "@/components/ui/button";
@@ -132,8 +132,14 @@ export function AdminProgramDirectory({
       errors.duration="Duration must be a whole number from 1 to 10 years.";
     setFieldErrors(errors);
     if(Object.keys(errors).length)return;
+    const resolvedCode=code.trim()||availableSuperAdminProgramCode(name,departmentId,programs);
+    if(programs.some(row=>row.departmentId===departmentId&&
+      row.code.toLowerCase()===resolvedCode.toLowerCase())){
+      setCreateError("Program code already exists in this department. Enter another code.");
+      return;
+    }
     const parsed=createCollegeProgramSchema.safeParse({
-      departmentId,name,code:code.trim()||deriveSuperAdminProgramCode(name),
+      departmentId,name,code:resolvedCode,
       durationTerms:legacyDurationYearsToTerms(Number(durationYears)),
     });
     if(!parsed.success){
@@ -221,6 +227,7 @@ export function AdminProgramDirectory({
           </div>
           <div>
             <label htmlFor="admin-program-code" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program code (optional)</label>
+            <p className="mb-1 text-xs text-muted-foreground">Leave blank to generate a unique code for this department.</p>
             <Input className="min-h-11 md:min-h-9" id="admin-program-code" value={code} maxLength={64}
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>

@@ -1,4 +1,5 @@
 import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -105,6 +106,14 @@ export default async function ActivityDetailPage({
           </dl>
         </details>
       </section>
+
+      <div className="flex flex-wrap gap-3 border-b border-border pb-4">
+        <Link href={(isSuperAdmin(context)?"/admin/audit":"/activity")+"?view=all&range=ALL&subjectType="+
+          encodeURIComponent(event.subjectType)+"&subjectId="+encodeURIComponent(event.subjectId)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+          View history for this record
+        </Link>
+      </div>
 
       <section className="space-y-3">
         <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Event context</h2>

@@ -36,7 +36,12 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
   const route = "/learn/projects/" + encodeURIComponent(projectId);
   return <section aria-label="Project Activity" className="space-y-4">
     <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Activity</h2>
-    <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 md:grid-cols-2 min-[992px]:grid-cols-5">
+    <details className="border-b border-border" defaultOpen={Boolean(parsed.success &&
+      (category !== "ALL" || parsed.data.from || parsed.data.to))}>
+      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+        Filter activity by type and dates
+      </summary>
+    <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 pb-5 pt-3 md:grid-cols-2 min-[992px]:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Activity type
         <Select name="activityCategory" defaultValue={category}
@@ -55,6 +60,7 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
       <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none hover:underline">Clear</Link>
     </form>
+    </details>
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
         <label className="min-w-0 flex-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Find in this activity page
