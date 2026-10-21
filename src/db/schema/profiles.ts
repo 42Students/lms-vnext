@@ -147,3 +147,26 @@ export const facultyAvatarCleanupQueue=pgTable("faculty_avatar_cleanup_queue",{
  check("faculty_avatar_cleanup_state_ck",sql`
   (${t.status}='DONE')=(${t.completedAt} is not null)`),
 ]);
+
+/** Persisted source FacultyType is the Java ordinal, not a string. Preserve
+ * its append-only ordering on approved legacy imports; employment title is
+ * display metadata, while TPO/MENTOR/ADMIN access requires verified roles. */
+export const LEGACY_FACULTY_TYPE_ORDINAL=[
+ "PERMANENT","GUEST","VISITING","CONTRACT","ADMIN","HEAD","COORDINATOR",
+ "CLERK","PROFESSOR","ASSOCIATE_PROFESSOR","ASSISTANT_PROFESSOR",
+ "LECTURER","ADJUNCT","MENTOR","TPO",
+] as const;
+export type LegacyFacultyTypeCode=typeof LEGACY_FACULTY_TYPE_ORDINAL[number];
+export function legacyFacultyTypeFromOrdinal(ordinal:number):{
+ ordinal:number;type:LegacyFacultyTypeCode;employmentType:string;
+ roleHint:"FACULTY"|"MENTOR"|"TPO"|"COLLEGE_ADMIN";
+}{
+ if(!Number.isInteger(ordinal)||ordinal<0||ordinal>=LEGACY_FACULTY_TYPE_ORDINAL.length)
+  throw new Error("Unsupported historical faculty type ordinal");
+ const type=LEGACY_FACULTY_TYPE_ORDINAL[ordinal];
+ const roleHint=type==="MENTOR"?"MENTOR":type==="TPO"?"TPO":
+  type==="ADMIN"?"COLLEGE_ADMIN":"FACULTY";
+ return {ordinal,type,employmentType:type.replaceAll("_"," "),roleHint};
+}
+/** Role hints are NOT account grants: role activation needs an existing,
+ * college-scoped membership with appropriate persisted permission. */

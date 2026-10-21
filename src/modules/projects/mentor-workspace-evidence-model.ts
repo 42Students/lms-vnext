@@ -88,3 +88,16 @@ export function buildMentorWorkspaceEvidence(input:{
  return {tasksBySprint,team:mentorWorkspaceTeamFacts(input.members),
   latestDelivery:mentorLatestDeliveryVersion(input.submissions)};
 }
+
+/** The source readiness proof coverage denominator counts only completed
+ * tasks. A task with a safe URL or submitted artifact counts once, and zero
+ * completed tasks yields 0 rather than a misleading 100%. */
+export function legacyTaskEvidenceCoverage(tasks:readonly {
+ id:string;status:string;deletedAt?:Date|null;
+ submissionUrl?:string|null;
+}[]){
+ const done=tasks.filter(task=>task.status==="DONE"&&!task.deletedAt);
+ const proved=done.filter(task=>safeProjectExternalHref(task.submissionUrl??null)!==null).length;
+ return {completedTasks:done.length,completedWithEvidence:proved,
+  percentage:done.length?Math.round(100*proved/done.length):0};
+}

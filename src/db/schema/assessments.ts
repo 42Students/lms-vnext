@@ -350,3 +350,29 @@ export const courseAssignmentResources=pgTable("course_assignment_resources",{
     and ${t.contentType} is not null
     and (${t.kind}<>'PDF' or ${t.contentType}='application/pdf'))`),
 ]);
+
+/** Import mapping for the historic four-state grade marker. The source
+ * label is retained in legacyGradingKind; a historical AUTO grade is never
+ * authority to perform automated grading in the new product. */
+export type LegacyAssignmentGradingStatus =
+  "NOT_GRADED"|"AUTO_GRADED"|"MANUALLY_GRADED"|"PARTIALLY_GRADED";
+export function legacyAssignmentGradeState(value:LegacyAssignmentGradingStatus):{
+ gradingStatus:"NOT_GRADED"|"GRADED";
+ legacyGradingKind:LegacyAssignmentGradingStatus;
+ displayLabel:string;
+}{
+ const labels:Record<LegacyAssignmentGradingStatus,string>={
+  NOT_GRADED:"Not graded",AUTO_GRADED:"Auto graded (historical)",
+  MANUALLY_GRADED:"Manually graded",PARTIALLY_GRADED:"Partially graded",
+ };
+ return {gradingStatus:value==="NOT_GRADED"?"NOT_GRADED":"GRADED",
+  legacyGradingKind:value,displayLabel:labels[value]};
+}
+export function assignmentGradeDisplayStatus(input:{
+ gradingStatus:string;legacyGradingKind:string|null;
+}):string{
+ const supported=["NOT_GRADED","AUTO_GRADED","MANUALLY_GRADED","PARTIALLY_GRADED"] as const;
+ const source=supported.find(value=>value===input.legacyGradingKind);
+ return source?legacyAssignmentGradeState(source).displayLabel:
+  input.gradingStatus==="GRADED"?"Graded":"Not graded";
+}
