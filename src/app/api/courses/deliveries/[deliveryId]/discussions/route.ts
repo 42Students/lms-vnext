@@ -10,6 +10,16 @@ import {
 
 export const runtime = "nodejs";
 
+/** This is a DELIVERY-scoped discussion feed, not the legacy
+ * /api/v1/discussion/fetchDiscussion or /post lesson-content thread.
+ * Legacy lessonContentId must be mapped through an authorized content read;
+ * never silently post to a whole course when a lesson target was requested.
+ * Existing vNext clients consume structured paginated GET data and a
+ * persisted {message} receipt (201), so don't replace either response with
+ * the older 200 Response(OK,OK,...) envelope on this route.
+ */
+const noStore={"Cache-Control":"private, no-store"};
+
 type RouteContext = {
   params: Promise<{
     deliveryId: string;
@@ -32,7 +42,7 @@ export async function GET(
       );
 
     return NextResponse.json(learnerDiscussionListResponse(result), {
-      headers: { "Cache-Control": "private, no-store" },
+      headers: noStore,
     });
   } catch (error) {
     return apiErrorResponse(error);
@@ -63,7 +73,7 @@ export async function POST(
 
     return NextResponse.json(
       { message },
-      { status: 201 },
+      { status: 201, headers: noStore },
     );
   } catch (error) {
     return apiErrorResponse(error);
