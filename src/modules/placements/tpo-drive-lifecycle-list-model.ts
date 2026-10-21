@@ -20,6 +20,8 @@ export const tpoDriveLifecycleQuerySchema = z.object({
   search:z.string().trim().max(100).default(""),
   deadline:z.enum(["ALL","TODAY","DUE_SOON","LATER","OVERDUE","UNSET"]).default("ALL"),
   workMode:z.enum(["ALL","ONSITE","REMOTE","HYBRID"]).default("ALL"),
+  /** Campus participation mode is independent of the employee's work location. */
+  recruiterDriveMode:z.enum(["ALL","ON_CAMPUS","POOL","OFF_CAMPUS"]).default("ALL"),
   employmentType:z.enum(["ALL","FULL_TIME","INTERNSHIP","CONTRACT"]).default("ALL"),
   jobTypeLabel:z.string().trim().min(2).max(40).optional(),
   minApplied:z.coerce.number().int().min(0).max(100000).optional(),
