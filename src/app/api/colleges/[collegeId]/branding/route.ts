@@ -18,7 +18,10 @@ type RouteContext = { params: Promise<{ collegeId: string }> };
 const collegeIdSchema = z.string().uuid();
 
 function notFound() {
-  return NextResponse.json({ error: "COLLEGE_NOT_FOUND" }, { status: 404 });
+  return NextResponse.json({
+    error: "COLLEGE_NOT_FOUND",
+    message: "Couldn't load branding for this college.",
+  }, { status: 404 });
 }
 
 export async function GET(_request: Request, { params }: RouteContext) {
