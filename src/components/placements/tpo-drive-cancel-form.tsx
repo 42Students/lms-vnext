@@ -74,8 +74,8 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
 
   return (
     <form onSubmit={(e) => void submit(e)} className="min-w-0 space-y-4 border-b border-border pb-6">
-      <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
-      <p className="max-w-prose text-sm text-body">
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Review consequences</h2>
+      <p className="max-w-prose text-sm text-body leading-[22px]">
         Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
       </p>
       <dl className="grid min-w-0 grid-cols-2 gap-x-6 border-t border-border min-[768px]:grid-cols-4">
@@ -87,7 +87,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
         ))}
       </dl>
           <div className="min-w-0 space-y-3">
-            <p className="text-sm font-semibold text-body">Reason for cancellation (audited)</p>
+            <p className="text-sm font-semibold text-body leading-[22px]">Reason for cancellation (audited)</p>
             <div className="flex min-w-0 flex-wrap gap-2" aria-label="Common cancellation reasons">
               {CANCEL_REASONS.map((preset) => (
                 <FilterChip
@@ -115,9 +115,9 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 className="min-h-11 w-full min-[768px]:min-h-9"
               />
             </label>
-            <p className="text-xs text-body">Students see the reason. You can choose a reason above or write your own.</p>
+            <p className="text-xs text-body leading-[20px]">Students see the reason. You can choose a reason above or write your own.</p>
           </div>
-          <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
+          <p className="text-xs text-body leading-[20px]">If the drive or counts change after this preview, the cancellation is rejected.</p>
           {error ? <InlineNotice tone="error" message={error}/> : null}
           <label className="flex items-start gap-[6px] text-[13px] text-[var(--lms-neutral-400)]">
             <Checkbox checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
