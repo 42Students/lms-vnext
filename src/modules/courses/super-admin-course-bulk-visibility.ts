@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {academicPeriods,courseLessons,courseLearningPaths,courseOfferings,courses,departments} from "@/db/schema";
+import {academicPeriods,courseLessons,courseLearningPaths,courseOfferings,courses,departments,lessonContents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -49,7 +49,13 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
  const lessonCourseIds=new Map(lessons.map(row=>[row.id,row.courseId]));
  const failedCourses=new Set<string>();
  const failures:{id:string;reason:string}[]=[];
- let matchedContents=0,changed=0,unchanged=0,changedCourses=0;
+ const [{total:matchedContents}]=await getDb().select({
+  total:sql<number>`count(*)::int`,
+ }).from(lessonContents).where(and(
+  inArray(lessonContents.lessonId,ids),
+  eq(lessonContents.status,"PUBLISHED"),
+ ));
+ let changed=0,unchanged=0,changedCourses=0;
  // Persist the course-level gate as well as lesson visibility. Hiding comes
  // first (fail closed); showing comes last, only after the descendant batch
  // succeeded. Each row is rechecked and locked under the acting tenant.
@@ -86,7 +92,6 @@ export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:
    const report=await bulkSuperAdminLessonVisibility(context,{
     lessonIds:slice,visibleToStudents:input.visibleToStudents,confirmed:true,
    });
-   matchedContents+=report.matchedContents;
    changed+=report.changed;unchanged+=report.unchanged;
    for(const failure of report.failures){
     const courseId=lessonCourseIds.get(failure.lessonId);
