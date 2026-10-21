@@ -136,6 +136,11 @@ export function FacultyLessonAuthoring({
   const [success, setSuccess] =
     useState<string | null>(null);
   const [publishNow,setPublishNow]=useState(true);
+  // Content create and publish are separate versioned transactions. Retain
+  // the saved UUID after a publish error so retry never creates a duplicate.
+  const [pendingPublish,setPendingPublish]=useState<{
+    contentId:string;lessonId:string;deliveryId:string|null;mode:Mode;
+  }|null>(null);
   const [createdResourceTarget,setCreatedResourceTarget]=useState<{
     contentId:string;lessonId:string;deliveryId:string|null;
   }|null>(null);
@@ -176,6 +181,7 @@ export function FacultyLessonAuthoring({
   function discardDraft(){
     setMode(null);setError(null);setSuccess(null);reset();
     setCreatedResourceTarget(null);
+    setPendingPublish(null);
     setDiscardConfirm(false);
   }
   function close(){
@@ -281,7 +287,22 @@ export function FacultyLessonAuthoring({
   ) {
     event.preventDefault();
     if (!mode || resourceUploading) return;
-
+    if(pendingPublish&&pendingPublish.lessonId===lessonId&&
+      pendingPublish.deliveryId===deliveryId&&pendingPublish.mode===mode){
+      setSubmitting(true);setError(null);
+      try{
+        await post("/api/courses/lesson-contents/"+
+          encodeURIComponent(pendingPublish.contentId)+"/transition",{action:"PUBLISH"});
+        setPendingPublish(null);
+        setSuccess("Saved draft published.");
+        reset();
+        onSaved?.();
+        router.refresh();
+      }catch{
+        setError("Draft is saved. Publishing did not finish; retry using this saved draft, without creating another item.");
+      }finally{setSubmitting(false);}
+      return;
+    }
     setError(null);
     setSuccess(null);
     setSubmitting(true);
@@ -498,9 +519,11 @@ export function FacultyLessonAuthoring({
         setCreatedResourceTarget({contentId:createdContentId,lessonId,deliveryId});
       }
       if(createdContentId&&publishNow){
+        setPendingPublish({contentId:createdContentId,lessonId,deliveryId,mode});
         try{
           await post("/api/courses/lesson-contents/"+
             encodeURIComponent(createdContentId)+"/transition",{action:"PUBLISH"});
+          setPendingPublish(null);
         }catch{
           throw new Error("Content saved as a draft but could not publish. Open it and choose Publish.");
         }
@@ -758,6 +781,16 @@ export function FacultyLessonAuthoring({
         >
           <fieldset disabled={submitting}>
             {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
+            {pendingPublish?.mode===mode&&pendingPublish.lessonId===lessonId&&
+              pendingPublish.deliveryId===deliveryId?
+              <div className="mb-4 flex flex-wrap items-center gap-3 rounded-md border border-amber-200 bg-amber-50 p-3">
+                <span className="text-sm font-semibold text-amber-900">
+                  Draft saved. Publish can be retried without creating another item.
+                </span>
+                <Button type="submit" variant="secondary" size="sm" disabled={submitting}>
+                  Retry publishing saved draft
+                </Button>
+              </div>:null}
             {success ? <Alert tone="success" className="mb-4">{success}</Alert> : null}
             {mode==="ASSIGNMENT"||mode==="RESOURCE"?<label className="block min-w-0 text-[13px] font-semibold md:col-span-2">
               <FieldLabel>Visibility</FieldLabel>
