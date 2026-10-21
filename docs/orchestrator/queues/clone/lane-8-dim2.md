@@ -19,14 +19,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
 - [x] `src/components/academics/academics-actions.tsx`
 - [x] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-promotion-confirmation.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-lifecycle-action.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/academics/college-promotion-confirmation.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-lifecycle-action.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
 - [ ] `src/components/admin/admin-revoke-sessions.tsx`
 - [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
 - [ ] `src/components/admin/college-archive-button.tsx`
