@@ -71,18 +71,17 @@ export async function ProjectAdminReassignMentorPage({
     listProjectMentorCandidates(context,collegeId,{q:mentorSearch,limit:100}),
     listCollegeProjectMentorWorkload(context,collegeId),
   ]);
-  if(projectsRead.status==="rejected"||
-     mentorsRead.status==="rejected"||workloadRead.status==="rejected")
+  if(projectsRead.status==="rejected"||workloadRead.status==="rejected")
     return <div className="min-w-0 space-y-[16px]">
       <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
-      <ErrorState title={projectsRead.status==="rejected"?"Failed to load project workspaces":mentorsRead.status==="rejected"?"Mentor options could not be loaded":"Mentor workload could not be loaded"}
+      <ErrorState title={projectsRead.status==="rejected"?"Failed to load project workspaces":"Mentor workload could not be loaded"}
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
         action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">{mentorsRead.status==="rejected"?"Retry mentors":"Retry loading mentor reassignment"}</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Retry loading mentor reassignment</Link>}/>
     </div>;
   const projects=projectsRead.value;
-  const mentors=mentorsRead.value;
+  const mentors=mentorsRead.status==="fulfilled"?mentorsRead.value:[];
   const workload=workloadRead.value;
 
   const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
@@ -94,6 +93,11 @@ export async function ProjectAdminReassignMentorPage({
           description="Move selected non-archived project workspaces to a new primary mentor." />
       </div>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
+      {mentorsRead.status==="rejected"?<ErrorState
+        title="Mentor options could not be loaded"
+        description="The workspace list and workload are available, but reassignment is disabled until current mentor permissions can be verified."
+        action={<Link className="font-semibold text-link underline"
+          href={projectAdminReassignMentorHref(basePath,parsed.data)}>Retry mentors</Link>}/>:null}
       <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
         <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
           {workload.map(row => {
@@ -148,7 +152,7 @@ export async function ProjectAdminReassignMentorPage({
         </Button>
       </form>
       </Disclosure>
-      <ProjectMentorReassignment
+      {mentorsRead.status==="fulfilled"?<ProjectMentorReassignment
         collegeId={collegeId}
         initialProjectId={initialProjectId}
         matchingWorkspaces={projects.matchingWorkspaces}
@@ -167,7 +171,9 @@ export async function ProjectAdminReassignMentorPage({
             roleLabel:project.roleLabel,
           }))}
         mentors={mentors}
-      />
+      />:<p role="alert" className="border-t border-border py-3 text-sm text-body">
+        Mentor assignments are read-only until the eligible mentor directory loads.
+      </p>}
       <ProjectAdminPagination
         basePath={basePath + "/reassign-mentor"}
         query={query}
