@@ -198,8 +198,9 @@ export async function createProjectInstance(
         eq(projectTemplateCollegeAssignments.templateId,input.templateId),
         isNull(projectTemplateCollegeAssignments.revokedAt),
       )).for("share").limit(1);
+      // Existing college assignments deliberately pin their original
+      // published version even after a later global template publication.
       if(!currentAssignment||currentAssignment.status!=="PUBLISHED"||
-        currentAssignment.publishedVersion!==currentAssignment.version||
         currentAssignment.templateVersionId!==assigned.templateVersionId){
         throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
       }
