@@ -77,15 +77,11 @@ export default async function SuperAdminCompaniesPage({
   const availableColleges=collegesResult.status==="fulfilled"?collegesResult.value:[];
   const candidates=findPossibleCompanyDuplicates(data.rows);
   const nameConflicts=findCompanyNameIdentityConflicts(data.rows);
-  // Legacy college table ordering is last-drive-activity first within this
-  // authorized server page; the service controls pagination and source scope.
-  const collegeRows=[...data.rows].sort((a,b)=>{
-   const aTime=a.lastActiveAt?new Date(a.lastActiveAt).getTime():0;
-   const bTime=b.lastActiveAt?new Date(b.lastActiveAt).getTime():0;
-   return bTime-aTime||b.name.localeCompare(a.name);
-  });
+  // Sort is applied by SQL before pagination, never page-locally.
+  const collegeRows=data.rows;
   const collegeColumns:DataTableColumn<AdminCompanyRow>[]=[
-   {key:"company",header:"Company",mobilePriority:"primary",cell:row=><div className={"flex min-w-0 items-start gap-3 "+(row.companyStatus==="ARCHIVED"?"opacity-55":"")}>
+   {key:"company",header:"Company",mobilePriority:"primary",sortable:true,
+    sortDirection:data.query.sort==="NAME"?"ascending":data.query.sort==="NAME_DESC"?"descending":"none",cell:row=><div className={"flex min-w-0 items-start gap-3 "+(row.companyStatus==="ARCHIVED"?"opacity-55":"")}>
      <SuperAdminCompanyAvatar name={row.name} url={row.logoPublicUrl??null}/>
      <div className="min-w-0 space-y-1">
       <p className="font-semibold text-[var(--lms-heading)]">{row.name}</p>
@@ -100,8 +96,10 @@ export default async function SuperAdminCompaniesPage({
      </div>
     </div>},
    {key:"industry",header:"Industry",cell:row=>row.industry??"—"},
-   {key:"drives",header:"Drives",className:"tabular-nums",cell:row=><span>{row.driveCount??0}</span>},
-   {key:"active",header:"Last active ↓",cell:row=><span>{row.lastActiveAt?
+   {key:"drives",header:"Drives",className:"tabular-nums",sortable:true,
+    sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
+   {key:"active",header:"Last active",sortable:true,
+    sortDirection:data.query.sort==="LAST_ACTIVE"?"descending":data.query.sort==="LAST_ACTIVE_ASC"?"ascending":"none",cell:row=><span>{row.lastActiveAt?
     new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
     "Never posted"}</span>},
    {key:"status",header:"Relationship",cell:row=><div className="space-y-1">
@@ -212,7 +210,7 @@ export default async function SuperAdminCompaniesPage({
       </label>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Order
         <Select name="sort" defaultValue={data.query.sort} className="min-h-11 md:min-h-9">
-          <option value="NAME">Company name</option><option value="RECENT">Recently changed relationship</option>
+          <option value="LAST_ACTIVE">Last active (newest)</option><option value="NAME">Company name (A–Z)</option><option value="DRIVES">Drives (most)</option><option value="RECENT">Recently changed relationship</option>
         </Select>
       </label>
       {data.query.companyId ? <Input type="hidden" name="companyId" value={data.query.companyId}/> : null}
@@ -241,6 +239,19 @@ export default async function SuperAdminCompaniesPage({
       ↓ Export CSV (matching filters; up to 2,000 rows)
     </Link>:<Button type="button" variant="secondary" disabled>Export CSV</Button>}
     <DataTable caption="This college's companies" columns={collegeColumns} rows={collegeRows}
+      sortHref={(key,next)=>{
+       const sort=key==="company"?(next==="ascending"?"NAME":"NAME_DESC"):
+         key==="drives"?(next==="ascending"?"DRIVES_ASC":"DRIVES"):
+         next==="ascending"?"LAST_ACTIVE_ASC":"LAST_ACTIVE";
+       return "/admin/companies?"+new URLSearchParams({
+        q:data.query.q,status:data.query.status,companyStatus:data.query.companyStatus,
+        owner:data.query.owner,website:data.query.website,verified:data.query.verified,
+        searchField:data.query.searchField,changedWithin:data.query.changedWithin,
+        trust:data.query.trust,view:"COLLEGE",sort,page:"1",
+        ...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),
+        ...(data.query.companyId?{companyId:data.query.companyId}:{}),
+       }).toString();
+      }}
       getRowKey={row=>row.relationshipId}
       empty={<EmptyState title={data.query.q?"No matching companies":"No companies yet"}
        description={data.query.q?"No company relationships match your search.":"No companies yet — add one to start reusing it across job postings."}/>}/>
