@@ -49,7 +49,22 @@ export async function listCollegeAssessmentAggregate(
   kind: CollegeAssessmentKind,
   rawQuery: unknown,
 ) {
-  const query = parseCollegeAssessmentQuery(kind, rawQuery);
+  // A legacy administrator may supply an integer legacy course ID or a
+  // native UUID. Resolve it only inside the persisted college-scoped JOIN;
+  // neither caller-provided courseId nor collegeId is an authorization grant.
+  const raw=rawQuery&&typeof rawQuery==="object"&&!Array.isArray(rawQuery)?
+   rawQuery as Record<string,unknown>:{};
+  const {courseId:rawCourseId,...modernQuery}=raw;
+  const query=parseCollegeAssessmentQuery(kind,modernQuery);
+  let courseUuid:string|null=null,legacyCourseId:number|null=null;
+  if(rawCourseId!==undefined){
+   const id=String(rawCourseId);
+   if(/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(id)){
+    courseUuid=id;
+   }else if(/^[1-9][0-9]{0,9}$/.test(id)&&Number.isSafeInteger(Number(id))){
+    legacyCourseId=Number(id);
+   }else throw new Error("Invalid course ID");
+  }
   let collegeId: string;
   if (isSuperAdmin(context) && !context.adminScope?.collegeId)
     throw new AuthorizationError("courses.read");
@@ -111,6 +126,8 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      courseUuid?eq(courses.id,courseUuid):undefined,
+      legacyCourseId!==null?eq(courses.legacyCourseId,legacyCourseId):undefined,
       query.deliveryId ? or(
         eq(courseAssignments.deliveryId,query.deliveryId),
         and(isNull(courseAssignments.deliveryId),exists(
@@ -172,6 +189,8 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
+      courseUuid?eq(courses.id,courseUuid):undefined,
+      legacyCourseId!==null?eq(courses.legacyCourseId,legacyCourseId):undefined,
       query.deliveryId ? or(
         eq(courseQuizzes.deliveryId,query.deliveryId),
         and(isNull(courseQuizzes.deliveryId),exists(
@@ -433,6 +452,8 @@ export async function listCollegeAssessmentAggregate(
     kind,
     collegeId,
     query,
+    // The resolved IDs are filters only, never part of the acting role.
+    courseIdFilter:courseUuid??legacyCourseId,
     items,
     reviewDeliveries,
     directoryCourses,
