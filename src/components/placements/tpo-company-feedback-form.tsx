@@ -60,7 +60,7 @@ export function TpoCompanyFeedbackForm({
         Internal note attached to an explicitly linked company contact. This does
         not send a message to the recruiter. Saving an activity moves a NEW CRM lead to CONTACTED.
       </p>
-      <label className="block text-sm font-medium text-foreground">
+      <label className="block text-sm font-semibold text-foreground">
         Linked contact
         <Select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
           className="mt-1 w-full">
@@ -69,7 +69,7 @@ export function TpoCompanyFeedbackForm({
           ))}
         </Select>
       </label>
-      <label className="block text-sm font-medium text-foreground">
+      <label className="block text-sm font-semibold text-foreground">
         Feedback / meeting note
         <Textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           rows={4} maxLength={2000}

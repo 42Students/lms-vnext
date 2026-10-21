@@ -109,7 +109,7 @@ export function TpoOfferLifecyclePanel({
           Changing a learner response here requires independent confirmation evidence.
         </p>
       </div>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
         Administrative action
         <Select
           value={action}
@@ -145,7 +145,7 @@ export function TpoOfferLifecyclePanel({
         </div>
       )}
       {action === "EXTEND" ? (
-        <label className="block text-sm font-semibold">
+        <label className="block text-[13px] font-semibold">
           New expiry (IST)
           <DateInput
             mode="datetime-local"
@@ -157,7 +157,7 @@ export function TpoOfferLifecyclePanel({
         </label>
       ) : null}
       {action === "RECORD_JOINED" ? (
-        <label className="block text-sm font-semibold">
+        <label className="block text-[13px] font-semibold">
           Confirmed joining date
           <DateInput
             mode="date"
@@ -168,7 +168,7 @@ export function TpoOfferLifecyclePanel({
           />
         </label>
       ) : null}
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
         Mandatory evidence / reason (10–1200 characters)
         <Textarea
           rows={3}
@@ -181,7 +181,7 @@ export function TpoOfferLifecyclePanel({
       </label>
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
-        <label className="flex min-w-0 items-start gap-2 break-words text-sm text-body">
+        <label className="flex min-w-0 items-start gap-[6px] break-words text-[13px] text-[var(--lms-neutral-400)]">
           <Checkbox checked={reviewed} disabled={busy}
             onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
           I reviewed the {selected.length} affected offer(s) and supporting evidence.

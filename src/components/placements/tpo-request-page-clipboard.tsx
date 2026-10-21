@@ -74,7 +74,7 @@ export function TpoRequestPageClipboard({rows}:{rows:readonly TpoRequestClipboar
   <p className="text-sm font-semibold">Select and copy request rows</p>
   <p role="status" aria-live="polite" className="text-xs">{selectedRows.length} selected of {rows.length} on this page.</p>
   <div className="flex flex-wrap gap-3">
-   <label className="text-sm">Sort request rows
+   <label className="text-[13px]">Sort request rows
     <Select className="ml-2 min-h-11 max-w-full text-base" value={sort}
      onChange={e=>setSort(e.target.value as typeof sort)}>
      <option value="ASKED_NEW">Asked · newest</option><option value="ASKED_OLD">Asked · oldest</option>

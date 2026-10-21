@@ -92,12 +92,12 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
           {rejectionReasons.map(choice=><FilterChip key={choice} type="button" disabled={pending||guardedPending}
             aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}>{choice}</FilterChip>)}
         </div>
-        {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
+        {reason==="Other"?<label className="block text-[13px] font-semibold">Explain the rejection
           <Textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
             disabled={pending||guardedPending} rows={3} className="mt-[var(--lms-space-2)] w-full"/>
         </label>:null}
         {!valid&&reason?<p role="status" className="text-[13px] leading-5 text-[var(--lms-error-text)]">Enter a rejection reason of at least 3 characters.</p>:null}
-      </div>:mode==="APPROVE"?<label className="block text-sm font-semibold">Approval note (optional)
+      </div>:mode==="APPROVE"?<label className="block text-[13px] font-semibold">Approval note (optional)
         <Textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
           disabled={pending||guardedPending} rows={3} className="mt-[var(--lms-space-2)] w-full"/>
       </label>:null}

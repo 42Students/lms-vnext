@@ -171,7 +171,7 @@ export function TpoRoundResultRecorder({
     <Disclosure title="Round result actions" className="mt-2 min-w-0" contentClassName="space-y-2 p-2 text-xs">
       {editable ? (
         <>
-          <label className="block font-semibold text-body">
+          <label className="block font-semibold text-[var(--lms-neutral-400)]">
             Round outcome
             <Select
               aria-label={"Round outcome for " + row.displayName}
@@ -186,7 +186,7 @@ export function TpoRoundResultRecorder({
             </Select>
           </label>
           {outcome === "HOLD" ? (
-            <label className="block font-semibold text-body">
+            <label className="block font-semibold text-[var(--lms-neutral-400)]">
               Waitlist rank
               <Input
                 type="number"
@@ -199,7 +199,7 @@ export function TpoRoundResultRecorder({
               />
             </label>
           ) : null}
-          <label className="block font-semibold text-body">
+          <label className="block font-semibold text-[var(--lms-neutral-400)]">
             Learner-facing message {outcome === "PASS" ? "(optional)" : "(required)"}
             <Textarea
               rows={2}

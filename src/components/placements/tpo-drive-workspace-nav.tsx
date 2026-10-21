@@ -24,7 +24,7 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
   return (
     <nav aria-label="Drive workspace sections"
       className="min-w-0 border-b border-border pb-0">
-      <label className="grid gap-1 text-sm font-semibold md:hidden">Workspace section
+      <label className="grid gap-[6px] text-[13px] font-semibold md:hidden">Workspace section
         <Select aria-label="Drive workspace section" value={selected}
           onChange={event=>router.push(event.target.value)}
           className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">

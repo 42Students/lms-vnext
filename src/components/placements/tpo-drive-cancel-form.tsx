@@ -101,7 +101,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
                 </FilterChip>
               ))}
             </div>
-            <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
               Reason shown to students
               <Textarea
                 required
@@ -119,7 +119,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           </div>
           <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
           {error ? <InlineNotice tone="error" message={error}/> : null}
-          <label className="flex items-start gap-2 text-sm text-body">
+          <label className="flex items-start gap-[6px] text-[13px] text-[var(--lms-neutral-400)]">
             <Checkbox checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
               disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>
             I reviewed the affected applications, rounds and offers. I understand cancellation

@@ -105,7 +105,7 @@ export function TpoDriveActOnPanel(){
     <div className="pt-2"><TpoBulkDriveReminder/></div>
    </details>
    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-   <label className="grid min-w-0 gap-1 text-sm font-semibold">Action
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold">Action
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);setNotice("");}}
      >
      <option value="CLOSE">Close selected live drives</option>
@@ -118,7 +118,7 @@ export function TpoDriveActOnPanel(){
    {rows.length?<div className="min-w-0 space-y-3 border-t border-border pt-4">
     <p role="status" className="text-sm">{rows.filter(row=>row.allowed).length} applicable · {rows.filter(row=>!row.allowed).length} left out</p>
     <ul className="min-w-0 divide-y divide-border text-sm">{rows.map(row=><li key={row.id} className="flex min-w-0 flex-col gap-1 py-2 sm:flex-row sm:justify-between sm:gap-3"><span className="break-words font-medium">{row.title}</span><span className={row.allowed?"text-body":"text-muted-foreground"}>{row.reason}</span></li>)}</ul>
-    <label className="grid min-w-0 max-w-xl gap-1 text-sm font-semibold">Reason (audited)
+    <label className="grid min-w-0 max-w-xl gap-[6px] text-[13px] font-semibold">Reason (audited)
      <Textarea className="min-w-0 w-full" value={reason} onChange={e=>{setReason(e.target.value);setNotice("");}} rows={3} minLength={10} maxLength={1000}
       />
     </label>
