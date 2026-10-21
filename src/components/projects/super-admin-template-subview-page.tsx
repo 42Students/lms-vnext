@@ -122,7 +122,7 @@ export async function SuperAdminTemplateSubviewPage({
     // template subview or accidentally present an empty global template.
     // The retry points back to the same authorized route, without exposing
     // exception text or version JSON to an unverified viewer.
-    return <div className="min-w-0 space-y-[var(--lms-space-5)]">
+    return <div className="min-w-0 space-y-5">
       <ProjectAdminNav basePath="/admin/projects" active="templates"/>
       <PageHeader title="Template section"/>
       <ErrorState title="Template section unavailable"
@@ -226,7 +226,7 @@ export async function SuperAdminTemplateSubviewPage({
           key={currentVersion?.version} templateId={detail.template.id}
           title={detail.template.title} summary={detail.template.summary}
           currentVersion={detail.template.currentVersion} blueprint={blueprint}/>:null}
-      <p className="m-0 text-xs leading-5 text-muted-foreground">
+      <p className="m-0 text-xs text-muted-foreground leading-[20px]">
         The sections below reflect the current template version.
         Published and college-assigned versions may differ.
       </p>
@@ -248,7 +248,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">
+              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 Sprints
               </h2>
               <StatusBadge>
@@ -276,7 +276,7 @@ export async function SuperAdminTemplateSubviewPage({
                       <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         {sprint.title}
                       </h3>
-                      <p className="mt-1 break-all text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                         Key: {sprint.key}
                       </p>
                     </div>
@@ -302,7 +302,7 @@ export async function SuperAdminTemplateSubviewPage({
                     <DetailField label="Due" value={sprint.dueLabel ?? "Not set"} />
                   </dl>
 
-                  <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                  <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
                     {sprint.goal || sprint.description ||
                       "No sprint description recorded."}
                   </p>
@@ -329,7 +329,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">
+              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 Tasks
               </h2>
               <StatusBadge>
@@ -357,7 +357,7 @@ export async function SuperAdminTemplateSubviewPage({
                       <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         {task.title}
                       </h3>
-                      <p className="mt-1 break-all text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                         Key: {task.key}
                       </p>
                     </div>
@@ -398,7 +398,7 @@ export async function SuperAdminTemplateSubviewPage({
                       <h4 className="text-xs font-semibold text-muted-foreground">
                         Description
                       </h4>
-                      <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                      <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
                         {task.description}
                       </p>
                     </div>
@@ -408,7 +408,7 @@ export async function SuperAdminTemplateSubviewPage({
                     <h4 className="text-xs font-semibold text-muted-foreground">
                       Acceptance criteria
                     </h4>
-                    <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                    <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
                       {task.acceptanceCriteria ||
                         "No acceptance criteria recorded."}
                     </p>
@@ -436,7 +436,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Resources
               </h2>
               <StatusBadge>
@@ -461,7 +461,7 @@ export async function SuperAdminTemplateSubviewPage({
                       <h3 className="m-0 break-words text-base font-semibold text-foreground">
                         {resource.title}
                       </h3>
-                      <p className="mt-1 break-all text-xs text-muted-foreground">
+                      <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
                         Key: {resource.key}
                       </p>
                     </div>
@@ -486,7 +486,7 @@ export async function SuperAdminTemplateSubviewPage({
                   </dl>
 
                   {resource.description ? (
-                    <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-body">
+                    <p className="mt-4 whitespace-pre-wrap text-sm text-body leading-[22px]">
                       {resource.description}
                     </p>
                   ) : null}
@@ -501,7 +501,7 @@ export async function SuperAdminTemplateSubviewPage({
                       Open resource →
                     </a>
                   ) : (
-                    <p className="mt-4 text-xs text-muted-foreground">
+                    <p className="mt-4 text-xs text-muted-foreground leading-[20px]">
                       No resource URL recorded.
                     </p>
                   )}
@@ -523,7 +523,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="space-y-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+              <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 Active college assignments
               </h2>
               <StatusBadge>
@@ -538,7 +538,7 @@ export async function SuperAdminTemplateSubviewPage({
               columns={[
                 {key:"college",header:"College",mobilePriority:"primary",cell:assignment=><>
                   <p className="m-0 font-semibold text-foreground">{assignment.collegeName}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{assignment.collegeCode}</p>
+                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">{assignment.collegeCode}</p>
                 </>},
                 {key:"status",header:"College status",mobilePriority:"secondary",cell:assignment=>
                   <StatusBadge tone={assignment.collegeStatus==="ACTIVE"?"success":"neutral"}>
@@ -567,7 +567,7 @@ export async function SuperAdminTemplateSubviewPage({
             className="min-w-0 space-y-3"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="m-0 text-lg font-semibold leading-7 text-[var(--lms-heading)]">
+              <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 Version history
               </h2>
               <StatusBadge>
@@ -599,7 +599,7 @@ export async function SuperAdminTemplateSubviewPage({
                         Version {version.version} ·{" "}
                         {version.title}
                       </h3>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                         Created{" "}
                         <time
                           dateTime={version.createdAt.toISOString()}
@@ -633,12 +633,12 @@ export async function SuperAdminTemplateSubviewPage({
                   </Link>
 
                   {version.summary ? (
-                    <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+                    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
                       {version.summary}
                     </p>
                   ) : null}
 
-                  <p className="mt-3 break-words text-sm text-body">
+                  <p className="mt-3 break-words text-sm text-body leading-[22px]">
                     {version.changeNote ||
                       "No change note recorded."}
                   </p>

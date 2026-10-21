@@ -56,7 +56,7 @@ export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
   <Button type="button" onClick={()=>void upload()} disabled={disabled||busy||!file}
    className="w-full sm:w-auto" loading={busy}>
    {busy?"Uploading…":"Attach file"}</Button>
-  {busy?<p role="status" className="text-xs text-body">Uploading · {progress}%</p>:null}
-  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {busy?<p role="status" className="text-xs text-body leading-[20px]">Uploading · {progress}%</p>:null}
+  {error?<p role="alert" className="text-xs text-error leading-[20px]">{error}</p>:null}
  </div>;
 }

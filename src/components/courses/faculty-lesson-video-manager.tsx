@@ -218,7 +218,7 @@ export function FacultyLessonVideoManager({
 
   return <section aria-label="Lesson video management" className="mt-4 min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
-    <p className="text-xs text-muted-foreground">{limitsSummary("lesson-video")}</p>
+    <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("lesson-video")}</p>
     <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Title
         <Input className="mt-[6px]" value={title} maxLength={255} onChange={event=>setTitle(event.target.value)}/>
@@ -240,7 +240,7 @@ export function FacultyLessonVideoManager({
       Upload video
     </Button>
     {busy&&activeName?<div className="space-y-2" role="status">
-      <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
+      <p className="break-words text-sm text-body leading-[22px]">{activeName}: {progress}%</p>
       <MetricBar label="Video upload progress" role="progressbar" value={progress} maximum={100} unit="percent" className={uploadStyles.upload} />
       <Button size="md" type="button" variant="secondary" onClick={()=>controllerRef.current?.abort()}>Cancel upload</Button>
     </div>:null}
@@ -252,7 +252,7 @@ export function FacultyLessonVideoManager({
         const canEdit=video.deliveryId===deliveryId;
         return <li key={video.id} className="min-w-0 space-y-3 py-4">
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <p className="min-w-0 break-words text-sm font-semibold text-foreground">{video.title} · {formatFileSize(video.sizeBytes)}</p>
+            <p className="min-w-0 break-words text-sm font-semibold text-foreground leading-[22px]">{video.title} · {formatFileSize(video.sizeBytes)}</p>
             <div className="flex min-w-0 flex-wrap items-center gap-2">
               <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
               <StatusBadge tone="neutral">{videoPublishLabel(video.publishStatus,video.visibleToStudents)}</StatusBadge>
@@ -324,7 +324,7 @@ export function FacultyLessonVideoManager({
           </details>
           {!canEdit?<Alert tone="info">Shared video · read only in this Section.</Alert>:null}
           {previewId===video.id&&deliveryId?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
-          {video.lessonContentId?<p className="text-xs text-muted-foreground">Linked to lesson content</p>:null}
+          {video.lessonContentId?<p className="text-xs text-muted-foreground leading-[20px]">Linked to lesson content</p>:null}
           {video.processingStatus==="PROCESSING"?<Alert tone="warning">Checking file. Playback and publishing are not available yet.</Alert>:null}
         </li>;
       })}

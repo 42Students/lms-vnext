@@ -150,7 +150,7 @@ export function FacultyAssessmentOverview({
         </label>
       </div>
 
-      <p aria-live="polite" className="text-xs text-muted-foreground">
+      <p aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">
         Showing {filtered.length} of {items.length} {kind === "QUIZ" ? "quizzes" : "assignments"}
       </p>
 
@@ -176,18 +176,18 @@ export function FacultyAssessmentOverview({
                       {item.authoredDeliveryId ? "This Section" : "Shared Offering"}
                     </StatusBadge>
                   </div>
-                  <h2 className="mt-2 text-base font-semibold text-foreground">{item.title}</h2>
-                  <p className="mt-1 break-words text-sm leading-5 text-body">
+                  <h2 className="mt-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.title}</h2>
+                  <p className="mt-1 break-words text-sm text-body leading-[22px]">
                     {item.courseName} · {item.sectionName} · {item.lessonName}
                   </p>
-                  <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                     {item.academicPeriodName} · {item.dueAt?`Due ${formatDate(item.dueAt)}`:`Created: ${formatDate(item.createdAt)}`}
                   </p>
-                  {item.status==="DRAFT"?<p className="mt-1 text-xs font-semibold text-warning">
+                  {item.status==="DRAFT"?<p className="mt-1 text-xs font-semibold text-warning leading-[20px]">
                     Draft · hidden from students
                   </p>:null}
                   {item.description ? (
-                    <p className="mt-2 line-clamp-2 text-sm text-body">{item.description}</p>
+                    <p className="mt-2 line-clamp-2 text-sm text-body leading-[22px]">{item.description}</p>
                   ) : null}
                 </div>
                 <div className="w-full min-w-0 lg:w-auto lg:max-w-[27rem]">
@@ -255,7 +255,7 @@ export function FacultyAssessmentOverview({
               </div>
               {item.kind === "QUIZ" ? (
                 <>
-                  <p className="mt-3 text-xs text-muted-foreground">
+                  <p className="mt-3 text-xs text-muted-foreground leading-[20px]">
                     {item.maxAttempts} allowed attempts · {item.totalPoints} points ·
                     {" "}{item.resultsPublished ? "Results published" : "Results private"}
                   </p>
@@ -272,7 +272,7 @@ export function FacultyAssessmentOverview({
                 </>
               ) : (
                 <>
-                  <p className="mt-3 text-xs text-muted-foreground">
+                  <p className="mt-3 text-xs text-muted-foreground leading-[20px]">
                     {item.maxPoints} points · Grade visible to learner only after publication
                   </p>
                   <FacultyAssignmentReview

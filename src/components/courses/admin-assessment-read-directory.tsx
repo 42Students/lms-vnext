@@ -63,7 +63,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
     {data.items.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {data.items.map(item => <article key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.title}</h2>
+          <h2 className="m-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{item.title}</h2>
           <StatusBadge tone={item.status === "PUBLISHED" ? "success" : "neutral"}>{item.status}</StatusBadge>
         </div>
         <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>

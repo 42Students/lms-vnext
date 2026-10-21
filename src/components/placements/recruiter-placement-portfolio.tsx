@@ -117,10 +117,10 @@ export function RecruiterPlacementPortfolio({
                   {item.collegeName}
                 </span>
               </div>
-              <h2 className="mt-2 break-words text-lg font-semibold leading-7 text-foreground min-[992px]:text-xl">
+              <h2 className="mt-2 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 {item.job.title}
               </h2>
-              <p className="mt-1 break-words text-sm text-body">
+              <p className="mt-1 break-words text-sm text-body leading-[22px]">
                 {item.companyName} ·{" "}
                 {item.job.employmentType
                   .toLowerCase()
@@ -130,16 +130,16 @@ export function RecruiterPlacementPortfolio({
                 {item.job.workMode
                   .toLowerCase()}
               </p>
-              <p className="mt-2 text-sm font-medium text-foreground">
+              <p className="mt-2 text-sm font-medium text-foreground leading-[22px]">
                 {item.job.minimumAnnualCtcInr!=null||item.job.maximumAnnualCtcInr!=null
                   ? "CTC: "+[item.job.minimumAnnualCtcInr,item.job.maximumAnnualCtcInr]
                     .filter(value=>value!=null).map(value=>"₹"+new Intl.NumberFormat("en-IN").format(value!)).join("–")
                   : "CTC not specified"}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                 {deadlineRelative(item.job.applicationDeadline,now)}
               </p>
-              <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
+              <p className="mt-3 line-clamp-2 text-sm text-body leading-[22px]">
                 {item.job.description}
               </p>
               {counts?<nav aria-label={"Drive metrics for "+item.job.title}
@@ -160,7 +160,7 @@ export function RecruiterPlacementPortfolio({
                 className="mt-2 inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-warning bg-[var(--lms-warning-subtle)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
               </Link>:null}
-              {(unansweredRequests[item.job.id]??0)>0||counts?<p className="mt-2 text-sm text-body">
+              {(unansweredRequests[item.job.id]??0)>0||counts?<p className="mt-2 text-sm text-body leading-[22px]">
                 Next: {(unansweredRequests[item.job.id]??0)>0?
                   "The placement cell asked for a change. Answer the open request.":item.job.status==="CLOSED"
                   ? "Hire again with a new request."

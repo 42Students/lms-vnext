@@ -100,11 +100,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      </div>)}
   </div>
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    <label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
+    <label className="grid min-w-40 flex-1 gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
        aria-label="Search resources" placeholder="Search title, description, file name, or link" className=""/>
     </label>
-    <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Type
+    <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Type
       <Select value={type} onChange={event=>setType(event.target.value)}
         className="">
        <option value="ALL">All types</option><option value="LINK">Links</option>
@@ -113,7 +113,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          <option key={kind} value={kind}>{kind[0]+kind.slice(1).toLowerCase()}</option>)}
       </Select>
     </label>
-    {mode!=="LEARNER"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Visible to
+    {mode!=="LEARNER"?<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Visible to
       <Select value={visibility} onChange={event=>setVisibility(event.target.value)}
        className="">
         <option value="ALL">Everyone and mentors</option>
@@ -121,7 +121,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </Select>
     </label>:null}
     {mode!=="LEARNER"?<>
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Status
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Status
         <Select value={status} onChange={event=>setStatus(event.target.value)}
           className="">
           <option value="ALL">All statuses</option><option value="ACTIVE">Active</option>
@@ -132,14 +132,14 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         <Checkbox className="size-5" checked={pinned} onChange={event=>setPinned(event.target.checked)}/>
         Pinned only
       </label>
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Sprint
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Sprint
         <Select value={sprint} onChange={event=>setSprint(event.target.value)}
           className="">
           <option value="">All sprints</option>
           {sprints.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Task
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Task
         <Select value={task} onChange={event=>setTask(event.target.value)}
           className="">
           <option value="">All tasks</option>
