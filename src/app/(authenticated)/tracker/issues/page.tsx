@@ -64,7 +64,31 @@ export default async function TrackerIssuesPage({
 
   let page: Awaited<ReturnType<typeof listBugTrackerIssuesForAdmin>>;
   try {
-    page = await listBugTrackerIssuesForAdmin(context, parsed.input);
+    if (parsed.legacyPage && parsed.legacyPage > 1) {
+      // Legacy links use one-based page numbers. Walk the scoped cursor chain
+      // rather than fetching an arbitrary offset that bypasses filter ordering.
+      let cursor: {beforeCreatedAt: string; beforeId: string} | null = null;
+      let latest: Awaited<ReturnType<typeof listBugTrackerIssuesForAdmin>> | null = null;
+      for (let index = 1; index <= parsed.legacyPage; index++) {
+        latest = await listBugTrackerIssuesForAdmin(context, {
+          ...parsed.input,
+          ...(cursor ?? {}),
+        });
+        if (index < parsed.legacyPage) {
+          if (!latest.nextCursor) {
+            latest = {...latest, items: [], nextCursor: null};
+            break;
+          }
+          cursor = {
+            beforeCreatedAt:latest.nextCursor.beforeCreatedAt.toISOString(),
+            beforeId:latest.nextCursor.beforeId,
+          };
+        }
+      }
+      page = latest!;
+    } else {
+      page = await listBugTrackerIssuesForAdmin(context, parsed.input);
+    }
   } catch {
     const retry = new URLSearchParams();
     for (const [key, value] of Object.entries(await searchParams)) {
@@ -88,8 +112,12 @@ export default async function TrackerIssuesPage({
   if (current.reporter) next.set("reporter", current.reporter);
   next.set("sort", current.sort);
   if (page.nextCursor) {
-    next.set("beforeCreatedAt", page.nextCursor.beforeCreatedAt.toISOString());
-    next.set("beforeId", page.nextCursor.beforeId);
+    if (parsed.legacyPage) {
+      next.set("page", String(parsed.legacyPage + 1));
+    } else {
+      next.set("beforeCreatedAt", page.nextCursor.beforeCreatedAt.toISOString());
+      next.set("beforeId", page.nextCursor.beforeId);
+    }
   }
 
   return (
