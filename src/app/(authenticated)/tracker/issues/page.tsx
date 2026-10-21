@@ -64,7 +64,23 @@ export default async function TrackerIssuesPage({
     );
   }
 
-  const page = await listBugTrackerIssuesForAdmin(context, parsed.input);
+  let page: Awaited<ReturnType<typeof listBugTrackerIssuesForAdmin>>;
+  try {
+    page = await listBugTrackerIssuesForAdmin(context, parsed.input);
+  } catch {
+    const retry = new URLSearchParams();
+    for (const [key, value] of Object.entries(await searchParams)) {
+      if (typeof value === "string") retry.set(key, value);
+    }
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Issues" description="Private Super Admin issue triage." />
+      <TrackerAdminNav />
+      <ErrorState title="Issues could not be loaded."
+        description="Your filters have been preserved. Try loading the issues again."
+        action={<Link href={"/tracker/issues" + (retry.toString() ? "?" + retry.toString() : "")}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    </div>;
+  }
   const current = parsed.display;
   const next = new URLSearchParams();
   if (current.status) next.set("status", current.status);
@@ -83,6 +99,10 @@ export default async function TrackerIssuesPage({
       <PageHeader
         title="Issues"
         description="Private Super Admin triage. Engineering notes and attachment metadata are never exposed through a public list."
+        actions={<Link href="/tracker"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-semibold text-primary-text md:min-h-9">
+          Report issue
+        </Link>}
       />
       <TrackerAdminNav />
       <TrackerIssueSavedViews filters={new URLSearchParams({
@@ -145,6 +165,9 @@ export default async function TrackerIssuesPage({
         </details>
       </form>
 
+      <p role="status" className="text-sm text-muted-foreground">
+        Showing {page.items.length} issues on this page (up to 20 per page). Filters remain applied when you load more.
+      </p>
       <TrackerIssueBulkActions rows={page.items.map(issue=>({publicId:issue.publicId,version:issue.version,status:issue.status}))} />
 
       {page.items.length === 0 ? (
