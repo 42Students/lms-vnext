@@ -21,7 +21,9 @@ export const collegeContentQuerySchema = z.object({
   deliveryId:z.string().uuid().optional(),
   visibility: z.enum(["ALL","VISIBLE","HIDDEN"]).default("ALL"),
   offeringStatus: z.enum(["ALL","ACTIVE","ARCHIVED"]).optional(),
-  page: z.coerce.number().int().min(1).max(1000).default(1),
+  page:z.coerce.number().int().min(1).max(1000).default(1),
+  // Legacy Video tables start at 10/page; Resource uses 15/page.
+  pageSize:z.coerce.number().int().min(10).max(100).optional(),
 }).strict();
 export type CollegeContentQuery = z.infer<typeof collegeContentQuerySchema>;
 
@@ -50,6 +52,7 @@ export function collegeContentHref(kind: CollegeContentKind, query: CollegeConte
   if (kind !== "LIVE_CLASS" && query.visibility !== "ALL") params.set("visibility",query.visibility);
   if (kind !== "LIVE_CLASS" && query.offeringStatus && query.offeringStatus !== "ALL")
     params.set("offeringStatus",query.offeringStatus);
+  if (query.pageSize) params.set("pageSize",String(query.pageSize));
   if (query.page > 1) params.set("page", String(query.page));
   return params.size ? base + "?" + params.toString() : base;
 }
@@ -65,15 +68,15 @@ export function collegeContentDuration(seconds: number | null) {
   return `${minutes}:${String(remaining).padStart(2, "0")}`;
 }
 
-export function collegeContentPageCount(total: number) {
-  return Math.max(1, Math.ceil(total / COLLEGE_CONTENT_PAGE_SIZE));
+export function collegeContentPageCount(total: number,pageSize=COLLEGE_CONTENT_PAGE_SIZE) {
+  return Math.max(1, Math.ceil(total / pageSize));
 }
 
 export function collegeContentSearchParams(
   params: Record<string, string | string[] | undefined>,
 ) {
   const raw: Record<string, string> = {};
-  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentName", "offeringType", "lessonStatus", "status", "format", "scope", "deliveryId", "visibility", "offeringStatus", "page"] as const) {
+  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentName", "offeringType", "lessonStatus", "status", "format", "scope", "deliveryId", "visibility", "offeringStatus", "page", "pageSize"] as const) {
     const value = params[key];
     if (typeof value === "string") raw[key] = value;
     else if (value !== undefined) return null;
