@@ -63,10 +63,14 @@ export default async function CollegeGroupsPage({
       action={<Link href="/college/groups" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
   const { kind, status, offset } = filters;
+  // The old Student Groups reader defaulted to ordinary study groups.
+  // Keep ELECTIVE and PROJECT_TEAM groups visible only through an explicit
+  // All-types filter; their actual mutations remain in their own modules.
+  const effectiveKind=kind==="ALL"?undefined:kind??"STUDY_GROUP";
 
   const result = await listCollegeGroups(context, {
     collegeId: membership.collegeId,
-    kind,
+    kind:effectiveKind,
     status,
     offset,
   });
@@ -82,7 +86,7 @@ export default async function CollegeGroupsPage({
     <div className="min-w-0 max-w-full space-y-4">
       <PageHeader
         title="Student Groups"
-        description={`Study groups, project teams and elective groups in ${result.collegeName}.`}
+        description={`Study groups in ${result.collegeName}. Elective and project teams are managed in their own modules.`}
         actions={<CollegeGroupActions />}
       />
 
@@ -94,8 +98,9 @@ export default async function CollegeGroupsPage({
           <span className="mb-1 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Type
           </span>
-          <Select name="kind" defaultValue={kind ?? ""}>
-            <option value="">All types</option>
+          <Select name="kind" defaultValue={kind ?? "STUDY_GROUP"}>
+            <option value="STUDY_GROUP">Study Group</option>
+            <option value="ALL">All types</option>
             {result.kinds.map((value) => (
               <option key={value} value={value}>
                 {label(value)}
@@ -129,6 +134,14 @@ export default async function CollegeGroupsPage({
         ) : null}
       </form>
 
+      <section aria-label="Group status summary" className="flex min-w-0 flex-wrap gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+       <p className="text-sm text-body"><strong>{total}</strong> matching groups</p>
+       <p className="text-sm text-body"><strong>{result.items.filter(row=>row.status==="ACTIVE").length}</strong> active on this page</p>
+       <p className="text-xs text-muted-foreground">Student group changes are scoped to your selected college.</p>
+      </section>
+      {kind==="ALL"?<p role="status" className="text-xs text-muted-foreground">
+       Electives-managed and Project Team-managed groups are included for reference only. Edit them in their corresponding module.
+      </p>:null}
       {result.items.length === 0 ? (
         <EmptyState
           title="No groups found"
@@ -173,7 +186,7 @@ export default async function CollegeGroupsPage({
               { key: "capacity", header: "Members", cell: capacityText },
               {
                 key: "queue",
-                header: "Waiting",
+                header: "Waitlisted",
                 cell: (row) =>
                   row.waitlistedCount + row.requestedCount === 0
                     ? "—"
@@ -184,7 +197,10 @@ export default async function CollegeGroupsPage({
                 header: "Manage",
                 cell: (row) => row.kind === "STUDY_GROUP" ? (
                   <CollegeGroupActions group={row} />
-                ) : <span className="text-xs text-muted-foreground">Managed elsewhere</span>,
+                ) : <span className="text-xs text-muted-foreground">
+                  {row.kind==="ELECTIVE_GROUP"?"Electives-managed":
+                   row.kind==="PROJECT_TEAM"?"Project Team-managed":"Managed elsewhere"}
+                </span>,
               },
               {
                 key: "term",
