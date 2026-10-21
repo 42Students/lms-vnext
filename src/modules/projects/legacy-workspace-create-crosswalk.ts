@@ -30,9 +30,10 @@ export type LegacyWorkspaceCreateStatusCrosswalk =
  * IN_PROGRESS is an active lifecycle alias, but phase and progress still need
  * explicit migration. READY/BLOCKED/ARCHIVED cannot safely be collapsed. */
 export function resolveLegacyWorkspaceCreateStatus(raw: unknown): LegacyWorkspaceCreateStatusCrosswalk {
- if(typeof raw!=="string" || !raw.trim())
+ if(raw===undefined || raw===null || (typeof raw==="string" && !raw.trim()))
   return {kind:"MAPPED",initialStatus:"ACTIVE",legacyStatus:"ACTIVE",
    note:"Legacy create defaults to ACTIVE when status was omitted; active requires a verified mentor."};
+ if(typeof raw!=="string")return {kind:"INVALID",reason:"Legacy workspace status must be a string."};
  const status=raw.trim().toUpperCase().replace(/[ -]/g,"_");
  switch(status){
   case "PLANNED":
