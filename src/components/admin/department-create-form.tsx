@@ -58,7 +58,7 @@ export function DepartmentCreateForm({
       <div className="min-w-0 w-full flex-1">
         <label
           htmlFor="department-name"
-          className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
+          className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           {DEPARTMENT_COPY.nameLabel}<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
         </label>

@@ -50,12 +50,12 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
    aria-expanded={open} aria-controls="admin-college-bulk-import-panel"
    onClick={()=>setOpen(x=>!x)}>Bulk Import</Button>
   {open?<div id="admin-college-bulk-import-panel" role="region" aria-label="Bulk Import" className="min-w-0 space-y-[var(--lms-space-3)]">
-   <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">Organization
     <Select className="min-h-11 w-full md:min-h-9" value={organizationId} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setOrganizationId(e.target.value);setResults([]);setError("");}}>
      {organizations.map(o=><option key={o.id} value={o.id}>{o.name}</option>)}
     </Select></label>
-   <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">CSV (name, code, city, state, country)
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden">CSV (name, code, city, state, country)
     <Textarea rows={5} maxLength={150000} value={csv} disabled={busy}
      onChange={e=>{versionRef.current++;confirmedVersionRef.current=-1;setConfirmImport(false);setCsv(e.target.value);setResults([]);setError("");}}
      className="min-h-32 w-full min-w-0 font-mono text-sm leading-6" aria-invalid={Boolean(validation)} aria-describedby="admin-college-bulk-format"
