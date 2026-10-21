@@ -13,7 +13,7 @@ Packets:
 
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_storage_file-lifecycle.ts.md` (edit src/modules/storage/file-lifecycle.ts; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_storage_file-policy.ts.md` (edit src/modules/storage/file-policy.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_profile-validation.ts.md` (edit src/modules/people/profile-validation.ts; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_profile-validation.ts.md` (edit src/modules/people/profile-validation.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_components_auth_login-form.tsx.md` (edit src/components/auth/login-form.tsx; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_modules_people_faculty-self-section-model.ts.md` (edit src/modules/people/faculty-self-section-model.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-13/W3_src_app_api_auth_memberships_route.ts.md` (edit src/app/api/auth/memberships/route.ts; 3 findings; best P1)

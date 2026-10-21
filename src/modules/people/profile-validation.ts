@@ -561,6 +561,17 @@ export const learnerProfileDocumentSchema = z
         });
       })
       .default([])),
+    // Legacy organization affiliations and coding links must survive profile
+    // edits and export without being silently stripped by the strict schema.
+    // These values are learner-owned profile data, never college membership
+    // authorization or an authenticated third-party token.
+    organizations: z.array(z.record(
+      z.string().trim().min(1).max(120),
+      z.union([z.string().max(2000),z.number().finite(),z.boolean(),z.null()]),
+    )).max(50).default([]),
+    codingProfiles: z.record(
+      z.string().trim().min(1).max(120),urlValue,
+    ).default({}),
     // LEARNER-profile-misc-R02: explicit learner-owned placement preferences.
     jobPreferences: z.preprocess(value => {
       if (!value || typeof value !== "object" || Array.isArray(value)) return value;

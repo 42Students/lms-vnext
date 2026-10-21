@@ -1,7 +1,7 @@
 import "server-only";
-import {and,desc,eq} from "drizzle-orm";
+import {and,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,placementApplications,placementCandidatePreferences,placementJobs,users} from "@/db/schema";
+import {collegeMemberships,membershipRoles,learnerProfiles,placementApplications,placementCandidatePreferences,placementJobs,users} from "@/db/schema";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {deliverInAppNotificationInTransaction} from "@/modules/activity/notification-service";
 import {learnerPlacementEventCopy,learnerPlacementEventUsesMatchingJobsPreference,type LearnerPlacementEventKind} from "./learner-placement-event-copy";
@@ -88,10 +88,12 @@ export async function deliverRecordedLearnerPlacementEvent(
    userId:collegeMemberships.userId,
    matching:placementCandidatePreferences.notifyMatchingJobs,
    applications:placementCandidatePreferences.notifyApplicationUpdates,
+   profileEnabled:sql<boolean>`coalesce(${learnerProfiles.profileDocument}->'jobPreferences'->>'jobNotificationsEnabled','true') <> 'false'`,
   }).from(collegeMemberships)
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
   .leftJoin(placementCandidatePreferences,eq(placementCandidatePreferences.membershipId,collegeMemberships.id))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(collegeMemberships.id,input.membershipId),
     eq(collegeMemberships.collegeId,input.collegeId),eq(collegeMemberships.status,"ACTIVE")))
   .limit(1);
@@ -109,8 +111,12 @@ export async function deliverRecordedLearnerPlacementEvent(
   if(!user||user.status!=="ACTIVE")return {delivered:false,skipped:"ACCOUNT_INACTIVE"};
   return {delivered:false,skipped:"LEARNER_ROLE_REVOKED"};
  }
- const enabled=learnerPlacementEventUsesMatchingJobsPreference(input.kind)
-  ? row.matching!==false : row.applications!==false;
+ // A legacy profile opt-out applies to every job/interview status event,
+ // regardless of the newer granular placement preference toggles.
+ const enabled=row.profileEnabled!==false && (
+  learnerPlacementEventUsesMatchingJobsPreference(input.kind)
+   ? row.matching!==false : row.applications!==false
+ );
  if(!enabled)return {delivered:false,skipped:"PREFERENCE_OFF"};
  const message=learnerPlacementEventCopy(input.kind,input.subject);
  const delivered=await deliverInAppNotificationInTransaction(tx,input.eventId,[row.userId],message);
@@ -131,6 +137,7 @@ export async function deliverRecordedJobApplicantsPlacementEvent(tx:Tx,input:{
   userId:collegeMemberships.userId,
   matching:placementCandidatePreferences.notifyMatchingJobs,
   applications:placementCandidatePreferences.notifyApplicationUpdates,
+  profileEnabled:sql<boolean>`coalesce(${learnerProfiles.profileDocument}->'jobPreferences'->>'jobNotificationsEnabled','true') <> 'false'`,
  }).from(placementApplications)
   .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
     eq(placementJobs.collegeId,input.collegeId)))
@@ -138,11 +145,13 @@ export async function deliverRecordedJobApplicantsPlacementEvent(tx:Tx,input:{
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
   .leftJoin(placementCandidatePreferences,eq(placementCandidatePreferences.membershipId,collegeMemberships.id))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .where(and(eq(placementApplications.jobId,input.jobId),
    eq(collegeMemberships.collegeId,input.collegeId),eq(collegeMemberships.status,"ACTIVE")));
  const jobPreference=learnerPlacementEventUsesMatchingJobsPreference(input.kind);
  const usersToNotify=[...new Set(recipients.filter(row=>
-   jobPreference?row.matching!==false:row.applications!==false).map(row=>row.userId))];
+   row.profileEnabled!==false &&
+   (jobPreference?row.matching!==false:row.applications!==false)).map(row=>row.userId))];
  const notice=learnerPlacementEventCopy(input.kind,input.subject);
  let delivered=0;
  for(let start=0;start<usersToNotify.length;start+=250){
