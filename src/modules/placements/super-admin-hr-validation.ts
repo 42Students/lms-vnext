@@ -58,8 +58,14 @@ export const updateSuperAdminHrInputSchema = z
     email: personEmailSchema.optional(),
     title: hrTitleSchema.nullable().optional(),
     status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
+    suspensionReason:z.string().trim().min(3).max(500).optional(),
   })
   .strict()
+  .refine(value=>
+    value.suspensionReason===undefined||value.status==="ARCHIVED",{
+    message:"A suspension reason requires archived recruiter status",
+    path:["suspensionReason"],
+  })
   .refine(
     (value) =>
       Object.values(value).some(

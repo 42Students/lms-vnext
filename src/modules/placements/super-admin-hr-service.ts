@@ -999,6 +999,10 @@ export async function updateSuperAdminHrAccount(
                     input.status === "ARCHIVED"
                       ? current.archivedAt ?? now
                       : null,
+                  // An archival/suspension remains an auth-blocking account
+                  // state. Record the optional admin reason for its audit.
+                  suspensionReason:input.status==="ARCHIVED"?
+                    input.suspensionReason??"Suspended by Super Admin":null,
                 }),
             updatedAt: now,
           })
@@ -1027,7 +1031,8 @@ export async function updateSuperAdminHrAccount(
           : input.status === "ACTIVE" && current.status === "ARCHIVED"
             ? "Recruiter reactivated" : "Recruiter account updated",
         metadata: {changedFields: Object.keys(input), previousStatus: current.status,
-          nextStatus: input.status ?? current.status},
+          nextStatus: input.status ?? current.status,
+          suspensionReasonRecorded:input.status==="ARCHIVED"},
       });
     });
   } catch (error) {
