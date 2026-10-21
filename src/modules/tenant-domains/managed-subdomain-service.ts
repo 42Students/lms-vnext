@@ -29,12 +29,20 @@ async function checkedCollege(ctx:RequestContext,input:string){
 }
 export async function getManagedCollegeSubdomain(ctx:RequestContext,collegeInput:string){
  const college=await checkedCollege(ctx,collegeInput);
- const baseDomain=configuredDomain();
- if(!baseDomain)return {ready:false as const,baseDomain:null,currentHost:null};
- const rows=await getDb().select({host:tenantDomains.host,isPrimary:tenantDomains.isPrimary})
-  .from(tenantDomains).where(and(eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt)));
- const managed=rows.find(row=>isManagedHost(row.host,baseDomain));
- return {ready:true as const,baseDomain,currentHost:managed?.host??null};
+ // A configured suffix can be displayed before wildcard deployment is ready.
+ // Only the explicit operator readiness flag permits allotment or changes.
+ const baseDomain=managedBaseDomain(process.env.TENANT_MANAGED_BASE_DOMAIN,true);
+ const ready=Boolean(baseDomain)&&process.env.TENANT_MANAGED_WILDCARD_READY==="true";
+ const rows=baseDomain?await getDb().select({host:tenantDomains.host,isPrimary:tenantDomains.isPrimary})
+  .from(tenantDomains).where(and(eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt))):[];
+ const managed=baseDomain?rows.find(row=>isManagedHost(row.host,baseDomain)):undefined;
+ const currentHost=managed?.host??null;
+ const subdomain=currentHost&&baseDomain?currentHost.slice(0,-baseDomain.length-1):null;
+ return {
+  ready,baseDomain,currentHost,host:currentHost,subdomain,
+  safetyStatus:ready?"WILDCARD_READY" as const:"WILDCARD_NOT_READY" as const,
+  setupHelp:ready?null:"Configure wildcard DNS for *.<base domain> with the expected CNAME/A target; allow DNS propagation and resolver timeouts; provision and verify wildcard HTTPS/TLS and tenant routing before setting TENANT_MANAGED_WILDCARD_READY=true. Verification TXT challenges for custom domains use the separate domain-verification workflow.",
+ };
 }
 export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeInput:string,raw:unknown){
  const college=await checkedCollege(ctx,collegeInput);
@@ -49,11 +57,14 @@ export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeIn
   const rows=await tx.select({id:tenantDomains.id,host:tenantDomains.host,isPrimary:tenantDomains.isPrimary,isVerified:tenantDomains.isVerified})
    .from(tenantDomains).where(and(eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt))).for("update");
   const current=rows.find(row=>isManagedHost(row.host,base));
+  // Network retries after a committed mutation must not fail merely because
+  // the caller is still carrying the former expectedHost. A different desired
+  // host still needs the strict compare-and-swap check below.
+  if(input.action==="REMOVE"&&!current)return {host:null,changed:false,fallbackHost:rows.find(row=>row.isPrimary)?.host??null};
+  if(host!==null&&current?.host===host)return {host,changed:false,fallbackHost:null};
   if((current?.host??null)!==input.expectedHost)throw new ManagedSubdomainError("SUBDOMAIN_STALE");
   if(input.action==="ALLOT"&&current)throw new ManagedSubdomainError("SUBDOMAIN_ALREADY_ALLOTTED");
   if(input.action==="CHANGE"&&!current)throw new ManagedSubdomainError("SUBDOMAIN_MISSING");
-  if(input.action==="REMOVE"&&!current)return {host:null,changed:false};
-  if(host===current?.host)return {host,changed:false};
   if(host){
    const [taken]=await tx.select({id:tenantDomains.id,collegeId:tenantDomains.collegeId})
     .from(tenantDomains).where(sql<boolean>`lower(${tenantDomains.host})=${host}`).limit(1);
@@ -64,11 +75,19 @@ export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeIn
   // published. Do not reassign an old public host to another college through
   // a routine allot/change, even if the active-host index releases it.
   const now=new Date();
+  // Removing a primary managed host should reactivate a verified custom
+  // address as primary when one exists, rather than leave an avoidable gap.
+  const fallback=!host&&current?.isPrimary?
+   rows.find(row=>row.id!==current.id&&row.isVerified):undefined;
   if(current){
    await tx.update(tenantDomains).set({
     deletedAt:now,isPrimary:false,isVerified:false,verificationToken:null,
     updatedAt:now,lastCheckResult:"MANAGED_RETIRED",
    }).where(and(eq(tenantDomains.id,current.id),isNull(tenantDomains.deletedAt)));
+  }
+  if(fallback){
+   await tx.update(tenantDomains).set({isPrimary:true,updatedAt:now})
+    .where(and(eq(tenantDomains.id,fallback.id),isNull(tenantDomains.deletedAt)));
   }
   if(host){
    // A verified custom domain can remain in the college, but at most one
@@ -88,6 +107,6 @@ export async function changeManagedCollegeSubdomain(ctx:RequestContext,collegeIn
    metadata:{from:current?.host??null,to:host,action:input.action,
      previousDomainId:current?.id??null,softRetired:Boolean(current)},
   });
-  return {host,changed:true};
+  return {host,changed:true,fallbackHost:fallback?.host??null};
  });
 }

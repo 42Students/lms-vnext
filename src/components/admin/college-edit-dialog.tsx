@@ -149,7 +149,7 @@ export function CollegeEditDialog({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "College updated",
+        title: "College updated successfully",
       });
       router.refresh();
       } catch {
@@ -166,6 +166,7 @@ export function CollegeEditDialog({
       <Button
         variant="secondary"
         size="sm"
+        aria-label={"Edit college "+college.name}
         className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
         onClick={() => {
           setName(college.name);
@@ -183,8 +184,9 @@ export function CollegeEditDialog({
       <Dialog
         open={open}
         onOpenChange={next=>{if(next)setOpen(true);else requestClose();}}
-        dismissible={!pending}
-        title={`Edit ${college.name}`}
+        dismissible={false}
+        className="max-w-[600px]"
+        title={`Edit college ${college.name}`}
         description={`College code ${college.code} and organization ownership cannot be changed after creation. For a different legal owner or identifier, create a new college and plan an authorized migration.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
@@ -213,6 +215,14 @@ export function CollegeEditDialog({
           </p> : null}
 
 
+          <div className="md:col-span-2 grid gap-2 text-sm text-muted-foreground">
+            <label className="grid gap-1">Organization
+              <Input value="Assigned organization (immutable)" readOnly disabled aria-label="Organization ownership cannot be changed"/>
+            </label>
+            <label className="grid gap-1">Unique ID
+              <Input value={college.code} readOnly disabled aria-label={"Unique ID for "+college.name}/>
+            </label>
+          </div>
           <div className="md:col-span-2">
             <label
               htmlFor={`college-name-${college.id}`}
@@ -267,6 +277,15 @@ export function CollegeEditDialog({
               maxLength={128}
             />
           </div>
+          {([
+           ["Address",addressLine1,setAddressLine1,255],
+           ["Address line 2",addressLine2,setAddressLine2,255],
+           ["Landmark",landmark,setLandmark,255],
+           ["Pin Code",postalCode,setPostalCode,32],
+          ] as const).map(([field,value,setter,maxLength])=><label key={field}
+           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
+           <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
+          </label>)}
           <div className="md:col-span-2">
             <label
               htmlFor={`college-country-${college.id}`}
@@ -284,15 +303,6 @@ export function CollegeEditDialog({
               maxLength={128}
             />
           </div>
-          {([
-           ["Address",addressLine1,setAddressLine1,255],
-           ["Address line 2",addressLine2,setAddressLine2,255],
-           ["Landmark",landmark,setLandmark,255],
-           ["Pin Code",postalCode,setPostalCode,32],
-          ] as const).map(([field,value,setter,maxLength])=><label key={field}
-           className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field}
-           <Input className="min-h-11 md:min-h-9" value={value} disabled={pending} onChange={event=>setter(event.target.value)} maxLength={maxLength}/>
-          </label>)}
         </div>
       </Dialog>
     </>
