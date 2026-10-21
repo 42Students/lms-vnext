@@ -13,7 +13,6 @@ import type {RequestContext} from "@/modules/identity/context";
 
 /** COL-projects-15: one all-or-nothing learner-roster replacement. Class teams stay managed by their own workflow. */
 export async function replaceCollegeProjectLearners(context:RequestContext,projectId:string,raw:unknown){
- // Additive by default; explicit replacement/removal is authorized inside the transaction.
  const input=replaceCollegeProjectRosterSchema.parse(raw);
  const scope=await requireProjectManageAccess(context,projectId);
  return getDb().transaction(async tx=>{
