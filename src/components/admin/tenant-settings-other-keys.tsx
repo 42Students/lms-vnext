@@ -69,12 +69,12 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries,showHeadi
    </ul>}
   <fieldset disabled={!ready||busy} className="space-y-2">
    <legend className="font-semibold text-foreground">Add setting</legend>
-   <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Key
+   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Key
     <Input value={key} aria-invalid={Boolean(key&&!validKey.test(key))} aria-describedby="other-keys-syntax" onChange={event=>{setKey(event.target.value);setMessage("");}} maxLength={120}
      placeholder="custom.settingName" autoComplete="off"
      className="min-h-11 md:min-h-9 w-full"/>
    </label>
-   <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Value
+   <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Value
     <Textarea rows={2} value={value} onChange={event=>{setValue(event.target.value);setMessage("");}}
      maxLength={4096} className="min-h-24 w-full"/>
    </label>

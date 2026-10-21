@@ -36,7 +36,7 @@ export function SuperAdminPlatformBlockAction({userId,status}:{userId:string;sta
   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Platform-wide account access</summary>
   <div className="min-w-0 pt-[var(--lms-space-2)]">
   <p className="max-w-3xl text-sm leading-6 text-body">Unlike college suspension, a platform block prevents login across every college. This action requires an audit reason.</p>
-  <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
+  <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Reason
    <Textarea value={reason} maxLength={1000} rows={2} disabled={pending}
     aria-describedby="platform-block-reason-help"
     onChange={event=>{setReason(event.target.value);setError(null);}} className="min-h-11 w-full md:min-h-9"/>

@@ -39,7 +39,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
  return <section className="space-y-3 border-t border-border pt-4" aria-label="Bulk drive actions">
   <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
    <h2 className="sr-only">Bulk drives</h2>
-   <label className="flex min-h-11 items-center gap-2 text-sm">
+   <label className="flex min-h-11 items-center gap-[6px] text-sm">
     <Checkbox disabled={!eligible.length||busy}
      checked={eligible.length>0&&eligible.every(row=>selected.includes(row.id))}
      onChange={e=>{setSelected(e.target.checked?eligible.map(row=>row.id).slice(0,25):[]);
@@ -54,7 +54,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
    <Button variant="primary" type="button" disabled={!canProcess} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void send("PREVIEW")}>Preview change</Button>
   </div>
   <div className="grid max-h-52 min-w-0 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
-   {eligible.map(row=><label key={row.id} className="flex min-h-11 min-w-0 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border p-2 text-xs">
+   {eligible.map(row=><label key={row.id} className="flex min-h-11 min-w-0 items-center gap-[6px] rounded-[var(--lms-control-radius)] border border-border p-2 text-xs">
      <Checkbox checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/>
      <span className="min-w-0 break-words"><strong>{row.title}</strong><span className="block text-muted-foreground">
       {row.companyName} · {row.status}</span></span>
