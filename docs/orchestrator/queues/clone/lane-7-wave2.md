@@ -11,10 +11,10 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part1of4.md` (edit src/components/marketing/marketing-layout.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part2of4.md` (edit src/components/marketing/marketing-layout.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part3of4.md` (edit src/components/marketing/marketing-layout.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part4of4.md` (edit src/components/marketing/marketing-layout.tsx; 14 findings; best P3)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part1of4.md` (edit src/components/marketing/marketing-layout.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part2of4.md` (edit src/components/marketing/marketing-layout.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part3of4.md` (edit src/components/marketing/marketing-layout.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_components_marketing_marketing-layout.tsx.part4of4.md` (edit src/components/marketing/marketing-layout.tsx; 14 findings; best P3)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_app_authenticated_admin_colleges_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/colleges/page.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_app_authenticated_admin_colleges_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/colleges/page.tsx; 22 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-7/W2_src_app_authenticated_dashboard_page.tsx.part1of2.md` (edit src/app/(authenticated)/dashboard/page.tsx; 40 findings; best P2)
