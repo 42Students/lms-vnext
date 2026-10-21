@@ -9,6 +9,7 @@ import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-serv
 import {parseTpoVerificationParams,tpoVerificationHref} from "@/modules/verification/tpo-queue-server-model";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {Select} from "@/components/ui/select";
 
 export const dynamic="force-dynamic";
@@ -23,8 +24,27 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  </div>;
  const query=parsed;
  const context=await getCurrentRequestContext();
- const queue=await getTpoVerificationQueue(context,query);
- const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
+ const retryHref=tpoVerificationHref(query);
+ let queue:Awaited<ReturnType<typeof getTpoVerificationQueue>>;
+ try {
+  queue=await getTpoVerificationQueue(context,query);
+ } catch(error) {
+  if(error instanceof AuthorizationError) {
+   return <section className="min-w-0 space-y-3">
+    <PageHeader title="Verification" />
+    <h2 className="text-base font-semibold">You cannot verify profiles here</h2>
+    <Alert tone="warning">Your verification access has been removed. Ask your college admin.</Alert>
+   </section>;
+  }
+  return <section className="min-w-0 space-y-3">
+   <PageHeader title="Verification" />
+   <Alert tone="error" role="alert">Could not check your verification access</Alert>
+   <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
+  </section>;
+ }
+ // A batch-directory failure must not erase a successfully loaded queue.
+ const directory=queue.available&&queue.enabled&&queue.permitted
+  ? await listTpoBatches(context).catch(()=>null) : null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
  return <div className="min-w-0 space-y-4">
   <PageHeader title="Verification" description="Review learner education and identity verification requests."
@@ -108,8 +128,8 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
     <Alert tone="warning">Showing the first 1,000 students in this view. Narrow the filters to find more students.</Alert>:null}
   {!queue.available?<section className="space-y-3">
-   <Alert tone="warning">Verification records are not available right now. Please try again or contact your college admin.
-   <Link href="/tpo/verification" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link></Alert>
+   <Alert tone="warning" role="alert">Could not load the queue. Please try again or contact your college admin.</Alert>
+   <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>
   </section>:!queue.enabled||!queue.permitted?<section className="space-y-3">
    <h2 className="text-base font-semibold text-[var(--lms-heading)]">You cannot verify profiles here</h2>
    <Alert tone="warning">{!queue.enabled

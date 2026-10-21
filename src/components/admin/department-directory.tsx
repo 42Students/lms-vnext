@@ -101,7 +101,7 @@ export function DepartmentDirectory({
       </div>
 
       <p role="status" aria-live="polite" className="text-sm leading-[22px] text-muted-foreground">
-        {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}
+        Departments retrieved · {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}
       </p>
       <DataTable
         columns={columns.map(column => column.key === "name" ? {
