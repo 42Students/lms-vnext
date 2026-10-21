@@ -8,6 +8,10 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 
 type InterviewRound={id:string;name:string;sequence:number};
+type DraftInterviewSlot={
+ roundId:string;mode:string;startAt:string;endAt:string;capacity:string;
+ panelLabel:string;meetingLocation:string;
+};
 /** Times are the form's declared India Standard Time, not browser-local time. */
 function nowInIst(){
  return new Intl.DateTimeFormat("sv-SE",{
@@ -24,6 +28,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  const [start,setStart]=useState("");
  const [end,setEnd]=useState("");
  const [error,setError]=useState<string|null>(null);
+ const [queued,setQueued]=useState<DraftInterviewSlot[]>([]);
  const today=nowInIst();
  useEffect(()=>{
   if(!dirty||submitting)return;
@@ -31,43 +36,105 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   window.addEventListener("beforeunload",onExit);
   return ()=>window.removeEventListener("beforeunload",onExit);
  },[dirty,submitting]);
+ function readSlot(form:HTMLFormElement):DraftInterviewSlot|null{
+  const data=new FormData(form);
+  const field=(name:string)=>String(data.get(name)??"").trim();
+  const slot:DraftInterviewSlot={
+   roundId:field("roundId"),mode:field("mode"),
+   startAt:start,endAt:end,capacity:field("capacity"),
+   panelLabel:field("panelLabel"),meetingLocation:field("meetingLocation"),
+  };
+  const now=nowInIst();
+  if(!rounds.some(row=>row.id===slot.roundId)){
+   setError("Select an interview round.");return null;
+  }
+  if(!slot.startAt||!slot.endAt){
+   setError("Select both interview start and end times.");return null;
+  }
+  if(slot.startAt<now){
+   setError("Interview time must be in the future (IST).");return null;
+  }
+  if(slot.endAt<=slot.startAt){
+   setError("End time must be after start time.");return null;
+  }
+  const capacity=Number(slot.capacity);
+  if(!Number.isInteger(capacity)||capacity<1||capacity>100){
+   setError("Capacity must be between 1 and 100.");return null;
+  }
+  return slot;
+ }
+ function queueSlot(form:HTMLFormElement){
+  if(submitting||queued.length>=9)return;
+  const slot=readSlot(form);
+  if(!slot)return;
+  setQueued(current=>[...current,slot]);
+  setNotice("Time block added to the proposal. Propose all time blocks to save them.");
+  setError(null);setStart("");setEnd("");setDirty(true);
+  form.reset();
+ }
  async function submit(event:FormEvent<HTMLFormElement>){
-  const form=event.currentTarget;
-  const current=nowInIst();
-  if(!start||!end){event.preventDefault();setError("Select both interview start and end times.");return;}
-  if(start<current){event.preventDefault();setError("Interview time must be in the future (IST).");return;}
-  if(end<=start){event.preventDefault();setError("End time must be after start time.");return;}
   event.preventDefault();
   if(submitLock.current)return;
+  const form=event.currentTarget;
+  // Each legacy entry can carry a different round, mode, panel and capacity.
+  // The native API only writes one block transactionally. Present and retain
+  // any partial success instead of claiming a nonexistent atomic batch.
+  const hasCurrent=Boolean(start||end);
+  // After a partial failure the remaining queue can be retried unchanged,
+  // without inventing a new final time block just to submit it.
+  const current=hasCurrent||queued.length===0?readSlot(form):null;
+  if((hasCurrent||queued.length===0)&&!current)return;
+  const entries=current?[...queued,current]:[...queued];
+  if(entries.length>10){setError("Propose at most 10 time blocks at once.");return;}
+  const now=nowInIst();
+  if(entries.some(slot=>slot.startAt<now||slot.endAt<=slot.startAt)){
+   setError("Review queued time blocks. Start and end times must be in the future (IST).");return;
+  }
   submitLock.current=true;
   setError(null);setNotice(null);setSubmitting(true);
+  let saved=0;
   try{
-   const response=await fetch(action,{
-    method:"POST",body:new FormData(form),credentials:"same-origin",
-   });
-   const expectedPath=action.replace(/^\/api\/placements\/recruiter/,"/recruiter");
-   const target=new URL(response.url);
-   if(!response.ok||!response.redirected||target.pathname!==expectedPath){
-    const result=await response.json().catch(()=>null) as {error?:string}|null;
-    const code=result?.error;
-    setError(code==="SLOT_STALE"?"This time block was updated by someone else. Refresh and try again.":
-      code==="SLOT_FULL"?"This time block is full.":
-      code==="SLOT_OVERLAP"?"This interview overlaps with an existing time block.":
-      code==="INVALID_SLOT_DATE"?"Enter a valid IST start and end time.":
-      "Could not propose this slot. Check the details and retry.");
-    return;
+   for(let i=0;i<entries.length;i++){
+    const slot=entries[i];
+    const payload=new FormData();
+    payload.set("action","CREATE");
+    for(const [key,value] of Object.entries(slot))payload.set(key,value);
+    const response=await fetch(action,{
+     method:"POST",body:payload,credentials:"same-origin",
+     headers:{Accept:"application/json"},
+    });
+    const result=await response.json().catch(()=>null) as {error?:string;id?:string}|null;
+    if(!response.ok||!result||typeof result.id!=="string"){
+     setQueued(entries.slice(i));
+     setStart("");setEnd("");form.reset();setDirty(true);
+     const code=result?.error;
+     setError((code==="SLOT_OVERLAP"?"An interview overlaps with an existing time block.":
+       code==="SLOT_FULL"?"This time block is full.":
+       code==="INVALID_SLOT_DATE"?"Enter valid IST start and end times.":
+       code==="SLOT_STALE"?"This time block was updated by someone else.":
+       "Could not propose this time block. Check the details and retry.")+
+       " "+saved+" of "+entries.length+" time blocks were saved. Remaining blocks are kept below.");
+     router.refresh();
+     return;
+    }
+    saved++;
    }
-   setStart("");setEnd("");setDirty(false);form.reset();
-   setNotice("Interview time block proposed. Waiting for placement-cell coordination.");
+   setStart("");setEnd("");setQueued([]);setDirty(false);form.reset();
+   setNotice(saved+" interview time block"+(saved===1?"":"s")+
+     " proposed. Waiting for placement-cell coordination.");
    router.refresh();
   }catch{
-   setError("Could not reach the server. Your entered times are still here.");
+   setQueued(entries.slice(saved));
+   setStart("");setEnd("");form.reset();setDirty(true);
+   setError("Connection interrupted. "+saved+" of "+entries.length+
+     " blocks were saved. Remaining blocks are kept below; retry after checking the list.");
+   router.refresh();
   }finally{submitLock.current=false;setSubmitting(false);}
  }
  return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-4 sm:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interview round
-   <Select name="roundId" required defaultValue="" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
+   <Select name="roundId" required={queued.length===0} defaultValue="" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
     <option value="" disabled>Select an interview round</option>
     {rounds.map(row=><option key={row.id} value={row.id}>{row.sequence}. {row.name}</option>)}
    </Select>
@@ -78,12 +145,12 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    </Select>
   </label>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
-   <Input name="startAt" type="datetime-local" min={today} required value={start}
+   <Input name="startAt" type="datetime-local" min={today} required={queued.length===0} value={start}
     onChange={event=>{const next=event.target.value;setStart(next);if(end&&end<=next)setEnd("");setError(null);}}
     className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
-   <Input name="endAt" type="datetime-local" min={start||today} required value={end}
+   <Input name="endAt" type="datetime-local" min={start||today} required={queued.length===0} value={end}
     onChange={event=>{setEnd(event.target.value);setError(null);}}
     className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
@@ -102,12 +169,28 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
     </label>
    </div>
   </details>
+  {queued.length?<div className="sm:col-span-2 space-y-2" aria-live="polite">
+    <p className="text-sm font-semibold text-foreground">Time blocks ready to propose ({queued.length})</p>
+    <ol className="space-y-2">
+      {queued.map((slot,index)=><li key={index} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm text-body">
+        <span>{rounds.find(round=>round.id===slot.roundId)?.name??"Interview"} · {slot.startAt.replace("T"," ")}–{slot.endAt.replace("T"," ")} IST · {slot.capacity} places</span>
+        <Button type="button" variant="secondary" disabled={submitting} onClick={()=>{
+          setQueued(list=>list.filter((_,i)=>i!==index));setDirty(true);
+        }}>Remove</Button>
+      </li>)}
+    </ol>
+   </div>:null}
+  <Button type="button" variant="secondary" disabled={!rounds.length||submitting||queued.length>=9}
+    onClick={event=>{const form=event.currentTarget.closest("form");if(form)queueSlot(form);}}
+    className="min-h-11 w-full sm:col-span-2 md:min-h-9">
+    Add another time block
+  </Button>
   {!rounds.length?<p role="status" className="text-sm text-muted-foreground sm:col-span-2">No interview rounds are available to propose a slot.</p>:null}
   {error?<div className="sm:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <Button type="submit" disabled={!rounds.length||submitting} loading={submitting} aria-busy={submitting}
     variant="primary" className="min-h-11 w-full sm:col-span-2 md:min-h-9">
-    {submitting?"Sending time block…":"Propose slot"}
+    {submitting?"Sending time blocks…":queued.length?"Propose "+(queued.length+(start||end?1:0))+" time blocks":"Propose slot"}
   </Button>
  </form>;
 }
