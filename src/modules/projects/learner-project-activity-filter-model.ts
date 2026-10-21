@@ -38,6 +38,8 @@ export const learnerProjectActivityFilterSchema = z.object({
   to: z.iso.date().optional(),
   beforeTime: z.iso.datetime().optional(),
   beforeId: z.string().uuid().optional(),
+  sourceTab:z.string().trim().max(80).optional(),
+  search:z.string().trim().max(100).optional(),
   // Old /activity/feed supported bounded page/size and exact event type.
   // New cursor clients continue to default to page 1 / 100 events.
   eventType:z.string().trim().regex(/^projects\.[a-z0-9_.-]+$/i).max(120).optional(),
@@ -53,6 +55,7 @@ export type LearnerProjectActivityFilters = z.infer<typeof learnerProjectActivit
 export function parseLearnerProjectActivityFilters(input: {
   category?:unknown;from?:unknown;to?:unknown;beforeTime?:unknown;beforeId?:unknown;
   eventType?:unknown;page?:unknown;size?:unknown;
+  sourceTab?:unknown;search?:unknown;
 }) {
   return learnerProjectActivityFilterSchema.safeParse({
     category: input.category === "" ? undefined : input.category,
@@ -60,6 +63,7 @@ export function parseLearnerProjectActivityFilters(input: {
     to: input.to === "" ? undefined : input.to,
     beforeTime: input.beforeTime,beforeId:input.beforeId,
     eventType:input.eventType||undefined,page:input.page||undefined,
+    sourceTab:input.sourceTab||undefined,search:input.search||undefined,
     size:input.size||undefined,
   });
 }

@@ -7,7 +7,7 @@ import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
-import { collegeDriveListQuerySchema, COLLEGE_DRIVE_PAGE_SIZE } from "./college-drive-read-model";
+import { collegeDriveListQuerySchema } from "./college-drive-read-model";
 
 export async function requireCollegePlacementAdmin(context: RequestContext) {
  // The existing College Admin pathway is unchanged; a Super Admin uses only
@@ -89,7 +89,7 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
     db.select().from(source).where(applicantsFilter).orderBy(query.sort==="DEADLINE"?asc(source.applicationDeadline):
         query.sort==="NEWEST"?desc(sql`coalesce(${source.publishedAt}, ${source.createdAt})`):
         query.sort==="APPLICANTS"?desc(source.applicants):asc(source.title),asc(source.id))
-      .limit(COLLEGE_DRIVE_PAGE_SIZE).offset((query.page - 1) * COLLEGE_DRIVE_PAGE_SIZE),
+      .limit(query.pageSize).offset((query.page - 1) * query.pageSize),
     db.select({ id: placementSeasons.id, name: placementSeasons.name }).from(placementSeasons)
       .where(eq(placementSeasons.collegeId, collegeId)).orderBy(asc(placementSeasons.name)),
     db.select({ id: placementCompanyRelationships.id, name: placementCompanies.name })
@@ -100,5 +100,5 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
   ]);
   const total = totals[0]?.total ?? 0;
   return { query, items, seasons, companies, total,
-    totalPages: Math.max(1, Math.ceil(total / COLLEGE_DRIVE_PAGE_SIZE)) };
+    totalPages: Math.max(1, Math.ceil(total / query.pageSize)) };
 }

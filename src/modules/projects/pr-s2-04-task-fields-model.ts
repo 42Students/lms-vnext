@@ -8,7 +8,10 @@ export const projectTaskExpandedFieldsSchema=z.object({
 }).strict();
 export const projectTaskCommentInputSchema=z.object({
   body:z.string().trim().min(1,{message:"message is required"}).max(4000),
-  commentKind:z.enum(["NOTE","PROGRESS_UPDATE","FLAG_FOR_MENTOR"]).default("NOTE"),
+  commentKind:z.preprocess(kind=>
+    kind==="PROGRESS"?"PROGRESS_UPDATE":
+    kind==="NEEDS_HELP"?"FLAG_FOR_MENTOR":kind,
+   z.enum(["NOTE","PROGRESS_UPDATE","FLAG_FOR_MENTOR"]).default("NOTE")),
   expectedTaskUpdatedAt:z.iso.datetime({offset:true}),
 }).strict();
 /** System-only payload for status/progress snapshots; the human comment
@@ -22,4 +25,16 @@ export const projectTaskSystemCommentSchema=z.object({
 }).strict();
 export function projectTaskBlockerValid(status:string,reason:string|null){
   return status!=="BLOCKED"||Boolean(reason?.trim());
+}
+
+/** Old persisted comment codes normalize to the vNext enum at input only.
+ * UI labels stay exactly as legacy: Note, Progress update, Flag for mentor.
+ */
+export const PROJECT_LEGACY_COMMENT_LABELS={
+ NOTE:"Note",PROGRESS_UPDATE:"Progress update",
+ FLAG_FOR_MENTOR:"Flag for mentor",
+} as const;
+export function canonicalLegacyProjectCommentKind(input:string){
+ return input==="PROGRESS"?"PROGRESS_UPDATE":
+   input==="NEEDS_HELP"?"FLAG_FOR_MENTOR":input;
 }

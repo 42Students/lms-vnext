@@ -4,6 +4,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, users, learnerContentProgress } from "@/db/schema";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
+import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -86,6 +87,19 @@ export async function getOwnLearnerCourseProgressBreakdown(
     course: { name: course.courseName, code: course.courseCode, deliveryId },
     learningPathPublished: workspace.learningPath !== null,
     summary: workspace.summary,lessons,attemptByContent,
+    // Old learner course-home-stat becomes these authorized workspace cards.
+    // Grade publication remains governed by the lesson/assessment service;
+    // no private marks or a fabricated grade average is introduced here.
+    homeCards:{
+      progressPercent:workspace.summary.overallPercent,
+      lessons:{complete:workspace.summary.lessonsCompleted,total:workspace.summary.lessonsTotal},
+      content:{complete:workspace.summary.contentsCompleted,total:workspace.summary.contentsTotal},
+      assignments:{complete:workspace.summary.assignmentsCompleted,total:workspace.summary.assignmentsTotal,
+        missed:workspace.summary.assignmentsMissed},
+      quizzes:{complete:workspace.summary.quizzesCompleted,total:workspace.summary.quizzesTotal,
+        missed:workspace.summary.quizzesMissed},
+    },
+    nextItem:workspace.nextItem,nextContent:workspace.nextContent,
   };
 }
 
@@ -108,4 +122,28 @@ export async function getOwnLearnerCourseAttendanceHistory(
     overall: summary ?? null,
     months: buildLearnerCourseAttendanceMonths(records),
   };
+}
+
+/** Legacy LearnerController mapping:
+ * /learner/course-stats -> /learn/courses/[deliveryId]/home and progress;
+ * /learner/attendance -> /learn/courses/[deliveryId]/attendanceDetail;
+ * /learner/program -> /learn/profile/academic-record.
+ * All links use the authorized current delivery, never a numeric course ID
+ * resolved without the learner's selected active membership.
+ */
+export async function getOwnLearnerCourseProgramAvailability(context:RequestContext){
+ await requireCurrentLearner(context,"courses.read");
+ const [academic,deliveries]=await Promise.all([
+   getOwnLearnerAcademicSummary(context),
+   listLearnerCourseDeliveries(context,{includeHistorical:true}),
+ ]);
+ // Legacy GET returned 200/null when program information was absent.
+ if(!academic.enrollment)return null;
+ return {
+   kind:deliveries.length?"ENROLLED" as const:"ENROLLED_NO_COURSES" as const,
+   program:academic.enrollment.program,
+   count:deliveries.length,
+   guidance:deliveries.length?"Open a course to see your learning path.":
+     "Your program is recorded but no courses are assigned yet. Contact your college.",
+ };
 }

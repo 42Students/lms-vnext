@@ -35,7 +35,6 @@ export class FriendlyFetchError extends Error {
 /** A caller-initiated abort is not a network failure and must not trigger retry UI. */
 export class ApiFetchCancelledError extends FriendlyFetchError {
   readonly silent = true;
-  readonly retryable = false;
   constructor() {
     super("", 499, "REQUEST_CANCELLED");
     this.name = "ApiFetchCancelledError";

@@ -147,6 +147,13 @@ export default async function CollegeDrivesPage({ searchParams }: {
           <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
         </Select>
       </label>
+      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)]">
+        Rows per page
+        <Select name="pageSize" defaultValue={String(query.pageSize)}>
+          <option value="10">10</option><option value="20">20</option>
+          <option value="50">50</option><option value="100">100</option>
+        </Select>
+      </label>
         </div>
       </details>
       <Button type="submit" className="w-full self-end min-[768px]:w-auto">Filter</Button>
