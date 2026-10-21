@@ -62,7 +62,7 @@ export async function listTpoBatchCardEligibility(
 
   const sectionsByEnrollment = new Map<string, Set<string>>();
   const enrollmentIds = learners.map(row => row.id);
-  for (let from = 0; from < enrollmentIds.length; from += 4000) {
+  for (let from = 0; from < enrollmentIds.length; from += 1000) {
     const records = await db.select({
       enrollmentId: sectionEnrollments.learnerEnrollmentId,
       sectionId: sections.id,
@@ -77,7 +77,7 @@ export async function listTpoBatchCardEligibility(
       ))
       .where(and(
         eq(sectionEnrollments.status, "ACTIVE"),
-        inArray(sectionEnrollments.learnerEnrollmentId, enrollmentIds.slice(from, from + 4000)),
+        inArray(sectionEnrollments.learnerEnrollmentId, enrollmentIds.slice(from, from + 1000)),
       ));
     for (const row of records) {
       const set = sectionsByEnrollment.get(row.enrollmentId) ?? new Set<string>();
@@ -91,7 +91,7 @@ export async function listTpoBatchCardEligibility(
     ...[...sectionsByEnrollment.values()].flatMap(set => [...set]),
   ])];
   const decisions = new Map<string, PlacementScopeDecision>();
-  for (let from = 0; from < scopeIds.length; from += 4000) {
+  for (let from = 0; from < scopeIds.length; from += 1000) {
     const stored = await db.select({
       scopeType: placementEligibilityDecisions.scopeType,
       scopeId: placementEligibilityDecisions.scopeId,
@@ -102,7 +102,7 @@ export async function listTpoBatchCardEligibility(
     }).from(placementEligibilityDecisions)
       .where(and(
         eq(placementEligibilityDecisions.collegeId, collegeId),
-        inArray(placementEligibilityDecisions.scopeId, scopeIds.slice(from, from + 4000)),
+        inArray(placementEligibilityDecisions.scopeId, scopeIds.slice(from, from + 1000)),
       ));
     for (const row of stored) {
       if (row.status !== "ELIGIBLE" && row.status !== "INELIGIBLE") continue;
@@ -138,7 +138,13 @@ export async function listTpoBatchCardEligibility(
       }
     }
     output.set(batchId, summarizeBatchEligibility(
-      [...members].map(([membershipId, sectionIds]) => ({ membershipId, sectionIds: [...sectionIds] })),
+      [...members].map(([membershipId, sectionIds]) => ({
+        membershipId,
+        // A verified direct learner decision wins over conflicting section
+        // enrollment history. Only section-derived decisions are ambiguous
+        // when more than one active class remains.
+        sectionIds:learner.has(membershipId)?[]:[...sectionIds],
+      })),
       { learner, section, cohort: decisions.get("COHORT:" + batchId) ?? null },
       false,
     ));
