@@ -208,7 +208,7 @@ export function TpoBulkRoundResultRecorder({
             </Select>
           </label>
           <details className="group min-w-0 border-y border-border py-2 print:hidden">
-           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">Everyone I did not mark <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+           <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Everyone I did not mark <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
           <fieldset className="space-y-2 px-2 py-3">
             <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
             <label className="flex items-start gap-2 text-sm text-body">
