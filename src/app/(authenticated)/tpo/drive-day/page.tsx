@@ -3,10 +3,6 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { and, desc, eq, gte, isNull, lt, ne } from "drizzle-orm";
-import { getDb } from "@/db/client";
-import { placementJobRounds, placementJobs, placementCompanyRelationships, placementCompanies } from "@/db/schema";
-import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { tpoIstDayWindow } from "@/modules/placements/tpo-live-drive-day-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -24,7 +20,7 @@ import {summarizeTpoLiveTriage} from "@/modules/placements/tpo-live-triage-summa
 import {filterTpoLiveRoundSearch,tpoLiveRoundSearchSchema} from "@/modules/placements/tpo-live-round-search-model";
 import { tpoDriveDaySortSchema, sortTpoDriveDayRows } from "@/modules/placements/tpo-drive-day-sort-model";
 import { tpoDriveDayIssueSchema, filterTpoDriveDayIssues } from "@/modules/placements/tpo-drive-day-issue-filter-model";
-import { getTpoLiveDriveDaySummary } from "@/modules/placements/tpo-live-drive-day-service";
+import { getTpoLiveDriveDaySummary, getTpoDriveDayQueue } from "@/modules/placements/tpo-live-drive-day-service";
 import { TpoDriveDayTodayList } from "@/components/tpo/tpo-drive-day-today-list";
 
 function formatWhen(
@@ -62,27 +58,10 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
     // All on-campus rounds dated today are the primary list, not merely
     // those whose scheduled duration happens to include the current instant.
     const window=tpoIstDayWindow(new Date().toISOString());
-    let todayRounds: Array<{id:string;name:string;jobTitle:string;companyName:string;scheduledAt:Date|null;venue:string|null;status:string}> = [];
+    let todayRounds: Awaited<ReturnType<typeof getTpoDriveDayQueue>> = [];
     let todayError=false;
-    try {
-      await requirePlacementManageScope(context, context.membership.collegeId);
-      todayRounds=await getDb().select({
-        id:placementJobRounds.id,name:placementJobRounds.name,
-        jobTitle:placementJobs.title,companyName:placementCompanies.name,
-        scheduledAt:placementJobRounds.scheduledAt,
-        venue:placementJobRounds.venue,status:placementJobRounds.status,
-      }).from(placementJobRounds)
-        .innerJoin(placementJobs,eq(placementJobRounds.jobId,placementJobs.id))
-        .innerJoin(placementCompanyRelationships,eq(placementJobs.companyRelationshipId,placementCompanyRelationships.id))
-        .innerJoin(placementCompanies,eq(placementCompanyRelationships.companyId,placementCompanies.id))
-        .where(and(eq(placementJobs.collegeId,context.membership.collegeId),
-          eq(placementCompanyRelationships.collegeId,context.membership.collegeId),
-          eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt),
-          eq(placementJobs.recruiterDriveMode,"ON_CAMPUS"),
-          ne(placementJobRounds.status,"CANCELLED"),
-          gte(placementJobRounds.scheduledAt,window.start),lt(placementJobRounds.scheduledAt,window.end)))
-        .orderBy(desc(placementJobRounds.scheduledAt),desc(placementJobRounds.id)).limit(100);
-    } catch { todayError=true; }
+    try { todayRounds=await getTpoDriveDayQueue(context); }
+    catch { todayError=true; }
     let snapshot: Awaited<ReturnType<typeof getTpoLiveDriveDaySummary>> | null = null;
     try { snapshot=await getTpoLiveDriveDaySummary(context); } catch { /* Independent live snapshot. */ }
     const liveTotals=snapshot?summarizeTpoLiveTriage(snapshot.rows):null;

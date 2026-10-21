@@ -103,7 +103,8 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
-   .where(scope).groupBy(placementApplications.jobId),
+   .where(and(scope,inArray(placementOffers.status,["ISSUED","ACCEPTED"])))
+   .groupBy(placementApplications.jobId),
  ]);
  const counts:Record<string,{sharedApplicants:number;offers:number}>={};
  for(const id of ids)counts[id]={sharedApplicants:0,offers:0};

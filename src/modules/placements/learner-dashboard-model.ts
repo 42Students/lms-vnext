@@ -99,15 +99,14 @@ export function learnerPlacementDashboard(
   // kind here hid earlier interviews behind later assessments.
   const attentionEvents=weekEvents.filter(event=>
     event.kind==="ASSESSMENT"||event.kind==="INTERVIEW");
-  const firstWeek = (kind: PlacementDashboardEvent["kind"]) =>
-    weekEvents.find((event) => event.kind === kind) ?? null;
-  const priority =
-    firstWeek("ASSESSMENT") ??
-    firstWeek("INTERVIEW") ??
-    events[0] ??
-    null;
+  // Do not hide an earlier interview behind a later assessment.
+  const priority = events[0] ?? null;
 
   const urgentOffer=learnerExpiringOffer(input.offers,nowMs);
+  const pendingOffers=input.offers.filter(offer=>
+    (offer.status==="ISSUED"||offer.status==="RELEASED")&&
+    (offer.expiresAt===null||(Number.isFinite(offer.expiresAt.getTime())&&
+      offer.expiresAt.getTime()>nowMs)));
   const nextAction=urgentOffer
     ? {
         label:"Offer decision due soon",
@@ -115,6 +114,14 @@ export function learnerPlacementDashboard(
         detail:"An issued offer expires within 24 hours. Review the official terms before responding.",
         href:"/learn/my-placements/offers?status=pending",
         when:urgentOffer.expiresAt,
+      }
+    : pendingOffers.length > 0
+    ? {
+        label:"You have an offer",
+        title:"Reply to your placement offer",
+        detail:"Review the offer terms and deadline before responding.",
+        href:"/learn/my-placements/offers?status=pending",
+        when:null,
       }
     : priority
     ? {
@@ -149,12 +156,7 @@ export function learnerPlacementDashboard(
     thisWeekAssessmentCount:weekEvents.filter(event=>event.kind==="ASSESSMENT").length,
     upcomingInterviewCount: events.filter((event) => event.kind === "INTERVIEW").length,
     thisWeekInterviewCount:weekEvents.filter(event=>event.kind==="INTERVIEW").length,
-    activeOfferCount: input.offers.filter((row) => {
-      if(row.status!=="ISSUED")return false;
-      if(row.expiresAt===null)return true;
-      const expiry=row.expiresAt.getTime();
-      return Number.isFinite(expiry) && Number.isFinite(nowMs) && expiry>nowMs;
-    }).length,
+    activeOfferCount: pendingOffers.length,
     activeApplicationCount: new Set(
       input.applications.filter((row) =>
         row.applicationStatus === "SUBMITTED" &&
