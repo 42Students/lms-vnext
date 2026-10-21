@@ -22,7 +22,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  ]);
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <AdminScopedReadPage
-  intro={workspace?<section aria-label="Create faculty assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+  intro={workspace?<section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
    <SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>
    <Link href="/admin/courses" className="inline-flex min-h-11 items-center self-start rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Create teaching assignment →</Link>
   </section>:null}
