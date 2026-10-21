@@ -20,8 +20,15 @@ const inputSchema=z.object({
   autoRefresh:z.boolean().default(false),
 }).strict();
 
+export function groupRuleFeatureOwnerMessage(kind:string):string|null {
+ if(kind==="ELECTIVE")return "Elective groups are managed from the Electives page";
+ if(kind==="PROJECT_TEAM")return "Project team groups are managed from the project's Team tab";
+ return null;
+}
 export class GroupRuleServiceError extends Error {
-  constructor(public readonly code:string){ super(code); this.name="GroupRuleServiceError"; }
+  constructor(public readonly code:string,detail?:string){
+   super(detail??code); this.name="GroupRuleServiceError";
+  }
 }
 type Client=ReturnType<typeof getDb>;
 type Tx=Parameters<Parameters<Client["transaction"]>[0]>[0];
@@ -35,8 +42,9 @@ async function requireGroupManagement(tx:Tx,context:RequestContext,groupId:strin
   await assertPersistedGroupActor(tx, context, {collegeId:group.collegeId,mode:"MANUAL"});
   // Electives require slot-scoped locks and project teams require transactional
   // mirrors; never write either through this generic rule runner.
-  if (group.kind==="ELECTIVE" || group.kind==="PROJECT_TEAM")
-    throw new GroupRuleServiceError("GROUP_RULE_FEATURE_OWNER_REQUIRED");
+  const featureOwnerMessage=groupRuleFeatureOwnerMessage(group.kind);
+  if(featureOwnerMessage)
+    throw new GroupRuleServiceError("GROUP_RULE_FEATURE_OWNER_REQUIRED",featureOwnerMessage);
   return group;
 }
 async function assertCriteriaCollege(tx:Tx, collegeId:string, criteria:GroupRuleCriteria) {
