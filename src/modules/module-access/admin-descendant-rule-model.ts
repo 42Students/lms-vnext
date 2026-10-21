@@ -7,6 +7,8 @@ export const academicModuleRuleInput=z.strictObject({
  enabled:z.boolean().optional(),locked:z.boolean().optional(),
  expected:z.strictObject({enabled:z.boolean(),locked:z.boolean()}).nullable(),
 }).superRefine((input,ctx)=>{
+ if(input.module==="placements"&&input.action==="SET")
+  ctx.addIssue({code:"custom",path:["module"],message:"Placements is managed at college level. Use Placement eligibility for learner exceptions."});
  if(input.action==="SET"&&(input.enabled===undefined||input.locked===undefined))
   ctx.addIssue({code:"custom",path:["enabled"],message:"Set requires enabled and locked values"});
  if(input.action==="INHERIT"&&(input.enabled!==undefined||input.locked!==undefined))
