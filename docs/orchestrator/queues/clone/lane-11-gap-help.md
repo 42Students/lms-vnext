@@ -4,7 +4,7 @@ AUDIT ONLY: do not change code. Units moved here from slower lanes. Rules, facet
 
 - [x] (from lane 2) L17-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NotificationController.java`
 - [x] (from lane 4) L15-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterAccessController.java`
-- [ ] (from lane 4) L19-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminAnnouncementController.java`
-- [ ] (from lane 6) L17-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js`
+- [x] (from lane 4) L19-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminAnnouncementController.java`
+- [x] (from lane 6) L17-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js`
 - [ ] (from lane 9) L18-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerEligibilityController.java`
 - [ ] (from lane 7) L19-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CourseController.java`
