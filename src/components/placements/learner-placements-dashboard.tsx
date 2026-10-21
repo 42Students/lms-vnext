@@ -93,7 +93,7 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link
             href={next.href}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             {display.firstRun ? "Browse drives" : "View next step"} →
           </Link>
@@ -261,7 +261,7 @@ export function LearnerPlacementsDashboard({
             <ul className="divide-y divide-border">
               {display.attention.map((event) => (
                 <li key={event.applicationId + ":" + event.roundId} className="py-3 first:pt-0 last:pb-0">
-                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                  <Link href={event.href} className="block rounded-md hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                     <p className="text-sm font-semibold text-foreground">{event.roundName}</p>
                     <p className="mt-1 text-xs text-body">{event.companyName} · {formatWhen(event.when)}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
@@ -308,7 +308,7 @@ export function LearnerPlacementsDashboard({
                   {day.events.length===0 ? <p className="mt-1 text-xs text-muted-foreground">No rounds scheduled</p> :
                     <ul className="mt-2 space-y-2">{day.events.map(event=>(
                       <li key={event.applicationId+":"+event.roundId}>
-                        <Link href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                        <Link href={event.href} className="block min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                           {event.companyName} · {event.roundName}
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
                         </Link>
