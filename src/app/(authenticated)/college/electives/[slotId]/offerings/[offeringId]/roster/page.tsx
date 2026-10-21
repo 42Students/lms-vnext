@@ -239,7 +239,7 @@ export default async function ElectiveRoster({
     </Alert>}
     {feedback.error && <Alert tone="error" role="alert">{feedback.error}</Alert>}
     {archived && <Alert tone="warning" role="status">Archived offerings are read-only. The roster remains visible for reference.</Alert>}
-    <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label="Elective offering roster">
+    <section id="allocate" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)]" aria-label="Elective offering roster">
       <form method="get" className="flex min-w-0 flex-wrap items-end gap-3">
         <label className="min-w-0 flex-1 text-sm font-semibold">Search students
           <Input name="q" defaultValue={search} placeholder="Search students" maxLength={100} className="mt-1 w-full min-w-0" />
@@ -312,7 +312,7 @@ export default async function ElectiveRoster({
       />
       {pageCount > 1 && <Pagination label="Roster pages" page={page} pageCount={pageCount} hrefForPage={filterHref} />}
     </section>
-    <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+    <section id="faculty" className="min-w-0 scroll-mt-24 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
       <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Faculty</h2>
       <p className="text-sm text-muted-foreground leading-[22px]">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}

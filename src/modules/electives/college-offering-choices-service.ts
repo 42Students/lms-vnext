@@ -1,9 +1,9 @@
 import "server-only";
-import {and,asc,eq,isNull} from "drizzle-orm";
+import {and,asc,eq,inArray,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {cohorts,courseOfferings,courseSectionDeliveries,courses,departments,
- electiveSlots,lmsGroups,programs,sections} from "@/db/schema";
+ electiveSlots,lmsGroups,programs,sections,courseTeachingAssignments,collegeMemberships,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 
@@ -42,5 +42,27 @@ export async function listCollegeOfferingChoices(ctx:RequestContext,rawSlotId:st
    .orderBy(asc(lmsGroups.name)).limit(250),
   listElectiveOfferings(ctx,slotId),
  ]);
- return {deliveries,groups,offerings};
+ const deliveryIds=[...new Set(offerings.map(item=>item.backedDeliveryId))];
+ const facultyRows=deliveryIds.length?await getDb().select({
+  deliveryId:courseTeachingAssignments.deliveryId,
+  role:courseTeachingAssignments.role,
+  displayName:users.displayName,
+ }).from(courseTeachingAssignments)
+  .innerJoin(collegeMemberships,and(
+    eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+    eq(collegeMemberships.collegeId,slot.collegeId)))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(inArray(courseTeachingAssignments.deliveryId,deliveryIds),
+    isNull(courseTeachingAssignments.endedAt),
+    eq(collegeMemberships.status,"ACTIVE")))
+  .orderBy(asc(courseTeachingAssignments.role),asc(users.displayName)):[];
+ const facultyByDelivery=new Map<string,Array<{role:string;displayName:string}>>();
+ for(const item of facultyRows){
+  const list=facultyByDelivery.get(item.deliveryId)??[];
+  list.push({role:item.role,displayName:item.displayName});
+  facultyByDelivery.set(item.deliveryId,list);
+ }
+ return {deliveries,groups,offerings:offerings.map(offering=>({
+  ...offering,faculty:facultyByDelivery.get(offering.backedDeliveryId)??[],
+ }))};
 }

@@ -14,6 +14,7 @@ type Offering = {
   offeringId: string; courseId: string; courseName: string; courseCode: string;
   backedDeliveryId: string; groupId: string; capacity: number | null;
   activeMembers: number; waitlistedCount: number; status: string; version: number;
+  faculty:Array<{role:string;displayName:string}>;
 };
 type Load = { deliveries: Delivery[]; groups: Group[]; offerings: Offering[] };
 
@@ -133,12 +134,28 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           No courses added yet.</p>}
         {data.offerings.map(offering => <div key={offering.offeringId}
           className="flex min-w-0 flex-col items-start gap-2 border-b border-border py-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-          <span>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</span>
+          <div className="min-w-0 space-y-1">
+            <p>{offering.courseName} ({offering.courseCode}) · Seats: {offering.capacity ?? "No cap"} · Enrolled: {offering.activeMembers} · Waitlist: {offering.waitlistedCount} · {offering.status}</p>
+            <p className="text-xs text-muted-foreground">Faculty: {offering.faculty.length?
+              offering.faculty.map(member=>member.displayName+" ("+
+                (member.role==="PRIMARY"?"Primary":"Co-teacher")+")").join(", "):
+              "Not assigned"}</p>
+          </div>
           <div className="flex min-w-0 w-full flex-col items-stretch gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
               className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
               Roster & faculty
+            </Link>
+            <Link href={"/college/electives/"+encodeURIComponent(slotId)+
+              "/offerings/"+encodeURIComponent(offering.offeringId)+"/roster#faculty"}
+              className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+              Set faculty
+            </Link>
+            <Link href={"/college/electives/"+encodeURIComponent(slotId)+
+              "/offerings/"+encodeURIComponent(offering.offeringId)+"/roster#allocate"}
+              className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+              Allocate students
             </Link>
             {offering.status === "ACTIVE" && <>
               <Button variant="secondary" type="button" onClick={() => startEdit(offering)}
