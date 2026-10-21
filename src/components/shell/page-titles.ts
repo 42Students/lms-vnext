@@ -18,6 +18,14 @@ const ROUTE_TITLES: Record<string, string> = {
   allAssignments: "All Assignment",
   attendance: "Attendance",
   "my-placements": "My Placements",
+  "my-applications": "My Applications",
+  "career-calendar": "Career Calendar",
+  careerCalendar: "Career Calendar",
+  interviews: "Interviews",
+  fileExplorer: "File Explorer",
+  "file-explorer": "File Explorer",
+  assessments: "Assessments",
+  messages: "Messages",
   profile: "Profile",
   projects: "Projects",
 };
@@ -51,12 +59,32 @@ const ADMIN_ROUTE_TITLES: Record<string, string> = {
   attendance: "Attendance",
   projects: "Projects",
   profile: "Profile",
+  notifications: "Notifications",
+  "hiring-dashboard": "Hiring Dashboard",
+};
+
+const TPO_ROUTE_TITLES:Record<string,string>={
+  home:"Home",students:"Students",engage:"Recruiter Leads",
+  placements:"Placement Operations",drives:"Placement Operations",
+  messages:"Messages",team:"Team",notifications:"Notifications",
+  reports:"Reports",calendar:"Calendar",verification:"Verification",
+  requests:"Requests",settings:"Settings",announcements:"Announcements",
+  eligibility:"Placement eligibility","placement-eligibility":"Placement eligibility",
+  "audit-log":"Audit Log",
+};
+const HR_ROUTE_TITLES:Record<string,string>={
+  home:"Today",drives:"Drives",company:"Company",
+  calendar:"Recruiter Calendar",messages:"Messages & Notifications",
+  profile:"Your Profile",applicants:"Applicants",offers:"Offers",
+  placements:"Drives",settings:"Settings",
 };
 
 /** User/tenant IDs and opaque route tokens must never become tab titles. */
 function safeRouteTitle(segment:string):string|null{
  if(!/^[a-z][a-z0-9_-]{0,39}$/i.test(segment))return null;
  if(/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(segment))return null;
+ if(/^\d+$/.test(segment)||/^[0-9a-f]{16,}$/i.test(segment))return null;
+ if(/^\[[^\]]+\]$/.test(segment))return null;
  if(/(?:^|[-_])[0-9a-f]{16,}(?:$|[-_])/i.test(segment))return null;
  return titleCase(segment);
 }
@@ -97,9 +125,17 @@ export function pageTitleForPath(
     return ROUTE_TITLES[second] ?? safeRouteTitle(second);
   }
 
-  if (area === "tpo" || area === "hr" || area === "recruiter") {
-    if (!second) return area === "tpo" ? "Placements" : "Recruiter";
-    return ROUTE_TITLES[second] ?? ADMIN_ROUTE_TITLES[second] ?? safeRouteTitle(second);
+  if (area === "tpo") {
+    if (!second) return "Home";
+    if (second === "placements" && segments[2] === "jobs")
+      return segments.length > 4 && segments.includes("rounds") ? "Drive Rounds" : "Placement Operations";
+    if (second === "students" && segments.length > 2) return "Students";
+    return TPO_ROUTE_TITLES[second] ?? safeRouteTitle(second);
+  }
+  if (area === "hr" || area === "recruiter") {
+    if (!second) return "Recruiter";
+    if (second === "placements" && segments[2] === "jobs") return "Drives";
+    return HR_ROUTE_TITLES[second] ?? safeRouteTitle(second);
   }
 
   return null;

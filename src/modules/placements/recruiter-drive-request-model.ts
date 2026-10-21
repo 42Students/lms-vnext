@@ -26,9 +26,12 @@ export function canRecruiterResubmit(status:RecruiterRequestStatus){
 export function recruiterRequestStage(status:RecruiterRequestStatus):"WAITING"|"CLOSED"{
  return status==="REJECTED"||status==="CANCELLED"?"CLOSED":"WAITING";
 }
-export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus){
+export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus,
+ approvedJob?:{status:string}|null){
+ if(approvedJob?.status==="PUBLISHED")return "Live";
+ if(approvedJob?.status==="CLOSED")return "Completed";
  return status==="REJECTED"||status==="CANCELLED"?"Cancelled":
-  status==="DRAFT"?"Approved — awaiting publication":"Sent for review";
+  status==="DRAFT"?"Draft":"Sent for review";
 }
 
 /** Optimistic request edit token and real 0101 REQUEST/SENT_BACK transitions. */
