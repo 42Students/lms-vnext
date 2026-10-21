@@ -18,6 +18,7 @@ import {
   collegeSectionIdSchema, createCollegeSectionSchema,
   sectionCapacityAllows, sectionIdentityChanged,
   sectionPeriodWithinCohort, updateCollegeSectionSchema,
+  translateLegacyClassToSection,
 } from "./college-section-mutation-model";
 
 export type CollegeSectionErrorCode =
@@ -184,6 +185,9 @@ export async function createCollegeSection(context: RequestContext, raw: unknown
         metadata: {
           cohortId: created.cohortId, academicPeriodId: created.academicPeriodId,
           code: created.code, capacity: created.capacity,
+          legacyAction:"CLASS_CREATE",classId:created.id,
+          programSource:"COLLEGE_PROGRAM_AND_COHORT",
+          classAcademicPeriodId:created.academicPeriodId,
         },
       });
       return created;
@@ -261,39 +265,12 @@ export async function updateCollegeSection(context: RequestContext,
           fromPeriodId: current.academicPeriodId, toPeriodId: updated.academicPeriodId,
           fromCapacity: current.capacity, toCapacity: updated.capacity,
           fromMinSize: current.minSize, toMinSize: updated.minSize,
+          legacyAction:"CLASS_UPDATE",
+          transferPolicy:"UNUSED_CLASS_ONLY",
+          legacyClassId:updated.legacyClassId,
         },
       });
       return updated;
-    });
-  } catch (error) { return mapError(error); }
-}
-
-/** Legacy guarded delete: no historic enrollment, teaching, schedule or delivery may remain. */
-export async function deleteCollegeSection(context: RequestContext, sectionIdInput: unknown) {
-  const sectionId = collegeSectionIdSchema.parse(sectionIdInput);
-  const member = await ownCollege(context);
-  try {
-    return await getDb().transaction(async tx => {
-      const [row] = await tx.select({ id:sections.id, name:sections.name })
-        .from(sections)
-        .innerJoin(academicPeriods, and(
-          eq(academicPeriods.id,sections.academicPeriodId),
-          eq(academicPeriods.collegeId,member.collegeId),
-        ))
-        .where(eq(sections.id,sectionId)).for("update").limit(1);
-      if (!row) throw new CollegeSectionError("CLASS_NOT_FOUND");
-      if (await hasDependencies(tx,sectionId)) {
-        throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES",
-          "This class has students or scheduled teaching records. Move or clear them before deleting.");
-      }
-      await tx.delete(sections).where(eq(sections.id,sectionId));
-      await recordActivityEventInTransaction(tx,context,{
-        eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED,
-        organizationId:member.organizationId,collegeId:member.collegeId,
-        subjectType:"section",subjectId:row.id,subjectLabel:row.name,
-        summary:"Class deleted",metadata:{operation:"DELETE",className:row.name},
-      });
-      return { id:row.id,name:row.name };
     });
   } catch (error) { return mapError(error); }
 }
@@ -333,6 +310,46 @@ export async function listCollegeSectionOptions(context: RequestContext) {
       .orderBy(asc(academicPeriods.startDate)),
   ]);
   return { cohorts: cohortChoices, periods: periodChoices };
+}
+
+/** Import the ClassDTO through a verified college-scoped numeric crosswalk.
+ * This is not a public route: legacy IDs are source metadata, NEVER vNext
+ * authorization grants. Capacity 0 (unlimited) becomes nullable in the DB
+ * while new user-created sections still require 1..200.
+ */
+export async function importLegacyCollegeSection(context:RequestContext,raw:unknown,
+  resolved:{
+    cohortId:string;academicPeriodId:string;legacyBatchId:number;
+    legacyProgramId:number;code:string;
+  },
+){
+  const migrated=translateLegacyClassToSection(raw,resolved);
+  const member=await ownCollege(context);
+  return getDb().transaction(async tx=>{
+    const cohort=await lockCohort(tx,migrated.section.cohortId,member.collegeId);
+    await assertPeriod(tx,cohort,migrated.section.academicPeriodId,member.collegeId);
+    await assertUnique(tx,cohort.id,migrated.section.academicPeriodId,
+      migrated.section.name,migrated.section.code);
+    const [created]=await tx.insert(sections).values({
+      ...migrated.section,
+      legacyClassId:migrated.legacyClassId,
+    }).returning();
+    if(!created)throw new CollegeSectionError("CLASS_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_CREATED,
+      organizationId:member.organizationId,collegeId:member.collegeId,
+      subjectType:"section",subjectId:created.id,subjectLabel:created.name,
+      summary:"Class created",metadata:{
+        legacyAction:"CLASS_CREATE",legacyClassId:migrated.legacyClassId,
+        legacyBatchId:resolved.legacyBatchId,
+        legacyProgramId:resolved.legacyProgramId,
+        legacyStartsAt:migrated.legacyStartsAt,
+        legacyEndsAt:migrated.legacyEndsAt,
+        academicPeriodId:created.academicPeriodId,capacity:created.capacity,
+      },
+    });
+    return created;
+  });
 }
 
 /** Legacy deletion remains limited to a scoped dependency-free section.
