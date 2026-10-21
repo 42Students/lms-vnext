@@ -99,3 +99,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_telegram-webhook-controller.md.md` | 6/6 findings read and assigned per-ID to owning file(s), zero edits to Telegram alert callbacks out-of-lane service/schema. **Handoff, not fixed**; user-requested static review only, no CI.
 
 - `NEW_docs_audit_gap2_lane-7_l18-u021-job-important-date-event-dto.md.md` | 6/6 findings read and assigned per-ID to owning file(s), zero edits to Job important-date DTO out-of-lane service/schema. **Handoff, not fixed**; user-requested static review only, no CI.
+
+- `NEW_docs_audit_gap2_lane-7_u009-college-admin-workspace-index.md.md` | 6/6 findings reviewed and routed by ID. 0 out-of-area source edits. Projects owner to preserve whitelisted query context, validate UUID and avoid unauthorized lookups; not fixed. Static only, no CI.
+
+- `NEW_docs_audit_gap2_lane-6_cross-06-files-uploads-media-storage.md.md` | 5/5 findings reviewed and routed by ID. 0 out-of-area source edits. Storage/Projects owner to preserve private signed downloads, upload caps, grant scope and user-visible errors; not fixed. Static only, no CI.

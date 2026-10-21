@@ -835,3 +835,24 @@ Telegram provider acknowledgments must be authentic and persisted before editing
 - G2-18-021-062 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Choose role-specific data providers and preserve tenant boundaries, not a single global job date query.
 
 Importing numeric legacy job date records and learner visible/applied event union belongs to Placements + schema, with strict college/role authorization. No migration performed. **6/6 handed off, not fixed**.
+
+## Project workspace index redirect — lane-7 handoff (2026-10-21)
+
+- G2-7-009-001 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Forward validated query string, especially openTemplate/from/reason, into summary redirect; test deep links.
+- G2-7-009-006 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Keep openTemplate and reason parsed and encoded in redirect URL.
+- G2-7-009-015 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Ensure downstream summary action/At-risk context restored from query.
+- G2-7-009-024 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Accept searchParams promise, whitelist and encode all supported parameters; preserve page context.
+- G2-7-009-028 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Critical: preserve context query to prevent broken attach-template and review-return paths.
+- G2-7-009-010 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Validate required UUID and show scoped 404/error instead of nonsensical route; preserve compatibility slugs.
+
+This redirect currently drops original searchParams. Restoring selected, validated context and privacy-safe 404 belongs to Projects. **6/6 handed off, not fixed.**
+
+## File, uploads and media storage — lane-7 handoff (2026-10-21)
+
+- G2-6-032-021 | `src/modules/storage/file-policy.ts` | Pre-check actual 4900MiB limit and explain need for multipart for larger videos.
+- G2-6-032-038 | `src/modules/projects/project-resource-file-service.ts + authoring role permissions` | Resolve role-authoring parity for project resource files, separate from learner final-delivery submissions.
+- G2-6-032-024 | `src/modules/storage/file-errors.ts + contextual Resource upload UI` | Map precise contextual legacy strings and show field-level recovery.
+- G2-6-032-029 | `src/modules/storage/file-lifecycle.ts + Resource upload UI` | Use context-specific toast for grant failure with retry.
+- G2-6-032-030 | `src/modules/storage/file-lifecycle.ts + client playback refresh` | Make URL refresh seamless near expiry and document 60-vs-120-minute default.
+
+4900 MiB single-PUT size cap and private scanned-file model are intentional vNext safeguards; do not promise 5120 MiB uploads or public URLs. **5/5 handed off, not fixed.**
