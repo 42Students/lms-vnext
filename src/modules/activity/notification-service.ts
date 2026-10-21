@@ -30,6 +30,7 @@ import {
   colleges,
   inAppNotifications,
   placementCompanyRelationships,
+  placementCompanies,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
   sections,
@@ -588,9 +589,11 @@ async function assertScopedNotificationRecipients(
     db.select({ userId: collegeMemberships.userId })
       .from(collegeMemberships)
       .innerJoin(colleges, eq(colleges.id, collegeMemberships.collegeId))
+      .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .where(and(
         inArray(collegeMemberships.userId, [...activeUserIds]),
         eq(collegeMemberships.status, "ACTIVE"),
+        eq(users.platformStatus, "ACTIVE"),
         eq(colleges.status, "ACTIVE"),
         scopeCondition,
       )),
@@ -605,19 +608,27 @@ async function assertScopedNotificationRecipients(
         eq(placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId),
       )
       .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
+      .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
+      .innerJoin(users, eq(users.id, placementRecruiterCollegeGrants.recruiterUserId))
       .where(and(
         inArray(placementRecruiterCollegeGrants.recruiterUserId, [...activeUserIds]),
         eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+        eq(placementRecruiterCollegeGrants.verificationStatus, "VERIFIED"),
+        sql`${placementRecruiterCollegeGrants.validUntil} > clock_timestamp()`,
         eq(placementRecruiterProfiles.status, "ACTIVE"),
         eq(placementCompanyRelationships.status, "ACTIVE"),
+        eq(placementCompanies.status, "ACTIVE"),
+        eq(users.platformStatus, "ACTIVE"),
         eq(colleges.status, "ACTIVE"),
         relationshipScope,
       )),
     db.select({ userId: systemRoles.userId })
       .from(systemRoles)
+      .innerJoin(users, eq(users.id, systemRoles.userId))
       .where(and(
         inArray(systemRoles.userId, [...activeUserIds]),
         eq(systemRoles.role, "SUPER_ADMIN"),
+        eq(users.platformStatus, "ACTIVE"),
       )),
   ]);
 
