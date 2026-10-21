@@ -39,38 +39,6 @@ async function parseRequest(
   return bodySchema.parse(await request.json());
 }
 
-const replaceSchema=z.strictObject({
-  collegeIds:z.array(z.string().uuid()).max(100).refine(ids=>new Set(ids).size===ids.length,
-    "Select each college only once"),
-  expectedCollegeIds:z.array(z.string().uuid()).max(100).refine(ids=>new Set(ids).size===ids.length,
-    "The expected college list contains duplicates"),
-});
-
-/** Preview the authoritative scoped current assignment set for optimistic edits. */
-export async function GET(_request:Request,{params}:RouteContext){
- try{
-  const context=await getCurrentRequestContext();
-  const {templateId}=await params;
-  const detail=await getProjectTemplateDetail(context,templateId);
-  return NextResponse.json({collegeIds:detail.assignments.map(item=>item.collegeId).sort()});
- }catch(error){return apiErrorResponse(error);}
-}
-
-/** Atomic set replacement, with a compare-and-swap expected set. */
-export async function PUT(request:Request,{params}:RouteContext){
- if(!isSameOriginRequest(request))
-  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- try{
-  const context=await getCurrentRequestContext();
-  const {templateId}=await params;
-  const body=replaceSchema.parse(await request.json());
-  const outcome=await replaceProjectTemplateCollegeAssignments(context,templateId,
-   body.collegeIds,body.expectedCollegeIds);
-  return NextResponse.json({outcome,message:outcome.added.length||outcome.removed.length?
-   "Template assignments updated":"Template assignments unchanged"});
- }catch(error){return apiErrorResponse(error);}
-}
-
 export async function POST(
   request: Request,
   { params }: RouteContext,
@@ -137,12 +105,20 @@ export async function PUT(request:Request,{params}:RouteContext){
  try{
   const {templateId}=await params;
   const context=await getCurrentRequestContext();
-  requirePermission(context,"project-template.manage");
-  if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+  requirePermission(context,"project-template.assign");
+  if(context.adminScope?.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const body=bulkSchema.parse(await request.json());
-  const result=await replaceProjectTemplateCollegeAssignments(context,templateId,body);
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  const result=await replaceProjectTemplateCollegeAssignments(context,templateId,
+    body.collegeIds,body.expectedCollegeIds);
+  return NextResponse.json({
+    ...result,beforeCollegeIds:[...body.expectedCollegeIds].sort(),
+    afterCollegeIds:result.collegeIds,
+    total:result.collegeIds.length,
+    addedCount:result.added.length,removedCount:result.removed.length,
+    message:result.added.length||result.removed.length?
+      "Template assignments updated":"Template assignments unchanged",
+  },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
 
@@ -151,13 +127,18 @@ export async function GET(_request:Request,{params}:RouteContext){
  try{
   const {templateId}=await params;
   const context=await getCurrentRequestContext();
-  requirePermission(context,"project-template.manage");
-  if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+  requirePermission(context,"project-template.assign");
+  if(context.adminScope?.collegeId)
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const detail=await getProjectTemplateDetail(context,templateId);
   return NextResponse.json({
     collegeIds:detail.assignments.map(item=>item.collegeId).sort(),
+    assignments:detail.assignments.map(item=>({
+      collegeId:item.collegeId,templateId:detail.template.id,
+    })),
+    total:detail.assignments.length,
     templateId:detail.template.id,
+    editHint:"Use this collegeIds list as expectedCollegeIds on PUT to prevent overwriting another administrator's edits.",
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }

@@ -24,22 +24,41 @@ export async function POST(request: Request) {
         preview:await previewTpoLegacyAcademicImport(context,body.rows),
         identifierType:"SCOPED_ROLL_OR_MEMBERSHIP_UUID",
       },{headers:{"Cache-Control":"private, no-store"}});
-    // The verified evidence writer is intentionally limited to 200 rows
-    // per transaction; the 5000-row legacy staging preview is not a blanket
-    // authorization to commit unsupported sparse values or huge batches.
-    if(body.rows.length>200)
+    // Verified writes remain atomic in 200-row transactions. A larger
+    // legacy spreadsheet is previewed completely, then the caller explicitly
+    // confirms individual batches; a partial import must never be described
+    // as one atomic 5000-row success.
+    if(body.action==="IMPORT"&&body.rows.length>200)
       return NextResponse.json({error:"ACADEMIC_IMPORT_BATCH_TOO_LARGE",
-        message:"Select up to 200 verified rows per import."},{status:400});
+        message:"Review the complete preview, then import up to 200 verified rows per batch.",
+        batchSize:200,batchCount:Math.ceil(body.rows.length/200),
+        stagedCount:body.rows.length,
+      },{status:422,headers:{"Cache-Control":"private, no-store"}});
     // studentCode is the college-scoped learner membership UUID, NOT an
     // integer legacy learner or platform-user ID. Resolve historical IDs
     // offline through an approved college+learner crosswalk before this API.
-    if (body.action === "PREVIEW")
+    if (body.action === "PREVIEW"){
+      const combined:Awaited<ReturnType<typeof previewTpoAcademicImport>>["rows"]=[];
+      for(let offset=0;offset<body.rows.length;offset+=200){
+        const part=await previewTpoAcademicImport(context,{
+          ...input,rows:body.rows.slice(offset,offset+200),
+        });
+        combined.push(...part.rows);
+      }
       return NextResponse.json({
-        preview:await previewTpoAcademicImport(context,input),
+        preview:{rows:combined},stagedCount:body.rows.length,
+        matchCount:combined.filter(row=>row.match==="WILL_UPDATE").length,
+        unmatchedCount:combined.filter(row=>row.match!=="WILL_UPDATE").length,
+        batchSize:200,batchCount:Math.ceil(combined.length/200),
+        requiresExplicitConfirmation:true,
         identifierType:"COLLEGE_LEARNER_MEMBERSHIP_UUID",
       },{headers:{"Cache-Control":"private, no-store"}});
+    }
+    const result=await commitTpoAcademicImport(context,input);
     return NextResponse.json({
-      result:await commitTpoAcademicImport(context,input),
+      result,updated:result.updated,skipped:result.skipped,
+      updatedCount:result.updated,
+      message:result.updated===0?"No academic records were changed.":"Academic records updated",
       identifierType:"COLLEGE_LEARNER_MEMBERSHIP_UUID",
     },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
