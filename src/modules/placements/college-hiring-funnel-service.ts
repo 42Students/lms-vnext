@@ -107,28 +107,31 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
   stage,stage==="APPLIED"?sql<number>`count(*)::integer`.mapWith(Number):
    observedStageCount(stage),
  ]));
- const [groupRows,averages,reachedRows]=await Promise.all([
+ // Company breakdown is an independent optional read. A failure here must
+ // not hide the college-level metrics or a successfully loaded funnel.
+ const [groupRows,currentStageRows,averages,reachedRows]=await Promise.all([
   db.select({jobId:base.jobId,jobTitle:base.jobTitle,
    companyId:base.companyId,companyName:base.companyName,
    stage:base.stage,total:count()}).from(base)
    .groupBy(base.jobId,base.jobTitle,base.companyId,base.companyName,base.stage)
-   .orderBy(asc(base.companyName),asc(base.jobTitle)),
+   .orderBy(asc(base.companyName),asc(base.jobTitle))
+   .then(rows=>rows).catch(()=>null),
+  db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   db.select({avgHours:sql<number|null>`avg(${base.shortlistHours})`}).from(base)
    .where(sql`${base.shortlistHours} >= 0`),
   db.select(stageProjections).from(base),
  ]);
  const totals=Object.fromEntries(stages.map(stage=>[stage,0])) as Record<string,number>;
+ for(const row of currentStageRows){
+  if(row.stage in totals)totals[row.stage]+=row.total;
+ }
  const companies=new Map<string,{
   jobId:string;job:string;company:string;total:number;byStage:Record<string,number>
  }>();
  const companySubtotals=new Map<string,{
   companyId:string;company:string;total:number;byStage:Record<string,number>
  }>();
- const normalizedSubtotals=new Map<string,{
-  company:string;total:number;byStage:Record<string,number>
- }>();
- for(const row of groupRows){
-  if(row.stage in totals)totals[row.stage]+=row.total;
+ for(const row of groupRows??[]){
   const current=companies.get(row.jobId)??{
    jobId:row.jobId,job:row.jobTitle,company:row.companyName,total:0,
    byStage:Object.fromEntries(stages.map(stage=>[stage,0])),
@@ -160,6 +163,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  return {query,totals,cumulativeTotals,
   funnelBasis:"OBSERVED_TRANSITIONS" as const,
   totalApplications:Object.values(totals).reduce((sum,n)=>sum+n,0),
+  companyReportUnavailable:groupRows===null,
   companyRows:[...companies.values()],
   companySubtotals:[...companySubtotals.values()].sort((a,b)=>
    a.company.localeCompare(b.company)||a.companyId.localeCompare(b.companyId)),
