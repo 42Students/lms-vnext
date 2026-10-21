@@ -29,8 +29,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  // Student registration owns the page h1; the directory then has a section
  // heading. Other callers retain the original PageHeader by default.
  const heading=(eyebrow:string,detail?:string,exportAction?:ReactNode)=>headingMode==="section"
-  ? <div><h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
-     {detail?<p className="mt-1 text-sm text-body">{detail}</p>:null}</div>
+  ? <div><h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
+     {detail?<p className="mt-1 text-sm text-body leading-[22px]">{detail}</p>:null}</div>
   : compactReadLayout
     ? <div className="min-w-0 space-y-2">
        {backHref?<PageBackLink href={backHref} label="Placement overview" />:null}
@@ -92,7 +92,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {heading(peopleFilters?"People":"Super Admin · Read-only",description,
     <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}{refreshAction}</>)}
   {intro}
-  {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+  {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
   {peopleSummary?<section aria-label={title+" overview"} className="grid divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 xl:grid-cols-4">
@@ -102,11 +102,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {label:"Suspended",value:peopleSummary[2].total},
     {label:"Visible now",value:data.items.length},
    ].map(stat=><article key={stat.label} className="p-4">
-    <p className="text-xs font-semibold text-muted-foreground">{stat.label}</p>
+    <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{stat.label}</p>
     <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
    </article>)}
   </section>:null}
-  {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
+  {applicationFilters?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   {headingMode==="section"?refreshAction:null}
@@ -198,7 +198,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </details>:null}
   </form>
 
-  {applicationFilters?<p role="status" className="text-sm text-body">
+  {applicationFilters?<p role="status" className="text-sm text-body leading-[22px]">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
     ? "Active filters: "+[
        data.query.jobId?"Job":null,data.query.departmentId?"Department":null,
@@ -210,7 +210,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
@@ -218,19 +218,19 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
   {compactReadLayout?<>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
     <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-          <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{row.title}</h2>
+          <h2 className="m-0 min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{row.title}</h2>
           <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
         </div>
-        <p className="mt-1 break-words text-sm text-body">{row.subtitle}</p>
+        <p className="mt-1 break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
         <div className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1">
-          {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
+          {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground leading-[20px]">{value}</p>)}
         </div>
       </div>
       <div className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 md:justify-end">
@@ -247,11 +247,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 min-w-0 break-words text-base font-semibold text-foreground">{row.title}</h2>
+     <h2 className="m-0 min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{row.title}</h2>
      <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
     </div>
-    <p className="break-words text-sm text-body">{row.subtitle}</p>
-    {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
+    <p className="break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
+    {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground leading-[20px]">{value}</p>)}
     {renderRowActions?<div className="border-t border-border pt-3 print:hidden">{renderRowActions(row)}</div>:null}
     {row.href?<Link href={row.href} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open details →</Link>:null}
     {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{row.secondaryLabel??"Manage →"}</Link>:null}
