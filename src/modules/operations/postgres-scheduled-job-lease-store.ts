@@ -59,6 +59,62 @@ function toLease(row: LeaseRow | undefined): JobLease | null {
 }
 
 /**
+ * Fail closed when a deployment missed the registered 0133 migration, or
+ * replay left an incompatible schema. This checks database metadata rather
+ * than trusting a feature flag or treating a missing table as an empty queue.
+ * Invoke at worker startup and before accepting a scheduler tick.
+ */
+export async function assertPostgresScheduledJobLeaseReady(): Promise<void> {
+  let ready: { present: boolean; primary_key: boolean; fenced: boolean;
+    holder: boolean; expiry: boolean; positive_fence: boolean } | undefined;
+  try {
+    const result = await getDb().execute<{
+      present: boolean; primary_key: boolean; fenced: boolean;
+      holder: boolean; expiry: boolean; positive_fence: boolean;
+    }>(sql`
+      select
+        to_regclass('public.scheduled_job_leases') is not null as present,
+        exists (
+          select 1 from pg_constraint
+          where conrelid = to_regclass('public.scheduled_job_leases')
+            and contype = 'p'
+        ) as primary_key,
+        exists (
+          select 1 from information_schema.columns
+          where table_schema = 'public' and table_name = 'scheduled_job_leases'
+            and column_name = 'fence' and data_type = 'bigint'
+            and is_nullable = 'NO'
+        ) as fenced,
+        exists (
+          select 1 from information_schema.columns
+          where table_schema = 'public' and table_name = 'scheduled_job_leases'
+            and column_name = 'locked_by' and is_nullable = 'NO'
+        ) as holder,
+        exists (
+          select 1 from information_schema.columns
+          where table_schema = 'public' and table_name = 'scheduled_job_leases'
+            and column_name = 'locked_until'
+            and data_type = 'timestamp with time zone'
+            and is_nullable = 'NO'
+        ) as expiry,
+        exists (
+          select 1 from pg_constraint
+          where conrelid = to_regclass('public.scheduled_job_leases')
+            and contype = 'c'
+            and pg_get_constraintdef(oid) ilike '%fence > 0%'
+        ) as positive_fence
+    `);
+    ready = result.rows[0];
+  } catch {
+    throw new Error("SCHEDULED_JOB_LEASE_SCHEMA_UNAVAILABLE");
+  }
+  if (!ready?.present || !ready.primary_key || !ready.fenced ||
+      !ready.holder || !ready.expiry || !ready.positive_fence) {
+    throw new Error("SCHEDULED_JOB_LEASE_SCHEMA_UNAVAILABLE");
+  }
+}
+
+/**
  * PostgreSQL is the clock and concurrency authority. Acquisition uses one
  * atomic INSERT..ON CONFLICT..DO UPDATE WHERE expired, increasing the fence
  * exactly once for each successful takeover. A held lease returns null.
