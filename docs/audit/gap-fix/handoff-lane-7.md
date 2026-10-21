@@ -68,34 +68,34 @@ The target files are the existing shared Projects module (`src/components/projec
 
 The old controller maps to existing course-assignment creation, validation, storage and mutation files owned by the Courses/Faculty module, not lane-7-owned paths. The vNext draft/publish split, 10000 vs 1000 points and legacy R2 workflow must not be silently overwritten by this lane.
 
-- G2-2-006-004 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-005 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-014 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-015 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-016 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-017 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-018 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-020 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-024 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-027 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-031 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-033 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-035 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-036 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-039 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-044 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-045 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-052 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-055 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-056 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-057 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-058 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-059 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-062 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-021 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-022 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-023 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-025 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-026 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-028 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
-- G2-2-006-029 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-004 | `src/components/courses/college-assignment-create.tsx` | Implement 1-30 resource builder (INSTRUCTIONS, PDF, FILE, LINK) with title/reorder and upload.
+- G2-2-006-005 | `src/components/courses/college-assignment-create.tsx` | Add typed file picker, in-progress indicator and prevent save until upload completes.
+- G2-2-006-014 | `src/components/courses/college-assignment-create.tsx` | Enforce shared 0–1000 legacy points range across UI/validation/schema.
+- G2-2-006-015 | `src/components/courses/college-assignment-create.tsx` | Decide on draft staging; if strict parity require due date for save and future check.
+- G2-2-006-016 | `src/components/courses/college-assignment-create.tsx` | Build resource form and enforce count/unique methods/validation before save.
+- G2-2-006-017 | `src/components/courses/college-assignment-create.tsx` | Restore typed resource editor, single instructions rule, HTML sanitizer.
+- G2-2-006-018 | `src/components/courses/college-assignment-create.tsx` | Implement full PDF/FILE/LINK/INSTRUCTIONS set with HTTPS+file checks.
+- G2-2-006-020 | `src/components/courses/college-assignment-create.tsx` | Allow title-only corrections after submissions, lock other fields.
+- G2-2-006-024 | `src/components/courses/college-assignment-create.tsx` | Fail missing-resource saves with exact message on legacy-compatible path.
+- G2-2-006-027 | `src/components/courses/college-assignment-create.tsx` | Port field and server errors for bad file metadata and storage outage.
+- G2-2-006-031 | `src/components/courses/college-assignment-create.tsx` | Add upload/from-link UI with safe server attestation.
+- G2-2-006-033 | `src/components/courses/college-assignment-create.tsx` | Persist resource structures atomically with assignment metadata, preserve legacy edit semantics.
+- G2-2-006-035 | `src/components/courses/college-assignment-create.tsx` | Support legacy title-only edits; preserve all other post-submission immutable fields.
+- G2-2-006-036 | `src/components/courses/college-assignment-create.tsx` | Verify super-admin acting-college and ADMIN-only scopes; ensure faculty cannot use admin shared authoring.
+- G2-2-006-039 | `src/components/courses/college-assignment-create.tsx` | Align admin title-only edit with existing faculty model.
+- G2-2-006-044 | `src/components/courses/college-assignment-create.tsx` | Add persisted scanned/attested file materials (PDF/FILE), upload and from-link controls.
+- G2-2-006-045 | `src/components/courses/college-assignment-create.tsx` | Design vNext tenant-scoped private-file grants and verify size/MIME/virus attestation.
+- G2-2-006-052 | `src/components/courses/college-assignment-create.tsx` | Require expectedUpdatedAt on admin edit and protect read-modify-save race with robust CAS.
+- G2-2-006-055 | `src/components/courses/college-assignment-create.tsx` | Wire vNext attested R2 upload lifecycle and safe retries.
+- G2-2-006-056 | `src/components/courses/college-assignment-create.tsx` | Integrate link import and upload with tenant-based access checks.
+- G2-2-006-057 | `src/components/courses/college-assignment-create.tsx` | Write field-level migration mapping and preserve versions, audience, content resource payload.
+- G2-2-006-058 | `src/components/courses/college-assignment-create.tsx` | Add appropriate normalized/material payload tables and constraints for all types.
+- G2-2-006-059 | `src/components/courses/college-assignment-create.tsx` | Require non-optional CAS token for admin edits, including post-submission title edits.
+- G2-2-006-062 | `src/components/courses/college-assignment-create.tsx` | Restoration prerequisite before claiming exact admin assignment authoring parity.
+- G2-2-006-021 | `src/components/courses/college-assignment-create.tsx` | Map rejected admin mutation to exact response copy and HTTP 403 as appropriate.
+- G2-2-006-022 | `src/components/courses/college-assignment-create.tsx` | Map missing lesson to legacy field-level/error banner wording.
+- G2-2-006-023 | `src/components/courses/college-assignment-create.tsx` | Preserve distinct not-found versus unscoped forbidden states.
+- G2-2-006-025 | `src/components/courses/college-assignment-create.tsx` | Reject duplicates and invalid methods in both client and API with exact message.
+- G2-2-006-026 | `src/components/courses/college-assignment-create.tsx` | Align precise validation messages per field.
+- G2-2-006-028 | `src/components/courses/college-assignment-create.tsx` | Preserve legacy success semantics or explicitly migrate to staged-publish UX.
+- G2-2-006-029 | `src/components/courses/college-assignment-create.tsx` | Restore exact legacy toast variants if clone requirement includes operations feedback.
