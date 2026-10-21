@@ -296,30 +296,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/team/page.tsx`
 - [x] `src/app/(authenticated)/tpo/verification/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
-- [ ] `src/app/company-share/[token]/error.tsx`
-- [ ] `src/app/company-share/[token]/not-found.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/app/globals.css`
-- [ ] `src/app/home/page.tsx`
-- [ ] `src/app/login-shell.module.css`
-- [ ] `src/app/placements/page.tsx`
-- [ ] `src/app/platform/page.tsx`
-- [ ] `src/app/quiz/page.tsx`
-- [ ] `src/app/request-demo/page.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/academics/college-archived-programs.tsx`
-- [ ] `src/components/academics/college-hall-booking-action.tsx`
-- [ ] `src/components/academics/college-hall-cancellation-action.tsx`
-- [ ] `src/components/academics/college-promotion-confirmation.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/page.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/app/(authenticated)/tracker/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/app/company-share/[token]/error.tsx`
+- [x] `src/app/company-share/[token]/not-found.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/app/globals.css`
+- [x] `src/app/home/page.tsx`
+- [x] `src/app/login-shell.module.css`
+- [x] `src/app/placements/page.tsx`
+- [x] `src/app/platform/page.tsx`
+- [x] `src/app/quiz/page.tsx`
+- [x] `src/app/request-demo/page.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/academics/college-archived-programs.tsx`
+- [x] `src/components/academics/college-hall-booking-action.tsx`
+- [x] `src/components/academics/college-hall-cancellation-action.tsx`
+- [x] `src/components/academics/college-promotion-confirmation.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
 - [ ] `src/components/academics/college-structure-directory.tsx`
 - [ ] `src/components/academics/college-term-mapping-manager.tsx`
 - [ ] `src/components/academics/learner-class-schedule.module.css`

@@ -33,7 +33,7 @@ export default async function CompanySharePage({
    {access==="invalid"?<p role="alert" className="text-sm text-error">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+    <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
      <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
       pattern="[0-9]{6}" minLength={6} maxLength={6}
       className="min-h-11 w-full max-w-full md:min-h-9" />
@@ -59,7 +59,7 @@ export default async function CompanySharePage({
   mobilePriority: index===0?"primary":"secondary",
   cell: row=>row.cells[key]??"Not recorded",
  }));
- return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-4 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:px-5 min-[768px]:py-12`}>
+ return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-4 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:px-6 min-[768px]:py-12`}>
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 md:grid-cols-3">
    {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
   </div>
@@ -82,7 +82,7 @@ export default async function CompanySharePage({
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:flex-wrap md:items-end">
-    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Search learner name
+    <label className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto">Search learner name
      <Input name="q" type="search" defaultValue={result.search} maxLength={80}
       className="min-h-11 w-full md:min-h-9 md:w-64" placeholder="Name contains..." />
     </label>
