@@ -1289,6 +1289,13 @@
       "when": 1792352351266,
       "tag": "0183_lane15_academic_faculty_schedule_import",
       "breakpoints": true
+    },
+    {
+      "idx": 184,
+      "version": "7",
+      "when": 1792352411266,
+      "tag": "0184_lane15_independent_email_link_proofs",
+      "breakpoints": true
     }
   ]
 }

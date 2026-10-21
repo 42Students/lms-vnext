@@ -21,7 +21,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_courses_learner-course-discussion.tsx.part2of2.md` (edit src/components/courses/learner-course-discussion.tsx; 24 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_academics.ts.part1of2.md` (edit src/db/schema/academics.ts; 40 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_academics.ts.part2of2.md` (edit src/db/schema/academics.ts; 20 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_identity-auth-attempts.ts.md` (edit src/db/schema/identity-auth-attempts.ts; 28 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_identity-auth-attempts.ts.md` (edit src/db/schema/identity-auth-attempts.ts; 28 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_db10-bug-tracker.ts.md` (edit src/db/schema/db10-bug-tracker.ts; 25 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_projects_project-admin-collection-controls.tsx.md` (edit src/components/projects/project-admin-collection-controls.tsx; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_assessments.ts.md` (edit src/db/schema/assessments.ts; 19 findings; best P2)
