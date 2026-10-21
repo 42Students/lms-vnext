@@ -11,8 +11,8 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part1of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part2of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part1of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part2of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part3of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part4of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_attendance_faculty-attendance-workspace.tsx.part5of5.md` (edit src/components/attendance/faculty-attendance-workspace.tsx; 10 findings; best P3)
