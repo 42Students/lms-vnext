@@ -96,7 +96,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     <PageHeader title="Colleges"/>
     <ErrorState title="Invalid college directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4">Clear filters</Link>}/>
+      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const [colleges, organizations] = await Promise.all([
     listColleges(context),
