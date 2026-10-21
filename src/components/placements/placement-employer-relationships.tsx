@@ -11,6 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 
 function employerWebsiteHost(url:string|null){
@@ -51,6 +53,7 @@ type Draft = {
 type CompanyHistory = {
   company: {
     name: string;
+    relationshipStatus: string;
     contactName: string | null;
     contactEmail: string | null;
     contactPhone: string | null;
@@ -66,6 +69,20 @@ type CompanyHistory = {
   }[];
   totals: { drives: number; applicants: number; hired: number };
   truncated: boolean;
+};
+
+type HistoryContactDraft = {
+  contactPersonName: string;
+  contactEmail: string;
+  contactPhone: string;
+  internalNotes: string;
+};
+
+const emptyHistoryDraft: HistoryContactDraft = {
+  contactPersonName: "",
+  contactEmail: "",
+  contactPhone: "",
+  internalNotes: "",
 };
 
 function historyDate(value: string | null): string {
@@ -98,6 +115,10 @@ export function PlacementEmployerRelationships({
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
   const historyRequest = useRef(0);
+  const [historyEditing, setHistoryEditing] = useState(false);
+  const [historySaving, setHistorySaving] = useState(false);
+  const [historySaveError, setHistorySaveError] = useState<string | null>(null);
+  const [historyDraft, setHistoryDraft] = useState<HistoryContactDraft>(emptyHistoryDraft);
   const [drafts, setDrafts] = useState<
     Record<string, Draft>
   >(
@@ -214,6 +235,8 @@ export function PlacementEmployerRelationships({
     setHistoryForId(null);
     setHistoryData(null);
     setHistoryError(null);
+    setHistorySaveError(null);
+    setHistoryEditing(false);
     setHistoryLoading(false);
   }
 
@@ -229,7 +252,15 @@ export function PlacementEmployerRelationships({
           encodeURIComponent(relationshipId) +
           "/history",
       );
-      if (historyRequest.current === requestId) setHistoryData(result);
+      if (historyRequest.current === requestId) {
+        setHistoryData(result);
+        setHistoryDraft({
+          contactPersonName: result.company.contactName ?? "",
+          contactEmail: result.company.contactEmail ?? "",
+          contactPhone: result.company.contactPhone ?? "",
+          internalNotes: result.company.internalNotes ?? "",
+        });
+      }
     } catch (error) {
       if (historyRequest.current === requestId) {
         setHistoryError(
@@ -238,6 +269,46 @@ export function PlacementEmployerRelationships({
       }
     } finally {
       if (historyRequest.current === requestId) setHistoryLoading(false);
+    }
+  }
+
+  async function saveHistoryContact() {
+    if (!historyForId || historySaving) return;
+    const contactPhone = historyDraft.contactPhone.trim();
+    if (contactPhone && !/^[+()\d][\d\s().-]{6,29}$/.test(contactPhone)) {
+      setHistorySaveError("Enter a valid phone number");
+      return;
+    }
+    setHistorySaving(true);
+    setHistorySaveError(null);
+    try {
+      await apiFetch(
+        "/api/placements/companies/" + encodeURIComponent(historyForId) + "/history",
+        {
+          method: "PATCH",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            contactPersonName: historyDraft.contactPersonName.trim() || null,
+            contactEmail: historyDraft.contactEmail.trim() || null,
+            contactPhone: contactPhone || null,
+            internalNotes: historyDraft.internalNotes.trim() || null,
+          }),
+        },
+      );
+      showToast({
+        tone: "success",
+        title: "Company updated",
+        description: "These college contact details are not visible to students.",
+      });
+      setHistoryEditing(false);
+      await openHistory(historyForId);
+      router.refresh();
+    } catch (error) {
+      setHistorySaveError(
+        error instanceof Error ? error.message : friendlyApiError({}),
+      );
+    } finally {
+      setHistorySaving(false);
     }
   }
 
