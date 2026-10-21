@@ -294,7 +294,8 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    names.add(key);
    const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label.toLowerCase()===key);
    if(item.isBuiltin){
-    if(!fixed||item.countsAsPlaced!==fixed.countsAsPlaced)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+    if(!fixed||item.label!==fixed.label||item.countsAsPlaced!==fixed.countsAsPlaced)
+     throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
    }else{
     if(fixed)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
     customCount++;
@@ -372,7 +373,10 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    subjectType:"COLLEGE",subjectId:collegeId,
    summary:"JOB_TYPES_UPDATED",
    metadata:{customCount,hiddenCount:input.filter(item=>!item.active).length,
-    changedLabels:input.map(item=>item.label)},
+    before:existing.map(row=>({id:row.id,label:row.label,builtin:row.isBuiltin,
+      countsAsPlaced:row.countsAsPlaced,hidden:!row.active})),
+    after:input.map(row=>({id:row.id,label:row.label,builtin:row.isBuiltin,
+      countsAsPlaced:row.countsAsPlaced,hidden:!row.active}))},
   });
   return {saved:true};
  });
