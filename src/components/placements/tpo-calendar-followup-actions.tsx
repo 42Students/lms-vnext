@@ -104,7 +104,7 @@ export function TpoCalendarCreateFollowup({
         </p>
       ) : (
         <form onSubmit={onSubmit} className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
             Recruiter lead
             <Input type="search" value={leadQuery} className={inputClass}
               placeholder="Search name, company or email" aria-label="Search recruiter leads"
@@ -123,11 +123,11 @@ export function TpoCalendarCreateFollowup({
               <span role="status" className="text-xs text-muted-foreground">No matching recruiter leads.</span>
             ) : null}
           </label>
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
             Due date and time (IST)
             <Input name="dueAt" type="datetime-local" required className={inputClass} />
           </label>
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+          <label className="flex flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
             Note (optional)
             <Input name="note" maxLength={500} className={inputClass} />
           </label>
@@ -197,7 +197,7 @@ export function TpoCalendarMoveFollowup({
 
   return (
     <form onSubmit={onSubmit} className="grid min-w-0 gap-[var(--lms-space-3)]">
-      <label className="flex min-w-48 flex-1 flex-col gap-1 text-xs font-semibold text-body">
+      <label className="flex min-w-48 flex-1 flex-col gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
         Move follow-up (IST)
         <Input
           name="dueAt"

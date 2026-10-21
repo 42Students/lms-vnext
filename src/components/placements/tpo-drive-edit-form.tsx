@@ -86,22 +86,22 @@ export function TpoDriveEditForm({job}:{job:Draft}){
  }
  const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground md:min-h-9";
  return <><form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
-  <label className="block text-sm font-semibold text-body">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
-  <label className="block text-sm font-semibold text-body">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={4} className={cls}/></label>
-  <label className="block text-sm font-semibold text-body">Locations (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={4} className={cls}/></label>
+  <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Locations (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
   <details className="group min-w-0 border-y border-border py-3">
    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
     Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
    </summary>
    <div className="grid min-w-0 gap-4 pt-3 sm:grid-cols-2 xl:grid-cols-3">
-   <label className="block text-sm font-semibold text-body">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Maximum annual CTC (INR)<Input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Fixed CTC (LPA)
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Openings<Input type="number" min={1} max={100000} name="openings" defaultValue={job.openings??""} className={cls}/></label>
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Minimum annual CTC (INR)<Input type="number" min={0} max={100000000} name="minimumAnnualCtcInr" defaultValue={job.minimumAnnualCtcInr??""} className={cls}/></label>
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Maximum annual CTC (INR)<Input type="number" min={0} max={100000000} name="maximumAnnualCtcInr" defaultValue={job.maximumAnnualCtcInr??""} className={cls}/></label>
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Fixed CTC (LPA)
     <Input name="fixedCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.fixedCtcLpa??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Variable CTC (LPA)
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Variable CTC (LPA)
     <Input name="variableCtcLpa" type="number" min={0} max={1000} step="0.01" defaultValue={job.variableCtcLpa??""} className={cls}/></label>
-   <label className="block text-sm font-semibold text-body">Stipend per month (INR)
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Stipend per month (INR)
     <Input name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}
       defaultValue={job.stipendPerMonthInr??""} className={cls}/></label>
   </div>
@@ -111,17 +111,17 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     Dream drive — held-offer limit exception
   </label>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-   <label className="block text-sm font-semibold text-body">Application deadline (IST)
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
       defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
    </label>
-   <label className="block text-sm font-semibold text-body">Minimum CGPA for eligibility
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Minimum CGPA for eligibility
     <Input name="minCgpa" type="number" min={0} max={10} step="0.01"
       defaultValue={job.minCgpaHundredths===null?"":job.minCgpaHundredths/100} className={cls}/>
    </label>
   </div>
-    <label className="block text-sm font-semibold text-body">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
+    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Reason for edit (audited)<Textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
   <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
