@@ -110,12 +110,22 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
           : confirm.type === "ADD"
             ? "Failed to add courses to this semester."
             : "Could not remove the course from this semester.";
-        if (cause instanceof FriendlyFetchError && cause.code === "TERM_NOT_FOUND") {
-          setFieldErrors({ term: "Select a semester" });
-        } else if (cause instanceof FriendlyFetchError && cause.code === "COURSE_NOT_FOUND") {
-          setFieldErrors({ courses: "Select at least one course." });
+        const formErrors:{program?:string;term?:string;courses?:string;credits?:string}={};
+        if (cause instanceof FriendlyFetchError) {
+          // Legacy SemesterCourseMapping errors use program_id, semester_id,
+          // and course_ids. Translate field paths to visible form controls.
+          const fields=cause.fieldErrors;
+          for (const [key,value] of Object.entries(fields)) {
+            if (key==="program_id"||key==="programId")formErrors.program=value;
+            if (key==="semester_id"||key==="programTermId"||key==="termId")formErrors.term=value;
+            if (key==="course_ids"||key==="courseId"||key==="mappings")formErrors.courses=value;
+            if (key==="credits")formErrors.credits=value;
+          }
+          if (cause.code==="TERM_NOT_FOUND")formErrors.term??="Select a semester";
+          if (cause.code==="COURSE_NOT_FOUND")formErrors.courses??="Select at least one course.";
         }
-        setError(message);
+        setFieldErrors(formErrors);
+        setError(confirm.type==="ADD"?"Failed to add courses to this semester. "+message:message);
         showToast({ tone: "error", title: message });
       }finally{
         inFlight.current=false;

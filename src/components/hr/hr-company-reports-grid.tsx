@@ -33,9 +33,15 @@ const columns: readonly TpoGridColumn<HrCompanyReportSheetRow>[] = [
       <span className="ml-2 inline-flex rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-body">{row.status}</span>
       <span className="block text-xs text-muted-foreground">{row.employmentType.replaceAll("_"," ")}</span>
     </div>},
-  {key:"status",label:"Status",read:row=>row.status},
-  {key:"published",label:"Published",read:row=>row.published},
+  {key:"status",label:"Status",read:row=>row.status,
+    render:row=><Link href={driveHref(row)} aria-label={`Open drive ${row.title} status`}
+      className="block w-full min-h-9 py-2 text-body hover:text-link">{row.status}</Link>},
+  {key:"published",label:"Published",read:row=>row.published,
+    render:row=><Link href={driveHref(row)} aria-label={`Open drive ${row.title} published date`}
+      className="block w-full min-h-9 py-2 text-body hover:text-link">{row.published}</Link>},
   {key:"applied",label:"Applied",read:row=>row.applications,
+    render:row=><Link href={driveHref(row)} aria-label={`Open drive ${row.title} applications`}
+      className="block w-full min-h-9 py-2 text-body hover:text-link">{row.applications}</Link>,
     sortKind:"number",sortValue:row=>row.applications},
   {key:"submitted",label:"Submitted",read:row=>row.submittedApplications,
     sortKind:"number",sortValue:row=>row.submittedApplications},

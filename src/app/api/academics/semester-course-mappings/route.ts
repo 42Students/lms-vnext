@@ -31,7 +31,15 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof CollegeTermMappingError)
       return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });
-    if(error instanceof ZodError||error instanceof SyntaxError)
+    if(error instanceof ZodError)
+      return NextResponse.json({error:"INVALID_TERM_MAPPING",
+        fieldErrors:Object.fromEntries(error.issues.map(issue=>{
+          const field=String(issue.path[0]??"course_ids");
+          const mapped=field==="programTermId"?"semester_id":
+            field==="courseId"?"course_ids":field==="programId"?"program_id":field;
+          return [mapped,issue.message];
+        }))},{status:400});
+    if(error instanceof SyntaxError)
       return NextResponse.json({error:"INVALID_TERM_MAPPING"},{status:400});
     return apiErrorResponse(error);
   }
@@ -52,7 +60,15 @@ export async function PUT(request:Request){
   }catch(error){
     if(error instanceof CollegeTermMappingError)
       return NextResponse.json({error:error.code},{status:error.code.endsWith("NOT_FOUND")?404:409});
-    if(error instanceof ZodError||error instanceof SyntaxError)
+    if(error instanceof ZodError)
+      return NextResponse.json({error:"INVALID_TERM_MAPPING",
+        fieldErrors:Object.fromEntries(error.issues.map(issue=>{
+          const field=String(issue.path[0]??"course_ids");
+          const mapped=field==="programTermId"?"semester_id":
+            field==="courseId"?"course_ids":field==="programId"?"program_id":field;
+          return [mapped,issue.message];
+        }))},{status:400});
+    if(error instanceof SyntaxError)
       return NextResponse.json({error:"INVALID_TERM_MAPPING"},{status:400});
     return apiErrorResponse(error);
   }
