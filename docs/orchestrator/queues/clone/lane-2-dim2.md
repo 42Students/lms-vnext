@@ -143,11 +143,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/app/(authenticated)/learn/projects/[projectId]/error.tsx`
 - [x] `src/app/(authenticated)/learn/projects/[projectId]/not-found.tsx`
 - [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/not-found.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/(authenticated)/mentor/calendar/page.tsx`
+- [x] `src/app/(authenticated)/mentor/not-found.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
+- [x] `src/app/(authenticated)/mentor/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/projects/[projectId]/closeout/page.tsx`
