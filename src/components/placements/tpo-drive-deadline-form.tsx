@@ -71,7 +71,9 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
      <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
       className="min-h-24 w-full min-w-0"/></label>
    </div>
-   <p className="max-w-xl text-xs leading-5 text-body">{job.applicationDeadline?
+   <p className="max-w-xl text-xs leading-5 text-body">
+    Extending the deadline notifies applicants who see this drive. Your explanation is kept in the permanent change history.
+    {" "}{job.applicationDeadline?
     "New deadline must be later than the current deadline and in the future.":
     "First deadline must be in the future."} Expiry is validated again under the database lock.</p>
    {error?<InlineNotice tone="error" message={error}/>:null}
@@ -80,11 +82,11 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
   </form>
   <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
    title={job.applicationDeadline?"Extend application deadline?":"Set first application deadline?"}
-   description="The new IST deadline will be visible to applicants. This change is audited."
+   description="The new deadline will be visible to applicants after confirmation. Review the time in IST and your audit reason before saving."
    confirmVariant="primary" confirmLabel={job.applicationDeadline?"Extend deadline":"Set deadline"}
    pending={pending} onConfirm={()=>void confirm()}>
    {proposal?<dl className="min-w-0 space-y-2 text-sm">
-    <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3"><dt className="font-semibold">New deadline</dt><dd className="min-w-0 break-words">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(proposal.newDeadlineIso))} IST</dd></div>
+    <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3"><dt className="font-semibold">New deadline (IST)</dt><dd className="min-w-0 break-words">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(proposal.newDeadlineIso))} IST</dd></div>
     <div className="grid min-w-0 grid-cols-[auto_1fr] gap-3"><dt className="font-semibold">Reason</dt><dd className="min-w-0 break-words">{proposal.reason}</dd></div>
    </dl>:null}
   </ConfirmDialog>
