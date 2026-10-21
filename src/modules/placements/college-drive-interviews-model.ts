@@ -8,13 +8,14 @@ export const driveInterviewsQuerySchema = z.object({
   appointmentMode: z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).optional(),
   appointmentSearch: z.string().trim().max(120).optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  appointmentPage: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export type DriveInterviewsQuery = z.infer<typeof driveInterviewsQuerySchema>;
 export const DRIVE_INTERVIEW_PAGE_SIZE = 25;
 
 export function driveInterviewsParams(raw: Record<string,string|string[]|undefined>) {
   const filtered: Record<string,string> = {};
-  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch"] as const) {
+  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch","appointmentPage"] as const) {
     const value = raw[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && value !== "") filtered[key] = value;
@@ -32,6 +33,7 @@ export function driveInterviewsHref(jobId: string, query: DriveInterviewsQuery) 
   if (query.appointmentMode && query.appointmentMode !== "ALL") params.set("appointmentMode",query.appointmentMode);
   if (query.appointmentSearch) params.set("appointmentSearch",query.appointmentSearch);
   if (query.page>1) params.set("page",String(query.page));
+  if (query.appointmentPage>1) params.set("appointmentPage",String(query.appointmentPage));
   return "/college/placements/jobs/" + encodeURIComponent(jobId) + "/interviews" +
     (params.size ? "?" + params.toString() : "");
 }
@@ -67,5 +69,8 @@ export function driveInterviewFilterError(raw: Record<string, string | string[] 
     return "name is required and must be a valid value";
   if (raw.page !== undefined && !z.coerce.number().int().min(1).max(1000).safeParse(raw.page).success)
     return "Page must be a valid number";
+  if (raw.appointmentPage !== undefined &&
+      !z.coerce.number().int().min(1).max(1000).safeParse(raw.appointmentPage).success)
+    return "Appointment page must be a valid number";
   return "Invalid interview filters";
 }

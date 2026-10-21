@@ -99,7 +99,14 @@ export async function recordTpoOfferLifecycle(
       .where(inArray(placementOffers.id, input.offerIds))
       .orderBy(asc(placementOffers.id)).for("update");
     const now = new Date();
-    const items: { offerId: string; action: typeof input.action; status: string }[] = [];
+    const items: {
+      offerId: string;
+      action: typeof input.action;
+      status: string;
+      joiningStatus: string | null;
+      provisionalUntil: string | null;
+      finalized: boolean | null;
+    }[] = [];
     for (const offer of offers) {
       if (offer.status !== input.expectedStatus) {
         throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
@@ -254,7 +261,7 @@ export async function recordTpoOfferLifecycle(
           previousStatus: offer.status,
           nextStatus,
           reason: input.reason,
-          cascadeId:null,
+          cascadeId:offer.cascadeId,
           cascadedOfferCount:0,
           withdrawnApplicationCount:0,
         },
@@ -276,7 +283,23 @@ export async function recordTpoOfferLifecycle(
                 ". If this is incorrect, dispute within 48 hours."
               : "Employer offer decision updated for "+job.title,
       });
-      items.push({ offerId: offer.id, action: input.action, status: nextStatus });
+      items.push({
+        offerId: offer.id,
+        action: input.action,
+        status: nextStatus,
+        joiningStatus: input.action === "RECORD_JOINED"
+          ? "JOINED" : currentJoining?.status ?? null,
+        provisionalUntil: input.action === "RECORD_ACCEPTED"
+          ? new Date(now.getTime() + 48 * 60 * 60 * 1000).toISOString()
+          : offer.acceptanceChannel === "EXTERNAL_IMPORT" && !offer.cascadeId &&
+            nextStatus === "ACCEPTED"
+            ? offer.acceptedDisputableUntil?.toISOString() ?? null
+            : null,
+        finalized: nextStatus === "ACCEPTED"
+          ? (input.action !== "RECORD_ACCEPTED" &&
+              (offer.acceptanceChannel !== "EXTERNAL_IMPORT" || Boolean(offer.cascadeId)))
+          : null,
+      });
     }
     return { updated: items.length, items };
   });

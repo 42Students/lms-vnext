@@ -44,7 +44,13 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   // Round metadata must not take down candidate appointments, or vice versa.
   const [roundResult,appointmentResult]=await Promise.allSettled([
     listCollegeDriveInterviews(context,jobId,query),
-    getCollegeRoundSlotAppointments(context,jobId),
+    getCollegeRoundSlotAppointments(context,jobId,{
+      appointmentPage:query.appointmentPage,
+      appointmentStatus:query.appointmentStatus,
+      appointmentMode:query.appointmentMode,
+      appointmentSearch:query.appointmentSearch,
+      preferredApplicationId:query.applicationId,
+    }),
   ]);
   if(roundResult.status==="rejected"&&roundResult.reason instanceof AuthorizationError)
     throw roundResult.reason;
@@ -95,9 +101,21 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     </div>
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Candidate interviews</h2>
-      {appointments ? <CollegeInterviewAppointments jobId={jobId}
-        rounds={appointments.rounds} candidates={appointments.candidates}
-        appointments={appointments.interviews} preferredApplicationId={query.applicationId}/> :
+      {appointments ? <>
+        {appointments.candidateTotal>appointments.candidates.length?<Banner tone="warning">
+          Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates in the scheduling selector. Deep-link from the application detail to include an individual learner.
+        </Banner>:null}
+        <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}</p>
+        <CollegeInterviewAppointments jobId={jobId}
+          rounds={appointments.rounds} candidates={appointments.candidates}
+          appointments={appointments.interviews} preferredApplicationId={query.applicationId}/>
+        <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
+          {appointments.appointmentPage>1?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
+          {appointments.appointmentPage<appointments.appointmentPages?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
+        </nav>
+      </> :
         <ErrorState title="Unable to load interviews. Please try again."
           description="Candidate interview appointments could not be refreshed. No empty or stale schedule is being represented as current."
           action={<Link href={refreshHref}
