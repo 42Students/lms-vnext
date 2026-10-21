@@ -1,3 +1,4 @@
+import {z} from "zod";
 import type { RequestContext } from "@/modules/identity/context";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
@@ -30,7 +31,7 @@ function byDueDateThenTitle<
 
 export async function getLearnerAssessmentOverview(
   context: RequestContext,
-  options:{courseId?:unknown}={},
+  options:{courseId?:unknown;page?:unknown;pageSize?:unknown}={},
 ) {
   await requireOwnCourseLearnerRead(context);
   const snapshotNowMs = Date.now();
@@ -66,7 +67,14 @@ export async function getLearnerAssessmentOverview(
   const requestedCourse=options.courseId!==undefined&&options.courseId!==null&&options.courseId!=="";
   if(requestedCourse&&!selectedCourseId)throw new CoursesServiceError("COURSE_NOT_FOUND");
   const scopedDeliveries=selectedCourseId?deliveries.filter(row=>row.courseId===selectedCourseId):deliveries;
-  const {assignments,quizzes}=await listOwnLearnerAssessmentRows(scopedDeliveries,context.membership!.id,snapshotNowMs);
+  // The legacy list uses 20-row pages. Existing unpaged callers retain their
+  // full authorized overview; explicitly paged consumers push LIMIT/OFFSET
+  // down into both assessment queries, preserving due-date ordering.
+  const page=options.page===undefined?null:z.coerce.number().int().min(1).max(100000).parse(options.page);
+  const pageSize=options.pageSize===undefined?20:z.coerce.number().int().min(1).max(100).parse(options.pageSize);
+  const result=await listOwnLearnerAssessmentRows(scopedDeliveries,context.membership!.id,snapshotNowMs,
+    page===null?undefined:{page,pageSize});
+  const {assignments,quizzes}=result;
 
   assignments.sort(byDueDateThenTitle);
   quizzes.sort(byDueDateThenTitle);
@@ -93,5 +101,8 @@ export async function getLearnerAssessmentOverview(
     courses,
     assignments,
     quizzes,
+    ...(page!==null?{pagination:{page,pageSize,totals:result.totals,
+      hasMoreAssignments:page*pageSize<result.totals.assignments,
+      hasMoreQuizzes:page*pageSize<result.totals.quizzes}}:{}),
   };
 }

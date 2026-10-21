@@ -2,13 +2,13 @@
 import {Checkbox} from "@/components/ui/checkbox";
 import { Disclosure } from "@/components/ui/disclosure";
 
-import {useRouter} from "next/navigation";
+import {useRouter,usePathname,useSearchParams} from "next/navigation";
 import {ScrollCue} from "@/components/ui/scroll-cue";
 import {Button} from "@/components/ui/button";
 import {FilterChip} from "@/components/ui/filter-chip";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
-import {useState,useTransition} from "react";
+import {useState,useTransition,useEffect,useMemo} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
@@ -51,7 +51,35 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
 /** Page-scoped selection with explicit per-record failure reporting and retry. */
 export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  const router=useRouter();
- const [selected,setSelected]=useState<string[]>([]);
+ const pathname=usePathname(),searchParams=useSearchParams();
+ const selectionScope=useMemo(()=>{
+  const stable=new URLSearchParams(searchParams.toString());
+  stable.delete("page");stable.delete("pageSize");
+  stable.sort();
+  return "college-lesson-selection:"+pathname+"?"+stable.toString();
+ },[pathname,searchParams]);
+ const [selectedRows,setSelectedRows]=useState<Item[]>([]);
+ const selected=selectedRows.map(item=>item.id);
+ useEffect(()=>{
+  try{
+   const stored=window.sessionStorage.getItem(selectionScope);
+   const parsed:unknown=stored?JSON.parse(stored):[];
+   if(Array.isArray(parsed)){
+    const entries=parsed.filter((value):value is Item=>
+     Boolean(value)&&typeof value==="object"&&typeof value.id==="string"&&
+     typeof value.name==="string"&&typeof value.updatedAt==="string"&&
+     typeof value.visibleToStudents==="boolean").slice(0,100);
+    setSelectedRows(entries);
+   }else setSelectedRows([]);
+  }catch{setSelectedRows([]);}
+ },[selectionScope]);
+ function selectRows(rows:Item[]){
+  const unique=[...new Map(rows.map(item=>[item.id,item])).values()].slice(0,100);
+  setSelectedRows(unique);
+  try{window.sessionStorage.setItem(selectionScope,JSON.stringify(unique));}catch{
+   // Selection still works on the current page when storage is blocked.
+  }
+ }
  const [failed,setFailed]=useState<string[]>([]);
  const [retryTarget,setRetryTarget]=useState<boolean|null>(null);
  const [message,setMessage]=useState("");
@@ -60,8 +88,11 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  const [versions,setVersions]=useState<Record<string,string>>({});
  const [latestVisible,setLatestVisible]=useState<Record<string,boolean>>({});
  const allChecked=items.length>0&&items.every(item=>selected.includes(item.id));
+ const selectedRecords=selectedRows.map(row=>items.find(item=>item.id===row.id)??row);
  function toggle(id:string){
-  setSelected(old=>old.includes(id)?old.filter(value=>value!==id):[...old,id]);
+  const row=items.find(item=>item.id===id);
+  if(!row)return;
+  selectRows(selected.includes(id)?selectedRows.filter(item=>item.id!==id):[...selectedRows,row]);
   setFailed([]);setMessage("");
  }
  function apply(next:boolean,ids=selected){
@@ -71,7 +102,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
   setRetryTarget(next);
   start(async()=>{
    try{
-    const chosen=items.filter(item=>ids.includes(item.id));
+    const chosen=selectedRecords.filter(item=>ids.includes(item.id));
     const changed:Result["changed"]=[];
     const failedRows:Result["failed"]=[];
     // The endpoint caps each transaction group at 25; batch a full 100-row page safely.
@@ -95,7 +126,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     setVersions(old=>({...old,...Object.fromEntries(changed.map(item=>[item.id,item.updatedAt]))}));
     setLatestVisible(old=>({...old,...Object.fromEntries(changed.map(item=>[item.id,item.visibleToStudents]))}));
     const failures=failedRows.map(item=>item.lessonId);
-    setFailed(failures);setSelected(failures);
+    setFailed(failures);selectRows(selectedRecords.filter(item=>failures.includes(item.id)));
     const detail=failedRows.slice(0,5).map(item=>
      (items.find(row=>row.id===item.lessonId)?.name??"Lesson")+": "+item.reason).join("; ");
     setMessageTone(failures.length?"warning":"success");
@@ -108,12 +139,17 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  return <Disclosure title="Show to students / Hide from students" className="border-y border-border py-3 text-sm text-body">
   
   <p className="mt-2 text-xs text-muted-foreground">
-   Select Lessons on this page. Saved visibility does not delete student progress.
+   Select Lessons across pages of the same Course/search filter (up to 100). Changing Course or search clears this selection. Saved visibility does not delete student progress.
   </p>
   <label className="mt-2 flex min-h-11 items-center gap-2">
    <Checkbox disabled={pending} checked={allChecked}
-    onChange={event=>{setSelected(event.target.checked?items.map(item=>item.id):[]);setFailed([]);setMessage("");}}/>
-   Select all on this page
+    onChange={event=>{
+     selectRows(event.target.checked
+       ?[...selectedRows,...items.filter(item=>!selected.includes(item.id))]
+       :selectedRows.filter(item=>!items.some(current=>current.id===item.id)));
+     setFailed([]);setMessage("");
+    }}/>
+   Select all on this page ({selected.length} selected across pages)
   </label>
   <ScrollCue axis="y" label="Lessons available for bulk visibility" className="mt-2" viewportClassName="max-h-48"><div className="grid gap-2 md:grid-cols-2">
    {items.map(item=><label key={item.id} className="flex min-h-11 min-w-0 items-center gap-2">
