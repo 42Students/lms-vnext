@@ -65,7 +65,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_faculty-assessment-report-service.ts.md` (edit src/modules/courses/faculty-assessment-report-service.ts; 9 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_api_courses_progress_contentId_route.ts.md` (edit src/app/api/courses/progress/[contentId]/route.ts; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_college_departments_page.tsx.md` (edit src/app/(authenticated)/college/departments/page.tsx; 8 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-16_u015-job-eligibility.md.md` (new; 7 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-16_u015-job-eligibility.md.md` (new; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_college_lessons_page.tsx.md` (edit src/app/(authenticated)/college/lessons/page.tsx; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_api_courses_quizzes_route.ts.md` (edit src/app/api/courses/quizzes/route.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-6_job-application-repository.md.md` (new; 5 findings; best P2)
