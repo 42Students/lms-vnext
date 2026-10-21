@@ -143,7 +143,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
-            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline">Open recruiter leads</Link>
+            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open recruiter leads</Link>
           </p>
         ) : (
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
