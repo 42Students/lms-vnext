@@ -29,7 +29,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <PageHeader title="Analytics"/>
   <ErrorState title="Invalid analytics filters"
    description="Check the selected dates or filters."
-   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear all</Link>}/>
+   action={<Link href="/admin/placements/analytics" className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear all</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">

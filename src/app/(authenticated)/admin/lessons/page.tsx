@@ -30,7 +30,7 @@ export default async function SuperAdminLessonsPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
-      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+      action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -48,7 +48,7 @@ export default async function SuperAdminLessonsPage({
     <ErrorState title="Lessons unavailable"
       description="The lesson directory could not be loaded. Your filters have not changed."
       action={<Link href={adminLearningHref("LESSONS",parsed.data)}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading lessons</Link>} />
+        className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
   </div>;
   const data=dataResult.value;
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};

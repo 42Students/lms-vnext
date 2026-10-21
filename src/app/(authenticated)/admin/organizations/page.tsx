@@ -33,7 +33,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     <PageHeader title="Organizations"/>
     <ErrorState title="Invalid organization directory filters"
       description="Search text must be 100 characters or less; choose a valid page and page size. Remove repeated or unsupported filters."
-      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+      action={<Link href="/admin/organizations" className="inline-flex min-h-11 w-full items-center justify-center font-[650] text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const organizations = await listOrganizations(context);
   const {q,pageSize}=filters;
