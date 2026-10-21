@@ -175,10 +175,10 @@ export function TpoStudentsBulkAdd({
   return (
     <section id="student-bulk-add" className="min-w-0 space-y-4 border-y border-border py-4">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Add selected students to a drive
         </h2>
-        <p className="mt-1 text-sm text-body">
+        <p className="mt-1 text-sm text-body leading-[22px]">
           Select up to 200 learners from this filtered roster, including other pages.
           The server rechecks each selected college membership, drive and role.
         </p>
@@ -200,7 +200,7 @@ export function TpoStudentsBulkAdd({
              
              placeholder="Search company or drive"/>
           </label>
-          {visibleDrives.length===0?<p role="status" className="text-sm text-muted-foreground">No open drives match your search.</p>:null}
+          {visibleDrives.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No open drives match your search.</p>:null}
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
             <label className="min-w-0 text-sm font-semibold text-foreground">
               Published drive
@@ -281,16 +281,16 @@ export function TpoStudentsBulkAdd({
             {busy?"Checking learners…":"Confirm add selected"}
           </Button>
         </div>}>
-        <p role="status" className="text-sm">{alreadyAppliedCount===null?
+        <p role="status" className="text-sm leading-[22px]">{alreadyAppliedCount===null?
          "Existing applications have not been checked yet.":
          alreadyAppliedCount+" of them already applied."}</p>
-        <p className="mt-2 text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
+        <p className="mt-2 text-sm leading-[22px]">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
         {error?<InlineNotice tone="error" message={error}/>:null}
       </Dialog>
       {error&&!confirmOpen ? <InlineNotice tone="error" message={error}/> : null}
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
-          <h3 className="text-sm font-semibold text-foreground">Per-learner result</h3>
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Per-learner result</h3>
           <ul className="max-h-60 min-w-0 divide-y divide-border overflow-auto border-y border-border text-sm">
             {results.map((result) => (
               <li key={result.membershipId} className="flex min-w-0 flex-wrap gap-2 px-2 py-3">

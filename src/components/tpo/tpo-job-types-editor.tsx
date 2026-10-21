@@ -54,8 +54,8 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    </fieldset>
    <Button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Add job type</Button>
   </form>
-  <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
-  <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
+  <p className="text-sm text-muted-foreground leading-[22px]">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
+  <p className="text-sm text-muted-foreground leading-[22px]">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Find job type
       <Input type="search" value={search} maxLength={100} onChange={event=>setSearch(event.target.value)}
@@ -70,7 +70,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
       </Select>
     </label>
   </div>
-  <p role="status" className="text-xs text-muted-foreground">{visible.length} of {types.length} custom job types</p>
+  <p role="status" className="text-xs text-muted-foreground leading-[20px]">{visible.length} of {types.length} custom job types</p>
   {visible.length===0?<EmptyState title={tpoJobTypesEmptyMessage(types.length,search,status)}/>:
    <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>

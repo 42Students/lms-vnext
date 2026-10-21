@@ -83,7 +83,7 @@ export function TpoDraftDriveStepOneForm({
   return (
     <form onSubmit={(event) => void submit(event)}
       className="space-y-5 border-b border-border pb-5">
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         Active season: <strong>{season.name}</strong> ({season.startDate} to {season.endDate}).
         You can add other role options, compensation, targeting and rounds in the draft workspace.
       </p>
@@ -133,8 +133,8 @@ export function TpoDraftDriveStepOneForm({
         <Input className={cls} type="datetime-local" value={deadline}
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>
       </label>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-      {unknownCreate?<p role="alert" className="text-sm text-body">Review <Link href="/tpo/placements/lifecycle" className="text-[var(--lms-link-text)] underline">Drives</Link> before creating again. <Button type="button" variant="link" className="min-h-11 max-[767px]:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
+      {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
+      {unknownCreate?<p role="alert" className="text-sm text-body leading-[22px]">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <Button type="button" variant="link" className="min-h-11 max-[767px]:min-h-11" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</Button></p>:null}
       <Button type="submit" disabled={pending || unknownCreate || !companyRelationshipId}
         >
         {pending ? "Saving draft…" : "Review and save draft"}
