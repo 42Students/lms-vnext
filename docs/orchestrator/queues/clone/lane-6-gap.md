@@ -47,8 +47,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/fileExplorer.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/teacher/index.js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/teacher/notifications.js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Home/HomeEditDrawer.js`
-- [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobVisibilityCache.java`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Home/HomeEditDrawer.js`
+- [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobVisibilityCache.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypeService.java`
 - [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/BulkSmsAppsServiceImpl.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/semesters/SemesterSearchController.java`
