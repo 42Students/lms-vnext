@@ -28,7 +28,6 @@ import { learnerAssessmentQuickCounts } from "@/modules/courses/learner-assessme
 import { learnerAssessmentClock } from "@/modules/courses/learner-assessment-clock-model";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
-import { DataTable } from "@/components/ui/data-table";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { AssignmentFileOpenControl } from "./assignment-file-open-control";
@@ -276,6 +275,13 @@ export function LearnerAssessmentOverview({
       {kind==="QUIZ" ? (
         <section aria-label="Quiz summary" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-3 text-sm font-semibold text-body">
           <Badge tone="neutral">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</Badge>
+          <Badge tone="neutral">{scopedAttentionItems.filter(item=>{
+            const due=item.dueAt?new Date(item.dueAt):new Date(item.createdAt);
+            const today=new Date(currentNowMs);
+            if(!Number.isFinite(due.getTime()))return false;
+            const month=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit"});
+            return month.format(due)===month.format(today);
+          }).length} This month</Badge>
           <Disclosure title={`${submittedQuizzes.length} Submitted`} className="min-w-0">
             {submittedQuizzes.length>0 ? (
               <>
@@ -416,56 +422,51 @@ export function LearnerAssessmentOverview({
       ) : (
         <>
         {kind==="QUIZ" ? (
-          <DataTable
-            caption="Quiz list"
-            rows={paged.filter((item): item is LearnerQuizOverviewItem => item.kind==="QUIZ")}
-            getRowKey={item=>item.deliveryId+":"+item.id}
-            empty={<EmptyState title="No quizzes found" description="Try adjusting your filters." />}
-            columns={[
-              {key:"overview",header:"Overview",mobilePriority:"primary" as const,
-                cell:(item)=><div className="min-w-0">
-                  <strong className="block break-words text-foreground">{item.title}</strong>
-                  {item.description?<p className="mt-1 max-w-prose line-clamp-2 break-words text-xs text-muted-foreground">{item.description}</p>:null}
-                </div>},
-              {key:"course",header:"Course",mobilePriority:"secondary" as const,
-                cell:(item)=><span className="break-words">{item.courseName}</span>},
-              {key:"lesson",header:"Lesson",mobilePriority:"secondary" as const,
-                cell:(item)=><span className="break-words">{item.lessonName}</span>},
-              {key:"status",header:"Status",mobilePriority:"secondary" as const,
-                cell:(item)=><span className="block min-w-0">
-                  <StatusBadge tone={quizOverviewActionState(item,currentNowMs).tone}>
-                    {quizOverviewActionState(item,currentNowMs).label}
-                  </StatusBadge>
-                  <span className="block text-xs text-muted-foreground md:hidden">
-                    {learnerQuizMobileState(item,currentNowMs).detail}
-                  </span>
-                </span>},
-              {key:"due",header:"Due Date",mobilePriority:"secondary" as const,
-                cell:(item)=>item.dueAt?formatDate(item.dueAt):"No deadline"},
-              {key:"grade",header:"Grade",mobilePriority:"secondary" as const,
-                cell:(item)=>{
-                  if (item.attemptsUsed === 0) return "–";
-                  if (!item.resultsPublished) return "Not released";
-                  const score = item.latestScore;
-                  const maximum = item.latestMaxScore;
-                  return typeof score === "number" && Number.isFinite(score) &&
-                    typeof maximum === "number" && Number.isFinite(maximum) && maximum >= 0 &&
-                    score >= 0 && score <= maximum
-                      ? `${score} / ${maximum}`
-                      : "View result";
-                }},
-              {key:"actions",header:"Actions",mobilePriority:"action" as const,
-                cell:(item)=>{
-                  const state=quizOverviewActionState(item,currentNowMs);
-                  return <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-                    <Link href={`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`}
-                      className="inline-flex min-h-11 w-full items-center justify-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">{state.action}</Link>
-                    <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
-                      className="inline-flex min-h-11 w-full items-center justify-center break-words font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Attempt history</Link>
-                  </div>;
-                }},
-            ]}
-          />
+          <div className="space-y-3" aria-label="Quiz list">
+            {paged.filter((item): item is LearnerQuizOverviewItem=>item.kind==="QUIZ").map(item=>{
+              const state=quizOverviewActionState(item,currentNowMs);
+              const grade=item.attemptsUsed===0?"-":!item.resultsPublished?"Not released":
+                typeof item.latestScore==="number"&&Number.isFinite(item.latestScore)&&
+                typeof item.latestMaxScore==="number"&&Number.isFinite(item.latestMaxScore)&&
+                item.latestMaxScore>=0&&item.latestScore>=0&&item.latestScore<=item.latestMaxScore?
+                item.latestScore+" / "+item.latestMaxScore:"View result";
+              return <article key={item.deliveryId+":"+item.id}
+                className="flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface px-4 py-4 sm:flex-row sm:items-start">
+                <div aria-hidden="true" className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[var(--lms-radius-md)] border border-border bg-primary-subtle">
+                  <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M7 3h10l3 3v15H4V3h3m9 0v4h4M8 11h8M8 15h5"/><path d="M9 3v5"/>
+                  </svg>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <Link href={"/quiz?quizId="+encodeURIComponent(item.id)+"&deliveryId="+encodeURIComponent(item.deliveryId)+(state.review?"&review=true":"")}
+                    aria-label={"View quiz "+(item.title.trim()||"Untitled quiz")}
+                    className="block min-h-9 break-words text-base font-semibold text-primary-text hover:underline">
+                    {item.title.trim()||"Untitled quiz"}
+                  </Link>
+                  <p className="mt-1 text-sm text-body">{item.courseName} · {item.lessonName}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {item.dueAt?"Due: "+formatDate(item.dueAt):"Due: -"}
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <StatusBadge tone={state.tone}>{state.label}</StatusBadge>
+                    {learnerQuizMobileState(item,currentNowMs).detail?
+                      <span className="text-xs text-muted-foreground">{learnerQuizMobileState(item,currentNowMs).detail}</span>:null}
+                  </div>
+                  <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs">
+                    <div><dt className="text-muted-foreground">Attempts</dt><dd>{item.attemptsUsed}/{item.maxAttempts}</dd></div>
+                    <div><dt className="text-muted-foreground">Grade</dt><dd>{grade}</dd></div>
+                    <div><dt className="text-muted-foreground">Points</dt><dd>{item.totalPoints}</dd></div>
+                  </dl>
+                </div>
+                <div className="flex shrink-0 flex-wrap items-center gap-3 sm:flex-col sm:items-end">
+                  <Link href={"/quiz?quizId="+encodeURIComponent(item.id)+"&deliveryId="+encodeURIComponent(item.deliveryId)+(state.review?"&review=true":"")}
+                    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">{state.action}</Link>
+                  <Link href={"/learn/allQuizzes/"+encodeURIComponent(item.id)+"?deliveryId="+encodeURIComponent(item.deliveryId)}
+                    className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline md:min-h-9">Attempt history</Link>
+                </div>
+              </article>;
+            })}
+          </div>
         ) : null}
         {kind==="ASSIGNMENT" ? (
         <div className="space-y-3" aria-label="Assignment list">
