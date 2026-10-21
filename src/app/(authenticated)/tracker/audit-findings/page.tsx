@@ -118,6 +118,10 @@ export default async function IndependentFindingsPage({searchParams}:{
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
     <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></label>
    <div className="flex min-w-0 items-center gap-3 max-[767px]:[&>button]:flex-1">
+    <label className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">Per page
+     <Select name="size" defaultValue={String(parsed.size??50)} aria-label="Findings per page" className="min-h-11 md:min-h-9">
+      {[25,50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
+     </Select></label>
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Search</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
    </div>

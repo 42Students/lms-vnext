@@ -10,13 +10,14 @@ const filter=z.strictObject({
  severities:z.array(z.enum(FINDING_SEVERITIES)).max(4),
  kinds:z.array(z.enum(FINDING_KINDS)).max(7),
  area:z.string().trim().max(80).default(""),
- page:z.coerce.number().int().min(1).max(10000).default(1),
+ page:z.coerce.number().int().min(1).default(1),
+ size:z.coerce.number().int().min(1).max(200).optional(),
 });
 export type FindingFilters=z.infer<typeof filter>;
 export function parseIndependentFindingFilters(raw:Record<string,string|string[]|undefined>){
- if(Object.keys(raw).some(k=>!["q","view","status","severity","kind","area","page"].includes(k)))return null;
- if(["q","view","area","page"].some(k=>Array.isArray(raw[k])))return null;
- const parsed=filter.safeParse({q:raw.q,view:raw.view,area:raw.area,page:raw.page,
+ if(Object.keys(raw).some(k=>!["q","view","status","severity","kind","area","page","size"].includes(k)))return null;
+ if(["q","view","area","page","size"].some(k=>Array.isArray(raw[k])))return null;
+ const parsed=filter.safeParse({q:raw.q,view:raw.view,area:raw.area,page:raw.page,size:raw.size,
   statuses:values(raw.status),severities:values(raw.severity),kinds:values(raw.kind)});
  return parsed.success?parsed.data:null;
 }
@@ -29,6 +30,7 @@ export function independentFindingHref(input:FindingFilters,page=input.page){
  for(const kind of input.kinds)params.append("kind",kind);
  if(input.area)params.set("area",input.area);
  if(page>1)params.set("page",String(page));
+ if(input.size&&input.size!==INDEPENDENT_AUDIT_PAGE_SIZE)params.set("size",String(input.size));
  return "/tracker/audit-findings"+(params.size?"?"+params:"");
 }
 export const INDEPENDENT_AUDIT_PAGE_SIZE=50;

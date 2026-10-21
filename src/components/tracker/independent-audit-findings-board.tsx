@@ -39,6 +39,7 @@ export function IndependentAuditFindingsBoard({rows,view}:{
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState<string|null>(null);
  const [retry,setRetry]=useState(0);
+ const [copiedId,setCopiedId]=useState<string|null>(null);
  useEffect(()=>{
   const form=document.querySelector<HTMLFormElement>("form[data-audit-findings-filters]");
   if(!form)return;
@@ -113,6 +114,14 @@ export function IndependentAuditFindingsBoard({rows,view}:{
      <StatusBadge tone={statusTone(current.status)}>{statuses[current.status]??current.status}</StatusBadge>
      <StatusBadge tone={current.severity==="CRITICAL"?"error":current.severity==="HIGH"?"warning":"neutral"}>{current.severity}</StatusBadge>
      <StatusBadge>{current.area}</StatusBadge><StatusBadge>{current.kind}</StatusBadge>
+     {current.reportedSeverity?<StatusBadge>Reported as {current.reportedSeverity}</StatusBadge>:null}
+     {current.roles.map(role=><StatusBadge key={role}>{role}</StatusBadge>)}
+     <Button type="button" variant="secondary" onClick={()=>{
+      void navigator.clipboard.writeText(current.externalId).then(()=>setCopiedId(current.externalId))
+       .catch(()=>setCopiedId("Unavailable"));
+     }} aria-label={"Copy finding ID "+current.externalId}>Copy ID</Button>
+     {copiedId===current.externalId?<span role="status" className="text-xs text-muted-foreground">ID copied</span>:null}
+     {copiedId==="Unavailable"?<span role="alert" className="text-xs text-error">Copy ID unavailable</span>:null}
      <Link href={"/tracker/audit-findings/"+encodeURIComponent(current.externalId)}
       className="text-sm font-semibold text-link underline">Open full page</Link>
     </div>
@@ -138,7 +147,8 @@ export function IndependentAuditFindingsBoard({rows,view}:{
     <IndependentFindingActions key={current.id+"-"+current.version}
      externalId={current.externalId} version={current.version} status={current.status}
      severity={current.severity} currentAssignee={current.assignee}
-     candidates={detail?.similar.map(s=>({id:s.id,externalId:s.externalId,title:s.title}))??[]}/>
+     candidates={detail?.similar.map(s=>({id:s.id,externalId:s.externalId,title:s.title}))??[]}
+     onUpdated={()=>setRetry(value=>value+1)}/>
     <section className="space-y-2"><h3 className="font-semibold">History</h3>
      {detail?.events.length?<ol className="divide-y divide-[var(--lms-canvas-border)]">
       {detail.events.map(event=><li key={event.id} className="py-2 text-sm">

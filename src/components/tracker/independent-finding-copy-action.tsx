@@ -13,7 +13,7 @@ export function IndependentFindingCopyAction({finding}:{finding:IndependentFindi
   try{
    if(!navigator.clipboard?.writeText)throw new Error("clipboard unavailable");
    await navigator.clipboard.writeText(independentFindingFixPrompt(finding));
-   setMessage("Finding prompt copied.");
+   setMessage("Copied. Paste it to the agent that will fix it.");
   }catch{
    setMessage("Clipboard unavailable. Copy the finding details manually.");
   }
@@ -23,6 +23,6 @@ export function IndependentFindingCopyAction({finding}:{finding:IndependentFindi
   >
    Copy for Claude
   </Button>
-  {message?<InlineNotice tone={message.startsWith("Finding prompt")?"success":"error"} message={message}/>:null}
+  {message?<InlineNotice tone={message.startsWith("Copied.")?"success":"error"} message={message}/>:null}
  </div>;
 }

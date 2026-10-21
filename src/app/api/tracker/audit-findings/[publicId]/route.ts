@@ -17,10 +17,12 @@ export async function GET(_request:Request,{params}:Params){
    listIndependentAuditFindings(ctx,{q:"",view:"ALL",statuses:[],severities:[],kinds:[],area:finding.area,page:1}),
   ]);
   const tokens=new Set(finding.title.toLowerCase().split(/[^a-z0-9]+/).filter(token=>token.length>2));
-  const similar=matches.items.filter(item=>item.id!==finding.id).map(item=>({
-    id:item.id,externalId:item.externalId,title:item.title,status:item.status,
-    score:item.title.toLowerCase().split(/[^a-z0-9]+/).filter(token=>tokens.has(token)).length,
-  })).filter(item=>item.score>0).sort((a,b)=>b.score-a.score).slice(0,5);
+  const similar=matches.items.filter(item=>item.id!==finding.id).map(item=>{
+   const candidateTokens=new Set(item.title.toLowerCase().split(/[^a-z0-9]+/).filter(token=>token.length>2));
+   const shared=[...candidateTokens].filter(token=>tokens.has(token)).length;
+   const score=shared/Math.max(tokens.size,candidateTokens.size,1);
+   return {id:item.id,externalId:item.externalId,title:item.title,status:item.status,score};
+  }).filter(item=>item.score>=0.6).sort((a,b)=>b.score-a.score).slice(0,5);
   return NextResponse.json({finding,events,similar},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
