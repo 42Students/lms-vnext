@@ -138,3 +138,6 @@
 
 - `src/modules/auth/*` session lifecycle and Exotel SMS/OTP owner | G2-18-031-077/-082 | Ensure disabled platform account revokes all sessions while single-college suspension gates just that membership; credential-change invalidate-all and SMS provider/OTP timing must be transactional, independently revalidated per role switch. No shared user should inherit a suspended college role.
 - Hall importer and service owner | G2-19-018-062/-063 | Review unregistered 0228 instead of altering historical 0052; map old ordinal and dept=0, source deleted status/tenant, reconcile archived-name restore conflict with vNext active-name uniqueness.
+
+- Course content progress reset and latest-attempt service / lane 15 migration reviewer | G2-2-015-092, G2-2-017-057 | Registered original 0098 intentionally unchanged; add already proposed 0203 drop-old-pair/create attempt triple unique and DESC latest index after read/write consumers are attempt-aware and concurrent resets serialized.
+- Groups legacy scoped importer / admin groups service | G2-3-024-044/-045 | Map source group, member/event LONG IDs and source learner/roll/numeric college/org to UUID membership, verify tenant lifecycle, deleted state, actor provenance and roll collisions before 0242 registration or any import; preserve native version CAS and audit.

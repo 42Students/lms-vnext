@@ -1,10 +1,14 @@
 import { sql } from "drizzle-orm";
-import { boolean, check, index, integer, jsonb, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { bigint, boolean, check, index, integer, jsonb, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 export const lmsGroups = pgTable("lms_groups", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  legacyGroupId: bigint("legacy_group_id", { mode: "bigint" }),
+  legacyCollegeId: integer("legacy_college_id"),
+  legacyOrganizationId: integer("legacy_organization_id"),
+  legacyWasDeleted: boolean("legacy_was_deleted"),
   kind: varchar("kind", { length: 40 }).notNull(),
   ownerScope: varchar("owner_scope", { length: 20 }).default('COLLEGE').notNull(),
   collegeId: uuid("college_id").references(() => colleges.id, { onDelete: "restrict" }),
@@ -41,6 +45,9 @@ export const lmsGroups = pgTable("lms_groups", {
 
 export const lmsGroupMembers = pgTable("lms_group_members", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  legacyMemberId: bigint("legacy_member_id", { mode: "bigint" }),
+  legacyLearnerId: integer("legacy_learner_id"),
+  legacyRollNumber: varchar("legacy_roll_number", { length: 128 }),
   groupId: uuid("group_id").notNull().references(() => lmsGroups.id, { onDelete: "restrict" }),
   membershipId: uuid("membership_id").notNull().references(() => collegeMemberships.id, { onDelete: "restrict" }),
   memberType: varchar("member_type", { length: 20 }).default('LEARNER').notNull(),
@@ -67,6 +74,8 @@ export const lmsGroupMembers = pgTable("lms_group_members", {
 
 export const lmsGroupMemberEvents = pgTable("lms_group_member_events", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  legacyEventId: bigint("legacy_event_id", { mode: "bigint" }),
+  legacyActorId: integer("legacy_actor_id"),
   groupId: uuid("group_id").notNull().references(() => lmsGroups.id, { onDelete: "restrict" }),
   membershipId: uuid("membership_id").notNull().references(() => collegeMemberships.id, { onDelete: "restrict" }),
   fromState: varchar("from_state", { length: 20 }),
