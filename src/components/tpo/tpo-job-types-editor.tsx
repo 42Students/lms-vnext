@@ -10,6 +10,7 @@ import {Disclosure} from "@/components/ui/disclosure";
 import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
 import {TpoCustomJobTypePlaced} from "./tpo-custom-job-type-placed";
 import {useRouter} from "next/navigation";
+import Link from "next/link";
 import {useConfirmFlow} from "@/components/ui/use-confirm-flow";
 import {useState} from "react";
 import {filterTpoJobTypes,tpoJobTypesEmptyMessage,type TpoJobTypeStatusFilter} from "@/modules/placements/tpo-job-type-filter-model";
@@ -77,6 +78,11 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    <Button type="submit" disabled={!validLabel||Boolean(nameProblem)||countsAsPlaced===null||atLimit||busy} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Add job type</Button>
   </form>
   <p className="text-sm text-muted-foreground leading-[22px]">The drive form, filters and reports use this list. Switching a type off hides it from new drives; drives that already have it keep it.</p>
+  <nav aria-label="Job-type usage" className="flex min-w-0 flex-wrap gap-x-4 gap-y-2 text-xs">
+   <Link href="/tpo/placements/new" className="font-semibold text-link underline">Create a drive</Link>
+   <Link href="/tpo/placements/lifecycle" className="font-semibold text-link underline">Filter drives by job type</Link>
+   <Link href="/tpo/reports/placement-summary" className="font-semibold text-link underline">Placement-count report</Link>
+  </nav>
   <p className="text-sm text-muted-foreground leading-[22px]">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
   <div className="grid gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto]">
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Find job type

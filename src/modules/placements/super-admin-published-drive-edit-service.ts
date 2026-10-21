@@ -1,7 +1,7 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,count,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobs,placementJobRoleOptions,placementSeasons} from "@/db/schema";
+import {placementApplications,placementJobs,placementJobRoleOptions,placementSeasons,placementCompanyRelationships} from "@/db/schema";
 import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
 import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -71,10 +71,30 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
   const jobTypeLabel=builtin?.label??configured?.label??savedLabel;
   const countsAsPlaced=builtin?.countsAsPlaced??configured?.countsAsPlaced??job.countsAsPlaced;
+  const [companyRelationship]=await tx.select({
+    id:placementCompanyRelationships.id,
+  }).from(placementCompanyRelationships).where(and(
+    eq(placementCompanyRelationships.id,cmd.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,acting.collegeId),
+    eq(placementCompanyRelationships.status,"ACTIVE"),
+  )).limit(1);
+  if(!companyRelationship)throw new PlacementsServiceError("PLACEMENT_COMPANY_NOT_FOUND");
+  if(cmd.companyRelationshipId!==job.companyRelationshipId){
+    // Reassigning a published company after applicants or offers exist would
+    // silently move their employer identity. Refuse rather than rewriting records.
+    const [applications]=await tx.select({total:count()})
+      .from(placementApplications).where(eq(placementApplications.jobId,job.id));
+    if((applications?.total??0)>0)throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
+  }
   const legacyPostingDetails=placementLegacyPostingDetailsSchema.parse({
    ...(job.legacyPostingDetails??{}),responsibilities:cmd.responsibilities,
+   assessmentUrl:cmd.assessmentUrl||null,assessmentDeadline:cmd.assessmentDeadline,
+   candidatePreferences:cmd.candidatePreferences,
   });
+  if(!isLegacyAssessmentDeadlineAfterApplication(legacyPostingDetails.assessmentDeadline,deadline))
+   throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   const [saved]=await tx.update(placementJobs).set({
+   companyRelationshipId:cmd.companyRelationshipId,
    title:cmd.title,description:cmd.description,locations:cmd.locations,
    jobTypeLabel,countsAsPlaced,employmentType:cmd.employmentType,workMode:cmd.workMode,
    legacyPostingDetails,
@@ -102,7 +122,9 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    metadata:{reason:cmd.reason,previousTitle:job.title,newTitle:cmd.title,
     oldDeadline:job.applicationDeadline?.toISOString()??null,
     newDeadline:deadline.toISOString(),
-    fields:["title","description","responsibilities","jobTypeLabel","employmentType",
+    oldCompanyRelationshipId:job.companyRelationshipId,
+    newCompanyRelationshipId:cmd.companyRelationshipId,
+    fields:["companyRelationshipId","assessmentUrl","assessmentDeadline","candidatePreferences","title","description","responsibilities","jobTypeLabel","employmentType",
      "workMode","locations","applicationDeadline","openings",
      "minimumAnnualCtcInr","maximumAnnualCtcInr"],
     existingApplicationsUnchanged:true},

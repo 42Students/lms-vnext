@@ -11,6 +11,16 @@ import { tpoRequestDecisionSchema } from "./tpo-request-decision-model";
 import { placementRequestIdSchema } from "./validation";
 import { PlacementsServiceError } from "./errors";
 
+/** Legacy TpoRequestController had only inbox and decision endpoints.
+ * vNext preserves service effects through these explicit owners:
+ * - createPlacementRequest in request-service validates target/effect and
+ *   writes the unique PENDING request, audit event, and scoped TPO notices.
+ * - actOnPlacementRequest (called here) locks decision/target, applies the
+ *   approved or rejected effect, records status history, and notifies learner.
+ * - Escalation/auto-settlement are scheduled or independent TPO services,
+ *   never side effects of loading this route.
+ * The current route narrows the membership and persisted college before
+ * delegating; no legacy numeric user ID or client-supplied college scope. */
 export async function decideTpoRequest(context: RequestContext, rawId: unknown, raw: unknown) {
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "TPO"))

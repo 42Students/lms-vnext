@@ -5,6 +5,16 @@ export const superAdminPublishedDriveEditSchema=z.strictObject({
  reason:z.string().trim().min(10).max(1000),
  title:z.string().trim().min(3).max(100),
  description:z.string().trim().min(1).max(15000).refine(value=>value.replace(/<[^>]*>/g,"").trim().length>0,"Please enter job description."),
+ companyRelationshipId:z.uuid(),
+ assessmentUrl:z.union([z.url().refine(v=>/^https?:\/\//i.test(v),"Use a valid HTTP(S) URL"),z.literal("")]),
+ assessmentDeadline:z.iso.datetime({offset:true}).nullable(),
+ candidatePreferences:z.strictObject({
+  preferredDegree:z.string().trim().max(160),
+  specialization:z.string().trim().max(160),
+  graduationYear:z.number().int().min(1990).max(2050).nullable(),
+  minGpa:z.number().min(0).max(10).nullable(),
+  city:z.string().trim().max(160),
+ }),
  jobTypeLabel:z.string().trim().min(1,"Please select job type").max(120),
  employmentType:z.enum(["FULL_TIME","INTERNSHIP","CONTRACT"]),
  workMode:z.enum(["ONSITE","HYBRID","REMOTE"]),
@@ -15,6 +25,8 @@ export const superAdminPublishedDriveEditSchema=z.strictObject({
  minimumAnnualCtcInr:z.number().int().min(0).max(100000000).nullable(),
  maximumAnnualCtcInr:z.number().int().min(0).max(100000000).nullable(),
 }).superRefine((v,ctx)=>{
+ if(v.assessmentDeadline&&Date.parse(v.assessmentDeadline)<=Date.parse(v.applicationDeadline))
+  ctx.addIssue({code:"custom",path:["assessmentDeadline"],message:"Assessment deadline must follow application deadline."});
  if(v.maximumAnnualCtcInr!=null&&v.minimumAnnualCtcInr!=null&&
   v.maximumAnnualCtcInr<v.minimumAnnualCtcInr)
   ctx.addIssue({code:"custom",path:["maximumAnnualCtcInr"],message:"Maximum CTC must be at least the minimum."});
