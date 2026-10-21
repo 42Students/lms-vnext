@@ -3,6 +3,15 @@ import { check, index, pgTable, timestamp, uniqueIndex, uuid } from "drizzle-orm
 import { collegeMemberships } from "./memberships";
 import { courses } from "./courses";
 
+/**
+ * Historical FacultyCourseAssociation.active=1 maps to endedAt IS NULL;
+ * active=0 maps to endedAt with an audited effective timestamp. Legacy
+ * integer faculty/course/association IDs require verified UUID crosswalk and
+ * tenant-scoped faculty membership, not an int-to-UUID cast. Before a future
+ * import, group duplicate active faculty/course pairs, retain the original
+ * events in history, then choose a single authorized live association.
+ * Greenfield vNext has no legacy rows to backfill or activate automatically.
+ */
 export const facultyCourseAssociations = pgTable("faculty_course_associations", {
   id: uuid("id").defaultRandom().primaryKey(),
   membershipId: uuid("membership_id").notNull().references(() => collegeMemberships.id, { onDelete: "restrict" }),
