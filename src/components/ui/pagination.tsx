@@ -10,6 +10,8 @@ export type PaginationProps = {
   className?: string;
   /** Show first/last shortcuts for long page ranges. */
   showBoundaryLinks?: boolean;
+  /** Total rows after filters, used for the legacy item range summary. */
+  totalItems?: number;
   /** Preserve scroll position for client-side filter/pager transitions. */
   scroll?: boolean;
   /** Legacy per-resource sizes; omit for fixed 50-row curation lists. */
@@ -53,7 +55,7 @@ export function paginationPageToRemotePage(pageOneBased: number): number {
   return Number.isSafeInteger(pageOneBased) && pageOneBased > 0 ? pageOneBased - 1 : 0;
 }
 
-export function Pagination({ page, pageCount, hrefForPage, label = "Pages", className, showBoundaryLinks = true, scroll = true, pageSize, pageSizeOptions, hrefForPageSize }: PaginationProps) {
+export function Pagination({ page, pageCount, hrefForPage, label = "Pages", className, showBoundaryLinks = true, scroll = true, pageSize, pageSizeOptions, hrefForPageSize, totalItems }: PaginationProps) {
   const total = normalizedPageCount(pageCount);
   const current = Number.isFinite(page) ? Math.max(1, Math.min(total, Math.trunc(page))) : 1;
   const previousHref = current > 1 ? safePageHref(hrefForPage, current - 1) : null;
@@ -63,11 +65,17 @@ export function Pagination({ page, pageCount, hrefForPage, label = "Pages", clas
   const lastShown = pageLinks[pageLinks.length - 1]?.item ?? total;
   const firstHref = showBoundaryLinks && firstShown > 1 ? safePageHref(hrefForPage, 1) : null;
   const lastHref = showBoundaryLinks && lastShown < total ? safePageHref(hrefForPage, total) : null;
+  const hasTotal = typeof totalItems === "number" && Number.isSafeInteger(totalItems) && totalItems >= 0;
+  const safeTotal = hasTotal ? totalItems! : 0;
+  const safeSize = pageSize && Number.isSafeInteger(pageSize) && pageSize > 0 ? pageSize : 1;
+  const firstItem = safeTotal === 0 ? 0 : Math.min(safeTotal, (current - 1) * safeSize + 1);
+  const lastItem = Math.min(safeTotal, current * safeSize);
   const choices = [...new Set((pageSizeOptions ?? []).filter(value => Number.isSafeInteger(value) && value > 0))];
   const sizeLinks = choices.map(size=>({size,href: hrefForPageSize ? safePageHref(hrefForPageSize,size) : null}));
   const buttonClass = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] md:leading-5 text-[var(--lms-body-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none";
   return (
     <nav data-slot="pagination" aria-label={label} className={cx("flex min-w-0 flex-wrap items-center justify-center gap-1 md:justify-start md:gap-[var(--lms-space-2)]", className)}>
+      {hasTotal && pageSize && pageSize > 0 ? <span role="status" className="w-full text-xs font-medium text-[var(--lms-neutral-500)] tabular-nums md:mr-auto md:w-auto">Showing {firstItem}–{lastItem} of {safeTotal}</span> : null}
       {!previousHref ?
         <span aria-disabled="true" className={cx(buttonClass, "pointer-events-none cursor-not-allowed border-[var(--lms-neutral-200)] bg-[var(--lms-neutral-50)] text-[var(--lms-neutral-400)] opacity-100")}>Previous</span> :
         <Link className={buttonClass} href={previousHref} scroll={scroll} aria-label="Previous page">Previous</Link>}
