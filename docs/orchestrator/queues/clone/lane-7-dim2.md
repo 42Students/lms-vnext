@@ -43,16 +43,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/app/(authenticated)/college/activity/[eventId]/page.tsx`
 - [x] `src/app/(authenticated)/college/activity/page.tsx`
 - [x] `src/app/(authenticated)/college/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
-- [ ] `src/app/(authenticated)/college/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/college/companies/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
-- [ ] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/corrections/page.tsx`
+- [x] `src/app/(authenticated)/college/attendance/page.tsx`
+- [x] `src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx`
+- [x] `src/app/(authenticated)/college/companies/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/contacts/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/college/faculty-assignment/page.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
 - [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
 - [ ] `src/app/(authenticated)/college/groups/page.tsx`
 - [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
