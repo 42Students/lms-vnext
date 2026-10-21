@@ -63,16 +63,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/app/(authenticated)/learn/my-placements/assessments/page.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/layout.tsx`
 - [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/page.tsx`
-- [ ] `src/app/(authenticated)/learn/profile/verification/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
-- [ ] `src/app/(authenticated)/notifications/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/error.tsx`
+- [x] `src/app/(authenticated)/learn/profile/page.tsx`
+- [x] `src/app/(authenticated)/learn/profile/verification/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/mentor/notifications/page.tsx`
+- [x] `src/app/(authenticated)/mentor/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/notices/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/page.tsx`
