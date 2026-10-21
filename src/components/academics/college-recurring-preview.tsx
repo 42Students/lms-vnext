@@ -29,9 +29,10 @@ export function recurringSlotTimeIst(slot: Pick<Result["slots"][number], "starts
 }
 
 export function CollegeRecurringPreview({
-  classes, halls, faculty, deliveries, defaultSectionId = "",
+  classes, halls, faculty, deliveries, errors, defaultSectionId = "",
 }: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[];
-  defaultSectionId?: string }) {
+  defaultSectionId?: string;
+  errors?: { classes:boolean; halls:boolean; faculty:boolean; deliveries:boolean } }) {
   const router=useRouter();
   const chosen = classes.find(item => item.id === defaultSectionId);
   const [sectionId, setSectionId] = useState(chosen?.id ?? "");
@@ -155,9 +156,13 @@ export function CollegeRecurringPreview({
          <p className="max-w-[75ch] text-sm text-body leading-[22px]">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p></div>
         <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):router.push("/college/classes")}>Cancel</Button>
       </div>
+      {errors && Object.values(errors).some(Boolean) ? <Alert tone="warning">
+        Some schedule options could not be loaded: {Object.entries(errors).filter(([,failed])=>failed).map(([name])=>name).join(", ")}.
+        <Button type="button" variant="secondary" className="ml-2 min-h-9" onClick={()=>router.refresh()}>Retry options</Button>
+      </Alert> : null}
       {classes.length === 0 ? (
         <Alert tone="info">
-          No active classes are registered for this college. Create a class before previewing a schedule.
+          {errors?.classes ? "Classes could not be loaded. Retry options." : "No active classes are registered for this college. Create a class before previewing a schedule."}
         </Alert>
       ) : (
         <form onSubmit={preview} onChange={()=>setDirty(true)} aria-busy={pending} className="min-w-0 space-y-[var(--lms-space-4)]">
@@ -222,7 +227,7 @@ export function CollegeRecurringPreview({
                 </label>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">Leave every day unchecked to repeat daily. Times use five-minute steps (IST).</p>
+            <p className="text-xs text-muted-foreground">Clear every weekday to repeat daily. Times use five-minute steps (IST).</p>
           </fieldset>
           <Disclosure title="Optional teaching details" defaultOpen={Boolean(facultyId || hallId)} className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 py-3"><div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
@@ -240,7 +245,7 @@ export function CollegeRecurringPreview({
               </Select>
             </label>
           </div></Disclosure>
-          {invalidRange ? <Alert tone="error">{from && to && from > to ? "To date cannot be earlier than From date." : "End time must be after start time."}</Alert> : null}
+          {invalidRange ? <Alert tone="error">{endTime <= startTime ? "End time must be after start time." : "To date cannot be earlier than From date."}</Alert> : null}
           <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || invalidRange || !sectionId || !from || !to}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
@@ -248,7 +253,8 @@ export function CollegeRecurringPreview({
         </form>
       )}
       {created !== null ? <Alert tone="success" className="space-y-2">
-        <p role="status">{created === 0 ? "No sessions were scheduled. " : ""}Scheduled {created} of {requested??created+skipped.length} sessions. Failed or skipped: {skipped.length}.</p>
+        <p>Scheduled {created} of {requested ?? created + skipped.length} sessions. {skipped.length} failed or skipped.</p>
+        {created === 0 ? <p role="alert" className="font-semibold">No sessions were scheduled. Review conflicts and retry.</p> : null}
         {savedSessionIds.length>0?<p className="text-xs text-body">Created session IDs: {savedSessionIds.join(", ")}</p>:null}
         {skipped.length > 0 && <>
           <p className="font-semibold">These dates were skipped:</p>

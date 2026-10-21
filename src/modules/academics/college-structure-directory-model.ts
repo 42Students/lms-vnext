@@ -14,12 +14,12 @@ export const collegeStructureQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
-  page: urlDecimalInt(1,1000).default(1),
-  pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(25),
+  page: urlDecimalInt(1,100000).default(1),
+  pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(COLLEGE_STRUCTURE_PAGE_SIZE),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
-  status: z.enum(["ALL","ACTIVE","ARCHIVED"]).default("ALL"),
+  status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   departmentCode: z.string().trim().min(1).max(64).optional(),
   periodEndsOnOrBefore: z.iso.date().optional(),
   periodStartsOnOrAfter: z.iso.date().optional(),
@@ -52,6 +52,7 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   periodEndsOnOrBefore: z.iso.date().optional(),
   periodStartsOnOrAfter: z.iso.date().optional(),
   descriptionPresence: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
@@ -180,7 +181,7 @@ export function collegeStructureTotalPages(total: number, pageSize = COLLEGE_STR
 }
 
 export function classCapacityLabel(capacity: number | null) {
-  return capacity === null || capacity === 0 ? "No limit" : String(capacity);
+  return capacity === null ? "Not configured" : String(capacity);
 }
 
 export function electiveSelectionLabel(minPick: number, maxPick: number) {

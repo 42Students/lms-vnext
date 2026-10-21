@@ -12,7 +12,7 @@ import {
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
-import { classesExportHref, CLASSES_EXPORT_CAP } from "@/modules/academics/college-classes-export-model";
+import { classesExportHref } from "@/modules/academics/college-classes-export-model";
 import { listCollegeSectionOptions } from "@/modules/academics/college-section-mutation-service";
 import { listRecurringPreviewOptions } from "@/modules/academics/college-recurring-preview-service";
 
@@ -20,15 +20,17 @@ export default async function CollegeClassesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) return <div role="status" className="space-y-3">
-    <PageHeader title="Classes" />
-    <p>Select a College to view classes</p>
-    <Link href="/dashboard" className="font-semibold text-primary-text underline">Choose a college</Link>
+  if (!context.membership) return <div className="space-y-4">
+    <PageHeader title="Classes & Sections" />
+    <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+      Select a College to view classes.{" "}
+      <Link href="/dashboard" className="font-semibold text-primary-text underline">Choose a college workspace</Link>
+    </div>
   </div>;
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeClassQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">
-    <PageHeader title="Classes" />
+    <PageHeader title="Classes & Sections" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
@@ -58,7 +60,7 @@ export default async function CollegeClassesPage({
           </Link>
         </div>
         <p className="mt-[var(--lms-space-3)] max-w-[70ch] text-xs leading-5 text-muted-foreground">
-          Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.
+          Export includes every class/section matching the current filters.
         </p>
       </Disclosure>
     </div>
