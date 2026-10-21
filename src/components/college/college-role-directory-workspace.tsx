@@ -6,7 +6,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
-import { DataTable } from "@/components/ui/data-table";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatTile } from "@/components/ui/stat-tile";
 import { PageHeader } from "@/components/ui/page-header";
@@ -76,9 +77,62 @@ export async function CollegeRoleDirectoryWorkspace({
     );
   }
 
-  const result = await listCollegeRoleDirectory(context, kind, filter);
+  let result: Awaited<ReturnType<typeof listCollegeRoleDirectory>>;
+  try {
+    result = await listCollegeRoleDirectory(context, kind, filter);
+  } catch (error) {
+    // A forbidden college scope must remain forbidden; retry is only for
+    // transient directory errors, never an authorization fallback.
+    if (error instanceof AuthorizationError) throw error;
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title={title}/>
+      <ErrorState title={"Could not load "+title.toLowerCase()}
+        description={"The "+title.toLowerCase()+" directory is temporarily unavailable. No changes were made."}
+        action={<Link href={collegeRoleDirectoryHref(kind,filter)}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} />
+    </div>;
+  }
   const canonical = canonicalCollegeRoleDirectoryHref(kind, result.filter, result.totalPages);
   if (canonical) redirect(canonical);
+  type Row = (typeof result.items)[number];
+  const effectiveStatus = (item: Row) =>
+    item.membershipStatus === "ENDED" ? "Ended" :
+    item.membershipStatus !== "ACTIVE" || item.userStatus !== "ACTIVE" ? "Suspended" : "Active";
+  const actions = (item: Row) => <div className="flex min-w-0 flex-wrap items-center gap-2">
+    <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+    <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+    <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
+      departments={kind==="FACULTY"?result.departmentOptions:[]}/>
+    {kind==="FACULTY" ? <CollegeFacultyLifecycleAction
+      membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>
+    : <CollegeStudentLifecycleAction membershipId={item.membershipId}
+      name={item.name} status={item.membershipStatus}/>}
+  </div>;
+  // Legacy student order: Name, Roll No., Mobile, Email, Class, Gender,
+  // Status, Actions. Sensitive contact/gender and roll are not present in the
+  // college-scoped list read model; link to authorized detail instead of
+  // inventing PII or querying another tenant's identity.
+  const studentColumns: DataTableColumn<Row>[] = [
+    {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
+      <Link href={"/college/students/"+item.membershipId}
+        className="font-semibold text-link underline underline-offset-4">{item.name}</Link>},
+    {key:"roll",header:"Roll No.",cell:item=>
+      <Link href={"/college/students/"+item.membershipId} className="text-link underline">View student record</Link>},
+    {key:"mobile",header:"Mobile",cell:item=>
+      <Link href={collegeRoleContactHref(item.membershipId)}
+        className="text-link underline">View contact card</Link>},
+    {key:"email",header:"Email",cell:item=>item.email??"Not recorded"},
+    {key:"class",header:"Class",cell:item=>item.sections.length?
+      [...new Set(item.sections)].join(", "):"Not assigned"},
+    {key:"gender",header:"Gender",cell:()=>"Not in directory"},
+    {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><>
+      <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>
+        {effectiveStatus(item)}
+      </StatusBadge>
+      {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning">Account: {item.userStatus}</p>:null}
+    </>},
+    {key:"actions",header:"Actions",cell:actions},
+  ];
   return (
     <div className="min-w-0 space-y-6 md:space-y-6">
       <PageHeader
@@ -371,8 +425,8 @@ export async function CollegeRoleDirectoryWorkspace({
                   <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">{item.email??"No email recorded"}</p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
-                    {item.membershipStatus}
+                  <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>
+                    {effectiveStatus(item)}
                   </StatusBadge>
                   {item.userStatus!=="ACTIVE"?<span className="text-xs text-warning">Account: {item.userStatus}</span>:null}
                 </div>
@@ -405,7 +459,7 @@ export async function CollegeRoleDirectoryWorkspace({
               rows={result.items}
               getRowKey={item=>item.membershipId}
               empty={<EmptyState title="No role memberships" description="No role memberships match the selected filters."/>}
-              columns={[
+              columns={kind === "LEARNER" ? studentColumns : [
                 {key:"person",header:"Person",mobilePriority:"primary",cell:item=><>
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
                     className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -422,8 +476,8 @@ export async function CollegeRoleDirectoryWorkspace({
                   </Link>:null}
                 </>},
                 {key:"membership",header:"Membership",mobilePriority:"secondary",cell:item=><>
-                  <StatusBadge tone={item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"?"success":"warning"}>
-                    {item.membershipStatus}
+                  <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>
+                    {effectiveStatus(item)}
                   </StatusBadge>
                   {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning leading-[20px]">
                     Platform account: {item.userStatus}
@@ -486,6 +540,7 @@ export async function CollegeRoleDirectoryWorkspace({
       </p>
       <p className="text-xs text-muted-foreground leading-[20px]">
         Directory records are scoped to this college.
+        {kind === "LEARNER" ? " Roll numbers and sensitive contact/gender fields require the authorized student detail or contact card; they are not returned in this directory list. Account-wide suspension and membership suspension are distinct. Hard deletion and OTP unlock are not available here." : ""}
         {kind === "FACULTY"
           ? " Counts are active teaching assignments, not a complete workload or schedule."
           : " Only active academic enrollments and classes are shown; absent associations are not inferred."}
