@@ -158,3 +158,13 @@ export function adminAttendanceDayRatio(
   }
   return { attended, counted };
 }
+
+/** The legacy browser-generated monthly attendance PDF was retired: vNext
+ * only exports sanitized CSV. Printable views can use browser Print, but
+ * no API should promise a server-side PDF attachment that is not produced.
+ */
+export const ADMIN_ATTENDANCE_EXPORT_FORMATS={
+ supported:["CSV"] as const,
+ retired:["PDF"] as const,
+ pdfRetirementReason:"Monthly PDF export was retired. Download the CSV or print the attendance view.",
+} as const;

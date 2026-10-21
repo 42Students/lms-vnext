@@ -174,7 +174,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
     </section> : null}
     {imported ? <section aria-label="Confirmed group import results" className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
-        Import complete: {imported.added} added, {imported.waitlisted} waitlisted, {imported.errors} not added
+        Import complete: {imported.requested} requested, {imported.added} added, {imported.waitlisted} waitlisted, {imported.errors} errors
       </h2>
       <Alert tone={imported.errors?"warning":"success"}>
         {imported.requested} learner rows processed. Each membership was rechecked when written.
@@ -215,7 +215,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       <Button type="button" loading={pending} disabled={pending||!manualText.trim()}
         onClick={confirmManual}>Confirm manual import</Button>
       {manualResult ? <div className="min-w-0 space-y-3">
-        <h3 className="font-semibold">Manual import: {manualResult.added} added, {manualResult.waitlisted} waitlisted, {manualResult.errors} not added</h3>
+        <h3 className="font-semibold">Manual import: {manualResult.requested} requested, {manualResult.added} added, {manualResult.waitlisted} waitlisted, {manualResult.errors} errors</h3>
         {manualResult.errors>0?<a href={"data:text/csv;charset=utf-8,"+encodeURIComponent(manualResult.errorCsv)}
           download="manual-group-import-errors.csv" className="inline-flex min-h-11 items-center font-semibold text-link underline">
           Download errors

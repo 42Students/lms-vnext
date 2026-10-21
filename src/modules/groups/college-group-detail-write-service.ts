@@ -10,6 +10,23 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {assertPersistedGroupActor,GroupActorAccessError} from "./actor-access";
 import {collegeGroupDetailIdSchema,collegeGroupDetailWriteSchema,collegeWaitlistPromotionBlocker} from "./college-group-detail-write-model";
 
+/** Legacy AdminGroupController route matrix under membership-scoped UUIDs.
+ * Numeric learner IDs are resolved by the import adapter, not here; the
+ * import service applies tenant checks and preserves MANUAL/CSV event source.
+ * Rule preview is read-only; explicit apply/clear use the version-locked
+ * rule action endpoint. Locked and waitlisted rows keep their CAS guards.
+ */
+export const COLLEGE_GROUP_ADMIN_ACTION_ROUTES={
+ members:"/api/college/groups/import",
+ bulkAdd:"/api/college/groups/import",
+ validation:"/api/college/groups/import-preview",
+ ruleSave:"/api/college/groups/[groupId]/detail-actions",
+ rulePreview:"/college/groups/[groupId]/rule-preview",
+ ruleApply:"/api/college/groups/[groupId]/rule",
+ ruleClear:"/api/college/groups/[groupId]/rule",
+ promoteWaitlist:"/api/college/groups/[groupId]/detail-actions",
+} as const;
+
 export class CollegeGroupDetailWriteError extends Error {
   constructor(public readonly code:"GROUP_NOT_FOUND"|"GROUP_STALE"|
     "MEMBER_NOT_FOUND"|"MEMBER_STALE"|"WAITLIST_OUT_OF_ORDER"|"GROUP_CAPACITY_FULL"|

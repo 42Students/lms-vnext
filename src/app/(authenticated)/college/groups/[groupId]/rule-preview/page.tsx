@@ -8,6 +8,7 @@ import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Alert } from "@/components/ui/alert";
 import {
   CollegeRulePreviewError,
+  COLLEGE_RULE_NOT_CONFIGURED_STATE,
   previewCollegeGroupRule,
 } from "@/modules/groups/college-rule-preview-service";
 
@@ -26,7 +27,7 @@ export default async function CollegeGroupRulePreviewPage({
       if (error.code === "GROUP_NOT_FOUND") notFound();
       if(error.code==="RULE_NOT_CONFIGURED")return <div className="min-w-0 space-y-4">
         <PageHeader title="Rule preview" actions={<PageBackLink href={"/college/groups/"+encodeURIComponent(groupId)} label="Back to group"/>}/>
-        <Alert tone="info" title="No rule configured">This group has no automatic membership rule. Preview only; no learners were evaluated or changed.</Alert>
+        <Alert tone="info" title={COLLEGE_RULE_NOT_CONFIGURED_STATE.title}>{COLLEGE_RULE_NOT_CONFIGURED_STATE.message}</Alert>
       </div>;
       return <ErrorState
         title="Rule preview unavailable"
