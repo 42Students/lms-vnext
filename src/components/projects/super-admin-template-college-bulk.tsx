@@ -63,11 +63,6 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   }
  },[selected,storageKey]);
  const allowed=colleges.filter(row=>row.canAssign);
- const selectedItems=allowed.filter(row=>selected.includes(row.id));
- const actionable=selected.filter(id=>{
-  const row=colleges.find(item=>item.id===id);
-  return !row||operation==="assign"?!row?.assigned:row?.assigned;
- });
  const targets=selected.map(id=>colleges.find(row=>row.id===id)??{
    id,name:"Selected college "+id.slice(0,8),assigned:false,canAssign:true,
  }).filter(row=>operation==="assign"?!row.assigned:row.assigned||!colleges.some(college=>college.id===row.id));

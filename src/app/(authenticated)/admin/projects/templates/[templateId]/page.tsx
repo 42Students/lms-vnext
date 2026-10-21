@@ -99,7 +99,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
              <span role="status" className="text-xs text-muted-foreground">
               {context.adminScope?.collegeId?"Assign a published template to this college to create workspaces.":"Choose a college to use this template."}
              </span>}
-            {can(context, "project-template.manage") && detail.template.status === "DRAFT" ?
+            {can(context, "project-template.manage") && detail.template.status === "DRAFT" && detail.currentVersion ?
               <TemplateMetadataEditControl templateId={detail.template.id} title={detail.template.title}
                 summary={detail.template.summary} currentVersion={detail.template.currentVersion}
                 updatedAt={detail.template.updatedAt.toISOString()}
