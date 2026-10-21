@@ -5,8 +5,6 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import {
  listSuperAdminContentSectionOptions,listSuperAdminSectionSyllabus,
 } from "@/modules/courses/super-admin-content-directory-service";
@@ -50,20 +48,7 @@ export default async function AdminSectionSyllabusOrderPage({searchParams}:{
   <Link href="/admin/resources" className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
     Back to Courses &amp; Content
   </Link>
-  <form action="/admin/content-order" method="get"
-   className="flex min-w-0 flex-wrap items-end gap-3 border border-border bg-surface p-4">
-   <label className="grid min-w-0 flex-1 gap-2 text-sm font-semibold text-foreground">
-    Choose a class and course
-    <Select name="deliveryId" defaultValue={validChoice?deliveryId??"":""} className="min-h-11 md:min-h-9">
-     <option value="">Select class</option>
-     {choices.map(choice=><option key={choice.id} value={choice.id}>
-      {choice.courseCode} · {choice.courseName} · {choice.sectionName}
-     </option>)}
-    </Select>
-   </label>
-   <input type="hidden" name="offeringId" value={offeringId??""}/>
-   <Button type="submit" variant="secondary" disabled>Choose a class above, then use a course-specific link</Button>
-  </form>
+  <p className="text-sm font-semibold text-body">Choose an active class and course:</p>
   <nav aria-label="Choose class syllabus" className="flex max-h-36 flex-wrap gap-2 overflow-auto">
    {choices.map(choice=><Link key={choice.id}
     href={"/admin/content-order?offeringId="+encodeURIComponent(choice.offeringId)+"&deliveryId="+encodeURIComponent(choice.id)}
