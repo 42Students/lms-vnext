@@ -10,7 +10,6 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { z } from "zod";
 import {
   collegeMemberships,
   courseOfferings,
@@ -78,14 +77,6 @@ function eventWindowInsidePeriod(
 }
 
 type ScheduleTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
-
-function requestedHallId(value: unknown): string | null | undefined {
-  // Existing typed callers may omit this optional hall ID, but raw API bodies
-  // can supply it. Never accept an unchecked cross-college hall reference.
-  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
-  return z.string().uuid().nullable().optional()
-    .parse((value as Record<string, unknown>).lectureHallId);
-}
 
 async function assertScheduleResources(tx: ScheduleTx, input: {
   collegeId: string;
@@ -327,7 +318,7 @@ export async function createSectionScheduleEvent(
     createSectionScheduleEventInputSchema.parse(
       rawInput,
     );
-  const lectureHallId = requestedHallId(rawInput);
+  const lectureHallId = input.lectureHallId;
   const section = await loadSectionScope(
     input.sectionId,
   );
@@ -415,7 +406,7 @@ export async function updateSectionScheduleEvent(
     updateSectionScheduleEventInputSchema.parse(
       rawInput,
     );
-  const requestedRoom = requestedHallId(rawInput);
+  const requestedRoom = input.lectureHallId;
   const scope =
     await loadScheduleEventScope(eventId);
 
