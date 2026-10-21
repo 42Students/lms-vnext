@@ -206,6 +206,7 @@ export async function updateCollegeAttendancePolicyField(context:RequestContext,
       eligibilityThresholdPercent:attendancePolicies.eligibilityThresholdPercent,
       correctionWindowHours:attendancePolicies.correctionWindowHours,
     });
+    if(!updated)throw new Error("ATTENDANCE_POLICY_UPDATE_FAILED");
     await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:college.id,
       actorUserId:context.user.id,

@@ -78,8 +78,8 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  return <section aria-label="Attendance policy" className="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-[var(--lms-heading)]">Attendance policy</h2>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Late marking allowed for
-    <Input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
+   <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-hours">Late marking allowed for</label>
+    <Input id="attendance-policy-hours" type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
      onChange={e=>{setHours(e.target.value);setMessage("");setFailed(false);}} aria-describedby="late-marking-help"
      aria-invalid={failed&&!withinRange}
      className="min-h-11 w-full md:min-h-9"/>
@@ -90,9 +90,9 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>setHours(String(DEFAULT_ATTENDANCE_POLICY.correctionWindowHours))}>Use default value</Button>
     </div>
     <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
-   </label>
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Minimum attendance
-    <Input type="number" min={1} max={100} step={1} value={threshold}
+   </div>
+   <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-threshold">Minimum attendance</label>
+    <Input id="attendance-policy-threshold" type="number" min={1} max={100} step={1} value={threshold}
      onChange={e=>{setThreshold(e.target.value);setMessage("");setFailed(false);}} aria-describedby="minimum-attendance-help"
      aria-invalid={failed&&!thresholdValid}
      className="min-h-11 w-full md:min-h-9"/>
@@ -103,7 +103,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>setThreshold(String(DEFAULT_ATTENDANCE_POLICY.eligibilityThresholdPercent))}>Use default value</Button>
     </div>
     <span id="minimum-attendance-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
-   </label>
+   </div>
   </div>
   <p className="hidden text-sm text-body print:block leading-[22px]">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
   <p className="text-xs text-muted-foreground print:hidden">Each Save updates only its own setting. Use default value selects 24 hours or 75%, but does not remove a college override or invent global/organization inheritance.</p>
