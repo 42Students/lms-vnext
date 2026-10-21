@@ -89,7 +89,7 @@ export const SUPER_ADMIN_COLLEGE_QUICK_ACTIONS=[
  {label:"Faculty",href:"/admin/faculty"},
  {label:"Students",href:"/admin/students"},
  {label:"Jobs",href:"/admin/placements"},
- {label:"Hiring Dashboard",href:"/admin/placements"},
+ {label:"Hiring Dashboard",href:"/admin/placements/analytics"},
  {label:"Attendance",href:"/admin/attendance"},
  {label:"Assignments",href:"/admin/assignments"},
  {label:"Quizzes",href:"/admin/quizzes"},

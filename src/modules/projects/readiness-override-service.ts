@@ -12,6 +12,18 @@ import {ProjectsServiceError} from "./errors";
 import {readinessOverrideInputSchema,isDuplicateProjectReadinessOverride,type ReadinessOverrideState} from "./readiness-override-model";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 
+/** Readiness override rows are authoritative state, not disposable analytics.
+ * Retention jobs must never compact this event type until a durable
+ * versioned per-project state table is registered, replayed and migrated.
+ * This invariant is exported to the activity retention owner as a contract;
+ * it does not by itself change the global activity retention worker.
+ */
+export const PROJECT_READINESS_OVERRIDE_RETENTION_POLICY={
+ protectedEventType:ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN,
+ allowCompaction:false,
+ requiresDurableSnapshotBeforePrune:true,
+} as const;
+
 type ReadableDb=Pick<ReturnType<typeof getDb>,"select">;
 export async function readProjectReadinessOverride(db:ReadableDb,projectId:string,collegeId:string) {
   const [row]=await db.select({metadata:activityEvents.metadata,occurredAt:activityEvents.occurredAt,
