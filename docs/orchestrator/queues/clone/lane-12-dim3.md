@@ -20,14 +20,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/projects/mentor-meetings-calendar.module.css`
 - [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
 - [x] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/public/public-auth-skin.module.css`
-- [ ] `src/components/tpo/legacy-company-year-chart.module.css`
-- [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/ui/button.tsx`
-- [ ] `src/components/ui/empty-state.tsx`
-- [ ] `src/components/ui/input.tsx`
-- [ ] `src/components/ui/popover.tsx`
+- [x] `src/components/public/public-auth-skin.module.css`
+- [x] `src/components/tpo/legacy-company-year-chart.module.css`
+- [x] `src/components/tpo/recruiter-saved-view-controls.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/ui/button.tsx`
+- [x] `src/components/ui/empty-state.tsx`
+- [x] `src/components/ui/input.tsx`
+- [x] `src/components/ui/popover.tsx`
 - [ ] `src/components/ui/tabs.tsx`
 - [ ] `src/components/placements/tpo-week-hour-calendar.module.css`
 - [ ] `src/components/projects/legacy-project-board.module.css`
