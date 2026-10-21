@@ -212,7 +212,7 @@ export default async function TpoMessagesPage({
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
       {tabs("recruiters")}
-      <TpoLiveRefresh intervalMs={4000}/>
+      <TpoLiveRefresh intervalMs={4000} pulseHref="/api/placements/tpo/messages/pulse"/>
       {recipientsUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm">The recruiter directory could not refresh. Existing conversations remain available; starting a new conversation is temporarily unavailable. <Link href="/tpo/messages" className="font-semibold text-link underline">Retry</Link></p>:null}
       <div role="tabpanel" id="tpo-messages-panel-recruiters" aria-labelledby="tpo-messages-tab-recruiters" aria-label="Recruiter conversations"
         className="mt-4 grid min-w-0 overflow-hidden rounded-lg border border-border lg:grid-cols-[minmax(280px,340px)_minmax(0,1fr)]">
