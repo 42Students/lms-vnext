@@ -10,6 +10,7 @@ import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
+import {useToast} from "@/components/ui/toast";
 import {Disclosure} from "@/components/ui/disclosure";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
@@ -23,6 +24,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  lessons:readonly Lesson[];deliveries:readonly Delivery[];
 }){
  const router=useRouter();
+ const {showToast}=useToast();
  const [opened,setOpened]=useState(false);
  const [keepOpen,setKeepOpen]=useState(false);
  const [offeringId,setOfferingId]=useState(lessons[0]?.offeringId??"");
@@ -114,7 +116,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setPoints("0");
    setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setFieldErrors({});
-   setMessage("Assignment created");
+   setMessage("Assignment saved");
+   showToast({tone:"success",title:"Assignment saved"});
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
   finally{lock.current=false;setPending(false);}
@@ -131,6 +134,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    title="Create Assignment" description="Select a course, audience and assignment details."
    className="max-w-[720px]">
    <div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
+    <p className="text-xs font-semibold text-muted-foreground sm:col-span-2">1. Course, Lesson and Section</p>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
     <Select value={offeringId} disabled={pending} onChange={e=>{
       const next=e.target.value;setOfferingId(next);setFieldErrors(old=>({...old,course:undefined,lesson:undefined,section:undefined}));
@@ -164,6 +168,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
       {section.sectionName} ({section.sectionCode})
      </option>)}
     </Select>{fieldErrors.section?<span role="alert" className="text-xs text-error">{fieldErrors.section}</span>:null}</label>:null}
+   <p className="border-t border-border pt-3 text-xs font-semibold text-muted-foreground sm:col-span-2">2. Assignment details</p>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
     <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} aria-invalid={Boolean(fieldErrors.title)} onChange={e=>{setTitle(e.target.value);setFieldErrors(old=>({...old,title:undefined}));}}
      className="min-h-11 w-full md:min-h-9"/></label>
@@ -189,6 +194,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
     </div>
    </Disclosure>
+   <p className="border-t border-border pt-3 text-xs font-semibold text-muted-foreground sm:col-span-2">3. Resources and publishing</p>
+   <p className="text-xs text-body sm:col-span-2">Save the draft first. Add verified private files and HTTPS links using the resource editor before publishing. Existing uploads are never silently discarded.</p>
    <label className="flex min-h-11 min-w-0 items-center gap-2 text-sm sm:col-span-2">
     <Checkbox checked={keepOpen} disabled={pending}
      onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving

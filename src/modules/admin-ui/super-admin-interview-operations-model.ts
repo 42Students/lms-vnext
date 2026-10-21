@@ -1,7 +1,7 @@
 export type SuperAdminCalendarRound={
  id:string;roundId:string|null;jobId:string|null;jobTitle:string|null;
  title:string;companyName:string;status:string;kind:string;
- startsAt:string;endsAt:string|null;venue:string|null;
+ startsAt:string;endsAt:string|null;venue:string|null;meetingUrl?:string|null;
  candidateMembershipId?:string|null;candidateName?:string|null;interviewer?:string|null;
  departmentId?:string|null;departmentName?:string|null;
  mode?:"Virtual"|"On campus"|"Not recorded";
