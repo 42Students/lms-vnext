@@ -42,7 +42,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_tenant-directory-csv-control.tsx.md` (edit src/components/admin/tenant-directory-csv-control.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-11_recruiter-drives-index.md.md` (new; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_super-admin-program-input.ts.md` (edit src/modules/admin-ui/super-admin-program-input.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_app_api_skills_route.ts.md` (edit src/app/api/skills/route.ts; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_app_api_skills_route.ts.md` (edit src/app/api/skills/route.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_learner-project-activity.tsx.md` (edit src/components/projects/learner-project-activity.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_app_api_courses_courseId_route.ts.md` (edit src/app/api/courses/[courseId]/route.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_super-admin-drive-pipeline-service.ts.md` (edit src/modules/placements/super-admin-drive-pipeline-service.ts; 3 findings; best P1)
