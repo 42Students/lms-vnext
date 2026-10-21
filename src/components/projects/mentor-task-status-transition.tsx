@@ -48,7 +48,7 @@ export function MentorTaskStatusTransition(props:{
   }
   return <>
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-end">
-      <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body md:w-48">Task state
+      <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:w-48">Task state
         <Select aria-label={"Next task state for task "+props.taskId} value={selected}
           onChange={event=>{setSelected(event.target.value);setError(null);}}
           disabled={pending} className="min-h-11 w-full min-w-0 md:min-h-9">
@@ -56,7 +56,7 @@ export function MentorTaskStatusTransition(props:{
         </Select>
       </label>
       {selected==="BLOCKED"&&!props.blockerReason?.trim()?
-        <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body md:min-w-64 md:max-w-xl md:flex-1">
+        <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] md:min-w-64 md:max-w-xl md:flex-1">
           What's blocking this task?
           <Input type="text" value={newBlockerReason} maxLength={2000}
             onChange={event=>setNewBlockerReason(event.target.value)}

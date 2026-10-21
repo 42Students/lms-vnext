@@ -63,7 +63,7 @@ export function TpoTrustToggle({
       description={"This changes only this college-company relationship, not recruiter-domain allowlisting or direct login permissions."}
       confirmLabel={nextTrusted?"Mark company trusted":"Remove company trust"}
       pending={pending} confirmDisabled={!valid} confirmVariant={nextTrusted?"primary":"danger"} onConfirm={()=>void submit()}>
-      <label className="block min-w-0 space-y-2 text-sm font-semibold text-foreground">
+      <label className="block min-w-0 space-y-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
         {"Reason for "+(nextTrusted?"trusting ":"removing trust from ")+companyName+" (at least 8 characters):"}
         <Textarea autoFocus value={reason} onChange={event=>{setReason(event.target.value);setError(null);}}
           maxLength={500} rows={3} className="min-h-24 w-full" disabled={pending} aria-invalid={reason.length>0&&!valid}

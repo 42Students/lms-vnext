@@ -45,7 +45,7 @@ export function MentorProjectAboutEditor({project}:{project:{
     {label:"Due date or milestone",value:dueLabel,change:setDueLabel,max:160},
     {label:"Next step",value:nextAction,change:setNextAction,max:4000},
     {label:"Requires attention",value:blocker,change:setBlocker,max:4000},
-   ]).map(field=><label key={field.label} className="block text-sm font-semibold">{field.label}
+   ]).map(field=><label key={field.label} className="block text-[13px] font-semibold">{field.label}
     <Textarea className="mt-1 min-h-16 w-full"
      disabled={busy} maxLength={field.max} value={field.value} onChange={e=>field.change(e.target.value)}/>
    </label>)}

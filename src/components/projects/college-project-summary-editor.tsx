@@ -35,13 +35,13 @@ export function CollegeProjectSummaryEditor({project}:{project:Project}){
   <Button variant="secondary" className="min-h-11 md:min-h-9" type="button" onClick={()=>setOpen(value=>!value)}>
    Edit workspace summary</Button>
   {open&&<div className="mt-3 grid gap-3">
-   <label className="text-sm">Workspace title
+   <label className="text-[13px]">Workspace title
     <Input className="mt-1 w-full" maxLength={200}
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="text-sm">Summary
+   <label className="text-[13px]">Summary
     <Textarea className="mt-1 w-full" maxLength={4000}
      value={summary} onChange={e=>setSummary(e.target.value)}/></label>
-   <label className="text-sm">Status
+   <label className="text-[13px]">Status
     <Select className="mt-1 w-full" value={status}
      onChange={e=>setStatus(e.target.value)}>
      <option value={project.status}>{project.status}</option>

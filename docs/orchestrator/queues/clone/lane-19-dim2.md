@@ -163,26 +163,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/placements/tpo-request-page-clipboard.tsx`
 - [x] `src/components/placements/tpo-round-result-entry-form.tsx`
 - [x] `src/components/placements/tpo-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/placements/tpo-selection-import.tsx`
-- [ ] `src/components/placements/tpo-trust-toggle.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/profile/learner-skill-catalog-input.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/college-project-mentor-dialog.tsx`
-- [ ] `src/components/projects/college-project-student-roster-dialog.tsx`
-- [ ] `src/components/projects/college-project-summary-editor.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/learner-task-progress-control.tsx`
-- [ ] `src/components/projects/learner-task-status-actions.tsx`
-- [ ] `src/components/projects/mentor-delivery-lock-control.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-project-about-editor.tsx`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/mentor-task-status-transition.tsx`
-- [ ] `src/components/projects/project-admin-submission-review.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-season-controls.tsx`
+- [x] `src/components/placements/tpo-selection-import.tsx`
+- [x] `src/components/placements/tpo-trust-toggle.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/projects/college-project-mentor-dialog.tsx`
+- [x] `src/components/projects/college-project-student-roster-dialog.tsx`
+- [x] `src/components/projects/college-project-summary-editor.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-task-progress-control.tsx`
+- [x] `src/components/projects/learner-task-status-actions.tsx`
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/projects/mentor-meeting-reschedule.tsx`
+- [x] `src/components/projects/mentor-project-about-editor.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/mentor-task-status-transition.tsx`
+- [x] `src/components/projects/project-admin-submission-review.tsx`
 - [ ] `src/components/projects/project-delivery-file-uploader.tsx`
 - [ ] `src/components/projects/project-delivery-reopen-control.tsx`
 - [ ] `src/components/projects/project-lifecycle-actions.tsx`

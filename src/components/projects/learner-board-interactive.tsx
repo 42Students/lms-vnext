@@ -129,7 +129,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
           <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
         {task.sprintId===null && own && !readOnly ?
-          <label className="mt-2 block text-xs font-semibold text-body">
+          <label className="mt-2 block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
             Pull into sprint
             <Select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
               onChange={event=>{if(event.target.value)void pull(task,event.target.value);}}
@@ -140,7 +140,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
             {!sprints.some(s=>s.status==="ACTIVE")?
               <span className="mt-1 block text-xs font-normal">Start a sprint before moving backlog tasks onto the board.</span>:null}
           </label> : null}
-        {editable?<label className="mt-2 block text-xs font-semibold text-body">
+        {editable?<label className="mt-2 block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
           Move {task.title}
           <Select aria-label={"Move "+task.title} value={task.status} disabled={busy}
            onChange={event=>void move(task.id,event.target.value as EditableStatus)}
