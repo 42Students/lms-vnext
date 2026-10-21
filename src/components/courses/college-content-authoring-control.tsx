@@ -5,6 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
+import { DataTable } from "@/components/ui/data-table";
+import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
@@ -39,18 +42,35 @@ function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){
  if(matches.length>1)throw Error("This local time occurs twice due to a daylight-saving change. Choose another time.");
  return matches[0]!;
 }
+function initialLiveSchedule(){
+ const tomorrow=new Date(Date.now()+24*60*60_000);
+ const start=new Date(tomorrow.getTime()+60*60_000);
+ start.setUTCMinutes(Math.ceil(start.getUTCMinutes()/15)*15,0,0);
+ const end=new Date(start.getTime()+60*60_000);
+ return {start:dateInput(start.toISOString()),end:dateInput(end.toISOString())};
+}
 export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,existingPage=1,existingFilters,materialsEnabled=false}:{
  kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
  existingPage?:number;existingFilters?:{courseId:string;lessonId:string;sectionId:string;search:string};
  materialsEnabled?:boolean;
 }){
- const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
+ const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(kind!=="RESOURCE"&&lessons.length>0);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
   [url,setUrl]=useState(""),[notes,setNotes]=useState(""),[duration,setDuration]=useState(""),
-  [start,setStart]=useState(""),[end,setEnd]=useState(""),
+  [start,setStart]=useState(kind==="LIVE_CLASS"?initialLiveSchedule().start:""),
+  [end,setEnd]=useState(kind==="LIVE_CLASS"?initialLiveSchedule().end:""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [visibleToStudents,setVisibleToStudents]=useState(true);
- const [initialDraft,setInitialDraft]=useState("");
+ const [initialDraft,setInitialDraft]=useState(()=>{
+  const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
+  return JSON.stringify({lessonId:lessons[0]?.id??"",title:"",url:"",notes:"",duration:"",
+   start:times.start,end:times.end,deliveryId:"",timeZone:"Asia/Kolkata",
+   removeLink:false,visibleToStudents:true});
+ });
+ const [pendingArchive,setPendingArchive]=useState<Existing|null>(null);
+ const [pendingPublish,setPendingPublish]=useState<Existing|null>(null);
+ const [saveConfirmOpen,setSaveConfirmOpen]=useState(false);
+ const [courseSearch,setCourseSearch]=useState("");
  const [discardOpen,setDiscardOpen]=useState(false);
  const [newResourceId,setNewResourceId]=useState<string|null>(null);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
@@ -64,6 +84,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [deliveryId,setDeliveryId]=useState("");
  const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
+ const courseOptions=[...new Map(lessons.map(row=>[row.offeringId,
+  {id:row.offeringId,name:row.course,code:row.courseCode}])).values()];
+ const authorCourseId=selectedLesson?.offeringId??"";
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
  const listOfferingId=lessons.find(lesson=>lesson.id===listLessonId)?.offeringId??
    existing.find(item=>item.lessonId===listLessonId)?.offeringId;
@@ -86,7 +109,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   if(!("existingPage" in changes))params.delete("existingPage");
   router.replace(window.location.pathname+(params.size?"?"+params.toString():""));
  }
- const text=kind==="YOUTUBE"?"Link YouTube video":kind==="RESOURCE"?"Add Resource":"Schedule live class";
+ const text=kind==="YOUTUBE"?"Add a video":kind==="RESOURCE"?"Add Resource":"Schedule a live class";
  const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents});
  function closeEditor(){
   if(busy)return;
@@ -104,14 +127,18 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:item.visibleToStudents}));
  }
  function fresh(){
-  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");setTimeZone("Asia/Kolkata");setDeliveryId("");
+  const times=kind==="LIVE_CLASS"?initialLiveSchedule():{start:"",end:""};
+  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");
+  setStart(times.start);setEnd(times.end);setTimeZone("Asia/Kolkata");setDeliveryId("");
   setError("");setMessage("");setRemoveLink(false);setVisibleToStudents(true);
   setDiscardOpen(false);
-  setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:"",end:"",
+  setInitialDraft(JSON.stringify({lessonId,title:"",url:"",notes:"",duration:"",start:times.start,end:times.end,
    deliveryId:"",timeZone:"Asia/Kolkata",removeLink:false,visibleToStudents:true}));
  }
- async function save(){
+ async function save(confirmed=false){
   if(busy)return;
+  if(!confirmed){setSaveConfirmOpen(true);return;}
+  setSaveConfirmOpen(false);
   if(!title.trim()||!lessonId||title.trim().length>255){
    setError(kind==="RESOURCE"?"Choose a course/lesson and enter a Resource title (1–255 characters).":
     "Choose a Lesson and enter a Title (1–255 characters).");return;
@@ -154,7 +181,6 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    if(!editing&&(nextOverride[lessonId]??selectedLesson?.nextSequence??0)>10000){
     setError("This Lesson has reached the content ordering limit.");return;
    }
-   if(!window.confirm(editing?"Save changes?":"Create this content?"))return;
    const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
@@ -192,11 +218,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save Order.");}
   finally{setBusy(false);}
  }
- async function transition(item:Existing,action:"PUBLISH"|"ARCHIVE"){
+ async function transition(item:Existing,action:"PUBLISH"|"ARCHIVE",confirmed=false){
   if(busy)return;
-  if(!window.confirm(action==="PUBLISH"?
-    "Publish this content to enrolled students?":
-    "Delete this content from student access? The record will be archived."))return;
+  if(!confirmed){
+   if(action==="PUBLISH")setPendingPublish(item);
+   else setPendingArchive(item);
+   return;
+  }
+  setPendingPublish(null);setPendingArchive(null);
   setBusy(true);setError("");setMessage("");
   try{
    const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id)+"/transition",{
@@ -213,19 +242,27 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content");}
   finally{setBusy(false);}
  }
- return <section className="min-w-0 space-y-3 md:flex-none">
-  <div className="flex flex-wrap items-center gap-3">
-   <h2 className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
-   <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
-    onClick={fresh} className="w-full md:w-auto">{text}</Button>
-  </div>
-  {!lessons.length&&<p className="text-sm leading-[22px]">Create a course offering, learning path and lesson before adding content.</p>}
-  {open&&<div className="grid min-w-0 max-w-3xl gap-4 md:grid-cols-2">
+ const editorFields=(
+  <div className="grid min-w-0 max-w-3xl gap-4 md:grid-cols-2">
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+    <Input type="search" className="mt-[6px] mb-2" aria-label="Search courses"
+      value={courseSearch} onChange={event=>setCourseSearch(event.target.value)} placeholder="Search course"/>
+    <Select value={authorCourseId} disabled={Boolean(editing)}
+      onChange={event=>{
+       const next=lessons.find(lesson=>lesson.offeringId===event.target.value);
+       setLessonId(next?.id??"");setDeliveryId("");
+      }} className="mt-[6px]">
+      <option value="">Select course</option>
+      {courseOptions.filter(course=>course.id===authorCourseId||
+       (course.name+" "+course.code).toLocaleLowerCase().includes(courseSearch.trim().toLocaleLowerCase()))
+       .map(course=><option key={course.id} value={course.id}>{course.name} · {course.code}</option>)}
+    </Select>
+   </label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
     <Select className="mt-[6px]" value={selectedLesson?lessonId:""}
      onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
      {editing&&!selectedLesson?<option value="">Saved Lesson outside authoring picker</option>:null}
-     {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
+     {lessons.filter(lesson=>lesson.offeringId===authorCourseId).map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}</option>)}
     </Select></label>
    {editing&&!selectedLesson?<p role="status" className="text-xs text-muted-foreground md:col-span-2 leading-5">
@@ -238,8 +275,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      {allowedDeliveries.map(row=><option key={row.deliveryId} value={row.deliveryId}>
       {row.sectionName} ({row.sectionCode})</option>)}
     </Select></label>
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-    <Input required maxLength={255} className="mt-[6px]"
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Content Title
+    <Input required maxLength={255} className="mt-[6px]" placeholder="e.g., Introduction Video"
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
     <Input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-[6px]"
@@ -265,12 +302,22 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      </Select>
      <span className="mt-1 block text-xs text-muted-foreground">Changing Time Zone preserves the scheduled instant and converts the displayed dates.</span>
     </label>
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date and Time
-     <Input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
-      className="mt-1"/></label>
-    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date and Time
-     <Input type="datetime-local" required value={end} onChange={e=>setEnd(e.target.value)}
-      className="mt-1"/></label>
+    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start Date
+      <Input type="date" required value={start.split("T")[0]??""}
+       onChange={event=>setStart(event.target.value+"T"+(start.split("T")[1]||"09:00"))}
+       className="mt-1"/>
+      <span className="mt-2 block">Start Time</span>
+      <Input type="time" required step={900} value={start.split("T")[1]??""}
+       onChange={event=>setStart((start.split("T")[0]||dateInput(new Date().toISOString()).split("T")[0])+"T"+event.target.value)}
+       className="mt-1"/></label>
+    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End Date
+      <Input type="date" required value={end.split("T")[0]??""}
+       onChange={event=>setEnd(event.target.value+"T"+(end.split("T")[1]||"10:00"))}
+       className="mt-1"/>
+      <span className="mt-2 block">End Time</span>
+      <Input type="time" required step={900} value={end.split("T")[1]??""}
+       onChange={event=>setEnd((end.split("T")[0]||dateInput(new Date().toISOString()).split("T")[0])+"T"+event.target.value)}
+       className="mt-1"/></label>
    </>}
    <label className="flex items-center gap-2 text-sm md:col-span-2">
     <Checkbox checked={visibleToStudents} disabled={busy}
@@ -283,10 +330,44 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </label>:null}
    <div className="flex flex-col-reverse gap-2 border-t border-border pt-3 md:col-span-2 md:flex-row md:justify-end">
     <Button type="button" variant="primary" loading={busy} disabled={busy} onClick={()=>void save()}>
-     {busy?"Saving…":"Save"}</Button>
+     {busy?"Saving…":editing?"Save Changes":kind==="RESOURCE"?"Add Resource":"Add Content"}</Button>
     <Button type="button" variant="secondary" disabled={busy} onClick={closeEditor}>Cancel</Button>
    </div>
-  </div>}
+  </div>
+ );
+ return <section className="min-w-0 space-y-3 md:flex-none">
+  <div className="flex flex-wrap items-center gap-3">
+   <h2 className={kind==="LIVE_CLASS"||kind==="RESOURCE"?"sr-only":"font-semibold"}>{kind==="YOUTUBE"?"Videos":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
+   <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
+    onClick={fresh} className="w-full md:w-auto">{text}</Button>
+  </div>
+  {!lessons.length&&<p role="status" className="text-sm leading-[22px]">Create a course offering, learning path and lesson before adding content.
+    <Link href="/college/courses" className="ml-2 font-semibold text-link underline">Go to Courses</Link>
+  </p>}
+  {open ? kind==="RESOURCE"?
+    <Dialog open={open} onOpenChange={value=>{if(!value)closeEditor();}}
+      title={editing?"Edit Content: "+title:"Add Resource"}
+      description="Select a Course and Lesson to manage the resource."
+      className="max-w-[700px]" dismissible={!busy}>
+      {editorFields}
+    </Dialog>:
+    <section aria-label="Add Content" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+      <h3 className="mb-3 font-semibold">{editing?"Edit Content: "+title:"Add Content"}</h3>
+      {editorFields}
+    </section>:null}
+  <ConfirmDialog open={saveConfirmOpen} onOpenChange={setSaveConfirmOpen}
+    title={editing?"Save changes?":"Create this content?"} confirmVariant="primary"
+    confirmLabel={editing?"Save changes":"Create"}
+    pending={busy} onConfirm={()=>void save(true)}/>
+  <ConfirmDialog open={Boolean(pendingArchive)} onOpenChange={open=>{if(!open)setPendingArchive(null);}}
+    title={kind==="RESOURCE"?"Delete this resource?":"Are you sure to delete this content?"}
+    description="Students will no longer see it. The record is archived and historical files are retained."
+    confirmLabel="Yes" cancelLabel="No" pending={busy}
+    onConfirm={()=>{if(pendingArchive)void transition(pendingArchive,"ARCHIVE",true);}}/>
+  <ConfirmDialog open={Boolean(pendingPublish)} onOpenChange={open=>{if(!open)setPendingPublish(null);}}
+    title="Publish this content?" description="Enrolled students will be able to see this content."
+    confirmVariant="primary" confirmLabel="Publish" pending={busy}
+    onConfirm={()=>{if(pendingPublish)void transition(pendingPublish,"PUBLISH",true);}}/>
   <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
    title={kind==="RESOURCE"?"Discard the changes to this resource?":"Discard lesson-content edits?"}
    description="Unsaved changes will be lost." confirmLabel="Discard changes"
@@ -352,32 +433,42 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      onClick={()=>applyExistingFilters({existingPage:String(existingPage+1)})}>Next page</Button>
    </div>
    {matching.length===0?<p className="text-xs text-muted-foreground leading-5">No saved items match this Lesson and Section.</p>:null}
-   <ul className="space-y-1">{matching.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
-    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.courseCode} · {item.lessonName} · {item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?
-        ((deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"Section")+" ("+
-         (deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionCode??"")+")"):"One section":"All sections taking this course"})</span></span>
-    <div className="flex min-w-0 flex-wrap items-center gap-2">
-     {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
-      {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
-     <label className="flex items-center gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order
-      <Input type="number" min={1} max={10001} value={orderDraft[item.id]??String(item.sequence+1)}
-       onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
-       className="w-16 rounded border border-border bg-background p-1"/>
-     </label>
-     <Button type="button" variant="link" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</Button>
-     {kind==="RESOURCE"&&materialsEnabled?<Button type="button" className="underline"
-      aria-expanded={openMaterialsId===item.id} disabled={busy}
-      onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</Button>:null}
-     <Button type="button" variant="link" disabled={busy} onClick={()=>select(item)}>Edit</Button>
-     {item.status==="DRAFT"&&<Button type="button" variant="primary" disabled={busy}
-       onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>}
-     <Button type="button" variant="danger" disabled={busy}
-       onClick={()=>void transition(item,"ARCHIVE")}>Delete</Button>
-    </div>
-    {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId===item.id?
-      <LessonResourceMaterialsControl key={item.id} contentId={item.id}
-       deliveryId={item.deliveryId} editable/>:null}
-   </li>)}</ul>
+   <p id="content-order-help" className="sr-only">Use the arrow keys to adjust a numeric Order input, then select Save order to apply it.</p>
+   <DataTable mobileMode="scroll" caption="Existing Content"
+     empty={<p className="text-sm">No content matches the selected Course and Lesson.</p>}
+     getRowKey={item=>item.id} rows={matching}
+     columns={[
+      {key:"title",header:"Title",mobilePriority:"primary",cell:item=>item.title},
+      {key:"type",header:"Type",cell:()=>kind==="YOUTUBE"?"YouTube":kind==="RESOURCE"?"Resource":"Live class"},
+      {key:"order",header:"Order",cell:item=>{
+       return <div className="flex items-center gap-1">
+        <Input type="number" aria-describedby="content-order-help"
+         aria-label={"Order for "+item.title} min={1} max={10001}
+         value={orderDraft[item.id]??String(item.sequence+1)}
+         onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
+         className="w-16"/>
+        <Button type="button" size="sm" variant="ghost" disabled={busy}
+         onClick={()=>void saveOrder(item)}>Save order</Button>
+       </div>;
+      }},
+      {key:"students",header:"Students",cell:item=>item.visibleToStudents?"Visible":"Hidden"},
+      {key:"content",header:"Content",cell:item=>item.externalUrl?
+       <a className="text-link underline" href={item.externalUrl} target="_blank" rel="noopener noreferrer">
+        {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}
+       </a>:"—"},
+      {key:"actions",header:"Action",mobilePriority:"action",cell:item=>
+       <div className="flex flex-wrap gap-2">
+        {kind==="RESOURCE"&&materialsEnabled?<Button size="sm" type="button" variant="ghost"
+         onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</Button>:null}
+        <Button size="sm" type="button" variant="ghost" disabled={busy} onClick={()=>select(item)}>Edit</Button>
+        {item.status==="DRAFT"?<Button size="sm" type="button" variant="primary"
+         disabled={busy} onClick={()=>void transition(item,"PUBLISH")}>Publish</Button>:null}
+        <Button size="sm" type="button" variant="danger" disabled={busy}
+         onClick={()=>void transition(item,"ARCHIVE")}>Delete</Button>
+       </div>},
+     ]}/>
+   {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId? <LessonResourceMaterialsControl
+      contentId={openMaterialsId} deliveryId={existing.find(item=>item.id===openMaterialsId)?.deliveryId??null} editable/>:null}
   </div></details>}
   {error&&<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>}
   {message&&<p role="status" className="text-sm leading-[22px]">{message}</p>}
