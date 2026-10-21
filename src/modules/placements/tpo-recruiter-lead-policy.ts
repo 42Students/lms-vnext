@@ -1,3 +1,34 @@
+/** Exactly the nine V1 ChoicesController recruiterLeadSources options.
+ * MANUAL and IMPORT are system labels, never user-pickable form values.
+ * Keep their values for history/reporting even when the editor hides them. */
+export const RECRUITER_LEAD_SOURCE_OPTIONS = [
+ {value:"ALUMNI",label:"Alumni",pickable:true},
+ {value:"REFERRAL",label:"Referral",pickable:true},
+ {value:"LINKEDIN",label:"LinkedIn",pickable:true},
+ {value:"JOB_PORTAL",label:"Job portal",pickable:true},
+ {value:"EVENT",label:"Event or job fair",pickable:true},
+ {value:"COLD_OUTREACH",label:"Cold outreach",pickable:true},
+ {value:"COMPANY_REACHED_OUT",label:"Company reached out",pickable:true},
+ {value:"MANUAL",label:"Added by hand",pickable:false},
+ {value:"IMPORT",label:"Imported",pickable:false},
+] as const;
+export type RecruiterLeadSource = (typeof RECRUITER_LEAD_SOURCE_OPTIONS)[number]["value"];
+export const PICKABLE_RECRUITER_LEAD_SOURCES =
+ RECRUITER_LEAD_SOURCE_OPTIONS.filter(source=>source.pickable);
+export function recruiterLeadSourceLabel(source:string|null|undefined){
+ return RECRUITER_LEAD_SOURCE_OPTIONS.find(option=>option.value===source)?.label??"Not recorded";
+}
+export function normalizePickedRecruiterLeadSource(
+ raw:string|null|undefined,
+):RecruiterLeadSource|null{
+ if(!raw?.trim())return null;
+ const value=raw.trim().toLowerCase();
+ const result=PICKABLE_RECRUITER_LEAD_SOURCES.find(option=>
+  option.value.toLowerCase()===value.replaceAll(" ","_")||option.label.toLowerCase()===value);
+ if(!result)throw new Error("Choose a recruiter lead source from the available options");
+ return result.value;
+}
+
 export type TpoRecruiterLeadStage =
   | "NEW"
   | "CONTACTED"
