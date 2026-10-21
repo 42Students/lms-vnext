@@ -87,7 +87,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
    if(moving===target||!stableOrder.includes(moving)||!stableOrder.includes(target))return;
    const next=stableOrder.filter(id=>id!==moving);
    next.splice(next.indexOf(target),0,moving);
-   void saveOrder(next);
+   setOrderIds(next);
  }
 
  const filtered=rows.filter(row=>{
