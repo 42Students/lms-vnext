@@ -36,6 +36,15 @@ import {
   type LearnerAttendanceRow,
 } from "./model";
 
+/** A historical attendanceThresholdPercent import must be validated before
+ * updating attendancePolicies; the absence of an override uses 75, not zero. */
+export function legacyAttendanceThresholdPercent(raw:unknown):number|null {
+ if(raw===null||raw===undefined||raw==="")return null;
+ const n=typeof raw==="number"?raw:typeof raw==="string"?Number(raw):NaN;
+ if(!Number.isFinite(n)||n<1||n>100)return null;
+ return n;
+}
+
 const DEFAULT_POLICY = {
   eligibilityThresholdPercent: 75,
   correctionWindowHours: 24,
@@ -61,6 +70,9 @@ export async function getLearnerAttendanceWorkspace(
   options: {
     includeHistorical?: boolean;
     deliveryId?: string;
+    /** Old integer course/class IDs are accepted only for a unique authorized delivery. */
+    legacyCourseId?: number;
+    legacyClassId?: number;
     /** Trusted server-side half-open IST calendar window. */
     window?: { from: Date; to: Date };
   } = {},
@@ -79,6 +91,10 @@ export async function getLearnerAttendanceWorkspace(
     !Number.isFinite(options.window.to.getTime()) ||
     options.window.from >= options.window.to
   )) throw new RangeError("INVALID_LEARNER_ATTENDANCE_WINDOW");
+  if(options.legacyCourseId!==undefined&&(!Number.isSafeInteger(options.legacyCourseId)||options.legacyCourseId<=0))
+    throw new RangeError("INVALID_LEGACY_ATTENDANCE_COURSE");
+  if(options.legacyClassId!==undefined&&(!Number.isSafeInteger(options.legacyClassId)||options.legacyClassId<=0))
+    throw new RangeError("INVALID_LEGACY_ATTENDANCE_CLASS");
   // A forged college/membership pair must be denied, not rendered as an
   // empty attendance workspace.
   const [persisted] = await getDb()
@@ -133,10 +149,17 @@ export async function getLearnerAttendanceWorkspace(
     };
   }
 
-  const authorizedDeliveries=options.deliveryId?
-    deliveries.filter(delivery=>delivery.deliveryId===options.deliveryId):deliveries;
-  if(options.deliveryId&&authorizedDeliveries.length===0)
+  const authorizedDeliveries=deliveries.filter(delivery=>
+    (!options.deliveryId||delivery.deliveryId===options.deliveryId)&&
+    (options.legacyCourseId===undefined||delivery.legacyCourseId===options.legacyCourseId)&&
+    (options.legacyClassId===undefined||delivery.legacyClassId===options.legacyClassId));
+  if((options.deliveryId||options.legacyCourseId!==undefined||
+      options.legacyClassId!==undefined)&&authorizedDeliveries.length===0)
     throw new AuthorizationError("courses.read");
+  // A legacy course can occur in more than one class or term. Never silently
+  // expose a different class's record merely because numeric IDs match.
+  if(options.legacyCourseId!==undefined&&!options.deliveryId&&authorizedDeliveries.length>1)
+    throw new RangeError("AMBIGUOUS_LEGACY_COURSE_ATTENDANCE");
   // Legacy numeric courseId is insufficient when a course spans sections/terms;
   // read only this learner's authorized UUID deliveries. Historical completed
   // enrollments are included only when includeHistorical is requested.
@@ -256,6 +279,11 @@ export async function getLearnerAttendanceWorkspace(
       asc(sectionScheduleEvents.startsAt),
     );
 
+  // Legacy GET /learner/{id}/attendance?courseId=&classId=&dateRange= maps
+  // numeric IDs to an authorized delivery ID and an IST half-open window.
+  // Never accept an arbitrary learner ID here: the signed-in learner membership
+  // is authoritative. A failed authorized read must be handled at the page
+  // boundary with Retry rather than substituting stale/empty results.
   // Legacy {classes, absentids}: classScheduleId -> scheduleEventId;
   // class/term/course -> authorized delivery UUID; attendanceTaken ->
   // attendanceSessions MARKED; legacy active absence (null status) -> ABSENT;
@@ -280,6 +308,8 @@ export async function getLearnerAttendanceWorkspace(
     (delivery) => ({
       deliveryId: delivery.deliveryId,
       courseId: delivery.courseId,
+      legacyCourseId: delivery.legacyCourseId,
+      legacyClassId: delivery.legacyClassId,
       courseName: delivery.courseName,
       courseCode: delivery.courseCode,
       sectionName: delivery.sectionName,
