@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,gt,inArray} from "drizzle-orm";
+import {and,asc,desc,eq,gt,inArray,isNull,sql} from "drizzle-orm";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -9,7 +9,7 @@ import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
  placementApplicationScreenings,placementApplicationScreeningHistory,
  placementApplicationStatusHistory,placementJobRoleOptions,placementJobs,
- placementJobRounds,placementOffers,users} from "@/db/schema";
+ placementJobRounds,placementOffers,placementRoundResults,users} from "@/db/schema";
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
@@ -160,6 +160,22 @@ export async function getCollegeApplicationDetail(
     .from(placementOffers).where(eq(placementOffers.applicationId,application.id))
     .orderBy(asc(placementOffers.issuedAt)).limit(50),
  ]);
+ // Only real applied, unsuperseded score_percent evidence is displayable.
+ // There is no vNext automated matching score or partial-match algorithm.
+ // Join the round to this authorized job so imported foreign results cannot
+ // accidentally appear under the selected college's application.
+ const [recordedScore] = await db.select({
+   scorePercent:sql<number|null>`max(${placementRoundResults.scorePercent})::integer`,
+ }).from(placementRoundResults)
+  .innerJoin(placementJobRounds,and(
+   eq(placementJobRounds.id,placementRoundResults.roundId),
+   eq(placementJobRounds.jobId,jobId)))
+  .where(and(
+   eq(placementRoundResults.applicationId,application.id),
+   eq(placementRoundResults.status,"APPLIED"),
+   isNull(placementRoundResults.supersededAt),
+  ));
+ const assessmentScore=recordedScore?.scorePercent??null;
  const [receiptRecord]=await db.select({snapshot:profileVerifications.submittedSnapshot})
    .from(profileVerifications).where(and(
     eq(profileVerifications.learnerMembershipId,application.membershipId),
@@ -211,7 +227,11 @@ export async function getCollegeApplicationDetail(
   internalNoteVersion:latestNote?.id??null,
   offerLetterUrl:offers.at(-1)?.offerLetterUrl??null,
   rounds,offers,
-  scoring:{available:false,reason:"No persisted screening score is available for this application."},
+  scoring:{available:assessmentScore!==null,scorePercent:assessmentScore,
+   partial:false,
+   reason:assessmentScore!==null
+    ?"Highest recorded score from applied assessment rounds; not an automated match score."
+    :"No applied assessment round score is recorded. Automated match scoring is not enabled."},
   resume:{available:Boolean(resumeUrl),url:resumeUrl,
    reason:resumeUrl?"Open the verified resume through the authorized document route.":
     "A submitted verified private resume receipt is not available."}};
