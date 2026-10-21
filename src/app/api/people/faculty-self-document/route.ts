@@ -14,11 +14,15 @@ export async function GET(request:Request){
   const context=await getCurrentRequestContext();
   const current=await loadOwnFacultyProfileDocumentStaged(context);
   const section=new URL(request.url).searchParams.get("section");
-  if(section===null)return NextResponse.json(current);
+  if(section===null)return NextResponse.json({
+    ...current,
+    selfProfileHref:"/teacher/profile",
+    collegeAdminProfileHref:null,
+  },{headers:{"Cache-Control":"private, no-store"}});
   const parsed=facultySelfEditableSection.safeParse(section);
   if(!parsed.success)return NextResponse.json({error:"INVALID_SECTION"},{status:400});
   return NextResponse.json({section:parsed.data,value:current.document[parsed.data],
-    version:current.version});
+    version:current.version},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
 export async function PATCH(request:Request){
@@ -31,7 +35,8 @@ export async function PATCH(request:Request){
     {status:error instanceof FacultyProfileBodyTooLarge?413:400});
   }
   const result=await patchOwnFacultyProfileSection(context,body);
-  return NextResponse.json(result);
+  return NextResponse.json({...result,profileCompletenessRefresh:true},
+   {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
 
@@ -65,8 +70,10 @@ export async function DELETE(request:Request){
   const next=currentRows.filter(item=>item.id!==input.id);
   if(next.length===currentRows.length)
    return NextResponse.json({error:"PROFILE_ENTRY_NOT_FOUND"},{status:404});
-  return NextResponse.json(await patchOwnFacultyProfileSection(context,{
+  const result=await patchOwnFacultyProfileSection(context,{
    section:input.section,value:next,expectedVersion:input.expectedVersion,
-  }));
+  });
+  return NextResponse.json({...result,removedEntryId:input.id,
+    profileCompletenessRefresh:true},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
