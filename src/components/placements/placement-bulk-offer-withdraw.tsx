@@ -95,7 +95,7 @@ export function PlacementBulkOfferWithdraw({
 
   if (choices.length === 0) return null;
   return (
-    <section className="space-y-4 border-b border-border pb-5" aria-label="Bulk offer withdrawal">
+    <section className="space-y-4 border-b border-border pb-6" aria-label="Bulk offer withdrawal">
       <div>
         <h3 className="text-base font-semibold text-[var(--lms-heading)]">
           Bulk withdraw offers

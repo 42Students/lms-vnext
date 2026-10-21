@@ -420,65 +420,65 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/hr/recruiter-private-rating-editor.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
 - [ ] `src/components/placements/applicant-notes-panel.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [ ] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/college-report-navigation.tsx`
+- [x] `src/components/placements/college-report-navigation.tsx`
 - [ ] `src/components/placements/drive-day-roster.tsx`
 - [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.module.css`
+- [x] `src/components/placements/learner-career-calendar.module.css`
 - [ ] `src/components/placements/learner-career-calendar.tsx`
 - [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
+- [x] `src/components/placements/learner-interview-withdrawal-request.tsx`
 - [ ] `src/components/placements/learner-placement-job-detail.tsx`
 - [ ] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-metrics.module.css`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-metrics.module.css`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
 - [ ] `src/components/placements/learner-placement-offers.tsx`
 - [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/legacy-calendar-theme.module.css`
-- [ ] `src/components/placements/legacy-tpo-report-stats.module.css`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-bulk-offer-withdraw.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/legacy-calendar-theme.module.css`
+- [x] `src/components/placements/legacy-tpo-report-stats.module.css`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
 - [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-day-overview.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-day-overview.tsx`
 - [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
 - [ ] `src/components/placements/placement-operations-overview.tsx`
 - [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
 - [ ] `src/components/placements/public-join-preview-retry.tsx`
 - [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/report-bar-chart.module.css`
+- [x] `src/components/placements/report-bar-chart.module.css`
 - [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/super-admin-hiring-funnel.module.css`
-- [ ] `src/components/placements/tpo-applicant-review-form.tsx`
-- [ ] `src/components/placements/tpo-bulk-drive-reminder.tsx`
+- [x] `src/components/placements/super-admin-hiring-funnel.module.css`
+- [x] `src/components/placements/tpo-applicant-review-form.tsx`
+- [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
-- [ ] `src/components/placements/tpo-company-feedback-form.tsx`
-- [ ] `src/components/placements/tpo-company-interaction-form.tsx`
-- [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx`
-- [ ] `src/components/placements/tpo-company-person-editor.tsx`
-- [ ] `src/components/placements/tpo-delete-draft-action.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-company-feedback-form.tsx`
+- [x] `src/components/placements/tpo-company-interaction-form.tsx`
+- [x] `src/components/placements/tpo-company-lifecycle-editor.tsx`
+- [x] `src/components/placements/tpo-company-person-editor.tsx`
+- [x] `src/components/placements/tpo-delete-draft-action.tsx`
 - [ ] `src/components/placements/tpo-drive-change-requests.tsx`
 - [ ] `src/components/placements/tpo-drive-clone-action.tsx`
-- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
+- [x] `src/components/placements/tpo-drive-close-preview-form.tsx`
 - [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
+- [x] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
 - [ ] `src/components/placements/tpo-drive-saved-views.tsx`
 - [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
 - [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
 - [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
+- [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
 - [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
