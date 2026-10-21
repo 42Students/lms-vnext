@@ -244,7 +244,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className=""/></label>
     {message?<InlineNotice tone="error" message={message}/>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
-     <Button variant="secondary" type="button" disabled={saving} onClick={cancelDraft}
+     <Button variant="secondary" type="button" disabled={saving} onClick={()=>cancelDraft()}
       className="w-full sm:w-auto">Cancel</Button>
      <Button variant="primary" type="button" loading={saving} disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
       className="w-full sm:w-auto">{saving?"Saving…":"Add follow-up"}</Button>
@@ -258,7 +258,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     review?.kind==="LEAVE"?"Leave unfinished follow-up?":"Discard unfinished follow-up?"}
    description={review?.prompts[review.index]??""}
    confirmLabel={review?.kind==="LEAVE"||review?.kind==="DISCARD"?"Discard":
-    review?.index===review?.prompts.length-1?"Confirm":"Continue"}
+    review !== null && review.index === review.prompts.length-1?"Confirm":"Continue"}
    confirmVariant={review?.kind==="LEAVE"||review?.kind==="DISCARD"?"danger":"primary"}
    pending={saving} onConfirm={()=>{
     if(!review)return;
