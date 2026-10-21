@@ -110,6 +110,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    const snapshot:unknown=await refreshed.json().catch(()=>null);
    const rules=refreshed.ok&&snapshot&&typeof snapshot==="object"&&"rules" in snapshot&&
     Array.isArray(snapshot.rules)?snapshot.rules as unknown[]:[];
+   if(token!==seq.current)return; // College/member changed during the recheck.
    const current=rules.find(row=>Boolean(row)&&typeof row==="object"&&
     "module" in row&&row.module===target.module);
    if(!current||typeof current!=="object"||!("enabled" in current)||
