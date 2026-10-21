@@ -1766,7 +1766,8 @@ export function buildAcademicsPlan(snapshot: Snapshot, base: Plan, config: Acade
     // Quarantine this row, preserving its legacy ID in the rejection ledger.
     const rawSelected = str(row.selected_option_ids) ?? "";
     const legacySelected = parseOptionIds(row.selected_option_ids);
-    if (rawSelected && legacySelected.length === 0) {
+    if (rawSelected && !["[]", "null"].includes(rawSelected.trim().toLowerCase()) &&
+        legacySelected.length === 0) {
       notes.answerOptionIdsUnresolved += 1;
       c.reject("quiz_answer", row, "INVALID_VALUE");
       continue;

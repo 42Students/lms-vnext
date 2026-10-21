@@ -67,7 +67,11 @@ export async function CollegeRoleDirectoryWorkspace({
 
   let filter: ReturnType<typeof parseCollegeRoleDirectorySearchParams>;
   try {
-    filter = parseCollegeRoleDirectorySearchParams(await searchParams);
+    const rawFilters=await searchParams;
+    filter = parseCollegeRoleDirectorySearchParams(
+      kind==="LEARNER"&&!Object.hasOwn(rawFilters,"pageSize")
+        ? {...rawFilters,pageSize:"10"} : rawFilters,
+    );
     assertCompatibleCollegeRoleDirectoryFilters(kind,filter);
   } catch (error) {
     return (
@@ -121,7 +125,10 @@ export async function CollegeRoleDirectoryWorkspace({
     {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
       <Link href={"/college/students/"+item.membershipId}
         className="font-semibold text-link underline underline-offset-4">{item.name}</Link>},
-    {key:"roll",header:"Roll No.",cell:item=>
+    {key:"roll",header:<Link href={collegeRoleDirectoryHref(kind,{
+        ...result.filter,sort:result.filter.sort==="ROLL"?"ROLL_DESC":"ROLL",page:1})}
+        className="text-link underline" aria-label="Sort by roll number">
+        Roll No. {result.filter.sort==="ROLL"?"↑":result.filter.sort==="ROLL_DESC"?"↓":"↕"}</Link>,cell:item=>
       item.rollNumber ? <span title={item.rollNumber} className="max-w-32 truncate font-mono text-sm">{item.rollNumber}</span> : "—"},
     {key:"mobile",header:"Mobile",cell:item=>
       <Link href={collegeRoleContactHref(item.membershipId)}
@@ -140,7 +147,10 @@ export async function CollegeRoleDirectoryWorkspace({
     {key:"actions",header:"Actions",className:"text-right",cell:actions},
   ];
   const facultyColumns: DataTableColumn<Row>[] = [
-    {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
+    {key:"name",header:<Link href={collegeRoleDirectoryHref(kind,{
+      ...result.filter,sort:result.filter.sort==="NAME"?"NAME_DESC":"NAME",page:1})}
+      className="text-link underline" aria-label="Sort by faculty name">
+      Name {result.filter.sort==="NAME_DESC"?"↓":"↑"}</Link>,mobilePriority:"primary",cell:item=>
       <Link href={"/college/faculty/"+item.membershipId}
         className="font-semibold text-link underline underline-offset-4">{item.name||"—"}</Link>},
     {key:"department",header:"Department",cell:item=>item.department||"—"},
@@ -149,8 +159,8 @@ export async function CollegeRoleDirectoryWorkspace({
         className="font-semibold text-link underline" aria-label={"View permitted mobile contact for "+item.name}>View contact</Link>},
     {key:"email",header:"Email",cell:item=>item.email?
       <span title={item.email} className="block max-w-52 truncate">{item.email}</span>:"—"},
-    {key:"type",header:"Type",cell:()=>
-      <span title="Employment type is available on the authorized faculty profile">—</span>},
+    {key:"type",header:"Type",cell:item=>item.employmentType?
+      <StatusBadge tone="neutral">{item.employmentType.replaceAll("_"," ")}</StatusBadge>:"—"},
     {key:"gender",header:"Gender",cell:()=>
       <span title="Gender is not exposed in the directory for privacy">—</span>},
     {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
@@ -427,6 +437,8 @@ export async function CollegeRoleDirectoryWorkspace({
               >
               <option value="NAME">Name A–Z</option>
               <option value="NAME_DESC">Name Z–A</option>
+              {kind==="LEARNER"?<option value="ROLL">Roll number ↑</option>:null}
+              {kind==="LEARNER"?<option value="ROLL_DESC">Roll number ↓</option>:null}
               <option value="NEWEST">Newest membership</option>
               <option value="OLDEST">Oldest membership</option>
             </Select>
@@ -435,6 +447,7 @@ export async function CollegeRoleDirectoryWorkspace({
             Rows per page
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="pageSize" defaultValue={result.filter.pageSize} >
               <option value="10">10</option><option value="25">25</option><option value="50">50</option>
+              <option value="100">100</option><option value="200">200</option>
             </Select>
           </label>
             </div>
@@ -538,10 +551,11 @@ export async function CollegeRoleDirectoryWorkspace({
       <p className="text-xs text-muted-foreground leading-[20px]">
         CSV applies the same roster filters as this view, not just name and status.
         Export includes only current-college role memberships, rechecks College Admin access and is capped at 1,000 rows.
+        Faculty paging may show up to 200 rows but does not change the export cap.
       </p>
       <p className="text-xs text-muted-foreground leading-[20px]">
         Directory records are scoped to this college.
-        {kind === "LEARNER" ? " Roll numbers and sensitive contact/gender fields require the authorized student detail or contact card; they are not returned in this directory list. Account-wide suspension and membership suspension are distinct. Hard deletion and OTP unlock are not available here." : ""}
+        {kind === "LEARNER" ? " Roll numbers are college-scoped roster fields. Sensitive contact and gender require the authorized detail or contact card. Account-wide suspension and membership suspension are distinct. Hard deletion and OTP unlock are not available here." : ""}
         {kind === "FACULTY"
           ? " Counts are active teaching assignments, not a complete workload or schedule."
           : " Only active academic enrollments and classes are shown; absent associations are not inferred."}

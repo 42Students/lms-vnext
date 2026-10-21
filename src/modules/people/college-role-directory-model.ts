@@ -25,7 +25,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   titlePresence: z.enum(["ALL", "PRESENT", "MISSING"]).default("ALL"),
   departmentPresence: z.enum(["ALL", "ASSIGNED", "MISSING"]).default("ALL"),
   employmentType: z.string().trim().min(1).max(128).optional(),
-  sort: z.enum(["NAME", "NAME_DESC", "NEWEST", "OLDEST"]).default("NAME"),
+  sort: z.enum(["NAME", "NAME_DESC", "ROLL", "ROLL_DESC", "NEWEST", "OLDEST"]).default("NAME"),
   // URL paging must not silently interpret hexadecimal, exponent syntax or
   // whitespace as another tenant-directory page.
   page: z.union([
@@ -35,7 +35,7 @@ export const collegeRoleDirectoryQuerySchema = z.object({
   pageSize: z.union([
     z.number().int(),
     z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int()),
-  ]).refine(n => [10,25,50].includes(n)).default(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
+  ]).refine(n => [10,25,50,100,200].includes(n)).default(COLLEGE_ROLE_DIRECTORY_PAGE_SIZE),
 }).strict();
 
 export type CollegeRoleDirectoryQuery = z.infer<typeof collegeRoleDirectoryQuerySchema>;
@@ -60,6 +60,7 @@ export type CollegeRoleDirectoryRow = {
   registrationNumber?:string|null;
   legacyUniqueId?:string|null;
   department?:string|null;
+  employmentType?:string|null;
 };
 
 export function describeCollegeDirectoryContext(
