@@ -9,6 +9,18 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 const sectionDepartment=alias(departments,"admin_faculty_section_department");
+/** Legacy shows Sem N only when a term number can be established from an
+ * explicit semester code/name. Do not invent it from the year or cohort. */
+function legacySemester(periodName:string,periodCode:string){
+ const match=[periodCode,periodName].map(value=>
+  /(?:^|[\s_/-])(?:SEMESTER|SEM|S)[\s_:-]*([1-9][0-9]?)(?:$|[\s_/-])/i.exec(value)?.[1])
+  .find(Boolean);
+ return match?"Sem "+Number(match):"—";
+}
+function legacyAcademicYear(values:(string|null)[]){
+ return values.map(value=>value?.trim()).find(value=>Boolean(value))??"—";
+}
+
 export async function listAdminFacultyAssignments(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
  const query=superAdminReadQuerySchema.parse(raw),selected=requireSuperAdminSelectedCollege(context,"courses.read"),db=getDb();
  const active=and(isNull(courseTeachingAssignments.endedAt),isNull(courseSectionDeliveries.endedAt));
@@ -24,7 +36,10 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
   sectionName:aliasedColumn(sections.name,"admin_teacher_section_name"),
   sectionId:sections.id,
   periodName:academicPeriods.name,
-  periodYear:academicPeriods.startDate,
+  periodCode:academicPeriods.code,
+  legacyAcademicYear:academicPeriods.legacyAcademicYearName,
+  cohortAcademicYear:cohorts.academicYear,
+  cohortLegacyYear:cohorts.legacyAcademicYearRaw,
   deliveryId:aliasedColumn(courseSectionDeliveries.id,"admin_teacher_delivery_id"),
  }).from(courseTeachingAssignments)
  .innerJoin(courseSectionDeliveries,eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
@@ -68,8 +83,14 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
   id:row.id,title:row.teacherName||"Unnamed faculty",subtitle:row.courseName+" ("+row.courseCode+")",
   revision:row.updatedAt.toISOString(),
   status:row.teachingEnded||row.deliveryEnded?"ENDED":"ACTIVE",
-  details:["Class: "+row.sectionName,"Semester: "+row.periodName,"Year: "+row.periodYear.slice(0,4),
-   "Teaching role: "+row.role,"Active: "+(row.teachingEnded||row.deliveryEnded?"No":"Yes"),"Started: "+format(row.startedAt)],
+  details:["Class: "+row.sectionName,
+   "Semester: "+legacySemester(row.periodName,row.periodCode),
+   "Year: "+legacyAcademicYear([row.cohortAcademicYear,row.cohortLegacyYear,row.legacyAcademicYear]),
+   "Teaching role: "+row.role,
+   "Active: "+(row.teachingEnded||row.deliveryEnded?"No":"Yes"),
+   "Started: "+format(row.startedAt),
+   ...(row.teachingEnded?["Ended: "+format(row.teachingEnded)]:[]),
+   ...(row.deliveryEnded?["Delivery ended: "+format(row.deliveryEnded)]:[])],
  }))};
 }
 
