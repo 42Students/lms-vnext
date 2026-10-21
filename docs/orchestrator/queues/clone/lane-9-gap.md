@@ -73,5 +73,5 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U032 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Colleges.js`
 - [x] U033 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Companies.js`
 - [x] U034 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js`
-- [ ] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Dashboard.js`
+- [x] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Dashboard.js`
 - [ ] U036 (Cross-cutting area) `cross/09: Settings, feature flags and module toggles (what turns each module on/off and who controls it)`
