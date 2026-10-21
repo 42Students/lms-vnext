@@ -25,3 +25,10 @@
 - `src/modules/courses/lesson-content-service.ts` (courses owner): G2-3-027-082 — legacy int author/class/course/content and active/enabled/soft delete/version crosswalk without exposing draft media.
 - `src/components/courses/admin-course-actions.tsx` and course data validator (UI/courses owner): G2-8-020-007/-014/-050/-051 — old card image/thumbnail/media link validation, explicit sanitized intro HTML, editor for all 14 legacy metadata fields.
 - `src/modules/courses/course-service.ts` (courses owner): G2-8-020-042/-067/-068 — case-insensitive shortTitle conflict, creator-org provenance and code precedence, collision preflight before 0205.
+
+- `src/modules/courses/semester-offering-service.ts` and curriculum UI (courses owner) | G2-8-016-001/-036/-039/-016, G2-14-031-055 | Map legacy semester course/cohort/period, append display order, exact duplicate message "Course is already assigned to this semester".
+- `src/modules/courses/lesson-service.ts`, `src/modules/courses/validation.ts` (courses owner) | G2-18-002-044, G2-19-002-041 | Exact duplicate "A lesson with this name already exists in the course", reconcile sequence 1..10001 and points bound.
+- `src/modules/projects/template-service.ts` / migration importer (projects owner) | G2-10-029-055/-028-056, G2-13-017-001/-007/-010/-013/-015/-016/-033/-035/-052 | Version legacy inline task fields, numeric ID maps, old statuses, safe key translation, signed actor and first submission URL<=2048 with IST conversion.
+- `src/modules/projects/mentor-task-delete-service.ts` and task views (projects owner) | G2-13-017-031/-038 | Preserve soft-delete vs workspace suppression when recomputing template fallback; current code hard deletes.
+- `src/modules/projects/project-task-activity-service.ts` and task comment UI (projects owner) | G2-12-017-007/-013/-014/-015/-058/-060 | Publish comment progressValue/snapshot/badges and reject client-spoofed author; process system events separately.
+- `drizzle/meta/_journal.json` (lane 15 only) | G2-8-016-005, G2-12-017-060 | Review 0206/0207, preflight tenant import and comment kind constraints before journal registration.

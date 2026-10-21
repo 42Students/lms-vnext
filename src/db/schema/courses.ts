@@ -141,7 +141,8 @@ export const courseOfferings = pgTable(
     type: courseOfferingTypeEnum("type")
       .notNull()
       .default("CORE"),
-    credits: integer("credits"),
+    // Legacy semester_course credit default; explicit null remains allowed.
+    credits: integer("credits").default(3),
     displayOrder: integer("display_order")
       .notNull()
       .default(0),
