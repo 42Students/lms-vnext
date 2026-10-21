@@ -229,3 +229,39 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
   return {changed:true,updatedAt:saved.updatedAt.toISOString()};
  });
 }
+
+const removeSchema=z.object({jobTypeId:z.string().uuid(),
+ expectedVersion:z.iso.datetime({offset:true})}).strict();
+/** Delete only unused college custom types; existing drives always retain their historical label. */
+export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
+ const input=removeSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const [current]=await tx.select().from(placementTpoJobTypes)
+   .where(and(eq(placementTpoJobTypes.id,input.jobTypeId),eq(placementTpoJobTypes.collegeId,collegeId)))
+   .for("update").limit(1);
+  if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  const [usage]=await tx.select({n:sql<number>`count(*)::integer`}).from(placementJobs)
+   .where(and(eq(placementJobs.collegeId,collegeId),
+    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`,
+    sql`${placementJobs.archivedAt} is null`));
+  if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
+  await tx.delete(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.id,current.id),
+   eq(placementTpoJobTypes.collegeId,collegeId)));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
+   actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.removed",
+   subjectType:"JOB_TYPE",subjectId:current.id,summary:"TPO removed an unused custom job type",
+   metadata:{label:current.label},
+  });
+  return {changed:true};
+ });
+}
