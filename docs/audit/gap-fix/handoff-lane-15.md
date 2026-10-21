@@ -664,3 +664,10 @@
 - G2-7-013-039 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Project normalized resource DTO onto legacy field identities
 - G2-7-015-045 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Avoid unrelated fetch blocking Summary load
 - G2-7-027-088 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Map every action request and notification into new typed API route/service
+
+
+## Wave 2 dependency contracts: recruiter, colleges, suppression and receipts
+- Recruiter search: HR request-list already owns SENT_BACK/REQUEST/DRAFT priority and request counts; drive SQL must count only canonical jobs, with valid recruiter grants, company joins and stable pagination. Map active/expired to status/deadline and only compute popularity from authorized application counts, not arbitrary initial 1000 rows. Program/department targeting needs scoped eligibility joins.
+- College: legacy numeric keys and casefolded historical uniqueId are import locators only, not access grants. Tenant-domain registry owns verified hosts, current code remains canonical. College detail needs chair/vice-chair + domain aliases; chair assignment must lock and validate an ACTIVE FACULTY membership in the same college. Migrate logos into verified object storage before signed preview.
+- Suppression: a null source reason becomes LEGACY_UNSPECIFIED and continues to suppress; old civil timestamps require documented IST conversion. Global email HMAC must derive from normalized bounded address with key rotation. Clear actions require privileged actor/audit checks; do not activate outbound dispatch without pre-send suppression fencing.
+- Course files: reconcile legacy receipt IDs and folder names through the membership/assignment mapping, never from public URL or numeric owner alone. Assignment folder maps to ASSIGNMENT_SUBMISSION and lesson-content folder to COURSE_RESOURCE. Only CLEAN scanned, nondeleted rows can generate 15-minute signed access grants. Record imported type/size exceptions.
