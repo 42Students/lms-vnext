@@ -66,7 +66,7 @@ const columns = {
  * import/migration, global fuzzy index, and ephemeral recent-skills cache remain
  * separately tracked; this service cannot promise unbounded full-catalog parity.
  */
-export async function readSkillCatalog(input: SkillCatalogQuery) {
+async function readSkillCatalogUncached(input: SkillCatalogQuery) {
   const db = getDb();
   const base = eq(db10Skills.isActive, true);
   if (input.mode === "categories") {
@@ -192,6 +192,43 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
     a.row.displayName.localeCompare(b.row.displayName)||
     a.row.id.localeCompare(b.row.id));
   return { items:[...items,...fuzzy.slice(0,Math.max(0,input.limit-items.length)).map(match=>match.row)] };
+}
+
+/** Twenty-second process-local query coalescing avoids repeated DB scans during
+ * fast autocomplete. A bounded cache and a short TTL mean new/renamed skill
+ * records do not require a privileged remote refresh to become visible.
+ * Authorization remains in the request route, before reading this catalog. */
+const catalogQueryCache = new Map<string, {
+  expiresAt: number;
+  result: ReturnType<typeof readSkillCatalogUncached>;
+}>();
+const MAX_CACHED_SEARCHES = 256;
+const CATALOG_TTL_MS = 20_000;
+
+export async function readSkillCatalog(input: SkillCatalogQuery) {
+  const key = JSON.stringify([input.mode, input.query.toLocaleLowerCase("en-US"),
+    input.category ?? "", input.limit]);
+  const now = Date.now();
+  const cached = catalogQueryCache.get(key);
+  if (cached && cached.expiresAt > now) return cached.result;
+  catalogQueryCache.delete(key);
+  if (catalogQueryCache.size >= MAX_CACHED_SEARCHES) {
+    for (const [key,entry] of catalogQueryCache) {
+      if (entry.expiresAt < now) catalogQueryCache.delete(key);
+    }
+    if (catalogQueryCache.size >= MAX_CACHED_SEARCHES)
+      catalogQueryCache.delete(catalogQueryCache.keys().next().value!);
+  }
+  const result = readSkillCatalogUncached(input);
+  catalogQueryCache.set(key, {expiresAt:now+CATALOG_TTL_MS,result});
+  try { return await result; }
+  catch (error) { catalogQueryCache.delete(key); throw error; }
+}
+
+/** Bounded invalidation hook for a future skill catalog mutation/import route.
+ * It is not an unguarded HTTP endpoint. */
+export function invalidateSkillCatalogSearchCache() {
+  catalogQueryCache.clear();
 }
 
 /** Alias management read, not a mutation: the importer can inspect one
