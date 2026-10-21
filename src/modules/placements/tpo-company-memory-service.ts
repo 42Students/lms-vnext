@@ -182,6 +182,7 @@ async function selectDriveFactRows(jobIds:string[]){
   return db
     .select({
       jobId: placementJobs.id,
+      countsAsPlaced:placementJobs.countsAsPlaced,
       jobStatus: placementJobs.status,
       archivedAt: placementJobs.archivedAt,
       offerStatus: placementOffers.status,
