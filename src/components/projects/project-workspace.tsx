@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
+import { ProjectChangeTemplateControl } from "./project-change-template-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
 import {MentorProjectAboutEditor} from "./mentor-project-about-editor";
@@ -316,6 +317,13 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                 >
                   {label(workspace.project.status)}
                 </StatusBadge>
+                {mode === "ADMIN" ? (
+                  <ProjectChangeTemplateControl
+                    projectId={workspace.project.id}
+                    status={workspace.project.status}
+                    expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
+                  />
+                ) : null}
                 {mode === "ADMIN" ? (
                   <ProjectArchiveControl
                     projectId={workspace.project.id}
