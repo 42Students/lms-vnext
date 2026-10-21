@@ -200,3 +200,27 @@ export function collegeProgressDescription(row: Pick<
     ? "No recorded learner content activity"
     : `${row.completedRows} completed content records of ${row.recordedRows}; ${row.learnersWithRecords} distinct learners with records`;
 }
+
+/** An exact historical DTO can only be formed after authorized resolution
+ * of old numeric IDs and course slug. UUIDs or course codes are not drop-in
+ * replacements for legacy IDs/slugs.
+ */
+export type LegacyLessonSearchDto = {
+ id:number;lessonName:string;courseId:number;courseSlug:string;
+ courseName:string;active:boolean;
+};
+export function collegeLessonLegacyDto(
+ row:CollegeLessonRecord,
+ resolved:{legacyLessonId:number|null;legacyCourseId:number|null;courseSlug:string|null},
+):LegacyLessonSearchDto|null {
+ const {legacyLessonId,legacyCourseId,courseSlug}=resolved;
+ if(legacyLessonId===null||legacyCourseId===null||
+    !Number.isSafeInteger(legacyLessonId)||legacyLessonId<1||
+    !Number.isSafeInteger(legacyCourseId)||legacyCourseId<1||
+    !courseSlug||!courseSlug.trim()||courseSlug.length>160)return null;
+ return {
+  id:legacyLessonId,lessonName:row.name,
+  courseId:legacyCourseId,courseSlug:courseSlug.trim(),
+  courseName:row.courseName,active:row.status==="ACTIVE",
+ };
+}
