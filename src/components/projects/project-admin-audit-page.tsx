@@ -22,8 +22,28 @@ import {
   ACTIVITY_IMPORTANCE,
   ACTIVITY_EVENT_TYPES,
 } from "@/modules/activity/taxonomy";
-import { parseProjectAdminAuditQuery } from "@/modules/projects/admin-audit-query-model";
+import { parseProjectAdminAuditQuery,legacyProjectAuditActions } from "@/modules/projects/admin-audit-query-model";
 import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
+import {z} from "zod";
+
+const destructiveProjectEventTypes=new Set<string>([
+ ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_DELETED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNASSIGNED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ARCHIVED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_TEAM_MEMBER_ENDED,
+ ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_ARCHIVED,
+]);
+function linkedWorkspaceId(event:{
+ subjectId:string;subjectType:string;metadata:Record<string,unknown>;
+}):string|null{
+ const candidate=event.subjectType==="project_instance"||event.subjectType==="project"
+   ?event.subjectId:event.metadata.projectId;
+ return typeof candidate==="string"&&z.string().uuid().safeParse(candidate).success
+   ?candidate:null;
+}
+
 
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
@@ -61,6 +81,8 @@ export async function ProjectAdminAuditPage({
 
   const filters = parseProjectAdminAuditQuery(searchParams);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
+  const allTime=!from&&!to;
+  const pageLimit=allTime?25:200;
 
   const activityRead =
     await listActivityEvents(
@@ -75,7 +97,7 @@ export async function ProjectAdminAuditPage({
         to,
         beforeOccurredAt: filters.beforeOccurredAt,
         beforeId: filters.beforeId,
-        limit: 40,
+        limit: pageLimit,
       },
     ).then(value => ({ ok: true as const, value }))
      .catch(() => ({ ok: false as const }));
@@ -84,11 +106,19 @@ export async function ProjectAdminAuditPage({
       description="Who changed what, and when — check daily for anything unexpected."
       actions={<PageBackLink href={basePath} label="Project workspaces" />} />
     <ProjectAdminNav basePath={basePath} active="audit" />
-    <ErrorState title="Project audit unavailable"
-      description="Could not load project audit events. Your filters have not changed."
+    <ErrorState title="Audit log could not be loaded"
+      description="Failed to load audit log. Your filters have not changed."
       action={<Link href={basePath+"/audit"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry audit</Link>} />
   </div>;
   const result = activityRead.value;
+  const rawEvents=result.items;
+  const coveredEvents=rawEvents.length;
+  const peopleCount=new Set(rawEvents.map(item=>item.actor.id)
+    .filter((id):id is string=>Boolean(id))).size;
+  const destructiveCount=rawEvents.filter(item=>destructiveProjectEventTypes.has(
+    item.event.eventType)).length;
+  const partialCoverage=Boolean(result.nextCursor);
+  const legacyOptions=Object.entries(legacyProjectAuditActions).sort(([a],[b])=>a.localeCompare(b));
 
   const groups: ActivityCenterGroup[] =
     result.groups.map((group) => ({
@@ -216,11 +246,18 @@ export async function ProjectAdminAuditPage({
           </span>
           <Select className={inputClass} name="action" defaultValue={eventType??""}>
             <option value="">All actions</option>
-            {(Object.values(ACTIVITY_EVENT_TYPES) as string[]).filter(value=>
-              value.startsWith("projects."))
-              .sort().map(value=><option key={value} value={value}>
-                {value.replace(/^projects\./,"").replaceAll("."," · ").replaceAll("_"," ")}
+            <optgroup label="Legacy actions">
+              {legacyOptions.map(([key,value])=><option key={key} value={value}>
+                {key.replaceAll("_"," ")}
               </option>)}
+            </optgroup>
+            <optgroup label="Other project events">
+              {(Object.values(ACTIVITY_EVENT_TYPES) as string[]).filter(value=>
+                value.startsWith("projects.")&&!legacyOptions.some(([_,mapped])=>mapped===value))
+                .sort().map(value=><option key={value} value={value}>
+                  {value.replace(/^projects\./,"").replaceAll("."," · ").replaceAll("_"," ")}
+                </option>)}
+            </optgroup>
           </Select>
         </label>
         <label>
@@ -302,17 +339,19 @@ export async function ProjectAdminAuditPage({
 
       <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-3">
         {([
-          {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
-          {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
-            .filter((id):id is string=>Boolean(id))).size},
-          {label:"Destructive actions",value:result.groups.filter(g=>
-            /archive|delete|revoke|remove|unassign/i.test(g.latest.event.eventType))
-            .reduce((sum,g)=>sum+g.count,0)},
+          {label:"Actions shown"+(partialCoverage?" (partial)":""),value:coveredEvents},
+          {label:"People who made changes"+(partialCoverage?" (partial)":""),value:peopleCount},
+          {label:"Destructive actions"+(partialCoverage?" (partial)":""),value:destructiveCount},
         ]).map(item=><div key={item.label} className="p-4">
           <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{item.label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
         </div>)}
       </section>
+      <p role="status" className="text-xs text-body">
+        Displaying {coveredEvents} raw audit actions in {groups.length} grouped entries.
+        {partialCoverage?" Counts are minimums for this page; older events are available below.":""}
+        {allTime?" All-time pages show up to 25 actions.":" Date-filtered views show up to 200 actions."}
+      </p>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <Link href={refreshHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Refresh</Link>
@@ -325,6 +364,34 @@ export async function ProjectAdminAuditPage({
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       </div>
+      <section aria-label="Workspace audit actions" className="space-y-2">
+        <h2 className="text-sm font-semibold text-foreground">Workspace actions</h2>
+        <div className="divide-y divide-border">
+          {rawEvents.map(item=>{
+            const metadata=(item.event.metadata??{}) as Record<string,unknown>;
+            const workspaceId=linkedWorkspaceId({
+              subjectId:item.event.subjectId,subjectType:item.event.subjectType,
+              metadata,
+            });
+            return <div key={item.event.id} className="flex flex-wrap items-center justify-between gap-3 py-2 text-sm">
+              <div className="min-w-0">
+                <p className="break-words font-semibold">{item.event.subjectLabel??item.event.subjectType}</p>
+                <p className="break-words text-xs text-body">
+                  {item.event.eventType} · {item.actor.displayName??"System"} · {
+                    new Intl.DateTimeFormat("en-IN",{
+                      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+                    }).format(item.event.occurredAt)}
+                </p>
+              </div>
+              {workspaceId?<Link
+                href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
+                className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+                Open workspace
+              </Link>:null}
+            </div>;
+          })}
+        </div>
+      </section>
       <ActivityCenter
         emptyActionHref={basePath + "/audit"}
         groups={groups}

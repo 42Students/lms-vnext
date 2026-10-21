@@ -13,7 +13,7 @@ const eventTypes = new Set<string>(
 );
 const importanceValues = new Set<string>(ACTIVITY_IMPORTANCE);
 
-const legacyProjectAuditActions:Readonly<Record<string,string>> = {
+export const legacyProjectAuditActions:Readonly<Record<string,string>> = {
  PROJECT_CREATE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_CREATED,
  PROJECT_ARCHIVE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
  PROJECT_DELETE:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_DELETED,
