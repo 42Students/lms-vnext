@@ -79,7 +79,7 @@ export function CollegeFacultyScheduleReassign({membershipId,name}:{
       </Alert>:null}
       {loaded?<div className="min-w-0 space-y-[var(--lms-space-4)]">
         <p className="max-w-prose text-sm text-body">{upcoming} upcoming scheduled session(s) for {name}.</p>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assign to
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assign to
           <Select value={selected} disabled={busy||truncated||Boolean(receipt)} onChange={e=>{setSelected(e.target.value);setError("");}}>
             <option value="">Choose a replacement faculty</option>
             {options.map(row=><option key={row.id} value={row.id}>{row.name??row.id}</option>)}
