@@ -649,18 +649,14 @@ export async function PlacementCalendarWorkspace({
   const previous =
     shiftCareerCalendarDay(
       state.anchor,
-      state.view === "week"
-        ? "week"
-        : "month",
+      state.view,
       -1,
     );
 
   const next =
     shiftCareerCalendarDay(
       state.anchor,
-      state.view === "week"
-        ? "week"
-        : "month",
+      state.view,
       1,
     );
 
@@ -725,8 +721,8 @@ export async function PlacementCalendarWorkspace({
         }
       />
 
-      {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
-        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {mainSnapshot.stale ? "This refresh failed. Showing the last successful calendar events for this account and filter (up to 15 minutes old)." : needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
+      {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry summary</Link>}>
+        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
       </Banner>:null}
 
       {calendarFollowupsWritable ? (
@@ -840,6 +836,11 @@ export async function PlacementCalendarWorkspace({
             <p className="mt-1 text-sm text-muted-foreground">
               Showing {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)} · IST
+              <span className="ml-2 font-semibold text-foreground">
+               {loadedResponse?visibleEvents.length+" item"+(visibleEvents.length===1?"":"s")+
+                 " in this "+(state.view==="week"?"week":state.view==="month"?"month":"period"):
+                 "Item count unavailable"}
+              </span>
             </p>
           </div>
           <div
@@ -884,7 +885,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Previous calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            ←
+            ← Previous
           </Link>
           <Link
             href={calendarHref(
@@ -907,7 +908,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Next calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            →
+            Next →
           </Link>
           <span className="order-first col-span-3 min-w-0 break-words text-sm font-semibold text-foreground sm:order-none sm:ml-2">
             {state.view === "week"
@@ -955,7 +956,7 @@ export async function PlacementCalendarWorkspace({
               name="company"
               maxLength={150}
               defaultValue={state.company}
-              placeholder="Search company name"
+              placeholder="Filter by company"
               className="w-full"
             />
           </label>
@@ -1066,6 +1067,9 @@ export async function PlacementCalendarWorkspace({
   const nextKinds=toggleTpoCalendarChip(currently,filter.value);
   return <FilterChipLink key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
     selected={active}
+    title={(active?"Hide ":"Show ")+filter.label+
+      (state.kinds.length>0||state.kind?" too":" only")+
+      " · "+count+" matching event"+(count===1?"":"s")}
     aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}>
     <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-[var(--lms-radius-pill)] "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
     {filter.label} ({count})
@@ -1125,6 +1129,9 @@ export async function PlacementCalendarWorkspace({
           {event.note?<p className="text-xs">{event.note}</p>:null}
          </li>)}</ul>
        </section>:null}
+      {isTpo&&state.view==="week"?<p className="text-xs text-muted-foreground" role="note">
+       Select an empty time slot to add a follow-up, drag a follow-up to move it, or open a round in its placement drive to change its schedule.
+      </p>:null}
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        blockedDates={blockedDays?.rows.map(row=>row.day)??[]} blockedDatesAvailable={blockedDays?.ready??false}
@@ -1167,7 +1174,7 @@ export async function PlacementCalendarWorkspace({
 
               const shown = dayEvents.slice(
                 0,
-                state.view === "month" ? 2 : 4,
+                state.view === "month" ? 3 : 4,
               );
 
               return (
@@ -1289,7 +1296,7 @@ export async function PlacementCalendarWorkspace({
               className="space-y-3"
             >
               <h3 className="m-0 border-b border-border pb-2 text-sm font-semibold text-foreground">
-                {dateLabel(group.day)}
+                {new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(group.day+"T12:00:00Z"))}
                 {group.day === today
                   ? " · Today"
                   : ""}
