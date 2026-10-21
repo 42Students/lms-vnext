@@ -320,43 +320,43 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/tpo/more/page.tsx`
 - [x] `src/components/activity/notification-list.tsx`
 - [x] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/tpo-drive-clone-action.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/placements/tpo-report-presentation.tsx`
-- [ ] `src/components/projects/project-list.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/recruiter-inline-stage.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
-- [ ] `src/components/ui/badge.tsx`
-- [ ] `src/components/ui/board-column.tsx`
-- [ ] `src/components/ui/bottom-sheet.tsx`
-- [ ] `src/components/ui/button.tsx`
-- [ ] `src/components/ui/checkbox.tsx`
-- [ ] `src/components/ui/dialog.tsx`
-- [ ] `src/components/ui/disclosure.tsx`
-- [ ] `src/components/ui/drawer.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/inline-notice.tsx`
-- [ ] `src/components/ui/input-group.tsx`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/ui/page-back-link.tsx`
-- [ ] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/radio.tsx`
-- [ ] `src/components/ui/range-slider.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/selection-controls.tsx`
-- [ ] `src/components/ui/stat-tile.tsx`
-- [ ] `src/components/ui/status-badge.tsx`
-- [ ] `src/components/ui/table.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
-- [ ] `src/components/ui/toast.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/tpo-drive-clone-action.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/placements/tpo-report-presentation.tsx`
+- [x] `src/components/projects/project-list.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/recruiter-inline-stage.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
+- [x] `src/components/ui/badge.tsx`
+- [x] `src/components/ui/board-column.tsx`
+- [x] `src/components/ui/bottom-sheet.tsx`
+- [x] `src/components/ui/button.tsx`
+- [x] `src/components/ui/checkbox.tsx`
+- [x] `src/components/ui/dialog.tsx`
+- [x] `src/components/ui/disclosure.tsx`
+- [x] `src/components/ui/drawer.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/inline-notice.tsx`
+- [x] `src/components/ui/input-group.tsx`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/ui/page-back-link.tsx`
+- [x] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/radio.tsx`
+- [x] `src/components/ui/range-slider.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/selection-controls.tsx`
+- [x] `src/components/ui/stat-tile.tsx`
+- [x] `src/components/ui/status-badge.tsx`
+- [x] `src/components/ui/table.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/ui/toast.tsx`
