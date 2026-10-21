@@ -193,16 +193,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
 - [x] `src/app/(authenticated)/hr/home/page.tsx`
 - [x] `src/app/(authenticated)/hr/messages/error.tsx`
-- [ ] `src/app/(authenticated)/hr/not-found.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/page.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/error.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/page.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/error.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
+- [x] `src/app/(authenticated)/hr/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/page.tsx`
+- [x] `src/app/(authenticated)/hr/profile/error.tsx`
+- [x] `src/app/(authenticated)/hr/profile/page.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/error.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/page.tsx`
 - [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx`
 - [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
 - [ ] `src/app/(authenticated)/learn/allAssignments/error.tsx`
