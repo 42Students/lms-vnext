@@ -199,17 +199,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/placements/college-application-pipeline-controls.tsx`
 - [x] `src/components/placements/college-company-create.tsx`
 - [x] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
-- [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
-- [ ] `src/components/placements/learner-own-drive-journey.tsx`
-- [ ] `src/components/placements/learner-placement-academic-evidence.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
-- [ ] `src/components/placements/learner-placement-preferences.tsx`
-- [ ] `src/components/placements/learner-recent-placement-activity.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/learner-support-cancel.tsx`
+- [x] `src/components/placements/hr-recruiter-drives-grid.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/placements/learner-interview-withdrawal-request.tsx`
+- [x] `src/components/placements/learner-own-drive-journey.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-preferences.tsx`
+- [x] `src/components/placements/learner-recent-placement-activity.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/learner-support-cancel.tsx`
 - [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
 - [ ] `src/components/placements/placement-drive-day-overview.tsx`
 - [ ] `src/components/placements/placement-employer-relationships.tsx`
