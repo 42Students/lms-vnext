@@ -2,7 +2,7 @@ import "server-only";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { safeNotificationActionHref } from "@/modules/activity/notification-action";
-import type { ScheduledJobFence } from "./scheduled-job-runner";
+import { tomorrowInIndiaUtcWindow, type ScheduledJobFence } from "./scheduled-job-runner";
 
 type BatchResult = { processed: number; hasMore: boolean };
 
@@ -239,4 +239,237 @@ export async function releaseScheduledNotificationOutbox(
     processed += 1;
   }
   return { processed, hasMore: processed === 200 };
+}
+
+/**
+ * Candidate-slot reminders use BOOKED per-learner slots rather than a broad
+ * job's interview round. This excludes withdrawn applications, cancelled
+ * slots and non-members, and never copies private interviewer feedback.
+ *
+ * All three job names share the same event dedupe identity for a phase, slot,
+ * version and recipient. Competing legacy/TPO triggers cannot double-notify.
+ * An event and its SENT inbox row are created in one fenced transaction.
+ * This adapter does not claim an email was sent; email has its own outbox.
+ */
+export async function queueFencedInterviewReminders(
+  fence: ScheduledJobFence,
+  phase: "TOMORROW" | "TODAY",
+  now = new Date(),
+): Promise<BatchResult> {
+  const expected = phase === "TOMORROW"
+    ? ["notification.interviewReminders", "tpo.interviewReminders"]
+    : ["tpo.interviewMorningReminders"];
+  if (!expected.includes(fence.lease.jobName)) throw new Error("INVALID_INTERVIEW_REMINDER_LEASE");
+  if (!(now instanceof Date) || !Number.isFinite(now.getTime()))
+    throw new Error("INVALID_INTERVIEW_REMINDER_TIME");
+  const tomorrow = tomorrowInIndiaUtcWindow(now);
+  const from = phase === "TOMORROW"
+    ? tomorrow.from : new Date(tomorrow.from.getTime() - 86_400_000);
+  const to = phase === "TOMORROW" ? tomorrow.to : tomorrow.from;
+  const kind = phase === "TOMORROW" ? "INTERVIEW_REMINDER_TOMORROW" : "INTERVIEW_REMINDER_TODAY";
+  const title = phase === "TOMORROW" ? "Interview tomorrow" : "Interview today";
+  const body = phase === "TOMORROW"
+    ? "You have an interview tomorrow. Open My Placements to confirm the latest schedule."
+    : "You have an interview today. Open My Placements to confirm the latest schedule.";
+  return guardedBatch(fence, async (tx) => {
+    const result = await tx.execute<{processed:number;has_more:boolean}>(sql`
+      with eligible as materialized (
+        select s.id as slot_id, s.version as slot_version,
+          s.starts_at, j.id as job_id, r.id as round_id,
+          m.user_id, c.id as college_id, c.organization_id,
+          ('scheduler:interview:' || ${phase} || ':' || s.id::text || ':'
+            || s.version::text || ':' || m.user_id::text) as dedupe
+        from placement_round_candidate_slots s
+        join placement_job_rounds r on r.id = s.round_id
+          and r.job_id = s.job_id and r.status = 'SCHEDULED'
+          and r.kind = 'INTERVIEW'
+        join placement_jobs j on j.id = s.job_id
+          and j.status in ('PUBLISHED', 'CLOSED')
+        join colleges c on c.id = j.college_id and c.status = 'ACTIVE'
+        join organizations o on o.id = c.organization_id and o.status = 'ACTIVE'
+        join placement_applications a on a.id = s.application_id
+          and a.job_id = j.id and a.status = 'SUBMITTED'
+        join college_memberships m on m.id = a.membership_id
+          and m.college_id = c.id and m.status = 'ACTIVE'
+        join membership_roles role on role.membership_id = m.id and role.role = 'LEARNER'
+        join users u on u.id = m.user_id and u.platform_status = 'ACTIVE'
+        where s.status = 'BOOKED' and s.interview_outcome is null
+          and s.starts_at >= ${from} and s.starts_at < ${to}
+          and s.starts_at > ${now}
+          and not exists (
+            select 1 from activity_events existing_event
+            join in_app_notifications existing_notice
+              on existing_notice.event_id = existing_event.id
+            where existing_event.dedupe_key =
+              ('scheduler:interview:' || ${phase} || ':' || s.id::text || ':'
+                || s.version::text || ':' || m.user_id::text)
+              and existing_notice.user_id = m.user_id
+          )
+        order by s.starts_at, s.id
+        limit 201
+      ), limited as materialized (
+        select * from eligible order by starts_at, slot_id limit 200
+      ), created_events as (
+        insert into activity_events (
+          organization_id, college_id, module, event_type, importance,
+          subject_type, subject_id, summary, metadata, dedupe_key
+        )
+        select l.organization_id, l.college_id, 'PLACEMENTS', ${kind}, 'NORMAL',
+          'placement_round_candidate_slot', l.slot_id::text, ${title},
+          jsonb_build_object('slotId',l.slot_id,'jobId',l.job_id,
+            'roundId',l.round_id,'startsAt',l.starts_at,'phase',${phase}),
+          l.dedupe
+        from limited l
+        on conflict (dedupe_key) where dedupe_key is not null do nothing
+        returning id, dedupe_key
+      ), created_notices as (
+        insert into in_app_notifications (
+          user_id, event_id, title, body, action_href, delivery_status, delivered_at
+        )
+        select l.user_id, e.id, ${title}, ${body},
+          '/learn/my-placements/schedule', 'SENT', clock_timestamp()
+        from limited l join created_events e on e.dedupe_key = l.dedupe
+        on conflict (user_id, event_id) do nothing returning id
+      )
+      select (select count(*)::integer from created_notices) as processed,
+             (select count(*) from eligible) > 200 as has_more
+    `);
+    return {processed:Number(result.rows[0]?.processed??0),
+      hasMore:result.rows[0]?.has_more===true};
+  });
+}
+
+/**
+ * Daily 09:00 IST reminders. Only PUBLISHED assignments/quizzes with a real
+ * canonical dueAt in [now+12h,now+36h) are eligible. Skip submitted work,
+ * inactive sections and disabled lessons. A generic lesson activity may target
+ * several active course deliveries, but never a cross-college learner.
+ */
+export async function queueFencedCourseDueReminders(
+  fence: ScheduledJobFence,
+  now = new Date(),
+): Promise<BatchResult> {
+  if (fence.lease.jobName !== "notification.assignmentReminders")
+    throw new Error("INVALID_COURSE_REMINDER_LEASE");
+  if (!(now instanceof Date) || !Number.isFinite(now.getTime()))
+    throw new Error("INVALID_COURSE_REMINDER_TIME");
+  const from = new Date(now.getTime() + 12 * 60 * 60_000);
+  const to = new Date(now.getTime() + 36 * 60 * 60_000);
+  return guardedBatch(fence, async (tx) => {
+    const result = await tx.execute<{processed:number;has_more:boolean}>(sql`
+      with content_due as (
+        select 'ASSIGNMENT'::text as kind, a.id as content_id,
+          a.title, a.due_at, d.id as delivery_id, d.section_id,
+          o.academic_period_id, o.cohort_id, c.id as college_id,
+          c.organization_id
+        from course_assignments a
+        join course_lessons lesson on lesson.id = a.lesson_id
+          and lesson.status = 'ACTIVE' and lesson.visible_to_students = true
+          and lesson.deleted_at is null
+        join course_learning_paths path on path.id = lesson.learning_path_id
+          and path.status = 'ACTIVE'
+        join course_offerings o on o.id = path.offering_id
+          and o.status = 'ACTIVE'
+        join course_section_deliveries d on d.offering_id = o.id
+          and d.ended_at is null
+          and (a.delivery_id is null or a.delivery_id = d.id)
+        join academic_periods period on period.id = o.academic_period_id
+        join colleges c on c.id = period.college_id and c.status = 'ACTIVE'
+        join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
+        where a.status = 'PUBLISHED' and a.due_at >= ${from} and a.due_at < ${to}
+        union all
+        select 'QUIZ'::text, q.id, q.title, q.due_at, d.id,
+          d.section_id, o.academic_period_id, o.cohort_id,
+          c.id, c.organization_id
+        from course_quizzes q
+        join course_lessons lesson on lesson.id = q.lesson_id
+          and lesson.status = 'ACTIVE' and lesson.visible_to_students = true
+          and lesson.deleted_at is null
+        join course_learning_paths path on path.id = lesson.learning_path_id
+          and path.status = 'ACTIVE'
+        join course_offerings o on o.id = path.offering_id
+          and o.status = 'ACTIVE'
+        join course_section_deliveries d on d.offering_id = o.id
+          and d.ended_at is null
+          and (q.delivery_id is null or q.delivery_id = d.id)
+        join academic_periods period on period.id = o.academic_period_id
+        join colleges c on c.id = period.college_id and c.status = 'ACTIVE'
+        join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
+        where q.status = 'PUBLISHED' and q.due_at >= ${from} and q.due_at < ${to}
+      ), eligible as materialized (
+        select due.*, membership.user_id,
+          ('scheduler:course:' || due.kind || ':' || due.content_id::text
+            || ':' || due.delivery_id::text || ':' || membership.user_id::text
+            || ':' || to_char(due.due_at at time zone 'UTC','YYYYMMDDHH24MI')) as dedupe
+        from content_due due
+        join section_enrollments section_member
+          on section_member.section_id = due.section_id
+          and section_member.academic_period_id = due.academic_period_id
+          and section_member.status = 'ACTIVE'
+        join learner_program_enrollments enrol
+          on enrol.id = section_member.learner_enrollment_id
+          and enrol.cohort_id = due.cohort_id and enrol.status = 'ACTIVE'
+        join college_memberships membership
+          on membership.id = enrol.membership_id
+          and membership.college_id = due.college_id and membership.status = 'ACTIVE'
+        join membership_roles role
+          on role.membership_id = membership.id and role.role = 'LEARNER'
+        join users learner on learner.id = membership.user_id
+          and learner.platform_status = 'ACTIVE'
+        where (
+          (due.kind = 'ASSIGNMENT' and not exists (
+            select 1 from assignment_submissions submitted
+            where submitted.assignment_id = due.content_id
+              and submitted.membership_id = membership.id
+              and submitted.deleted_at is null
+          )) or (due.kind = 'QUIZ' and not exists (
+            select 1 from quiz_attempts attempted
+            where attempted.quiz_id = due.content_id
+              and attempted.membership_id = membership.id
+              and attempted.deleted_at is null
+          ))
+        ) and not exists (
+          select 1 from activity_events existing_event
+          join in_app_notifications existing_notice
+            on existing_notice.event_id = existing_event.id
+          where existing_event.dedupe_key =
+            ('scheduler:course:' || due.kind || ':' || due.content_id::text
+              || ':' || due.delivery_id::text || ':' || membership.user_id::text
+              || ':' || to_char(due.due_at at time zone 'UTC','YYYYMMDDHH24MI'))
+            and existing_notice.user_id = membership.user_id
+        )
+        order by due.due_at, due.content_id, membership.user_id
+        limit 201
+      ), limited as materialized (
+        select * from eligible order by due_at, content_id, user_id limit 200
+      ), created_events as (
+        insert into activity_events (
+          organization_id, college_id, module, event_type, importance,
+          subject_type, subject_id, summary, metadata, dedupe_key
+        )
+        select l.organization_id, l.college_id, 'COURSES',
+          'COURSE_' || l.kind || '_DUE_REMINDER', 'NORMAL',
+          lower(l.kind), l.content_id::text, l.kind || ' due soon',
+          jsonb_build_object('contentId',l.content_id,
+            'deliveryId',l.delivery_id,'dueAt',l.due_at,'kind',l.kind),
+          l.dedupe
+        from limited l
+        on conflict (dedupe_key) where dedupe_key is not null do nothing
+        returning id, dedupe_key
+      ), created_notices as (
+        insert into in_app_notifications (
+          user_id, event_id, title, body, action_href, delivery_status, delivered_at
+        )
+        select l.user_id, e.id, l.kind || ' due soon',
+          left(l.title,180) || ' is due soon. Open your course to complete it.',
+          '/learn/courses', 'SENT', clock_timestamp()
+        from limited l join created_events e on e.dedupe_key = l.dedupe
+        on conflict (user_id, event_id) do nothing returning id
+      )
+      select (select count(*)::integer from created_notices) as processed,
+             (select count(*) from eligible) > 200 as has_more
+    `);
+    return {processed:Number(result.rows[0]?.processed??0),
+      hasMore:result.rows[0]?.has_more===true};
+  });
 }
