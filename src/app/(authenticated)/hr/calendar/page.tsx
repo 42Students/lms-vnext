@@ -249,7 +249,7 @@ export default async function HrCalendarPage({
   const query = await searchParams;
   if (Object.values(query).some(Array.isArray)) {
     return <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader title="Calendar" />
+      <PageHeader title="Recruiter Calendar" />
       <ErrorState title="Invalid calendar filters" description="Review the selected date, view and event filters."
         action={<Link href="/hr/calendar" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
     </div>;
@@ -311,7 +311,7 @@ export default async function HrCalendarPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
-        title="Calendar"
+        title="Recruiter Calendar"
         description="Rounds, interview slots, deadlines and results due, for your drives at this college."
         actions={<Link href="/hr/placements"
           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-primary hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 md:w-auto">
