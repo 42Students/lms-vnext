@@ -32,6 +32,24 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
 
 /** Only administrators associated with this college may be selected. */
 type AdminSessionTarget={userId:string;membershipId:string;status:string;name:string|null;email:string|null;roles:string[]};
+/** Historical Faculty.adminType names were scoped roles, not distinct
+ * canonical users. Never resolve legacy numeric faculty IDs as UUIDs. */
+export function legacyFacultyAdminRole(role:string):"COLLEGE_ADMIN"|"TPO"|null{
+ return role==="ADMIN"||role==="COLLEGE_ADMIN"?"COLLEGE_ADMIN":role==="TPO"?"TPO":null;
+}
+export function collegeAdminSessionDisplay(row:{
+ device_name:string|null;user_agent:string|null;ip_address:string|null;last_seen_at:Date|string;
+}){
+ const rawTime=new Date(row.last_seen_at);
+ return {
+  device:row.device_name?.trim()||row.user_agent?.trim()||"Unknown device",
+  agent:row.user_agent?.trim()||"Unknown browser",
+  ip:row.ip_address?.trim()||"—",
+  lastUsed:Number.isFinite(rawTime.getTime())
+   ?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(rawTime)+" IST"
+   :"—",
+ };
+}
 export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawCollegeId:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
  const collegeId=z.uuid().parse(rawCollegeId);
@@ -122,7 +140,10 @@ export async function listCollegeAdminSessionTargetsPage(
  });
 }
 
-export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unknown,userId:unknown){
+export async function listCollegeAdminSessions(
+ ctx:RequestContext,collegeId:unknown,userId:unknown,rawPage:unknown=1,
+){
+ const page=adminSessionHistoryPageSchema.parse(rawPage),pageSize=100;
  const target=await authorizedTarget(ctx,collegeId,userId);
  // A Super Admin's session scope/role can be revoked after resolving the
  // target college. Hold the persisted actor locks while reading device data.
@@ -136,8 +157,8 @@ export async function listCollegeAdminSessions(ctx:RequestContext,collegeId:unkn
   }>`SELECT id,device_name,user_agent,ip_address,last_seen_at,created_at,expires_at
    FROM identity_device_sessions WHERE user_id=${target.userId}::uuid
    AND revoked_at IS NULL AND expires_at>now()
-   ORDER BY last_seen_at DESC LIMIT 100`);
-  return {target,devices:result.rows};
+   ORDER BY last_seen_at DESC,id DESC LIMIT 101 OFFSET ${(page-1)*pageSize}`);
+  return {target,devices:result.rows.slice(0,pageSize),page,pageSize,hasMore:result.rows.length>pageSize,truncated:result.rows.length>pageSize};
  });
 }
 
@@ -156,7 +177,7 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
     AND expires_at>now() RETURNING id`);
   // The second "sign out everywhere" retry is a no-op: there were no live
   // sessions left to revoke. Do not emit a duplicate lifecycle audit record.
-  if(rows.rows.length===0)return {revoked:0};
+  if(rows.rows.length===0)return {revoked:0,message:"No active sessions."};
   await recordActivityEventInTransaction(tx,ctx,{
    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ADMIN_SESSIONS_REVOKED,
    organizationId:target.college.organizationId,collegeId:target.college.id,
@@ -164,7 +185,7 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
    summary:"Super Admin signed out a college administrator everywhere",
    metadata:{revoked:rows.rows.length},
   });
-  return {revoked:rows.rows.length};
+  return {revoked:rows.rows.length,message:"All sessions revoked"};
  });
 }
 

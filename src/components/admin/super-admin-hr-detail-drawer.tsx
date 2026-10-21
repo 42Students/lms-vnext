@@ -64,6 +64,11 @@ export function SuperAdminHrDetailDrawer({
     setSelectedRelationshipId,
   ] = useState("");
 
+  // Include historical, revoked and expired rows without duplicating active IDs.
+  const allGrants=account
+    ?[...account.grants,...(account.grantHistory??[]).filter(history=>
+       !account.grants.some(active=>active.id===history.id))]
+    :[];
   const eligibleRelationships = account
     ? relationships.filter(
         (relationship) =>
@@ -100,6 +105,7 @@ export function SuperAdminHrDetailDrawer({
   return (
     <Drawer
       open
+      className="md:!w-[min(640px,100vw)]"
       dismissible={!pending}
       onOpenChange={(open) => {
         if (!open && !pending) {
@@ -134,7 +140,7 @@ export function SuperAdminHrDetailDrawer({
       }
     >
       {loading ? (
-        <LoadingState label="Loading recruiter details…" />
+        <div className="flex min-h-48 items-center justify-center"><LoadingState label="Loading recruiter details…" /></div>
       ) : error ? (
         <ErrorState
           title="Could not load recruiter"
@@ -157,21 +163,19 @@ export function SuperAdminHrDetailDrawer({
         <div className="min-w-0 space-y-[var(--lms-space-4)]">
           {optionsError?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
             College options could not be loaded. Grant actions are disabled until relationships are verified.
-            Use Retry in Add a college to reload the options.
+            <Button type="button" variant="link" size="sm" onClick={onReloadOptions}>Retry college options</Button>
           </p>:null}
           {actionError?<ErrorState title="Action failed" description={actionError}/>:null}
           <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {account.title || "No job title"}
-                </p>
+                <p className="mt-1 text-sm text-muted-foreground">{account.companyName} · {account.title||"No designation"} · {account.phoneE164||"No mobile"}</p>
               </div>
               <StatusBadge
                 tone={hrStatusTone(account.status)}
               >
-                {account.status === "ARCHIVED" ? "Suspended" : account.status === "ACTIVE" ? "Active" : "Disabled"}
+                {"Account: "+(account.status === "ARCHIVED" ? "Suspended" : account.status === "ACTIVE" ? "Active" : "Disabled")}
               </StatusBadge>
             </div>
 
@@ -212,51 +216,47 @@ export function SuperAdminHrDetailDrawer({
                   College access
                 </h3>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  {account.grants.length} active grant
-                  {account.grants.length === 1 ? "" : "s"}{" "}
-                  visible in the current admin scope.
+                  {account.grants.length} current access grant{account.grants.length===1?"":"s"} and {Math.max(0,allGrants.length-account.grants.length)} historical records visible in this admin scope.
                 </p>
               </div>
             </div>
 
-            {account.grants.length === 0 ? (
-              <p className="mt-4 border-l-2 border-border bg-muted px-4 py-3 text-sm text-muted-foreground">
-                No colleges yet.
-              </p>
-            ) : (
-              <ul className="mt-4 space-y-3">
-                {account.grants.map((grant) => (
-                  <li
-                    key={grant.id}
-                    className="flex min-w-0 flex-col items-start gap-3 border-b border-border py-3 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div className="min-w-0">
-                      <p className="m-0 min-w-0 break-words [overflow-wrap:anywhere] font-semibold text-foreground">
-                        {grant.collegeName}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {grant.validUntil ? `Until ${new Date(grant.validUntil).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}`:"Expiry not recorded"}
-                        {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=renderNow?"Expired":grant.verificationStatus}
-                      </p>
-                    </div>
-                    <Button className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
-                      variant="secondary"
-                      size="sm"
-                      disabled={pending}
-                      onClick={() =>
-                        onRevokeRequest(grant)
-                      }
-                    >
-                      Revoke
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <div className="mt-4 min-w-0 overflow-x-auto" role="region" aria-label="College access and history" tabIndex={0}>
+             <table className="w-full min-w-[590px] border-collapse text-left text-sm">
+              <thead><tr className="border-b border-border bg-surface-subtle">
+               <th scope="col" className="px-3 py-2 font-semibold">College</th>
+               <th scope="col" className="px-3 py-2 font-semibold">Access</th>
+               <th scope="col" className="px-3 py-2 font-semibold">Until</th>
+               <th scope="col" className="px-3 py-2 font-semibold"><span className="sr-only">Actions</span></th>
+              </tr></thead>
+              <tbody>
+               {allGrants.length===0?<tr><td colSpan={4} className="px-3 py-5 text-center text-muted-foreground">No colleges yet.</td></tr>:
+               allGrants.map(grant=>{
+                const expired=Boolean(grant.validUntil&&Date.parse(grant.validUntil)<=renderNow);
+                const status=grant.status==="REVOKED"?"Revoked":
+                  expired?"Expired":grant.status==="ACTIVE"&&grant.verificationStatus==="VERIFIED"?"Active":
+                  grant.verificationStatus==="VERIFIED"?"Inactive":"Unverified";
+                const current=account.grants.some(item=>item.id===grant.id);
+                return <tr key={grant.id} className="border-b border-border align-middle">
+                 <td className="max-w-[230px] break-words px-3 py-3 font-semibold">{grant.collegeName}</td>
+                 <td className="px-3 py-3"><StatusBadge tone={status==="Active"?"success":status==="Unverified"?"warning":"neutral"}>{status}</StatusBadge></td>
+                 <td className="px-3 py-3 text-xs text-body">
+                  {grant.validUntil?<span className="rounded-md border border-border px-2 py-1">{grant.validUntil.slice(0,10)}</span>:"No recorded expiry"}
+                 </td>
+                 <td className="px-3 py-3">
+                  {current&&grant.status==="ACTIVE"?<Button type="button" variant="secondary" size="sm"
+                    disabled={pending} aria-label={"Remove access for "+grant.collegeName} onClick={()=>onRevokeRequest(grant)}>Remove</Button>:
+                   <span className="text-xs text-muted-foreground">—</span>}
+                 </td>
+                </tr>;
+               })}
+              </tbody>
+             </table>
+            </div>
 
             {account.status === "ACTIVE" ? (
-              <details open className="group mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
-                <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a college</summary>
+              <div className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+                <h4 className="text-sm font-semibold text-foreground">Add a college</h4>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   Only active company–college relationships for{" "}
                   {account.companyName} are eligible. Choose the college to grant access.
@@ -356,9 +356,9 @@ export function SuperAdminHrDetailDrawer({
                     void grant();
                   }}
                 >
-                  {pending ? "Working…" : validUntil ? "Grant until selected date" : "Grant 3-month access"}
+                  {pending ? "Working…" : "Give access"}
                 </Button>
-              </details>
+              </div>
             ) : (
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
                 This recruiter is not active. Restore
@@ -368,14 +368,6 @@ export function SuperAdminHrDetailDrawer({
             )}
           </section>
 
-          {account.grantHistory?.length ? <section aria-label="College grant history" className="border-b border-border pb-5">
-            <h3 className="font-semibold">College access history</h3>
-            <ul className="mt-3 space-y-2 text-sm">{account.grantHistory.map(grant=><li key={grant.id} className="flex flex-wrap justify-between gap-2 border-b border-border pb-2">
-              <span>{grant.collegeName}</span>
-              <span>{grant.status==="REVOKED"?"Revoked":grant.validUntil&&Date.parse(grant.validUntil)<=renderNow?"Expired":"Active"}
-               {" · "}{grant.validUntil?"Until "+grant.validUntil.slice(0,10):"No recorded expiry"}</span>
-            </li>)}</ul>
-          </section>:null}
           <section className="border-b border-border pb-5">
             <h3 className="m-0 text-base font-semibold text-foreground">
               Account security

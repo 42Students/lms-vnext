@@ -7,7 +7,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {sanitizePublicCollegeBranding} from "./public-branding-model";
-import {effectiveCollegeSignInMethod} from "./public-signin-policy-service";
+import {effectiveCollegeSignInMethod,effectivePublicCollegeSignInPolicy} from "./public-signin-policy-service";
 import {
   collegeBrandingSaveSchema,
   sameCollegeBranding,
@@ -112,12 +112,23 @@ export async function getPublicCollegeBranding(collegeId: string) {
     if (error instanceof CollegeBrandingNotFoundError) return null;
     throw error;
   }
-  const view=toView(await loadBranding(collegeId));
-  return { collegeName: college.name, ...view,
-    ...sanitizePublicCollegeBranding(view),
-    ...(college.logoObjectPath?.startsWith("branding/"+college.id+"/")?{
-      logoUrl:"/api/colleges/"+college.id+"/branding/logo",
-    }:{}),
+  const [branding,signIn]=await Promise.all([
+    loadBranding(collegeId),effectivePublicCollegeSignInPolicy(college.id),
+  ]);
+  // Allowlist exactly public presentation and sign-in capability fields.
+  // Version, object-storage keys and other private state stay server-side.
+  const safe=sanitizePublicCollegeBranding(toView(branding));
+  const uploadedLogo=college.logoObjectPath?.startsWith("branding/"+college.id+"/")
+    ?"/api/colleges/"+college.id+"/branding/logo":null;
+  return {
+    collegeName:college.name,
+    ...safe,
+    logoUrl:uploadedLogo??safe.logoUrl,
+    signInMethod:signIn.method,
+    loginMethods:signIn.legacyLoginMethods,
+    signInChannelOrder:signIn.channelOrder,
+    emailEnabled:signIn.emailEnabled,
+    phoneEnabled:signIn.phoneEnabled,
   };
 }
 
@@ -169,6 +180,11 @@ export async function saveCollegeBranding(
    const [stored]=await tx.select().from(collegeBranding)
     .where(eq(collegeBranding.collegeId,college.id)).for("update").limit(1);
    const previous=toView(stored??null);
+   // Keep stale references for an authorized post-commit storage worker.
+   // Never delete old objects inside the transaction, nor delete arbitrary
+   // external HTTPS URLs: they can be shared with other tenants.
+   const changedAssetFields=(["logoUrl","faviconUrl","loginBackgroundUrl","loginBackgroundUrlMobile"] as const)
+    .filter(key=>previous[key]!==input[key]);
    // An already-applied retry is safe. Do not advance version or emit a
    // duplicate activity event merely because the response was lost.
    if(sameCollegeBranding(previous,input))
@@ -189,7 +205,7 @@ export async function saveCollegeBranding(
     subjectId: college.id,
     subjectLabel: college.name,
     summary: "College branding updated",
-    metadata: { version: row.version },
+    metadata: { version: row.version,changedAssetFields,storageCleanup:"POST_COMMIT_OWNER_REVIEW_REQUIRED" },
    });
    return { collegeName: college.name, ...toView(row) };
   });

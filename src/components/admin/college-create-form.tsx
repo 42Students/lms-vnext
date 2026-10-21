@@ -29,7 +29,7 @@ export function CollegeCreateForm({
   onCreated?: (collegeId: string) => void;
 }) {
   const router = useRouter();
-  const initialOrganizationId=preferredOrganizationId??organizations[0]?.id??"";
+  const initialOrganizationId=organizations.some(org=>org.id===preferredOrganizationId)?preferredOrganizationId!:"";
   const initialForm={organizationId:initialOrganizationId,name:"",code:"",
     city:"",state:"",addressLine1:"",addressLine2:"",landmark:"",
     postalCode:"",country:"India"};
@@ -68,6 +68,8 @@ export function CollegeCreateForm({
 
     void guardedRun(async () => {
       try {
+        // Legacy org_id/unique_id/pinCode map to UUID organizationId,
+        // normalized code and postalCode in the vNext membership model.
         const payload=await apiFetch<unknown>("/api/colleges",{
           method:"POST",headers:{"content-type":"application/json"},
           body:JSON.stringify({organizationId,name,code,city,state,addressLine1,
@@ -110,8 +112,9 @@ export function CollegeCreateForm({
       onSubmit={submit}
       noValidate
       aria-busy={pending}
-      className="grid min-w-0 gap-3 border-t border-border pt-4 min-[992px]:grid-cols-[1fr_1fr_12rem_auto] min-[992px]:items-end print:hidden"
+      className="grid min-w-0 max-w-[640px] gap-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)] print:hidden"
     >
+      <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Create New College</h3>
       <div>
         <label
           htmlFor="college-organization"
@@ -121,13 +124,14 @@ export function CollegeCreateForm({
         </label>
         <Select
           className="min-h-11 md:min-h-9" id="college-organization"
-          disabled={pending}
+          disabled={pending||organizations.length===0}
           value={organizationId}
           onChange={(event) => setOrganizationId(event.target.value)}
           required
           aria-invalid={Boolean(fieldErrors.organizationId)}
           aria-describedby={fieldErrors.organizationId ? "college-organization-error" : undefined}
         >
+          <option value="" disabled>{organizations.length===0?"Organizations unavailable — Retry above":"Select organization"}</option>
           {organizations.map((organization) => (
             <option key={organization.id} value={organization.id}>
               {organization.name}
@@ -162,6 +166,12 @@ export function CollegeCreateForm({
           className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
           Unique ID / Code
+          <details className="group relative ml-2 inline-block align-middle text-xs font-normal">
+           <summary className="inline-flex h-6 w-6 cursor-help list-none items-center justify-center rounded-full border border-border text-muted-foreground" aria-label="Unique ID / Code help">?</summary>
+           <p className="absolute left-0 top-full z-20 mt-1 w-[min(320px,80vw)] rounded-lg border border-border bg-surface p-3 text-xs font-normal leading-5 text-body shadow-lg">
+            A short, permanent code for this college — shown in switchers and menus (e.g. “ROLE • NSRIT”). It’s separate from the web address you’ll add next, though people often reuse the same word for both. Once set, avoid changing it — other parts of the system reference it by this code, not by the college’s display name.
+           </p>
+          </details>
         </label>
         <Input
           className="min-h-11 md:min-h-9" id="college-code"
@@ -178,7 +188,7 @@ export function CollegeCreateForm({
         />
         {fieldErrors.code ? <p id="college-code-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.code}</p> : null}
       </div>
-      <div className="space-y-3 min-[992px]:col-span-4">
+      <div className="space-y-3">
        <Disclosure title="Address details (optional)" className="border-b border-border pb-4">
         <div className="mt-3 grid min-w-0 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
          {([
@@ -187,12 +197,13 @@ export function CollegeCreateForm({
           ["Landmark",landmark,setLandmark,255],["Pin Code",postalCode,setPostalCode,32],
           ["Country",country,setCountry,128],
          ] as const).map(([label,value,setter,maxLength])=><label key={label} className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {label}<Input value={value} disabled={pending} onChange={e=>setter(e.target.value)} maxLength={maxLength}
+          {label}<Input value={value} disabled={pending} placeholder={label==="Address"?"Full address":label} onChange={e=>setter(e.target.value)} maxLength={maxLength}
            className="min-h-11 w-full md:min-h-9"/>
          </label>)}
         </div>
        </Disclosure>
-       <p id="college-code-help" className="text-xs text-muted-foreground leading-5">Unique ID / Code identifies this college across links and integrations. Choose it carefully; it is not editable after creation.</p>
+       <p id="college-code-help" className="text-xs text-muted-foreground leading-5">The Unique ID / Code is a short, permanent switcher and menu code; it is separate from the college web address. vNext normalizes this code to lowercase letters, numbers and hyphens, while legacy free-form Unique IDs may require a verified migration mapping.</p>
+       <p className="text-xs text-body">College logo can be uploaded later under Branding. College Chair and College Vice Chair are optional appointments managed after creation in academic settings.</p>
       </div>
       <Button
         type="submit"
@@ -200,12 +211,13 @@ export function CollegeCreateForm({
         loading={pending}
         disabled={pending}
       >
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
         {pending ? "Creating…" : "Create College"}
       </Button>
-      {restored?<Alert tone="info" className="min-[992px]:col-span-4">Draft restored</Alert>:null}
-      {success ? <Alert tone="success" role="status" className="min-[992px]:col-span-4">{success}</Alert> : null}
+      {restored?<Alert tone="info" className="">Draft restored</Alert>:null}
+      {success ? <Alert tone="success" role="status" className="">{success}</Alert> : null}
       {error ? (
-        <Alert tone="error" className="min-[992px]:col-span-4">
+        <Alert tone="error" className="">
           {error}
         </Alert>
       ) : null}
