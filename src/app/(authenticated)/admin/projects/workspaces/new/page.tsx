@@ -36,7 +36,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   const requested=(await searchParams).templateId;
   const selected=typeof requested==="string"&&templates.some(t=>t.templateId===requested)?requested:null;
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
-    <PageBackLink href="/admin/projects" label="Back to workspaces" />
+    {templates.length === 0 ? <PageBackLink href="/admin/projects" label="Back to workspaces" /> : null}
     <PageHeader title="Create project workspace"
       description="Every workspace starts from a template — pick one below." />
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."

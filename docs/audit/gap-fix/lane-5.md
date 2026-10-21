@@ -304,3 +304,15 @@
 
 ## Packet 67 — Canonical workspace overview navigation
 - Legacy overview already resolves through canonical /admin/projects/[projectId]/[section]. Replaced unsafe first-of-duplicate query selection with bounded single-value from/reason, while leaving college ID exclusively in authorized selected scope. G2-18-028-001 reviewed; unsupported old numeric IDs stay unmapped pending an explicit crosswalk. No code/tests/CI run.
+
+## Packet 68 — Template assignment legacy identifier
+- Finding G2-7-033-002 already fixed: `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx` resolves legacy numeric template IDs using `legacyIdMap` and approved slugs using `resolveTemplateCollegeLegacyId`, then validates UUID after permissioned lookup. No parallel resolver added. No code/test/CI run.
+
+## Packet 69 — Workspace creator guarded Back action
+- Existing ClassTeamWorkspaceCreator already owns dirty/busy discard dialog and safe Cancel navigation. Removed the unguarded parent PageBackLink when the editor is present; retained it for a clean empty-template state. The editor's Cancel remains the only normal leaving action while dirty. G2-8-028-002 handled within one workspace role/scope. No code/test/CI run.
+
+## Packet 70 — Inbound mail provider cutover
+- Created `docs/audit/gap-fix/inbound-mail-cutover-lane-5.md` with source mapping, signed provider verification, idempotent source IDs, scoped privacy, dry-run validation, rollout, and rollback gates. PG 0068 migration and legacy V225 are not equivalent and no data migration is claimed complete. G2-10-009-120 planning finding covered. No code/tests/CI run.
+
+## Packet 71 — Cross-college admin lifecycle
+- Created `docs/audit/gap-fix/college-admin-lifecycle-contract-lane-5.md` describing per-college membership suspension, global user device-session revocation, role-switcher and reactivation semantics, and explicit follow-up auth verification. The existing Super Admin sign-out-everywhere service is user-wide; session tokens are not claimed refreshed after reactivation. G2-18-031-054 reviewed. No code/tests/CI run.
