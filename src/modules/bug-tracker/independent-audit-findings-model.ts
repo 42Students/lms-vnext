@@ -16,8 +16,8 @@ const filter=z.strictObject({
 export type FindingFilters=z.infer<typeof filter>;
 export function parseIndependentFindingFilters(raw:Record<string,string|string[]|undefined>){
  if(Object.keys(raw).some(k=>!["q","view","status","severity","kind","area","page","size"].includes(k)))return null;
- if(["q","view","area","page","size"].some(k=>Array.isArray(raw[k])))return null;
- const parsed=filter.safeParse({q:raw.q,view:raw.view,area:raw.area,page:raw.page,size:raw.size,
+ if(["q","view","page","size"].some(k=>Array.isArray(raw[k])))return null;
+ const parsed=filter.safeParse({q:raw.q,view:raw.view,area:Array.isArray(raw.area)?raw.area.join(","):raw.area,page:raw.page,size:raw.size,
   statuses:values(raw.status),severities:values(raw.severity),kinds:values(raw.kind)});
  return parsed.success?parsed.data:null;
 }

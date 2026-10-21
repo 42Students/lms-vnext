@@ -92,6 +92,7 @@ export function IndependentAuditFindingsBoard({rows,view}:{
   ["Where",["Repo: "+current.sourceRepo,...current.paths.map(p=>"File: "+p),
    ...current.pages.map(p=>"Page: "+p),...current.endpoints.map(p=>"Endpoint: "+p)].join("\n")],
   ["Affects",current.roles.join(", ")],["Seen on",current.environment],
+  ["Source commit",current.sourceCommitSha],["Imported",istDate(current.importedAt)],
   ["Reported",(current.foundBy??"Not given")+" · "+istDate(current.foundAt)],
   ["Fix commits",current.fixCommits.length?current.fixCommits.map(c=>c.repo+" "+c.sha).join("\n"):"None yet"],
  ]:[];

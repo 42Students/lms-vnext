@@ -79,7 +79,10 @@ export default async function IndependentFindingsPage({searchParams}:{
         timeZone:"Asia/Kolkata"}).format(sync.lastSyncedAt)+" IST" : "not recorded"}
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
-   <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
+   <div className="flex flex-wrap items-center gap-3">
+    <Button type="button" variant="secondary" disabled title="Credential-verified repository synchronization is not configured">Sync now</Button>
+    <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
+   </div>
    <Banner tone="warning">
     Sync now is unavailable because an authenticated, credential-verified repository importer and durable job receipt have not been configured. No import is performed when this page loads.
    </Banner>
@@ -129,15 +132,15 @@ export default async function IndependentFindingsPage({searchParams}:{
     className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2 lg:col-span-3">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
     <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
-   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
-    <Input name="area" list="audit-finding-areas" defaultValue={parsed.area} maxLength={80}
-     placeholder="Choose an area (or comma separated)"/>
-    <datalist id="audit-finding-areas">{[
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area (multiple)
+    <Select name="area" multiple size={4} defaultValue={parsed.area.split(",").filter(Boolean)} aria-label="Filter findings by areas">
+     {[
       "login","course","lesson-content","quiz","assignment","attendance","classroom",
       "notifications","calendar","projects","placements-tpo","recruiter",
       "student-placements","college-admin","super-admin","groups-electives",
       "people-accounts","reports","tracker","mobile","platform","security","other",
-    ].map(area=><option key={area} value={area}/>)}</datalist></label>
+     ].map(area=><option key={area} value={area}>{area}</option>)}
+    </Select></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
     <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
