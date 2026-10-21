@@ -27,7 +27,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
   companyId:first(raw.companyId)||undefined,departmentId:first(raw.departmentId)||undefined,
   sort:first(raw.sort)??"UPCOMING",page:first(raw.page)??"1"};
  const valid=collegeInterviewFilters.safeParse(input);
- if(!valid.success)return <div className="space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/></div>;
+ if(!valid.success)return <div className="min-w-0 space-y-4"><PageHeader title="Interviews"/><ErrorState title="Invalid interview filters" description="Review the interview search and filters." action={<Link href="/college/placements/interviews" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
  const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
