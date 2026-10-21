@@ -123,26 +123,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/placements/applicant-notes-panel.tsx`
 - [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [x] `src/components/placements/college-drive-bulk-actions.tsx`
-- [ ] `src/components/placements/college-drive-deadline-action.tsx`
-- [ ] `src/components/placements/college-interview-status-actions.tsx`
-- [ ] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-bulk-offer-withdraw.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-operations-overview.tsx`
-- [ ] `src/components/placements/placement-recruiter-access.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/placement-request-queue.tsx`
-- [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/super-admin-drive-archive.tsx`
-- [ ] `src/components/placements/super-admin-drive-deadline.tsx`
-- [ ] `src/components/placements/super-admin-drive-quick-search.tsx`
-- [ ] `src/components/placements/super-admin-platform-placement-policy.tsx`
-- [ ] `src/components/placements/tpo-applicant-review-form.tsx`
+- [x] `src/components/placements/college-drive-deadline-action.tsx`
+- [x] `src/components/placements/college-interview-status-actions.tsx`
+- [x] `src/components/placements/drive-day-roster.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-interview-withdrawal-request.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/placement-operations-overview.tsx`
+- [x] `src/components/placements/placement-recruiter-access.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/placement-request-queue.tsx`
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- [x] `src/components/placements/super-admin-drive-archive.tsx`
+- [x] `src/components/placements/super-admin-drive-deadline.tsx`
+- [x] `src/components/placements/super-admin-drive-quick-search.tsx`
+- [x] `src/components/placements/super-admin-platform-placement-policy.tsx`
+- [x] `src/components/placements/tpo-applicant-review-form.tsx`
 - [ ] `src/components/placements/tpo-college-rules-control.tsx`
 - [ ] `src/components/placements/tpo-company-feedback-form.tsx`
 - [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx`

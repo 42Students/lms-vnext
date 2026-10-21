@@ -36,7 +36,7 @@ export function LearnerInterviewWithdrawalRequest({target}:{target:LearnerInterv
     {target.pending||submitted ? <p role="status" className="text-sm text-body">
       Withdrawal requested; awaiting the placement team&apos;s decision. <Link className="font-semibold text-primary-text underline" href="/learn/my-placements/support?status=PENDING&type=APPLICATION_WITHDRAWAL">Review request</Link>
     </p> : review ? <div className="space-y-3">
-      <label className="block text-sm font-semibold text-body">Reason for requesting withdrawal
+      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for requesting withdrawal
         <Textarea value={reason} maxLength={2000} rows={3} disabled={pending} onChange={event=>setReason(event.target.value)}
           className="mt-2 w-full" />
       </label>

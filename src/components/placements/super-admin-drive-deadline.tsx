@@ -39,7 +39,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
  return <div className="space-y-3"><form onSubmit={review} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
-  <label className="grid w-full max-w-md gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
+  <label className="grid w-full max-w-md gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
    <Input name="deadline" type="datetime-local" required className="w-full" onChange={()=>{setError("");setSaved(false);}}/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

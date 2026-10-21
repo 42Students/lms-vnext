@@ -21,12 +21,12 @@ export function SuperAdminDriveQuickSearch({jobs,basePath}:{
   return <section aria-label="Find drives" className="space-y-3 border-b border-border pb-5">
     <h2 className="font-semibold">Find a drive</h2>
     <div className="flex flex-wrap items-end gap-3">
-      <label className="grid min-w-52 flex-1 gap-1 text-sm font-semibold text-body">Search by drive or company
+      <label className="grid min-w-52 flex-1 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Search by drive or company
         <Input type="search" value={query} onChange={e=>setQuery(e.target.value)}
           placeholder="Search by drive or company"
           className="min-h-11 w-full sm:min-h-9" />
       </label>
-      <label className="grid gap-1 text-sm font-semibold text-body">Status
+      <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Status
         <Select value={filter} onChange={e=>setFilter(e.target.value as "ALL"|"ACTIVE")}
           className="min-h-11 w-full sm:min-h-9">
           <option value="ACTIVE">Active drives</option><option value="ALL">All drives</option>
