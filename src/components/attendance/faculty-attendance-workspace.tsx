@@ -735,6 +735,8 @@ export function FacultyAttendanceWorkspace({
                   {monthSummary.learnerCount > 0 && monthSummary.sessionCount > 0 ? (
                 <FacultyReportDownload
                   kind="attendance"
+                  attendanceMonth={month}
+                  attendanceCourse={workspace.course.courseName}
                   title={workspace.course.courseName + " " + monthLabel}
                   subtitle={workspace.course.courseCode + " · " + workspace.course.sectionName}
                   summary={[

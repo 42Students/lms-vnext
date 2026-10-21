@@ -63,6 +63,24 @@ function formatDateTime(
   }).format(date);
 }
 
+/** The historic API sometimes serialized createdAt as a Java LocalDateTime
+ * array. Preserve its calendar day as an IST wall date rather than feeding
+ * the raw array to Date.parse or accidentally shifting it across midnight.
+ */
+function lessonCreatedOn(value:Date|string|readonly number[]|null|undefined){
+ if(!value)return "—";
+ let date:Date;
+ if(Array.isArray(value)){
+  const [year,month,day]=value;
+  if(!year||!month||!day||month<1||month>12||day<1||day>31)return "—";
+  date=new Date(Date.UTC(year,month-1,day,12));
+ }else{
+  date=value instanceof Date?value:new Date(value as string);
+ }
+ return Number.isNaN(date.getTime())?"—":
+  new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(date);
+}
+
 function ContentCard({
   item,
 }: {
@@ -305,13 +323,16 @@ export function AdminOfferingLearningOverview({
   const [createOpen,setCreateOpen]=useState(false);
   const [focusedLessonId,setFocusedLessonId]=useState<string|null>(null);
   const previousCount=useRef(workspace.lessons.length);
+  // The source-offering may change without remounting this client boundary.
+  // Dismiss stale lesson detail before navigating another course.
+  useEffect(()=>{setFocusedLessonId(null);setCreateOpen(false);},[offering.id,learningPath?.id]);
   useEffect(()=>{
    if(workspace.lessons.length>previousCount.current&&createOpen)setCreateOpen(false);
    previousCount.current=workspace.lessons.length;
   },[workspace.lessons.length,createOpen]);
   const focusedIndex=focusedLessonId===null?-1:
    workspace.lessons.findIndex(lesson=>lesson.id===focusedLessonId);
-  const visibleLessons=focusedIndex<0?workspace.lessons:[workspace.lessons[focusedIndex]!];
+  const visibleLessons=focusedIndex<0?[]:[workspace.lessons[focusedIndex]!];
 
   if (!learningPath) {
     return (
@@ -422,9 +443,22 @@ export function AdminOfferingLearningOverview({
         </div>
       </section>
 
-      <div id="lesson-authoring" className="flex flex-wrap items-center gap-3">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <h2 className="m-0 flex items-center gap-2 text-xl font-semibold text-[var(--lms-heading)]">
+          <span aria-hidden="true" className="h-6 w-1 rounded bg-[#e9a23b]"/>
+          Lessons
+        </h2>
+        <div id="lesson-authoring" className="flex flex-wrap items-center gap-3">
        <Button type="button" onClick={()=>setCreateOpen(true)}
-        className="min-h-11 md:min-h-9">Create New Lesson</Button>
+        className="min-h-11 md:min-h-9">
+        <span className="inline-flex items-center gap-2">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M12 4v16M4 12h16"/>
+          </svg>
+          Create New
+        </span>
+       </Button>
        <Button type="button" variant="secondary" onClick={()=>router.refresh()}
         className="min-h-11 md:min-h-9">Refresh lessons</Button>
        <Drawer open={createOpen} onOpenChange={setCreateOpen} side="right"
@@ -433,39 +467,57 @@ export function AdminOfferingLearningOverview({
           className="min-h-11 md:min-h-9">Cancel and refresh</Button>}>
         <CreateLessonForm learningPathId={learningPath.id} nextSequence={nextLessonSequence}/>
        </Drawer>
+        </div>
       </div>
 
       {workspace.lessons.length === 0 ? (
-        <section className="border-y border-dashed border-border py-4">
-          <h3 className="m-0 text-base font-semibold text-foreground">
-            No Lessons yet
-          </h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Add the first Lesson to begin building
-            the shared Course structure.
-          </p>
+        <section className="flex min-h-40 flex-col items-center justify-center border-y border-border py-7 text-center" aria-label="No lessons">
+          <svg aria-hidden="true" width="60" height="48" viewBox="0 0 60 48"
+           fill="none" stroke="currentColor" strokeWidth="1.5" className="text-muted-foreground">
+            <rect x="8" y="8" width="44" height="32" rx="3"/><path d="M18 17h24M18 24h19M18 31h14"/>
+          </svg>
+          <h3 className="mt-3 text-sm font-semibold text-foreground">No Lessons yet</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Click Create New to add your first Lesson.</p>
         </section>
       ) : (
         <div className="min-w-0 space-y-[var(--lms-space-4)]">
           {focusedIndex<0?<CollegeLessonDragOrder learningPathId={learningPath.id}
             lessons={workspace.lessons.map(row=>({id:row.id,name:row.name,sequence:row.sequence}))}/>:null}
-          <nav aria-label="Lesson roadmap" className="space-y-2">
-           {focusedIndex<0?<div className="flex flex-wrap gap-2">
-            {workspace.lessons.map((lesson,index)=><Button key={lesson.id}
-             variant="secondary" type="button" onClick={()=>setFocusedLessonId(lesson.id)}
-             className="min-h-11 md:min-h-9">Lesson {index+1}: {lesson.name}</Button>)}
-           </div>:<div className="flex flex-wrap items-center gap-2">
-            <Button type="button" variant="secondary" onClick={()=>setFocusedLessonId(null)}
-             className="min-h-11 md:min-h-9">← Back to syllabus</Button>
-            <Button type="button" variant="secondary" disabled={focusedIndex===0}
-             onClick={()=>setFocusedLessonId(workspace.lessons[focusedIndex-1]?.id??null)}
-             className="min-h-11 md:min-h-9">Previous lesson</Button>
-            <Button type="button" variant="secondary" disabled={focusedIndex===workspace.lessons.length-1}
-             onClick={()=>setFocusedLessonId(workspace.lessons[focusedIndex+1]?.id??null)}
-             className="min-h-11 md:min-h-9">Next lesson</Button>
-           </div>}
-          </nav>
-          {visibleLessons.map(
+          {focusedIndex<0?(
+            <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-3">
+              {workspace.lessons.map((lesson,index)=>{
+                const itemCount=lesson.contents.length+lesson.assignments.length+lesson.quizzes.length;
+                return <button type="button" key={lesson.id}
+                  aria-label={"Open lesson "+(lesson.name.trim()||"Untitled lesson")}
+                  className="group flex min-h-48 min-w-0 flex-col items-start rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 text-left shadow-sm transition-shadow hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  onClick={()=>setFocusedLessonId(lesson.id)}>
+                  <p className="text-xs font-semibold text-primary-text">Lesson {index+1}</p>
+                  <h3 className="mt-3 break-words text-[26px] font-semibold leading-[1.25] capitalize text-[var(--lms-heading)]">
+                    {lesson.name.trim()||"Untitled lesson"}
+                  </h3>
+                  <p className="mt-auto pt-4 text-sm text-muted-foreground">
+                    Created on {lessonCreatedOn(lesson.createdAt)}
+                  </p>
+                  <p className="mt-1 text-xs text-muted-foreground">{itemCount} items</p>
+                  <span className="mt-3 text-sm font-semibold text-primary-text group-hover:underline">
+                    Open lesson →
+                  </span>
+                </button>;
+              })}
+            </div>
+          ):(
+            <nav aria-label="Lesson roadmap" className="flex flex-wrap items-center gap-2">
+              <Button type="button" variant="secondary" onClick={()=>setFocusedLessonId(null)}
+               className="min-h-11 md:min-h-9">← Back to syllabus</Button>
+              <Button type="button" variant="secondary" disabled={focusedIndex===0}
+               onClick={()=>setFocusedLessonId(workspace.lessons[focusedIndex-1]?.id??null)}
+               className="min-h-11 md:min-h-9">Previous lesson</Button>
+              <Button type="button" variant="secondary" disabled={focusedIndex===workspace.lessons.length-1}
+               onClick={()=>setFocusedLessonId(workspace.lessons[focusedIndex+1]?.id??null)}
+               className="min-h-11 md:min-h-9">Next lesson</Button>
+            </nav>
+          )}
+          {focusedIndex>=0?visibleLessons.map(
             (lesson, visibleIndex) => {
               const lessonIndex=focusedIndex<0?visibleIndex:focusedIndex;
               const itemCount =
@@ -484,9 +536,12 @@ export function AdminOfferingLearningOverview({
                       <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                         Lesson {lessonIndex + 1}
                       </p>
-                      <h2 className="mt-1 text-lg font-semibold text-foreground">
-                        {lesson.name}
+                      <h2 className="mt-1 text-[26px] font-semibold capitalize text-[var(--lms-heading)]">
+                        {lesson.name.trim()||"Untitled lesson"}
                       </h2>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Created on {lessonCreatedOn(lesson.createdAt)}
+                      </p>
                       {lesson.description ? (
                         <p className="mt-1 max-w-3xl text-sm leading-6 text-body">
                           {lesson.description}
@@ -571,7 +626,7 @@ export function AdminOfferingLearningOverview({
                 </section>
               );
             },
-          )}
+          ):null}
         </div>
       )}
     </div>
