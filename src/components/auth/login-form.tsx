@@ -327,7 +327,7 @@ export function LoginForm({
       {error ? (
         <div
           role="alert" ref={errorSummaryRef} tabIndex={-1}
-          className="mt-4 rounded-[var(--lms-control-radius)] border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error"
+          className="mt-4 rounded-[var(--lms-control-radius)] border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           {error}
         </div>
