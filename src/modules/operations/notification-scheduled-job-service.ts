@@ -367,13 +367,18 @@ export async function queueFencedCourseDueReminders(
           and lesson.status = 'ACTIVE' and lesson.visible_to_students = true
           and lesson.deleted_at is null
         join course_learning_paths path on path.id = lesson.learning_path_id
-          and path.status = 'ACTIVE'
+          and path.status = 'PUBLISHED'
         join course_offerings o on o.id = path.offering_id
           and o.status = 'ACTIVE'
         join course_section_deliveries d on d.offering_id = o.id
           and d.ended_at is null
           and (a.delivery_id is null or a.delivery_id = d.id)
         join academic_periods period on period.id = o.academic_period_id
+          and period.status = 'ACTIVE'
+        join sections section on section.id = d.section_id
+          and section.cohort_id = o.cohort_id
+          and section.academic_period_id = period.id
+          and section.status = 'ACTIVE'
         join colleges c on c.id = period.college_id and c.status = 'ACTIVE'
         join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
         where a.status = 'PUBLISHED' and a.due_at >= ${from} and a.due_at < ${to}
@@ -386,13 +391,18 @@ export async function queueFencedCourseDueReminders(
           and lesson.status = 'ACTIVE' and lesson.visible_to_students = true
           and lesson.deleted_at is null
         join course_learning_paths path on path.id = lesson.learning_path_id
-          and path.status = 'ACTIVE'
+          and path.status = 'PUBLISHED'
         join course_offerings o on o.id = path.offering_id
           and o.status = 'ACTIVE'
         join course_section_deliveries d on d.offering_id = o.id
           and d.ended_at is null
           and (q.delivery_id is null or q.delivery_id = d.id)
         join academic_periods period on period.id = o.academic_period_id
+          and period.status = 'ACTIVE'
+        join sections section on section.id = d.section_id
+          and section.cohort_id = o.cohort_id
+          and section.academic_period_id = period.id
+          and section.status = 'ACTIVE'
         join colleges c on c.id = period.college_id and c.status = 'ACTIVE'
         join organizations org on org.id = c.organization_id and org.status = 'ACTIVE'
         where q.status = 'PUBLISHED' and q.due_at >= ${from} and q.due_at < ${to}
