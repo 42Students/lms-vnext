@@ -101,6 +101,20 @@ export function prepareSafeDriveChangeJobPatch(
   // recruiter must supply an explicit instant, never a local parsed guess.
   if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(value))
    return null;
+  // Native Date parsing may silently turn 30 February into March. Check
+  // the source wall-clock date before applying its explicit zone offset.
+  const [datePart,timePart]=value.split("T");
+  const [year,month,day]=datePart.split("-").map(Number);
+  const [hour,minute]=timePart.slice(0,5).split(":").map(Number);
+  const second=timePart[5]===":"?Number(timePart.slice(6,8)):0;
+  const wall=new Date(Date.UTC(year,month-1,day,hour,minute,second));
+  const offset=/([+-])(\d{2}):(\d{2})$/.exec(value);
+  if(year<100||wall.getUTCFullYear()!==year||
+     wall.getUTCMonth()+1!==month||wall.getUTCDate()!==day||
+     wall.getUTCHours()!==hour||wall.getUTCMinutes()!==minute||
+     wall.getUTCSeconds()!==second||
+     (offset&&(Number(offset[2])>23||Number(offset[3])>59)))
+   return null;
   const proposed=new Date(value);
   if(!Number.isFinite(proposed.getTime())||proposed.getTime()<=now.getTime())
    return null;
