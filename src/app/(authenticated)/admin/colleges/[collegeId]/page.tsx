@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { collegeIdSchema } from "@/modules/colleges/validation";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { ErrorState } from "@/components/ui/error-state";
+import { Banner } from "@/components/ui/banner";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -12,9 +16,25 @@ import { superAdminVerificationHref } from "@/modules/verification/admin-links";
 export default async function TenantDetail({params}:{params:Promise<{collegeId:string}>}) {
  const {collegeId}=await params;
  const context=await getCurrentRequestContext();
+ if (!collegeIdSchema.safeParse(collegeId).success) return <div className="min-w-0 space-y-4">
+   <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges" />}/>
+   <ErrorState title="Missing collegeId"
+     description="This drawer requires a valid college record. Return to Colleges and select a college to manage."
+     action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Back to colleges</Link>}/>
+ </div>;
  let item:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
  try {item=await getSuperAdminTenantLifecycleDetail(context,collegeId);}
- catch(error){if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND") notFound();throw error;}
+ catch(error){
+   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND") notFound();
+   if(error instanceof AuthorizationError) throw error;
+   return <div className="min-w-0 space-y-4">
+     <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+     <ErrorState title="College setup unavailable"
+       description="This college's setup information could not be loaded. No changes have been made."
+       action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)}
+         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry college setup</Link>}/>
+   </div>;
+ }
  const fields=[
   ["Organization",item.organizationName],["College code",item.code],
   ["College status",item.status],["Organization status",item.organizationStatus],
@@ -25,6 +45,11 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."
    actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
+  <Banner tone="info" role="status">
+   Manage College is divided into separate pages for Branding, Admins, Sign-in Methods and Web address.
+   Save or discard edits in the active section before leaving it. Do not switch college scope
+   while a save is pending. This overview has no unsaved form changes to discard.
+  </Banner>
   <div className="min-w-0">
    <Tabs ariaLabel="College tabs" renderPanel={false} value="college" items={[
     {value:"college",label:"College",href:`/admin/colleges/${encodeURIComponent(item.id)}`},
