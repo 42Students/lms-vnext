@@ -18,6 +18,7 @@ import type {
 } from "@/modules/academics/college-academic-directory-service";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { CollegeDirectoryPageSize } from "@/components/academics/college-directory-page-size";
 
 type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeSemesters>>
@@ -310,7 +311,8 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
                   <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
                     <Link href={"/college/batches/"+encodeURIComponent(item.id)+"/students"}
-                      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]">
+                      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]"
+                      aria-label={"View student roster and move students between classes in " + item.name}>
                       Students
                     </Link>
                     <CollegeCohortRowActions row={item} periods={batchPeriods}/>
@@ -321,7 +323,8 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
+        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</span>
+        <CollegeDirectoryPageSize current={data.query.pageSize} />
         <div className="flex gap-2">
           {data.query.page > 1 ? (
             <Link href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page - 1 })}
