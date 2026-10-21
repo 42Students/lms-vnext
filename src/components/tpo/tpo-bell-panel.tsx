@@ -121,16 +121,16 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
    </div>
   </div>;
  const panelBody = <div className="min-w-0"> {refreshing?<p role="status" className={style.topbarNotificationState}>Refreshing notifications…</p>:null}
-   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="min-w-0 space-y-0">
+   {!refreshing&&displayedItems.length===0&&!error?<div role="status" className={style.topbarNotificationState}><p className="font-medium">Nothing yet</p><p className="text-sm text-muted-foreground leading-[22px]">Things that happen on your drives and recruiters show up here.</p></div> :displayedItems.length>0?<ul role="list" aria-label="Recent placement notifications" className="min-w-0 space-y-0">
     {groupedItems.map((group,index)=><li key={group.day+"-"+index} className="min-w-0 list-none">
-    <p className="px-3 pb-2 pt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group.day}</p>
+    <p className="px-3 pb-2 pt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">{group.day}</p>
     <ul role="list" aria-label={"Notifications for "+group.day} className="space-y-0">
     {group.items.map(item=><li key={item.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] text-sm last:border-b-0">
      <Button variant="ghost" type="button" disabled={pending} onClick={()=>void openItem(item)}
       className="min-h-11 w-full min-w-0 flex-col items-start justify-start gap-1 rounded-[var(--lms-control-radius)] border-0 bg-transparent px-3 py-3 text-left hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:px-4">
      <span className="block max-w-full break-words text-sm font-semibold leading-[1.4] text-foreground">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-[var(--lms-topbar-unread)]"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</span>
      {item.body?<span className="mt-1 block max-w-full line-clamp-2 break-words text-sm leading-[1.5] text-muted-foreground">{item.body}</span>:null}
-     <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)]">
+     <time dateTime={item.createdAt} className="mt-1 block text-xs text-[var(--lms-muted-text)] leading-[20px]">
       {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
      </time>
      <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
@@ -165,8 +165,8 @@ export function TpoBellPanel({initialUnread,items,revision=0,compact=false}:{ini
        onDismiss={()=>{setOpen(false);trigger.current?.focus();}}
        className="absolute right-0 top-[calc(100%_+_8px)] z-[70] w-[min(420px,calc(100vw_-_24px))] max-h-[min(520px,calc(100dvh_-_120px))] overflow-y-auto overscroll-contain p-4">
        <div className="mb-3 border-b border-border pb-3">
-        <h2 className="text-lg font-semibold text-foreground">Notifications</h2>
-        <p className="text-xs text-muted-foreground">Most recent notifications from your own college.</p>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Notifications</h2>
+        <p className="text-xs text-muted-foreground leading-[20px]">Most recent notifications from your own college.</p>
        </div>
        {panelBody}
        <div className="mt-3 border-t border-border pt-3">{panelFooter}</div>
