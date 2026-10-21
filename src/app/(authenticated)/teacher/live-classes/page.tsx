@@ -57,7 +57,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    <Button type="submit" className="w-full lg:w-auto">Filter</Button>
    <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center justify-center p-2 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">Clear</Link>
   </form>
-  <p className="text-sm leading-[22px] text-body" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching registered live session{data.total===1?"":"s"}</p>
+  <p className="text-sm leading-[1.6] text-body" role="status" aria-live="polite">{data.total.toLocaleString("en-IN")} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(s=><li key={s.deliveryId+":"+s.id}

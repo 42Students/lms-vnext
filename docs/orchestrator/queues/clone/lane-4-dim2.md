@@ -260,76 +260,76 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
 - [x] `src/app/(authenticated)/hr/profile/error.tsx`
 - [x] `src/app/(authenticated)/hr/profile/page.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/error.tsx`
-- [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/error.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/error.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/error.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reports/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/review-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/recruiter/not-found.tsx`
-- [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/teaching/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/audit/actors/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/audit/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/audit/page.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/error.tsx`
+- [x] `src/app/(authenticated)/hr/round-results/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/error.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/activity-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/board-review/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/resources-directory/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-overview/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/risk-readiness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/tasks/[taskId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/error.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reports/page.tsx`
+- [x] `src/app/(authenticated)/mentor/review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/page.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/page.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/page.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
+- [x] `src/app/(authenticated)/recruiter/not-found.tsx`
+- [x] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/assignments/manage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-history/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/discussion-participation/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/[learnerMembershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/teaching/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/teacher/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/error.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/page.tsx`
+- [x] `src/app/(authenticated)/tpo/audit/actors/error.tsx`
+- [x] `src/app/(authenticated)/tpo/audit/error.tsx`
+- [x] `src/app/(authenticated)/tpo/audit/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/history/error.tsx`

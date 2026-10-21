@@ -48,7 +48,7 @@ export default async function FacultySessionCoveragePage({
             </time>
           </li>)}
         </ol>}
-      {data.omitted > 0 ? <p role="status" className="text-sm leading-[22px] text-body">
+      {data.omitted > 0 ? <p role="status" className="text-sm leading-[1.6] text-body">
         Showing latest 40 sessions; {data.omitted} older sessions omitted.
       </p> : null}
     </section>

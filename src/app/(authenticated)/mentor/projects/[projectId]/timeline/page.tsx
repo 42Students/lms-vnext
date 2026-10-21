@@ -55,7 +55,7 @@ export default async function MentorProjectTimelinePage({
           href: mentorTimelineHref({...data.query,sprintStatus:status,page:1}),
         }))} />
       </div>
-      <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">
+      <p role="status" aria-live="polite" className="text-sm text-body leading-[1.6]">
         {data.total.toLocaleString("en-IN")} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered releases"

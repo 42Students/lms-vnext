@@ -75,7 +75,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Attempt {selected.attemptNumber} result</h2>
         <Link href={historyUrl} className="inline-flex min-h-11 w-full items-center justify-center text-sm text-primary-text underline sm:w-auto hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Close detail</Link>
       </div>
-      <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
+      <p role="status" className="mt-3 flex flex-wrap items-center gap-2 text-sm font-semibold text-body leading-[1.6]"><StatusBadge tone={selected.resultsVisible?"success":"neutral"}>{selected.resultsVisible?"Published":"Not published"}</StatusBadge>{learnerAttemptResultLabel(selected)}</p>
       {selected.resultsVisible ? selected.answers.length===0 ? (
         <Alert tone="info" role="status" className="mt-4">No question-level review was recorded for this attempt.</Alert>
       ) : <div className="min-w-0 divide-y divide-border border-y border-border">
@@ -92,7 +92,7 @@ export default async function LearnerQuizHistory({params,searchParams}:Props) {
               <li className="break-words" key={option.id}>Selected: {option.text}</li>)}
           </ul>
           {learnerQuizSelectedAnswerMessage(answer.selectedOptionIds,answer.options??[]) ? (
-            <p role="status" className="mt-2 text-sm text-muted-foreground">
+            <p role="status" className="mt-2 text-sm text-muted-foreground leading-[1.6]">
               {learnerQuizSelectedAnswerMessage(answer.selectedOptionIds,answer.options??[])}
             </p>
           ) : null}
