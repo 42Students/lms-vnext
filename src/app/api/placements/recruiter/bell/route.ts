@@ -2,11 +2,16 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {readHrRecruiterBell,markHrRecruiterBellRead} from "@/modules/placements/hr-recruiter-bell-service";
+import {readHrRecruiterBell,markHrRecruiterBellRead,countHrRecruiterBellUnread} from "@/modules/placements/hr-recruiter-bell-service";
 export const runtime="nodejs";
-export async function GET(){
+export async function GET(request:Request){
  try{
-  const data=await readHrRecruiterBell(await getCurrentRequestContext());
+  const context=await getCurrentRequestContext();
+  if(new URL(request.url).searchParams.get("countOnly")==="1"){
+   const count=await countHrRecruiterBellUnread(context);
+   return NextResponse.json({...count,ok:true},{headers:{"Cache-Control":"private, no-store"}});
+  }
+  const data=await readHrRecruiterBell(context);
   return NextResponse.json({...data,ok:true,
     unreadCount:data.unread,refreshAfterMs:30_000,
     // Modern routes keep request-context college grants and event ACLs.
