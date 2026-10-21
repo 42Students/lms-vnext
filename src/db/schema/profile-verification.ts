@@ -9,7 +9,7 @@ import type { SafeSnapshot } from "@/modules/profile-verification/domain";
 export const profileVerifications = pgTable("profile_verifications", {
   id: uuid("id").defaultRandom().primaryKey(),
   // Tenant/college is always derived through owning membership, never an independent client-supplied FK.
-  /** Source learner/student ID is not the canonical membership key. */
+  /** Original source IDs are for scoped import, not runtime authorization. */
   legacyStudentId: integer("legacy_student_id"),
   legacyVerificationId: integer("legacy_verification_id"),
   learnerMembershipId: uuid("learner_membership_id").notNull()
@@ -98,7 +98,7 @@ export const profileVerificationEvents = pgTable("profile_verification_events", 
     .references(() => profileVerifications.id, {onDelete: "restrict"}),
   legacyEventId: integer("legacy_event_id"),
   legacyAction: varchar("legacy_action", {length: 64}),
-  action: varchar("action", {length: 20}).notNull()
+  action: varchar("action", {length: 20}).notNull(),
   actorKind: varchar("actor_kind", {length: 20}).notNull(),
   actorUserId: uuid("actor_user_id").notNull()
     .references(() => users.id, {onDelete: "restrict"}),
@@ -154,13 +154,13 @@ export const profileVerificationAcademicMarks = pgTable("profile_verification_ac
   learnerMembershipId: uuid("learner_membership_id").notNull()
     .references(() => collegeMemberships.id, {onDelete: "restrict"}),
   level: varchar("level", {length: 16}).notNull(),
-  /** Unmodified source verification values, not live eligibility authority. */
+  /** Unmodified source values are not live eligibility authority. */
   legacyQualificationId: integer("legacy_qualification_id"),
   legacyGradingType: varchar("legacy_grading_type", {length: 64}),
   legacyEarnedMarks: text("legacy_earned_marks"),
   legacyCgpa: text("legacy_cgpa"),
   legacyPassingYear: varchar("legacy_passing_year", {length: 20}),
-  originalGrade: varchar("original_grade", {length: 64}).notNull()
+  originalGrade: varchar("original_grade", {length: 64}).notNull(),
   originalScale: varchar("original_scale", {length: 32}),
   originalMax: varchar("original_max", {length: 32}),
   percentageBasisPoints: integer("percentage_basis_points"),
