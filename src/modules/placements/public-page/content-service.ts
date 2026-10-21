@@ -9,7 +9,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {DEFAULT_PUBLIC_METRICS,publicPlacementContentInput,
- type PublicPlacementMetricKey} from "./content-model";
+ type PublicPlacementMetricKey,normalizePublicPlacementMetricKeys} from "./content-model";
 const ready=()=>placementTableExists("placement_public_page_content");
 export async function getPublicPlacementPageContent(collegeId:string){
  if(!await ready())return {ready:false as const,about:"",
@@ -19,7 +19,7 @@ export async function getPublicPlacementPageContent(collegeId:string){
   updatedAt:placementPublicPageContent.updatedAt,
  }).from(placementPublicPageContent).where(eq(placementPublicPageContent.collegeId,collegeId)).limit(1);
  return {ready:true as const,about:row?.about??"",
-  metricKeys:row?.metricKeys??DEFAULT_PUBLIC_METRICS,updatedAt:row?.updatedAt.toISOString()??null};
+  metricKeys:row?.metricKeys?normalizePublicPlacementMetricKeys(row.metricKeys):DEFAULT_PUBLIC_METRICS,updatedAt:row?.updatedAt.toISOString()??null};
 }
 export async function saveTpoPublicPlacementContent(context:RequestContext,raw:unknown){
  const input=publicPlacementContentInput.parse(raw);
