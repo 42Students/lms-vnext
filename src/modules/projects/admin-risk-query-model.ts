@@ -24,10 +24,12 @@ export function parseProjectAdminRiskQuery(params: Record<string,string|string[]
       (params.search!==undefined && params.q!==undefined))
     return schema.safeParse(null);
   const legacyFilter=first(params.filter)?.trim().toLowerCase();
-  if(legacyFilter && !["stalled","blocker","review"].includes(legacyFilter))
-    return schema.safeParse(null);
+  // Old bookmarks could contain a retired display-only quick filter;
+  // ignore unknown *values* without relaxing the strict allowlist of keys.
+  const migratedBucket=legacyFilter&&["stalled","blocker","review"].includes(legacyFilter)
+    ?legacyFilter.toUpperCase():undefined;
   const entries = {
-    riskBucket: legacyFilter ? legacyFilter.toUpperCase() : first(params.riskBucket),
+    riskBucket: migratedBucket ?? first(params.riskBucket),
     riskSort: first(params.riskSort),
     q: first(params.search) ?? first(params.q), status: first(params.status),
     page: first(params.page), pageSize: first(params.pageSize),

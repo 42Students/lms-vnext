@@ -15,7 +15,11 @@ export function ProjectAtRiskPageExport({rows}:{rows:Row[];collegeId:string}){
   const headings=["Workspace","Mentor","Status","Severity","Risk reasons"];
   const data=rows.map(row=>[
    row.title,row.mentorName??"",row.status??"",
-   row.severity??(row.riskReasons.length>1||row.blockerReason?"Risk":"Watch"),
+   row.severity==="HIGH_RISK"?"High risk":
+   row.severity==="AT_RISK"?"At risk":
+   row.severity==="WATCH"?"Watch":
+   row.riskReasons.length>=3?"High risk":
+   row.riskReasons.length===2?"At risk":"Watch",
    row.riskReasons.join("; "),
   ]);
   const csv=projectAdminCsv([headings,...data]);

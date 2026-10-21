@@ -110,6 +110,11 @@ export async function ProjectAdminAtRiskPage({
           </FilterChipLink>)}
       </nav>
       <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
+      <p className="text-xs text-body" role="status">
+        Risk buckets count the current search and status filters, independent
+        of the selected quick filter. Completed workspaces appear only for
+        an unresolved blocker or pending review.
+      </p>
       <ListToolbar label="At-risk workspaces" viewCount={result.total}
         exportAction={<ProjectAtRiskPageExport collegeId={collegeId}
           rows={result.items.map(project=>({
