@@ -1,28 +1,25 @@
 "use client";
-import { PageHeader } from "@/components/ui/page-header";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import {Button} from "@/components/ui/button";
 
+/** Route-local fail-closed recovery: unknown application status must never
+ * be presented as an unsubmitted application or an enabled Apply action.
+ */
 export default function LearnerJobDetailError({
-  reset,
-}: {
-  error: Error & { digest?: string };
-  reset: () => void;
-}) {
-  return (
-    <section role="alert" className="min-w-0 space-y-4">
-      <PageHeader title={"Unable to load this drive"} />
-      <p className="mt-2 text-sm text-body">
-        Drive information could not be loaded. This is different from an unavailable or removed job.
-      </p>
-      <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
-        <Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
-        <Link href="/learn/my-placements/jobs"
-          className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9">
-          Back to Drives
-        </Link>
-      </div>
-    </section>
-  );
+ reset,
+}:{
+ error:Error&{digest?:string};
+ reset:()=>void;
+}){
+ return <section role="alert" className="mx-auto max-w-2xl rounded-[var(--lms-control-radius)] border border-border bg-surface p-5">
+  <h1 className="text-lg font-semibold text-foreground">Application status unavailable</h1>
+  <p className="mt-2 text-sm text-body">We couldn't load this drive or confirm your application status.
+   Please check status again before applying. Do not submit a second application until it is confirmed.</p>
+  <div className="mt-4 flex flex-wrap items-center gap-3">
+   <Button type="button" onClick={reset}>Check status again</Button>
+   <Link href="/learn/my-placements/jobs" className="text-sm font-semibold text-primary-text underline">Browse drives</Link>
+   <Link href="/learn/my-placements/applications" className="text-sm font-semibold text-primary-text underline">My applications</Link>
+  </div>
+ </section>;
 }

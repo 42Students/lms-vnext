@@ -38,6 +38,12 @@ export type LearnerPlacementJobItem = {
     applicationDeadline: string | null;
     publishedAt?: string | null;
     stipendPerMonthInr?:number|null;
+    recruiterDriveMode?:string;
+    campusPool?:{hostCollege:string;reportingTime:string|null;travelNote:string}|null;
+    candidatePreferences?:{
+     preferredDegree:string;specialization:string;graduationYear:number|null;
+     minGpa:number|null;city:string;
+    }|null;
   };
   roleOption: {
     id: string;
@@ -167,6 +173,44 @@ async function placementMutation(
   return payload;
 }
 
+type OwnApplicationReceipt={
+ id:string;jobId:string;roleOptionId:string;status:string;channel:string;submittedAt:string;
+};
+type OwnApplicationLookup={known:boolean;application:OwnApplicationReceipt|null};
+/** A signed-in learner can only read their own persisted applications here.
+ * Never retry an ambiguous POST without querying this authoritative endpoint.
+ */
+async function checkOwnPlacementApplication(jobId:string,roleOptionId:string):Promise<OwnApplicationLookup>{
+ try{
+  const result=await fetch("/api/placements/applications/me",{cache:"no-store",credentials:"same-origin"});
+  if(!result.ok)return {known:false,application:null};
+  const payload:unknown=await result.json();
+  if(!payload||typeof payload!=="object"||!("applications" in payload))return {known:false,application:null};
+  const records=(payload as {applications:unknown}).applications;
+  if(!Array.isArray(records))return {known:false,application:null};
+  const matches=records.filter(row=>row&&typeof row==="object"&&
+   "application" in row&&row.application&&typeof row.application==="object"&&
+   "jobId" in row.application&&row.application.jobId===jobId&&
+   "roleOptionId" in row.application&&row.application.roleOptionId===roleOptionId);
+  if(matches.length===0)return {known:true,application:null};
+  if(matches.length!==1)return {known:false,application:null};
+  const selected=(matches[0] as {application:Record<string,unknown>}).application;
+  if(typeof selected.id!=="string"||typeof selected.status!=="string"||
+     typeof selected.channel!=="string"||typeof selected.submittedAt!=="string")
+   return {known:false,application:null};
+  return {known:true,application:{
+   id:selected.id,jobId,roleOptionId,
+   status:selected.status,channel:selected.channel,submittedAt:selected.submittedAt,
+  }};
+ }catch{return {known:false,application:null};}
+}
+function formatApplicationReceiptTime(value:string){
+ const at=new Date(value);
+ return Number.isFinite(at.getTime())?new Intl.DateTimeFormat("en-IN",{
+  dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+ }).format(at):"Date unavailable";
+}
+
 function JobActions({
   item,
 }: {
@@ -182,6 +226,10 @@ function JobActions({
     useState<"WITHDRAW" | "EXTERNAL" | "INTERNAL" | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
   const [showSharedDetails, setShowSharedDetails] = useState(false);
+  const [applyResolution,setApplyResolution]=useState<"NONE"|"UNKNOWN"|"FAILED"|"CONFIRMED">("NONE");
+  const [confirmedReceipt,setConfirmedReceipt]=useState<OwnApplicationReceipt|null>(null);
+  const [applyError,setApplyError]=useState("");
+
   const { job, roleOption, application } = item;
   const reason = withdrawReason.trim();
   const validWithdrawalReason = reason.length >= 3 && reason.length <= 900;
@@ -196,11 +244,13 @@ function JobActions({
     const checked=learnerDriveApplySelectionSchema.safeParse({
       roleOptionId:roleOption.id,channel,confirmed:true,
     });
-    if(preview!=="READY" || !checked.success || pendingRef.current) return;
+    if(preview!=="READY" || !checked.success || pendingRef.current||
+     applyResolution==="UNKNOWN"||applyResolution==="CONFIRMED")return;
     pendingRef.current = true;
     setPendingAction(channel);
+    setApplyError("");
     try {
-      await placementMutation(
+      const submitted=await placementMutation(
         `/api/placements/jobs/${job.id}/applications`,
         channel === "EXTERNAL"
           ? {
@@ -218,12 +268,17 @@ function JobActions({
               },
       );
       setConfirmation(null);
+      const stored=(submitted as {application?:OwnApplicationReceipt}|null)?.application;
+      if(stored?.id&&stored?.status==="SUBMITTED"){
+       setConfirmedReceipt(stored);
+      }
+      setApplyResolution("CONFIRMED");
       showToast({
         tone: "success",
         title:
           channel === "EXTERNAL"
             ? "External application recorded"
-            : "Application submitted",
+            : "You're in — application sent",
         description:
           channel === "EXTERNAL"
             ? "Your LMS placement timeline now reflects the employer application."
@@ -231,17 +286,56 @@ function JobActions({
       });
       router.refresh();
     } catch (error) {
-      showToast({
-        tone: "error",
-        title: "Application not submitted",
-        description:
-          error instanceof Error
-            ? humanize(error.message)
-            : "Please try again.",
-      });
+      // POST failure, timeout or dropped response does not prove no write.
+      // Reconcile the learner's own persisted application before permitting retry.
+      const checkedState=await checkOwnPlacementApplication(job.id,roleOption.id);
+      setConfirmation(null);
+      if(checkedState.application){
+       setConfirmedReceipt(checkedState.application);
+       setApplyResolution("CONFIRMED");
+       if(checkedState.application.status==="SUBMITTED"&&checkedState.application.channel===channel){
+        showToast({tone:"success",title:"Application confirmed",
+         description:"Your existing application is recorded in My applications."});
+       }else{
+        setApplyError("A different application record exists. Review it before taking another action.");
+       }
+       router.refresh();
+      }else{
+       // The write may still be in flight even if a first read returns empty.
+       // Only a second explicit status check may unlock the Apply action.
+       setApplyResolution("UNKNOWN");
+       setApplyError(checkedState.known?
+        "No application appeared in the first check. Check status again before retrying.":
+        "Application status unavailable. Check status again before applying.");
+      }
     } finally {
       pendingRef.current = false;
       setPendingAction(null);
+    }
+  }
+
+  async function checkStatusAgain(){
+    if(pendingRef.current)return;
+    pendingRef.current=true;
+    setPendingAction("VERIFY");
+    try{
+     const checkedState=await checkOwnPlacementApplication(job.id,roleOption.id);
+     if(checkedState.application){
+      setConfirmedReceipt(checkedState.application);
+      setApplyResolution("CONFIRMED");
+      setApplyError(checkedState.application.status==="SUBMITTED"?
+       "":"An application record exists. Review My applications.");
+      router.refresh();
+     }else if(checkedState.known){
+      setApplyResolution("FAILED");
+      setApplyError("No application is recorded for this role. You can try again.");
+     }else{
+      setApplyResolution("UNKNOWN");
+      setApplyError("Application status unavailable. Check status again before applying.");
+     }
+    }finally{
+     pendingRef.current=false;
+     setPendingAction(null);
     }
   }
 
@@ -284,21 +378,32 @@ function JobActions({
     }
   }
 
-  if (application?.status === "SUBMITTED") {
+  const receipt=confirmedReceipt??application;
+  if (receipt?.status === "SUBMITTED") {
     return (
       <>
         <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
           <StatusBadge tone="success">
-            Applied · {humanize(application.channel)}
+            Applied · {humanize(receipt.channel)}
           </StatusBadge>
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
+          <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle px-3 py-3 text-sm">
+            <p className="font-semibold text-foreground">You're in — application sent</p>
+            <p className="mt-1 break-all text-body">Receipt: {receipt.id}</p>
+            <p className="mt-1 text-body">Recorded: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
+            <p className="mt-1 text-body">Resume: Not attached by this application</p>
+            <Link href="/learn/my-placements/applications"
+              className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+              View applications →
+            </Link>
+          </div>
+          {application?.status==="SUBMITTED"?<Button className="min-h-11 w-full sm:w-auto md:min-h-9"
             size="sm"
             variant="secondary"
             disabled={pendingAction !== null}
             onClick={() => setConfirmation("WITHDRAW")}
           >
             Ask to withdraw
-          </Button>
+          </Button>:null}
         </div>
         <Dialog
           open={confirmation === "WITHDRAW"}
@@ -350,7 +455,17 @@ function JobActions({
     );
   }
 
-  if (application?.status === "WITHDRAWN") {
+  if(confirmedReceipt&&receipt?.status!=="SUBMITTED"&&receipt?.status!=="WITHDRAWN"){
+   return <div role="alert" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm">
+    <p className="font-semibold text-foreground">Application status unavailable</p>
+    <p className="mt-2 text-body">A persisted application record has status {humanize(confirmedReceipt.status)}.
+     Review your application before submitting another.</p>
+    <Link href="/learn/my-placements/applications" className="mt-2 inline-flex min-h-9 items-center text-primary-text underline">
+     View my applications
+    </Link>
+   </div>;
+  }
+  if (receipt?.status === "WITHDRAWN") {
     return (
       <StatusBadge tone="neutral">
         Withdrawn
@@ -397,7 +512,7 @@ function JobActions({
       {internalAvailable ? (
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
           size="sm"
-          disabled={pendingAction !== null}
+          disabled={pendingAction !== null || applyResolution==="UNKNOWN"||applyResolution==="CONFIRMED"}
           onClick={() => setConfirmation("INTERNAL")}
         >
           {pendingAction === "INTERNAL"
@@ -418,7 +533,7 @@ function JobActions({
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9"
             size="sm"
             variant="secondary"
-            disabled={pendingAction !== null}
+            disabled={pendingAction !== null || applyResolution==="UNKNOWN"||applyResolution==="CONFIRMED"}
             onClick={() => setConfirmation("EXTERNAL")}
           >
             {pendingAction === "EXTERNAL"
@@ -427,6 +542,25 @@ function JobActions({
           </Button>
         </>
       ) : null}
+      {applyResolution==="UNKNOWN"||applyResolution==="FAILED"?(
+        <div role="alert" className="w-full rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4 text-sm">
+          <p className="font-semibold text-foreground">
+            {applyResolution==="UNKNOWN"?"Application status unavailable":"Application not submitted"}
+          </p>
+          <p className="mt-1 text-body">{applyError}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <Button type="button" size="sm" variant="secondary"
+              disabled={pendingAction!==null} onClick={()=>void checkStatusAgain()}>
+              {pendingAction==="VERIFY"?"Checking…":"Check status again"}
+            </Button>
+            <Link href="/learn/my-placements/applications" className="inline-flex min-h-9 items-center text-primary-text underline">
+              My applications
+            </Link>
+            {applyResolution==="FAILED"?<button type="button" className="min-h-9 text-muted-foreground underline"
+              onClick={()=>{setApplyError("");setApplyResolution("NONE");}}>Dismiss</button>:null}
+          </div>
+        </div>
+      ):null}
       <Dialog
         open={confirmation === "INTERNAL"}
         onOpenChange={(open) => {if(!open && pendingAction===null)setConfirmation(null);}}
@@ -582,7 +716,7 @@ export function LearnerPlacementJobs({
                   Work
                 </p>
                 <p className="mt-1 break-words font-semibold text-body">
-                  {item.job.jobTypeLabel?.trim() || humanize(
+                  {humanize(
                     item.roleOption.employmentType,
                   )}{" "}
                   ·{" "}
