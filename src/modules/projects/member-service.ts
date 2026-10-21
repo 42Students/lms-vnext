@@ -982,9 +982,9 @@ export async function listMyLearnerProjectPage(
   eq(collegeMemberships.userId,context.user.id),eq(collegeMemberships.status,"ACTIVE"),
   eq(users.platformStatus,"ACTIVE"),eq(membershipRoles.role,"LEARNER"),
  );
- const taskTotal=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id})`;
- const taskDone=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.status='DONE')`;
- const taskBlocked=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.status='BLOCKED')`;
+ const taskTotal=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.deleted_at is null)`;
+ const taskDone=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.deleted_at is null and pt.status='DONE')`;
+ const taskBlocked=sql<number>`(select count(*)::int from project_tasks pt where pt.project_id=${projectInstances.id} and pt.deleted_at is null and pt.status='BLOCKED')`;
  const live=sql<boolean>`${projectInstances.status} not in ('COMPLETED','ARCHIVED')`;
  const blocked=sql<boolean>`(${projectInstances.blocker} is not null and btrim(${projectInstances.blocker}) <> '' or ${taskBlocked} > 0)`;
  const conditions=[];

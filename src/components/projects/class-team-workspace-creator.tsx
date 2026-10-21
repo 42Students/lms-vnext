@@ -68,6 +68,13 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const [pending,setPending]=useState(false);
   const createInFlight=useRef(false);
   const [error,setError]=useState("");
+  const [preflightPage,setPreflightPage]=useState(1);
+  const [resultPage,setResultPage]=useState(1);
+  const [expandedGroups,setExpandedGroups]=useState<number[]>([]);
+  const [createConfirmation,setCreateConfirmation]=useState<{
+    count:number;alreadyCovered:number;names:string[];
+  }|null>(null);
+  const confirmCreation=useRef<((confirmed:boolean)=>void)|null>(null);
   const [notice,setNotice]=useState("");
   const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
   items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[];scopeKey:string}|null>(null);
@@ -88,7 +95,11 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       if(!raw)return;
       const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome};
       if(!saved.expiresAt||saved.expiresAt<Date.now()||!saved.report||
-        !Array.isArray(saved.report.individualResults)){
+        !Array.isArray(saved.report.individualResults)||
+        saved.report.individualResults.length>10000||
+        !saved.report.individualResults.every(item=>
+         item&&typeof item.membershipId==="string"&&
+         ["CREATED","ALREADY_COVERED"].includes(item.status))){
         window.localStorage.removeItem(reportKey);return;
       }
       setOutcome(saved.report);setOutcomeRestored(true);
@@ -146,7 +157,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const rosterKey=collegeId+"|"+classId+"|"+rosterRefreshKey;
   const [prevRosterKey,setPrevRosterKey]=useState(rosterKey);
   if(prevRosterKey!==rosterKey){
-    setPrevRosterKey(rosterKey);
+    setPrevRosterKey(rosterKey);setPreflightPage(1);setResultPage(1);setExpandedGroups([]);
     setRoster(null);setGroups([]);
     if(classId){setRosterLoading(true);setError("");}
   }
@@ -164,7 +175,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   },[collegeId,classId,rosterRefreshKey]);
   const [prevPlan,setPrevPlan]=useState({roster,mode,order,size,seed});
   if(prevPlan.roster!==roster||prevPlan.mode!==mode||prevPlan.order!==order||prevPlan.size!==size||prevPlan.seed!==seed){
-    setPrevPlan({roster,mode,order,size,seed});
+    setPrevPlan({roster,mode,order,size,seed});setExpandedGroups([]);
     if(!roster){setGroups([]);}
     else{
       try {
@@ -243,8 +254,18 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           setNotice("Nothing was created. All eligible learners are already covered.");
           return;
         }
-        if(!window.confirm("Create "+fresh.toCreate+
-          " workspaces? "+fresh.alreadyCovered+" already covered."))return;
+        const allowed=await new Promise<boolean>(resolve=>{
+          confirmCreation.current=resolve;
+          setCreateConfirmation({
+            count:fresh.toCreate,alreadyCovered:fresh.alreadyCovered,
+            names:fresh.items.filter(item=>item.status==="TO_CREATE").slice(0,10)
+              .map(item=>{
+                const learner=names.get(item.membershipId);
+                return learner?.displayName??learner?.rollNumber??item.membershipId;
+              }),
+          });
+        });
+        if(!allowed)return;
       }
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
@@ -255,6 +276,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       if(result.batchMode==="ATOMIC"&&result.committed!==true)
         throw new Error("Creation was not committed. Refresh the roster before retrying.");
       setOutcome(result);
+      setResultPage(1);
       setOutcomeRestored(false);
       if(mode==="INDIVIDUAL"){
         try{
@@ -323,9 +345,14 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           onClick={()=>setClassesRetry(v=>v+1)}>Retry class search</Button>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published template
-        <Select value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
+        <Select aria-label="Choose a published project template"
+          value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
+          {!templates.length?<option value="">No assigned published templates</option>:null}
           {templates.map(t=><option key={t.templateId} value={t.templateId}>{t.title} · v{t.version}</option>)}
         </Select>
+        {!templateId?<span role="alert" className="block text-xs text-warning">
+          Choose a published template assigned to this college before creating workspaces.
+        </span>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace title
         <Input aria-invalid={Boolean(classId&&!title.trim())} value={title} disabled={!plannerEditable}
@@ -375,13 +402,24 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
             A mentor is required before a workspace can be Active
           </span>:null}
       </label>
-      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace mode
-        <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
-          <option value="WHOLE_CLASS">One team</option>
-          <option value="TEAMS">Split a class into teams</option>
-          <option value="INDIVIDUAL">One workspace per student</option>
-        </Select>
-      </label>
+      <fieldset className="space-y-2 md:col-span-2">
+       <legend className="text-[13px] font-semibold text-body">Workspace mode</legend>
+       <div role="radiogroup" aria-label="Workspace creation mode"
+        className="grid gap-2 rounded-[var(--lms-control-radius)] border border-border p-1 sm:grid-cols-3">
+        {([
+          ["WHOLE_CLASS","One team"],
+          ["TEAMS","Split a class into teams"],
+          ["INDIVIDUAL","One workspace per student"],
+        ] as const).map(([value,title])=><label key={value}
+         className={"flex min-h-11 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 py-2 text-sm font-semibold "+
+          (mode===value?"border-primary bg-primary-subtle text-link":"border-transparent bg-surface text-body")}>
+         <input type="radio" name="workspaceMode" value={value}
+          checked={mode===value} disabled={!plannerEditable}
+          onChange={()=>setMode(value)}/>
+         {title}
+        </label>)}
+       </div>
+      </fieldset>
       {mode==="TEAMS"?<>
         <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Preferred team size
           <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
@@ -415,25 +453,44 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <DataTable
           caption="Learner creation preflight"
-          rows={currentPreflight.items.map((row,index)=>({...row,index}))}
-          getRowKey={row=>row.membershipId+"-"+row.index}
+          rows={currentPreflight.items.slice((Math.min(preflightPage,
+             Math.max(1,Math.ceil(currentPreflight.items.length/20)))-1)*20,
+             Math.min(preflightPage,Math.max(1,Math.ceil(currentPreflight.items.length/20)))*20)
+             .map(row=>row)}
+          getRowKey={row=>row.membershipId}
           columns={[
             {key:"learner",header:"Learner",mobilePriority:"primary",cell:row=>{
               const learner=names.get(row.membershipId);
               return <>{learner?.displayName??learner?.rollNumber??"Learner"}{learner?.rollNumber?" · "+learner.rollNumber:""}</>;
             }},
+            {key:"membershipId",header:"Learner ID",mobilePriority:"secondary",
+              cell:row=><span className="break-all text-xs tabular-nums">{row.membershipId}</span>},
             {key:"decision",header:"Decision",mobilePriority:"secondary",cell:row=>
               row.status==="TO_CREATE"?"To create":row.status==="ALREADY_COVERED"?"Already covered":"Duplicate"},
           ]}
           empty={<EmptyState title="No eligible learners" description="No eligible learners in this preview." />}
         />
       </div>
+      {currentPreflight.items.length>20?<nav aria-label="Preflight learner pages"
+        className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-body">
+        <span>Page {Math.min(preflightPage,
+          Math.max(1,Math.ceil(currentPreflight.items.length/20)))} of {
+          Math.ceil(currentPreflight.items.length/20)} · 20 per page</span>
+        <div className="flex gap-2">
+          <Button type="button" variant="secondary" size="sm"
+            disabled={preflightPage<=1} onClick={()=>setPreflightPage(n=>Math.max(1,n-1))}>Previous</Button>
+          <Button type="button" variant="secondary" size="sm"
+            disabled={preflightPage>=Math.ceil(currentPreflight.items.length/20)}
+            onClick={()=>setPreflightPage(n=>n+1)}>Next</Button>
+        </div>
+      </nav>:null}
       <p className="text-xs text-muted-foreground leading-[20px]">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 xl:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
         <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{team.name} · {team.membershipIds.length}</h2>
-        <ul className="mt-2 space-y-2">{team.membershipIds.map(id=>{
+        <ul className="mt-2 space-y-2">{team.membershipIds.slice(0,
+          expandedGroups.includes(index)?undefined:20).map(id=>{
           const learner=names.get(id);
           return <li key={id} className="flex min-w-0 flex-col gap-2 border-t border-border py-2 text-sm md:flex-row md:flex-wrap md:items-center">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
@@ -458,6 +515,13 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
             </label>:null}
           </li>;
         })}</ul>
+        {team.membershipIds.length>20?<Button type="button"
+          size="sm" variant="secondary" className="mt-2" disabled={pending}
+          onClick={()=>setExpandedGroups(old=>old.includes(index)?
+            old.filter(value=>value!==index):[...old,index])}>
+          {expandedGroups.includes(index)?"Show first 20 learners":
+            "Show remaining "+(team.membershipIds.length-20)+" learners"}
+        </Button>:null}
       </section>)}
     </div>:null}
     {!balanced&&groups.length>0?<p role="alert" className="text-sm text-error leading-[22px]">Teams must have sizes differing by at most one.</p>:null}
@@ -469,7 +533,9 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       {outcomeRestored?<p className="text-xs text-body">
         This report was kept for seven days on this device for the selected college.
       </p>:null}
-      <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
+      <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered · {
+        outcome.failedCount??Math.max(0,outcome.requested-outcome.alreadyCovered-outcome.created.length)
+      } not created</p>
       {outcomeCheckedAt?<p className="text-xs text-body">Reported at {new Date(outcomeCheckedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
       <p role="status" className="text-sm leading-[22px]">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
@@ -479,16 +545,35 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       <div className="max-h-72 overflow-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" role="region" aria-label="Per-learner creation results" tabIndex={0}>
         <DataTable
           caption="Individual workspace creation results"
-          rows={outcome.individualResults}
+          rows={outcome.individualResults.slice((Math.min(resultPage,
+            Math.max(1,Math.ceil(outcome.individualResults.length/15)))-1)*15,
+            Math.min(resultPage,Math.max(1,Math.ceil(outcome.individualResults.length/15)))*15)}
           getRowKey={row=>row.membershipId}
           columns={[
             {key:"learner",header:"Learner",mobilePriority:"primary",cell:row=>names.get(row.membershipId)?.displayName??row.membershipId},
             {key:"result",header:"Result",mobilePriority:"secondary",cell:row=>row.status==="CREATED"?"Created":"Already covered"},
-            {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>row.title??"Existing workspace"},
+            {key:"workspace",header:"Workspace",mobilePriority:"secondary",cell:row=>
+              row.projectId?<a href={basePath+"/"+encodeURIComponent(row.projectId)+"/summary"}
+               className="font-semibold text-link underline">{row.title??"Open workspace"}</a>:
+               row.title??"Existing workspace"},
+            {key:"workspaceId",header:"Workspace ID",mobilePriority:"secondary",
+              cell:row=><span className="break-all text-xs tabular-nums">{row.projectId??"—"}</span>},
           ]}
           empty={<EmptyState title="No individual results" description="No individual results recorded." />}
         />
       </div>
+      {outcome.individualResults.length>15?<nav aria-label="Creation result pages"
+        className="flex flex-wrap items-center justify-between gap-2 text-xs text-body">
+        <span>Page {Math.min(resultPage,Math.max(1,Math.ceil(outcome.individualResults.length/15)))} of {
+          Math.ceil(outcome.individualResults.length/15)} · 15 per page</span>
+        <div className="flex gap-2">
+          <Button size="sm" variant="secondary" type="button" disabled={resultPage<=1}
+            onClick={()=>setResultPage(n=>Math.max(1,n-1))}>Previous</Button>
+          <Button size="sm" variant="secondary" type="button"
+            disabled={resultPage>=Math.ceil(outcome.individualResults.length/15)}
+            onClick={()=>setResultPage(n=>n+1)}>Next</Button>
+        </div>
+      </nav>:null}
       <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
         onClick={()=>{
           let url:string|null=null;
@@ -547,6 +632,27 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
         {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(currentPreflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
       </Button>
     </div>
+    <ConfirmDialog open={Boolean(createConfirmation)}
+      onOpenChange={next=>{
+        if(!next){
+          setCreateConfirmation(null);
+          confirmCreation.current?.(false);
+          confirmCreation.current=null;
+        }
+      }}
+      title={"Create "+(createConfirmation?.count??0)+" workspaces?"}
+      description={(createConfirmation?.alreadyCovered??0)+" already covered; those learners will be skipped. Review the first ten names before creating."}
+      confirmLabel="Create workspaces"
+      pending={false}
+      onConfirm={()=>{
+        setCreateConfirmation(null);
+        confirmCreation.current?.(true);
+        confirmCreation.current=null;
+      }}>
+      {createConfirmation?.names.length?<ul className="max-h-56 list-disc space-y-1 overflow-y-auto pl-5 text-sm text-body">
+        {createConfirmation.names.map((name,index)=><li key={index}>{name}</li>)}
+      </ul>:<p className="text-sm text-body">No new learner workspace is required.</p>}
+    </ConfirmDialog>
     <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
       title="Discard unsaved changes?"
       description="Leave this workspace plan and discard its unsaved changes?"

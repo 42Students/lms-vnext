@@ -9,6 +9,7 @@ import {MentorTaskAllocation} from "@/components/projects/mentor-task-allocation
 import {MentorLaneBoard} from "@/components/projects/mentor-lane-board";
 import {MentorProductBacklog} from "@/components/projects/mentor-product-backlog";
 import { MentorProjectTabs } from "@/components/projects/mentor-project-tabs";
+import {MentorProjectSectionCache} from "@/components/projects/mentor-project-section-cache";
 import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
@@ -89,7 +90,9 @@ export default async function MentorProjectPage({
               {subtitles[selectedTab??"overview"]}
             </p>
           </section>}
-      {/* The delivery deep link keeps its section mounted so the one-time review dialog can open. */}
+      <MentorProjectSectionCache key={projectId} projectId={projectId}
+        section={selectedTab??"overview"}>
+      {/* Keep previous project tabs mounted when navigating within this workspace. */}
       {selectedTab==="board"?<div className="min-w-0 space-y-4 md:space-y-6">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
@@ -118,6 +121,7 @@ export default async function MentorProjectPage({
         }
         activeSection={activeSection}
       />}
+      </MentorProjectSectionCache>
       {access.access === "MENTOR" ? <section className="min-w-0 border-b border-border pb-4"><Disclosure title="Additional project tools" className="min-w-0 [&>summary]:text-link"><div className="mt-3 grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 xl:grid-cols-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">

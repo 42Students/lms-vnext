@@ -27,12 +27,14 @@ export async function assignProjectTask(context:RequestContext,projectIdInput:st
     if(!project||!["PLANNED","ACTIVE"].includes(project.status))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const [task]=await tx.select().from(projectTasks)
-      .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id)))
+      .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id),
+        isNull(projectTasks.deletedAt)))
       .for("update").limit(1);
     if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
     if(task.status==="DONE"||task.status==="IN_REVIEW"||
       task.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    if(task.assigneeMembershipId===input.assigneeMembershipId)return task;
     if(input.assigneeMembershipId){
       const [eligible]=await tx.select({id:projectMembers.id}).from(projectMembers)
         .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
@@ -47,6 +49,7 @@ export async function assignProjectTask(context:RequestContext,projectIdInput:st
     const now=new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
     const [updated]=await tx.update(projectTasks).set({assigneeMembershipId:input.assigneeMembershipId,updatedAt:now})
       .where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
+        isNull(projectTasks.deletedAt),
         sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`)).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const event = await recordActivityEventInTransaction(tx,context,{
