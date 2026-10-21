@@ -57,6 +57,7 @@ function useAcademicMutation() {
     task: () => Promise<unknown>,
     title: string,
     onSuccess?: () => void,
+    onError?: (error: unknown) => void,
   ) {
     startTransition(async () => {
       try {
@@ -68,6 +69,7 @@ function useAcademicMutation() {
         });
         router.refresh();
       } catch (error) {
+        onError?.(error);
         showToast({
           tone: "error",
           title: "Academic update failed",
@@ -117,6 +119,8 @@ export function ProgramActions({
     useState(false);
   const [archiveOpen, setArchiveOpen] =
     useState(false);
+  const [editError, setEditError] = useState("");
+  const [archiveError, setArchiveError] = useState("");
   const [discardOpen, setDiscardOpen] =
     useState(false);
   const [name, setName] =
@@ -130,6 +134,7 @@ export function ProgramActions({
     useAcademicMutation();
 
   function openEdit() {
+    setEditError("");
     setDepartmentId(program.departmentId ?? "");
     setName(program.name);
     setCode(program.code);
@@ -155,37 +160,16 @@ export function ProgramActions({
 
   return (
     <>
-      {compactActions ? (
-        <div className="flex min-w-0 justify-end">
-          <Dropdown trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-            <Menu>
-              <MenuItem disabled={pending} onClick={openEdit}>Edit</MenuItem>
-              <MenuItem disabled={programHasLinkedRecords}
-                title={programHasLinkedRecords ? "Remove linked semesters, batches, classes before deleting." : "Archive this program"}
-                onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
-            </Menu>
-          </Dropdown>
-        </div>
-      ) : (
-      <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
-        <Button
-          size="md"
-         
-          variant="secondary"
-          onClick={openEdit}
-          disabled={pending}
-        >
-          Edit
-        </Button>
-        <AcademicActionMenu><MenuItem
-          disabled={programHasLinkedRecords}
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
+        <Button size={compactActions ? "sm" : "md"} variant="secondary"
+          onClick={openEdit} disabled={pending}>Edit</Button>
+        <Button size={compactActions ? "sm" : "md"} variant="danger"
+          disabled={pending || programHasLinkedRecords}
           title={programHasLinkedRecords
-            ? "Remove linked semesters, batches, classes before deleting."
-            : "Archive this program"}
-          onClick={() => setArchiveOpen(true)}
-        >Archive</MenuItem></AcademicActionMenu>
+            ? "Remove linked semesters, batches and classes before archiving."
+            : "Archive this program while retaining historical records."}
+          onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Archive</Button>
       </div>
-      )}
 
       <Dialog
         open={editOpen}
@@ -221,8 +205,9 @@ export function ProgramActions({
                         durationTerms: displayDurationYears ? Number(durationTerms)*2 : Number(durationTerms),
                       }),
                     ),
-                  displayDurationYears ? `Updated program “${program.name}”.` : "Program updated",
-                  () => setEditOpen(false),
+                  `Updated program “${name.trim()}”.`,
+                  () => { setEditError(""); setEditOpen(false); },
+                  (error) => setEditError(academicSetupErrorMessage(error, "Program was not updated")),
                 )
               }
             >
@@ -232,7 +217,10 @@ export function ProgramActions({
         }
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-
+          {editError ? <div role="alert" className="flex items-start justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm md:col-span-2">
+            <p><strong>Program was not updated</strong>: {editError}</p>
+            <Button type="button" variant="secondary" onClick={() => setEditError("")}>Dismiss</Button>
+          </div> : null}
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
             Program name
             <Input
@@ -289,6 +277,14 @@ export function ProgramActions({
         }}
       />
 
+      {archiveError ? <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
+        <p><strong>Program was not archived</strong>: {archiveError}</p>
+        <div className="flex gap-2">
+          <Button variant="secondary" type="button" disabled={pending}
+            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Retry archive</Button>
+          <Button variant="ghost" type="button" onClick={() => setArchiveError("")}>Dismiss</Button>
+        </div>
+      </div> : null}
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
@@ -304,8 +300,9 @@ export function ProgramActions({
                 "DELETE",
                 { confirm: true },
               ),
-            "Program archived",
-            () => setArchiveOpen(false),
+            `Archived program “${program.name}”.`,
+            () => { setArchiveError(""); setArchiveOpen(false); },
+            (error) => { setArchiveOpen(false); setArchiveError(academicSetupErrorMessage(error, "Program was not archived")); },
           )
         }
       />
