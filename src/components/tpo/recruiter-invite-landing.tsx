@@ -89,7 +89,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       cache:"no-store",signal:controller.signal,
     }).then(data=>{
       if(controller.signal.aborted)return;
-      const outcome=recruiterInvitePreviewDisposition(data.invite?200:404,Boolean(data.invite));
+      // A 200 with incomplete preview fields is not proof of a usable invite.
+      const valid=Boolean(data.invite && typeof data.invite.collegeName==="string" &&
+        data.invite.collegeName.trim() && typeof data.invite.contactName==="string");
+      if(!valid){setState("load_error");return;}
+      const outcome=recruiterInvitePreviewDisposition(200,true);
       if(outcome!=="ready"){setState(outcome);return;}
       setInvite(data.invite??null);
       setName(data.invite?.contactName??"");
@@ -227,8 +231,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <div className="text-center">
         <PageHeader title="This link is no longer valid" />
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
-          It may have expired or already been used. Ask the placement cell to send you a new one.
+          It may have expired or already been used. Ask the placement cell to send you a new one. Already joined? Sign in with your work email.
         </p>
+        <Link className={actionLink} href="/login">Sign in</Link>
       </div>,
     );
   }
