@@ -13,6 +13,39 @@ import {
   type SkillCatalogQuery,
 } from "./catalog-validation";
 
+/** Legacy SkillsCache shortcuts, always available even before synonym seeds.
+ * Persisted tenant-approved synonyms still participate in ranking. */
+const LEGACY_SKILL_ALIASES: Readonly<Record<string,string>> = {
+ js:"javascript",ts:"typescript",py:"python",rb:"ruby",cpp:"c++",
+ csharp:"c#",golang:"go",rn:"react native",ng:"angular",node:"node.js",
+ k8s:"kubernetes",aws:"amazon web services",gcp:"google cloud",az:"azure",
+ ml:"machine learning",ai:"artificial intelligence",dl:"deep learning",
+ nlp:"natural language processing",ds:"data science",db:"database",
+ fe:"frontend",be:"backend",ui:"user interface",ux:"user experience",
+ qa:"quality assurance",pm:"project management",
+};
+
+/** Bounded Levenshtein fallback: return 3 when the distance exceeds 2.
+ * Never allocate a dynamic-programming grid for unbounded DB strings. */
+function editDistanceAtMostTwo(first:string,second:string):number {
+ const a=first.toLocaleLowerCase("en"), b=second.toLocaleLowerCase("en");
+ if(a.length>128||b.length>128||Math.abs(a.length-b.length)>2)return 3;
+ let previous=Array.from({length:b.length+1},(_,index)=>index);
+ for(let i=1;i<=a.length;i++){
+  const current=Array<number>(b.length+1).fill(0);
+  current[0]=i;
+  let rowMin=current[0];
+  for(let j=1;j<=b.length;j++){
+   current[j]=Math.min(previous[j]+1,current[j-1]+1,
+    previous[j-1]+(a[i-1]===b[j-1]?0:1));
+   rowMin=Math.min(rowMin,current[j]);
+  }
+  if(rowMin>2)return 3;
+  previous=current;
+ }
+ return Math.min(3,previous[b.length]??3);
+}
+
 const columns = {
   id: db10Skills.id,
   name: db10Skills.name,
@@ -34,7 +67,8 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
       .from(db10Skills)
       .where(and(base, sql`${db10Skills.category} is not null`))
       .orderBy(asc(db10Skills.category));
-    return { categories: categories.flatMap(row => row.category ? [row.category] : []) };
+    return { categories: categories.flatMap(row => row.category ? [row.category] : []),
+      message: "Categories retrieved successfully" };
   }
 
   if (input.mode === "category") {
@@ -64,28 +98,29 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
         asc(db10Skills.id),
       )
       .limit(input.limit);
-    return { items };
+    return { items, message:"Popular skills retrieved successfully" };
   }
 
+  const searchTerm=LEGACY_SKILL_ALIASES[q]??q;
   const normalized = sql`lower(${db10Skills.name})`;
   const display = sql`lower(${db10Skills.displayName})`;
-  const namePrefix = sql<boolean>`left(${normalized}, length(${q})) = ${q}`;
-  const displayPrefix = sql<boolean>`left(${display}, length(${q})) = ${q}`;
-  const nameContains = sql<boolean>`position(${q} in ${normalized}) > 0`;
-  const displayContains = sql<boolean>`position(${q} in ${display}) > 0`;
+  const namePrefix = sql<boolean>`left(${normalized}, length(${searchTerm})) = ${searchTerm}`;
+  const displayPrefix = sql<boolean>`left(${display}, length(${searchTerm})) = ${searchTerm}`;
+  const nameContains = sql<boolean>`position(${searchTerm} in ${normalized}) > 0`;
+  const displayContains = sql<boolean>`position(${searchTerm} in ${display}) > 0`;
   const synonymPrefix = sql<boolean>`exists (
     select 1 from ${db10SkillSynonyms} synonym
     where synonym.skill_id = ${db10Skills.id}
-      and left(lower(synonym.synonym), length(${q})) = ${q}
+      and left(lower(synonym.synonym), length(${searchTerm})) = ${searchTerm}
   )`;
   const synonymContains = sql<boolean>`exists (
     select 1 from ${db10SkillSynonyms} synonym
     where synonym.skill_id = ${db10Skills.id}
-      and position(${q} in lower(synonym.synonym)) > 0
+      and position(${searchTerm} in lower(synonym.synonym)) > 0
   )`;
   const score = sql<number>`(
     case
-      when ${normalized} = ${q} then 100
+      when ${normalized} = ${searchTerm} then 100
       when ${namePrefix} then 80
       when ${displayPrefix} then 70
       when ${synonymPrefix} then 60
@@ -112,5 +147,26 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
       asc(db10Skills.id),
     )
     .limit(input.limit);
-  return { items };
+  if (q.length < 3 || items.length >= Math.min(5,input.limit)) return { items };
+  // Legacy typo search happens only if fewer than five direct/prefix results.
+  // Bound SQL candidates and in-memory edit distance; no unindexed table-wide
+  // Levenshtein call or unrestricted scan is introduced.
+  const first=q.slice(0,1);
+  const candidates=await db.select(columns).from(db10Skills)
+    .where(and(base,sql<boolean>`(
+      left(lower(${db10Skills.name}),1)=${first} or
+      left(lower(${db10Skills.displayName}),1)=${first}
+    )`))
+    .orderBy(desc(db10Skills.usageCount),asc(db10Skills.displayName),asc(db10Skills.id))
+    .limit(250);
+  const used=new Set(items.map(item=>item.id));
+  const fuzzy=candidates.flatMap(row=>{
+    if(used.has(row.id))return [];
+    const distance=Math.min(editDistanceAtMostTwo(q,row.name),
+      editDistanceAtMostTwo(q,row.displayName));
+    return distance<=2?[{row,distance}]:[];
+  }).sort((a,b)=>a.distance-b.distance||
+    a.row.displayName.localeCompare(b.row.displayName)||
+    a.row.id.localeCompare(b.row.id));
+  return { items:[...items,...fuzzy.slice(0,Math.max(0,input.limit-items.length)).map(match=>match.row)] };
 }
