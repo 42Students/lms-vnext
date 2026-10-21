@@ -157,3 +157,9 @@
 
 - TPO drive lifecycle UI/read owner G2-8-011-001: use `tpoLegacyLifecycleProjection` to distinguish placement_recruiter_drive_requests REQUEST/SENT_BACK/REJECTED from placement_jobs DRAFT/PUBLISHED/CLOSED/CANCELLED; never send request IDs to job cancellation route.
 - Learner project workspace DTO adapter G2-15-004-065: map actual active projectMembers mentor, latest projectSubmissions submittedAt, immutable review events, projectInstances progressPercent/endDate to `learnerLegacyProjectProgressProjection`; add fixtures for each status/nullable timestamp; no fake review dates.
+
+- Learner schedule loader G2-17-005-025: produce combined authorized calendar of assessments, standalone interview slots and vendor tests, merging chronologically and respecting old /schedule view aliases; kind-specific workspace cannot conjure missing records.
+- Super Admin course authoring component/service G2-9-025-063: paginate/search `listSuperAdminContentAuthoringLessons` and add selected offering's courseSectionDeliveries (tenant-checked) to picker; create with verified deliveryId rather than always null. Maintain acting-college scope.
+
+- Project audit page G2-7-036-012/017: pass `actorName`, `entityType`, `entityId` from authorized ungrouped activity rows into ProjectAuditPageExport, not event ID as entity ID. Current caller only passes summary/label, so missing values export blank until integrated.
+- Company email policy G2-13-012-028: bundled old personal-mail-domains.txt/disposable-mail-domains.txt not found under legacy-source; retrieve authoritative resource lists, review/refresh central policy, prevent send until MX/tenancy provider checks. Local inline sets are incomplete by design.

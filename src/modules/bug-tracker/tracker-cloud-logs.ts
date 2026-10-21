@@ -10,6 +10,18 @@ import {cloudPollSettings} from "@/modules/log-alerts/scheduler";
 import {cloudLoggingAccessToken,readCloudLogErrorPage} from "@/modules/log-alerts/cloud-log-reader";
 import {TrackerAdminError} from "./admin-errors";
 
+/** Sanitized provider detail intentionally excludes full GcpLogEntryResponse
+ * payloads (raw request headers, auth tokens, IPs, stack paths, PII and labels).
+ * IDs locate the already-authorized bounded error list, never provider JSON.
+ */
+export function safeTrackerCloudLogDetail(entry:{
+ id:string;time:string;event:string;message:string;path:string;
+ requestId:string|null;component:string|null;
+}){
+ return {id:entry.id,time:entry.time,event:entry.event,
+  message:entry.message,path:entry.path,requestId:entry.requestId,
+  component:entry.component};
+}
 export const trackerCloudLogQuerySchema=z.strictObject({
   windowMinutes:z.coerce.number().int().min(2).max(1440).default(60),
   pageToken:z.string().min(1).max(1024).optional(),
