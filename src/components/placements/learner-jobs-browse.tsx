@@ -12,6 +12,7 @@ import {
   availableLearnerJobFacets,
   filterLearnerPlacementJobs,
   learnerJobEmploymentTypeCounts,
+  closingSoonIstDayEndMs,
   type LearnerJobBrowseFilters,
 } from "@/modules/placements/learner-jobs-browse-model";
 import { readLearnerDriveUrl, learnerDriveQueryWithChanges } from "@/modules/placements/learner-drive-url-model";
@@ -21,7 +22,6 @@ import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mo
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
 import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drives-model";
 import {Button} from "@/components/ui/button";
-import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Pagination } from "@/components/ui/pagination";
 import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 
@@ -106,7 +106,7 @@ export function LearnerJobsBrowse({
     return counts;
   },[items]);
   const eligibleCount=new Set(items.filter(row=>row.canApply).map(row=>row.job.id)).size;
-  const soonCutoff=Date.parse(snapshotNowIso)+7*86_400_000;
+  const soonCutoff=closingSoonIstDayEndMs(Date.parse(snapshotNowIso));
   const closingCount=new Set(items.filter(row=>{
     const deadline=row.job.applicationDeadline?Date.parse(row.job.applicationDeadline):NaN;
     return !row.deadlinePassed&&Number.isFinite(deadline)&&deadline>=Date.parse(snapshotNowIso)&&
@@ -128,7 +128,9 @@ export function LearnerJobsBrowse({
     filters.closingSoon?"closing soon":null,
     filters.availability!=="all"?filters.availability.replaceAll("-"," "):null,
   ].filter(Boolean).join(", ")||"your filters";
-  const matchingItems=savedOnly?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items;
+  const matchingItems=useMemo(()=>savedOnly
+    ?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items,
+    [items,savedOnly,savedJobIds.join(",")]);
   const visible=useMemo(()=>
     filterLearnerPlacementJobs(matchingItems,filters,Date.parse(snapshotNowIso)),
    [matchingItems,snapshotNowIso,filters.search,filters.employmentType,filters.location,
@@ -159,6 +161,7 @@ export function LearnerJobsBrowse({
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-[var(--lms-control-height)] max-md:min-h-11";
+  const closeMobileFilters=()=>{setMobileOpen(false);mobileFilterButton.current?.focus();};
   const resetFilters=()=>{
     setSearch("");
     updateQuery({q:null,type:null,loc:null,eligible:null,soon:null,
@@ -193,69 +196,67 @@ export function LearnerJobsBrowse({
         </button>
       </nav>
       {navigating?<p role="status" className="text-xs text-body">Updating drives…</p>:null}
-      <section className="border-t border-border pt-4" aria-label="Find placement drives">
-        <div className="mb-3">          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Search drives, companies and roles
-            <Input
-              type="search"
-              value={search}
-              maxLength={100}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search roles, companies, skills, departments, locations…"
-              className={selectClass}
-            />
-            <span className="mt-1 block text-xs font-normal text-muted-foreground" role="status">
+      <section className="pt-3" aria-label="Find placement drives">
+        <div className="grid min-w-0 gap-3 md:grid-cols-[minmax(220px,2fr)_repeat(3,minmax(130px,1fr))] md:items-start">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Search
+            <Input type="search" value={search} maxLength={100}
+              onChange={event=>setSearch(event.target.value)}
+              placeholder="Search jobs, companies, roles, locations…"
+              className={selectClass}/>
+            <span className="mt-1 block text-[11px] font-normal text-muted-foreground">
               {search.length}/100 characters · Search is limited to 100 characters.
             </span>
           </label>
+          <Button ref={mobileFilterButton} variant="secondary" type="button"
+            aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
+            onClick={()=>setMobileOpen(prev=>!prev)}
+            className="min-h-11 w-full justify-between md:hidden">
+            <span>{mobileOpen?"Hide filters":learnerJobsMobileFilterLabel(filters)}</span>
+            <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
+          </Button>
+          {mobileOpen?<button type="button" aria-label="Close drive filters"
+            className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={closeMobileFilters}/>:null}
+          <div id="learner-drive-filters"
+            className={(mobileOpen?"flex":"hidden")+
+             " fixed inset-x-0 bottom-0 z-50 max-h-[82dvh] min-w-0 flex-col gap-4 overflow-y-auto rounded-t-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-lg md:static md:col-span-3 md:flex md:max-h-none md:flex-row md:items-start md:gap-3 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none"}>
+            <div className="flex items-center justify-between md:hidden">
+              <h3 className="text-base font-semibold text-foreground">Filter drives</h3>
+              <Button type="button" variant="secondary" onClick={closeMobileFilters}>Done</Button>
+            </div>
+            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Sort
+              <Select value={filters.sort} aria-label="Sort placement drives"
+                onChange={event=>updateQuery({sort:event.target.value})} className={selectClass}>
+                <option value="deadline">Deadline soonest</option>
+                <option value="newest">Newest first</option>
+                <option value="ctc">Highest CTC</option>
+                <option value="title">Role A–Z</option>
+              </Select>
+            </label>
+            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Type
+              <Select value={filters.employmentType} aria-label="Type"
+                onChange={event=>updateQuery({type:event.target.value})} className={selectClass}>
+                <option value="all">All types ({allDrives.roles})</option>
+                {facets.types.map(type=><option key={type} value={type}>
+                  {type.includes("_")?humanize(type):type} ({employmentCounts.get(type)??0})
+                </option>)}
+              </Select>
+            </label>
+            <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Location
+              <Select value={filters.location} aria-label="Location"
+                onChange={event=>updateQuery({loc:event.target.value})} className={selectClass}>
+                <option value="all">All locations</option>
+                {facets.locations.map(location=><option key={location} value={location}>
+                  {location} ({locationCounts.get(location.toLowerCase())??0})
+                </option>)}
+              </Select>
+            </label>
+          </div>
         </div>
-        <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
-          onClick={()=>setMobileOpen(value=>!value)}
-          className="min-h-11 w-full justify-between md:hidden">
-          <span>{mobileOpen ? "Hide drive filters" : learnerJobsMobileFilterLabel(filters)}</span>
-          <span aria-hidden="true">{mobileOpen ? "−" : "+"}</span>
-        </Button>
-        <div id="learner-drive-filters"
-          className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
-        <div className="grid gap-3 md:grid-cols-2">
-
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Type
-            <Select value={filters.employmentType}
-              onChange={(event) => updateQuery({ type: event.target.value })}
-              className={selectClass}>
-              <option value="all">All types</option>
-              {facets.types.map((type) => (
-                <option key={type} value={type}>{type.includes("_")?humanize(type):type} ({employmentCounts.get(type)??0})</option>
-              ))}
-            </Select>
-          </label>
-          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Location
-            <Select value={filters.location}
-              onChange={(event) => updateQuery({ loc: event.target.value })}
-              className={selectClass}>
-              <option value="all">All locations</option>
-              {facets.locations.map((location) => (
-                <option key={location} value={location}>{location} ({locationCounts.get(location.toLowerCase())??0})</option>
-              ))}
-            </Select>
-          </label>
-        </div>
-        <SegmentedControl label="Drive application availability"
-          className="w-fit max-w-full"
-          value={filters.availability}
-          onChange={(next) => updateQuery({ availability: next })}
-          options={([
-            ["all", "All published"],
-            ["open", "Open to apply"],
-            ["not-open", "Not open to you"],
-            ["closed", "Deadline passed"],
-          ] as const).map(([key, label]) => ({
-            value: key,
-            label: label + " (" + availabilityCounts[key] + ")",
-          }))} />
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
           <button type="button" aria-pressed={filters.eligibleOnly}
             onClick={()=>updateQuery({eligible:filters.eligibleOnly?null:"1"})}
             className={"inline-flex min-h-11 items-center gap-2 rounded-full border px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
@@ -268,24 +269,18 @@ export function LearnerJobsBrowse({
               (filters.closingSoon?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-primary-text":"border-border bg-surface text-body hover:border-[var(--lms-primary)]")}>
             Closing soon <span className="text-xs opacity-80">{closingCount}</span>
           </button>
-          <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-[6px] text-[length:var(--lms-font-sm)] md:ml-auto md:w-auto md:flex-row md:items-center md:gap-2 md:min-h-[var(--lms-control-height)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Sort
-            <Select value={filters.sort}
-              aria-label="Sort placement drives"
-              onChange={(event) => updateQuery({ sort: event.target.value })}
-              className="min-h-[var(--lms-control-height)] max-md:min-h-11">
-              <option value="deadline">Deadline soonest</option>
-              <option value="newest">Newest first</option>
-              <option value="ctc">Highest CTC</option>
-              <option value="title">Role A–Z</option>
+          <label className="inline-flex min-h-11 flex-wrap items-center gap-2 text-xs font-semibold text-body md:ml-auto md:min-h-9">
+            Availability
+            <Select className="min-h-9 w-auto max-w-full" value={filters.availability}
+              onChange={event=>updateQuery({availability:event.target.value})}>
+              <option value="all">All ({availabilityCounts.all})</option>
+              <option value="open">Open ({availabilityCounts.open})</option>
+              <option value="not-open">Not open to you ({availabilityCounts["not-open"]})</option>
+              <option value="closed">Expired ({availabilityCounts.closed})</option>
             </Select>
           </label>
-          <Button variant="link" type="button" onClick={() => {
-              resetFilters();
-            }} className="min-h-11 px-2 md:min-h-9">
-            Clear filters
-          </Button>
-        </div>
+          <Button variant="link" type="button" onClick={resetFilters}
+            className="min-h-11 px-2 md:min-h-9">Clear filters</Button>
         </div>
       </section>
 
