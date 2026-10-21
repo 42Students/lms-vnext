@@ -7,18 +7,18 @@ export const driveInterviewsQuerySchema = z.object({
   appointmentStatus: z.enum(["ALL","UPCOMING","COMPLETED","CANCELLED"]).optional(),
   appointmentMode: z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).optional(),
   appointmentSearch: z.string().trim().max(120).optional(),
-  appointmentSort: z.enum(["DATE_ASC","DATE_DESC"]).default("DATE_ASC"),
-  appointmentPageSize: z.union([z.literal(10),z.literal(20),z.literal(50),z.literal(100),z.enum(["10","20","50","100"]).transform(Number)]).default(20),
   page: z.coerce.number().int().min(1).max(1000).default(1),
   appointmentPage: z.coerce.number().int().min(1).max(1000).default(1),
+  appointmentPageSize:z.coerce.number().int().refine(n=>[10,20,50,100].includes(n)).default(20),
+  appointmentSort:z.enum(["DATE_ASC","DATE_DESC"]).default("DATE_ASC"),
 }).strict();
 export type DriveInterviewsQuery = z.infer<typeof driveInterviewsQuerySchema>;
 export const DRIVE_INTERVIEW_PAGE_SIZE = 20;
-export const DRIVE_INTERVIEW_PAGE_SIZE_CHOICES = [10,20,50,100] as const;
+export const DRIVE_INTERVIEW_PAGE_SIZES=[10,20,50,100] as const;
 
 export function driveInterviewsParams(raw: Record<string,string|string[]|undefined>) {
   const filtered: Record<string,string> = {};
-  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch","appointmentPage","appointmentSort","appointmentPageSize"] as const) {
+  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch","appointmentPage","appointmentPageSize","appointmentSort"] as const) {
     const value = raw[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && value !== "") filtered[key] = value;
@@ -35,24 +35,16 @@ export function driveInterviewsHref(jobId: string, query: DriveInterviewsQuery) 
   if (query.appointmentStatus && query.appointmentStatus !== "ALL") params.set("appointmentStatus",query.appointmentStatus);
   if (query.appointmentMode && query.appointmentMode !== "ALL") params.set("appointmentMode",query.appointmentMode);
   if (query.appointmentSearch) params.set("appointmentSearch",query.appointmentSearch);
-  if (query.appointmentSort !== "DATE_ASC") params.set("appointmentSort",query.appointmentSort);
-  if (query.appointmentPageSize !== 20) params.set("appointmentPageSize",String(query.appointmentPageSize));
   if (query.page>1) params.set("page",String(query.page));
+  if(query.appointmentPageSize!==20)params.set("appointmentPageSize",String(query.appointmentPageSize));
+  if(query.appointmentSort!=="DATE_ASC")params.set("appointmentSort",query.appointmentSort);
   if (query.appointmentPage>1) params.set("appointmentPage",String(query.appointmentPage));
   return "/college/placements/jobs/" + encodeURIComponent(jobId) + "/interviews" +
     (params.size ? "?" + params.toString() : "");
 }
 export function driveRoundTime(value: Date | null, timezone: string | null) {
   if (!value) return "Not scheduled";
-  try {
-    return new Intl.DateTimeFormat("en-IN",{
-      timeZone:timezone||"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-    }).format(value) + (timezone?" · "+timezone:" · IST");
-  } catch {
-    return new Intl.DateTimeFormat("en-IN",{
-      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-    }).format(value) + " · IST";
-  }
+  return value.toISOString() + (timezone ? " · " + timezone : " · Timezone not recorded");
 }
 
 export type CandidateInterviewFilter = {
@@ -88,25 +80,19 @@ export function driveInterviewFilterError(raw: Record<string, string | string[] 
   return "Invalid interview filters";
 }
 
-/** When a filter changes, old pagination offsets are no longer meaningful. */
-export function resetDriveInterviewFilterPage(
-  current: DriveInterviewsQuery,
-  next: Partial<DriveInterviewsQuery>,
-): DriveInterviewsQuery {
-  const updated = { ...current, ...next };
-  return { ...updated, page: 1, appointmentPage: 1 };
+export function appointmentFilterChange(query:DriveInterviewsQuery,patch:Partial<DriveInterviewsQuery>){
+ const changed=Object.keys(patch).some(key=>key!=="appointmentPage"&&
+  query[key as keyof DriveInterviewsQuery]!==patch[key as keyof DriveInterviewsQuery]);
+ return {...query,...patch,appointmentPage:changed?1:(patch.appointmentPage??query.appointmentPage)};
 }
-
-/** Preserve the distinction between attendance/outcome and booking state. */
-export function legacyDriveCandidateStatusLabel(status: string): string {
-  switch (status.trim().toUpperCase()) {
-    case "BOOKED":
-    case "SCHEDULED": return "Scheduled";
-    case "CONFIRMED": return "Confirmed";
-    case "RESCHEDULE_REQUESTED": return "Reschedule requested";
-    case "COMPLETED": return "Completed";
-    case "NO_SHOW": return "No show";
-    case "CANCELLED": return "Cancelled";
-    default: return "Status unavailable";
-  }
+export function sortDriveAppointments<T extends {scheduledAt:string;id:string}>(rows:readonly T[],sort:"DATE_ASC"|"DATE_DESC"){
+ const direction=sort==="DATE_DESC"?-1:1;
+ return [...rows].sort((a,b)=>direction*(Date.parse(a.scheduledAt)-Date.parse(b.scheduledAt))||
+  a.id.localeCompare(b.id));
+}
+export function appointmentConflictLabel(changed:boolean,conflict:boolean){
+ return conflict?"Schedule conflict":changed?"Time changed":"On schedule";
+}
+export function driveInterviewDateIst(date:Date){
+ return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST";
 }

@@ -3,8 +3,8 @@ import {hrRecruiterNameFieldsSchema} from "./hr-recruiter-name-fields-model";
 export const recruiterProfileDetailsPatchSchema=z.strictObject({
  firstName:z.string().trim().min(1,"FIRST_NAME_REQUIRED").max(100),
  lastName:z.string().trim().max(100),
- title:z.string().trim().max(160),
- phone:z.string().trim().max(20),
+ title:z.string().trim().max(150),
+ phone:z.string().trim().max(13),
  expectedUserUpdatedAt:z.iso.datetime(),
  expectedProfileUpdatedAt:z.iso.datetime(),
 }).superRefine((input,ctx)=>{
@@ -45,6 +45,7 @@ export function recruiterProfileFieldErrors(raw: {
   const issues: Partial<Record<"firstName" | "lastName" | "title" | "phone", string>> = {};
   const firstName = raw.firstName.trim();
   if (!firstName) issues.firstName = "First name is required";
+  if (raw.title.trim().length>150)issues.title="Title must not exceed 150 characters.";
   if (raw.phone && !/^(?:[0-9]{10}|\+91[0-9]{10})$/.test(raw.phone))
     issues.phone = "Enter a valid 10-digit mobile number, or leave it blank";
   if (backendCode === "INVALID_MOBILE") issues.phone = "Enter a valid 10-digit mobile number, or leave it blank";
@@ -58,4 +59,16 @@ export function recruiterAccessEndedFeedback(input: {
   return input.authorizedSupport && input.suspensionReason?.trim()
     ? "Recruiter access suspended: " + input.suspensionReason.trim()
     : "Your recruiter access has ended. Ask the placement cell to restore it.";
+}
+
+export function recruiterGrantAccessLabel(input:{
+ accountStatus:"ACTIVE"|"DISABLED";profileStatus:string;
+ grantStatus:string;grantExpiresAt:Date|null;now?:Date;
+}){
+ if(input.accountStatus!=="ACTIVE"||input.profileStatus!=="ACTIVE")
+   return "Recruiter account suspended";
+ if(input.grantStatus!=="ACTIVE")return "Recruiter college access ended";
+ if(!input.grantExpiresAt||input.grantExpiresAt.getTime()<=(input.now??new Date()).getTime())
+   return "Recruiter college grant expired";
+ return "Recruiter access active";
 }
