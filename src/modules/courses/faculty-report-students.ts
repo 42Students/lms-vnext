@@ -21,10 +21,10 @@ export function facultyReportStudentPage(
     .filter((student) =>
       !query || student.name.toLocaleLowerCase().includes(query),
     )
+    // Array.prototype.sort is stable. Equal scores keep the scoped response
+    // order, matching the legacy assignment and quiz ranking table.
     .sort((left, right) =>
-      (right.percent ?? -1) - (left.percent ?? -1) ||
-      left.name.localeCompare(right.name) ||
-      left.id.localeCompare(right.id),
+      (right.percent ?? -1) - (left.percent ?? -1),
     );
   const size = Number.isInteger(pageSize) && pageSize > 0
     ? Math.min(pageSize, 100)
@@ -41,5 +41,5 @@ export function facultyReportStudentPage(
 
 /** Report labels are display names only; missing identities never fall back to contact data. */
 export function facultyReportLearnerName(displayName: string | null | undefined): string {
-  return displayName?.trim() || "Learner (name unavailable)";
+  return displayName?.trim() || "Unknown student";
 }
