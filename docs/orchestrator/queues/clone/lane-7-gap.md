@@ -49,29 +49,29 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/delivery.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/index.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js`
-- [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js`
-- [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js`
-- [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js`
-- [ ] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/team.js`
-- [ ] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/deleted.js`
-- [ ] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/index.js`
-- [ ] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/new.js`
-- [ ] U021 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/reassign-mentor.js`
-- [ ] U022 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/[contactsTab].js`
-- [ ] U023 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/index.js`
-- [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/mentor/fileExplorer.js`
-- [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/mentor/index.js`
-- [ ] U026 (FE page) `docs/legacy-source/frontend/src/pages/mentor/notifications.js`
-- [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/[projectId].js`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/index.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/at-risk/index.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/audit/index.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/index.js`
-- [ ] U032 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/readiness/index.js`
-- [ ] U033 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/colleges.js`
-- [ ] U034 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/index.js`
-- [ ] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/overview.js`
-- [ ] U036 (Cross-cutting area) `cross/07: Exports and imports: CSV/XLSX/PDF, column sets, bulk upload validation and error reports`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js`
+- [x] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js`
+- [x] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js`
+- [x] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js`
+- [x] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/team.js`
+- [x] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/deleted.js`
+- [x] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/index.js`
+- [x] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/new.js`
+- [x] U021 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/reassign-mentor.js`
+- [x] U022 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/[contactsTab].js`
+- [x] U023 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/index.js`
+- [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/mentor/fileExplorer.js`
+- [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/mentor/index.js`
+- [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/mentor/notifications.js`
+- [x] U027 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/[projectId].js`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/index.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/at-risk/index.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/audit/index.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/index.js`
+- [x] U032 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/readiness/index.js`
+- [x] U033 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/colleges.js`
+- [x] U034 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/index.js`
+- [x] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/overview.js`
+- [x] U036 (Cross-cutting area) `cross/07: Exports and imports: CSV/XLSX/PDF, column sets, bulk upload validation and error reports`
