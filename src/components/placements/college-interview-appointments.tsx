@@ -250,9 +250,21 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     getRowKey={row=>row.id}
     columns={[
       {key:"candidate",header:"Candidate",mobilePriority:"primary",
-        cell:row=>candidates.find(c=>c.applicationId===row.applicationId)?.name??row.applicationId},
+        cell:row=>{
+         const person=applicant(row.applicationId);
+         return <span className="grid min-w-0 gap-1">
+          <span className="font-semibold">{person?.name??row.applicationId}</span>
+          {person?.departmentName?<span className="text-xs text-body">{person.departmentName}</span>:null}
+          {person?.rollNumber?<span className="text-xs text-body">{person.rollNumber}</span>:null}
+         </span>;
+        }},
       {key:"round",header:"Round",mobilePriority:"secondary",
         cell:row=>rounds.find(r=>r.id===row.roundId)?.name??"Interview round"},
+      {key:"type",header:"Interview type",mobilePriority:"secondary",cell:row=>
+        <StatusBadge tone={row.interviewType==="HR"?"success":row.interviewType==="TECHNICAL"?"info":
+          row.interviewType==="FINAL"?"warning":"neutral"}>
+          {(row.interviewType??"Interview").replaceAll("_"," ")}
+        </StatusBadge>},
       {key:"time",header:"Date & Time (IST)",mobilePriority:"secondary",
         cell:row=>display(row.scheduledAt)+" · "+row.durationMinutes+" min"},
       {key:"location",header:"Mode and location",mobilePriority:"secondary",
@@ -274,12 +286,21 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
           <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] pb-2 md:flex-row md:flex-wrap">
+     <Link href={applicationHref(row.applicationId)}
+       aria-label={"View application for "+(applicant(row.applicationId)?.name??"candidate")+" in "+(jobTitle??"this placement drive")}
+       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">
+       View application
+     </Link>
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
-       id:row.id,title:"College interview",date:row.scheduledAt,
+       id:row.id,title:eventTitle(row),date:row.scheduledAt,
        durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-[650] text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
-      Download .ics</a>:null}
+      }))} aria-label={"Download calendar file for "+eventTitle(row)}
+       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-[650] text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor"
+        fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6M17 2v6M3 11h18"/>
+      </svg>Download .ics</a>:null}
      {row.status==="COMPLETED"?<Button type="button" variant="secondary"
       disabled={busy} onClick={()=>void openFeedback(row)}>Interview feedback</Button>:null}
      {row.status==="SCHEDULED"?<>
