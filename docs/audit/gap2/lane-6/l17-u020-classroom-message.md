@@ -60,7 +60,7 @@
 
 ## Unit summary
 
-- Total atomic findings: **51**. Verdicts: P2 27, P3 11, P1 13.
-- Distinct action gaps (GAP + MISSING) by severity: P0 0, P1 0, P2 0, P3 0. MATCH and EXTRA rows remain documented, not counted as fix gaps.
+- Total atomic findings: **51**. Verdicts: GAP 32, MATCH 8, EXTRA 7, UNKNOWN 3, MISSING 1.
+- Distinct action gaps (GAP + MISSING) by severity: P0 0, P1 13, P2 19, P3 1. MATCH and EXTRA rows remain documented, not counted as fix gaps.
 - Top three gaps: **irreversible physical deletion with no historical tombstone** (F10/F22); **sender-name snapshot and server-authored role parity** (F04/F22); **legacy full chronological poll versus vNext paged history with no deleted delta** (F05/F10/F19).
 - Reviewer: validate rendered CSS/breakpoint/focus and unavailable-class behavior in a dev session before closing UNKNOWN rows. No Java/TypeScript changes were made.
