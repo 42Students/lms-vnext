@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,asc,eq,inArray,isNotNull,isNull,or} from "drizzle-orm";
+import {and,asc,eq,inArray,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
@@ -50,19 +50,23 @@ export async function listCollegeLearnerProgressChoices(context:RequestContext){
   .where(and(isNull(courseSectionDeliveries.endedAt),
     eq(courseOfferings.status,"ACTIVE"),eq(sections.status,"ACTIVE")))
   .orderBy(asc(sections.name),asc(courses.code))
-  .limit(2000);
+  .limit(2001);
 }
 
 export async function getCollegeLearnerProgressReport(
  context:RequestContext,raw:unknown,
 ){
  const parsed=selectionSchema.safeParse(raw);
- const choices=await listCollegeLearnerProgressChoices(context);
- if(!parsed.success)return {choices,report:null};
+ const allChoices=await listCollegeLearnerProgressChoices(context);
+ const choicesTruncated=allChoices.length>2000;
+ const choices=allChoices.slice(0,2000);
+ if(!parsed.success)return {choices,choicesTruncated,report:null,
+  selectionError:"Invalid class/course selection. Choose a current pair."};
  const {offeringId,deliveryId}=parsed.data;
- if(!offeringId||!deliveryId)return {choices,report:null};
+ if(!offeringId||!deliveryId)return {choices,choicesTruncated,report:null};
  const chosen=choices.find(item=>item.offeringId===offeringId&&item.deliveryId===deliveryId);
- if(!chosen)return {choices,report:null};
+ if(!chosen)return {choices,choicesTruncated,report:null,
+  selectionError:"The selected class and course do not match. Choose a current pair."};
  const db=getDb();
  const collegeId=collegeForReport(context);
 
@@ -116,7 +120,7 @@ export async function getCollegeLearnerProgressReport(
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
     eq(courseLessons.visibleToStudents,true),
-    inArray(courseQuizzes.status,["PUBLISHED","CLOSED"]),
+    eq(courseQuizzes.status,"PUBLISHED"),
     or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,deliveryId)))),
  ]);
  const members=visible.map(item=>item.membershipId);
@@ -125,10 +129,10 @@ export async function getCollegeLearnerProgressReport(
  const [completions,submissions,attempts]=await Promise.all([
   members.length&&videoIds.length?db.select({
    membershipId:learnerContentProgress.membershipId,itemId:learnerContentProgress.lessonContentId,
+   attempt:learnerContentProgress.attempt,completedAt:learnerContentProgress.completedAt,
   }).from(learnerContentProgress).where(and(
    inArray(learnerContentProgress.membershipId,members),
-   inArray(learnerContentProgress.lessonContentId,videoIds),
-   isNotNull(learnerContentProgress.completedAt))):[],
+   inArray(learnerContentProgress.lessonContentId,videoIds))):[],
   members.length&&assignmentIds.length?db.select({
    membershipId:assignmentSubmissions.membershipId,itemId:assignmentSubmissions.assignmentId,
   }).from(assignmentSubmissions).where(and(
@@ -150,22 +154,34 @@ export async function getCollegeLearnerProgressReport(
   }
   return out;
  };
- const videos=byMember(completions),assignments=byMember(submissions),quizzes=byMember(attempts);
+ const latestVideo=new Map<string,(typeof completions)[number]>();
+ for(const item of completions){
+  const key=item.membershipId+":"+item.itemId;
+  const prior=latestVideo.get(key);
+  if(!prior||item.attempt>prior.attempt)latestVideo.set(key,item);
+ }
+ // The current attempt may be incomplete even if an older attempt completed.
+ const videos=byMember([...latestVideo.values()].filter(item=>item.completedAt!==null));
+ const assignments=byMember(submissions),quizzes=byMember(attempts);
  const itemsMeasured=videoIds.length+assignmentIds.length+quizIds.length;
  const rows=visible.map(member=>{
-  const videoDone=videos.get(member.membershipId)?.size??0;
-  const assignmentDone=assignments.get(member.membershipId)?.size??0;
-  const quizDone=quizzes.get(member.membershipId)?.size??0;
+  const videoDone=Math.min(videoIds.length,videos.get(member.membershipId)?.size??0);
+  const assignmentDone=Math.min(assignmentIds.length,assignments.get(member.membershipId)?.size??0);
+  const quizDone=Math.min(quizIds.length,quizzes.get(member.membershipId)?.size??0);
   const completed=videoDone+assignmentDone+quizDone;
   return {...member,videoDone,assignmentDone,quizDone,completed,
-   progress:itemsMeasured?Math.round(100*completed/itemsMeasured):0};
+   progress:itemsMeasured?Math.min(100,Math.max(0,Math.round(100*completed/itemsMeasured))):0};
  }).sort((a,b)=>a.progress-b.progress||String(a.name??"").localeCompare(String(b.name??"")));
- return {choices,report:{
-  chosen,rows,totalVideos:videoIds.length,totalAssignments:assignmentIds.length,
+ return {choices,choicesTruncated,report:{
+  chosen,rows:itemsMeasured?rows:[],totalVideos:videoIds.length,totalAssignments:assignmentIds.length,
   totalQuizzes:quizIds.length,itemsMeasured,students:rows.length,
   truncated:learners.length>2000,
-  notStarted:rows.filter(row=>row.completed===0).length,
+  choicesTruncated,
+  enrolledStudents:visible.length,
+  noMeasurableWork:itemsMeasured===0,
+  emptyReason:itemsMeasured===0?"No measurable items for the selected class and course.":null,
+  notStarted:itemsMeasured?rows.filter(row=>row.completed===0).length:0,
   averageCompletion:rows.length&&itemsMeasured?
-   Math.round(100*rows.reduce((sum,row)=>sum+row.completed,0)/(rows.length*itemsMeasured)):0,
+   Math.min(100,Math.round(100*rows.reduce((sum,row)=>sum+row.completed,0)/(rows.length*itemsMeasured))):null,
  }};
 }

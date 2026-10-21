@@ -102,8 +102,10 @@ export async function listAdminTenantSettings(ctx:RequestContext,kind:"GLOBAL"|"
 /** Each key is committed and audited independently so unrelated, valid edits
  * survive stale versions or invalid entries. No credentials are accepted. */
 export async function saveAdminTenantSettings(ctx:RequestContext,raw:unknown){
- if(raw&&typeof raw==="object"&&!Array.isArray(raw)&&"changes" in raw&&Array.isArray(raw.changes)&&raw.changes.length===0)
+ if(raw===null||raw===undefined||typeof raw!=="object"||Array.isArray(raw)||
+  !("changes" in raw)||!Array.isArray(raw.changes)||raw.changes.length===0)
   throw new TenantSettingEditorError("EMPTY_BODY");
+
  const parsed=input.parse(raw);
  const target=await scope(ctx,parsed.scopeType,parsed.collegeId);
  const seen=new Set<string>();
@@ -251,4 +253,21 @@ export async function removeUnlistedTenantSetting(ctx:RequestContext,raw:unknown
   });
   return {key:input.key,status:"DELETED" as const};
  });
+}
+
+/** Explicit single-key read status: absent override != unavailable storage. */
+export async function getAdminTenantSettingState(
+ context:RequestContext,kind:"GLOBAL"|"COLLEGE",key:string,collegeId?:string,
+):Promise<{state:"UNAVAILABLE"|"UNSET"|"OVERRIDDEN";value?:string;version?:number;activationMessage?:string}> {
+ const selected=await scope(context,kind,collegeId);
+ const present=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.platform_setting_overrides') is not null as ready`);
+ if(!present.rows[0]?.ready)return {state:"UNAVAILABLE"};
+ const [entry]=await getDb().select({value:platformSettingOverrides.value,version:platformSettingOverrides.version})
+  .from(platformSettingOverrides).where(and(
+   eq(platformSettingOverrides.scopeType,kind),eq(platformSettingOverrides.scopeId,selected.scopeId),
+   eq(platformSettingOverrides.key,key))).limit(1);
+ if(!entry)return {state:"UNSET",activationMessage:tenantSettingActivationMessage(key)};
+ return {state:"OVERRIDDEN",version:entry.version,
+   value:/(?:secret|token|password|credential)/i.test(key)?"[redacted]":entry.value,
+   activationMessage:tenantSettingActivationMessage(key)};
 }
