@@ -25,3 +25,60 @@ export function learnerDueSoonNotices(rows:readonly LearnerDueSource[],now:Date,
    return true;
   });
 }
+
+/** Legacy reminders are independent of the on-demand 48-hour due widget above.
+ * The scheduler must call this at 09:00/19:00 Asia/Kolkata, and persist each
+ * notice.key as a delivery idempotency key before contacting a provider. */
+export type LearnerInterviewReminderSource = {
+ id:string;title:string;startsAt:Date|null;status:string;href:string;
+};
+function istClock(now:Date){
+ const parts=new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).formatToParts(now);
+ const get=(type:string)=>parts.find(part=>part.type===type)?.value??"";
+ return {day:[get("year"),get("month"),get("day")].join("-"),
+  hour:get("hour"),minute:get("minute")};
+}
+function nextIstDay(day:string){
+ const [year,month,date]=day.split("-").map(Number);
+ const value=new Date(Date.UTC(year,month-1,date+1));
+ return value.toISOString().slice(0,10);
+}
+/** Exactly tomorrow by IST calendar day, not a floating 24/48-hour interval. */
+export function interviewTomorrowReminders(
+ rows:readonly LearnerInterviewReminderSource[],now:Date,
+):LearnerDueNotice[]{
+ const tomorrow=nextIstDay(istClock(now).day);
+ const seen=new Set<string>();
+ return rows.filter(row=>row.startsAt && Number.isFinite(row.startsAt.getTime()) &&
+  !["CANCELLED","CANCELED","COMPLETED"].includes(row.status.toUpperCase()) &&
+  istClock(row.startsAt).day===tomorrow).map(row=>({
+   key:"interview:"+row.id+":"+tomorrow,
+   title:"Interview reminder",body:row.title+" · Tomorrow at "+
+    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(row.startsAt!),
+   href:row.href,dueAt:row.startsAt!.toISOString(),
+ })).sort((a,b)=>a.dueAt.localeCompare(b.dueAt)||a.key.localeCompare(b.key))
+  .filter(notice=>{if(seen.has(notice.key))return false;seen.add(notice.key);return true});
+}
+/** Callback is the authenticated, durable delivery adapter. Never send from
+ * a page render; retry safety depends on the supplied idempotent dispatch. */
+export async function dispatchDailyLearnerReminders(args:{
+ now:Date;assignments:readonly LearnerDueSource[];
+ interviews:readonly LearnerInterviewReminderSource[];
+ dispatch:(notice:LearnerDueNotice)=>Promise<void>;
+}):Promise<{kind:"ASSIGNMENT"|"INTERVIEW"|null;count:number}>{
+ if(!Number.isFinite(args.now.getTime()))return {kind:null,count:0};
+ const clock=istClock(args.now);
+ const assignmentRun=clock.hour==="09"&&clock.minute==="00";
+ const interviewRun=clock.hour==="19"&&clock.minute==="00";
+ if(!assignmentRun&&!interviewRun)return {kind:null,count:0};
+ const notices=assignmentRun
+  ?learnerDueSoonNotices(args.assignments,args.now,24).map(notice=>({
+    ...notice,key:"assignment:"+clock.day+":"+notice.key,
+  }))
+  :interviewTomorrowReminders(args.interviews,args.now);
+ for(const notice of notices)await args.dispatch(notice);
+ return {kind:assignmentRun?"ASSIGNMENT":"INTERVIEW",count:notices.length};
+}

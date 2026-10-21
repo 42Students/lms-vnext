@@ -25,7 +25,7 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  decidedAt?:Date|null;decidedByName?:string|null;
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true,hideHeader=false,denseTable=false}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true,hideHeader=false,denseTable=true}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
@@ -99,7 +99,13 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
          <strong>{row.learnerName}</strong>
          <p className="text-xs text-muted-foreground">{row.rollNumber??"No roll number"} · {row.batchName??"No batch"}</p>
         </div>},
-      {key:"kind",header:"Review",mobilePriority:"secondary" as const,
+      {key:"roll",header:"Roll",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.rollNumber??"—"},
+      {key:"batch",header:"Batch",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.batchName??"—"},
+      {key:"branch",header:"Branch",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.branchName??"—"},
+      {key:"kind",header:"Section",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"?"Education":"Identity"},
       {key:"state",header:"Status",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>
@@ -107,9 +113,15 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
       {key:"date",header:"Submitted",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=>new Intl.DateTimeFormat("en-IN",{
          dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)+" IST"},
-      {key:"evidence",header:"Supporting proof",mobilePriority:"secondary" as const,
+      {key:"reviewHistory",header:"By / reason",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.decidedByName
+         ?row.decidedByName+(row.decisionNote?" · "+row.decisionNote:"")
+         :row.decisionNote??"—"},
+      {key:"evidence",header:"Marksheets",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"
-        ?row.missingMarksheet?"Missing marksheet":"Marksheet available"
+        ?row.marksheets
+         ?row.marksheets.uploaded+" / "+row.marksheets.expected+" uploaded"
+         :row.missingMarksheet?"Missing marksheet":"Marksheet available"
         :row.missingIdentityProof?"Missing identity proof":"Identity proof available"},
       {key:"actions",header:"Actions",mobilePriority:"action" as const,
        cell:(row:VerificationQueueCard)=><Button type="button" variant="secondary"
