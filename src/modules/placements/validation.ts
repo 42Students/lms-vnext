@@ -551,6 +551,8 @@ export const candidateAcademicEvidenceInputSchema = z
       .nullable()
       .optional()
       .default(null),
+    postgraduatePercentage: percentageSchema.nullable().optional().default(null),
+    hasPostgraduateQualification:z.boolean().nullable().optional().default(null),
     gapYears: z
       .number()
       .int()
@@ -625,6 +627,7 @@ export const placementEligibilityPolicyInputSchema = z
       .nullable()
       .optional()
       .default(null),
+    minPostgraduatePercentage:percentageSchema.nullable().optional().default(null),
     minPctThroughout: percentageSchema
       .nullable().optional().default(null),
     maxGapYears: z

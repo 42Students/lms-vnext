@@ -288,6 +288,8 @@ function evidenceValues(
     undergraduatePctBasisPoints: scaleHundredths(
       input.undergraduatePercentage,
     ),
+    postgraduatePctBasisPoints:scaleHundredths(input.postgraduatePercentage),
+    hasPostgraduateQualification:input.hasPostgraduateQualification,
     gapYears: input.gapYears,
     isLateralEntry: input.isLateralEntry,
     passingYear: input.passingYear,
@@ -316,6 +318,8 @@ function academicEvidenceView(
     undergraduatePercentage: unscaleHundredths(
       row.undergraduatePctBasisPoints,
     ),
+    postgraduatePercentage:unscaleHundredths(row.postgraduatePctBasisPoints),
+    hasPostgraduateQualification:row.hasPostgraduateQualification,
   };
 }
 
@@ -581,6 +585,7 @@ export async function getJobEligibilityPolicy(
       unscaleHundredths(
         policy.minUndergraduatePctBasisPoints,
       ),
+    minPostgraduatePercentage:unscaleHundredths(policy.minPostgraduatePctBasisPoints),
     minPctThroughout: unscaleHundredths(policy.minPctThroughoutBasisPoints),
     maxGapYears: policy.maxGapYears,
     allowedPassingYears:
@@ -635,6 +640,7 @@ export async function upsertJobEligibilityPolicy(
       scaleHundredths(
         input.minUndergraduatePercentage,
       ),
+    minPostgraduatePctBasisPoints:scaleHundredths(input.minPostgraduatePercentage),
     minPctThroughoutBasisPoints: scaleHundredths(input.minPctThroughout),
     maxGapYears: input.maxGapYears,
     allowedPassingYears: input.allowedPassingYears,
@@ -1289,6 +1295,23 @@ export async function evaluatePlacementEligibility(
       "MIN",
       100,
     );
+  }
+  if(policy.minPostgraduatePctBasisPoints!==null){
+    // The PG condition is not applicable to a verified non-PG learner.
+    // Unknown qualification is MISSING, not a silent pass.
+    if(evidence?.hasPostgraduateQualification===false){
+      // No check for people who do not hold a postgraduate qualification.
+    }else if(evidence?.hasPostgraduateQualification===true||
+      evidence?.postgraduatePctBasisPoints!==null&&
+      evidence?.postgraduatePctBasisPoints!==undefined){
+      numericCheck(checks,"Postgraduate percentage",
+        evidence?.postgraduatePctBasisPoints??null,
+        policy.minPostgraduatePctBasisPoints,"MIN",100);
+    }else checks.push({
+      criterion:"Postgraduate qualification",
+      status:"MISSING",actual:null,required:"PG qualification",
+      detail:"Postgraduate qualification has not been verified",
+    });
   }
   if (policy.minPctThroughoutBasisPoints !== null) {
     numericCheck(

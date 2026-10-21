@@ -16,6 +16,7 @@ export const PRIVATE_OBJECT_NAMESPACES = [
   "assignment-submission",
   "course-resource",
   "project-resource",
+  "placement-document",
   "lesson-video",
 ] as const;
 
@@ -34,13 +35,13 @@ export const LEGACY_STORAGE_FOLDER_CROSSWALK = {
   "lesson-content": "course-resource",
   "profile-images": null,
   "video-intros": null,
-  resumes: null,
+  resumes: "placement-document",
   assignments: "assignment-submission",
   "course-images": "course-resource",
   "identity-docs": "profile-verification",
   marksheets: "profile-verification",
   "college-branding": null,
-  "offer-letters": null,
+  "offer-letters": "placement-document",
   "jd-files": null,
 } as const satisfies Record<string, PrivateObjectNamespace | null>;
 // Legacy lesson videos instead use lesson-video; project assignment attachments
