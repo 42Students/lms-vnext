@@ -1149,9 +1149,13 @@ export function ProjectWorkspace({
           ) : null}
           {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
             <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
-              description={mode==="ADMIN"
-                ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
-                :"Add the sprints this project should be measured against."}/>:null}
+              description={mode==="ADMIN"?
+                "No sprints yet. Add the first sprint when a release is ready.":
+                "Add the sprints this project should be measured against."}/>:null}
+          {mode==="ADMIN"&&!workspace.releasesLoadError&&workspace.releases.length>0&&
+            workspace.sprints.length===0?<p role="status" className="border-y border-border py-3 text-sm text-body">
+              No sprints yet. Add the first sprint when a release is ready.
+            </p>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
@@ -1176,8 +1180,11 @@ export function ProjectWorkspace({
           </nav>:null}
         {mode==="ADMIN"&&show("tasks")?(()=>{
           const liveTasks=workspace.tasks.filter(task=>!task.deletedAt);
+          const liveTaskIds=new Set(liveTasks.map(task=>task.id));
+          const activeSubmissions=workspace.taskSubmissions.filter(item=>
+            liveTaskIds.has(item.taskId));
           const latest=new Map<string,(typeof workspace.taskSubmissions)[number]>();
-          for(const item of workspace.taskSubmissions){
+          for(const item of activeSubmissions){
             const prior=latest.get(item.taskId);
             if(!prior||item.version>prior.version)latest.set(item.taskId,item);
           }
@@ -1191,7 +1198,7 @@ export function ProjectWorkspace({
              <dl className="grid grid-cols-2 border-y border-border sm:grid-cols-4">
               {([
                ["Tasks",liveTasks.length],["In progress",active],
-               ["Done",done],["Submissions",workspace.taskSubmissions.length],
+               ["Done",done],["Submissions",activeSubmissions.length],
               ] as const).map(([name,count])=><div key={name} className="border-b border-border p-3">
                <dt className="text-xs text-body">{name}</dt>
                <dd className="text-xl font-semibold tabular-nums">{count}</dd>
@@ -1200,12 +1207,12 @@ export function ProjectWorkspace({
             </section>
             <ProjectTaskSubmissionOverview
               metrics={[
-                {label:"Total submissions",value:String(workspace.taskSubmissions.length)},
+                {label:"Total submissions",value:String(activeSubmissions.length)},
                 {label:"Submitted",value:String(submitted)},
-                {label:"Approved",value:String(workspace.taskSubmissions.filter(item=>item.status==="APPROVED").length)},
-                {label:"Changes requested",value:String(workspace.taskSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
+                {label:"Approved",value:String(activeSubmissions.filter(item=>item.status==="APPROVED").length)},
+                {label:"Changes requested",value:String(activeSubmissions.filter(item=>item.status==="CHANGES_REQUESTED").length)},
               ]}
-              rows={workspace.taskSubmissions.map(item=>({
+              rows={activeSubmissions.map(item=>({
                 id:item.id,
                 taskTitle:workspace.tasks.find(task=>task.id===item.taskId)?.title??"Recorded task",
                 submitter:workspace.members.find(member=>
