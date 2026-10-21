@@ -97,7 +97,7 @@ export default async function LearnerAssessmentResultsPage({
       ) : (
         <section aria-label="Official assessment outcomes" className="min-w-0 divide-y divide-border">
           {paged.items.map((item) => (
-            <article key={item.resultId} className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-5">
+            <article key={item.resultId} className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-4">
               <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
