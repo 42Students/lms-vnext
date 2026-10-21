@@ -213,6 +213,7 @@ export async function listLectureHalls(
     ...(containsSearch ? [or(
       ilike(lectureHalls.name, containsSearch),
       ilike(lectureHalls.description, containsSearch),
+      ilike(lectureHalls.roomType, containsSearch),
     )!] : []),
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),

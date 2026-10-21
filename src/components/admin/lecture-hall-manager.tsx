@@ -283,7 +283,7 @@ export function LectureHallManager({
             </Button>
           </form>
         </section>
-        <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0">
+        <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
       {halls.length === 0 ? (
         <EmptyState
@@ -293,10 +293,12 @@ export function LectureHallManager({
       ) : (
         <DataTable empty={<EmptyState title="No lecture halls" description="No records to show."/>}
           columns={[
-            { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="block min-w-0"><span className="block break-words font-semibold text-foreground">{hall.name}</span>{hall.description ? <span className="mt-1 block break-words text-xs text-muted-foreground">{hall.description}</span> : null}</span> },
+            { key: "name", header: LECTURE_HALL_COPY.columns.name, mobilePriority: "primary", cell: (hall: HallRow) => <span className="block min-w-0 break-words font-semibold text-foreground">{hall.name}</span> },
             { key: "type", header: LECTURE_HALL_COPY.columns.type, cell: (hall) => ROOM_TYPE_LABELS[hall.roomType] ?? hall.roomType },
             { key: "capacity", header: "Capacity", cell: (hall) => hall.capacity },
             { key: "dept", header: LECTURE_HALL_COPY.columns.department, cell: (hall) => hall.departmentName ?? "—" },
+            { key:"description",header:"Description",cell:(hall)=>
+               <span title={hall.description??undefined} className="block max-w-44 truncate">{hall.description??"—"}</span> },
             {
               key: "upcoming",
               header: "Upcoming classes",
@@ -322,6 +324,13 @@ export function LectureHallManager({
                     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                     Availability
                   </Link>
+                  <Button type="button" variant="ghost" size="sm" disabled={pending}
+                    aria-label={"Edit "+hall.name} title={"Edit "+hall.name}
+                    onClick={()=>open(hall)} className="min-h-11 md:min-h-9">✎ Edit</Button>
+                  {hall.status==="ACTIVE"?<Button type="button" variant="ghost" size="sm"
+                    aria-label={"Archive "+hall.name} title={"Archive "+hall.name}
+                    disabled={pending} onClick={()=>setArchiving(hall)}
+                    className="min-h-11 text-error md:min-h-9">Archive</Button>:null}
                   <Dropdown label="Lecture hall actions" trigger="Actions" mobileSheet align="end" triggerClassName="md:!min-h-9">
                     <Menu className="w-full min-w-0">
                       <MenuItem disabled={pending} onClick={() => open(hall)}>Edit</MenuItem>
@@ -424,7 +433,7 @@ export function LectureHallManager({
         open={archiving !== null}
         onOpenChange={(value) => !value && !pending && setArchiving(null)}
         title="Archive lecture hall"
-        description={`Archive ${archiving?.name ?? "this hall"}? It can't be archived while it has upcoming classes.`}
+        description={`Delete this room? ${archiving?.name ?? "This room"} will be archived, not physically deleted. Scheduled and past class history is preserved; upcoming scheduled sessions must be resolved first. You can restore this room later.`}
         confirmLabel="Archive hall" confirmVariant="danger"
         pending={pending}
         onConfirm={() => archiving && setStatus(archiving, "ARCHIVED")}

@@ -42,7 +42,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   tab:rawTab,q:raw.q,role:raw.role,membershipStatus:raw.membershipStatus,
   platformStatus:raw.platformStatus,page:firstBackendPage,
  }:{invalid:true});
- if(!query.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
+ if(!query?.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
    action={<Link href="/admin/people/directory" className="font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:underline w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">Clear filters</Link>}/>
  </div>;
