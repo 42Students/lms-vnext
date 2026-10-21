@@ -144,7 +144,10 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Newer messages
    </Link> : null}
   </nav>
-  <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}/>
+  <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}
+   kind={result.thread.kind} mentionMembers={eligibleAssignees.map(member=>({
+     membershipId:member.membershipId,displayName:member.displayName,
+   }))}/>
   {asks.status==="READY"?<TpoTeamAskPanel threadId={result.thread.id}
    actorId={context.membership?.id??""}
    recipientId={otherMembershipId}
