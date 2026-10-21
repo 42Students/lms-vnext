@@ -154,6 +154,7 @@ export async function listCourses(
   collegeIdInput: string,
   departmentIdInput?: string | null,
   includeArchived = false,
+  paging?: { limit: number; offset: number },
 ) {
   const collegeId =
     collegeIdSchema.parse(collegeIdInput);
@@ -199,7 +200,7 @@ export async function listCourses(
     );
   }
 
-  return getDb()
+  const query = getDb()
     .select({
       id: courses.id,
       departmentId: courses.departmentId,
@@ -222,7 +223,49 @@ export async function listCourses(
     .orderBy(
       asc(departments.name),
       asc(courses.name),
+      asc(courses.id),
     );
+
+  if (!paging) return query;
+  if (!Number.isSafeInteger(paging.limit) || paging.limit < 1 ||
+      !Number.isSafeInteger(paging.offset) || paging.offset < 0) {
+    throw new RangeError("Invalid course page");
+  }
+  return query.limit(Math.min(100, paging.limit)).offset(paging.offset);
+}
+
+/** Indexed SQL page and count, scoped with the same authorization as listCourses.
+ * The unpaged call remains available to existing legacy-compatible consumers. */
+export async function listCoursesPage(
+  context: RequestContext,
+  collegeIdInput: string,
+  paging: { limit: number; offset: number },
+  departmentIdInput?: string | null,
+  includeArchived = false,
+) {
+  const coursesPage = await listCourses(
+    context, collegeIdInput, departmentIdInput, includeArchived, paging,
+  );
+  const collegeId = collegeIdSchema.parse(collegeIdInput);
+  const departmentId = departmentIdInput
+    ? departmentIdSchema.parse(departmentIdInput) : null;
+  const conditions = [
+    eq(departments.collegeId, collegeId),
+    isNull(departments.archivedAt),
+  ];
+  if (!includeArchived) conditions.push(eq(courses.status, "ACTIVE"));
+  if (departmentId) conditions.push(eq(courses.departmentId, departmentId));
+  const [counter] = await getDb()
+    .select({ total: sql<number>`count(*)::int` })
+    .from(courses)
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .where(and(...conditions));
+  return {
+    courses: coursesPage,
+    total: counter?.total ?? 0,
+    limit: Math.min(100, paging.limit),
+    offset: paging.offset,
+  };
 }
 
 export async function createCourse(
