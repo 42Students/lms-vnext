@@ -1,0 +1,45 @@
+# L11-U015 — TPO root index redirect
+
+**Legacy:** docs/legacy-source/frontend/src/pages/tpo/index.js:1-9, destination docs/legacy-source/frontend/src/pages/tpo/home.js:1-123, legacy PageShell, TpoHubService.getHome and homeRows. **vNext:** src/app/(authenticated)/tpo/page.tsx:1-4, src/app/(authenticated)/tpo/layout.tsx:1-23, src/app/(authenticated)/tpo/home/page.tsx:1-224, tpo-operations-service and module access. The legacy unit is a route-only redirect; the destination Home page is a separate audit unit.
+
+| ID | Facet | Legacy behaviour (file:line) | vNext behaviour (file:line or NONE) | Verdict | Severity | Fix | Effort |
+|---|---|---|---|---|---|---|---|
+| G2-11-015-001 | F01 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-4 /tpo is a temporary server-side redirect to /tpo/home. | src/app/(authenticated)/tpo/page.tsx:1-3 redirects to /tpo/home using Next App Router redirect(). | MATCH | P3 | Keep /tpo→/tpo/home with no intermediate page. | S |
+| G2-11-015-002 | F01 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 explicitly permanent:false (HTTP temporary redirect). | src/app/(authenticated)/tpo/page.tsx:3 uses Next redirect (temporary semantics, status implementation framework-dependent). | UNKNOWN | P2 | Check network response: legacy 307 vs Next redirect status and caching headers must remain non-permanent. | S |
+| G2-11-015-003 | F02 | docs/legacy-source/frontend/src/pages/tpo/index.js:6-8 returns null and never paints a card/header. | src/app/(authenticated)/tpo/page.tsx:3 returns redirect without markup or loading elements. | MATCH | P3 | No root page UI. | S |
+| G2-11-015-004 | F03 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 defines no button, badge, icon, tooltip or counter. | src/app/(authenticated)/tpo/page.tsx:1-4 defines no elements or button. | MATCH | P3 | No visible root controls. | S |
+| G2-11-015-005 | F04 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 receives neither props nor API response data. | src/app/(authenticated)/tpo/page.tsx:1-4 receives neither query data nor API data. | MATCH | P3 | No data needs formatting on the root redirect. | S |
+| G2-11-015-006 | F05 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 renders no table, search, sort, row or pagination. | src/app/(authenticated)/tpo/page.tsx:1-4 no table/list; src/app/(authenticated)/tpo/home/page.tsx:32-45 owns page data. | MATCH | P3 | Do not add list under /tpo. | S |
+| G2-11-015-007 | F06 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 has no form, status default or submit. | src/app/(authenticated)/tpo/page.tsx:1-3 no form, only navigation. | MATCH | P3 | None: no form at /tpo. | S |
+| G2-11-015-008 | F07 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 no validation/errors outside framework redirect. | src/app/(authenticated)/tpo/page.tsx:3 errors delegated to Next redirect; src/app/(authenticated)/tpo/layout.tsx:13-15 handles unauthorized. | EXTRA | P3 | Retain authorization at layout; avoid leaking unauthorized home data. | S |
+| G2-11-015-009 | F08 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 redirects without success toast. | src/app/(authenticated)/tpo/page.tsx:3 redirects without toast. | MATCH | P3 | Keep redirect silent. | S |
+| G2-11-015-010 | F09 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no modal, drawer, menu or popover. | src/app/(authenticated)/tpo/page.tsx:1-4 no modal/dialog. | MATCH | P3 | No modal action needed. | S |
+| G2-11-015-011 | F10 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 getServerSideProps produces redirect only, no DB/API reads or mutations. | src/app/(authenticated)/tpo/page.tsx:3 redirect() only; src/app/(authenticated)/tpo/home/page.tsx:48-63 retrieves TPO data after arrival. | MATCH | P3 | Keep root redirect side-effect free. | S |
+| G2-11-015-012 | F10 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 destination /tpo/home. | src/app/(authenticated)/tpo/page.tsx:3 identical path, but home now loads many independent services src/app/(authenticated)/tpo/home/page.tsx:48-63. | EXTRA | P3 | No root change; home actions audited separately. | S |
+| G2-11-015-013 | F11 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 has no inline authorization (legacy auth/nav applied elsewhere). | src/app/(authenticated)/tpo/layout.tsx:13-15 checks canOpenTpoWorkspace and redirects denied portal home, unlike bare old index. | EXTRA | P3 | Retain strong layout enforcement; verify no redirect loop. | S |
+| G2-11-015-014 | F12 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 does not inspect role, college, or module; only temporary redirect. | src/app/(authenticated)/tpo/page.tsx:3 does not inspect roles; src/app/(authenticated)/tpo/layout.tsx:13-16 checks workspace and TPO tooling. | EXTRA | P3 | Document intentional access hardening in centralized layout. | S |
+| G2-11-015-015 | F13 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no skeleton/loading/error, only SSR redirect. | src/app/(authenticated)/tpo/page.tsx:1-4 immediately redirects; standard Next route loading/error could apply upstream. | MATCH | P3 | Do not add skeleton just for URL redirect. | S |
+| G2-11-015-016 | F14 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no export/upload/download/import. | src/app/(authenticated)/tpo/page.tsx:1-4 no export/upload/import. | MATCH | P3 | None: redirect-only route. | S |
+| G2-11-015-017 | F15 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no email/notification emitted. | src/app/(authenticated)/tpo/page.tsx:1-4 no email/notification; home client reads separately src/app/(authenticated)/tpo/home/page.tsx:50-63. | MATCH | P3 | Redirect must never dispatch email or notification. | S |
+| G2-11-015-018 | F16 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no DOM; responsive behavior belongs to /tpo/home. | src/app/(authenticated)/tpo/page.tsx:1-4 no DOM; src/app/(authenticated)/tpo/layout.tsx:16-21 renders responsive container after redirect. | MATCH | P3 | No breakpoint-specific root presentation. | S |
+| G2-11-015-019 | F17 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no focusable element; browser navigates by redirect. | src/app/(authenticated)/tpo/page.tsx:3 direct redirect; no focusable root element. | MATCH | P3 | Retain semantic navigation and destination heading. | S |
+| G2-11-015-020 | F18 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-4 exact destination string '/tpo/home' and no visible wording. | src/app/(authenticated)/tpo/page.tsx:3 exact destination '/tpo/home' and no visible copy. | MATCH | P3 | No text parity adjustment. | S |
+| G2-11-015-021 | F19 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 SSR redirect avoids downloading page data; no fetch. | src/app/(authenticated)/tpo/page.tsx:3 server redirect avoids root fetch; src/app/(authenticated)/tpo/home/page.tsx:48-63 data behind target. | MATCH | P3 | Keep one HTTP redirect, avoid extra client hop. | S |
+| G2-11-015-022 | F20 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 unconditionally redirect regardless of query string; /tpo?x=... becomes /tpo/home without forwarded x. | src/app/(authenticated)/tpo/page.tsx:3 redirects fixed /tpo/home, likewise drops query. | MATCH | P3 | Do not inject untrusted query into destination. | S |
+| G2-11-015-023 | F21 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 no job, queue, webhook or third-party. | src/app/(authenticated)/tpo/page.tsx:3 no integrations; src/app/(authenticated)/tpo/home/page.tsx:50-63 uses DB/services only after redirect. | MATCH | P3 | None at root. | S |
+| G2-11-015-024 | F22 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no entity/table/migration model, pure navigation. | src/app/(authenticated)/tpo/page.tsx:1-4 no schema access. | MATCH | P3 | N/A model parity for redirect. | S |
+| G2-11-015-025 | F23 | docs/legacy-source/frontend/src/pages/tpo/index.js:1-9 no in-page auth guard or mobile footer. | src/app/(authenticated)/tpo/layout.tsx:3-21 adds centralized authorization, TpoKeyboardShortcuts and TpoMobileFooter. | EXTRA | P3 | Keep shared shell/access, audit the destination home separately. | S |
+| G2-11-015-026 | F23 | docs/legacy-source/frontend/src/pages/tpo/index.js:2-4 uses getServerSideProps object; src/app/(authenticated)/tpo/page.tsx:3 Next redirect exception. | src/app/(authenticated)/tpo/page.tsx:1-4 migrated mechanism intentionally, behavior equivalent if redirect status unchanged. | EXTRA | P3 | Verify in network panel with cookies disabled to ensure temporary redirect handling. | S |
+
+## Unit summary
+- MATCH: 19
+- GAP: 0
+- MISSING: 0
+- EXTRA: 6
+- UNKNOWN: 1
+- P0: 0
+- P1: 0
+- P2: 1
+- P3: 25
+
+Three review items: verify temporary status and response caching for anonymous and authenticated requests; test TPO layout unauthorized redirect to avoid loops; preserve no-query/no-mutating behavior. **UNKNOWN** exact redirect HTTP status/header until live network check. Root has no independent page visuals, hence no further page UI requirements.
