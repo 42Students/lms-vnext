@@ -101,3 +101,6 @@ export * from "./recruiter-message-email";
 
 // Registered storage only; DB10_OUTBOUND_READY and dispatch remain fail-closed.
 export { db10OutboundMessages, db10OutboundSuppressions, db10GlobalEmailSuppressions } from "./db10-outbound-messages.draft";
+
+// Registered lineage only; no mass import rollback/delete endpoint is activated.
+export { learnerImportBatches, learnerImportBatchMembers } from "./db02-learner-import-batches.staged";

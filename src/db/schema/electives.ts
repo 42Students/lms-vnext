@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { check, foreignKey, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
-import { academicPeriods, programs } from "./academics";
+import { academicPeriods, groupBackedClassOfferings, programs } from "./academics";
 import { courses, courseSectionDeliveries } from "./courses";
 import { lmsGroups } from "./groups";
 export const electiveSlots = pgTable("elective_slots", {
@@ -37,6 +37,8 @@ export const electiveOfferings = pgTable("elective_offerings", {
   courseId: uuid("course_id").notNull().references(() => courses.id, { onDelete: "restrict" }),
   groupId: uuid("group_id").notNull().references(() => lmsGroups.id, { onDelete: "restrict" }),
   backedDeliveryId: uuid("backed_delivery_id").notNull().references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
+  /** Distinct legacy GROUP_BACKED class identity; nullable until attendance/grade services bind it. */
+  backedClassOfferingId: uuid("backed_class_offering_id").references(() => groupBackedClassOfferings.id, { onDelete: "restrict" }),
   capacity: integer("capacity"),
   status: varchar("status", { length: 20 }).default('ACTIVE').notNull(),
   deletedAt: timestamp("deleted_at", { withTimezone: true }),
@@ -46,6 +48,12 @@ export const electiveOfferings = pgTable("elective_offerings", {
 }, t => [
   uniqueIndex("elective_offerings_group_uq").on(t.groupId),
   uniqueIndex("elective_offerings_delivery_uq").on(t.backedDeliveryId),
+  uniqueIndex("elective_offerings_backed_class_uq").on(t.backedClassOfferingId).where(sql`${t.backedClassOfferingId} is not null`),
+  foreignKey({
+    name: "elective_offerings_backed_class_group_fk",
+    columns: [t.backedClassOfferingId, t.groupId],
+    foreignColumns: [groupBackedClassOfferings.id, groupBackedClassOfferings.rosterGroupId],
+  }).onDelete("restrict"),
   uniqueIndex("elective_offerings_slot_active_course_uq").on(t.slotId, t.courseId).where(sql.raw("\"status\" = 'ACTIVE' AND \"deleted_at\" IS NULL")),
   index("elective_offerings_slot_status_idx").on(t.slotId, t.status),
   index("elective_offerings_course_idx").on(t.courseId),
