@@ -44,12 +44,57 @@ const routes:Record<LearnerPlacementEventKind,string>={
  NUDGE:"/learn/my-placements",PREP_ASSIGNED:"/learn/courses",PROFILE_VERIFIED:"/learn/profile",
  PROFILE_SENT_BACK:"/learn/profile",PLACEMENT_ANNOUNCEMENT:"/learn/my-placements/announcements",
 };
-export function learnerPlacementEventCopy(kind:LearnerPlacementEventKind,subject:string){
- const safeSubject=subject.replace(/[\r\n\u0000-\u001f]/g," ").trim().slice(0,150);
+/** Optional transaction-authored context only; never trust these fields from a browser.
+ * Persisting producers must authorize the application before setting any URL. */
+export type LearnerPlacementEventContext={
+ learnerName?:string;jobTitle?:string;companyName?:string;status?:string;
+ applicationId?:string;jobId?:string;assessmentUrl?:string;
+ interviewVenue?:string;rejectionReason?:string;
+};
+const applicationStatusTitles:Record<string,string>={
+ INTERVIEW:"Interview scheduled",REJECTED:"Application rejected",
+ SHORTLISTED:"Application shortlisted",ASSESSMENT:"Assessment invitation",
+ OFFERED:"Placement offer extended",HIRED:"Placement hiring confirmed",
+ WAITLISTED:"Application waitlisted",
+};
+function cleanEventDetail(value:string|undefined,max=120){
+ return (value??"").replace(/[\r\n\u0000-\u001f]/g," ").trim().slice(0,max);
+}
+function safeAssessmentUrl(value:string|undefined){
+ if(!value)return null;
+ try{
+  const url=new URL(value);
+  return url.protocol==="https:"&&!url.username&&!url.password&&!url.hash&&url.hostname?url.href:null;
+ }catch{return null;}
+}
+export function learnerPlacementEventCopy(
+ kind:LearnerPlacementEventKind,subject:string,context: LearnerPlacementEventContext={},
+){
+ const safeSubject=cleanEventDetail(subject,150);
+ const status=cleanEventDetail(context.status,32).toUpperCase();
+ const title=kind==="APPLICATION_STATUS_CHANGED"?(applicationStatusTitles[status]??titles[kind]):titles[kind];
+ const named=[cleanEventDetail(context.jobTitle),cleanEventDetail(context.companyName)]
+  .filter(Boolean).join(" at ");
+ const detail=named||safeSubject;
+ const extra=kind==="APPLICATION_STATUS_CHANGED"&&status==="REJECTED"
+   ?cleanEventDetail(context.rejectionReason,150):
+   kind==="ROUND_SCHEDULED"?cleanEventDetail(context.interviewVenue,150):"";
+ const body=(detail?`${title}: ${detail}.`:`${title}. Open your placement workspace for details.`)+
+   (extra?` ${extra}.`:"");
+ const actionHref=routes[kind]; // Never send a recipient to an unverified external assessment URL.
  return {
-  title:titles[kind],
-  body:safeSubject ? `${titles[kind]}: ${safeSubject}.` : `${titles[kind]}. Open your placement workspace for details.`,
-  actionHref:routes[kind],
+  title,body,actionHref,
+  metadata:{
+   learnerName:cleanEventDetail(context.learnerName),
+   jobTitle:cleanEventDetail(context.jobTitle),
+   companyName:cleanEventDetail(context.companyName),
+   applicationId:/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(context.applicationId??"")?context.applicationId:null,
+   jobId:/^[0-9a-f]{8}-[0-9a-f-]{27,36}$/i.test(context.jobId??"")?context.jobId:null,
+   status:status||null,
+   assessmentUrl:safeAssessmentUrl(context.assessmentUrl),
+   interviewVenue:cleanEventDetail(context.interviewVenue),
+   rejectionReason:cleanEventDetail(context.rejectionReason,150),
+  },
  };
 }
 export function learnerPlacementEventUsesMatchingJobsPreference(kind:LearnerPlacementEventKind):boolean{

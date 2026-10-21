@@ -104,6 +104,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const noteSelection=shared?.selected??localSelection;
  const setNoteSelection=shared?.setSelected??setLocalSelection;
  const [downloadError,setDownloadError]=useState("");
+ const [clipboardNotice,setClipboardNotice]=useState("");
+ const viewName=params.get("view")?.trim()||"students";
  const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
@@ -111,7 +113,11 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   return pageSort==="NAME"?a.displayName.localeCompare(b.displayName):
    (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
  });
- const active=sortedRows.find(row=>row.membershipId===selected)??null;
+ // Translate historic numeric roll/registration bookmarks only inside
+ // this already-authorized college roster; every mutation still uses a UUID.
+ const matches=selected?sortedRows.filter(row=>row.membershipId===selected||
+   row.rollNumber===selected||row.registrationNumber===selected):[];
+ const active=matches.length===1?matches[0]!:null;
  const selectedScoped=noteSelection.filter(id=>shared?.allIds?.includes(id)??rows.some(row=>row.membershipId===id));
  const allSelected=Boolean(shared?.allIds?.length&&selectedScoped.length===shared.allIds.length);
  const xlsxHref=(()=>{
@@ -135,7 +141,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
    try{
     const anchor=document.createElement("a");
-    anchor.href=url;anchor.download=legacyGridExportFilename("students","csv");document.body.appendChild(anchor);
+    anchor.href=url;anchor.download=legacyGridExportFilename(viewName,"csv");document.body.appendChild(anchor);
     anchor.click();anchor.remove();
    }finally{URL.revokeObjectURL(url);}
   }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
@@ -181,13 +187,18 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
     setDownloadError("");
-    void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen)).catch(()=>{
-      setDownloadError("Could not copy student rows. Check browser clipboard permissions.");
-    });
+    setClipboardNotice("");
+    void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen))
+      .then(()=>setClipboardNotice(chosen.length===1?"Copied":
+        "Copied "+chosen.length+" rows. Paste into Excel or Sheets."))
+      .catch(()=>{
+        setDownloadError("Could not copy student rows. Check browser clipboard permissions.");
+      });
    }
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
+  {clipboardNotice?<p role="status" aria-live="polite" className="text-sm text-success">{clipboardNotice}</p>:null}
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
    {!xlsxHref&&selectedScoped.length>200?<p role="status" className="text-xs text-warning-text leading-[20px]">Export up to 200 individually selected students or select all matching students.</p>:null}
   <Button variant="secondary" type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
@@ -223,7 +234,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
-   filterTitle="Filter students" exportName="students" xlsxHref={xlsxHref}
+   filterTitle="Filter students" exportName={viewName} xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
   <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),

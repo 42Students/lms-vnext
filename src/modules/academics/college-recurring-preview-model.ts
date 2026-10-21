@@ -10,7 +10,7 @@ export const recurringPreviewSchema = z.object({
   sectionId: z.string().uuid(),
   from: daySchema,
   to: daySchema,
-  weekdays: z.array(z.number().int().min(0).max(6)).min(1).max(7),
+  weekdays: z.array(z.number().int().min(0).max(6)).max(7),
   startTime: timeSchema,
   endTime: timeSchema,
   facultyMembershipId: z.string().uuid().nullable().optional(),
@@ -45,7 +45,7 @@ export function expandIstSessions(input: RecurringPreviewInput): Omit<RecurringS
   for (let ms = Date.parse(input.from + "T00:00:00Z");
     ms <= Date.parse(input.to + "T00:00:00Z"); ms += 86400000) {
     const day = new Date(ms);
-    if (!selected.has(day.getUTCDay())) continue;
+    if (selected.size > 0 && !selected.has(day.getUTCDay())) continue;
     const startsAt = new Date(ms + (sh * 60 + sm - 330) * 60000);
     const endsAt = new Date(ms + (eh * 60 + em - 330) * 60000);
     result.push({

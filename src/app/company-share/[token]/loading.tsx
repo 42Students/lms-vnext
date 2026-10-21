@@ -1,12 +1,11 @@
-import authStyles from "@/components/public/public-auth-skin.module.css";
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-import { PageHeader } from "@/components/ui/page-header";
-
-export default function Loading() {
- return <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 items-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
-  <div className="w-full min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-   <PageHeader title="Shared applicants" />
-   <GracefulPageLoading label="Loading shared applicants..." shape="directory" />
+import {PageHeader} from "@/components/ui/page-header";
+export default function CompanyShareLoading(){
+ return <main role="status" aria-busy="true" aria-label="Loading shared applicants"
+  className="mx-auto max-w-[1000px] space-y-5 px-5 py-12">
+  <PageHeader title="Shared applicants"/>
+  <div className="h-28 animate-pulse rounded-xl border border-border bg-surface"/>
+  <div className="space-y-3 rounded-xl border border-border p-5">
+   {Array.from({length:7},(_,index)=><div key={index} className="h-8 animate-pulse rounded-md bg-muted"/>)}
   </div>
  </main>;
 }

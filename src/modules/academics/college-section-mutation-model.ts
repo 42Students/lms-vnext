@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const uuid = z.string().uuid();
-const name = z.string().trim().min(1).max(255);
+const name = z.string().trim().min(1, "Class name is required").max(255);
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid class code");
 const capacity = z.number().int().min(1).max(200).nullable();

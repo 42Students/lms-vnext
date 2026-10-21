@@ -1348,6 +1348,9 @@ export const placementLegacyApplicationStatusEvents = pgTable(
       .on(t.applicationId, t.sourceLegacyEventId)
       .where(sql`${t.sourceLegacyEventId} is not null`),
     index("placement_legacy_status_timeline_idx").on(t.applicationId, t.changedAt),
+    index("placement_legacy_status_visible_timeline_idx")
+      .on(t.applicationId,t.changedAt,t.id)
+      .where(sql`${t.sourceDeleted} = false`),
     check("placement_legacy_status_nonblank_ck", sql`length(trim(${t.newStatus})) > 0`),
   ],
 );
@@ -1381,6 +1384,9 @@ export const placementApplicationStatusHistory = pgTable(
     index(
       "placement_application_status_history_application_idx",
     ).on(table.applicationId, table.createdAt),
+    index("placement_application_history_state_time_idx")
+      .on(table.applicationId,table.toStatus,table.createdAt),
+    index("placement_application_history_time_idx").on(table.createdAt,table.id),
     index("placement_application_history_cascade_id_idx")
       .on(table.cascadeId)
       .where(sql`${table.cascadeId} is not null`),

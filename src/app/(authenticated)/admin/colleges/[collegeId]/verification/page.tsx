@@ -67,7 +67,7 @@ export default async function AdminCollegeVerification({
 
    <SuperAdminVerificationPanel key={college.id+":"+JSON.stringify(query)} collegeId={college.id} rows={data.rows}
     counts={data.counts} activeTab={data.filter.tab} initialKind={data.filter.kind??"ALL"}
-    page={data.page} total={data.total} hasMore={data.hasMore} query={query}/>
+    page={data.page} total={data.total} hasMore={data.hasMore} query={query} truncated={data.truncated}/>
    <Disclosure title="Placement-cell verification setting" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
    <TpoVerificationSwitch collegeId={college.id} initialEnabled={policy?.enabled??true}/>
    </Disclosure>

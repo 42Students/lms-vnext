@@ -102,6 +102,17 @@ export default async function SuperAdminProjectTemplateDetailPage({
             {can(context, "project-template.manage") && detail.template.status === "DRAFT" ?
               <TemplateMetadataEditControl templateId={detail.template.id} title={detail.template.title}
                 summary={detail.template.summary} currentVersion={detail.template.currentVersion}
+                slug={detail.template.slug}
+                courseLabel={detail.currentVersion?.blueprint.overview.courseLabel??detail.template.legacyCourseLabel??""}
+                phase={detail.currentVersion?.blueprint.overview.phase??detail.template.legacyPhase??""}
+                overview={{
+                  goal:detail.currentVersion?.blueprint.overview.goal??"",
+                  description:detail.currentVersion?.blueprint.overview.description??"",
+                  deliverables:detail.currentVersion?.blueprint.overview.deliverables??[],
+                  definitionOfDone:detail.currentVersion?.blueprint.overview.definitionOfDone??[],
+                  personas:detail.currentVersion?.blueprint.overview.personas??[],
+                  submissionInstructions:detail.currentVersion?.blueprint.overview.submissionInstructions??"",
+                }}
                 updatedAt={detail.template.updatedAt.toISOString()} /> : null}
             {can(context, "project-template.manage") || context.adminScope?.collegeId ? (
             <ProjectTemplateActions

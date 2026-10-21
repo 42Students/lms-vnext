@@ -14,8 +14,11 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const params = Object.fromEntries(new URL(request.url).searchParams);
-    return NextResponse.json(await listLectureHalls(context, params));
+    const search=new URL(request.url).searchParams;
+    const legacy=search.get("legacy")==="1";
+    const params=Object.fromEntries([...search].filter(([key])=>key!=="legacy"));
+    const result=await listLectureHalls(context,params);
+    return NextResponse.json(legacy?{...result,message:"Lecture halls retrieved"}:result);
   } catch (error) {
     if (error instanceof LectureHallError) return lectureHallErrorResponse(error);
     return apiErrorResponse(error);

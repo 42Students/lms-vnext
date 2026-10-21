@@ -74,7 +74,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
  }
  return <>
   <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");setHasSearched(false);setConfirming(false);setMentorRequired(false);setMentorId("");setSelectedMentor(null);setMentors([]);void load("");}}>
-   Reassign mentor
+   Reassign mentor…
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!busy){setOpen(next);if(!next){requestSequence.current++;setConfirming(false);}}}}
    title="Reassign mentor"
@@ -103,6 +103,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
     </label>
     {!searching&&!error&&hasSearched&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
     <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Reassigning the mentor cancels scheduled meetings, unassigns tasks belonging to the outgoing mentor, and notifies both the outgoing and incoming mentors. Co-mentors remain assigned.</p>
+    <a href={"/college/projects/reassign-mentor?projectId="+encodeURIComponent(projectId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Use the bulk Reassign Mentor page</a>
     {confirming?<Banner tone="warning">Confirm the reassignment to {selectedMentor?.displayName??selectedMentor?.email??"the selected mentor"}. Cancelled meetings and unassigned tasks may need rescheduling or reassignment.</Banner>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">

@@ -3,6 +3,7 @@ import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { Button } from "@/components/ui/button";
 import { Banner } from "@/components/ui/banner";
 import {useState} from "react";
+import {useToast} from "@/components/ui/toast";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 import styles from "./legacy-project-touch-actions.module.css";
@@ -11,12 +12,14 @@ export function SuperAdminTemplateArchiveControl({templateId,title,status}:{
 }){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const {askConfirm,dialog}=useConfirmFlow();
+ const {showToast}=useToast();
 
  async function archive(){
   if(!(await askConfirm("Archive template \""+title+"\"? Existing workspaces keep their pinned snapshot. This template will no longer be available for new assignments.")))return;
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId),"DELETE");
+   showToast({tone:"success",title:"Template archived"});
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to archive template");}
   finally{setBusy(false);}

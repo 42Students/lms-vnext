@@ -14,6 +14,8 @@ import {projectMutation} from "./project-api";
 import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import {useToast} from "@/components/ui/toast";
+import {FriendlyFetchError} from "@/lib/api-fetch";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  priority:string;estimatePoints:number|null;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;
@@ -23,6 +25,8 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  projectId:string;tasks:Task[];sprints:Sprint[];readOnly?:boolean;
 }){
  const router=useRouter();
+ const {showToast}=useToast();
+ const [recentlySaved,setRecentlySaved]=useState<Task[]>([]);
  const draftId=useId();
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[approach,setApproach]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
@@ -34,7 +38,10 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
  }
  const guard=useProjectEditorDiscardGuard(adding,draftDirty,busy,discardDraft);
- const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
+ // A server-confirmed new row remains visible until the next route snapshot.
+ const snapshotIds=new Set(tasks.map(task=>task.id));
+ const visibleTasks=[...tasks,...recentlySaved.filter(task=>!snapshotIds.has(task.id))];
+ const backlog=visibleTasks.filter(task=>task.sprintId===null),completed=visibleTasks.filter(task=>task.status==="DONE");
  const velocity=completed.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
  async function move(){
   if(busy||readOnly||!moveRequest)return;
@@ -46,11 +53,15 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    });
    setMoveRequest(null);
    setNotice(targetSprintId?"Task pulled into sprint.":"Task returned to backlog.");router.refresh();
-  }catch{setError("Cannot move task.");}finally{setBusy(false);}
+  }catch(reason){
+    const stale=reason instanceof FriendlyFetchError&&reason.status===409;
+    setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
+   }finally{setBusy(false);}
  }
  const targets=sprints.filter(s=>s.status!=="COMPLETED");
  const returnable=tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status));
  return <section className="space-y-3 border-b border-border pb-5">
+  <p className="text-xs text-muted-foreground">Task edits are individually version-checked. Reload after a conflict to avoid overwriting another editor.</p>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
     <p className="mt-1 text-sm text-body">{backlog.length} backlog tasks</p>
@@ -64,23 +75,33 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     </Button>
     {adding?<form id={draftId} onSubmit={async e=>{
       e.preventDefault();if(busy)return;setError("");
-      if(!title.trim()||!Number.isInteger(points?Number(points):0)||
+      if(!title.trim()){setError("Item 1: Title required");return;}
+      if(!Number.isInteger(points?Number(points):0)||
         (points!==""&&(Number(points)<0||Number(points)>1000))){
-        setError("Enter a task title and a valid estimate from 0 to 1000.");return;
+        setError("Item 1: Estimate must be between 0 and 1000.");return;
       }
       setBusy(true);
       try{
-        await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
+        const receipt=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
           title:title.trim(),description:description.trim()||null,
           approach:approach.trim()||null,
           acceptanceCriteria:criteria.trim()||null,priority,
           estimatePoints:points?Number(points):null,
           taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
+        if(!receipt || typeof receipt!=="object" || !("task" in receipt) ||
+           !receipt.task || typeof receipt.task!=="object" ||
+           !("id" in receipt.task) || typeof receipt.task.id!=="string")
+          throw new Error("Task save receipt is invalid.");
+        setRecentlySaved(old=>[...old,receipt.task as Task]);
+        showToast({tone:"success",title:"Tasks updated"});
         setAdding(false);setTitle("");setDescription("");setApproach("");setCriteria("");
         setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
         router.refresh();
-      }catch{setError("Could not add backlog task");}
+      }catch(reason){
+        const stale=reason instanceof FriendlyFetchError&&reason.status===409;
+        setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
+      }
       finally{setBusy(false);}
     }} className="grid gap-3 border-t border-border pt-3 min-[768px]:grid-cols-2">
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title<Input required maxLength={200} value={title}

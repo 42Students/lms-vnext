@@ -1,7 +1,7 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
@@ -40,8 +40,16 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
  async function submit(confirmed=false){
   if(lock.current)return;
   if(action==="COMMENT"&&!note.trim()){setError("Write a comment");return;}
-  if(action==="STATUS"&&["WONT_FIX","CANT_REPRODUCE","NEEDS_INFO","VERIFIED"].includes(nextStatus)&&note.trim().length<4){
+  if(action==="STATUS"&&nextStatus===status){setError("It is already "+status.replaceAll("_"," "));return;}
+  if(action==="SEVERITY"&&nextSeverity===severity){setError("It is already "+severity);return;}
+  if(action==="ASSIGNEE"&&assignee.trim().length>100){setError("Keep the name under 100 characters");return;}
+  if(action==="DUPLICATE"&&(!duplicateOf.trim()||duplicateOf.trim()===externalId)){setError("Choose the finding this repeats");return;}
+  if(action==="STATUS"&&["WONT_FIX","CANT_REPRODUCE","NEEDS_INFO","VERIFIED"].includes(nextStatus)&&!note.trim()){
    setError("Say why (for \"verified\": what you re-tested)");return;
+  }
+  if(action==="STATUS"&&["VERIFIED","DUPLICATE","WONT_FIX","CANT_REPRODUCE"].includes(status)&&
+    !["VERIFIED","DUPLICATE","WONT_FIX","CANT_REPRODUCE"].includes(nextStatus)&&!note.trim()){
+    setError("Say why it is being reopened");return;
   }
   if(action==="FIX_COMMIT"&&!/^[0-9a-f]{7,40}$/.test(sha.trim())){setError("That isn't a commit hash");return;}
   if(!confirmed){setError(null);setConfirmOpen(true);return;}
@@ -53,7 +61,21 @@ export function IndependentFindingActions({externalId,version,status,severity,cu
    if(!result.ok||result.version<=version)throw new Error("The update could not be verified. Refresh and retry.");
    setConfirmOpen(false);
    router.refresh();
-  }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
+  }catch(reason){
+   if(reason instanceof FriendlyFetchError){
+    const messages:Record<string,string>={
+     STALE_VERSION:"The finding changed. Refresh and retry.",
+     INVALID_STATUS_TRANSITION:"This status change is not allowed. Check the finding history and choose a valid next step.",
+     SEVERITY_UNCHANGED:"It is already "+nextSeverity,
+     ASSIGNEE_UNCHANGED:"The assignee has not changed",
+     INVALID_DUPLICATE:"Choose the finding this repeats",
+     DUPLICATE_COMMIT:"This commit is already recorded.",
+     NOT_FOUND:"Finding not found",
+     NOT_READY:"Audit findings storage is not verified.",
+    };
+    setError(messages[reason.code??""]??reason.fieldErrors.note??reason.fieldErrors.assignee??reason.message);
+   }else setError(reason instanceof Error?reason.message:friendlyApiError({}));
+  }
   finally{lock.current=false;setPending(false);}
  }
  return <section className="min-w-0 max-w-3xl space-y-3 border-b border-border pb-4" aria-label="Finding actions">

@@ -1,3 +1,4 @@
+import {CollegeProgressCapture} from "@/components/courses/college-progress-last-good";
 import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -9,6 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
 import { collegeProgressCsvHref } from "@/modules/courses/college-progress-export-model";
+import {CollegeCourseRetakeAction} from "@/components/college/college-course-retake-action";
 
 type Search = Record<string, string | string[] | undefined>;
 const first = (value: string | string[] | undefined) =>
@@ -72,7 +74,9 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
           Export recorded course activity CSV
         </Link>
       </div>} />
-    <CollegeLearnerProgressReport data={report}/>
-    <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
+    <CollegeProgressCapture>
+      <CollegeLearnerProgressReport data={report}/>
+      <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
+    </CollegeProgressCapture>
   </div>;
 }

@@ -26,20 +26,23 @@ export default async function CompanySharePage({
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-[650] text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 text-sm">Try Again</Link>}/>
  </main>;
- if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:py-12`}>
+ if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-[480px] flex-col justify-center px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:py-12`}>
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-   <PageHeader title="Enter the 6-digit share code" />
+   <PageHeader title="Open shared applicants" />
+   <div role="note" className="rounded-md border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm leading-6 text-body">
+     This company share is protected. Enter the six-digit code supplied separately by the placement cell before viewing applicant data.
+   </div>
    <p className="max-w-prose break-words text-sm text-body leading-[22px]">Ask the placement cell for the code sent separately with this company share link.</p>
    <p className="max-w-prose break-words text-xs text-muted-foreground leading-[20px]">A code cannot be emailed or resent from this page yet. If the invitation did not include one, ask the placement cell for access rather than retrying guessed codes.</p>
    {access==="invalid"?<p role="alert" className="text-sm text-error leading-[22px]">
     That code did not work, or this share is no longer available.</p>:null}
-   <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
+   <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-end">
     <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
      <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
       pattern="[0-9]{6}" minLength={6} maxLength={6}
-      className="min-h-11 w-full max-w-full md:min-h-9" />
+      className="min-h-11 w-full max-w-full sm:w-48 md:min-h-9" />
     </label>
-    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open shared applicants</Button>
+    <Button type="submit" className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9">Open</Button>
    </form>
    <p className="max-w-prose break-words text-xs text-muted-foreground leading-[20px]">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
   </section>
@@ -52,15 +55,16 @@ export default async function CompanySharePage({
   </section>
  </main>;
  const columns=safeCompanyShareColumns(result.selectedColumns);
+ const orderedColumns=[...columns].sort((a,b)=>Number(b==="APPLICATION_ID")-Number(a==="APPLICATION_ID"));
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
- const tableColumns: DataTableColumn<(typeof result.rows)[number]>[] = columns.map((key,index)=>({
+ const tableColumns: DataTableColumn<(typeof result.rows)[number]>[] = orderedColumns.map((key,index)=>({
   key,
   header: COMPANY_SHARE_COLUMNS[key],
   mobileLabel: COMPANY_SHARE_COLUMNS[key],
   mobilePriority: index===0?"primary":"secondary",
-  cell: row=>row.cells[key]??"Not recorded",
+  cell: row=>row.cells[key]??"—",
  }));
- return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-4 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:px-6 min-[768px]:py-12`}>
+ return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-[1000px] space-y-4 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:px-6 min-[768px]:py-12`}>
   <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 md:grid-cols-3">
    {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
   </div>
@@ -90,9 +94,8 @@ export default async function CompanySharePage({
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply search</Button>
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
-  <p role="status" className="text-sm text-body leading-[22px]">
-   {result.total.toLocaleString("en-IN")} shortlisted applicants · Page {result.page} of {result.totalPages}
-  </p>
+  <h2 className="text-base font-semibold text-[var(--lms-heading)]">Applicants ({result.total.toLocaleString("en-IN")})</h2>
+  <p role="status" className="text-sm text-body leading-[22px]">Page {result.page} of {result.totalPages}</p>
   <DataTable columns={tableColumns} rows={result.rows}
    getRowKey={row=>row.applicationId} caption="Shared applicants"
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">

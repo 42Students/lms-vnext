@@ -1,5 +1,6 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import {useMemo,useState} from "react";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
@@ -24,11 +25,11 @@ export type VerificationQueueCard = Pick<VerificationRecord,
  decidedAt?:Date|null;decidedByName?:string|null;
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
-export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true,hideHeader=false}:{
+export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false,showTabCounts=true,hideHeader=false,denseTable=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
  onRetry?:()=>void;onReview?:(row:VerificationQueueCard)=>void;
  selectedKeys?:ReadonlySet<string>;onSelectionChange?:(row:VerificationQueueCard,checked:boolean)=>void;
- disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;legacyCollegeCopy?:boolean;legacyTpoCopy?:boolean;showTabCounts?:boolean;hideHeader?:boolean;
+ disableLocalSearch?:boolean;sort?:"OLDEST"|"NEWEST"|"NAME";allowCollegeStudentLinks?:boolean;allowCollegeContactLinks?:boolean;selectionDisabled?:boolean;preserveServerOrder?:boolean;legacyCollegeCopy?:boolean;legacyTpoCopy?:boolean;showTabCounts?:boolean;hideHeader?:boolean;denseTable?:boolean;
 }){
  const [tab,setTab]=useState<VerificationTab>(initialTab);
  const [kind,setKind]=useState<"ALL"|"EDUCATION"|"IDENTITY">(initialKind);
@@ -81,6 +82,40 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
          <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{legacyTpoCopy?"Students appear here when they send their education or identity.":collegeVerificationLegacyCopy.emptyDescription}</p></>
       : <p>No matching verification requests on this page.</p>}
     </div>:
+   denseTable?<DataTable caption="Verification requests" rows={visible}
+    getRowKey={row=>verificationSelectionKey(row)}
+    empty={<p>No matching verification requests.</p>}
+    columns={[
+      ...(onSelectionChange?[{
+        key:"select",header:"Select",mobilePriority:"action" as const,
+        cell:(row:VerificationQueueCard)=>
+         <Checkbox aria-label={"Select "+row.learnerName+" "+row.section}
+          checked={selectedKeys?.has(verificationSelectionKey(row))??false}
+          disabled={selectionDisabled||!["SUBMITTED","UPDATE_PENDING"].includes(row.status)}
+          onChange={e=>onSelectionChange(row,e.target.checked)}/>,
+      }]:[]),
+      {key:"learner",header:"Student",mobilePriority:"primary" as const,
+       cell:(row:VerificationQueueCard)=><div className="min-w-0">
+         <strong>{row.learnerName}</strong>
+         <p className="text-xs text-muted-foreground">{row.rollNumber??"No roll number"} · {row.batchName??"No batch"}</p>
+        </div>},
+      {key:"kind",header:"Review",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"?"Education":"Identity"},
+      {key:"state",header:"Status",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>
+        {verificationQueueCardPresentation(row.status).state}</StatusBadge>},
+      {key:"date",header:"Submitted",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>new Intl.DateTimeFormat("en-IN",{
+         dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)+" IST"},
+      {key:"evidence",header:"Supporting proof",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"
+        ?row.missingMarksheet?"Missing marksheet":"Marksheet available"
+        :row.missingIdentityProof?"Missing identity proof":"Identity proof available"},
+      {key:"actions",header:"Actions",mobilePriority:"action" as const,
+       cell:(row:VerificationQueueCard)=><Button type="button" variant="secondary"
+        disabled={!onReview} onClick={()=>onReview?.(row)}
+        className="min-h-11 md:min-h-9">Review</Button>},
+    ]}/>:
    <ul className="min-w-0 divide-y divide-border border-y border-border">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 py-4">
      <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.learnerName}</h2>

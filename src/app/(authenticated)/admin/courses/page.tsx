@@ -43,7 +43,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
           ]}
         />
         <Banner tone="warning" role="status">
-          Select a college to view and manage its courses. Global progress policy
+          Select a college to view courses. Global progress policy
           can be reviewed only with the platform-wide Super Admin scope selected.
         </Banner>
         {globalPolicy?.ok && globalPolicy.value.state !== "UNAVAILABLE" ? (
@@ -94,10 +94,21 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
       action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const {catalogueQuery,duplicateCourseId}=parsed;
-  const [workspace,lessonCountByCourse]=await Promise.all([
+  const [workspaceResult,dependencyResult]=await Promise.allSettled([
     getAdminCourseWorkspace(context,collegeId),
     getSuperAdminCourseDependencyCounts(context),
   ]);
+  if(workspaceResult.status==="rejected"){
+   return <div className="space-y-5">
+    <PageHeader title="Courses"/>
+    <Banner tone="error" role="alert">Couldn&apos;t refresh courses. Previously loaded course records have not been replaced with guesses.</Banner>
+    <ErrorState title="Courses could not be loaded"
+      description="The selected college course directory is temporarily unavailable. Your active college scope is preserved."
+      action={<Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry courses</Link>}/>
+   </div>;
+  }
+  const workspace=workspaceResult.value;
+  const lessonCountByCourse=dependencyResult.status==="fulfilled"?dependencyResult.value:undefined;
 
   return (
     <div className="min-w-0 space-y-6">
@@ -117,6 +128,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
             { value: "quizzes", label: "Quizzes →", href: "/admin/quizzes" },
           ]}
         />
+      {dependencyResult.status==="rejected"?<Banner tone="warning" role="status">
+        Course dependency counts could not be loaded. Course listing and editing remain available, but lesson counts may be missing.
+        <Link href="/admin/courses" className="ml-2 font-semibold text-primary-text underline">Retry counts</Link>
+      </Banner>:null}
       <AdminCourseOverview
         workspace={workspace}
         courseBasePath="/admin/courses"

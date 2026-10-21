@@ -35,8 +35,8 @@ export async function POST(
     );
 
     return NextResponse.json(
-      { attempt },
-      { status: 201 },
+      { attempt, message: `Attempt ${attempt.attemptNumber} submitted successfully.`, resultsVisible: false },
+      { status: 200 },
     );
   } catch (error) {
     return apiErrorResponse(error);

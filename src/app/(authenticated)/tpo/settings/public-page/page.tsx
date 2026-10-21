@@ -60,7 +60,14 @@ export default async function PublicPlacementSettingsPage({
     {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
     {published&&content.about?<p className="whitespace-pre-wrap text-sm text-body">{content.about}</p>:null}
     <div className="grid gap-3 min-[768px]:grid-cols-2">
-     {content.metricKeys.map(key=><StatTile key={key} label={PUBLIC_METRIC_LABELS[key]} value={formatPublicPlacementMetric(key,{population:published?.population??null,placed:published?.placed??null,offers:published?.offers??null,employers:published?.employers??null,highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null})} className="min-h-[104px]" />)}
+     {content.metricKeys.flatMap(key=>{
+ const value=formatPublicPlacementMetric(key,{population:published?.population??null,
+   placed:published?.placed??null,offers:published?.offers??null,
+   employers:published?.employers??null,highestCtcInr:published?.highestCtcInr??null,
+   medianCtcInr:published?.medianCtcInr??null});
+ return value===null?[]:[<StatTile key={key} label={PUBLIC_METRIC_LABELS[key]}
+   value={value} className="min-h-[104px]" />];
+})}
     </div>
    </section>
    </Disclosure>

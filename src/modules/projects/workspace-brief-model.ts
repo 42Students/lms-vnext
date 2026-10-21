@@ -23,7 +23,7 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
   ?value as Record<string,unknown>:{};
  const list=(data:unknown):string[]=>Array.isArray(data)
   ?data.filter((item):item is string=>typeof item==="string")
-  :typeof data==="string"?data.split(/\\r?\\n/).map(s=>s.trim()).filter(Boolean):[];
+  :typeof data==="string"?data.split(/\r?\n/).map(s=>s.trim()).filter(Boolean):[];
  const fallback={
   goal:typeof raw.goal==="string"?raw.goal:"",
   description:typeof raw.description==="string"?raw.description:"",

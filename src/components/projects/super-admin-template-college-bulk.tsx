@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
 import { EmptyState } from "@/components/ui/empty-state";
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
@@ -18,6 +18,30 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
 }){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
+ const [savedSelection,setSavedSelection]=useState<College[]>([]);
+ const [selectionLoaded,setSelectionLoaded]=useState(false);
+ const selectionKey="template-college-selection:"+templateId;
+ useEffect(()=>{
+  try{
+   const raw=sessionStorage.getItem(selectionKey);
+   const stored=raw?JSON.parse(raw) as unknown:null;
+   if(Array.isArray(stored)){
+    const valid=stored.filter((row):row is College=>
+     row!==null&&typeof row==="object"&&typeof row.id==="string"&&
+     typeof row.name==="string"&&typeof row.assigned==="boolean"&&
+     row.canAssign===true&&/^[0-9a-f-]{36}$/i.test(row.id)).slice(0,500);
+    setSavedSelection(valid);
+    setSelected(valid.map(row=>row.id));
+   }
+  }catch{/* Corrupt selection must not override server authorization. */}
+  setSelectionLoaded(true);
+ },[selectionKey]);
+ useEffect(()=>{
+  if(!selectionLoaded)return;
+  try{sessionStorage.setItem(selectionKey,JSON.stringify(
+   savedSelection.filter(row=>selected.includes(row.id))
+  ));}catch{/* optional */}
+ },[selectionKey,selectionLoaded,selected,savedSelection]);
  const [operation,setOperation]=useState<BulkOperation|null>(null);
  const [pending,setPending]=useState(false);
  const [progress,setProgress]=useState<{done:number;total:number}|null>(null);
@@ -25,7 +49,10 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
  const [notice,setNotice]=useState("");
  const [noticeTone,setNoticeTone]=useState<"success"|"warning">("success");
  const allowed=colleges.filter(row=>row.canAssign);
- const selectedItems=allowed.filter(row=>selected.includes(row.id));
+ const currentById=new Map<string,College>(savedSelection.map(row=>[row.id,row]));
+ for(const row of colleges)currentById.set(row.id,row);
+ const selectedItems=selected.map(id=>currentById.get(id)).filter(
+  (row):row is College=>Boolean(row?.canAssign));
  const actionable=selectedItems.filter(row=>operation==="assign"?!row.assigned:row.assigned);
  const targets=operation==="assign"?selectedItems.filter(row=>!row.assigned):selectedItems.filter(row=>row.assigned);
 
@@ -49,10 +76,11 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
   }
   setOperation(null);
   setSelected(failed);
+  setSavedSelection(current=>current.filter(row=>failed.includes(row.id)));
   setNoticeTone(failed.length?"warning":"success");
   setNotice(failed.length?
    successful+" succeeded; "+failed.length+" college assignment(s) failed. Failed colleges remain selected for retry.":
-   currentOperation==="assign"?"Selected colleges assigned":"Selected colleges removed");
+   currentOperation==="assign"?"Selected colleges assigned":"Selected college assignments removed");
   inFlight.current=false;setPending(false);setProgress(null);router.refresh();
  }
  return (
@@ -63,7 +91,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-3)]"
   >
    <p className="m-0 max-w-prose text-[13px] leading-5 text-muted-foreground">
-    Select colleges on this page to update availability; existing workspaces remain unchanged.
+    Select colleges across pages to update availability. Each college is checked separately; existing workspaces remain unchanged.
    </p>
    {!published ? (
     <Banner tone="info">Publish this template before assigning it to colleges.</Banner>
@@ -77,19 +105,22 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     <>
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <span role="status" aria-live="polite" aria-atomic="true" className="text-[13px] font-semibold leading-5 text-body">
-       {selectedItems.length} selected
+       {selectedItems.length} selected across pages
       </span>
       <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row">
        <Button type="button" variant="ghost" size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9"
-        disabled={pending||!allowed.length||selectedItems.length===allowed.length}
-        onClick={()=>setSelected(allowed.map(row=>row.id))}>
+        disabled={pending||!allowed.length||allowed.every(row=>selected.includes(row.id))}
+        onClick={()=>{
+         setSelected(current=>[...new Set([...current,...allowed.map(row=>row.id)])]);
+         setSavedSelection(current=>[...new Map([...current,...allowed].map(row=>[row.id,row] as const)).values()]);
+        }}>
         Select all on page
        </Button>
        <Button type="button" variant="ghost" size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9"
         disabled={pending||!selected.length}
-        onClick={()=>setSelected([])}>
+        onClick={()=>{setSelected([]);setSavedSelection([]);}}>
         Clear selection
        </Button>
       </div>
@@ -102,9 +133,14 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
           checked={selected.includes(college.id)}
           disabled={pending||!college.canAssign}
           className="mt-0.5"
-          onChange={event=>setSelected(current=>
-           event.target.checked?(current.includes(college.id)?current:[...current,college.id]):current.filter(id=>id!==college.id)
-          )}
+          onChange={event=>{
+           setSelected(current=>event.target.checked?
+            (current.includes(college.id)?current:[...current,college.id]):
+            current.filter(id=>id!==college.id));
+           setSavedSelection(current=>event.target.checked?
+            [...current.filter(row=>row.id!==college.id),college]:
+            current.filter(row=>row.id!==college.id));
+          }}
          />
          <span className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">

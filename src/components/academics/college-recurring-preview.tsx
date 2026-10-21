@@ -66,7 +66,7 @@ export function CollegeRecurringPreview({
   const [confirming, setConfirming] = useState(false);
   const selected = classes.find((item) => item.id === sectionId);
   const previewChanged = Boolean(result && lastPreviewKey !== previewKey());
-  const invalidRange = Boolean(from && to && from > to);
+  const invalidRange = Boolean((from && to && from > to) || (startTime && endTime && endTime <= startTime));
   function onClass(id: string) {
     setSectionId(id);
     setDirty(true);

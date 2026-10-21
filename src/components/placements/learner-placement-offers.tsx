@@ -80,6 +80,17 @@ function formatMoney(value: number | null) {
   }).format(amount);
 }
 
+function safeOfferLetterHref(value:string|null|undefined):string|null{
+ if(!value||value!==value.trim()||/[\\\x00-\x1f\x7f]/.test(value))return null;
+ if(/^\/api\/placements\/offers\/[0-9a-f-]{36}\//i.test(value)&&!value.includes("..")&&!value.includes("?"))return value;
+ try{const url=new URL(value);return url.protocol==="https:"&&!url.username&&!url.password?url.href:null;}
+ catch{return null;}
+}
+function offerWithin24Hours(value:string|null,now:string):boolean{
+ if(!value)return false;
+ const deadline=Date.parse(value),current=Date.parse(now);
+ return Number.isFinite(deadline)&&Number.isFinite(current)&&deadline>current&&deadline-current<=86400000;
+}
 function formatWhen(value: string | null) {
   return learnerOfferDisplayDate(value);
 }
@@ -175,10 +186,17 @@ export function LearnerPlacementOffers({
           }),
         },
       );
+      const payload:unknown=await response.json().catch(()=>null);
       if (!response.ok) {
-        throw new Error(learnerOfferActionErrorMessage(response.status));
+        const code=payload&&typeof payload==="object"&&!Array.isArray(payload)&&"error" in payload&&
+          typeof payload.error==="string"?payload.error:null;
+        throw new Error(learnerOfferActionErrorMessage(response.status,code));
       }
-
+      const confirmed=payload&&typeof payload==="object"&&!Array.isArray(payload)&&
+        "offer" in payload&&payload.offer&&typeof payload.offer==="object"&&
+        "id" in payload.offer&&payload.offer.id===offerId&&"status" in payload.offer&&
+        payload.offer.status===(action==="ACCEPT"?"ACCEPTED":"DECLINED");
+      if(!confirmed)throw new Error("The offer response could not be confirmed. Refresh your offers before taking another action.");
       showToast({
         tone: "success",
         title:
@@ -314,7 +332,9 @@ export function LearnerPlacementOffers({
                         : "neutral"
                   }
                 >
-                  {humanize(item.status)}
+                  {item.status==="ISSUED"?
+                    (learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED"?"Response deadline passed":"Waiting for your reply"):
+                    humanize(item.status)}
                 </StatusBadge>
                 {item.joining ? (
                   <StatusBadge
@@ -339,8 +359,8 @@ export function LearnerPlacementOffers({
             </div>
 
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 break-words text-sm text-body">
-              {item.letterHref ? (
-                <a href={item.letterHref} rel="noopener noreferrer"
+              {safeOfferLetterHref(item.letterHref) ? (
+                <a href={safeOfferLetterHref(item.letterHref)??undefined} target="_blank" rel="noopener noreferrer"
                   className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline">
                   View offer letter
                 </a>
@@ -545,7 +565,7 @@ export function LearnerPlacementOffers({
           </Button>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pendingId !== null || declineReason.length > 2000}
             onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
-            {pendingId !== null ? "Saving…" : "Decline offer"}
+            {pendingId !== null ? "Saving…" : "Decline"}
           </Button>
         </div>}
       >
@@ -601,7 +621,7 @@ export function LearnerPlacementOffers({
               ] as const).map(([label,rows])=><div key={label}>
                 <p className="font-semibold">{label} ({rows.length})</p>
                 {rows.length?<ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>:
-                <p className="text-xs text-muted-foreground">None</p>}
+                <p className="text-xs text-muted-foreground">Nothing else changes</p>}
               </div>)}
               {acceptImpact.blockedByAnotherAcceptedOffer?<p role="alert" className="font-semibold text-error">
                 Another accepted offer is already recorded. You cannot accept this offer until the placement cell resolves the conflict.

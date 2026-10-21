@@ -14,12 +14,15 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 
 export const tpoNoticeCreateSchema=z.object({
- title:z.string().trim().min(1).max(200),
- message:z.string().trim().min(1).max(8000),
+ title:z.string().trim().min(1,"Give the announcement a title").max(200),
+ message:z.string().trim().min(1,"Write an announcement").max(8000,"Keep it under 8000 characters."),
  pinned:z.boolean().default(false),
  buttonLabel:z.string().trim().min(1).max(60).optional(),
  buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\s]+$/,"The link has to start with https://").optional(),
- audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
+ audience:z.preprocess(
+  raw=>raw==="ALL"?"PLACEMENTS":raw,
+  z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("PLACEMENTS")
+ ),
  targetId:z.string().uuid().optional(),
  targetIds:z.array(z.string().uuid()).max(50).optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
