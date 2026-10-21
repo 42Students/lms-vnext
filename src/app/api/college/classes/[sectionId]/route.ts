@@ -3,7 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
-  CollegeSectionError, updateCollegeSection,
+  CollegeSectionError, updateCollegeSection, deleteCollegeSection,
 } from "@/modules/academics/college-section-mutation-service";
 
 export const runtime = "nodejs";
@@ -31,4 +31,23 @@ export async function PATCH(request: Request, {
     }
     return apiErrorResponse(error);
   }
+}
+
+/** Dependency-free hard delete only. Historical children always block it. */
+export async function DELETE(request:Request,{params}:{params:Promise<{sectionId:string}>}){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const context=await getCurrentRequestContext();
+  const {sectionId}=await params;
+  const deleted=await deleteCollegeSection(context,sectionId,await request.json());
+  return NextResponse.json({deleted},{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof CollegeSectionError)
+   return NextResponse.json({error:error.code},{
+    status:error.code==="CLASS_NOT_FOUND"?404:409,
+    headers:{"Cache-Control":"private, no-store"},
+   });
+  return apiErrorResponse(error);
+ }
 }

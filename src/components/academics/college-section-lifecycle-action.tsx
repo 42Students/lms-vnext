@@ -18,6 +18,7 @@ export function CollegeSectionLifecycleAction({ row }: {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const action = row.status === "ACTIVE" ? "ARCHIVE" : "RESTORE";
 
   function change() {
@@ -45,12 +46,33 @@ export function CollegeSectionLifecycleAction({ row }: {
     });
   }
 
-  return <div className="min-w-0">
+  function remove(){
+    if(inFlight.current||pending)return;
+    inFlight.current=true;setError("");
+    startTransition(async()=>{
+      try{
+        await apiFetch("/api/college/classes/"+encodeURIComponent(row.id),{
+          method:"DELETE",headers:{"content-type":"application/json"},
+          body:JSON.stringify({expectedUpdatedAt:row.updatedAt,confirm:true}),
+        });
+        setDeleting(false);
+        showToast({tone:"success",title:"Class deleted successfully"});
+        router.refresh();
+      }catch(reason){
+        setError(reason instanceof Error?reason.message:"Could not delete this class. Check enrollment, schedule and course dependencies.");
+      }finally{inFlight.current=false;}
+    });
+  }
+
+  return <div className="flex min-w-0 flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={pending}
       className="min-h-11 w-full sm:w-auto md:min-h-9"
       onClick={() => { setError(""); setConfirming(true); }}>
       {pending ? "Saving…" : action === "ARCHIVE" ? "Archive" : "Restore"}
     </Button>
+    <Button variant="danger" type="button" disabled={pending}
+      title="Delete is available only when no enrollment, faculty, schedule or course history exists"
+      onClick={()=>{setError("");setDeleting(true);}}>{pending?"Saving…":"Delete"}</Button>
     <ConfirmDialog open={confirming} onOpenChange={setConfirming}
       title={action === "ARCHIVE" ? "Archive class" : "Restore class"}
       description={classLifecyclePrompt(row.name, action)}
@@ -58,6 +80,12 @@ export function CollegeSectionLifecycleAction({ row }: {
       confirmVariant={action === "ARCHIVE" ? "danger" : "primary"}
       pending={pending} onConfirm={change}>
       {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
+    </ConfirmDialog>
+    <ConfirmDialog open={deleting} onOpenChange={setDeleting}
+      title="Delete this class?" confirmLabel="Delete class"
+      confirmVariant="danger" pending={pending} onConfirm={remove}>
+      <p className="text-sm text-body">Delete “{row.name}” permanently? Only allowed before any enrollment, faculty assignment, schedule or course delivery exists. Otherwise retain or archive the class.</p>
+      {error?<Alert tone="error" className="mt-3">{error}</Alert>:null}
     </ConfirmDialog>
   </div>;
 }
