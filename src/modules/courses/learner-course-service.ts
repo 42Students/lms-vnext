@@ -79,6 +79,9 @@ export async function listLearnerCourseDeliveries(
 ) {
   const membership =
     requireLearnerMembership(context);
+  // Active cards follow the old published/enabled/allowed-for-display gate.
+  // Historical semester cards may remain visible for reference, while their
+  // workspace actions are governed by the scoped delivery/learner read guard.
   const includeHistorical =
     options.includeHistorical ?? false;
 
@@ -190,6 +193,9 @@ export async function listLearnerCourseDeliveries(
               courseOfferings.courseId,
             ),
             eq(courses.status, "ACTIVE"),
+            eq(courses.enabled, true),
+            or(isNull(courses.legacyAllowedForDisplay),
+              ne(courses.legacyAllowedForDisplay, 0)),
           ),
     )
     .innerJoin(
@@ -308,6 +314,9 @@ export async function listLearnerCourseDeliveries(
       inArray(courseSectionDeliveries.id, groupDeliveryIds),
       eq(courseOfferings.status, "ACTIVE"),
       eq(courses.status, "ACTIVE"),
+      eq(courses.enabled, true),
+      or(isNull(courses.legacyAllowedForDisplay),
+        ne(courses.legacyAllowedForDisplay, 0)),
       eq(sections.status, "ACTIVE"),
       eq(sections.cohortId, courseOfferings.cohortId),
       eq(sections.academicPeriodId, courseOfferings.academicPeriodId),

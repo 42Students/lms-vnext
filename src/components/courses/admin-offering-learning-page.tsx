@@ -67,8 +67,11 @@ export async function AdminOfferingLearningPage({
   const roster=rosterResult.status==="fulfilled"?rosterResult.value:null;
   const sectionPreview=sectionPreviewResult.status==="fulfilled"?sectionPreviewResult.value:null;
   const displayEnabled=courseDisplayRuntimeEnabled();
-  const display=displayEnabled?await getAdminCourseDisplayContent(
-   context,workspace.offering.courseId).catch(()=>null):null;
+  const displayResult=displayEnabled?await getAdminCourseDisplayContent(
+   context,workspace.offering.courseId).then(value=>({value,failed:false as const}))
+    .catch(()=>({value:null,failed:true as const})):
+    {value:null,failed:false as const};
+  const display=displayResult.value;
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
@@ -90,6 +93,10 @@ export async function AdminOfferingLearningPage({
       />
       <AdminOfferingSectionTabs home={<div className="space-y-4">
        <h2 className="text-lg font-semibold text-foreground">Home</h2>
+       {displayResult.failed?<Alert tone="warning" role="alert" title="Server Notification">
+        Course Home content couldn&apos;t be loaded. Internal Server Error.
+        <a href={retryHref+"#course-home"} className="ml-2 font-semibold underline">Retry</a>
+       </Alert>:null}
        {display?<section aria-label="In this Course" className="space-y-3 border-b border-border pb-4">
         <h3 className="text-base font-semibold text-foreground">In this Course</h3>
         {display.introductionText?<p className="whitespace-pre-wrap text-sm text-body">{display.introductionText}</p>:null}
