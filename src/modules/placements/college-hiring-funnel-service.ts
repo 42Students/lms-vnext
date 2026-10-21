@@ -131,6 +131,9 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  const companySubtotals=new Map<string,{
   companyId:string;company:string;total:number;byStage:Record<string,number>
  }>();
+ const normalizedSubtotals=new Map<string,{
+  company:string;total:number;byStage:Record<string,number>
+ }>();
  for(const row of groupRows??[]){
   const current=companies.get(row.jobId)??{
    jobId:row.jobId,job:row.jobTitle,company:row.companyName,total:0,

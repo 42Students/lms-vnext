@@ -5,6 +5,12 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoSettingsBody,TpoCommunicationBodyError} from "@/modules/placements/tpo-communication-request-model";
 import { changeTpoRecruiterGrant,TpoRecruiterGrantConflict } from "@/modules/placements/tpo-recruiter-grant-write-service";
 export const runtime = "nodejs";
+/** Legacy /api/v1/tpo/recruiter-access/{recruiterId}/extend|revoke maps
+ * to action EXTEND|REVOKE with the UUID grantId and expectedUpdatedAt.
+ * The discriminated-union validator rejects obsolete integer recruiter IDs;
+ * tenant-scoped permission and compare-and-swap are enforced in the service.
+ * A recruiter leaving their own college instead uses the separate self-leave DELETE.
+ */
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   try {
