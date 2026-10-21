@@ -38,7 +38,7 @@ const safeUrl=z.string().trim().max(2048).url()
   .refine(url=>/^https?:\/\//i.test(url),{message:"Only HTTP(S) resource URLs are allowed"});
 export const projectResourceLibraryRowSchema=z.strictObject({
   id:z.string().uuid().nullable(),
-  key:z.string().trim().min(1).max(120).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
+  key:z.string().trim().min(1).max(120),
   title:z.string().trim().min(1,"Title is required").max(200),
   legacyKind:z.enum(legacyResourceKinds),
   url:safeUrl.nullable(),
