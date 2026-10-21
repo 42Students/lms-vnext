@@ -10,3 +10,14 @@
 - `src/app/api/courses/route.ts`, `src/modules/courses/college-course-catalogue-service.ts`, course filters/table — `G2-19-027-050`: `listCoursesPage` provides SQL scoped rows + count; migrate paged list consumers while retaining unpaged legacy-compatible endpoint where needed. Pagination token/UI is not yet connected.
 - `src/components/courses/admin-course-actions.tsx` and route clients — `G2-19-027-052`, `G2-8-020-028`, `G2-8-020-061`: edit PATCH now requires `expectedUpdatedAt` and row-local token from `CourseActions`; any additional direct consumer must send it or receive 400. Legacy 409 copy provided in edit modal; retain dirty fields for reapply.
 - Course catalog/metadata owners and database migration integrator — `G2-19-027-010`, `011`, `012`, `038`, `055`, `G2-12-003-014`: require approved identity slug-alias mapping, legacy rich 14-field metadata image/HTML safe storage, standalone visibility vs archive and migration crosswalk; do not add fabricated direct file URLs, move tenants/department ownership or conflate legacy slug with human course code.
+
+## MERGE ROBOT — schema lanes 14/15 handoff (2026-10-21)
+
+- **File:** `src/db/schema/tpo-configuration.ts` (OWNED BY schema lanes 14/15; lane-3 MUST NOT edit). **Finding IDs:** `G2-3-011-019`, `G2-3-011-045`, `G2-3-011-046`, `G2-3-011-051`. **Exact required fix:** retain `placementTpoJobTypes.label = varchar("label", { length: 40 }).notNull()`, `sortOrder = integer("sort_order").notNull().default(0)`, `countsAsPlaced = boolean("counts_as_placed").notNull().default(true)`, `isBuiltin = boolean("is_builtin").notNull().default(false)`, and case-insensitive `uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, sql\`lower(\${table.label})\`)`. Replace the currently interpolated **regex string as SQL bound parameter** (`\${"^[[:alnum:] +&/().,'-]{2,40}$"}`) with a **literal, correctly quote-escaped PostgreSQL regex in the tagged SQL**:
+  ```ts
+  check(
+    "placement_tpo_job_types_label_ck",
+    sql\`length(btrim(\${table.label})) between 2 and 40 and \${table.label} ~ '^[[:alnum:] +&/().,''-]{2,40}$'\`,
+  )
+  ```
+  The `''` is the escaped apostrophe in the SQL single-quoted literal, not a TS quote terminator. Do not truncate the `$'\` ending, remove the closing `);`, or add an extra index declaration. Match `drizzle/0138_job_type_drive_policy.sql` (lane-3 corrected its broken CHECK/duplicate index DDL in commit `ee56c867`) and preserve other schema lanes' changes. Do NOT copy the branch's stale/broken schema file over current `main`. Drizzle migration/schema consistency and PG acceptance remain untested.
