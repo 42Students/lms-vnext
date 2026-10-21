@@ -463,7 +463,7 @@ export function LearnerQuizAttempt() {
                         {isSelected&&!correct&&canReviewLearnerQuizCorrectAnswers(
                           quiz.quiz.resultsPublished,latestAttempt?.resultsVisible===true)&&
                           submitted?.correct===false?
-                          <StatusBadge tone="danger">Incorrect</StatusBadge>:null}
+                          <StatusBadge tone="error">Incorrect</StatusBadge>:null}
                       </div>
                     );
                   })}
