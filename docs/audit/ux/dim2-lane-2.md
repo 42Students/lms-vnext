@@ -1,0 +1,10 @@
+# Dimension re-sweep lane chat-2 — spacing, radius, shadow
+Reference: docs/design/old-lms-shell-spec.md, old-lms-shell.css, legacy-styles, ui-clone-checklist.md. Source-only check; no runtime/CI. Values inherited from PageCanvas are noted when a route exposes fewer than three local utilities.
+- `src/app/(authenticated)/account/security/page.tsx` | instances 4 | space-y-4 16px = legacy 16px; md:space-y-6 24px = legacy 24px; control radius var 9px = legacy 9px | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/activity/page.tsx` | instances 25 | space-y-4 16px = legacy 16px; md:space-y-6 24px = legacy 24px; gap-2 8px = legacy 8px | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/admin/academics/page.tsx` | instances 12 | control radius var 9px = legacy 9px; px-4 16px = legacy 16px; shared canvas pad 24px = legacy 24px (PageCanvas inherited) | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/admin/announcements/page.tsx` | instances 32 | space-y-6 24px = legacy 24px; px-3 12px = legacy 12px; py-2 8px = legacy 8px | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/admin/assignments/page.tsx` | instances 8 | space-y-4 16px = legacy 16px; control radius var 9px = legacy 9px; shared canvas pad 24px = legacy 24px (PageCanvas inherited) | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/admin/attendance/page.tsx` | instances 6 | space-y-6 24px = legacy 24px; control radius var 9px = legacy 9px; px-4 16px = legacy 16px | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/admin/audit/page.tsx` | instances 3 | space-y-6 24px = legacy 24px; control radius var 9px = legacy 9px; px-4 16px = legacy 16px | fixes: none | 1280/768/375 source breakpoints checked.
+- `src/app/(authenticated)/admin/batches/[batchId]/students/page.tsx` | instances 6 | control radius var 9px = legacy 9px; px-4 16px = legacy 16px; shared canvas pad 24px = legacy 24px (PageCanvas inherited) | fixes: none | 1280/768/375 source breakpoints checked.
