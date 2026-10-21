@@ -56,7 +56,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     items={tabs.map(([value,label,count])=>({
       value,label,count,href:root+"/offers?status="+value+searchSuffix,
     }))}/>
-  <form method="get" action={root+"/offers"} className="min-w-0 space-y-3 border-b border-border pb-4">
+  <form method="get" action={root+"/offers"} className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Filter offers">
    <Input type="hidden" name="status" value={data.status}/>
    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
    <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learner, email, roll, batch, branch or role
