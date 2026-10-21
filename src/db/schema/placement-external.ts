@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  foreignKey,
   index,
   numeric,
   pgTable,
@@ -90,7 +91,12 @@ export const placementExternalOfferEvents = pgTable(
   ],
 );
 
-/** A learner's saved job is NOT an application. It is private to their college. */
+/**
+ * A learner's saved job is NOT an application. It is private to their college.
+ * Legacy learner_saved_job int learnerId/jobId -> trusted membership/job UUID
+ * crosswalk. Legacy created_at is savedAt only after source-zone validation;
+ * historical duplicates across colleges must not become global saved jobs.
+ */
 export const placementSavedJobs = pgTable(
   "placement_saved_jobs",
   {
@@ -104,6 +110,16 @@ export const placementSavedJobs = pgTable(
     savedAt: timestamp("saved_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    foreignKey({
+      name: "placement_saved_jobs_member_college_fk",
+      columns: [t.membershipId, t.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "placement_saved_jobs_job_college_fk",
+      columns: [t.jobId, t.collegeId],
+      foreignColumns: [placementJobs.id, placementJobs.collegeId],
+    }).onDelete("restrict"),
     uniqueIndex("placement_saved_jobs_member_job_uq").on(t.membershipId, t.jobId),
     index("placement_saved_jobs_college_idx").on(t.collegeId, t.membershipId),
   ],

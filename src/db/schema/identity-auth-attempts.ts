@@ -3,6 +3,14 @@
  * Codes are stored only as keyed HMAC (never raw), expire within five
  * minutes, and share one atomic verification budget across channels.
  * Contract: docs/planning/db01-auth-otp-handoff-contract.md.
+ *
+ * Legacy learnerId=0 preuser challenge intentionally cannot bypass this
+ * authenticated user FK: a future pre-registration endpoint needs a distinct,
+ * expiring non-account intent keyed by a stable HMAC fingerprint and rate limit,
+ * with proof of ownership BEFORE binding to a newly created UUID user.
+ * Never insert placeholder users, raw OTPs, roll numbers or plaintext contact
+ * into this table. No historical verification OTPs are imported to vNext.
+ * Hash/expiry/version constraints supersede legacy plaintext learner_acct_verification.
  */
 import { sql } from "drizzle-orm";
 import {

@@ -202,3 +202,24 @@
 
 ## Packet 47 — department ID/archive crosswalk
 - `src_db_schema_departments.ts.md` | G2-18-027-010/052, G2-9-024-066: documented legacy numeric college/department → verified UUID and isDeleted→archivedAt mapping. Existing UUID FK, soft archive and timestamps already preserve current vNext model. | No historic department records by greenfield policy; an actual data migration requires tenant-verified crosswalk and original timezone. No new schema DDL or migration.
+
+
+## Packet 48 — recruiter drive request/group identity
+- `src_db_schema_placement-drive-requests.ts.md` | Documented G2-12-025-009/029/050: submissionId identifies an idempotent per-college request and can correlate authorized same-recruiter group responses; requestId is not a jobId, approvedJobId exists only after approval, all college copies retain separate authorization/status. | Legacy numeric drive_group and immediate Job request are intentionally NOT transplanted into vNext request-first model. No historic data to import. Response compatibility groupId/colleges array and client downstream mapping handed to service owners; no schema migration needed.
+
+## Packet 49 — immutable round results migration
+- `drizzle_0024_placements_p6c_results.sql.md` | G2-12-022-009/059: reviewed old Long ID/result double→vNext round/result UUID, outcome status, source, score_percent integral 0..100, reason/comment privacy. Historic source score must be finite and in [0,100] before explicit half-up whole-percent rounding; preserve original score and actor/source in restricted provenance or quarantine. TPO/HR/IMPORT mapping must be explicit, public candidate_message separated from private internal_comment. | Existing migration 0024 NOT MODIFIED. No historic imports under greenfield plan; old Double precision, actor and nullable category cannot be inferred from current schema. Import/status service handoff; no SQL executed.
+
+
+## Packet 50 — immutable lesson SQL legacy crosswalk
+- `drizzle_0004_courses_c2_learning.sql.md` | G2-13-013-054/G2-18-002-120: original Lesson.id/course_id ints→verified UUID lesson/learningPath ancestry; active→course_lessons.status, enabled→visibleToStudents, is_deleted→deletedAt independent of status, sequence LONG→nonnegative integer checked overflow, version LONG→bigint optimistic CAS. Old course-wide casefold name and sequence uniqueness must be preflighted across all learning paths and offering/course duplicates; don't silently delete colliding lessons. | Existing migration 0004 immutable, no legacy data import required in greenfield. Import must resolve course/learning path before placement, reject ambiguous names and duplicate sequence; service owner handoff. No SQL executed.
+
+## Packet 51 — saved job ownership integrity
+- `src_db_schema_placement-external.ts.md` | G2-19-012-048/G2-3-019-042: added same-college composite references for placementSavedJobs membership and job, with preflight migration 0169 (reject existing mismatches). Documented int learner/job→tenant verified membership/job UUID crosswalk, savedAt from known source timezone, preserved member+job uniqueness. | No historic MySQL saved jobs in greenfield; source ID remap and original createdAt provenance for future approved import. 0169 NOT EXECUTED.
+
+
+## Packet 52 — schema barrel and historical bug activity
+- `src_db_schema_index.ts.md` | G2-19-017-048/G2-3-021-041: existing DB07 staged projectMeetingAuditHistory is NOT promoted separately; it needs project owner migration, audit writer and scope FK replay alongside live project_task_comments/project_delivery_events to avoid duplicate tables. DB10 bug_report_activities already registered with UUID and restrict retention, activity actor provenance; old integer IDs need audited crosswalk if ever imported. | No legacy project meeting or bug activity data in greenfield; strict staged DB07 cutover. Registered project tables must not be redefined. Handoff, no DDL migration and no old migration edits.
+
+## Packet 53 — OTP account identity/preuser isolation
+- `src_db_schema_identity-auth-attempts.ts.md` | G2-20-018-023/036: retained existing real user FK, HMAC-only OTP fingerprints, five-minute expiry and bounded attempts; documented proposed isolated pre-registration proof intent rather than legacy learnerId=0 bypass or fake users. Deliberately retire old plaintext code/roll-number data, do not import raw OTPs. | Public pre-registration challenge workflow requires auth owner review, HMAC keyed nonce, rate cap and verified binding before user provisioning; no auto-migration of secrets. No SQL changes/activation.

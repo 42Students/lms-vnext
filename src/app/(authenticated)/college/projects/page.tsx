@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {redirect} from "next/navigation";
+import {AuthorizationError} from "@/modules/permissions/policy";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -63,12 +64,13 @@ export default async function CollegeProjectsPage({
   const [snapshotsResult, templatesResult] = await Promise.all([
     listProjectAdminSnapshots(context, collegeId, serviceQuery)
       .then(value => ({ ok: true as const, value }))
-      .catch(() => ({ ok: false as const })),
+      .catch((error:unknown) => ({ ok: false as const,error })),
     listAssignedProjectTemplates(context, collegeId)
       .then(value => ({ ok: true as const, value }))
       .catch(() => ({ ok: false as const })),
   ]);
   if(!snapshotsResult.ok){
+    if(snapshotsResult.error instanceof AuthorizationError)throw snapshotsResult.error;
     const retry=new URLSearchParams();
     if(query.q)retry.set("q",query.q);
     if(query.status)retry.set("status",query.status);
@@ -79,13 +81,15 @@ export default async function CollegeProjectsPage({
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."/>
-      <ErrorState title="Project workspaces unavailable"
-        description="The workspace list could not be loaded. Your search and filters were not changed."
+      <ErrorState title="Workspaces could not be loaded"
+        description="Failed to load project workspaces. Your search and filters were not changed."
         action={<Link href={"/college/projects"+(suffix?"?"+suffix:"")}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading workspaces</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>}/>
     </div>;
   }
   const result=snapshotsResult.value;
+  const canonical=canonicalCollegeProjectsPageHref(query,result.totalPages);
+  if(canonical)redirect(canonical);
   const templateTitles = new Map(
     (templatesResult.ok ? templatesResult.value : []).map(template => [template.templateId, template.title]),
   );
@@ -109,10 +113,11 @@ export default async function CollegeProjectsPage({
       <PageHeader
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
-        actions={<Link href="/college/projects/create"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9 md:w-auto hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-          Create workspace
-        </Link>}
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+          <Link href="/college/projects/create" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">Create workspace</Link>
+          <Link href="/college/projects/reassign-mentor" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Bulk reassign mentor</Link>
+          <Link href="/college/projects/deleted" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Deleted workspaces</Link>
+        </div>}
       />
 
       <details className="group min-w-0 border-b border-border pb-3">
@@ -121,7 +126,7 @@ export default async function CollegeProjectsPage({
         </summary>
         <nav aria-label="Project workspace tools" className="flex min-w-0 flex-col items-stretch gap-2 pt-3 md:flex-row md:flex-wrap md:items-center">
       <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold hover:bg-primary-subtle md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9 lms-inline-link active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></nav>
+</nav>
       </details>
 
       <div className="min-w-0 space-y-2">

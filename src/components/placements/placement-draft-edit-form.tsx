@@ -7,13 +7,15 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
 
@@ -113,12 +115,10 @@ function toLocalInput(
   value: string | null,
 ) {
   if (!value) return "";
-  const date = new Date(value);
-  const local = new Date(
-    date.getTime() -
-      date.getTimezoneOffset() * 60_000,
-  );
-  return local.toISOString().slice(0, 16);
+  return new Intl.DateTimeFormat("sv-SE",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+  }).format(new Date(value)).replace(" ","T");
 }
 
 async function requestJson(url:string,method:"POST"|"PUT"|"PATCH",body:unknown){
@@ -141,6 +141,7 @@ export function PlacementDraftEditForm({
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
   const {pending,run}=useGuardedAction();
+  const [staleConflict,setStaleConflict]=useState(false);
   const [
     applicationMode,
     setApplicationMode,
@@ -182,11 +183,14 @@ export function PlacementDraftEditForm({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    const description=String(data.get("description")??"").trim();
+    if(!description.replace(/<[^>]*>/g,"").trim()){
+      showToast({tone:"error",title:"Please enter job description."});
+      return;
+    }
     await run(async()=>{
     try {
-      const data = new FormData(
-        event.currentTarget,
-      );
       const deadline = String(
         data.get("applicationDeadline") ??
           "",
@@ -199,9 +203,7 @@ export function PlacementDraftEditForm({
           title: String(
             data.get("title") ?? "",
           ).trim(),
-          description: String(
-            data.get("description") ?? "",
-          ).trim(),
+          description,
           jobTypeLabel: String(data.get("jobTypeLabel")??"Full-time"),
           employmentType: (()=>{
             const label=String(data.get("jobTypeLabel")??"Full-time");
@@ -248,10 +250,9 @@ export function PlacementDraftEditForm({
                   ) ?? "",
                 ).trim() || null,
           applicationDeadline:
-            deadline
-              ? new Date(
-                  deadline,
-                ).toISOString()
+            deadline ? deadline===toLocalInput(value.job.applicationDeadline)
+              ? value.job.applicationDeadline
+              : driveDeadlineIstToIso(deadline)
               : null,
         },
       );
@@ -344,21 +345,24 @@ export function PlacementDraftEditForm({
 
       showToast({
         tone: "success",
-        title: "Draft updated",
+        title: "Job saved as draft",
         description:
           "Job details and eligibility rules were saved.",
       });
       clearDirty();
       router.refresh();
     } catch (error) {
-      showToast({
-        tone: "error",
-        title: "Could not update draft",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
-      });
+      if(error instanceof FriendlyFetchError &&
+        (error.status===409||error.code==="PLACEMENT_JOB_STALE")){
+        setStaleConflict(true);
+      }else{
+        showToast({
+          tone: "error",
+          title: "Could not update draft",
+          description:
+            error instanceof Error ? error.message : "Please try again.",
+        });
+      }
     }
     });
   }
@@ -539,10 +543,11 @@ export function PlacementDraftEditForm({
         </div>
 
         <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
-          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules</summary>
+          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules — enforced</summary>
           <div className="min-w-0 pb-4">
           <p className="mt-1 text-xs leading-5 text-body">
             Leave programs and cohorts unselected to keep the opportunity college-wide.
+            These eligibility rules restrict applications. Legacy candidate preferences were advisory, not eligibility gates.
           </p>
 
           <div className="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
@@ -716,6 +721,13 @@ export function PlacementDraftEditForm({
         </div>
         {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
       </form>
+      <ConfirmDialog open={staleConflict} onOpenChange={setStaleConflict}
+        title="This drive changed since you loaded it"
+        description="Reload the current drive before retrying. Unsaved local changes will be discarded."
+        confirmLabel="Reload" cancelLabel="Dismiss" confirmVariant="primary"
+        onConfirm={()=>{
+          setStaleConflict(false);clearDirty();router.refresh();
+        }}/>
     </Disclosure>
   );
 }

@@ -13,6 +13,7 @@ import {
 import { getDb } from "@/db/client";
 import {hasAvailablePlacementOfferSeat,isPlacementIssuanceConcurrencyError} from "./offer-seat-capacity-policy";
 import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
+import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 type PlacementDb = ReturnType<typeof getDb>;
 type PlacementTx = Parameters<Parameters<PlacementDb["transaction"]>[0]>[0];
 import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
@@ -262,6 +263,62 @@ function sameOfferPayload(
     (input.expiresAt == null ||
       (offer.expiresAt?.getTime() ?? null) === input.expiresAt.getTime())
   );
+}
+
+/** A selected learner is not yet the recipient of an issued offer.
+ * Staff see the verified pre-release record separately; the learner's Offers
+ * page continues to read only issued placement_offers rows.
+ */
+export async function getPlacementOfferReleaseState(
+ context:RequestContext,applicationIdInput:string,
+){
+ const applicationId=placementApplicationIdSchema.parse(applicationIdInput);
+ const current=await loadApplicationContext(applicationId);
+ await requirePlacementManageScope(context,current.job.collegeId);
+ const [selection]=await getDb().select().from(placementDriveSelections)
+  .where(and(eq(placementDriveSelections.applicationId,applicationId),
+    eq(placementDriveSelections.jobId,current.job.id))).limit(1);
+ const [latestOffer]=await getDb().select().from(placementOffers)
+  .where(eq(placementOffers.applicationId,applicationId))
+  .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id)).limit(1);
+ const state=selection?.status??"NOT_SELECTED";
+ const issued=latestOffer!==undefined;
+ const activeOffer=latestOffer?.status==="ISSUED"||latestOffer?.status==="ACCEPTED";
+ return {
+  applicationId,jobId:current.job.id,
+  selectionId:selection?.id??null,selectionStatus:state,
+  selectionRecordedAt:selection?.recordedAt.toISOString()??null,
+  selectionVerifiedAt:selection?.verifiedAt?.toISOString()??null,
+  releasedOfferId:selection?.releasedOfferId??null,
+  latestOffer:latestOffer?{
+   id:latestOffer.id,status:latestOffer.status,kind:latestOffer.kind,
+   version:latestOffer.version,issuedAt:latestOffer.issuedAt.toISOString(),
+  }:null,
+  // SELECTED/VERIFIED never imply an applicant-visible issued offer.
+  canVerifySelection:state==="SELECTED",
+  canReleaseSelection:state==="VERIFIED"&&!activeOffer,
+  learnerOfferVisible:issued,
+ };
+}
+/** Scoped latest-by-application query for authorized TPO/College Admin readers
+ * and the learner who owns this persisted application. An unauthorized UUID
+ * is indistinguishable from an unavailable application at this boundary.
+ */
+export async function getLatestPlacementOfferForApplication(
+ context:RequestContext,applicationIdInput:string,
+){
+ const applicationId=placementApplicationIdSchema.parse(applicationIdInput);
+ const current=await loadApplicationContext(applicationId);
+ if(context.membership?.id===current.application.membershipId&&
+    hasMembershipRole(context,"LEARNER")){
+  await requireLearnerPlacementAccess(context);
+ }else{
+  await requirePlacementManageScope(context,current.job.collegeId);
+ }
+ const [offer]=await getDb().select().from(placementOffers)
+  .where(eq(placementOffers.applicationId,applicationId))
+  .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id)).limit(1);
+ return offer??null;
 }
 
 export async function issuePlacementOffer(
@@ -1193,9 +1250,19 @@ export async function previewOwnOfferAcceptanceImpact(
   wouldKeep({...candidate,annualCtcInr:candidate.annualCtcInr??candidate.jobAnnualCtcInr}));
  const declined=otherOffers.filter(candidate=>
   candidate.status==="ISSUED" && candidate.kind==="OFFER" && !wouldKeep(candidate));
+ const blockedByAnotherAcceptedOffer=otherOffers.some(row=>row.status==="ACCEPTED");
+ const expired=isPlacementOfferResponseExpired(current.offer.expiresAt,new Date());
+ const blockingReasons:string[]=[];
+ if(current.offer.status!=="ISSUED")
+  blockingReasons.push("This offer is not awaiting a response.");
+ if(expired)blockingReasons.push("The offer response deadline has passed.");
+ if(blockedByAnotherAcceptedOffer)
+  blockingReasons.push("Another accepted offer must be reviewed by the placement cell.");
  return {
   offerId,offerStatus:current.offer.status,expiresAt:current.offer.expiresAt?.toISOString()??null,
-  blockedByAnotherAcceptedOffer:otherOffers.some(row=>row.status==="ACCEPTED"),
+  blockedByAnotherAcceptedOffer,
+  canAccept:current.offer.status==="ISSUED"&&!expired&&!blockedByAnotherAcceptedOffer,
+  blockingReasons,
   withdrawn:withdrawn.map(row=>({id:row.id,title:row.title})),
   declined:declined.map(row=>({id:row.id,title:row.title})),
   stayed:stayed.map(row=>({id:row.id,title:row.title})),
