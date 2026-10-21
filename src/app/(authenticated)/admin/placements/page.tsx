@@ -54,15 +54,13 @@ export default async function AdminPlacementsPage({ searchParams }: {
           </Link>}
         />
         <SuperAdminPlacementOversightNav />
+        <SuperAdminPlatformPlacementPolicy initial={policy} />
         <EmptyState
           title="Select a college to continue"
-          description="To manage drives, choose an Organization + College in the header. Platform-wide policy remains available below without a college selected."
+          description="To manage drives, choose an Organization + College in the header. Platform-wide policy is shown above. Select a college for operations."
         />
         <Disclosure title="Related directories" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
           {directoryActions}
-        </Disclosure>
-        <Disclosure title="Placements policy" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
-          <SuperAdminPlatformPlacementPolicy initial={policy} />
         </Disclosure>
       </div>
     );

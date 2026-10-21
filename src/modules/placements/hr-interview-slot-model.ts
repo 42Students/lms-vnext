@@ -6,8 +6,9 @@ export const hrInterviewSlotCreateSchema=z.strictObject({
  endAt:z.union([z.date(),z.iso.datetime({offset:true}).transform(value=>new Date(value))]),
  timezone:z.literal("Asia/Kolkata"),
  mode:z.enum(["ON_CAMPUS","VIRTUAL"]),
- meetingLocation:z.string().trim().max(500).optional(),
- panelLabel:z.string().trim().max(160)
+ meetingLocation:z.string().trim().max(500,{message:"Interview venue or link exceeds the 500-character slot limit. Review the legacy value; it cannot be truncated silently."})
+  .refine(value=>value===undefined||!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid meeting location"}).optional(),
+ panelLabel:z.string().trim().max(160,{message:"Interviewer panel exceeds the 160-character slot limit. Review the legacy name before migration."})
   .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid interview panel label"}).optional(),
  capacity:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])
   .pipe(z.number().int().min(1).max(100)),
@@ -36,7 +37,8 @@ export const HR_INTERVIEW_ROUND_DESCRIPTION_ERROR =
  "Round description is required. Please describe what this round is about so we can send clear context to the candidate.";
 export function requireHrInterviewRoundDescription(value:string|null|undefined):string{
  const text=value?.trim();
- if(!text)throw new Error(HR_INTERVIEW_ROUND_DESCRIPTION_ERROR);
+ if(!text||/[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]/.test(text))
+  throw new Error(HR_INTERVIEW_ROUND_DESCRIPTION_ERROR);
  return text;
 }
 export const hrInterviewSlotActionSchema=z.strictObject({
@@ -76,4 +78,22 @@ export function parseIstLocalSlot(value:unknown):string{
 export function canRecruiterMutateOwnSlot(createdByUserId:string,recruiterUserId:string):boolean{
  return Boolean(createdByUserId.trim() && recruiterUserId.trim() &&
   createdByUserId === recruiterUserId);
+}
+
+/** Format a persisted UTC instant for the IST datetime-local control.
+ * Reject second precision instead of silently losing legacy scheduling data.
+ * parseIstLocalSlot is the inverse for every supported minute-precision value.
+ */
+export function formatUtcInterviewSlotAsIstLocal(value:Date):string{
+ if(!(value instanceof Date)||!Number.isFinite(value.getTime())||
+   value.getUTCSeconds()!==0||value.getUTCMilliseconds()!==0)
+  throw new Error("Interview start must be a valid minute-precision UTC instant");
+ const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).formatToParts(value);
+ const part=(type:string)=>parts.find(row=>row.type===type)?.value??"";
+ const local=part("year")+"-"+part("month")+"-"+part("day")+"T"+part("hour")+":"+part("minute");
+ if(new Date(parseIstLocalSlot(local)).getTime()!==value.getTime())
+  throw new Error("Interview UTC/IST conversion did not round-trip");
+ return local;
 }

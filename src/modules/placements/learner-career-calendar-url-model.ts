@@ -10,7 +10,10 @@ export function readLearnerCalendarUrl(query:string,fallbackDay:string):LearnerC
   const params=new URLSearchParams(query);
   const get=(key:string)=>params.getAll(key).length===1?params.get(key):undefined;
   const validDate=date.safeParse(get("date"));
-  const validView=learnerCalendarUrlStateSchema.shape.view.safeParse(get("view"));
+  const oldView=get("view");
+  // Legacy calendar bookmarks used view=calendar to mean the Schedule month grid.
+  const normalizedView=oldView==="calendar"||oldView==="schedule"?"month":oldView;
+  const validView=learnerCalendarUrlStateSchema.shape.view.safeParse(normalizedView);
   const validKind=learnerCalendarUrlStateSchema.shape.kind.safeParse(get("kind"));
   return {date:validDate.success?validDate.data:date.parse(fallbackDay),view:validView.success?validView.data:"month",kind:validKind.success?validKind.data:"ALL"};
 }

@@ -7,6 +7,9 @@ import {
 } from "@/modules/organizations/service";
 import { apiErrorResponse } from "@/lib/api-error";
 
+/** Canonical UUID API. Legacy /api/v1/organization/create and /fetch
+ * use dedicated response-envelope shims; numeric-ID update/delete URLs are
+ * deliberately not translated to unrelated UUID records. */
 export const runtime = "nodejs";
 
 export async function GET() {

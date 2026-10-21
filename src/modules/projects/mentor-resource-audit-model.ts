@@ -3,7 +3,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 export function projectResourceAuditInput(
  action:"CREATED"|"UPDATED"|"ARCHIVED",
  scope:{projectId:string;collegeId:string;organizationId:string},
- resource:{id:string;title:string},
+ resource:{id:string;title:string;resourceOrder?:number|null},
  nonce?:string,
  creatorRole?:"LEARNER"|"MENTOR"|"ADMIN",
 ){
@@ -13,10 +13,14 @@ export function projectResourceAuditInput(
  const verb=action==="CREATED"?"added":action==="UPDATED"?"updated":"archived";
  return {
   eventType,collegeId:scope.collegeId,organizationId:scope.organizationId,
-  subjectType:"project_resource",subjectId:resource.id,subjectLabel:resource.title,
+  subjectType:"project_resource",subjectId:resource.id,
+  subjectLabel:legacyProjectResourceAuditLabel(resource.title),
   summary:"Project resource "+verb,
   metadata:{
    projectId:scope.projectId,resourceId:resource.id,
+   ...(resource.resourceOrder!==undefined&&resource.resourceOrder!==null&&
+      Number.isSafeInteger(resource.resourceOrder)&&resource.resourceOrder>=0
+    ? {resourceOrder:resource.resourceOrder}:{}) ,
    ...(action==="CREATED"&&creatorRole ? {
      creatorRole,originalActorType:creatorRole,
    } : {}),
@@ -35,4 +39,19 @@ export function isProjectResourceOriginalCreator(
  actor:{userId:string;role:"LEARNER"|"MENTOR"|"ADMIN"},
 ):boolean {
  return creator!==null && creator.userId===actor.userId && creator.role===actor.role;
+}
+
+/** Legacy resource keys drop the prefix and turn hyphens into words. */
+export function legacyProjectResourceAuditLabel(key:string|null|undefined):string{
+ const label=(key??"").replace(/^resource[-_]/i,"").replace(/[-_]+/g," ").trim();
+ return label||"—";
+}
+export const LEGACY_PROJECT_RESOURCE_ACTIONS = {
+ UPSERT:"Saved",CREATE:"Added",UPDATE:"Edited",DELETE:"Removed",
+ CREATED:"Added",UPDATED:"Edited",ARCHIVED:"Removed",
+} as const;
+export function legacyProjectResourceAuditTag(action:keyof typeof LEGACY_PROJECT_RESOURCE_ACTIONS){
+ const label=LEGACY_PROJECT_RESOURCE_ACTIONS[action];
+ const tone=label==="Added"?"success":label==="Edited"?"warning":label==="Removed"?"error":"info";
+ return {label,tone};
 }

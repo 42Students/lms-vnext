@@ -24,9 +24,9 @@ export function skillsCatalogReadiness(): SkillCatalogReadiness {
     schemaReplayVerified,
     catalogReplayVerified,
     synonymsSeedVerified,
-    // Synonyms remain an optional bootstrap independent of canonical skills.
+    // All three registered tables and curated synonyms must be replayed before enabling any reader.
     // Never open the read side before actual schema and catalog replay.
-    enabled: schemaReplayVerified && catalogReplayVerified,
+    enabled: schemaReplayVerified && catalogReplayVerified && synonymsSeedVerified,
   };
 }
 

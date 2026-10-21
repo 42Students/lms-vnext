@@ -12,6 +12,17 @@ import {resolveModuleAccessFromRules,type ModuleAccessRule,type ModuleAccessScop
 
 const uuid=z.uuid();
 type ScopeType="DEPARTMENT"|"PROGRAM"|"COHORT"|"SECTION";
+/** The legacy Batch/Class labels are display aliases, not new DB scopes. */
+export function legacyModuleScopeType(value:string):ScopeType|null{
+ const code=value.trim().toUpperCase();
+ if(code==="BATCH"||code==="COHORT")return "COHORT";
+ if(code==="CLASS"||code==="SECTION")return "SECTION";
+ return code==="DEPARTMENT"||code==="PROGRAM"?code:null;
+}
+export function legacyModuleScopeLabel(type:ScopeType){
+ return type==="COHORT"?"Batch":type==="SECTION"?"Class":
+  type==="DEPARTMENT"?"Department":"Program";
+}
 type ScopeRow={id:string;name:string;departmentId:string;programId:string|null;cohortId:string|null};
 function superAdmin(ctx:RequestContext){if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");requirePermission(ctx,"admin-scope.select");}
 async function collegeScope(ctx:RequestContext,collegeInput:string){
@@ -129,6 +140,28 @@ export async function listCollegeModuleScopeChoices(ctx:RequestContext,collegeId
    studentsInScope:students.get(row.scopeType+":"+row.scopeId)??0};
  });
 }
+/** Full, independently scoped inventory count for paged/virtualized trees.
+ * The list keeps its bounded 500-row read; the caller uses hasMore rather
+ * than silently assuming page one is the complete college hierarchy. */
+export async function listCollegeModuleScopePage(
+ ctx:RequestContext,collegeIdInput:string,page=1,
+){
+ const safePage=Number.isSafeInteger(page)?Math.max(1,Math.min(page,10000)):1;
+ const college=await collegeScope(ctx,collegeIdInput);
+ if(!college)return {items:[] as AcademicModuleScope[],page:safePage,total:0,totalPages:0,hasMore:false};
+ const [result,items]=await Promise.all([
+  getDb().execute<{total:number}>(sql`select (
+   (select count(*) from departments d where d.college_id=${college.id}::uuid)+
+   (select count(*) from programs p join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid)+
+   (select count(*) from cohorts c join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid)+
+   (select count(*) from sections s join cohorts c on c.id=s.cohort_id join programs p on p.id=c.program_id join departments d on d.id=p.department_id where d.college_id=${college.id}::uuid)
+  )::integer as total`),
+  listCollegeModuleScopeChoices(ctx,college.id,safePage),
+ ]);
+ const total=Number(result.rows[0]?.total??0);
+ return {items,page:safePage,total,totalPages:Math.ceil(total/500),hasMore:safePage*500<total};
+}
+
 export async function readDescendantRule(ctx:RequestContext,collegeInput:string,scopeType:ScopeType,scopeIdInput:string,module:"projects"|"placements"|"electives"){
  const college=await collegeScope(ctx,collegeInput);if(!college)return null;
  const scopeId=uuid.parse(scopeIdInput);
