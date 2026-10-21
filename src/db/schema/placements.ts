@@ -389,6 +389,8 @@ export const placementCandidatePreferences = pgTable(
     )
       .notNull()
       .default("NO_PREFERENCE"),
+    /** Private placement assistance interest: YES/NO/NEED_MORE_INFO. */
+    papInterest: varchar("pap_interest", { length: 20 }),
     notifyMatchingJobs: boolean("notify_matching_jobs")
       .notNull()
       .default(true),
@@ -420,6 +422,10 @@ export const placementCandidatePreferences = pgTable(
     check(
       "placement_candidate_preferences_relocation_ck",
       sql`${table.relocationPreference} in ('YES', 'NO', 'NO_PREFERENCE')`,
+    ),
+    check(
+      "placement_candidate_preferences_pap_ck",
+      sql`${table.papInterest} is null or ${table.papInterest} in ('YES', 'NO', 'NEED_MORE_INFO')`,
     ),
     check(
       "placement_candidate_preferences_ctc_ck",
@@ -1216,6 +1222,38 @@ export const placementApplicationPrivateArtifacts = pgTable(
       "placement_application_private_resume_history_ck",
       sql`jsonb_typeof(${table.resumeHistory}) = 'array'`,
     ),
+  ],
+);
+
+/**
+ * Import-only compatibility events; modern lifecycle/stages remain authoritative.
+ * Preserve unknown historical actors without inventing a privileged system user.
+ */
+export const placementLegacyApplicationStatusEvents = pgTable(
+  "placement_legacy_application_status_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    applicationId: uuid("application_id").notNull().references(
+      () => placementApplications.id, { onDelete: "restrict" },
+    ),
+    sourceLegacyEventId: varchar("source_legacy_event_id", { length: 40 }),
+    oldStatus: varchar("old_status", { length: 50 }),
+    newStatus: varchar("new_status", { length: 50 }).notNull(),
+    reason: varchar("reason", { length: 500 }),
+    actorUserId: uuid("actor_user_id").references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    sourceActorType: varchar("source_actor_type", { length: 32 }),
+    /** Imported status rows may have been soft-deleted, never assume active. */
+    sourceDeleted: boolean("source_deleted").notNull().default(false),
+    changedAt: timestamp("changed_at", { withTimezone: true }).notNull(),
+  },
+  (t) => [
+    uniqueIndex("placement_legacy_status_source_uq")
+      .on(t.applicationId, t.sourceLegacyEventId)
+      .where(sql`${t.sourceLegacyEventId} is not null`),
+    index("placement_legacy_status_timeline_idx").on(t.applicationId, t.changedAt),
+    check("placement_legacy_status_nonblank_ck", sql`length(trim(${t.newStatus})) > 0`),
   ],
 );
 

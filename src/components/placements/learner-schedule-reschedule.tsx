@@ -6,13 +6,21 @@ import { Input } from "@/components/ui/input";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
  const router=useRouter();
+ const {showToast}=useToast();
  const [open,setOpen]=useState(false),[reason,setReason]=useState(""),[date,setDate]=useState("");
+ const [preferredTimes,setPreferredTimes]=useState("");
  const [nextMode,setNextMode]=useState(mode),[nextVenue,setNextVenue]=useState(venue??""),[nextUrl,setNextUrl]=useState(meetingUrl??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[success,setSuccess]=useState("");
+ // Keep free-text windows in the applicant-visible reason until the
+ // request API has a separate approved preferredTimes field.
+ const requestReason=reason.trim()+(preferredTimes.trim()?"\nTimes that work for you: "+preferredTimes.trim():"");
  async function save(){
-  if(busy||reason.trim().length<3||reason.trim().length>900||!date)return;
+  if(busy||reason.trim().length<3||requestReason.length>900||!date){
+   setError("Enter a reason of at least 3 characters and keep all notes within 900 characters.");return;
+  }
   const when=new Date(date);
   if(!Number.isFinite(when.getTime())||when.getTime()<=Date.now()){setError("Choose a future preferred time.");return;}
   setBusy(true);setError("");setSuccess("");
@@ -20,13 +28,18 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    const response=await fetch("/api/placements/requests",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({requestType:"ROUND_RESCHEDULE",applicationId,roundId,
-     reason:reason.trim(),scheduledAt:when.toISOString(),timezone:"Asia/Kolkata",mode:nextMode,
+     reason:requestReason,scheduledAt:when.toISOString(),timezone:"Asia/Kolkata",mode:nextMode,
      venue:nextMode==="ON_CAMPUS"?nextVenue.trim()||null:null,
      meetingUrl:nextMode==="VIRTUAL"?nextUrl.trim()||null:null}),
    });
    if(!response.ok)throw Error("Request not sent. Check the time and contact details.");
-   setOpen(false);setSuccess("Reschedule request sent. Your booking is unchanged until approved.");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not send request.");}
+   setOpen(false);setSuccess("Reschedule request sent. Your booking is unchanged until approved.");
+   showToast({tone:"success",title:"Sent. The placement cell will reply.",
+    description:"Your current booking remains unchanged until approved."});router.refresh();
+  }catch(e){
+   const message=e instanceof Error?e.message:"Could not send request.";
+   setError(message);showToast({tone:"error",title:"Could not send",description:message});
+  }
   finally{setBusy(false);}
  }
  return <div className="mt-3 space-y-2">
@@ -39,6 +52,10 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (3–900 characters)
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
+   <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Times that work for you (optional)
+    <Textarea rows={2} maxLength={350} value={preferredTimes} onChange={e=>setPreferredTimes(e.target.value)}
+     className="mt-1 min-h-20 w-full" placeholder="e.g. weekday mornings, or after 3 PM"/>
+   </label>
    <label className="text-sm">Preferred date and time
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>
@@ -53,8 +70,9 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
     <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Suggested meeting URL
      <Input required type="url" value={nextUrl} maxLength={2000} onChange={e=>setNextUrl(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>}
+   {requestReason.length>900?<p role="alert" className="text-xs text-error">Reason and preferred times must stay within 900 characters.</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||reason.trim().length<3||!date||
+   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||reason.trim().length<3||requestReason.length>900||!date||
      (nextMode==="ON_CAMPUS"?!nextVenue.trim():!/^https:\/\//i.test(nextUrl))}
      onClick={()=>void save()} >
     {busy?"Sending…":"Send request"}</Button>

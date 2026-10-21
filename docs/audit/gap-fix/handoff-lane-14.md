@@ -47,3 +47,17 @@
 - `src/components/projects/project-admin-workspace-list.tsx` and status filters (projects UI owner) | G2-7-019-054/-089/-090/-091/-092, G2-7-020-103/-105/-106 | Render historic READY/BLOCKED as separate readiness flags; explicit old title/slug cap and migration collision feedback.
 - `src/modules/projects/mentor-reassignment-service.ts` (projects owner) | G2-7-021-091 | Legacy mentor userId -> faculty membership/primary mentor with archived exclusion and CAS; no bare int role grant.
 - `drizzle/meta/_journal.json` (lane 15 only) | G2-5-017-047 | Register 0210/0211 only after review/replay and historical event conflict checks.
+
+- `src/modules/projects/mentor-reassignment-service.ts` / at-risk UI (projects owner) | G2-7-021-093, G2-7-029-093 | Scope status/blocked/readiness derived from legacy status before mentor workload calculations, exclude ARCHIVED.
+- `src/modules/projects/project-meeting-service.ts` (projects owner) | G2-19-028-022, G2-20-017-020 | Convert legacyMeetingsList to tenant-safe relational meetings, only show calendar error if a real sync producer exists.
+- `src/modules/projects/template-service.ts` (projects owner) | G2-6-017-017 | Preserve exact duplicate college-template assignment wording for verified unique conflict.
+
+- `src/modules/activity/service.ts` and audit routes (activity owner) | G2-18-024-007/-052, G2-10-003-034/-066, G2-16-021-003/-005/-007/-019/-032/-034 | Add reviewed legacy audit action/entity mapping, masked last4 actor role snapshot, privacy-gated IP digest and retention; never raw PII.
+- `src/app/api/notifications/*` and notification producers (notifications owner) | G2-17-026-007/-046/-047, G2-15-011-008/-011/-069/-070, G2-18-012-002/-009/-010 | Add college/org authorized admin directory, scoped int user expansion, schedule/delivery audit/soft delete, internal deep link and external URL allowlist.
+- `drizzle/meta/_journal.json` (lane 15 only) | G2-18-024-052 | Register 0212/0213 after privacy, tenant, migration tests and review.
+
+- `src/modules/activity/notification-service.ts` and worker (activity/notifications owner) | G2-18-012-041/-052/-057/-059/-063/-064, G2-4-032-035/-045/-072/-073, G2-8-018-045/-058 | Transactional producer outbox, due processing SKIP LOCKED, retry idempotency, no premature inbox/SSE, recipient college/role scope, admin failure state.
+- `src/modules/activity/service.ts` and projects event importer (activity/projects owner) | G2-5-018-010/-024/-040/-046, G2-7-004-073 | Trusted actor display/type snapshots and keyed project event crosswalk; preserve cleared readiness override events, index subject read path.
+- `src/modules/activity/service.ts` / privileged audit (activity owner) | G2-8-031-051/-067, G2-9-001-038/-070, G2-15-017-008, G2-9-026-041/-060, G2-9-027-046/-060 | Decide critical versus best-effort audit write transactions, no raw IP/UA CSV, tenant-only forensic export, immutable role/name snapshots.
+- `src/modules/activity/notification-service.ts` and admin notification composer (notifications owner) | G2-18-012-058, G2-8-018-076/-079/-084/-085/-087/-088, G2-4-032-027 | Exact event title/body mapping, old faculty editor ownership, class/job/application deep links and allowlisted external assessment CTA, scheduled/error state UI.
+- `drizzle/meta/_journal.json` (lane15 only) | G2-18-012-052 | Review/register 0214/0215 only after worker/API and tenant privacy negative tests.

@@ -32,12 +32,12 @@ export const placementCompanyDomainSchema = z
 const corporateWebsiteSchema=z.string().trim().max(500).url().refine(
  value=>{try{const url=new URL(value);return url.protocol==="https:"&&
   !url.username&&!url.password;}catch{return false;}},
- "Enter an HTTPS company website URL",
+ "Company website must be a valid https link",
 );
 export const createPlacementCompanyInputSchema = z
   .object({
     collegeId: z.string().uuid(),
-    name: z.string().trim().min(2).max(150),
+    name: z.string().trim().min(2,"Company name must be between 2 and 150 characters").max(150,"Company name must be between 2 and 150 characters"),
     websiteUrl: corporateWebsiteSchema.optional(),
     primaryDomain: placementCompanyDomainSchema.optional(),
     isTrusted: z.boolean().optional().default(false),
@@ -45,7 +45,7 @@ export const createPlacementCompanyInputSchema = z
   .strict()
   .refine(value=>Boolean(value.primaryDomain||value.websiteUrl),{
     path:["primaryDomain"],
-    message:"Enter a company domain or HTTPS website to verify this company",
+    message:"Add the company's website or a company email domain",
   });
 
 export const updatePlacementCompanyRelationshipInputSchema = z
@@ -325,6 +325,9 @@ export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
     const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
     if(assessmentDeadline){
+      if(Date.parse(assessmentDeadline)<=Date.now())
+        ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
+          message:"Assessment deadline cannot be in the past"});
       if(!value.applicationDeadline||Date.parse(assessmentDeadline)<=value.applicationDeadline.getTime())
         ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
           message:"Assessment deadline must be after application deadline"});
@@ -640,8 +643,8 @@ export const placementEligibilityPolicyInputSchema = z
 
 export const placementEligibilityOverrideInputSchema = z
   .object({
-    decision: z.enum(["INCLUDE", "EXCLUDE"]),
-    reason: z.string().trim().min(3).max(1000),
+    decision: z.enum(["INCLUDE", "EXCLUDE"],{error:"Choose include or exclude."}),
+    reason: z.string().trim().min(3,"A reason is required.").max(1000),
     // Omitted for existing single-record callers; TPO bulk sends the
     // previewed active override ID (or null) to prevent stale overwrites.
     expectedOverrideId: z.string().uuid().nullable().optional(),

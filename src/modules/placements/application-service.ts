@@ -405,6 +405,10 @@ async function resolveApplicationRoleOption(
   );
 }
 
+/** Live self-apply never uses the migration-only source normalizer.
+ * An unknown or blank historical channel can be mapped in the importer,
+ * but interactive external declarations still require confirmation.
+ */
 function resolveApplicationChannel(
   applicationMode: string,
   input: ReturnType<
@@ -1006,6 +1010,32 @@ export async function listOwnPlacementApplications(
       ),
     )
     .orderBy(desc(placementApplications.submittedAt));
+}
+
+/** Calendar data is drawn from the learner's own persisted applications,
+ * including those whose drive has since closed or passed its deadline.
+ * It must not depend on the live published-drive discovery feed.
+ */
+export async function listOwnPlacementApplicationCalendarEvents(context:RequestContext){
+ const records=await listOwnPlacementApplications(context);
+ return records.flatMap(row=>{
+  const base={
+   jobId:row.job.id,applicationId:row.application.id,
+   title:row.job.title,company:row.company.name,
+   status:row.application.status,
+  };
+  const events:Array<typeof base&{type:"APPLIED"|"DEADLINE";at:string}>=[{
+   ...base,type:"APPLIED",
+   at:row.application.submittedAt.toISOString(),
+  }];
+  if(row.job.applicationDeadline){
+   events.push({
+    ...base,type:"DEADLINE",
+    at:row.job.applicationDeadline.toISOString(),
+   });
+  }
+  return events;
+ });
 }
 
 export async function listPlacementJobApplications(
