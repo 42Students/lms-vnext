@@ -13,8 +13,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_job-service.ts.part1of2.md` (edit src/modules/placements/job-service.ts; 40 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_job-service.ts.part2of2.md` (edit src/modules/placements/job-service.ts; 35 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_placement-job-create-form.tsx.part1of2.md` (edit src/components/placements/placement-job-create-form.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_placement-job-create-form.tsx.part2of2.md` (edit src/components/placements/placement-job-create-form.tsx; 27 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_placement-job-create-form.tsx.part1of2.md` (edit src/components/placements/placement-job-create-form.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_placement-job-create-form.tsx.part2of2.md` (edit src/components/placements/placement-job-create-form.tsx; 27 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_admin_placements_drives_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/placements/drives/page.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_admin_placements_drives_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/placements/drives/page.tsx; 25 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_tpo_team_page.tsx.part1of2.md` (edit src/app/(authenticated)/tpo/team/page.tsx; 40 findings; best P2)
