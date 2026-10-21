@@ -1,4 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import Link from "next/link";
+import {Alert} from "@/components/ui/alert";
 import {
   LearnerCourseList,
   type LearnerCourseListRow,
@@ -18,10 +20,14 @@ import {
 
 export default async function LearnerCoursesPage() {
   const context = await getCurrentRequestContext();
-  const courses = await listLearnerCourseDeliveries(
-    context,
-    { includeHistorical: true },
-  );
+  let directoryError:string|null=null;
+  const courses=await listLearnerCourseDeliveries(context,{includeHistorical:true})
+   .catch(error=>{
+    directoryError=error instanceof Error&&/ACCESS_DENIED|PERMISSION|AUTH|403/i.test(error.message)
+     ?"You do not have permission to view these courses."
+     :"Failed to load courses. Please try again.";
+    return [];
+   });
 
   let displays=new Map<string,{thumbnailUrl:string|null}>();
   try{
@@ -71,8 +77,22 @@ export default async function LearnerCoursesPage() {
       });
       if (duplicate) return unavailable("Duplicate course mapping " + (index + 1));
       if (!course.deliveryId || !course.courseId || !course.academicPeriodId ||
-          typeof course.courseName !== "string" || !course.courseName.trim()) {
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(course.deliveryId)) {
         return unavailable("Invalid course record " + (index + 1));
+      }
+      const historical=Boolean(course.deliveryEndedAt)||
+       course.sectionEnrollmentStatus!=="ACTIVE"||
+       course.programEnrollmentStatus!=="ACTIVE"||
+       course.periodStatus==="CLOSED";
+      // Legacy renders historic cards for reference, without loading their
+      // entire lesson and assessment trees or authorizing a click.
+      // Limit expensive dashboard expansion to a single active 48-card page.
+      if(historical||index>=48){
+       return {
+        ...unavailable(""),unavailable:false,
+        thumbnailUrl:displays.get(course.courseId)?.thumbnailUrl??null,
+        readOnly:historical,learningPathReady:Boolean(course.learningPathId),
+       };
       }
       try {
         const [workspace, instructors] = await Promise.all([
@@ -118,16 +138,22 @@ export default async function LearnerCoursesPage() {
     }, 4,
   );
 
-  const [setupStatus,programSemesters]=await Promise.all([
-    rows.length===0?getLearnerCourseSetupStatus(context):Promise.resolve(null),
-    listLearnerProgramSemesters(context),
+  const [setupStatus,semesterResult]=await Promise.all([
+    rows.length===0&&directoryError===null
+      ?getLearnerCourseSetupStatus(context).catch(()=>null):Promise.resolve(null),
+    listLearnerProgramSemesters(context)
+      .then(value=>({semesters:value,error:null as "LOAD_FAILED"|null}))
+      .catch(()=>({semesters:[],error:"LOAD_FAILED" as const})),
   ]);
+  const programSemesters=semesterResult.semesters;
   return (
     <div className="min-w-0 max-w-full space-y-[16px]">
-      <PageHeader
-        title="Courses"
-      />
-      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters} />
+      <PageHeader title="Courses" />
+      {directoryError?<Alert tone="error" role="alert">
+       {directoryError} <Link href="/learn/courses" className="font-semibold underline">Try again</Link>
+      </Alert>:null}
+      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters}
+       semestersLoadError={semesterResult.error} />
     </div>
   );
 }
