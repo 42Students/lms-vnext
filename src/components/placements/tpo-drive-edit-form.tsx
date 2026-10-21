@@ -23,8 +23,8 @@ type Draft={id:string;title:string;description:string;updatedAt:string;status:st
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
  allowedCohortIds:string[];availableBatches:Array<{id:string;name:string;code:string;status:string;program:string}>;
  roleOptions:Array<{id:string;title:string}>;
- employmentType:"FULL_TIME"|"INTERNSHIP"|"CONTRACT";
- workMode:"ONSITE"|"HYBRID"|"REMOTE";recruiterDriveMode:"ON_CAMPUS"|"OFF_CAMPUS";
+ employmentType:string;
+ workMode:string;recruiterDriveMode:string;
  jobTypeLabel:string|null;
  verifiedMarksOnly:boolean;
  minTenthPctBasisPoints:number|null;minTwelfthPctBasisPoints:number|null;
@@ -172,7 +172,25 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
  }
  const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[7px] text-[var(--lms-form-ink)] md:min-h-9";
- return <><form onSubmit={submit} onChange={()=>{markDirty();setSaved(null);}} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
+ return <>
+ <header className="flex min-w-0 flex-wrap items-start justify-between gap-4 border-b border-[var(--lms-canvas-border)] pb-4">
+  <div className="min-w-0">
+   <p className="text-xs font-bold uppercase tracking-wide text-[var(--lms-neutral-400)]">Drive setup</p>
+   <h2 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">{job.status==="PUBLISHED"?"Update the live opportunity carefully":"Build the opportunity students will see"}</h2>
+   <p className="mt-1 text-sm text-body">Move from company and role details into pay, eligibility and rounds. The review rail stays visible while you work.</p>
+  </div>
+  <div className="min-w-20 text-right" role="status" aria-label="Setup progress">
+   <strong className="block text-2xl font-bold tabular-nums text-[var(--lms-heading)]">{completeChecklist}/4</strong>
+   <span className="text-xs text-muted-foreground">steps ready</span>
+  </div>
+ </header>
+ <div className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+ <form onSubmit={submit} onChange={event=>{
+  markDirty();setSaved(null);
+  const field=event.target as HTMLInputElement;
+  if(field.name==="title")setReviewTitle(field.value);
+  if(field.name==="applicationDeadline")setReviewDeadline(field.value);
+ }} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
@@ -308,6 +326,51 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     </Link>:null}
   </div>
  </form>
+ <aside aria-label="Drive setup review" className="min-w-0 space-y-4 lg:sticky lg:top-20">
+  <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+   <h2 className="mb-3 text-base font-semibold text-[var(--lms-heading)]">Setup review</h2>
+   <ol className="space-y-3 text-sm">
+    <li className="flex items-start gap-3">
+     <span aria-hidden="true" className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-xs font-bold">1</span>
+     <div><strong>Company &amp; role</strong>
+      <p className="text-xs text-muted-foreground">{reviewTitle.trim().length>=3?reviewTitle:"Add the company and role"}</p>
+     </div>
+    </li>
+    <li className="flex items-start gap-3">
+     <span aria-hidden="true" className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-xs font-bold">2</span>
+     <div><strong>Pay packages</strong>
+      <p className="text-xs text-muted-foreground">{job.roleOptions.length>0?`${job.roleOptions.length} package${job.roleOptions.length===1?"":"s"} · managed on the drive`:"Add at least one role option"}</p>
+     </div>
+    </li>
+    <li className="flex items-start gap-3">
+     <span aria-hidden="true" className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-xs font-bold">3</span>
+     <div><strong>Application deadline</strong>
+      <p className="text-xs text-muted-foreground">{reviewDeadline?"Deadline selected":"Required before publishing"}</p>
+     </div>
+    </li>
+    <li className="flex items-start gap-3">
+     <span aria-hidden="true" className="inline-flex size-7 shrink-0 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-xs font-bold">4</span>
+     <div><strong>Rounds</strong><p className="text-xs text-muted-foreground">Managed separately after saving the drive</p>
+      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/rounds"}
+       className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">View rounds</Link>
+     </div>
+    </li>
+   </ol>
+  </section>
+  <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+   <h2 className="mb-2 font-semibold text-foreground">Who this reaches</h2>
+   <p className="text-sm text-body"><strong className="tabular-nums">{job.applicantCount}</strong> existing applicants</p>
+   <p className="mt-2 text-xs leading-5 text-muted-foreground">Changes are audited. Applicant notices are sent only after you choose to notify on save.</p>
+  </section>
+  <section className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+   <h2 className="mb-2 font-semibold text-foreground">Saved packages</h2>
+   {job.roleOptions.length?<ul className="space-y-1 text-sm text-body">{job.roleOptions.map(role=><li key={role.id}>{role.title}</li>)}</ul>:
+    <p className="text-sm text-muted-foreground">No role packages recorded.</p>}
+   <Link href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)+"/about"}
+    className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open package details</Link>
+  </section>
+ </aside>
+ </div>
  {job.status==="PUBLISHED"?
   <Dialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Save changes to a live drive?"
    description={"Choose whether to notify "+job.applicantCount+" existing applicants. Both choices audit the change."}
