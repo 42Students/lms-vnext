@@ -72,7 +72,7 @@ export default async function SuperAdminCourseProgressPage({
     {data.items.length ? <div className="divide-y divide-border border-y border-border">
       {data.items.map(item => <article key={item.offeringId} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.courseName} ({item.courseCode})</h2>
+          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{item.courseName} ({item.courseCode})</h2>
           <StatusBadge tone={item.offeringStatus === "ACTIVE" ? "success" : "neutral"}>{item.offeringStatus}</StatusBadge>
         </div>
         <p className="mt-1 text-sm text-body">{item.cohortName} · {item.periodName}</p>

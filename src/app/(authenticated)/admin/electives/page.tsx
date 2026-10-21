@@ -79,7 +79,7 @@ export default async function SuperAdminElectivesPage({
       {data.items.length ? <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
         {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 py-5 first:pt-0">
           <div className="flex flex-wrap items-start justify-between gap-2">
-            <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{item.name}</h2>
+            <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{legacyAcademicStatus(item.status)}</StatusBadge>
           </div>
           <p className="mt-1 text-sm text-body">{item.programName} · Semester {item.semesterNumber}</p>

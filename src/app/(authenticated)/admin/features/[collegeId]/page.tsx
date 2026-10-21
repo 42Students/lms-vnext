@@ -131,7 +131,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
             key={decision.module}
             className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4 md:py-4"
           >
-            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+            <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
               {decision.label}
             </h2>
             <div className="mt-3">
@@ -158,7 +158,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section className="min-w-0 border-t border-border pt-4" aria-label="Placements college access impact">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Placements: college-level access impact</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Placements: college-level access impact</h2>
         <Disclosure title="View Placements impact" className="mt-2" contentClassName="pb-3 pt-2">
         {modules.filter(decision=>decision.module==="placements").map(decision=>(
           <div key={decision.module} className="mt-3 space-y-2 text-sm text-body">
@@ -209,7 +209,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
 
       <section className="min-w-0 space-y-3">
         <div>
-          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
             College inheritance
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
@@ -243,7 +243,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
 
       <section aria-label="Academic module rules" className="border-t border-border pt-6">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Department, Program, Batch and Class access</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Department, Program, Batch and Class access</h2>
         <p className="mt-2 text-sm text-body">Select an academic scope, set Projects, Placements or Electives On, Off, or Inherit, and apply an optional lock.</p>
         <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicScopes}/>
         <AcademicModuleScopeInventory scopes={academicScopes} page={academicPage}
@@ -251,7 +251,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
       </section>
       <section className="min-w-0 space-y-3">
         <div>
-          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+          <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
             Persisted lower-level overrides
           </h2>
           <p className="mt-1 text-sm leading-6 text-body">
