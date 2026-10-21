@@ -22,7 +22,7 @@ const jobTypeColumnReady = sql`select exists (
 // Match the old LMS validation message while preserving the vNext schema's
 // supported Unicode letters and punctuation. Never echo unescaped HTML.
 const legacyLabelSchema=z.string().transform((raw,ctx)=>{
- const label=raw.trim().replace(/\s+/g," ");
+ const label=raw.normalize("NFKC").trim().replace(/\s+/g," ");
  if(!tpoJobTypeNameSchema.safeParse(label).success){
   const preview=label.replace(/[\u0000-\u001f\u007f]/g," ").slice(0,80);
   ctx.addIssue({code:"custom",message:'"'+preview+'": a job type name is 2-40 letters, digits or simple punctuation'});
@@ -328,7 +328,7 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
   const names=new Set<string>(),seenIds=new Set<string>();
   let customCount=0;
   for(const item of input){
-   const key=item.label.toLowerCase();
+   const key=item.label.toLocaleLowerCase("en-IN");
    if(names.has(key))throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
    names.add(key);
    const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label.toLowerCase()===key);
@@ -419,7 +419,14 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    subjectType:"COLLEGE",subjectId:collegeId,
    summary:"JOB_TYPES_UPDATED",
    metadata:{customCount,hiddenCount:input.filter(item=>!item.active).length,
-    changedLabels:input.map(item=>item.label)},
+    changedLabels:input.map(item=>item.label),
+    // One JOB_TYPES_UPDATED audit receipt for the entire atomic edit. Both
+    // snapshots preserve which placement rules/visibility flags changed.
+    before:existing.map(item=>({id:item.id,label:item.label,active:item.active,
+      countsAsPlaced:item.countsAsPlaced,isBuiltin:item.isBuiltin})),
+    after:input.map(item=>({id:item.id,label:item.label,active:item.active,
+      countsAsPlaced:item.countsAsPlaced,isBuiltin:item.isBuiltin})),
+   },
   });
   return {saved:true};
  });
