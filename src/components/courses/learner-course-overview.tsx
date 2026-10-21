@@ -58,12 +58,14 @@ export function LearnerCourseOverview({
   workspace,
   meta,
   readOnly = false,
+  progressLoadFailed = false,
   courseUpdates = [],
 }: {
   deliveryId: string;
   workspace: Workspace;
   meta: CourseMeta;
   readOnly?: boolean;
+  progressLoadFailed?: boolean;
   courseUpdates?: Array<{
     id: string;
     title: string;
@@ -407,7 +409,12 @@ export function LearnerCourseOverview({
         </div>
       </section>
 
-      {!progressAvailability.hasDenominator ? (
+      {progressLoadFailed ? (
+        <Alert tone="warning" role="alert" aria-label="Course progress load failure"
+          title="Progress could not be loaded">
+          You can still open course content.
+        </Alert>
+      ) : !progressAvailability.hasDenominator ? (
         <Alert tone="warning" role="status" aria-label="Course progress availability"
           title="Course progress not yet measurable">
           {progressAvailability.detail}
@@ -419,7 +426,7 @@ export function LearnerCourseOverview({
       <div aria-label="Course progress summary" className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4 md:grid-cols-2 xl:grid-cols-4">
         <StatTile
           label="Overall"
-          value={progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
+          value={!progressLoadFailed && progressAvailability.hasDenominator ? `${summary.overallPercent}%` : "Not available"}
           detail={`${summary.itemsCompleted} of ${summary.itemsTotal} learning items complete.`}
         />
         <StatTile
