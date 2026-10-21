@@ -1,5 +1,6 @@
 "use client";
 import { PageHeader } from "@/components/ui/page-header";
+import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 import { Banner } from "@/components/ui/banner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -211,7 +212,7 @@ export function RecruiterLeadDetailWorkspace({
         if(!response.ok)throw new Error("Company drive details are unavailable.");
         const payload=await response.json() as {company?:CompanySummary};
         if(!controller.signal.aborted)setCompanySummary(payload.company??null);
-      }).catch(()=>{if(!controller.signal.aborted)setCompanyError("Company drive details could not be loaded.");});
+      }).catch(()=>{if(!controller.signal.aborted)setCompanyError("Company drive details could not be loaded. Retry this section.");});
     return ()=>controller.abort();
   },[collegeId,lead?.companyName]);
 
@@ -399,11 +400,12 @@ export function RecruiterLeadDetailWorkspace({
     <section className="min-w-0 space-y-5">
       {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
-        <p role="status" className="border-y border-border py-6">Loading recruiter details…</p>
+        <GracefulPageLoading label="Loading recruiter details…" shape="detail"/>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 border-b border-border pb-5">
-          <PageHeader title="This recruiter isn’t in Engage" />
+          <PageHeader title={error.includes("not found")?"Recruiter not found":"Could not load recruiter details"} />
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
+           <p className="text-xs text-muted-foreground">The recruiter may be missing, or the activity and follow-up services may be unavailable. Your college scope remains unchanged.</p>
           <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
             Go to Engage
           </Link>
@@ -423,7 +425,7 @@ export function RecruiterLeadDetailWorkspace({
                 <div className="flex min-w-48 flex-col gap-1">
                   <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
                   <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
-                  {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
+                  <Link className={button} href={"/tpo/messages?tab=team&q="+encodeURIComponent(lead.companyName||lead.name)}>Team talk</Link>
                   <Button type="button" variant="ghost" className="w-full justify-start" onClick={openEdit}>Edit details</Button>
                   {lead.manualStage==="NEW"?<Button type="button" variant="ghost" disabled={saving}
                     className="w-full justify-start" onClick={()=>void mutate(base+"/contacted","POST",{collegeId})}>Mark contacted</Button>:null}
@@ -464,7 +466,7 @@ export function RecruiterLeadDetailWorkspace({
                    {" · "+drive.applied+" applied · "+drive.offers+" offers"}
                  </li>)}
                </ul>
-             </div>:companyError?<p role="status" className="mt-2 text-xs text-warning leading-[20px]">{companyError}</p>:
+             </div>:companyError?<p role="status" className="mt-2 text-xs text-warning leading-[20px]">{companyError} <Button type="button" variant="link" className="min-h-11 md:min-h-9" onClick={()=>void load()}>Retry</Button></p>:
                <p role="status" className="mt-2 text-xs text-muted-foreground leading-[20px]">Loading company drives…</p>}
              <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
