@@ -26,6 +26,16 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  if(input.facultyType!==undefined&&input.employmentType===undefined)
   input.employmentType=input.facultyType;
  delete input.facultyType;
+ if(input.deptId!==undefined&&input.departmentId===undefined)
+  input.departmentId=input.deptId;
+ delete input.deptId;
+ // The selected college comes exclusively from the signed-in context.
+ if(input.collegeId!==undefined){
+  if(typeof input.collegeId!=="string"||
+    input.collegeId!==context.adminScope?.collegeId)
+    throw new Error("Foreign college search is not allowed");
+  delete input.collegeId;
+ }
  const query=superAdminReadQuerySchema.parse(input),
   selected=requireSuperAdminSelectedCollege(context,"people.manage"),db=getDb();
  const personDocument=role==="FACULTY"?facultyProfiles.profileDocument:learnerProfiles.profileDocument;
@@ -232,6 +242,40 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  }))};
 }
 
+/** Popularity is deliberately non-persistent, scoped and identifier-only.
+ * The old process-wide search cache could expose stale cross-college contacts.
+ * Count explicit selections only; never cache names, emails or phone numbers.
+ */
+const facultySelections=new Map<string,Map<string,{uses:number;lastAt:number}>>();
+
+export async function recordAdminScopedFacultySelection(
+ context:RequestContext,membershipId:string,
+):Promise<boolean>{
+ const selected=requireSuperAdminSelectedCollege(context,"people.manage");
+ if(!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(membershipId))return false;
+ const found=await getDb().select({id:collegeMemberships.id}).from(collegeMemberships)
+  .innerJoin(colleges,and(eq(colleges.id,collegeMemberships.collegeId),
+   selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
+  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"FACULTY")))
+  .where(and(eq(collegeMemberships.id,membershipId),
+   eq(collegeMemberships.collegeId,selected.collegeId)))
+  .limit(1);
+ if(!found.length)return false;
+ const now=Date.now(),scope=selected.collegeId;
+ const counters=facultySelections.get(scope)??new Map<string,{uses:number;lastAt:number}>();
+ const entry=counters.get(membershipId);
+ // Reject very frequent repeat pings; background suggestions never mutate usage.
+ if(entry&&now-entry.lastAt<1000)return true;
+ counters.delete(membershipId);
+ counters.set(membershipId,{uses:Math.min(1000,(entry?.uses??0)+1),lastAt:now});
+ while(counters.size>100)counters.delete(counters.keys().next().value!);
+ facultySelections.set(scope,counters);
+ // Multi-tenant bounded memory: evict the oldest college when capacity is hit.
+ while(facultySelections.size>50)facultySelections.delete(facultySelections.keys().next().value!);
+ return true;
+}
+
 /** Strictly selected-college suggestions (legacy: 15 search, 10 popular). */
 export async function listAdminScopedPeopleSuggestions(
  context:RequestContext,role:"FACULTY"|"LEARNER",search:string,limit=15,
@@ -241,7 +285,13 @@ export async function listAdminScopedPeopleSuggestions(
  const result=await listAdminScopedPeople(context,role,{
   q,page:1,pageSize:25,status:"ALL",
  });
- return result.items.slice(0,q?bounded:Math.min(10,bounded)).map(row=>({
+ const frequency=role==="FACULTY"?
+  facultySelections.get(requireSuperAdminSelectedCollege(context,"people.manage").collegeId):undefined;
+ const items=!q&&frequency
+  ?[...result.items].sort((a,b)=>
+    (frequency.get(b.id)?.uses??0)-(frequency.get(a.id)?.uses??0))
+  :result.items;
+ return items.slice(0,q?bounded:Math.min(10,bounded)).map(row=>({
   id:row.id,label:row.title,kind:role,
   // Historical school-wide caches are intentionally replaced with a fresh,
   // permission-scoped SQL query. Never put contact fields in suggestion data.
