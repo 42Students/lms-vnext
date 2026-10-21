@@ -157,7 +157,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <div id="batch-student-decisions" className="min-w-0">
   <DataTable rows={visible} getRowKey={student=>student.membershipId}
    caption={"Batch students · page "+result.page}
-   empty={<EmptyState title={result.students.length===0?"No active learners found on this page.":"No students match these filters. Clear the filters or change the page."} action={<Link href={href(1)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
+   empty={<EmptyState title={result.students.length===0?"No active learners found on this page.":"No students match these filters. Clear the filters or change the page."} action={<Link href={href(1)} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
    columns={[
     {key:"student",header:"Student",mobilePriority:"primary" as const,cell:student=>
      <div className="min-w-0 space-y-1">

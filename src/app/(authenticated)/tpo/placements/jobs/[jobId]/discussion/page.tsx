@@ -24,7 +24,7 @@ export default async function TpoDriveDiscussion({params}:{
    </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
     description="Use Recruiter Messages to begin or find a recruiter conversation."
     action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Recruiter Messages</Link>}/>:<section aria-label="Recruiter conversations" className="min-w-0">
-   <p role="status" className="mb-2 text-sm text-body leading-[22px]">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
+   <p role="status" className="mb-2 text-sm text-body leading-[1.6]">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="min-w-0 divide-y divide-border border-y border-border">{data.threads.map(thread=><li key={thread.id} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
     <div className="min-w-0 flex-1 space-y-1">
      <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{thread.recruiterName?.trim()||"Recruiter"}</h2>

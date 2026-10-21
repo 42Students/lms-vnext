@@ -64,7 +64,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
         className="inline-flex min-h-11 items-center justify-center px-3 text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>
     </form>
-    <p role="status" className="text-sm text-body leading-[22px]">
+    <p role="status" className="text-sm text-body leading-[1.6]">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
     </p>
     {data.items.length === 0 ? <EmptyState title="No published assessments matched"
