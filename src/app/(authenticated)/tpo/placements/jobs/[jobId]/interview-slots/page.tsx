@@ -31,7 +31,7 @@ export default async function TpoRecruiterSlotReviewPage({params}:{
   <PageHeader title="Interview slot proposals"
     description={data.job.title+" · Employer-proposed time blocks for your college."}
     actions={<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)}
-      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link md:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Back to drive</Link>} />
+      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link md:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Back to drive</Link>} />
   <Alert tone="info">
    Proposals and employer-internal reservations are not confirmed student interviews. The placement cell must arrange its own rooms, candidates and confirmed schedule separately.
   </Alert>

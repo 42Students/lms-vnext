@@ -47,7 +47,7 @@ export default async function TpoDriveJoiningPage({
         title={tracker.job.title + " · Joining outcomes"}
         description="Record joining outcomes only for persisted accepted offers. All edits reuse the audited joining-history API."
         actions={<Link href={"/tpo/placements/jobs/" + encodeURIComponent(tracker.job.id)}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">
           ← Back to drive workspace
         </Link>}
       />

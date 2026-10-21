@@ -21,9 +21,9 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Drive workspace" title={data.job.title+" · Selections"}
    description="Record the company's selections, verify placement rules, and release the offers."
-   actions={<Link href={root+"/offers"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Offer register</Link>}/>
+   actions={<Link href={root+"/offers"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Offer register</Link>}/>
   <nav aria-label="Selection related pages" className="flex min-w-0 flex-wrap items-center gap-3 text-sm font-semibold leading-5">
-   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
+   <Link className="inline-flex min-h-11 items-center text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={root+"/rounds"}>Review completed rounds</Link>
 
   </nav>
   {!data.storageReady?<Alert tone="warning">
@@ -34,7 +34,7 @@ export default async function TpoSelectionsPage({params}:{params:Promise<{jobId:
   </Alert>:<div className="min-w-0 space-y-4">
     <TpoDriveSelectionManager jobId={jobId} candidates={data.candidates} selections={data.selections} roleOptions={data.roleOptions}/>
     <details className="group min-w-0 border-t border-border pt-3">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Import the company's selection list <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Import the company's selection list <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <div className="pt-3"><TpoSelectionImport jobId={jobId} candidates={data.candidates}/></div>
     </details>
   </div>}

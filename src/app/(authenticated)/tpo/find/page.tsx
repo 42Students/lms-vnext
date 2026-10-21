@@ -44,32 +44,32 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
   </form>
   {invalid?<Alert tone="error">Search must contain 2–100 characters.</Alert>:!text?<EmptyState title="Type a name or a roll number, for example 21CS001"/>:<>
    {!hasMatches?<EmptyState title={"No student, recruiter, company or drive matches \""+(rawText??"")+"\""}
-    action={<Link href="/tpo/find" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear search</Link>}/>:null}
+    action={<Link href="/tpo/find" className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>:null}
    {foundBatches.length>0?<section className="min-w-0 space-y-2"><h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
     {foundBatches.length===0?<p className="text-sm leading-[22px]">No matching batches.</p>:<ul className="divide-y divide-border border-y border-border">{foundBatches.map(b=><li key={b.id} className="min-w-0 py-2 text-sm">
-      <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{b.name} · {b.program}</Link></li>)}</ul>}
+      <Link href={"/tpo/batches/"+b.id} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{b.name} · {b.program}</Link></li>)}</ul>}
    </section>:null}
    {named.students.length>0?<section className="min-w-0 space-y-2"><h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Students ({named.students.length})</h2>
     {named.students.length===0?<p className="text-sm leading-[22px]">No matching students.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.students.slice(0,5).map(s=><li key={s.id} className="min-w-0 py-2 text-sm">
-       <Link href={"/tpo/students?q="+encodeURIComponent(s.rollNumber??s.name??"")+"&student="+encodeURIComponent(s.id)} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{s.name??"Student"}{s.rollNumber?" · "+s.rollNumber:""}{s.branch?" · "+s.branch:""}</Link>
+       <Link href={"/tpo/students?q="+encodeURIComponent(s.rollNumber??s.name??"")+"&student="+encodeURIComponent(s.id)} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{s.name??"Student"}{s.rollNumber?" · "+s.rollNumber:""}{s.branch?" · "+s.branch:""}</Link>
       </li>)}</ul>}
    </section>:null}
    {named.recruiters.length>0?<section className="min-w-0 space-y-2"><h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recruiter Leads ({named.recruiters.length})</h2>
     {named.recruiters.length===0?<p className="text-sm leading-[22px]">No matching recruiter leads.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.recruiters.slice(0,5).map(lead=><li key={lead.id} className="min-w-0 py-2 text-sm">
-       <Link href={"/tpo/recruiters/"+lead.id} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{lead.name}</Link>
+       <Link href={"/tpo/recruiters/"+lead.id} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{lead.name}</Link>
       </li>)}</ul>}
    </section>:null}
    {named.companies.length>0?<section className="min-w-0 space-y-2"><h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Companies ({named.companies.length})</h2>
     {named.companies.length===0?<p className="text-sm leading-[22px]">No matching companies.</p>:<ul className="divide-y divide-border border-y border-border">
       {named.companies.slice(0,5).map(company=><li key={company.id} className="min-w-0 py-2 text-sm">
-       <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{company.name}</Link>
+       <Link href={"/tpo/companies?name="+encodeURIComponent(company.name)} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{company.name}</Link>
       </li>)}</ul>}
    </section>:null}
    {jobs.length>0?<section className="min-w-0 space-y-2"><h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Drives ({jobs.length})</h2>
     {jobs.length===0?<p className="text-sm leading-[22px]">No matching drives.</p>:<ul className="divide-y divide-border border-y border-border">{jobs.map(r=><li key={r.job.id} className="min-w-0 py-2 text-sm">
-     <Link href={"/tpo/placements/jobs/"+r.job.id} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{r.job.title} · {r.job.company.name} · {r.job.status.replaceAll("_"," ")}</Link></li>)}</ul>}
+     <Link href={"/tpo/placements/jobs/"+r.job.id} className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{r.job.title} · {r.job.company.name} · {r.job.status.replaceAll("_"," ")}</Link></li>)}</ul>}
    </section>:null}
   </>}
  </div>;

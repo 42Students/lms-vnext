@@ -167,10 +167,10 @@ export default async function TpoMessagesPage({
           <div className="flex w-full flex-col items-stretch gap-2 min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <details className="group relative min-w-0">
-              <summary className="inline-flex min-h-11 w-full cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 [&::-webkit-details-marker]:hidden">More TPO tools</summary>
+              <summary className="inline-flex min-h-11 w-full cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 [&::-webkit-details-marker]:hidden">More TPO tools</summary>
               <nav aria-label="More TPO tools" className="mt-2 flex min-w-0 flex-col gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 min-[768px]:absolute min-[768px]:right-0 min-[768px]:z-20 min-[768px]:w-64">
-                <Link href="/tpo/messages/notifications" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">My placement notifications</Link>
-                <Link href="/tpo/more" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">More TPO tools</Link>
+                <Link href="/tpo/messages/notifications" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">My placement notifications</Link>
+                <Link href="/tpo/more" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-body hover:bg-primary-subtle hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">More TPO tools</Link>
               </nav>
             </details>
           </div>
@@ -255,7 +255,7 @@ export default async function TpoMessagesPage({
           key={status}
           href={tpoMessagesHref({...commonFilters,status,page:1})}
           aria-current={query.status===status?"page":undefined}
-          className={"inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)] "+
+          className={"inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border px-4 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] "+
             (query.status===status?"border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)]":
               "border-border bg-surface text-body hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)]")}>
             {label} ({count})
@@ -263,7 +263,7 @@ export default async function TpoMessagesPage({
       </nav> : null}
       <section className="border-b border-border pb-4">
         <details open={Boolean(query.from || query.to || query.q || pageSize !== 25)} className="group">
-          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[16px] font-semibold leading-[26px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] [&::-webkit-details-marker]:hidden">Communication filters <span aria-hidden="true" className="ml-2 text-primary-text group-open:rotate-180">⌄</span></summary>
+          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center text-[16px] font-semibold leading-[26px] text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] [&::-webkit-details-marker]:hidden">Communication filters <span aria-hidden="true" className="ml-2 text-primary-text group-open:rotate-180">⌄</span></summary>
 
         <form
           action="/tpo/messages"
@@ -374,7 +374,7 @@ export default async function TpoMessagesPage({
 
         {items.length === 0 ? (
           <EmptyState
-            action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}
+            action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
             title="No matching communication records"
             description={
               isRecruiterInbox
@@ -439,7 +439,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page - 1,
                 })}
-                className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:flex-none"
+                className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:flex-none"
               >
                 Previous
               </Link>
@@ -451,7 +451,7 @@ export default async function TpoMessagesPage({
                   ...commonFilters,
                   page: page + 1,
                 })}
-                className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-9 min-[768px]:flex-none"
+                className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:flex-none"
               >
                 Next
               </Link>

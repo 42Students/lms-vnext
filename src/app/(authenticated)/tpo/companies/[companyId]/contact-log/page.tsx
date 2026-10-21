@@ -127,12 +127,12 @@ export default async function TpoCompanyContactLogPage({
             <span className="text-body">Page {log.page} of {log.pages}</span>
             <div className="flex flex-wrap gap-3">
               {log.page > 1 ? (
-                <Link href={href(log.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                <Link href={href(log.page - 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                   ← Previous
                 </Link>
               ) : null}
               {log.pages !== null && log.page < log.pages ? (
-                <Link href={href(log.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+                <Link href={href(log.page + 1)} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                   Next →
                 </Link>
               ) : null}

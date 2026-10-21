@@ -61,23 +61,23 @@ export default async function TpoNoShowReportPage({
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">
             <a
               href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/no-shows/export"}
-              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
             >
               Export explicit no-shows CSV
             </a>
             <details className="min-w-0 sm:relative">
-              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 [&::-webkit-details-marker]:hidden">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-foreground marker:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">
                 Attendance export
               </summary>
               <div className="mt-2 bg-surface sm:absolute sm:right-0 sm:z-20 sm:w-64 sm:rounded-[var(--lms-control-radius)] sm:border sm:border-border sm:p-2 sm:shadow-sm">
                 <a href={"/api/placements/drive-day/" + encodeURIComponent(data.round.id) + "/attendance/export"}
-                  className="inline-flex min-h-11 w-full items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                  className="inline-flex min-h-11 w-full items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-link underline hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                   Export complete attendance CSV
                 </a>
               </div>
             </details>
             <Link href={roundHref}
-              className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+              className="lms-inline-link inline-flex min-h-11 items-center justify-center px-2 text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               ← Back to round overview
             </Link>
           </div>
@@ -124,7 +124,7 @@ export default async function TpoNoShowReportPage({
           rows={report.explicitAbsences}
           getRowKey={(item) => item.applicationId}
           empty={<EmptyState title="No learner is currently marked ABSENT in this round." description="This does not mean all learners attended; check the waiting/unmarked count above."
-            action={<Link href={roundHref} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">← Back to round overview</Link>} />}
+            action={<Link href={roundHref} className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Back to round overview</Link>} />}
           columns={[
             {key:"learner",header:"Learner",mobileLabel:"Learner",mobilePriority:"primary",cell:(item)=>item.displayName},
             {key:"roll",header:"Roll number",mobileLabel:"Roll number",mobilePriority:"secondary",cell:(item)=>item.rollNumber??"Not recorded"},
@@ -133,7 +133,7 @@ export default async function TpoNoShowReportPage({
         />
       </section>
       <details className="min-w-0 border-t border-border pt-3 text-xs leading-5 text-muted-foreground">
-        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Round report notes</summary>
+        <summary className="min-h-11 cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Round report notes</summary>
         <p className="max-w-3xl pb-2">
           Round status: {data.round.status}. Scheduled: {" "}
           {data.round.scheduledAt ? formatTime.format(data.round.scheduledAt) + " IST" : "Not scheduled"}.
