@@ -321,7 +321,12 @@ export async function listCollegeRoleDirectory(
         enrollmentId: learnerProgramEnrollments.id,
         programName: programs.name,
         cohortName: cohorts.name,
+        departmentName: departments.name,
+        rollNumber: learnerProfiles.rollNumber,
+        registrationNumber: learnerProfiles.registrationNumber,
+        legacyUniqueId: learnerProfiles.legacyUniqueId,
       }).from(learnerProgramEnrollments)
+        .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,learnerProgramEnrollments.membershipId))
         .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
         .innerJoin(cohorts, and(
           eq(cohorts.id, learnerProgramEnrollments.cohortId),
@@ -402,6 +407,8 @@ export async function listCollegeRoleDirectory(
       cohort: study?.cohortName ?? null,
       sections: sectionsByMembership.get(person.membershipId) ?? [],
       activeTeachingAssignments: teachingCount.get(person.membershipId) ?? 0,
+      rollNumber:study?.rollNumber??null,registrationNumber:study?.registrationNumber??null,
+      legacyUniqueId:study?.legacyUniqueId??null,department:study?.departmentName??null,
     };
   });
   // COL-people-13: exact scoped directory metrics, independent of page filters.

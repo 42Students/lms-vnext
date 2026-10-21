@@ -15,14 +15,17 @@ export function learnerAttendanceIstMonth(value: string | Date): string {
 }
 
 export function resolveLearnerAttendanceFilters(
-  input: { deliveryId?: unknown; month?: unknown },
-  courses: readonly { deliveryId: string }[],
+  input: { deliveryId?: unknown; courseId?: unknown; month?: unknown },
+  courses: readonly { deliveryId: string; courseId?: string; historical?: boolean }[],
   defaultMonth: string,
 ) {
   const requestedDelivery = deliverySchema.safeParse(input.deliveryId).data;
+  const requestedCourse=deliverySchema.safeParse(input.courseId).data;
+  const courseDeliveries=requestedCourse?courses.filter(course=>course.courseId===requestedCourse):[];
+  const preferred=courseDeliveries.find(course=>!course.historical)??courseDeliveries[0];
   return {
     deliveryId: courses.some(course => course.deliveryId === requestedDelivery)
-      ? requestedDelivery! : courses[0]?.deliveryId ?? "",
+      ? requestedDelivery! : preferred?.deliveryId??courses[0]?.deliveryId ?? "",
     month: learnerAttendanceMonthSchema.safeParse(input.month).data ??
       learnerAttendanceMonthSchema.parse(defaultMonth),
   };
@@ -35,4 +38,24 @@ export function filterLearnerAttendanceMonth<T extends { deliveryId: string; sta
       !learnerAttendanceMonthSchema.safeParse(month).success) return [];
   return rows.filter(row => row.deliveryId === deliveryId &&
     learnerAttendanceIstMonth(row.startsAt) === month);
+}
+
+/** A legacy course ID may resolve to multiple authorized section deliveries.
+ * Never merge by course ID alone across colleges; callers provide the
+ * already-scoped learner deliveries. Retain historic rows for read-only audit. */
+export function learnerAttendanceDeliveryIdsForCourse(
+ courseId:string,authorized:readonly {courseId:string;deliveryId:string}[],
+):string[]{
+ if(!deliverySchema.safeParse(courseId).success)return [];
+ return [...new Set(authorized.filter(row=>row.courseId===courseId)
+  .map(row=>row.deliveryId).filter(id=>deliverySchema.safeParse(id).success))];
+}
+export function filterLearnerHistoricCourseAttendance<T extends {
+ deliveryId:string;startsAt:string;
+}>(
+ rows:readonly T[],authorizedDeliveryIds:readonly string[],month:string,
+):T[]{
+ if(!learnerAttendanceMonthSchema.safeParse(month).success)return [];
+ const allowed=new Set(authorizedDeliveryIds.filter(id=>deliverySchema.safeParse(id).success));
+ return rows.filter(row=>allowed.has(row.deliveryId)&&learnerAttendanceIstMonth(row.startsAt)===month);
 }
