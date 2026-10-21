@@ -41,10 +41,10 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  if(!loaded.ok) return <div className="min-w-0 space-y-4">
   <PageHeader title="People Directory"/>
   <ErrorState
-   title={loaded.denied?"Directory access denied":"People Directory unavailable"}
+   title={loaded.denied?"Directory access denied":"Couldn\'t load contacts"}
    description={loaded.denied
     ?"Your account can no longer view these membership records."
-    :"These membership records could not be loaded. Your filters were preserved."}
+    : "Something went wrong on our end. Please try again. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
     className="font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 min-h-11 md:min-h-9">
     {loaded.denied?"Back to dashboard":"Retry loading users"}

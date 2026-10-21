@@ -130,10 +130,10 @@ export default async function LearnerProjectsPage({
     })
     .filter((row) =>
       query.attention !== "LEARNER_ACTION" ||
-      attentionByProject.has(row.project.id),
+      (row.project.status !== "ARCHIVED" && attentionByProject.has(row.project.id)),
     )
     .filter((row)=>query.attention!=="BLOCKED"||
-      Boolean(row.project.blocker?.trim())||
+      (row.project.status!=="ARCHIVED"&&Boolean(row.project.blocker?.trim()))||
       learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id)))
     .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
       row.project.status, progressByProject.get(row.project.id),

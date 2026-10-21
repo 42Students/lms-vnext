@@ -15,11 +15,24 @@ export async function GET(request:Request){
   const id=keys.length===1?parseSuperAdminStudentProgressParams({offeringId:search.get("offeringId")??undefined}):null;
   if(!id)
    return Response.json({error:"INVALID_REQUEST"},{status:400,headers:{"Cache-Control":"private, no-store"}});
-  const result=await getSuperAdminStudentCourseProgress(context,{offeringId:id});
-  const rows=result.rows.map(row=>[row.studentName,
-   row.videos,row.assignments,row.quizzes,
-   studentCourseCompletion(row)] as const);
-  const csv=placementReportCsv(["Student","Videos","Assignments","Quizzes","Progress (%)"],rows);
+  // Export all authorized roster pages: the legacy CSV was not limited to
+  // the first 500 students and includes both IDs and denominator columns.
+  const rows:(string|number|null)[][]=[];
+  let page=1;
+  while(true){
+   const result=await getSuperAdminStudentCourseProgress(context,{offeringId:id,page,pageSize:500});
+   rows.push(...result.rows.map(row=>[
+    row.membershipId,row.studentName,row.rollNumber??"",
+    row.videos,row.totalVideos,row.assignments,row.totalAssignments,
+    row.quizzes,row.totalQuizzes,studentCourseCompletion(row),
+   ]));
+   if(!result.hasMore)break;
+   page+=1;
+  }
+  const csv=placementReportCsv([
+   "learnerId","name","rollNumber","videos","videoTotal",
+   "assignments","assignmentTotal","quizzes","quizTotal","percent",
+  ],rows);
   return new Response("\uFEFF"+csv,{
    headers:{"Content-Type":"text/csv; charset=utf-8",
     "Content-Disposition":'attachment; filename="course-progress-students.csv"',

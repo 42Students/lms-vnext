@@ -11,6 +11,8 @@ import {
 } from "@/components/courses/faculty-contacts-table";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
+import { ErrorState } from "@/components/ui/error-state";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
 
@@ -58,15 +60,21 @@ export default async function FacultyContactsPage({
   </section>;
   const {page,pageSize,search}=filters;
   const context = await getCurrentRequestContext();
-  const result = await listFacultyContacts(
-    context,
-    {
-      tab: selected.value,
-      search,
-      page,
-      pageSize,
-    },
-  );
+  const loaded = await listFacultyContacts(context,{
+    tab:selected.value,search,page,pageSize,
+  }).then(value=>({ok:true as const,value}))
+    .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
+  if(!loaded.ok)return <section className="min-w-0 space-y-4">
+    <PageHeader title={selected.label} />
+    <ErrorState title={loaded.denied?"Contacts access denied":"Couldn't load contacts"}
+      description={loaded.denied?"You no longer have access to these contacts.":"Something went wrong on our end. Please try again."}
+      action={<Link href={loaded.denied?"/teacher/contacts":"/teacher/contacts/"+contactsTab+"?"+new URLSearchParams({
+        ...(search?{q:search}:{}),page:String(page),pageSize:String(pageSize),
+      }).toString()} className="font-semibold text-primary-text underline">
+        {loaded.denied?"Back to Contacts":"Retry contacts"}
+      </Link>} />
+  </section>;
+  const result=loaded.value;
 
   const baseHref =
     `/teacher/contacts/${contactsTab}`;
@@ -86,7 +94,7 @@ export default async function FacultyContactsPage({
         <div className="flex min-w-0 flex-col gap-3">
           <div>
             <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
-            <p className="mt-1 text-sm text-body leading-[22px]" role="status" aria-live="polite">
+            <p className="mt-1 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-sm text-body leading-[22px]" role="status" aria-live="polite">
               {result.total}{" "}
               {result.total === 1
                 ? "contact"
