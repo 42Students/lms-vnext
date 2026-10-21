@@ -171,7 +171,7 @@ function RecruiterCalendarEventCard({
             <p className="mt-1 text-xs text-muted-foreground">College: {event.collegeName}</p>
           ) : null}
 
-          <h3 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
+          <h3 className="mt-1 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
             {event.title}
           </h3>
 
@@ -320,7 +320,7 @@ export default async function HrCalendarPage({
       />
       {noCollegeAccess ? (
         <section className="border-b border-[var(--lms-canvas-border)] pb-6">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
             Open this on your college&apos;s placement address
           </h2>
           <p className="mt-2 text-sm text-body">
@@ -435,7 +435,7 @@ export default async function HrCalendarPage({
               <div className="space-y-3 min-[1100px]:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles.mobileDay}>
-                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{dateLabel(day.day)}</h3>
+                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{dateLabel(day.day)}</h3>
                     <div className={styles.mobileEvents}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
@@ -565,7 +565,7 @@ export default async function HrCalendarPage({
               className="space-y-6"
             >
               <div>
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
                   Agenda
                 </h2>
 
@@ -587,7 +587,7 @@ export default async function HrCalendarPage({
                   key={day.day}
                   className="space-y-3"
                 >
-                  <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">
+                  <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
                     {dateLabel(day.day)}
                     {day.day === today
                       ? " · Today"
@@ -617,7 +617,7 @@ export default async function HrCalendarPage({
             <section aria-label="Results due in this period"
               className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
               <div>
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">
+                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
                   Results due in this period
                 </h2>
                 <p className="mt-1 text-sm text-body">

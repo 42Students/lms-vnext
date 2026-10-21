@@ -152,7 +152,7 @@ export default async function SuperAdminTenantSetup({
     ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-primary)]">
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
       className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{card.label}</h3>
+      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{card.label}</h3>
       <p className="mt-2 text-sm font-normal text-body">{card.description}</p>
      </Link>
     </Card>)}
@@ -165,7 +165,7 @@ export default async function SuperAdminTenantSetup({
     <ol className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
-      <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{step.title}</h3>
+      <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{step.title}</h3>
       <p className="mt-2 text-sm text-body">{step.description}</p>
       <Link href={step.href} className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open workspace →</Link>
      </li>)}
