@@ -6,7 +6,7 @@ import {Button} from "@/components/ui/button";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useId,useState} from "react";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
 import {verificationSelectionKey} from "@/modules/verification/selection-model";
 import {collegeBulkReviewPayload} from "@/modules/verification/bulk-client-payload";
@@ -15,6 +15,7 @@ import {describeBulkReviewOutcomeRows,type BulkReviewOutcome} from "@/modules/ve
 type Action="VERIFY"|"SEND_BACK";
 export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly VerificationQueueCard[];scope?:"roster"|"verification"}){
  const router=useRouter();
+ const previewId=useId();
  const [selected,setSelected]=useState<string[]>([]);
  const [action,setAction]=useState<Action>("VERIFY");
  const [preview,setPreview]=useState(false);
@@ -88,7 +89,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
       :checked.every(row=>row.section==="EDUCATION")
       ?["Marksheet is missing or unreadable","Submitted details do not match the document"]
       :["Submitted details do not match the document"]).map(item=>
-      <Button variant="secondary" type="button" key={item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
+      <Button variant="secondary" type="button" key={item} aria-pressed={reason===item} disabled={busy} onClick={()=>{setReason(item);invalidate();}}
        >{item}</Button>)}
    </div>
    <label className="grid gap-[6px] text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Correction reason (shown to students)
@@ -96,10 +97,10 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
      value={reason} disabled={busy} onChange={event=>{setReason(event.target.value);invalidate();}}/>
    </label>
   </div>:null}
-  <Button variant="secondary" type="button" disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
+  <Button variant="secondary" type="button" aria-expanded={preview} aria-controls={preview?previewId:undefined} disabled={busy||guardedPending||checked.length===0||action==="SEND_BACK"&&reason.trim().length<3}
    onClick={()=>{setPreview(true);setError("");setOutcomes([]);}}
    >Preview selected</Button>
-  {preview?<div className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
+  {preview?<div id={previewId} className="space-y-3 border-t border-border bg-primary-subtle px-3 py-4 md:px-4">
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text leading-[22px]">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><Checkbox  checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
