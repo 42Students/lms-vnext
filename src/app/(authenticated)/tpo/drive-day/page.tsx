@@ -8,7 +8,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
-import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listMyDriveDayRounds } from "@/modules/placements/drive-day-coordinator-service";
 import {tpoLiveAttendanceAttention} from "@/modules/placements/tpo-live-attendance-attention-model";
@@ -27,13 +26,11 @@ function formatWhen(
   value: Date | null,
   timezone: string | null,
 ) {
-  if (!value) return "Time not scheduled";
+  if (!value || !Number.isFinite(value.getTime())) return null;
   return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone:
-      timezone ?? "Asia/Kolkata",
-  }).format(value);
+    hour:"numeric",minute:"2-digit",hour12:true,
+    timeZone:timezone??"Asia/Kolkata",
+  }).format(value).toUpperCase();
 }
 
 export default async function DriveDayPage({searchParams}:{searchParams:Promise<{issue?:string|string[];sort?:string|string[];q?:string|string[]}>}) {
@@ -69,7 +66,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
     return (
       <div className="min-w-0 space-y-[var(--lms-space-6)]">
         <PageHeader title="Drive day"
-          description="Today's on-campus interview rounds, followed by live attendance attention." />
+          description="Your assigned rounds for today, optimized for quick on-site access." />
         <TpoDriveDayTodayList
           rows={todayRounds.map(round => ({
             ...round,
@@ -78,7 +75,12 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           failed={todayError}
           cacheKey={context.user.id + ":" + context.membership.collegeId + ":" + window.start.toISOString().slice(0, 10)}
         />
-        {!snapshot?<Alert tone="error">Could not load today&apos;s drive-day assignments. <Link href="/tpo/drive-day" className="font-semibold text-link underline">Retry</Link></Alert>:null}
+        <details className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-white p-4">
+          <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">
+            Live attendance and on-site monitoring
+          </summary>
+          <div className="space-y-4 pt-3">
+        {!snapshot?<Alert tone="error">Could not load today's live attendance data. <Link href="/tpo/drive-day" className="font-semibold text-link underline">Retry</Link></Alert>:null}
         <h2 className="text-lg font-semibold">Rounds happening now</h2>
         <form action="/tpo/drive-day" method="get" className="grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 sm:items-end xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]" aria-label="Filter drive day">
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search live rounds<Input name="q" type="search" maxLength={100} defaultValue={search.data} placeholder="Company, job or round" className="block min-h-11 min-[768px]:min-h-[var(--lms-control-height)] mt-[6px]"/></label>
@@ -135,6 +137,8 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
             ))}
           </div>
         )}
+          </div>
+        </details>
       </div>
     );
   }
@@ -151,16 +155,21 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
       />
 
       {rounds.length === 0 ? (
-        <EmptyState title="There is no drive day for you today." description="This workspace appears only for dates when the placement cell assigns you as a student coordinator."/>
+        <section className="rounded-[13px] border border-border bg-surface p-6 text-center">
+          <EmptyState title="There is no drive day for you today."
+            action={<Link href="/tpo/calendar"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 font-semibold text-link md:min-h-9">
+              See upcoming rounds
+            </Link>}/>
+        </section>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-3 md:grid-cols-2">
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="border-b border-border py-4"
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-[#e5e9f0] bg-white p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center"
             >
-              <div className="flex min-w-0 flex-col gap-4 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
-                <div>
+              <div className="min-w-0">
                   <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link leading-5">
                     Assigned round
                   </p>
@@ -169,22 +178,11 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     {round.jobTitle}
                   </h2>
                   <p className="mt-1 text-sm text-body leading-[22px]">
-                    {round.roundName} ·{" "}
-                    {formatWhen(
-                      round.startsAt,
-                      round.timezone,
-                    )}
-                    {round.venue
-                      ? " · " + round.venue
-                      : ""}
+                    {[round.roundName,formatWhen(round.startsAt,round.timezone),round.venue]
+                      .filter(Boolean).join(" · ")}
                   </p>
-                  <div className="mt-3">
-                    <StatusBadge tone={round.roundStatus==="COMPLETED"?"success":"info"}>
-                      {round.roundStatus}
-                    </StatusBadge>
-                  </div>
-                </div>
-                <Link
+              </div>
+              <Link
                   href={
                     "/tpo/drive-day/" +
                     round.roundId
@@ -193,7 +191,6 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                 >
                   Open round
                 </Link>
-              </div>
             </article>
           ))}
         </div>

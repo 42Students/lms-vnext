@@ -1,13 +1,10 @@
 import { notFound } from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
-import {Banner} from "@/components/ui/banner";
-import {Disclosure} from "@/components/ui/disclosure";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
-import { CollegeBrandingPreview } from "@/components/admin/college-branding-preview";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
 import {CollegeLogoUploader} from "@/components/admin/college-logo-uploader";
 import {getCollegeBranding} from "@/modules/colleges/branding-service";
@@ -25,7 +22,16 @@ export default async function SuperAdminCollegeBrandingPage({
   requirePermission(context,"admin-scope.select");
   const { collegeId } = await params;
   if (!collegeIdSchema.safeParse(collegeId).success) {
-    notFound();
+    return <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+      <h1 className="text-lg font-semibold text-foreground">Look and feel</h1>
+      <p role="status" className="mt-3 text-sm font-semibold text-body">Pick a college first</p>
+      <p className="mt-1 text-sm text-body">
+        Branding belongs to one college. Choose a college in the header so changes can&apos;t land on the wrong one.
+      </p>
+      <Link href="/admin/colleges" className="mt-3 inline-flex min-h-11 items-center text-link underline md:min-h-9">
+        Choose a college
+      </Link>
+    </section>;
   }
 
 
@@ -54,38 +60,33 @@ export default async function SuperAdminCollegeBrandingPage({
   const persisted=persistedResult.value,tenant=tenantResult.value;
   const canEdit=can(context,"college.manage",{collegeId,organizationId:tenant.organizationId});
 
-  return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-    <PageHeader title="Look and feel" actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4">
-      <PageBackLink href={`/admin/colleges/${encodeURIComponent(collegeId)}`} label="College overview"/>
-      {context.adminScope?.collegeId===collegeId ? <Link href={`/admin/colleges/${encodeURIComponent(collegeId)}/subdomain`}
-        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
-        Verify web address
-      </Link> : null}
-    </div>}/>
-    <Banner tone="warning" role="status">
-      Switching the selected college discards unsaved branding edits. Save changes before
-      leaving or changing the active college in the header. The current editor is scoped
-      to this college only.
-    </Banner>
-    <section aria-label="Edit college branding" className="min-w-0 space-y-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-     <h2 className="text-[16px] font-semibold leading-[26px] text-[var(--lms-heading)] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Edit college branding</h2>
-     <p className="text-sm text-body">Update the stored college logo URL, colours and sign-in appearance. Upload and crop your square logo above, then edit colours and sign-in appearance.</p>
-     <CollegeLogoUploader collegeId={collegeId} currentUrl={persisted.uploadedLogoUrl} canEdit={canEdit}/>
-     <CollegeBrandingForm key={collegeId} collegeId={collegeId} collegeName={persisted.collegeName}
-      canEdit={canEdit} uploadedLogoUrl={persisted.uploadedLogoUrl} initialVersion={persisted.version} initial={{
-       logoUrl:persisted.logoUrl,faviconUrl:persisted.faviconUrl,
-       loginBackgroundUrl:persisted.loginBackgroundUrl,
-       loginBackgroundUrlMobile:persisted.loginBackgroundUrlMobile,
-       primaryColor:persisted.primaryColor,secondaryColor:persisted.secondaryColor,
-       supportEmail:persisted.supportEmail,supportPhone:persisted.supportPhone,
-       termsUrl:persisted.termsUrl,privacyUrl:persisted.privacyUrl,
-      }}/>
-    </section>
-    <Disclosure title="Stored branding preview" className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
-      <p className="text-xs text-muted-foreground">
-        This preview uses stored brand details. Actual login appearance and tenant-domain routing require separate browser verification.
+  return <div className="min-w-0 max-w-full space-y-4" data-testid="superadmin.college.branding">
+    <PageHeader title="Manage college" description={persisted.collegeName}
+      actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+        <PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)} label="College overview"/>
+        {context.adminScope?.collegeId===collegeId ? <Link
+          href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/subdomain"}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+          Web address
+        </Link> : null}
+      </div>}/>
+    <section aria-label="College login branding" className="min-w-0 space-y-3">
+      <p className="sr-only">
+        These appearance controls use the active college membership and separate versioned branding record.
+        The editor confirms unsaved edits before a college switch, reload, or leaving the page.
       </p>
-      <CollegeBrandingPreview branding={branding}/>
-    </Disclosure>
+      <div className="min-w-0 max-w-full space-y-3">
+        <CollegeLogoUploader collegeId={collegeId} currentUrl={persisted.uploadedLogoUrl} canEdit={canEdit}/>
+        <CollegeBrandingForm key={collegeId} collegeId={collegeId} collegeName={persisted.collegeName}
+          canEdit={canEdit} uploadedLogoUrl={persisted.uploadedLogoUrl} initialVersion={persisted.version} initial={{
+            logoUrl:persisted.logoUrl,faviconUrl:persisted.faviconUrl,
+            loginBackgroundUrl:persisted.loginBackgroundUrl,
+            loginBackgroundUrlMobile:persisted.loginBackgroundUrlMobile,
+            primaryColor:persisted.primaryColor,secondaryColor:persisted.secondaryColor,
+            supportEmail:persisted.supportEmail,supportPhone:persisted.supportPhone,
+            termsUrl:persisted.termsUrl,privacyUrl:persisted.privacyUrl,
+          }}/>
+      </div>
+    </section>
   </div>;
 }
