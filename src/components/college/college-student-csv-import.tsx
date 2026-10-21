@@ -124,12 +124,12 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Download sample CSV
         </a>
-        <button type="button" onClick={()=>{
+        <Button type="button" onClick={()=>{
           fileRevision.current++;setCsv(SAMPLE_CSV);setSelectedFilename(SAMPLE_FILENAME);
           setReport(null);setConfirm(false);setSummary(null);setError(null);
-        }} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9">
+        }} >
           Load example rows
-        </button>
+        </Button>
       </div>
       <p className="mt-2 text-xs text-muted-foreground">
         Sample contains two fictitious students with reserved example.invalid email addresses.
