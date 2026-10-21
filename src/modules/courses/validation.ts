@@ -264,43 +264,36 @@ export const createCourseLessonInputSchema =
   z.object({
     learningPathId: learningPathIdSchema,
     name: legacyLessonNameSchema,
-    description: z
-      .string()
-      .trim()
-      .max(5000)
-      .nullable()
-      .optional(),
-    sequence: z
-      .number()
-      .int()
-      .min(0)
-      .max(10000),
-    visibleToStudents: z.boolean().optional(),
-  }).strict();
+    description: z.string().trim().max(5000).nullable().optional(),
+    // Legacy zero or omitted order appends after the last active lesson.
+    sequence:z.number().int().min(0).max(10000).optional(),
+    active:z.boolean().optional(),
+    enabled:z.boolean().optional(),
+    visibleToStudents:z.boolean().optional(),
+  }).strict().refine(value=>value.enabled===undefined||
+    value.visibleToStudents===undefined||value.enabled===value.visibleToStudents,{
+      path:["enabled"],message:"Enabled and visibility values conflict",
+    });
 
 export const updateCourseLessonInputSchema =
-  z
-    .object({
-      name: legacyLessonNameSchema.optional(),
-      description: z
-        .string()
-        .trim()
-        .max(5000)
-        .nullable()
-        .optional(),
-      sequence: z
-        .number()
-        .int()
-        .min(0)
-        .max(10000)
-        .optional(),
-      expectedUpdatedAt: z.iso.datetime({ offset: true }),
-    })
-    .refine(
-      (value) =>
-        value.name !== undefined || value.description !== undefined || value.sequence !== undefined,
-      "At least one lesson field is required",
-    ).strict();
+  z.object({
+    name:legacyLessonNameSchema.optional(),
+    description:z.string().trim().max(5000).nullable().optional(),
+    sequence:z.number().int().min(0).max(10000).optional(),
+    active:z.boolean().optional(),
+    enabled:z.boolean().optional(),
+    visibleToStudents:z.boolean().optional(),
+    expectedUpdatedAt:z.iso.datetime({offset:true}),
+    expectedVersion:z.number().int().nonnegative().optional(),
+  }).strict().refine(value=>
+    value.name!==undefined||value.description!==undefined||
+    value.sequence!==undefined||value.active!==undefined||
+    value.enabled!==undefined||value.visibleToStudents!==undefined,{
+      message:"At least one lesson field is required",
+    }).refine(value=>value.enabled===undefined||
+     value.visibleToStudents===undefined||value.enabled===value.visibleToStudents,{
+      path:["enabled"],message:"Enabled and visibility values conflict",
+    });
 
 const lessonContentBaseSchema = z.object({
   visibleToStudents:z.boolean().optional(),
