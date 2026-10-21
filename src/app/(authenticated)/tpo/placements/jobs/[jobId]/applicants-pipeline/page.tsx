@@ -110,6 +110,11 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     </div>
    </details>
   </form>
+  <p className="text-xs leading-5 text-muted-foreground">
+   Applications and stage counts are read live from the current college-scoped drive; there is no cached snapshot to refresh.
+   Organization-wide search and statistics are available only in the authorized Super Admin workspace,
+   not by entering another organization ID here.
+  </p>
   <p role="status" className="text-sm text-body leading-[22px]">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
   {data.rows.length > 0 && context.membership &&
