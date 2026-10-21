@@ -44,13 +44,13 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/courses.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/learn/notifications.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/index.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/calendar.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/lesson-content.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/liveclass.js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/AttendanceReport.js`
-- [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoMailService.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/JobServiceImpl.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/NotificationService.java`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/calendar.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/lesson-content.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/liveclass.js`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/AttendanceReport.js`
+- [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/TpoMailService.java`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/JobServiceImpl.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/NotificationService.java`
 - [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/jobs/JobSearchCache.java`
 - [ ] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/tpo/EmailSuppressionRepository.java`
 - [ ] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/_Class.java`
