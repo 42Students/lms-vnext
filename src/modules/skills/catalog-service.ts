@@ -56,8 +56,9 @@ const columns = {
 /**
  * Preserves legacy v1's exact/prefix/display/contains tier ordering and
  * popularity/priority boosts while also consulting *persisted* synonym rows.
- * v2's full fuzzy Levenshtein search and ephemeral recent-skills cache are
- * separate, explicitly unresolved consumer parity; no false 100% claim.
+ * Bounded typo search and legacy shortcuts are restored here. The catalog
+ * import/migration, global fuzzy index, and ephemeral recent-skills cache remain
+ * separately tracked; this service cannot promise unbounded full-catalog parity.
  */
 export async function readSkillCatalog(input: SkillCatalogQuery) {
   const db = getDb();
