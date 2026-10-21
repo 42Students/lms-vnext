@@ -32,7 +32,7 @@ export async function createBugTrackerIssueForAdmin(context: RequestContext, raw
     if (!actor || actor.platformStatus !== "ACTIVE") {
       throw new TrackerAdminError("FORBIDDEN");
     }
-    const reporterName = actor.displayName.trim() || "Authenticated reporter";
+    const reporterName = actor.displayName?.trim() || "Authenticated reporter";
     // Historic bug tracker allowed selecting an active named reporter, but
     // names are not identities and may collide. User IDs are authoritative.
     // Existing rows are re-used so reporting does not create a new disabled
