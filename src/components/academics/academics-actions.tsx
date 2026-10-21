@@ -316,10 +316,10 @@ export function ProgramActions({
       />
 
       {archiveError ? <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
-        <p><strong>Program was not archived</strong>: {archiveError}</p>
+        <p><strong>Program was not deleted</strong>: {archiveError}</p>
         <div className="flex gap-2">
           <Button variant="secondary" type="button" disabled={pending}
-            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Retry archive</Button>
+            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Retry delete</Button>
           <Button variant="ghost" type="button" onClick={() => setArchiveError("")}>Dismiss</Button>
         </div>
       </div> : null}
@@ -341,7 +341,7 @@ export function ProgramActions({
                 programArchiveInFlight = false;
               }
             },
-            `Archived program “${program.name}”.`,
+            `Program “${program.name}” was archived.`,
             () => { setArchiveError(""); setArchiveOpen(false); },
             (error) => { setArchiveOpen(false); setArchiveError(academicSetupErrorMessage(error, "Program was not archived")); },
           )
