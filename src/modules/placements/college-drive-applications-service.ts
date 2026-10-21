@@ -120,13 +120,18 @@ export async function listCollegeDriveApplications(
       query.skills?sql`exists(select 1 from jsonb_array_elements(
         case when jsonb_typeof(${learnerProfiles.profileDocument}->'skills')='array'
           then ${learnerProfiles.profileDocument}->'skills' else '[]'::jsonb end
-        ) skill(value) where lower(coalesce(skill.value->>'name',
-          skill.value->>'skill',skill.value#>>'{}','')) like lower(${pattern(query.skills)}))`:undefined,
+        ) skill(value) where coalesce(skill.value->>'name',
+          skill.value->>'skill',skill.value#>>'{}','') ilike ${pattern(query.skills)})`:undefined,
       query.screening === "ALL" ? undefined
         : query.screening === "UNRECORDED" ? isNull(placementApplicationScreenings.applicationId)
         : eq(placementApplicationScreenings.status, query.screening),
-      query.q ? or(
+      query.q && ![drive.title,drive.companyName].some(value=>
+        value.toLocaleLowerCase("en-IN").includes(query.q.toLocaleLowerCase("en-IN"))) ? or(
         ilike(users.displayName, pattern(query.q)),
+        ilike(users.legacyFirstName, pattern(query.q)),
+        ilike(users.legacyLastName, pattern(query.q)),
+        sql`concat_ws(' ',nullif(trim(${users.legacyFirstName}),''),
+          nullif(trim(${users.legacyLastName}),'')) ilike ${pattern(query.q)}`,
         ilike(users.email, pattern(query.q)),
         ilike(learnerProfiles.rollNumber, pattern(query.q)),
         ilike(placementJobRoleOptions.title, pattern(query.q)),
