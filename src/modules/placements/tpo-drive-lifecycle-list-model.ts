@@ -105,10 +105,23 @@ export function tpoDriveStatusTone(status:string):"success"|"warning"|"info"|"ne
  if(status==="CLOSED")return "neutral";
  return "warning";
 }
-export function tpoDriveStatusLabel(status:string){
- return status==="CANCELLED"?"Cancelled":
-   status==="CLOSED"?"Closed":status==="PUBLISHED"?"Live":
-   status==="DRAFT"?"Draft":status;
+/** A published drive can be past its application deadline while interviews
+ * and offers remain active. Expiry closes applications, not the hiring process.
+ */
+export function tpoDriveApplicationsClosed(
+ status:string,deadline:string|null|undefined,nowIso:string,
+):boolean{
+ if(status!=="PUBLISHED"||!deadline)return false;
+ const due=Date.parse(deadline),now=Date.parse(nowIso);
+ return Number.isFinite(due)&&Number.isFinite(now)&&due<=now;
+}
+export function tpoDriveStatusLabel(status:string,deadline?:string|null,nowIso?:string){
+ if(status==="CANCELLED")return "Cancelled";
+ if(status==="CLOSED")return "Closed";
+ if(status==="PUBLISHED")
+  return nowIso&&tpoDriveApplicationsClosed(status,deadline,nowIso)
+   ?"Applications closed":"Live";
+ return status==="DRAFT"?"Draft":status;
 }
 
 /** TPO-drives-05: concise lifecycle cue from real persisted job and round facts. */
@@ -127,7 +140,7 @@ export function tpoDriveWhereItIs(job:{
    return "Rounds "+job.roundsCompleted+" of "+job.roundCount+" done · deadline not set";
   return "Taking applications · no deadline";
  }
- if(job.applicationDeadline>nowIso)
+ if(!tpoDriveApplicationsClosed(job.status,job.applicationDeadline,nowIso))
   return "Taking applications";
  if(job.offersMade>0&&job.roundsCompleted>=job.roundCount)
   return "Offers · "+job.offersMade+" issued/accepted";
