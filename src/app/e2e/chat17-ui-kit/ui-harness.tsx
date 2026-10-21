@@ -49,7 +49,7 @@ function UIKitTestSurface() {
         title="Harness confirmation" description="Keyboard focus and Back button test."
         footer={<Button className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => setDialogOpen(false)}>Close harness dialog</Button>}>
         <p>Dialog body with keyboard focus.</p>
-        <Input aria-label="Dialog input" className="mt-3 w-full min-w-0" placeholder="Type here"/>
+        <Input aria-label="Dialog input" className="mt-[6px] w-full min-w-0" placeholder="Type here"/>
       </Dialog>
     </section>
 
