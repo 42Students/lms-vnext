@@ -21,7 +21,7 @@ export async function POST(request: Request) {
   let payload: unknown;
   try {
     const reader = request.body?.getReader();
-    if (!reader) return NextResponse.json({ message: "Invalid request." }, { status: 400 });
+    if (!reader) return NextResponse.json({ ok:true,acknowledged:false });
     let length = 0;
     const parts: Uint8Array[] = [];
     while (true) {
@@ -40,6 +40,7 @@ export async function POST(request: Request) {
       bytes.set(part, offset);
       offset += part.length;
     }
+    if(length===0)return NextResponse.json({ok:true,acknowledged:false});
     payload = JSON.parse(new TextDecoder().decode(bytes));
   } catch {
     return NextResponse.json({ message: "Invalid request." }, { status: 400 });

@@ -14,6 +14,8 @@ export const collegeInterviewFilters=z.object({
  mode:z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).default("ALL"),
  type:z.enum(["ALL","INTERVIEW","GD"]).default("ALL"),
  companyId:z.uuid().optional(),
+ /** A scoped single-interview ICS export retains the same college authorization. */
+ interviewId:z.uuid().optional(),
  departmentId:z.uuid().optional(),
  sort:z.enum(["UPCOMING","RECENT","STUDENT"]).default("UPCOMING"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
@@ -33,6 +35,7 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
 
  const literalSearch="%"+filters.q.replace(/[\\%_]/g,"\\$&")+"%";
  const conditions=and(eq(placementJobs.collegeId,collegeId),
+  filters.interviewId?eq(interviews.id,filters.interviewId):undefined,
   eq(interviews.status,"BOOKED"),
   filters.type==="ALL"?inArray(placementJobRounds.kind,["INTERVIEW","GD"]):eq(placementJobRounds.kind,filters.type),
   filters.companyId?eq(placementCompanyRelationships.companyId,filters.companyId):undefined,

@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/** Fixed legacy server-page bound for all College Admin and Super Admin assessment views.
+ * An API zero-based page maps to UI page N as N-1 only at an API adapter boundary;
+ * all vNext read and pagination models are consistently 1-based. */
 export const COLLEGE_ASSESSMENT_PAGE_SIZE = 20;
 export const collegeAssessmentKindSchema = z.enum(["ASSIGNMENT", "QUIZ"]);
 export type CollegeAssessmentKind = z.infer<typeof collegeAssessmentKindSchema>;
@@ -33,8 +36,8 @@ export function parseCollegeAssessmentQuery(
   return result;
 }
 
-export function collegeAssessmentScopeLabel(deliverySpecific:boolean){
-  return deliverySpecific?"Section-specific":"Shared offering";
+export function collegeAssessmentScopeLabel(deliverySpecific:boolean, sectionName?:string|null){
+  return deliverySpecific?(sectionName?.trim()||"Section-specific"):"All eligible sections";
 }
 
 export function collegeAssessmentSummary(
@@ -74,6 +77,14 @@ export type CollegeAssessmentAggregateItem = {
   courseName: string;
   courseCode: string;
   lessonName: string;
+  /** Same normalized lesson identifier as the legacy lessonId edit contract. */
+  lessonId?: string;
+  /** Actual assigned course Section when an assessment targets one delivery. */
+  sectionName?: string | null;
+  /** Source author belongs to the scoped lesson metadata, not an inferred role. */
+  facultyId?: string | null;
+  /** Persisted mutation time when the source exposes it. */
+  updatedAt?: Date | null;
   offeringId: string;
   status: string;
   dueAt: Date | null;
