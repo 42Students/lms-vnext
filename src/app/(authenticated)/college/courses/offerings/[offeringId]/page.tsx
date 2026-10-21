@@ -1,6 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { z } from "zod";
+import {and,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {courseOfferings,courses,departments} from "@/db/schema";
+import {isSuperAdmin,hasMembershipRole} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -25,6 +30,28 @@ export default async function CollegeOfferingLearningPage({
   const { offeringId } = await params;
   if (!z.uuid().safeParse(offeringId).success) {
     const legacyLink=/^(?:[0-9]+|crs-[a-z0-9-]+)$/i.test(offeringId);
+    // Numeric catalog IDs are NOT offering IDs. A redirect is safe only when
+    // one and only one ACTIVE offering can be resolved inside the authorized
+    // selected college; any ambiguous old URL returns the chooser below.
+    if(legacyLink){
+      const scope=isSuperAdmin(context)&&context.adminScope?.collegeId
+        ?{collegeId:context.adminScope.collegeId,organizationId:context.adminScope.organizationId}
+        :hasMembershipRole(context,"COLLEGE_ADMIN")&&context.membership
+        ?{collegeId:context.membership.collegeId,organizationId:context.membership.organizationId}
+        :null;
+      if(!scope)throw new AuthorizationError("courses.read");
+      requirePermission(context,"courses.read",scope);
+      const legacyId=/^[1-9][0-9]{0,9}$/.test(offeringId)?Number(offeringId):null;
+      const match=legacyId!==null?eq(courses.legacyCourseId,legacyId):eq(courses.slug,offeringId);
+      const offeringMatches=await getDb().select({id:courseOfferings.id}).from(courseOfferings)
+        .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+        .innerJoin(departments,eq(departments.id,courses.departmentId))
+        .where(and(eq(departments.collegeId,scope.collegeId),match,
+          eq(courseOfferings.status,"ACTIVE")))
+        .limit(2);
+      if(offeringMatches.length===1)
+        redirect("/college/courses/offerings/"+encodeURIComponent(offeringMatches[0].id));
+    }
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Course offering unavailable" />
       <ErrorState title={legacyLink?"Legacy course link requires a course lookup":"Invalid course offering link"}
