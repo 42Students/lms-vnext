@@ -79,7 +79,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   <h2 className="text-lg font-semibold text-foreground">Write a campaign</h2>
   <p className="text-sm text-body">Save a draft for your placement cell. No message is sent until a separate, verified dispatch action is enabled.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
-   <label className="block text-sm font-semibold">Campaign name
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">Campaign name
     <Input value={title} maxLength={160} required className={field}
      onChange={e=>setTitle(e.target.value)}/>
    </label>
@@ -99,17 +99,17 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     </div>:null}
     <p className="mt-2 text-xs text-muted-foreground">This is a preview, not a send. Recipient eligibility is checked again when saving the draft.</p>
    </section>:null}
-   <label className="block text-sm font-semibold">To
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">To
     <Select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
     </Select>
    </label>
    {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
-   <label className="block text-sm font-semibold">Subject
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">Subject
     <Input value={subject} maxLength={200} required className={field}
      onChange={e=>setSubject(e.target.value)}/>
    </label>
-   <label className="block text-sm font-semibold">Message
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">Message
     <Textarea value={body} maxLength={10000} required rows={6}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
@@ -125,7 +125,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      </p>
      </div>
    </Disclosure>
-   <label className="block text-sm font-semibold">Approved campaign template key
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">Approved campaign template key
     <Input value={templateKey} maxLength={160} required className={field}
      placeholder="tpo-campaign-general" onChange={e=>setTemplateKey(e.target.value)}/>
     <span className="mt-1 block text-xs font-normal text-muted-foreground">

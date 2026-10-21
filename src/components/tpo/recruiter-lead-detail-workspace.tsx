@@ -509,7 +509,7 @@ export function RecruiterLeadDetailWorkspace({
                   {lead.unsubscribedAt||lead.manualStage==="NOT_NOW"?
                     <p role="status" className="text-xs text-warning">This person said they are not hiring from your college this season or unsubscribed.</p>:null}
                   {inviteLink ? (
-                    <label className="block text-xs">
+                    <label className="block text-[length:var(--lms-font-sm)] leading-4 font-semibold">
                       Invite link
                       <Input
                         className="mt-1 font-mono text-xs"
@@ -523,7 +523,7 @@ export function RecruiterLeadDetailWorkspace({
                     <p className="text-xs text-muted-foreground">
                       Valid until {formatDateTimeIst(inviteExpiresAt)}.
                     </p>
-                    <label className="block text-xs">Invitation preview
+                    <label className="block text-[length:var(--lms-font-sm)] leading-4 font-semibold">Invitation preview
                       <Textarea rows={8} readOnly value={inviteMessage} onFocus={event=>event.currentTarget.select()}
                         className="mt-1 whitespace-pre-wrap" />
                     </label>
