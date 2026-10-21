@@ -17,6 +17,25 @@ import {
   isValidMentorSprintTransition,
 } from "./mentor-sprint-write-model";
 
+/** Old LMS permits active-project mentor actions. In vNext PLANNED and
+ * ACTIVE projects are editable, COMPLETED and ARCHIVED read-only. Sprint
+ * transitions keep their own versioned state checks, rather than assuming
+ * that one legacy integer revision equals a JS timestamp.
+ */
+export const MENTOR_SPRINT_PROJECT_WRITE_STATES={
+ PLANNED:true,ACTIVE:true,COMPLETED:false,ARCHIVED:false,
+} as const;
+export function mentorSprintProjectWritable(status:string):boolean{
+ return status==="PLANNED"||status==="ACTIVE";
+}
+export function legacySprintRevisionToUpdatedAt(
+ legacyVersion:number,approved:ReadonlyMap<number,string>,
+):string|null{
+ if(!Number.isSafeInteger(legacyVersion)||legacyVersion<0)return null;
+ const mapped=approved.get(legacyVersion);
+ if(!mapped||!Number.isFinite(new Date(mapped).getTime()))return null;
+ return new Date(mapped).toISOString();
+}
 async function mentorSprintWriteScope(context: RequestContext, projectId: string) {
   return requireProjectLifecycleMutationAccess(context, projectId);
 }
@@ -35,7 +54,7 @@ export async function createMentorProjectSprint(
         .where(and(eq(projectInstances.id,scope.project.id),
           eq(projectInstances.collegeId,scope.collegeId)))
         .for("update").limit(1);
-      if(!project || !["PLANNED","ACTIVE"].includes(project.status)) {
+      if(!project || !mentorSprintProjectWritable(project.status)) {
         throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
       }
       await assertPersistedProjectMutationActor(tx,context,scope);
@@ -98,7 +117,7 @@ export async function transitionMentorProjectSprint(
       .where(and(eq(projectInstances.id,scope.project.id),
         eq(projectInstances.collegeId,scope.collegeId)))
       .for("update").limit(1);
-    if(!project || project.status==="ARCHIVED" || project.status==="COMPLETED") {
+    if(!project || !mentorSprintProjectWritable(project.status)) {
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     await assertPersistedProjectMutationActor(tx,context,scope);
@@ -205,16 +224,16 @@ export async function getMentorSprintTransitionHistory(
  const scope=await mentorSprintWriteScope(context,params.projectId);
  const events=await getDb().select({
   actorUserId:activityEvents.actorUserId,actorMembershipId:activityEvents.actorMembershipId,
-  createdAt:activityEvents.createdAt,metadata:activityEvents.metadata,
+  occurredAt:activityEvents.occurredAt,metadata:activityEvents.metadata,
  }).from(activityEvents).where(and(
   eq(activityEvents.collegeId,scope.collegeId),
   eq(activityEvents.organizationId,scope.organizationId),
   eq(activityEvents.subjectType,"project_sprint"),
   eq(activityEvents.subjectId,params.sprintId),
   eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED),
- )).orderBy(desc(activityEvents.createdAt)).limit(100);
+ )).orderBy(desc(activityEvents.occurredAt)).limit(100);
  return events.filter(event=>["START","COMPLETE","REOPEN"].includes(String(event.metadata?.action)))
-  .map(event=>({action:String(event.metadata?.action),at:event.createdAt,
+  .map(event=>({action:String(event.metadata?.action),at:event.occurredAt,
     actorUserId:event.actorUserId,actorMembershipId:event.actorMembershipId,
     from:event.metadata?.from,to:event.metadata?.to}));
 }
