@@ -155,6 +155,14 @@ export default async function SuperAdminFeaturesPage({
               <option value="NAME">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="CODE">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
             </Select>
           </label>
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Colleges per page
+            <Select name="pageSize" defaultValue={String(result.pageSize)} className="min-h-11 md:min-h-9">
+              <option value="20">20</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </Select>
+          </label>
           <Disclosure title="More college filters"
             defaultOpen={Boolean(result.moduleFilter||result.stateFilter!=="ALL"||result.lockFilter!=="ALL"||result.presenceFilter!=="ANY"||result.recentFilter!=="ALL"||result.searchField!=="ALL")}
             className="min-w-0 sm:w-full"
@@ -211,7 +219,7 @@ export default async function SuperAdminFeaturesPage({
             College module matrix
           </h2>
           <Link href={adminFeatureExportHref({
-            q:result.q,page:result.page,sort:result.sort,module:result.moduleFilter??undefined,
+            q:result.q,page:result.page,pageSize:result.pageSize,sort:result.sort,module:result.moduleFilter??undefined,
             storedState:result.stateFilter,locks:result.lockFilter,presence:result.presenceFilter,
             recent:result.recentFilter,searchField:result.searchField,
           })} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">
@@ -286,6 +294,7 @@ export default async function SuperAdminFeaturesPage({
                   recent: result.recentFilter,
                   searchField: result.searchField,
                   page: result.page - 1,
+                  pageSize:result.pageSize,
                 })}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
@@ -304,6 +313,7 @@ export default async function SuperAdminFeaturesPage({
                   recent: result.recentFilter,
                   searchField: result.searchField,
                   page: result.page + 1,
+                  pageSize:result.pageSize,
                 })}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)]"
               >
@@ -316,7 +326,7 @@ export default async function SuperAdminFeaturesPage({
 
       <Disclosure title="How to interpret module access" className="min-w-0" contentClassName="max-w-4xl pb-3 pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
-        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner&apos;s effective access. The CSV includes only the current permissioned page (up to 20 colleges) and excludes contacts. Source: module_access_rules and the existing
+        Filtering by module means the college has an explicit stored college-level rule for that module; it does not filter by each learner&apos;s effective access. The CSV includes only the current permissioned page (up to 100 colleges) and excludes contacts. Source: module_access_rules and the existing
         optional-module resolver. A persisted global,
         organization or college rule can override the
         source defaults. This matrix shows college-level

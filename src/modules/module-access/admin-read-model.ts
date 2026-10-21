@@ -82,6 +82,7 @@ export function describeModuleDecision(
 export function adminFeaturesHref(filters: {
   q?: string;
   page?: number;
+  pageSize?:number;
   sort?: "NAME"|"CODE"|"NAME_DESC"|"CODE_DESC";
   module?: "projects"|"placements"|"electives";
   storedState?: "ALL"|"ON"|"OFF";
@@ -99,6 +100,8 @@ export function adminFeaturesHref(filters: {
   if (filters.page && filters.page > 1) {
     params.set("page", String(filters.page));
   }
+  if(filters.pageSize && filters.pageSize!==20)
+    params.set("pageSize",String(filters.pageSize));
 
   if (filters.sort && filters.sort !== "NAME") params.set("sort", filters.sort);
   if (filters.module) params.set("module", filters.module);
