@@ -35,6 +35,9 @@ async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
   version:placementApplications.version,status:placementApplications.status,
   submittedAt:placementApplications.submittedAt,
   withdrawnAt:placementApplications.withdrawnAt,
+  statusBeforeWithdrawal:placementApplications.statusBeforeWithdrawal,
+  statusUpdatedAt:placementApplications.statusUpdatedAt,
+  statusUpdatedByUserId:placementApplications.statusUpdatedByUserId,
   eligibilityStatus:placementApplications.eligibilityStatus,
   eligibilitySnapshot:placementApplications.eligibilitySnapshot,
  }).from(placementApplications)
@@ -193,10 +196,17 @@ export async function getCollegeApplicationDetail(
    .orderBy(asc(placementApplicationScreeningHistory.createdAt),
      asc(placementApplicationScreeningHistory.id)).limit(101),
  ]);
+ // Only resolve the audit actor after the application is college-scoped;
+ // this cannot be used to enumerate unrelated user profiles.
+ const [statusUpdatedBy]=application.statusUpdatedByUserId
+  ?await db.select({name:users.displayName}).from(users)
+    .where(eq(users.id,application.statusUpdatedByUserId)).limit(1)
+  :[];
  const rejectionReason=stageHistory.filter(row=>row.to==="REJECTED").at(-1)?.reason??
     screeningHistory.filter(row=>row.to==="REJECTED").at(-1)?.reason??null;
  const latestNote=notes[0]??null;
- return {application:{...application,rejectionReason},learnerPortfolio,
+ return {application:{...application,rejectionReason,
+   statusUpdatedByName:statusUpdatedBy?.name??null},learnerPortfolio,
   screening:screening[0]??null,
   stage:stage[0]?.stage??null,stageHistory:stageHistory.slice(0,100),
   screeningHistory:screeningHistory.slice(0,100),
