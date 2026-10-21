@@ -31,7 +31,7 @@ export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus,
  if(approvedJob?.status==="PUBLISHED")return "Live";
  if(approvedJob?.status==="CLOSED")return "Completed";
  return status==="REJECTED"||status==="CANCELLED"?"Cancelled":
-  status==="DRAFT"?"Draft":"Sent for review";
+  status==="DRAFT"?"Sent for review":"Sent for review";
 }
 
 /** Optimistic request edit token and real 0101 REQUEST/SENT_BACK transitions. */
@@ -78,9 +78,19 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
  if(!raw||typeof raw!=="object"||Array.isArray(raw))
   return {ok:false,reason:RECRUITER_DRIVE_FORM_REQUIRED_ERROR,unmappedFields:[]};
  const form=raw as Record<string,unknown>;
+ // The old controller used only the FIRST role option; tolerate malformed
+ // legacy JSON rather than making an invalid role visible as valid pay.
+ let roleOption:Record<string,unknown>|null=null;
+ try{
+  const rawOptions=typeof form.roleOptions==="string"?JSON.parse(form.roleOptions) as unknown:form.roleOptions;
+  const option=Array.isArray(rawOptions)?rawOptions[0]:null;
+  if(option&&typeof option==="object"&&!Array.isArray(option))roleOption=option as Record<string,unknown>;
+ }catch{/* Malformed legacy role-options were treated as missing. */}
+ const pay=(value:unknown)=>typeof value==="number"&&Number.isFinite(value)?String(value):
+  typeof value==="string"?value.trim():"";
  const unmapped=["companyName","companyId","companyLogo","jdUrl","hostCollegeName",
   "reportingAt","travelNote","requiresExternalRegistration","externalPortalName",
-  "externalPortalUrl","wantedSkills","category","categoryOverrideReason","roleOptions",
+  "externalPortalUrl","wantedSkills","category","categoryOverrideReason",
   "eligibility","applicationDeadline","seasonId","recordedOutside","notifyApplicants"]
   .filter(field=>form[field]!==undefined&&form[field]!==null);
  const base=emptyHrDriveDraft();
@@ -105,6 +115,10 @@ export function recruiterDraftFromLegacyForm(raw:unknown):
   employmentType,
   driveMode:form.driveMode==="OFF_CAMPUS"?"OFF_CAMPUS" as const:"ON_CAMPUS" as const,
   externalApplicationUrl:typeof form.externalApplyUrl==="string"?form.externalApplyUrl:"",
+  ctcLpa:pay(roleOption?.ctcLpa)||base.ctcLpa,
+  fixedLpa:pay(roleOption?.fixedLpa)||base.fixedLpa,
+  variableLpa:pay(roleOption?.variableLpa)||base.variableLpa,
+  stipendMonthlyInr:pay(roleOption?.stipendPerMonth)||base.stipendMonthlyInr,
   rounds,
  };
  const parsed=hrDriveDraftSchema.safeParse(candidate);

@@ -88,3 +88,14 @@ export function parseTpoApplicantPipelineLink(value:unknown){
 export function tpoApplicantPipelineResetHref(jobId:string){
  return "/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applicants-pipeline";
 }
+
+/** Standalone, bounded suggestion query; full pipeline pagination stays 25. */
+export const tpoApplicantAutocompleteQuery=z.strictObject({
+  q:z.string().trim().min(2).max(100),
+  limit:z.coerce.number().int().min(1).max(100).default(15),
+});
+export function tpoApplicantAutocompleteLimit(raw:unknown){
+ const parsed=tpoApplicantAutocompleteQuery.safeParse(raw);
+ return parsed.success?{ok:true as const,limit:parsed.data.limit,query:parsed.data.q}:
+  {ok:false as const,error:"Autocomplete limit must be 1–100; search must have 2–100 characters."};
+}

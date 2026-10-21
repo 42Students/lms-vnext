@@ -159,7 +159,22 @@ export function summarizeTpoAuditKinds(
 export function formatTpoAuditEventType(
   value: string,
 ): string {
+  if(!value.trim())return "Activity";
   const legacy:Record<string,string>={
+   REGISTERED_BY_TPO:"Registration set by the placement cell",
+   REGISTRATION_RESTORED:"Registration put back (undo)",
+   RECRUITER_LEADS_RESTORED:"Recruiters put back (undo)",
+   BULK_RUN:"Bulk action",BULK_UNDONE:"Bulk action undone",
+   JOB_TYPES_UPDATED:"Job types changed",
+   OUTCOME_LABELS_UPDATED:"Outcome labels changed",
+   SETTINGS_UPDATED:"Settings changed",
+   APPLICANTS_MOVED:"Applicants moved",
+   APPLICANTS_NOT_SELECTED:"Applicants not selected",
+   APPLICANTS_MOVE_UNDONE:"Move undone",
+   ROUND_RESULTS_APPLIED:"Round results applied",
+   NUDGE_SENT:"Nudge sent",PREP_ASSIGNED:"Prep assigned",
+   RECRUITER_LEADS_OWNER_SET:"Recruiter owner set",
+   RECRUITER_LEADS_STAGE_SET:"Recruiter stage set",
    PLACEMENTS_COLLEGE_RULES_UPDATED:"Placement rules changed",
    RECRUITER_LEADS_CREATED:"Recruiter lead added",
    RECRUITER_LEADS_CONTACT_UPDATED:"Recruiter contact updated",
@@ -202,6 +217,13 @@ export function formatTpoAuditEventType(
 }
 
 /** TPO-settings-audit-90: show a safe actor name or an honest fallback, never UUIDs. */
-export function tpoAuditActorLabel(displayName:string|null|undefined):string{
- return displayName?.trim()||"System / unknown";
+export function tpoAuditActorLabel(
+ displayName:string|null|undefined,actorType:string|null|undefined="SYSTEM",
+):string{
+ if(displayName?.trim())return displayName.trim();
+ const labels:Record<string,string>={
+  TPO:"Placement team",RECRUITER:"Recruiter",STUDENT:"Student",
+  SYSTEM:"System",COLLEGE_ADMIN:"College admin",
+ };
+ return labels[actorType??"SYSTEM"]??"System";
 }

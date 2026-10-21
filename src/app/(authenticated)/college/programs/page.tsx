@@ -1,4 +1,5 @@
 import { Alert } from "@/components/ui/alert";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import Link from "next/link";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -22,12 +23,23 @@ export default async function CollegeProgramsPage() {
   </div>;
 
   // Both reads enforce scoped permissions and active college status.
-  const [programs, departments, archived] = await Promise.all([
+  const [programs, departments] = await Promise.all([
     listPrograms(context, collegeId),
     listDepartments(context, collegeId),
+  ]);
+  // Auxiliary counts/archive listings must not cause a false empty active
+  // directory. Keep the main program roster available when they fail.
+  const [contentsResult, archivedResult] = await Promise.allSettled([
+    listProgramContents(context, collegeId, programs.map(program => program.id)),
     listArchivedCollegePrograms(context),
   ]);
-  const contents = await listProgramContents(context, collegeId, programs.map(program => program.id));
+  if(contentsResult.status==="rejected"&&contentsResult.reason instanceof AuthorizationError)
+    throw contentsResult.reason;
+  if(archivedResult.status==="rejected"&&archivedResult.reason instanceof AuthorizationError)
+    throw archivedResult.reason;
+  const contents=contentsResult.status==="fulfilled"?contentsResult.value:new Map<string,{semesters:number;batches:number;classes:number}>();
+  const archived=archivedResult.status==="fulfilled"?archivedResult.value:[];
+  const partial=contentsResult.status==="rejected"||archivedResult.status==="rejected";
 
   return (
     <div className="min-w-0 space-y-6">
@@ -49,6 +61,10 @@ export default async function CollegeProgramsPage() {
           {label}
         </Link>)}
       </nav>
+      {partial?<Alert tone="warning">
+        Some linked program details could not be loaded. Active programs remain available; refresh to retrieve the missing records.
+        <Link href="/college/programs" className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Alert>:null}
       <section aria-label="Active programs" className="min-w-0">
         <AdminProgramDirectory
         programs={programs.map((program) => ({

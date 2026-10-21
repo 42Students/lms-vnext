@@ -49,7 +49,7 @@ export async function listLessonResourceMaterials(
   sequence:lessonContentMaterials.sequence,
   uploadStatus:lessonContentMaterials.uploadStatus,
  }).from(lessonContentMaterials).where(eq(lessonContentMaterials.lessonContentId,contentId))
-  .orderBy(asc(lessonContentMaterials.sequence)).limit(20);
+  .orderBy(asc(lessonContentMaterials.sequence));
  // FILE rows never disclose opaque object keys; a separate auth-scoped signed
  // download-grant endpoint will serve only verified/clean READY materials.
  // Historical imported LINK rows bypassed today's authoring validation: never
@@ -143,7 +143,7 @@ export function parseLegacyResourceMaterialDrafts(value: unknown): LegacyResourc
   const record = dto as Record<string, unknown>;
   const rawMaterials = record.resourceMaterials ?? record.resource_materials;
   if (!Array.isArray(rawMaterials)) return [];
-  return rawMaterials.slice(0, 20).flatMap((raw, index): LegacyResourceMaterialDraft[] => {
+  return rawMaterials.flatMap((raw, index): LegacyResourceMaterialDraft[] => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
     const item = raw as Record<string, unknown>;
     const kind = String(item.kind ?? "").toUpperCase();
@@ -175,7 +175,7 @@ export async function resolveLegacyResourceMaterialId(
  context: RequestContext, contentId: string, deliveryId: string | null,
  rawIndex: number,
 ): Promise<string | null> {
- if (!Number.isSafeInteger(rawIndex) || rawIndex < 0 || rawIndex >= 20)
+ if (!Number.isSafeInteger(rawIndex) || rawIndex < 0)
   throw new StorageFileError("STORAGE_NOT_FOUND");
  await authorizeMaterial(context, contentId, deliveryId, false);
  const [row] = await getDb().select({id: lessonContentMaterials.id})
