@@ -140,7 +140,7 @@ export default async function TrackerIssueDetailPage({
         <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Issue sharing</summary>
           <div className="min-w-0 pt-3">
-        <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page}/>
+        <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page} issue={issue} attachmentCount={detail.attachments.length}/>
           </div>
         </details>
       </section>
