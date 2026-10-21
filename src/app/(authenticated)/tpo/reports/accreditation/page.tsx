@@ -84,7 +84,7 @@ export default async function TpoAccreditationReportPage({
       />
       <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
-      <section aria-labelledby="section-naac-5-2-1-placed-students" id="accreditation-batch" className="space-y-3 border-t border-border pt-5">
+      <section aria-labelledby="section-naac-5-2-1-placed-students" id="accreditation-batch" className="space-y-3 border-t border-border pt-6">
        <h2 id="section-naac-5-2-1-placed-students" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">NAAC 5.2.1 · Placed students</h2>
        <p role="status" className="text-sm leading-[22px]">NAAC 5.2.1 lists the students of one batch. Pick the batch above.</p>
        <form role="search" aria-label="reports accreditation filters" method="get" className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
@@ -133,7 +133,7 @@ export default async function TpoAccreditationReportPage({
         />
        </>}
       </section>
-      <section aria-labelledby="section-reporting-scope" className="border-t border-border py-5">
+      <section aria-labelledby="section-reporting-scope" className="border-t border-border py-4">
         <h2 id="section-reporting-scope" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Reporting scope
         </h2>
@@ -172,7 +172,7 @@ export default async function TpoAccreditationReportPage({
           Evidence preview
         </h2>
         {overview.length === 0 ? (
-          <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5 text-sm text-body leading-[22px]">
+          <p className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6 text-sm text-body leading-[22px]">
             No reportable placement season was found. Download the
             CSV for the explicit completeness warnings.
           </p>
