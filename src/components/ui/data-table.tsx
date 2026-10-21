@@ -33,6 +33,8 @@ export type DataTableProps<Row> = {
   caption?: string;
   rowHref?: (row: Row) => string;
   className?: string;
+  /** Legacy dense tables keep every column reachable on a narrow viewport. */
+  mobileMode?: "cards"|"scroll";
   /** Safe same-origin URL for the *next* sort state. Query params persist state. */
   sortHref?: (columnKey: string, next: "ascending" | "descending") => string;
   /** Native form-based multi-selection; no client-only handler is required. */
@@ -49,7 +51,7 @@ export type DataTableProps<Row> = {
 /** Backwards-compatible export for existing DataTable consumers and tests. */
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
-export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className, sortHref, rowSelection }: DataTableProps<Row>) {
+export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className, sortHref, rowSelection, mobileMode = "scroll" }: DataTableProps<Row>) {
   if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
   // Native form association keeps this component usable in Server Components:
   // checkboxes join a form by stable caller-owned ID without a client boundary.
@@ -63,6 +65,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
       return [col.key,isSafeInternalHref(candidate)?candidate:null] as const;
     } catch { return [col.key,null] as const; }
   }));
+  const horizontal=mobileMode==="scroll";
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
@@ -124,9 +127,10 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   const cell=(item:(typeof prepared)[number],col:DataTableColumn<Row>)=>item.cells.get(col.key);
   return <div data-slot="data-table" className={cx("min-w-0", className)}>
     <ScrollCue axis="x" label={caption ? caption+" scrollable columns" : "Scrollable table columns"} className="min-w-0 md:rounded-[var(--lms-radius-md)] md:border md:border-[var(--lms-canvas-border)]">
-      <table className="block w-full border-separate border-spacing-0 text-left text-[14px] leading-5 tabular-nums md:table md:border-collapse md:[&_tbody_tr:last-child_td]:border-b-0">
+      <table className={cx("w-full border-separate border-spacing-0 text-left text-[14px] leading-5 tabular-nums md:table md:border-collapse md:[&_tbody_tr:last-child_td]:border-b-0",
+          horizontal?"table min-w-[860px] border-collapse":"block")}>
         <caption className="sr-only">{caption ?? "Records"}</caption>
-        <thead className="hidden md:table-header-group md:bg-[var(--lms-white)]">
+        <thead className={cx("md:table-header-group md:bg-[var(--lms-white)]",horizontal?"table-header-group bg-surface":"hidden")}>
           <tr>
             {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)]">
               <span className="sr-only">Select records</span>
@@ -141,10 +145,11 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
             </th>)}
           </tr>
         </thead>
-        <tbody className="block space-y-[var(--lms-space-3)] md:table-row-group md:space-y-0">
+        <tbody className={cx("md:table-row-group md:space-y-0",horizontal?"table-row-group":"block space-y-[var(--lms-space-3)]")}>
           {prepared.map(item=><tr key={item.key} data-slot="data-table-row"
-            className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:table-row md:overflow-visible md:rounded-none md:border-0 md:p-0 md:transition-colors md:duration-[var(--lms-motion-fast)] md:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] md:focus-within:border-[var(--lms-canvas-border)] md:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
-            {selection ? <td className="block py-1 md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)]">
+            className={cx("min-w-0 bg-surface md:table-row md:overflow-visible md:rounded-none md:border-0 md:p-0 md:transition-colors md:duration-[var(--lms-motion-fast)] md:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] md:focus-within:border-[var(--lms-canvas-border)] md:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none",
+              horizontal?"table-row border-0 p-0":"block overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] p-[var(--lms-space-4)]")}>
+            {selection ? <td className={cx("py-1 md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)]",horizontal?"table-cell px-3":"block")}>
               <input type="checkbox" name={selection.fieldName??"selected"} value={item.key}
                 form={selection.formId} disabled={!item.selectable}
                 aria-label={"Select record "+item.key}
@@ -155,16 +160,16 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
               const content=cell(item,col);
               return <td key={col.key} className={cx(
                 "min-w-0 break-words py-1 text-body md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)] md:py-[12px] md:align-middle md:first:sticky md:first:left-0 md:first:z-10 md:first:bg-inherit",
-                phoneVisible?"block":"hidden",col.className,
+                horizontal?"table-cell border-b border-border px-3 py-3 align-middle":phoneVisible?"block":"hidden",col.className,
               )}>
-                {phoneVisible && col.mobilePriority!=="action" ?
+                {!horizontal && phoneVisible && col.mobilePriority!=="action" ?
                   <span className="mr-2 font-medium text-body md:hidden">{col.mobileLabel??col.header}</span>:null}
                 {col===primary && (typeof content==="string"||typeof content==="number")
                   ? <strong className="break-words text-sm font-semibold leading-5 text-[var(--lms-heading)]">{content}</strong>
                   : content}
               </td>;
             })}
-            {extra.length ? <td className="block min-w-0 py-1 md:hidden">
+            {!horizontal && extra.length ? <td className="block min-w-0 py-1 md:hidden">
               <Disclosure title="More details" className="mt-2 pt-2">
                 <dl className="grid gap-[var(--lms-space-2)] text-[13px] leading-[22px]">{extra.map(col=><div key={col.key} className="min-w-0">
                   <dt className="font-medium text-body">{col.mobileLabel??col.header}</dt>
@@ -172,7 +177,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                 </div>)}</dl>
               </Disclosure>
             </td>:null}
-            {[...item.detailLinks.values()].some(Boolean) ? <td className="block min-w-0 py-1 md:hidden">
+            {!horizontal && [...item.detailLinks.values()].some(Boolean) ? <td className="block min-w-0 py-1 md:hidden">
               <ul className="space-y-[var(--lms-space-2)]" aria-label="Fields on detail page">
                 {recoverable.filter(col=>item.detailLinks.get(col.key)).map(col=>
                   <li key={col.key}><Link href={item.detailLinks.get(col.key)!}
@@ -181,7 +186,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                   </Link></li>)}
               </ul>
             </td>:null}
-            {item.detailHref ? <td className="block min-w-0 py-1 md:hidden">
+            {!horizontal && item.detailHref ? <td className="block min-w-0 py-1 md:hidden">
               <Link href={item.detailHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View details</Link>
             </td>:null}
           </tr>)}

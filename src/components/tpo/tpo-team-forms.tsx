@@ -38,6 +38,20 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  const [kind,setKind]=useState<"DIRECT"|"TOPIC"|"DRIVE"|"COMPANY">("DIRECT");
  const [contextId,setContextId]=useState("");
  const [additional,setAdditional]=useState<string[]>([]);
+ const [memberQuery,setMemberQuery]=useState("");
+ const [highlighted,setHighlighted]=useState(0);
+ const memberChoices=members.filter(m=>m.membershipId!==recipient&&
+  m.displayName.toLocaleLowerCase().includes(memberQuery.trim().toLocaleLowerCase()));
+ function toggleMember(id:string){
+  setAdditional(previous=>previous.includes(id)?previous.filter(value=>value!==id):[...previous,id]);
+  createKey.current=null;
+ }
+ function insertMemberMention(name:string){
+  if(!name)return;
+  const token="@"+name.trim();
+  const next=(firstMessage.trim()?firstMessage.trim()+" ":"")+token+" ";
+  updateDraft(recipient,topic,next.slice(0,4000));
+ }
  useEffect(()=>{
   const handle=window.setTimeout(()=>{
    try {const raw=sessionStorage.getItem(draftKey);if(!raw)return;
@@ -87,7 +101,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
     setKind(event.target.value as typeof kind);setAdditional([]);setContextId("");createKey.current=null;
    }} className="min-h-11 md:min-h-9">
     <option value="DIRECT">Private direct</option>
-    <option value="TOPIC">Group topic</option>
+    <option value="TOPIC">About a topic or student</option>
     <option value="DRIVE">Drive discussion</option>
     <option value="COMPANY">Company discussion</option>
    </Select>
@@ -101,15 +115,33 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   </label>
   {kind!=="DIRECT"?<fieldset className="grid gap-2 border-b border-border pb-3">
    <legend className="text-[13px] font-semibold">Additional team members</legend>
-   {members.filter(member=>member.membershipId!==recipient).map(member=>
-    <label key={member.membershipId} className="flex min-h-11 items-center gap-2 text-sm">
-     <Checkbox checked={additional.includes(member.membershipId)} disabled={busy}
-      onChange={event=>{setAdditional(current=>event.target.checked?
-        [...current,member.membershipId]:current.filter(id=>id!==member.membershipId));
-       createKey.current=null;}}/>
-     {member.displayName}
-    </label>)}
-   <p className="text-xs text-muted-foreground">The author and selected active college teammates can read this topic.</p>
+   <label className="grid gap-1 text-sm font-semibold">Find a colleague
+     <Input value={memberQuery} disabled={busy} role="combobox" aria-expanded={memberChoices.length>0}
+       aria-controls="tpo-team-member-choices" aria-autocomplete="list"
+       onChange={event=>{setMemberQuery(event.target.value);setHighlighted(0);}}
+       onKeyDown={event=>{
+        if(event.key==="ArrowDown"){event.preventDefault();setHighlighted(i=>Math.min(memberChoices.length-1,i+1));}
+        if(event.key==="ArrowUp"){event.preventDefault();setHighlighted(i=>Math.max(0,i-1));}
+        if(event.key==="Enter"&&memberChoices[highlighted]){
+          event.preventDefault();toggleMember(memberChoices[highlighted].membershipId);
+        }
+       }}
+       placeholder="Search placement team members"/>
+   </label>
+   <div id="tpo-team-member-choices" role="listbox" aria-label="Team colleagues"
+     className="max-h-48 space-y-1 overflow-y-auto">
+   {memberChoices.map((member,index)=>
+
+    <div key={member.membershipId} role="option" aria-selected={additional.includes(member.membershipId)}
+      className={"flex min-h-11 items-center gap-2 rounded px-2 text-sm "+(highlighted===index?"bg-muted":"")}>
+      <Checkbox checked={additional.includes(member.membershipId)} disabled={busy}
+        onChange={()=>toggleMember(member.membershipId)} aria-label={"Add "+member.displayName}/>
+      <span className="min-w-0 flex-1">{member.displayName}</span>
+      <Button type="button" size="sm" variant="ghost" disabled={busy}
+        onClick={()=>insertMemberMention(member.displayName)}>Mention</Button>
+    </div>)}
+   </div>
+   <p className="text-xs text-muted-foreground">Private conversation · Only selected active teammates can view this discussion.</p>
   </fieldset>:null}
   {(kind==="DRIVE"||kind==="COMPANY")?<label className="grid gap-2 text-[13px] font-semibold">
    {kind==="DRIVE"?"Drive ID":"Company relationship ID"}
@@ -119,7 +151,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   </label>:null}
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Topic
    <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
-    className="min-h-11 md:min-h-9" placeholder="Drive coordination"/>
+    className="min-h-11 md:min-h-9" placeholder={kind==="DRIVE"?"Drive coordination":kind==="COMPANY"?"Company coordination":kind==="TOPIC"?"Topic or student discussion":"Private coordination"}/>
   </label>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First message (optional)
    <Textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}

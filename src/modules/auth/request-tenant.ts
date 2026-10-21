@@ -135,27 +135,23 @@ export async function resolveRequestTenant(
 }
 
 /** For tests only. */
-/** Invalidate verified and alias lookups after tenant-domain changes. */
-export function invalidateRequestTenantCache(host?: string): void {
-  if (!host) { cache.clear(); return; }
-  try { cache.delete(normalizeRequestHost(hostWithoutPort(host))); }
-  catch { /* Invalid host cannot be admitted to the positive cache. */ }
-}
-
-/** For tests only. */
 export function clearRequestTenantCacheForTests() {
-  invalidateRequestTenantCache();
+  cache.clear();
 }
 
-/** Versioned presentation data; permissions only use the server-side RequestTenant. */
-export function requestTenantBootstrap(tenant: RequestTenant) {
-  return {
-    version: 1 as const,
-    host: tenant.host,
-    tenantKind: tenant.kind,
-    ...(tenant.kind === "college" ? {
-      canonicalHost: tenant.canonicalHost ?? null,
-      shouldRedirectToCanonicalHost: tenant.shouldRedirectToCanonicalHost === true,
-    } : {}),
-  };
+/** Public bootstrap compatibility. Never serialize guessed or unverified
+ * Host/X-Forwarded-Host values as college identities. Versioned fields let
+ * old consumers upgrade without accidentally treating branding as auth. */
+export function publicRequestTenantSnapshot(value:RequestTenant){
+ const base={version:1 as const,resolvedHost:value.host,
+   isPlatform:value.kind==="platform",isVerifiedCollege:value.kind==="college"};
+ if(value.kind!=="college")return {...base,collegeId:null,organizationId:null,
+   canonicalHost:null,redirectToCanonical:false};
+ return {...base,collegeId:value.collegeId,
+  organizationId:value.organizationId,canonicalHost:value.canonicalHost??value.host,
+  redirectToCanonical:value.shouldRedirectToCanonicalHost===true};
+}
+/** Limit the effect of a just-verified or deleted DNS domain until next read. */
+export function invalidateRequestTenantHost(host:string){
+ try{cache.delete(normalizeRequestHost(hostWithoutPort(host)));}catch{/* Invalid host was never cached. */}
 }
