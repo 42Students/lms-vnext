@@ -44,6 +44,14 @@ export async function saveProjectMeetingPlan(context: RequestContext, projectId:
     if (updates.some(({ prior }) => !prior || prior.deletedAt || prior.status !== "DRAFT")) {
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     }
+    const currentKeys=new Set<string>();
+    for(const meeting of current){
+      const planned=updates.find(update=>update.next.id===meeting.id);
+      const key=(planned?.next.key??meeting.meetingKey??"").toLowerCase();
+      if(key&&currentKeys.has(key))
+        throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+      if(key)currentKeys.add(key);
+    }
     const changed = updates.filter(({ prior, next }) =>
       projectMeetingPlanFieldsChanged(prior!, next));
     if (!changed.length) {
@@ -74,7 +82,9 @@ export async function saveProjectMeetingPlan(context: RequestContext, projectId:
     const meetingIds: string[] = [];
     for (const { prior, next } of changed) {
       const [saved] = await tx.update(projectMeetings).set({
-        title: next.title, agenda: next.agenda, startsAt: new Date(next.startsAt),
+        title:next.title,meetingKey:next.key,meetingType:next.meetingType,
+        meetingUrl:next.meetingUrl,outcome:next.notes,
+        agenda: next.agenda, startsAt: new Date(next.startsAt),
         endsAt: new Date(next.endsAt), linkedSprintId: next.linkedSprintId,
         linkedTaskId: next.linkedTaskId, updatedAt, version: prior!.version + 1,
       }).where(and(eq(projectMeetings.id, next.id),

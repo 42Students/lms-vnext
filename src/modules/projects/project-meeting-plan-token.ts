@@ -6,7 +6,8 @@ export function projectMeetingPlanToken(meetings: readonly {
   id: string; status: string; title: string; agenda: string | null;
   startsAt: Date; endsAt: Date; updatedAt: Date; deletedAt: Date | null;
   meetingType: string; linkedSprintId: string | null; linkedTaskId: string | null;
-  meetingUrl: string | null; version: number;
+  meetingUrl: string | null;meetingKey:string|null;outcome:string|null;
+  version: number;
 }[]) {
   const hash = createHash("sha256");
   for (const row of [...meetings].sort((a, b) => a.id.localeCompare(b.id))) {
@@ -15,7 +16,7 @@ export function projectMeetingPlanToken(meetings: readonly {
       row.startsAt.toISOString(), row.endsAt.toISOString(),
       row.updatedAt.toISOString(), row.deletedAt?.toISOString() ?? null,
       row.meetingType, row.linkedSprintId, row.linkedTaskId,
-      row.meetingUrl, row.version,
+      row.meetingUrl,row.meetingKey,row.outcome,row.version,
     ]) + "\n");
   }
   return hash.digest("hex");
