@@ -48,6 +48,7 @@ export default async function CollegeOfferingLearningPage({
   const deliveryId=selected??null;
 
   return (
+    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]" data-legacy-surface="college-course-detail">
     <AdminOfferingLearningPage
       key={offeringId+":"+ (deliveryId??"all")}
       context={context}
@@ -56,5 +57,6 @@ export default async function CollegeOfferingLearningPage({
       eyebrow="College Admin · Courses"
       backHref="/college/courses"
     />
+    </div>
   );
 }

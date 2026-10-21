@@ -4,6 +4,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {ErrorState} from "@/components/ui/error-state";
+import {Alert} from "@/components/ui/alert";
 import {CollegeVerificationPanel} from "@/components/verification/CollegeVerificationPanel";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError,requireCollegeVerificationActor} from "@/modules/verification/staff-auth";
@@ -21,7 +22,11 @@ export default async function CollegeVerificationPage({searchParams}:{
   <PageHeader title="Profile verification"/>
   <ErrorState title="Profile verification" description="Admin not assigned to a college. Ask a Super Admin to assign a college before reviewing students."/>
  </div>;
- if(!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
+ if(!hasMembershipRole(context,"COLLEGE_ADMIN"))return <div className="min-w-0 space-y-4">
+  <PageHeader title="Profile verification"/>
+  <Alert tone="info" title="You cannot verify profiles here">Profile verification is available to an assigned College Admin in the selected college. Switch to the correct college and role to review requests.</Alert>
+  <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>
+ </div>;
  // Verify persisted membership separately from loading database queue rows.
  try{await requireCollegeVerificationActor(context);}
  catch(error){
@@ -61,8 +66,11 @@ export default async function CollegeVerificationPage({searchParams}:{
     :"Could not load verification requests from the database. The list was not assumed empty.";
   return <div className="min-w-0 max-w-full space-y-6">
    <PageHeader title="Profile verification"/>
+   <Alert tone="error" title={loadFailure==="READ_FAILED"?"Could not load verification requests":"Verification queue unavailable"}>
+    {description} The current filters are retained. No prior college's queue is shown as a fallback.
+   </Alert>
    <ErrorState title={loadFailure==="READ_FAILED"?"Could not load verification requests":"Profile verification"} description={description}
-     action={<Link href="/college/verification" prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>}/>
+     action={<Link href={verificationPageUrl(parsed.data,parsed.data.page)} prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>}/>
   </div>;
  }
  if(!data)throw new Error("VERIFICATION_QUEUE_UNAVAILABLE");

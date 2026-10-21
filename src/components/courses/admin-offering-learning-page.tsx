@@ -25,6 +25,7 @@ import {
 export async function AdminOfferingLearningPage({
   context,
   offeringId,
+  eyebrow,
   backHref,
   deliveryId=null,
 }: {
@@ -84,18 +85,29 @@ export async function AdminOfferingLearningPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <header className="min-w-0 border-b border-[var(--lms-canvas-border)] bg-surface pb-4">
-       <h1 className="m-0 break-words text-[24px] font-semibold leading-snug text-[var(--lms-heading)]">
-        {workspace.offering.courseName}
-       </h1>
-       <p className="mt-1 text-xs text-muted-foreground">
-        {workspace.offering.courseCode+" · "+workspace.offering.cohortName+
-          " · "+workspace.offering.academicPeriodName}
-       </p>
-      </header>
-      <AdminOfferingSectionTabs home={<article className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
-       <div><PageBackLink href={backHref} label="Back"/></div>
-       <h2 className="text-lg font-semibold text-foreground">In this Course</h2>
+      <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
+        <Link href={backHref} className="font-semibold text-link underline underline-offset-4">Courses</Link>
+        <span aria-hidden="true">/</span>
+        <span className="break-words" aria-current="page">{workspace.offering.courseName}</span>
+      </nav>
+      <PageHeader eyebrow={eyebrow}
+        title={
+          workspace.offering.courseName
+        }
+        description={
+          workspace.offering.courseCode +
+          " · " +
+          workspace.offering.cohortName +
+          " · " +
+          workspace.offering
+            .academicPeriodName
+        }
+        actions={
+          <PageBackLink href={backHref} label="Back to Courses" />
+        }
+      />
+      <AdminOfferingSectionTabs home={<div className="space-y-4">
+       <h2 className="text-lg font-semibold text-foreground">Home</h2>
        {displayResult.failed?<Alert tone="warning" role="alert" title="Server Notification">
         Course Home content couldn&apos;t be loaded. Internal Server Error.
         <a href={retryHref+"#course-home"} className="ml-2 font-semibold underline">Retry</a>

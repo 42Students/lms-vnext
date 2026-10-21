@@ -15,14 +15,22 @@ export async function POST(request:Request){
   const context=await getCurrentRequestContext();
   await requireCollegeVerificationActor(context);
   await requireVerificationTables();
+  // Legacy verify and send-back paths used numeric learner IDs. The
+  // membership-scoped UUID, section, expectedVersion and reason are a
+  // single validated body; the reviewer is derived from the active session.
   const input=verificationReviewInput.parse(await request.json());
   const record=await reviewProfileVerification(context,input,
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
   // The locked writer persists an immutable activity event AND an in-app notification
   // in the decision transaction. TODO(messaging): queue email/SMS intent via the
   // shared src/modules/messaging delivery interface once its outbox lands on main.
+  const sectionLabel=record.section==="EDUCATION"?"Education":"Identity";
+  const message=input.action==="VERIFY"?sectionLabel+" verified":
+   record.status==="VERIFIED"
+    ?sectionLabel+" update sent back. The previous verified snapshot remains in effect."
+    :sectionLabel+" sent back for changes";
   return NextResponse.json({decision:{learnerMembershipId:record.learnerMembershipId,
-   section:record.section,status:record.status,version:record.version}},
+   section:record.section,status:record.status,version:record.version},message},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof VerificationUnavailableError)
@@ -30,7 +38,14 @@ export async function POST(request:Request){
   if(error instanceof VerificationStateError){
    const status=error.code==="NOT_ALLOWED"?404:
      error.code==="REASON_REQUIRED"?400:error.code==="STALE_VERSION"?409:409;
-   return NextResponse.json({error:error.code==="NOT_ALLOWED"?"NOT_FOUND":error.code},{status});
+   const message=error.code==="STALE_VERSION"
+    ?"The student changed this after you opened it. Open it again to see what they sent."
+    :error.code==="REASON_REQUIRED"?"Say what needs to change"
+    :error.code==="INCOMPLETE_DOCUMENTS"?"Before sending: complete all required fields and documents"
+    :error.code==="NOT_ALLOWED"?"This verification record is not available."
+    :"Could not complete the review. Reload the student and try again.";
+   return NextResponse.json({error:error.code==="NOT_ALLOWED"?"NOT_FOUND":error.code,message},
+    {status,headers:{"Cache-Control":"private, no-store"}});
   }
   return apiErrorResponse(error);
  }
