@@ -9,6 +9,24 @@ import {updateWorkspaceBriefSchema,publishedWorkspaceBriefError} from "./workspa
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
+/** Old ProjectWorkspace PUT routes are split by explicit vNext mutation:
+ * overview -> updateProjectWorkspaceBrief, summary -> college-project-summary,
+ * sprints -> project sprint service, resources -> resource service, delivery ->
+ * final-delivery service; R2 downloads use the existing signed-URL storage
+ * route, never an unauthenticated raw object URL.
+ * All writes must independently enforce version, role and tenant scope;
+ * a project-wide PUT must not overwrite unrelated nested state.
+ */
+export const LEGACY_PROJECT_WORKSPACE_COMPATIBILITY={
+ overview:"updateProjectWorkspaceBrief",
+ summary:"college-project-summary-service",
+ sprints:"sprint service",
+ resources:"project resource service (signed read/download)",
+ delivery:"final delivery service",
+ activities:"activity events (durable)",
+ messages:"active-member inbox notices after verified commit",
+ conflicts:"PROJECT_SUBMISSION_CONFLICT (409; refresh before retry)",
+} as const;
 /** The workspace-authored brief is separate from the immutable template version. */
 export async function updateProjectWorkspaceBrief(context:RequestContext,projectIdInput:string,raw:unknown){
  const input=updateWorkspaceBriefSchema.parse(raw);

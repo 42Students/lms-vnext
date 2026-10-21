@@ -7,6 +7,15 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { listColleges } from "@/modules/colleges/service";
 import { getSuperAdminTemplateSubview } from "./template-subview-service";
 import { projectTemplateCollegeAvailability, templateCollegeAvailabilityQuerySchema, templateAvailabilityCollegesInScope } from "./template-college-availability-model";
+/** Legacy getColleges/getProjectTemplateById/assign/unassign/bulkSet are
+ * split between scoped reads and persisted mutation services. Missing
+ * assignment storage is UNKNOWN, never "not assigned". */
+export const legacyTemplateCollegeAvailabilityContract={
+ reads:["listColleges","getSuperAdminTemplateSubview"],
+ writes:["assign","unassign","bulkSet"],
+ knownOnlyAfter:["template","collegeDirectory","assignmentRows"],
+ draftAssignment:"Requires published template and authorized college scope",
+} as const;
 export class TemplateCollegeReadError extends Error {
   constructor(readonly source: "TEMPLATE" | "ASSIGNMENTS") {
     super(source === "TEMPLATE" ? "Template could not be loaded" : "College assignments could not be loaded");
@@ -55,6 +64,10 @@ export async function listSuperAdminTemplateCollegeAvailability(context: Request
     throw new TemplateCollegeReadError("ASSIGNMENTS");
   }
   // Both reads must succeed: never treat a failed assignment request as an empty list.
-  return { template: detail.template, ...projectTemplateCollegeAvailability(templateAvailabilityCollegesInScope(
-    colleges,context.adminScope??null,isSuperAdmin(context)),detail.assignedColleges,query) };
+  const verified=projectTemplateCollegeAvailability(templateAvailabilityCollegesInScope(
+    colleges,context.adminScope??null,isSuperAdmin(context)),detail.assignedColleges,query);
+  return {template:detail.template,...verified,
+    assignmentReadState:"VERIFIED" as const,
+    draftAssignmentForbidden:detail.template.status!=="PUBLISHED",
+  };
 }
