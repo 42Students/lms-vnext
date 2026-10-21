@@ -15,6 +15,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
+import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyAssessmentCreate } from "./faculty-assessment-create";
 import type { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
@@ -235,7 +236,9 @@ export function FacultyAssessmentOverview({
                           updatedAt: item.updatedAt,
                           ...(item.kind === "QUIZ"
                             ? { maxAttempts: item.maxAttempts }
-                            : { maxPoints: item.maxPoints, hasSubmissions:item.hasSubmissions }),
+                            : { maxPoints: item.maxPoints, hasSubmissions:item.hasSubmissions,
+                              allowedMethods:normalizeAssignmentMethods(item.allowedSubmissionMethods),
+                              deliveryId:item.deliveryId }),
                         }}
                       />
                       {item.kind === "QUIZ" &&

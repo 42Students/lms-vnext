@@ -19,6 +19,7 @@ import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import {FacultyQuizLearnerPreview} from "./faculty-quiz-learner-preview";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
+import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
 import { FacultyCourseItemViewer } from "./faculty-course-item-viewer";
@@ -248,6 +249,7 @@ function AssignmentItem({
               status: item.status,
               updatedAt: item.updatedAt,
               maxPoints: item.maxPoints,
+              allowedMethods:normalizeAssignmentMethods(item.allowedSubmissionMethods),
             }}
           />
           <FacultyAssessmentLifecycle
