@@ -25,3 +25,32 @@ export const facultyCourseAssociations = pgTable("faculty_course_associations", 
   index("faculty_course_associations_course_active_idx").on(t.courseId, t.membershipId).where(sql`${t.endedAt} is null`),
   check("faculty_course_associations_lifecycle_ck", sql`${t.endedAt} is null or ${t.endedAt} >= ${t.startedAt}`),
 ]);
+
+/** An approved historical import groups duplicate active faculty/course
+ * associations before applying the live partial unique constraint. Numeric
+ * IDs remain provenance only; the caller resolves each to same-college UUIDs.
+ * Older duplicates are closed at the newest active association's start. */
+export function resolveLegacyFacultyCourseDuplicates<T extends {
+ legacyId:number;active:0|1;startedAt:string;membershipId:string;courseId:string;
+}>(rows:readonly T[]){
+ const groups=new Map<string,T[]>();
+ for(const row of rows){
+  if(!Number.isSafeInteger(row.legacyId)||row.legacyId<1)
+   throw new Error("Invalid legacy association identity");
+  const instant=new Date(row.startedAt);
+  if(!Number.isFinite(instant.getTime())||!/(?:Z|[+-]\d{2}:\d{2})$/.test(row.startedAt))
+   throw new Error("Legacy association time zone requires review");
+  const key=row.membershipId+":"+row.courseId;
+  groups.set(key,[...(groups.get(key)??[]),row]);
+ }
+ return [...groups.values()].flatMap(group=>{
+  const active=group.filter(row=>row.active===1).sort((a,b)=>
+   Date.parse(b.startedAt)-Date.parse(a.startedAt)||b.legacyId-a.legacyId);
+  const survivor=active[0]??null;
+  return group.map(row=>({
+   ...row,isCurrent:survivor!==null&&row.legacyId===survivor.legacyId,
+   endedAt:row.active===0?row.startedAt:
+    survivor&&row.legacyId!==survivor.legacyId?survivor.startedAt:null,
+  }));
+ });
+}

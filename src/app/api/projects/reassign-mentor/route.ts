@@ -17,7 +17,18 @@ export async function POST(request: Request) {
   try {
     const context =
       await getCurrentRequestContext();
-    const input: unknown = await request.json();
+    let input:unknown;
+    try{input=await request.json();}
+    catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+    if(input&&typeof input==="object"&&!Array.isArray(input)){
+      const raw=input as Record<string,unknown>;
+      // A selected single project is the one-element form of the bulk
+      // transaction. No old integer ID is accepted as a project or mentor.
+      if(typeof raw.projectId==="string"&&raw.projectIds===undefined){
+        const {projectId,...rest}=raw;
+        input={...rest,projectIds:[projectId]};
+      }
+    }
     // Old numeric mentorId is not a persisted membership UUID. Importers must
     // resolve it against the selected college before invoking this route.
     if(input && typeof input==="object" && !Array.isArray(input) &&
@@ -28,7 +39,10 @@ export async function POST(request: Request) {
         context,
         input,
       );
-    return NextResponse.json(result);
+    return NextResponse.json({...result,
+      partialSuccess:result.failures.length>0&&result.reassignedCount>0,
+      failedProjects:result.failures,
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
