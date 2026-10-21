@@ -1060,6 +1060,27 @@ export async function evaluatePlacementEligibility(
   }
   const [enrollment] = enrollments;
 
+  // An INCLUDE override must not grant access where we cannot establish the
+  // learner's active program, cohort or section at all. This is an audience
+  // authorization boundary, not a missing-mark academic scoring criterion.
+  if (!enrollment && policy && (
+    policy.allowedProgramIds.length > 0 ||
+    policy.allowedCohortIds.length > 0 ||
+    policy.allowedSectionIds.length > 0
+  )) {
+    return {
+      status: "INELIGIBLE",
+      checks: [{
+        criterion: "Cohort",
+        status: "FAIL",
+        actual: null,
+        required: "An active eligible academic cohort",
+        detail: "Active academic enrollment not found (non-overridable audience restriction)",
+      }],
+      override: null,
+    };
+  }
+
   if (policy && enrollment && !isPlacementJobTargetCohort(policy, enrollment)) {
     // Reuse the existing legacy-facing Program/Cohort check vocabulary.
     const wrongProgram = policy.allowedProgramIds.length > 0 &&
