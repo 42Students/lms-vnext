@@ -95,11 +95,12 @@ async function SuperAdminDashboard({
   const collegeId = context.adminScope?.collegeId ?? null;
   if (!collegeId) {
     return <div className="min-w-0 max-w-full space-y-6">
+      <PageHeader eyebrow="Super Admin" title="Dashboard" description="Platform-wide operations and navigation" />
       <section aria-labelledby="platform-operations-title" className="space-y-3">
         <p className="text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">Platform operations</p>
-        <h1 id="platform-operations-title" className="text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
+        <h2 id="platform-operations-title" className="text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)] md:text-[var(--lms-font-2xl)]">
           Choose the level you need to operate at.
-        </h1>
+        </h2>
         <p className="max-w-3xl text-sm leading-[22px] text-body">
           Start with a platform-wide control below, or select a college in the header to switch this dashboard into that college&apos;s operational view.
         </p>
@@ -114,8 +115,8 @@ async function SuperAdminDashboard({
           <span aria-hidden="true" className="shrink-0 font-semibold text-primary-text">→</span>
         </Link>)}
       </nav>
-      <p role="note" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm leading-[22px] text-body">
-        Select a college in the header to see live college totals, issues needing attention, and college-scoped shortcuts.
+      <p role="note" className="flex items-start gap-3 border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm leading-[22px] text-body">
+        <span aria-hidden="true" className="text-xl">▦</span><span>Select a college in the header to see live college totals, issues needing attention, and college-scoped shortcuts.</span>
       </p>
     </div>;
   }
@@ -147,9 +148,13 @@ async function SuperAdminDashboard({
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow="Super Admin"
-        title="Overview"
-        description={`${scopeLabel}. Counts and actions follow the selected safety scope.`}
+        title="Dashboard"
+        description={`Hello, welcome to ${scopeLabel}. Counts and actions follow your selected college safety scope.`}
       />
+      <section aria-label="Selected college greeting" className="space-y-1">
+        <h2 className="text-xl font-semibold text-[var(--lms-heading)]">Your college at a glance</h2>
+        <p className="text-sm text-body">Review this college’s activity and quick actions.</p>
+      </section>
       <div className="grid min-w-0 gap-3 min-[768px]:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Organizations"
@@ -373,14 +378,8 @@ async function MembershipDashboard({
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
         eyebrow={roleLabel}
-        title={
-          college &&
-          workspaces.length === 1 &&
-          !hasActiveRecruiter(context)
-            ? college.name
-            : "Workspace dashboard"
-        }
-        description="Your active roles share one landing page. Every count and destination remains scoped through the same authenticated membership and permission rules."
+        title="Dashboard"
+        description={`Hello, welcome to ${college?.name ?? roleLabel}. Your active roles share one landing page, scoped to this membership.`}
       />
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -503,7 +502,13 @@ async function MembershipDashboard({
           </>
         ) : null}
       </div>
-      {hasWorkspace("COLLEGE_ADMIN") ? <CollegeAdminDashboardActions /> : null}
+      {hasWorkspace("COLLEGE_ADMIN") ? <>
+        <CollegeAdminDashboardActions />
+        <nav aria-label="More college administration" className="flex flex-wrap gap-3">
+          <Link href="/college/people" className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Manage students</Link>
+          <Link href="/college/academics" className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 font-semibold text-primary-text hover:bg-primary-subtle">Academic setup</Link>
+        </nav>
+      </> : null}
     </div>
   );
 }

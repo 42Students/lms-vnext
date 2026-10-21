@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { Disclosure } from "@/components/ui/disclosure";
 import { Dropdown } from "@/components/ui/dropdown";
 import { ErrorState } from "@/components/ui/error-state";
 import { Banner } from "@/components/ui/banner";
@@ -114,15 +113,16 @@ const columns: DataTableColumn<CollegeRow>[] = [
   {
     key: "actions",
     mobilePriority: "action",
-    header: <span className="sr-only">Actions</span>,
+    header: "Actions",
     className: "text-right",
     cell: (college) => (
       <div className="flex min-w-0 flex-wrap justify-start gap-2 md:justify-end">
         <Link href={`/admin/colleges/${encodeURIComponent(college.id)}`}
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">
-          Tenant setup
+          Manage
         </Link>
-        <Dropdown trigger="More" label="College actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
+        {college.canManage?<CollegeEditDialog college={college} />:null}
+        <Dropdown trigger="More" label={"More actions for "+college.name} align="end" mobileSheet triggerClassName="md:!min-h-9">
           <div className="grid min-w-0 gap-[var(--lms-space-2)]">
         <Link role="menuitem"
           href={`/admin/colleges/${encodeURIComponent(college.id)}/readiness`}
@@ -137,7 +137,6 @@ const columns: DataTableColumn<CollegeRow>[] = [
           Branding
         </Link>
         {college.canManage ? <>
-          <CollegeEditDialog college={college} />
           <CollegeArchiveButton collegeId={college.id} name={college.name} />
         </> : null}
           </div>
@@ -155,7 +154,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
   // A numeric legacy organization ID cannot be matched against vNext UUIDs.
   const rawDirectory=Object.fromEntries(Object.entries(raw).filter(([key])=>
     !["state","city","orgId"].includes(key)));
-  const filters=parseAdminDirectorySearchParams(rawDirectory);
+  // The old directory showed ten records initially, with a size changer.
+  const filters=parseAdminDirectorySearchParams({pageSize:"10",...rawDirectory});
   const validFacet=(value:unknown,max:number)=>value===undefined||
     (typeof value==="string"&&value.length<=max);
   const validOrg=raw.orgId===undefined||
@@ -189,7 +189,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
   const organizationNames=new Map(organizations.map(x=>[x.id,x.name]));
   const rows:CollegeRow[] = colleges.map(college=>({
     ...college,
-    organizationName:organizationNames.get(college.organizationId)??"Unavailable",
+    organizationName:organizationNames.get(college.organizationId)??("Org #"+college.organizationId.slice(0,8)),
     canManage:organizationsResult.ok&&canManageCollegeDirectoryRow(context,college),
   }));
   const {q,pageSize}=filters;
@@ -243,8 +243,12 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
         Organizations could not be loaded. College create, import, edit and archive actions
         are disabled until the authorized organization directory is available.
       </Banner>:null}
+
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <section aria-label="Create New College" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm md:p-5">
+       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Create New College</h2>
       {creatableOrganizations.length > 0 ? (
-        <Disclosure title="Create College" ariaLabel="Create college" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+        <div className="min-w-0 space-y-3">
         <CollegeCreateForm
           organizations={creatableOrganizations.map(
             (organization) => ({
@@ -253,16 +257,19 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
             }),
           )}
         />
-        </Disclosure>
+        </div>
       ) : organizationsResult.ok&&organizations.length === 0 ? (
         <EmptyState
           title="Create an organization first"
           description="Every college belongs to an organization, so the organization is the required first tenant boundary."
         />
-      ) : null}
+      ) : !organizationsResult.ok?<p role="status" className="text-sm text-muted-foreground">Organization options are unavailable. Retry organizations above.</p>:<p className="text-sm text-muted-foreground">Your role cannot create colleges in this scope.</p>}
+      </section>
+      <section aria-label="Existing Colleges" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm md:p-5">
+       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Existing Colleges</h2>
       <form role="search" aria-label="Search colleges" className="grid min-w-0 items-end gap-[8px] border-y border-border py-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto_auto] lg:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto]" method="get">
-       <label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search college, code, location or organization
-        <Input type="search" name="q" defaultValue={q} maxLength={100} />
+       <label className="flex min-w-0 w-full flex-1 flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-w-48">Search colleges
+        <Input type="search" name="q" defaultValue={q} maxLength={100} placeholder="Search colleges..." />
        </label>
        <label className="flex flex-col gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">State
         <Input name="state" defaultValue={state} maxLength={80} placeholder="All states"/>
@@ -292,6 +299,8 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
           description="No college records are visible under the selected Super Admin safety scope. Clear or change the scope to search elsewhere; no tenants were modified."/>}/>
       <Pagination page={page} pageCount={pages} hrefForPage={href} label="College directory pages"/>
       {creatableOrganizations.length>0?<CollegeBulkImport organizations={creatableOrganizations.map(x=>({id:x.id,name:x.name}))}/>:null}
+      </section>
+      </div>
     </div>
   );
 }

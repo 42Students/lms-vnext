@@ -37,10 +37,13 @@ const placementFilterPillClass = "inline-flex min-h-11 shrink-0 items-center gap
 const placementFilterNavClass = "min-w-0 max-w-full flex flex-nowrap items-center gap-2 overflow-x-auto pb-2 text-sm [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:max-w-full md:flex-wrap md:overflow-visible md:pb-0";
 
 export default async function LearnerPlacementAnnouncementsPage({ searchParams }: {
-  searchParams: Promise<{ pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[]; source?:string | string[] }>;
+  searchParams: Promise<{ show?:string|string[]; pinned?: string | string[]; unread?: string | string[]; q?: string | string[]; recent?: string | string[]; page?: string | string[]; sort?: string | string[]; alertQ?:string | string[]; focus?:string | string[]; source?:string | string[] }>;
 }) {
   const query = await searchParams;
-  const filters=readLearnerNoticeFilters(query);
+  const {show:rawShow,...visibleQuery}=query;
+  const show=Array.isArray(rawShow)?rawShow[0]:rawShow;
+  const activeView=show==="updates"?"updates":"announcements";
+  const filters=readLearnerNoticeFilters(visibleQuery);
   const pinnedOnly=filters.pinned;
   const unreadOnly=filters.unread;
   const queryText=filters.q;
@@ -63,6 +66,20 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const allNotices = collegeNoticesRead.available
     ? learnerPlacementNoticeFeed(collegeNoticesRead.items)
     : [];
+  // College notices and personal updates have independent unread populations.
+  // Unknown per-notice receipts must never be displayed as zero unread.
+  const hasNoticeReceipts=allNotices.every(row=>row.unread!==null);
+  const noticeUnread=hasNoticeReceipts?allNotices.filter(row=>row.unread===true).length:null;
+  const tabHref=(target:"announcements"|"updates")=>{
+    const params=new URLSearchParams();
+    if(target==="updates")params.set("show","updates");
+    if(filters.q)params.set("q",filters.q);
+    if(filters.alertQ)params.set("alertQ",filters.alertQ);
+    if(filters.pinned)params.set("pinned","1");
+    if(filters.unread)params.set("unread","1");
+    if(filters.source!=="all")params.set("source",filters.source);
+    return "/learn/my-placements/announcements"+(params.size?"?"+params.toString():"");
+  };
   const searchedNotices=searchLearnerNotices(filterLearnerNoticesBySource(learnerPlacementNoticeView(allNotices,pinnedOnly),source),queryText);
   const notices=recentOnly ? filterLearnerRecentNotices(searchedNotices,new Date().getTime()) : searchedNotices;
   const sortedNotices=sortLearnerNotices(notices,sortKey);
@@ -90,11 +107,17 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
           }>Couldn&apos;t load everything. The available notices are shown below.</Banner>
         ) : null}
       </div>
-      <nav aria-label="Placement notice views" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible sm:pb-0">
-        <a href="#college-notices" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Announcements</a>
-        <a href="#personal-updates" className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
+      <nav aria-label="Placement notice views" className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-0">
+        <Link href={tabHref("announcements")} aria-current={activeView==="announcements"?"page":undefined}
+          className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-[3px] px-4 text-sm font-semibold "+(activeView==="announcements"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+          Announcements <span className="rounded-full bg-primary-subtle px-2 py-0.5 text-xs">{noticeUnread===null?"Unread ?":noticeUnread+" unread"}</span>
+        </Link>
+        <Link href={tabHref("updates")} aria-current={activeView==="updates"?"page":undefined}
+          className={"inline-flex min-h-11 shrink-0 items-center gap-2 border-b-[3px] px-4 text-sm font-semibold "+(activeView==="updates"?"border-[var(--lms-primary)] text-primary-text":"border-transparent text-body hover:text-primary-text")}>
+          Updates about you ({unreadCount.available?unreadCount.items[0]:"?"} unread)
+        </Link>
       </nav>
-      <div id="college-notices" className="scroll-mt-24"/>
+      <section id="college-notices" aria-label="College placement announcements" hidden={activeView!=="announcements"} className="min-w-0 space-y-4 scroll-mt-24">
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="College notice search" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:gap-3">
         {alertQ?<Input type="hidden" name="alertQ" value={alertQ}/>:null}
         {source==="placement-cell"?<Input type="hidden" name="source" value={source}/>:null}
@@ -196,15 +219,17 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 py-4 first:pt-0 last:pb-0 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary md:py-4">
               <div className="flex flex-wrap items-center gap-2">
                 {notice.isPinned ? <Badge  tone="info">Pinned</Badge> : null}
-                {notice.updatedAt ? <Badge  tone="info">Updated</Badge> : null}
+                {notice.updatedAt ? <Badge tone="info">Updated</Badge> : null}
+                {notice.unread===true ? <Badge tone="info">New</Badge> : null}
                 {/* Never present a recent publication as unread without a receipt. */}
               </div>
               <h2 className="break-words text-lg font-semibold text-foreground">{notice.title}</h2>
               <p className="mt-1 text-xs text-muted-foreground">
-                {notice.senderLabel ? "Issued by "+notice.senderLabel : "College announcement"}
+                {notice.senderLabel ?? "College announcement"}
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
+              {notice.driveHref?<Link href={notice.driveHref} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open the drive</Link>:null}
                {notice.buttonUrl && notice.buttonLabel ? (
                  <div className="mt-3 min-w-0">
                    <ThirdPartyLink href={notice.buttonUrl} label={`${notice.buttonLabel} ↗`} />
@@ -233,12 +258,15 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
         {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center border border-border rounded-[8px] md:rounded-[var(--lms-control-radius)] px-3 text-primary-text hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link> : null}
       </nav> : null}
+      </section>
+      <section hidden={activeView!=="updates"} aria-label="Personal placement updates" className="min-w-0 space-y-4">
       <div id="personal-updates" className="scroll-mt-24 border-t border-border pt-6"><h2 className="text-lg font-semibold text-foreground">Updates about you</h2></div>
       <nav aria-label="Personal alert filter" className={placementFilterNavClass}>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className={placementFilterPillClass} aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>
       </nav>
       <form method="GET" action="/learn/my-placements/announcements" role="search" aria-label="Personal alert search" className="flex min-w-0 flex-wrap items-end gap-3">
+        <Input type="hidden" name="show" value="updates"/>
         {pinnedOnly?<Input type="hidden" name="pinned" value="1"/>:null}
         {recentOnly?<Input type="hidden" name="recent" value="1"/>:null}
         {unreadOnly?<Input type="hidden" name="unread" value="1"/>:null}
@@ -269,6 +297,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             className="ml-2 inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry personal alerts</Link>
         </Banner>}
 
+      </section>
     </div>
   );
 }
