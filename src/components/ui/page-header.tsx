@@ -38,7 +38,7 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
         </h1>
         {subtitle ? (
           <span
-            className="min-w-0 max-w-full text-[13px] leading-5 text-[var(--lms-muted-text)] md:flex-1"
+            className="min-w-0 max-w-full text-[14px] leading-5 text-[var(--lms-muted-text)] md:flex-1"
             title={subtitle}
           >
             {subtitle}

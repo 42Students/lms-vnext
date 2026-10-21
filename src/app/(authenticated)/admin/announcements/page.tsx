@@ -139,7 +139,7 @@ export default async function AnnouncementsPage({
           </Link>
         }
       />
-      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
+      <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search announcement title or message
           <Input name="q" defaultValue={params.q ?? ""} maxLength={120} placeholder="Search title or message" className="mt-1 w-full"/>
