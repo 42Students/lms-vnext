@@ -221,6 +221,7 @@ export async function getCourseQuiz(
   context: RequestContext,
   quizIdInput: string,
   deliveryIdInput?: string | null,
+  includeCorrectAnswers = true,
 ) {
   const quizId =
     courseQuizIdSchema.parse(quizIdInput);
@@ -310,8 +311,9 @@ export async function getCourseQuiz(
       asc(quizOptions.id),
     );
 
-  const revealCorrect = access !== "LEARNER" ||
-    learnerQuizResultsReleased(quiz,Date.now());
+  // GET editors opt in to private answer keys; learner release remains gated.
+  const resultsReleased=learnerQuizResultsReleased(quiz,Date.now());
+  const revealCorrect=includeCorrectAnswers && (access!=="LEARNER"||resultsReleased);
 
   const grouped = new Map<
     string,
@@ -369,7 +371,7 @@ export async function getCourseQuiz(
         : null,
     resultsVisible:
       access === "LEARNER"
-        ? revealCorrect
+        ? resultsReleased
         : true,
     questions:access==="LEARNER"&&context.membership
       ? shuffleQuizForLearner([...grouped.values()],quizId,context.membership.id,

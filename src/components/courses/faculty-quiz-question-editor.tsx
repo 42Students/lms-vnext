@@ -85,7 +85,7 @@ export function FacultyQuizQuestionEditor({
       const response = await fetch(
         `/api/courses/quizzes/${encodeURIComponent(
           quizId,
-        )}?deliveryId=${encodeURIComponent(
+        )}?includeCorrectAnswers=true&deliveryId=${encodeURIComponent(
           deliveryId,
         )}`,
         { cache: "no-store" },

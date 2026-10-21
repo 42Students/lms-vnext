@@ -25,7 +25,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   if(loading||busy)return;
   setOpen(true);setLoading(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quizId),{cache:"no-store"});
+   const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quizId)+"?includeCorrectAnswers=true",{cache:"no-store"});
    const body=await response.json().catch(()=>null);
    if(!response.ok||!Array.isArray(body?.quiz?.questions)&&!Array.isArray(body?.questions))
     throw new Error(typeof body?.error==="string"?body.error:"Unable to load quiz questions.");
