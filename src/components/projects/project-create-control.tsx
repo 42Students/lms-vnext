@@ -321,7 +321,7 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
-          <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Class
+          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Class
             <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
               <option value="">No class</option>
