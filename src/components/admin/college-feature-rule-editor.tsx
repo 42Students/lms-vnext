@@ -187,9 +187,11 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     {placementsOff?<div className="space-y-2">
      <p className="m-0 text-sm text-body">This hides Placements for the placement cell, college admins, students and recruiters at {collegeName}. Nothing is deleted; turning it back on restores access.</p>
      <dl className="grid grid-cols-2 gap-3 border-y border-border py-3 text-sm text-body">
-      {["Active drives","In-progress applications","Pending offers","Upcoming interviews"].map((label,index)=>
-       <div key={label}><dt className="text-muted-foreground">{label}</dt>
-        <dd className="font-semibold tabular-nums">{impactCounts?.[index]===undefined?"Unavailable":impactCounts[index].toLocaleString("en-IN")}</dd></div>)}
+      {["Active drives","In-progress applications","Pending offers","Upcoming interviews"].map((label,index)=>{
+       const value=impactCounts?.[index];
+       return <div key={label}><dt className="text-muted-foreground">{label}</dt>
+        <dd className="font-semibold tabular-nums">{value===undefined?"Unavailable":value.toLocaleString("en-IN")}</dd></div>;
+      })}
      </dl>
      <p className="text-xs text-muted-foreground">Counts can overlap; they are a blast-radius preview, not a deletion list.</p>
      {impactCounts!==null&&impactCounts.length<4?<Alert tone="warning">Upcoming-interview counts are not returned by this API. Check scheduled interviews before disabling Placements.</Alert>:null}
