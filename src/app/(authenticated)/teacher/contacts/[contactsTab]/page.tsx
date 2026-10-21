@@ -101,7 +101,6 @@ export default async function FacultyContactsPage({
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Search contacts
               <Input
-                className="mt-1.5"
                 type="search"
                 name="q"
                 maxLength={200}
