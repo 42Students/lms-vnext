@@ -11,8 +11,8 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_admin-assessment-read-directory.tsx.part1of2.md` (edit src/components/courses/admin-assessment-read-directory.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_admin-assessment-read-directory.tsx.part2of2.md` (edit src/components/courses/admin-assessment-read-directory.tsx; 24 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_admin-assessment-read-directory.tsx.part1of2.md` (edit src/components/courses/admin-assessment-read-directory.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_admin-assessment-read-directory.tsx.part2of2.md` (edit src/components/courses/admin-assessment-read-directory.tsx; 24 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-assessment-aggregate.tsx.part1of2.md` (edit src/components/courses/college-assessment-aggregate.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-assessment-aggregate.tsx.part2of2.md` (edit src/components/courses/college-assessment-aggregate.tsx; 17 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_college-learner-progress-report.tsx.part1of2.md` (edit src/components/courses/college-learner-progress-report.tsx; 40 findings; best P2)
