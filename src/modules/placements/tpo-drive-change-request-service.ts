@@ -151,7 +151,7 @@ async function applyDriveChangeField(
   roleChange={workMode:normalized};
  }else if(field==="CTC"||field==="STIPEND"){
   requireSingleRole();
-  if(!/^(?:0|[1-9]\\d*)(?:\\.\\d{1,2})?$/.test(value)||
+  if(!/^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/.test(value)||
    !Number.isFinite(Number(value))||Number(value)<0||
    (field==="CTC"&&Number(value)>1000)||
    (field==="STIPEND"&&Number(value)>2147483647))
@@ -166,7 +166,7 @@ async function applyDriveChangeField(
    roleChange={stipendPerMonthInr:Number(value).toFixed(2)};
   }
  }else if(field==="MIN_CGPA"){
-  if(!/^(?:0|[1-9]\\d*)(?:\\.\\d{1,2})?$/.test(value)||
+  if(!/^(?:0|[1-9]\d*)(?:\.\d{1,2})?$/.test(value)||
    Number(value)>10)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
   cgpaHundredths=Math.round(Number(value)*100);
  }else if(field==="BRANCHES"){
