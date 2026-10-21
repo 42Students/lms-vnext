@@ -11,7 +11,7 @@ export const superAdminReadQuerySchema = z.strictObject({
  q: z.string().trim().max(100).default(""),
  status: z.enum(["ALL","ACTIVE","INACTIVE","PLANNED","COMPLETED","ARCHIVED","ENDED","SUSPENDED","SUBMITTED","WITHDRAWN","PENDING","SCHEDULED","CANCELLED","HOLD","SHORTLISTED","REJECTED","ISSUED","ACCEPTED","DECLINED","JOINED","DID_NOT_JOIN","DEFERRED","CLOSED","DRAFT","PUBLISHED"]).default("ALL"),
  page: strictDecimal(1,1000,1),
- pageSize: strictDecimal(10,100,25).refine(n=>[10,25,50,100].includes(n)),
+ pageSize: strictDecimal(10,200,25).refine(n=>[10,25,50,100,200].includes(n)),
  jobId: z.string().uuid().optional(),
  source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
