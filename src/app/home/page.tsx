@@ -6,9 +6,10 @@ import {
 } from "@/components/marketing/marketing-layout";
 
 const site = "https://42lms.com";
-const title = "42 LMS | Talent development";
+// The legacy AI-title has been intentionally retired with the AI features.
+const title = "42 LMS — Learning, Projects and Placements";
 const description = "Connected learning, projects and placements for universities and enterprises.";
-export const metadata: Metadata = marketingPageMetadata("/", title, description);
+export const metadata: Metadata = {...marketingPageMetadata("/", title, description),title:{absolute:title}};
 
 /** Legacy home uses eight distinct visual bands. The seven agent positions,
  * integration chips and six pillars now describe shipped, non-AI LMS workflows.

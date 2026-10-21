@@ -4,7 +4,7 @@ const title="For Universities — 42 LMS";
 const description="Develop employable graduates: evaluate performance across exams, assignments, projects, and interviews, identify gaps early, and improve career readiness.";
 // The shared marketing layout emits the Organization, WebSite, WebPage and
 // BreadcrumbList JSON-LD graph when the route's canonical metadata is supplied.
-export const metadata=marketingPageMetadata("/universities",title,description);
+export const metadata={...marketingPageMetadata("/universities",title,description),title:{absolute:title}};
 export default function UniversitiesPage(){
  return <MarketingLayout path="/universities" pageTitle={title} pageDescription={description}>
   <MarketingHero eyebrow="For universities" title="Develop employable graduates through learning and placements"

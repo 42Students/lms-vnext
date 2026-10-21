@@ -5,7 +5,7 @@ const CANONICAL=SITE+"/enterprises";
 const DESCRIPTION="Build stronger workforces with structured learning, applied projects, evidence of skills and connected recruiting workflows for companies and colleges.";
 const TITLE="For Enterprises — 42 LMS";
 export const metadata:Metadata={
- title:TITLE,
+ title:{absolute:TITLE},
  description:DESCRIPTION,
  alternates:{canonical:CANONICAL},
  robots:{index:true,follow:true,maxImagePreview:"large",maxSnippet:-1,maxVideoPreview:-1},
