@@ -5,7 +5,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {isDatabaseUnavailableError} from "@/lib/db-outage";
 import {PlacementsServiceError} from "@/modules/placements/errors";
-import {saveOwnPlacementJob,unsaveOwnPlacementJob} from "@/modules/placements/saved-job-service";
+import {saveOwnPlacementJob,unsaveOwnPlacementJob,SavedJobsStorageUnavailableError} from "@/modules/placements/saved-job-service";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{jobId:string}>};
@@ -21,7 +21,7 @@ function savedJobError(error:unknown){
   return NextResponse.json({
    error:error.code,message:"This job is not available for your profile",
   },{status:404});
- if(isDatabaseUnavailableError(error))
+ if(error instanceof SavedJobsStorageUnavailableError || isDatabaseUnavailableError(error))
   return NextResponse.json({
    error:"SAVED_JOBS_NOT_CONFIGURED",message:"Saved jobs not configured",
   },{status:503,headers:{"Retry-After":"60"}});
