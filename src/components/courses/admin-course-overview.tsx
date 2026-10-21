@@ -24,6 +24,7 @@ import type {
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
 import { SuperAdminCourseBulkVisibility } from "./super-admin-course-bulk-visibility";
 import {AdminCourseVisibilityControl} from "./admin-course-visibility-control";
+import {CollegeCourseBulkVisibility} from "./college-course-bulk-visibility";
 import {
   CourseActions,
   DeliveryActions,
@@ -549,6 +550,12 @@ export function AdminCourseOverview({
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
           key={workspace.collegeId+":"+(catalogue?catalogue.items:workspace.courses).map(course=>course.id).join(":")}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
+        {!courseBasePath.startsWith("/admin/")?<CollegeCourseBulkVisibility
+         key={workspace.collegeId}
+         courses={(catalogue?catalogue.items:workspace.courses).map(course=>({
+          id:course.id,name:course.name,enabled:course.enabled&&course.legacyAllowedForDisplay!==0,
+          updatedAt:course.updatedAt.toISOString(),
+         }))}/>:null}
         <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show. Create Course and offering above to add the first record.</p>}
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}
