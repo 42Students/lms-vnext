@@ -81,7 +81,7 @@ export function TpoTeamAssignUnowned({
       ) : null}
 
       <div className="grid min-w-0 max-w-3xl grid-cols-1 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
           Who takes them?
           <Select
             disabled={busy || members.length === 0}

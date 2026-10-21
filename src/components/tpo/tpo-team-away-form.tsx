@@ -27,7 +27,7 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
    if(!date)return;const parsed=new Date(date+"+05:30");
    if(!Number.isFinite(parsed.getTime())){setError("Choose when you will be back.");return;}
    void submit(parsed.toISOString());}}>
-  <label className="grid gap-1 text-xs font-semibold">Away until (IST)
+  <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Away until (IST)
    <Input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
     className="min-h-11 md:min-h-9" />
   </label>
