@@ -559,7 +559,7 @@ export function SuperAdminHrAccounts({
 
   const accountActions = (account: HrAccount, mobile = false) => (
     <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden lg:justify-end">
-      <Button variant="secondary" size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||saving} onClick={() => openDetail(account)}>View</Button>
+      <Button variant="secondary" size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending||saving} onClick={() => openDetail(account)}>View</Button>
       <Dropdown label="Recruiter actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
         <Menu className="w-full min-w-0">
           <MenuItem disabled={pending || saving || !account.accountManageable}
@@ -786,7 +786,7 @@ export function SuperAdminHrAccounts({
                     Clear filters
                   </Link>
                 ) : (
-                  <Button className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden" disabled={saving||pending} onClick={openCreate}>
+                  <Button className="min-h-11 w-full md:w-auto md:min-h-9 print:hidden" disabled={saving||pending} onClick={openCreate}>
                     Add recruiter
                   </Button>
                 )
@@ -825,7 +825,7 @@ export function SuperAdminHrAccounts({
           {list.total > 0 ? (
             <nav
               aria-label="Recruiter account pages"
-              className="flex min-w-0 flex-col items-stretch gap-3 text-sm text-body print:hidden sm:flex-row sm:items-center sm:justify-between"
+              className="flex min-w-0 flex-col items-stretch gap-3 text-sm text-body print:hidden md:flex-row md:items-center md:justify-between"
             >
               <p className="m-0">
                 Showing {firstResult}–{lastResult}{" "}

@@ -666,7 +666,7 @@ export function RecruiterLeadsWorkspace({
         title={TPO_OWNER_PAGE_COPY.recruiterLeads}
         description="Every company contact you find, and what you will do next."
         actions={
-          <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
             <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase!=="ready"}
               onClick={()=>{setAdding(true);setForm(EMPTY);setSaveError("");setDuplicate(null);setReviewingCreate(false);}}>
               <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
@@ -729,8 +729,8 @@ export function RecruiterLeadsWorkspace({
             </Link>
             {!needsExpanded?<p className="text-xs text-muted-foreground leading-[20px]">Show needs doing to review outreach priorities.</p>:null}
           </section>
-          <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
-            <label className="min-w-48 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
+            <label className="min-w-48 flex-1 text-sm">
               Search name, company or contact
               <Input className={inputStyle + " mt-1.5 min-w-0"} value={query} onChange={e => updateFilter("query",e.target.value)}
                 placeholder="Search recruiter leads" />
@@ -742,7 +742,7 @@ export function RecruiterLeadsWorkspace({
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </Select>
             </label>
-            <div className="min-w-0 sm:col-span-2"><Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
+            <div className="min-w-0 md:col-span-2"><Tabs ariaLabel="Engage views" controlledOnly renderPanel={false} value={view}
               items={[{value:"table",label:"Table"},{value:"board",label:"Board"},
                 {value:"companies",label:"Companies",count:companies.length},{value:"campaigns",label:"Emails"}]}
               onValueChange={next=>{
@@ -770,8 +770,8 @@ export function RecruiterLeadsWorkspace({
               </FilterChip>)}
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
-              className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
+              className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4">
+              <label className="text-sm">Status
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
                   {["ALL","JOINED","UNSUBSCRIBED","NOT_JOINED"].map(item=>
@@ -1183,8 +1183,8 @@ export function RecruiterLeadsWorkspace({
               </Button>
             </div>:null}
             {saveError && <p role="alert" className="break-words text-sm text-error leading-[22px]">{saveError}</p>}
-            <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
-              <Button variant="secondary" type="button" className="w-full sm:w-auto" onClick={()=>closeAddDialog()} disabled={saving}>Cancel</Button>
+            <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 md:flex-row md:justify-end">
+              <Button variant="secondary" type="button" className="w-full md:w-auto" onClick={()=>closeAddDialog()} disabled={saving}>Cancel</Button>
               <Button variant="primary" type="submit" loading={saving} className={primaryStyle+" w-full sm:w-auto"}
                 disabled={saving || checking || Boolean(duplicate)}>
                 {saving ? "Creating…" : reviewingCreate?"Confirm and create recruiter":"Review and create recruiter"}
