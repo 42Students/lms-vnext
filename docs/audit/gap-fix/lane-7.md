@@ -190,3 +190,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-audit-grid.tsx.md` | Known UUID legacy drive link now maps to scoped vNext job route; other recruiter/student deep links require migration mapping. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_log-alerts_redaction.ts.md` | Alert redaction masks short uploaded filenames/extensions in addition to URLs and credentials; upload event/codes caller integration remains. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_activity-service.ts.md` | Activity service now projects immutable actorName, actorType, sourceTab JSON provenance where available, with current-name fallback. Legacy projectId data crosswalk and success envelope still require importer/API route. No CI.
+- `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-1_recruiter-invite-token.md.md` | Existing recruiter invite acceptance persists JOINED without legacy pending consent gate; security-sensitive membership lifecycle requires service/DB decision, no unsafe unilateral transition. Handed off, not fixed. No CI.

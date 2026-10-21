@@ -985,3 +985,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-11-006-003 | `src/modules/placements/tpo-audit-service.ts` | Map legacy recruiter and student context IDs to authorized vNext URLs; grid adapts UUID drive links.
 - G2-2-034-040 | `src/lib/report-client-error.ts + upload clients` | Emit safe FILE_UPLOAD_FAILURE classification/code only; never raw filename/presigned URL.
+
+- G2-5-018-025/-020 | `src/app/api/projects/[projectId]/activity/route.ts + activity event import` | Reconcile legacy projectId row migration to project scoped subjects/metadata and add optional legacy success envelope if compatibility clients require it.
+- G2-1-034-057 | `src/modules/placements/public-recruiter-invite-accept-service.ts + recruit consent UI` | Design PENDING_HR → JOINED consent lifecycle for existing recruiters while preserving token one-time use and verified college scope.
