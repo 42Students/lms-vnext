@@ -303,6 +303,12 @@ export function LectureHallManager({
         </section>
         <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
+          <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
+            <label htmlFor="hall-search" className="sr-only">Search halls</label>
+            <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-9 w-44"/>
+            <Button type="button" size="sm" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Refresh</Button>
+            <Button type="button" size="sm" variant="secondary" disabled={pending||visibleHalls.length===0} onClick={exportCsv}>Export CSV</Button>
+          </div>
       {visibleHalls.length === 0 ? (
         <EmptyState
           title={search?"No lecture halls match these filters.":emptyState?.title ?? "No lecture halls found."}
@@ -319,9 +325,9 @@ export function LectureHallManager({
                <span title={hall.description??undefined} className="block max-w-44 truncate">{hall.description??"—"}</span> },
             {
               key: "actions",
-              header: "",
+              header: "Actions",
               mobilePriority: "action",
-              className: "text-right",
+              className: "w-[120px] text-right md:sticky md:right-0 md:bg-surface",
               cell: (hall) => (
                 <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden md:justify-end">
                   <Link href={`${availabilityBase}/${hall.id}`}
@@ -350,6 +356,7 @@ export function LectureHallManager({
         open={editing !== null}
         onOpenChange={(value) => { if (!value) requestClose(); }}
         dismissible={!pending}
+        className="max-w-[500px]"
         title="Edit Lecture Hall"
         description="Names must be unique among active halls in this college. Archived rooms retain historical scheduling references and may be restored when no active name conflicts exist."
         footer={
