@@ -300,7 +300,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
                   item.mappedCourses > 0 ? item.mappedCredits ?? 0 : "—"},
                 {key:"courses",header:"Courses",mobilePriority:"secondary",cell:item=>item.mappedCourses},
                 {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
-                  <StatusBadge tone={item.isActive ? "success" : "danger"}>
+                  <StatusBadge tone={item.isActive ? "success" : "error"}>
                     {item.isActive ? "Active" : "Inactive"}
                   </StatusBadge>},
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
