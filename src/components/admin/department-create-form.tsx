@@ -74,7 +74,7 @@ export function DepartmentCreateForm({
       <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : DEPARTMENT_COPY.createButton}
       </Button>
-      {notice ? <p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-5 text-body sm:col-span-2">{notice}</p> : null}
+      {notice ? <p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-[22px] text-body sm:col-span-2">{notice}</p> : null}
       {error ? (
         <p role="alert" className="m-0 w-full min-w-0 break-words text-xs font-semibold leading-5 text-error sm:col-span-2">
           {error}

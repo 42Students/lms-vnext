@@ -54,7 +54,7 @@ export default async function TpoDriveJoiningPage({
       <section aria-label="Joining summary" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface grid-cols-1 md:grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
           <div key={name} className="min-w-0 border-b border-r border-border p-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:p-4 xl:last:border-r-0">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">{name}</p>
+            <p className="text-xs font-semibold uppercase text-muted-foreground leading-5">{name}</p>
             <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">{value}</p>
           </div>
         ))}
@@ -69,7 +69,7 @@ export default async function TpoDriveJoiningPage({
               <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{item.displayName}</h2>
-                  <p className="mt-1 text-sm text-body">{item.roleTitle}</p>
+                  <p className="mt-1 text-sm text-body leading-[22px]">{item.roleTitle}</p>
                   <Link
                     href={"/tpo/students/" + encodeURIComponent(item.membershipId) + "/history"}
                     className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -80,7 +80,7 @@ export default async function TpoDriveJoiningPage({
                   {item.joiningStatus.replaceAll("_", " ")}
                 </StatusBadge>
               </div>
-              <p className="mt-3 text-sm text-body">
+              <p className="mt-3 text-sm text-body leading-[22px]">
                 Current joining date: {item.joiningDate ?? "Not recorded"}
                 {item.reason ? " · Reason: " + item.reason : ""}
               </p>
@@ -93,7 +93,7 @@ export default async function TpoDriveJoiningPage({
           ))}
         </div>
       )}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
         Counts are current accepted-offer records, not unique placed learners.
         No joining is inferred from the planned joining date alone. Corrections
         to recorded outcomes require an explicit reason and are retained in history.

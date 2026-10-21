@@ -24,12 +24,12 @@ export default async function TpoDriveDiscussion({params}:{
    </Alert>:data.threads.length===0?<EmptyState title="No recruiter conversation is attached to this drive yet."
     description="Use Recruiter Messages to begin or find a recruiter conversation."
     action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open Recruiter Messages</Link>}/>:<section aria-label="Recruiter conversations" className="min-w-0">
-   <p role="status" className="mb-2 text-sm text-body">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
+   <p role="status" className="mb-2 text-sm text-body leading-[22px]">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="min-w-0 divide-y divide-border border-y border-border">{data.threads.map(thread=><li key={thread.id} className="flex min-w-0 flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
     <div className="min-w-0 flex-1 space-y-1">
      <h2 className="break-words text-base font-semibold leading-6 text-[var(--lms-heading)]">{thread.recruiterName?.trim()||"Recruiter"}</h2>
-     {thread.lastPreview?<p className="break-words text-sm leading-5 text-body">{thread.lastPreview}</p>:null}
-     <p className="break-words text-sm leading-5 text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
+     {thread.lastPreview?<p className="break-words text-sm leading-[22px] text-body">{thread.lastPreview}</p>:null}
+     <p className="break-words text-sm leading-[22px] text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
      <p className="break-words text-xs leading-5 text-muted-foreground">{thread.latestAt?
       new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
       "No messages yet"}</p>
@@ -38,6 +38,6 @@ export default async function TpoDriveDiscussion({params}:{
       className="inline-flex min-h-11 w-full shrink-0 items-center justify-center self-start rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Open conversation</Link>
    </li>)}</ul>
    </section>}
-  <p className="text-xs text-muted-foreground">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>
+  <p className="text-xs text-muted-foreground leading-5">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>
  </div>;
 }

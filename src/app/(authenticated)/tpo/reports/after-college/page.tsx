@@ -59,7 +59,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    </form>
    <div className="flex min-w-0 flex-wrap items-center gap-2"><TpoReportPresentation /></div>
    <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId} userId={ctx.user.id}/></Suspense>
-   <p className="text-sm text-body">{data.total} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
+   <p className="text-sm text-body leading-[22px]">{data.total} students in this reporting population. NAAC 5.2 / NIRF working data only; unreported choices remain Not decided.</p>
    <SummaryStrip label="After-college outcomes" steps={AFTER_COLLEGE_OUTCOMES.map(key=>({label:AFTER_COLLEGE_LABELS[key],value:data.counts[key]}))}/>
    <DataTable rows={data.rows.slice((page-1)*25,page*25)} getRowKey={row=>row.membershipId}
     caption="After college"
@@ -74,7 +74,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
     ]}
    />
    <Pagination page={page} pageCount={pageCount} hrefForPage={pageHref} label="After-college report pages"/>
-   {data.rows.length>300?<p className="text-xs text-muted-foreground">Showing the first 300 rows. Download CSV for the complete filtered list.</p>:null}
+   {data.rows.length>300?<p className="text-xs text-muted-foreground leading-5">Showing the first 300 rows. Download CSV for the complete filtered list.</p>:null}
   </>}
  </div>;
 }

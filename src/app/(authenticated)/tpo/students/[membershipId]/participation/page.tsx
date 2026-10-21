@@ -46,7 +46,7 @@ export default async function TpoLearnerParticipationPage({
       />
 
       <section className="border-b border-border py-5">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
           Current participation
         </h2>
         <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -67,11 +67,11 @@ export default async function TpoLearnerParticipationPage({
           </span>
         </div>
         {learner.effective.reason ? (
-          <p className="mt-3 text-sm text-body">
+          <p className="mt-3 text-sm text-body leading-[22px]">
             Current reason: {learner.effective.reason}
           </p>
         ) : null}
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="mt-3 text-xs text-muted-foreground leading-5">
           Learner decisions override class decisions, which override
           batch decisions. The Debar action below uses this same
           learner-level decision, not the separate timed/drive-based
@@ -85,10 +85,10 @@ export default async function TpoLearnerParticipationPage({
       </nav>
 
       <section className="border-b border-border py-5">
-        <h2 className="text-lg font-semibold text-foreground">
+        <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
           Change learner-level eligibility
         </h2>
-        <p className="mt-2 mb-5 text-sm leading-6 text-body">
+        <p className="mt-2 mb-5 text-sm leading-[22px] text-body">
           Changes take effect for the learner&apos;s placement participation
           eligibility. A reason is required when marking ineligible.
           Concurrent changes are rejected instead of silently overwritten.

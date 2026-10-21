@@ -32,7 +32,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
  const dateInIst=(iso:string)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(iso));
  const inIst=(iso:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(iso));
  return <section aria-label="Interview operations" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
-  <h2 className="font-semibold text-foreground">Interview operations</h2>
+  <h2 className="font-semibold text-[var(--lms-heading)]">Interview operations</h2>
   <dl className="grid min-w-0 grid-cols-2 border-y border-border sm:grid-cols-4">
    {([["Scheduled",events.filter(x=>x.status==="SCHEDULED").length],["Today",events.filter(x=>dateInIst(x.startsAt)===today).length],
     ["Companies",new Set(events.map(x=>x.companyName)).size],["Possible venue conflicts",conflicts.size]] as const)
@@ -61,12 +61,12 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
     setKind("ALL");setStatus("ALL");setMode("ALL");setDepartment("ALL");setConflictsOnly(false);setSort("DATE");
    }}>Clear filters</Button>
   </div>
-  <p role="status" aria-live="polite" className="text-sm text-body">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
+  <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">{filtered.length} matching candidate interview bookings. Department filter uses the applicant’s currently active academic program; historical departments may be unrecorded.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
   <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
    className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">Export interviews.csv</a>
-  {filtered.length>500?<p role="status" className="text-sm text-muted-foreground">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
-  {exportError?<p role="alert" className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error">{exportError}</p>:null}
+  {filtered.length>500?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Export includes the first 500 visible rounds. Narrow filters for the remaining records.</p>:null}
+  {exportError?<p role="alert" className="border-l-2 border-error bg-error-subtle px-4 py-3 text-sm text-error leading-[22px]">{exportError}</p>:null}
   {!filtered.length?<p className="border-b border-border py-4">No interviews match these filters. Clear filters to see all rounds.</p>:
    <DataTable<SuperAdminCalendarRound>
     rows={filtered} getRowKey={row=>row.id}

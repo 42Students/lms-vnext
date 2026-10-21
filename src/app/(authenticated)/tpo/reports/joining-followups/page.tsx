@@ -61,7 +61,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
       <Suspense fallback={<Skeleton variant="form" />}><TpoReportSavedFilters path="/tpo/reports/joining-followups" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
   {!report.season?<EmptyState title="No placement season" description="Joining follow-ups require a persisted placement season."/>:<>
    <section className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3" aria-label="Joining evidence">{Object.entries(report.counts).map(([label,n])=><StatTile key={label} label={label.replaceAll(/([A-Z])/g," $1").trim()} value={n} className="min-h-[104px]" />)}</section>
-   <Disclosure title="Joining date methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body">
+   <Disclosure title="Joining date methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body leading-[22px]">
     Due means a persisted joining date on or before {report.todayIst} IST. Upcoming means a recorded calendar date strictly after today and within seven IST calendar days. No date is unknown, never late.
     Only ACCEPTED offers count; JOINED requires an explicit recorded outcome.
    </p></Disclosure>
@@ -71,8 +71,8 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
     <section className="grid gap-3" aria-label="Pending and deferred joining offers">
      {report.rows.map(o=><article key={o.offerId} className="min-w-0 border-b border-border py-4">
        <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{o.companyName} · {o.roleTitle}</h2>
-       <p className="mt-1 text-sm text-body">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
-       <p className="mt-1 text-sm text-body">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
+       <p className="mt-1 text-sm text-body leading-[22px]">{o.candidateName??"Name not recorded"} · {o.jobTitle}</p>
+       <p className="mt-1 text-sm text-body leading-[22px]">{o.joiningStatus??"PENDING"} · Joining date: {o.scheduledDate??"Not recorded"}</p>
        <Link href={"/tpo/placements/jobs/"+o.jobId+"/joining"}
          className="mt-2 inline-flex min-h-11 sm:min-h-9 items-center text-sm font-semibold text-link hover:underline">
          Open drive joining records →</Link>

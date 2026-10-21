@@ -72,11 +72,11 @@ export default async function TpoPlacedByBranchPage({ searchParams }: { searchPa
               <StatTile key={label} label={label} value={reportNumber(count)} className="min-h-[104px]" />
             ))}
           </section>
-          <Disclosure title="Branch reporting methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body">{report.branchScopeNote}</p></Disclosure>
+          <Disclosure title="Branch reporting methodology" className="border-y border-border py-3"><p className="pt-3 text-sm text-body leading-[22px]">{report.branchScopeNote}</p></Disclosure>
           <ReportTable title="Branch outcomes" headings={["Current branch", "Placed learners", "Confirmed joined", "Accepted offer versions"]}
             rows={report.rows.map((row) => [row.departmentName, row.placed, row.joined, row.acceptedOfferVersions])}
             emptyDescription="No accepted offers have been recorded in this reporting scope." />
-          <p className="text-xs text-body">CSV contains the full totals and up to 200 branch rows, with explicit truncation notice.</p>
+          <p className="text-xs text-body leading-5">CSV contains the full totals and up to 200 branch rows, with explicit truncation notice.</p>
         </>
       )}
     </div>

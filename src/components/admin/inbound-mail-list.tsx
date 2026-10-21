@@ -43,7 +43,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   {rows.length===0?
    <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-5)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-    <p role="status" className="text-sm text-body">No inbound messages match these filters.</p>
+    <p role="status" className="text-sm text-body leading-[22px]">No inbound messages match these filters.</p>
     <Link href="/admin/inbound-mail?status=NEW" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white min-[768px]:min-h-9 min-[768px]:w-auto">Clear</Link>
    </div>:
    <>
@@ -52,18 +52,18 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
       <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between min-[768px]:gap-[var(--lms-space-6)]">
        <div className="min-w-0 flex-1 space-y-[var(--lms-space-1)]">
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-         <h2 className="min-w-0 break-words text-base font-semibold text-foreground">{row.subject||"(No subject)"}</h2>
+         <h2 className="min-w-0 break-words text-base font-semibold text-[var(--lms-heading)]">{row.subject||"(No subject)"}</h2>
          <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
         </div>
-        <p className="min-w-0 break-words text-sm text-body">From {row.fromAddress} · To {row.toAddress}</p>
-        <p className="line-clamp-2 max-w-prose break-words text-sm text-muted-foreground print:line-clamp-none">{safeInboundPreview(row.bodyPlain)}</p>
-        <p className="text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+        <p className="min-w-0 break-words text-sm text-body leading-[22px]">From {row.fromAddress} · To {row.toAddress}</p>
+        <p className="line-clamp-2 max-w-prose break-words text-sm text-muted-foreground print:line-clamp-none leading-[22px]">{safeInboundPreview(row.bodyPlain)}</p>
+        <p className="text-xs text-muted-foreground leading-5">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
        </div>
        <Button type="button" variant="secondary" className="w-full min-h-11 shrink-0 min-[768px]:w-auto min-[768px]:min-h-9 print:hidden" onClick={()=>{setMessage("");setMessageError(false);setSelected(row);}}>Read message</Button>
       </div>
      </article>)}
     </div>
-    <p className="text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
+    <p className="text-xs text-muted-foreground leading-5">Sender identity and conversation-routing status are not verified by this inbox.</p>
    </>}
   {selected?<Drawer open onOpenChange={open=>{if(!open&&!busy)setSelected(null)}} title={selected.subject||"(No subject)"}
     description="Private inbound message"
@@ -82,9 +82,9 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
      <div className="min-w-0 min-[768px]:col-span-2"><dt className="font-semibold">Received</dt><dd className="m-0">{new Date(selected.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</dd></div>
     </dl>
     <section className="mt-[var(--lms-space-4)] min-w-0">
-     <h3 className="text-sm font-semibold text-foreground">Plain text message</h3>
-     <p className="mt-[var(--lms-space-2)] max-w-prose whitespace-pre-wrap break-words text-sm text-body">{selected.bodyPlain.slice(0,15000)}</p>
-     {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground">Message preview truncated after 15,000 characters.</p>:null}
+     <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Plain text message</h3>
+     <p className="mt-[var(--lms-space-2)] max-w-prose whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{selected.bodyPlain.slice(0,15000)}</p>
+     {selected.bodyPlain.length>15000?<p className="text-xs text-muted-foreground leading-5">Message preview truncated after 15,000 characters.</p>:null}
     </section>
    </Drawer>:null}
  </div>;
