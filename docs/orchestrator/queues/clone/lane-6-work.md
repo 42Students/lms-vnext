@@ -79,7 +79,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_messages_threads_route.ts.md` (edit src/app/api/placements/tpo/messages/threads/route.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_settings_job-types_route.ts.md` (edit src/app/api/placements/tpo/settings/job-types/route.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_bulk-actions_preview_route.ts.md` (edit src/app/api/placements/tpo/bulk-actions/preview/route.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_students_academic-import_route.ts.md` (edit src/app/api/placements/tpo/students/academic-import/route.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_students_academic-import_route.ts.md` (edit src/app/api/placements/tpo/students/academic-import/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-11_l18-u023-learner-eligibility-controller.md.md` (new; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_announcements_noticeId_lifecycle_route.ts.md` (edit src/app/api/placements/tpo/announcements/[noticeId]/lifecycle/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_companies_companyId_domain_route.ts.md` (edit src/app/api/placements/tpo/companies/[companyId]/domain/route.ts; 1 findings; best P2)
