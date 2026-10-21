@@ -1,10 +1,13 @@
 import "server-only";
 import {and,desc,count,eq,ilike,or,exists,sql} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
-import {colleges,collegeMemberships,placementApplications,placementJobs,placementJobRoleOptions,placementApplicationScreenings,users,learnerProgramEnrollments,programs,departments,cohorts} from "@/db/schema";
+import {colleges,collegeMemberships,placementApplications,placementJobs,placementJobRoleOptions,placementApplicationScreenings,placementCompanyRelationships,placementCompanies,users,learnerProgramEnrollments,programs,departments,cohorts} from "@/db/schema";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin} from "@/modules/identity/context";
+import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,type SuperAdminReadResult} from "./super-admin-read-directory-model";
 export async function listAdminPlacementApplications(context:RequestContext,raw:unknown):Promise<SuperAdminReadResult>{
@@ -41,12 +44,17 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   pipelineStage:sql<string>`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end)`.as("admin_application_pipeline_stage"),
   jobId:aliasedColumn(placementJobs.id,"admin_application_job_id"),
   jobTitle:aliasedColumn(placementJobs.title,"admin_application_job_title"),
+  companyName:placementCompanies.name,
   roleTitle:aliasedColumn(placementJobRoleOptions.title,"admin_application_role_title"),
   learnerName:aliasedColumn(users.displayName,"admin_application_learner_name"),
  }).from(placementApplications)
  .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),eq(placementJobs.collegeId,selected.collegeId)))
  .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
   eq(placementJobRoleOptions.jobId,placementJobs.id)))
+ .innerJoin(placementCompanyRelationships,and(
+  eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+  eq(placementCompanyRelationships.collegeId,selected.collegeId)))
+ .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
  .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
   selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
@@ -72,6 +80,9 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
     query.cohortId?eq(cohorts.id,query.cohortId):undefined))):undefined,
   query.q?or(ilike(placementJobs.title,scopedSearchLike(query.q)),
    ilike(placementJobRoleOptions.title,scopedSearchLike(query.q)),
+   ilike(placementCompanies.name,scopedSearchLike(query.q)),
+   sql`${placementApplications.status}::text ilike ${scopedSearchLike(query.q)}`,
+   sql`coalesce(${placementCollegeApplicationStages.stage},'APPLIED')::text ilike ${scopedSearchLike(query.q)}`,
    ilike(users.displayName,scopedSearchLike(query.q))):undefined,
  )).as("super_admin_placement_applications");
  // Legacy list places recent applicants first. Clamp stale bookmarked pages
@@ -86,9 +97,10 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
  const now=Date.now();
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
-  id:row.id,title:row.learnerName||"Unnamed applicant",
-  subtitle:row.jobTitle+" · "+row.roleTitle,
+  id:row.id,title:(row.learnerName||"Unnamed applicant")+" - "+row.jobTitle,
+  subtitle:row.companyName+" · "+row.roleTitle,
   status:row.status,details:[
+   "Company: "+row.companyName,
    "Channel: "+row.channel,
    "Eligibility: "+row.eligibilityStatus,
    "Submitted: "+fmt.format(row.submittedAt)+" IST",
@@ -115,4 +127,85 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   secondaryHref:`/admin/placements/jobs/${encodeURIComponent(row.jobId)}/applications`,
   secondaryLabel:"Manage hiring stage →",
  }))};
+}
+
+/** Old LMS /search accepted query+limit and /stats returned a count. Keep
+ * that response shape only for an authenticated Super Admin in the selected
+ * organization or college; an untrusted organizationId is never a scope grant.
+ * All data comes from the current database, not a stale in-memory cache. */
+const legacySearchOptions=z.strictObject({
+ query:z.string().trim().max(100).default(""),
+ limit:z.coerce.number().int().min(1).max(200).default(15),
+ organizationId:z.string().uuid().optional(),
+});
+export async function searchSuperAdminPlacementApplicationsLegacy(
+ context:RequestContext,raw:unknown,
+){
+ const input=legacySearchOptions.parse(raw);
+ const scope=context.adminScope;
+ if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE"||
+   !scope?.organizationId)throw new AuthorizationError("placements.read");
+ if(input.organizationId&&input.organizationId!==scope.organizationId)
+  throw new AuthorizationError("placements.read");
+ requirePermission(context,"placements.read",{
+  collegeId:scope.collegeId,organizationId:scope.organizationId});
+ const db=getDb();
+ const where=and(
+  eq(colleges.organizationId,scope.organizationId),
+  scope.collegeId?eq(placementJobs.collegeId,scope.collegeId):undefined,
+  input.query?or(
+   ilike(users.displayName,scopedSearchLike(input.query)),
+   ilike(placementJobs.title,scopedSearchLike(input.query)),
+   ilike(placementCompanies.name,scopedSearchLike(input.query)),
+   sql`${placementApplications.status}::text ilike ${scopedSearchLike(input.query)}`
+  ):undefined,
+ );
+ const rows=await db.select({
+  applicationId:placementApplications.id,learnerId:collegeMemberships.id,
+  learnerName:users.displayName,jobId:placementJobs.id,
+  jobTitle:placementJobs.title,companyName:placementCompanies.name,
+  applicationStatus:placementApplications.status,
+  organizationId:colleges.organizationId,
+  submittedAt:placementApplications.submittedAt,
+ }).from(placementApplications)
+ .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+ .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+ .innerJoin(placementCompanyRelationships,and(
+  eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+  eq(placementCompanyRelationships.collegeId,placementJobs.collegeId)))
+ .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+ .innerJoin(collegeMemberships,and(
+  eq(collegeMemberships.id,placementApplications.membershipId),
+  eq(collegeMemberships.collegeId,placementJobs.collegeId)))
+ .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .where(where)
+ .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id))
+ .limit(input.limit);
+ return {message:"Applications retrieved",records:rows.map(row=>({
+  id:row.applicationId,learnerId:row.learnerId,
+  learnerName:row.learnerName??"Unnamed applicant",
+  jobId:row.jobId,jobTitle:row.jobTitle,
+  companyName:row.companyName,applicationStatus:row.applicationStatus,
+  organizationId:row.organizationId,
+ })),limit:input.limit,cache:"LIVE_DATABASE",refreshed:false};
+}
+export async function getSuperAdminOrganizationApplicationStats(
+ context:RequestContext,raw?:unknown,
+){
+ const input=z.strictObject({organizationId:z.string().uuid().optional()})
+  .parse(raw??{});
+ const scope=context.adminScope;
+ if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE"||
+   !scope?.organizationId)throw new AuthorizationError("placements.read");
+ if(input.organizationId&&input.organizationId!==scope.organizationId)
+  throw new AuthorizationError("placements.read");
+ requirePermission(context,"placements.read",{
+  organizationId:scope.organizationId,collegeId:scope.collegeId});
+ const [result]=await getDb().select({total:count()}).from(placementApplications)
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId))
+  .where(and(eq(colleges.organizationId,scope.organizationId),
+   scope.collegeId?eq(placementJobs.collegeId,scope.collegeId):undefined));
+ return {totalApplications:Number(result?.total??0),
+  message:"Applications retrieved",refreshed:false,cache:"LIVE_DATABASE"};
 }
