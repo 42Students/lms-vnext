@@ -40,8 +40,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-20.md: surface | regre
 - [x] `src/components/college/college-role-directory-workspace.tsx`
 - [x] `src/components/colleges/college-contact-profile-form.tsx`
 - [x] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/courses/college-lesson-reorder-actions.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/college-lesson-reorder-actions.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
 - [ ] `src/components/tracker/independent-finding-actions.tsx`
 - [ ] `src/components/courses/faculty-assignment-material-links.tsx`
 - [ ] `src/components/ui/multi-select.tsx`
