@@ -238,16 +238,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/college/profile/page.tsx`
 - [x] `src/app/(authenticated)/college/programs/page.tsx`
 - [x] `src/app/(authenticated)/college/projects/create/page.tsx`
-- [ ] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
-- [ ] `src/app/(authenticated)/college/resources/page.tsx`
-- [ ] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/verification/page.tsx`
-- [ ] `src/app/(authenticated)/college/videos/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/hr/not-found.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/college/projects/workspaces/new/page.tsx`
+- [x] `src/app/(authenticated)/college/resources/page.tsx`
+- [x] `src/app/(authenticated)/college/students/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/college/verification/page.tsx`
+- [x] `src/app/(authenticated)/college/videos/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/hr/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
 - [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
