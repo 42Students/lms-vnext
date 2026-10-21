@@ -13,12 +13,12 @@ import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types
 
 // The job-type column belongs to the schema/migration lane. Until that
 // migration lands, block cross-drive writes instead of half-saving config.
-const jobTypeColumnReady = sql<boolean>`exists (
+const jobTypeColumnReady = sql`select exists (
  select 1 from information_schema.columns
  where table_schema = current_schema()
    and table_name = 'placement_jobs'
    and column_name = 'job_type_label'
-)`;
+) as ready`;
 // Match the old LMS validation message while preserving the vNext schema's
 // supported Unicode letters and punctuation. Never echo unescaped HTML.
 const legacyLabelSchema=z.string().transform((raw,ctx)=>{
@@ -145,8 +145,8 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
   if(existing&&existing.id!==current.id)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
-  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
-  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
+  const jobTypeColumn=await tx.execute<{ready:boolean}>(jobTypeColumnReady);
+  if(jobTypeColumn.rows[0]?.ready!==true)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const [updated]=await tx.update(placementTpoJobTypes).set({label:input.label,
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`})
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
@@ -239,8 +239,8 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(current.countsAsPlaced===input.countsAsPlaced)return {changed:false,updatedAt:current.updatedAt.toISOString()};
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
-  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
-  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
+  const jobTypeColumn=await tx.execute<{ready:boolean}>(jobTypeColumnReady);
+  if(jobTypeColumn.rows[0]?.ready!==true)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const [saved]=await tx.update(placementTpoJobTypes).set({countsAsPlaced:input.countsAsPlaced,
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
   })
@@ -281,8 +281,8 @@ export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
-  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
-  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
+  const jobTypeColumn=await tx.execute<{ready:boolean}>(jobTypeColumnReady);
+  if(jobTypeColumn.rows[0]?.ready!==true)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const [usage]=await tx.select({n:sql<number>`count(*)::integer`}).from(placementJobs)
    .where(and(eq(placementJobs.collegeId,collegeId),
     sql`lower(job_type_label) = lower(${current.label})`));
@@ -345,8 +345,8 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
    throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(customCount>30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
   if(!input.some(item=>item.active))throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
-  const [jobTypeColumn]=await tx.select({ready:jobTypeColumnReady});
-  if(!jobTypeColumn?.ready)throw new TpoConfigError("TPO_SETTINGS_PENDING");
+  const jobTypeColumn=await tx.execute<{ready:boolean}>(jobTypeColumnReady);
+  if(jobTypeColumn.rows[0]?.ready!==true)throw new TpoConfigError("TPO_SETTINGS_PENDING");
   const existing=await tx.select().from(placementTpoJobTypes)
    .where(eq(placementTpoJobTypes.collegeId,collegeId)).for("update");
   const byId=new Map(existing.map(item=>[item.id,item]));

@@ -67,18 +67,19 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
     <Link href="/college/placements/drives" className="ml-1 text-link underline">search all drives</Link>.
    </p>:null}
    {visibleJobs.length?<div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-3">
-    {visibleJobs.map(job=><article key={job.id} className="min-w-0 space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
-     <h3 className="break-words [overflow-wrap:anywhere] font-semibold">
-      <Link href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/overview?returnTo=%2Fcollege%2Fplacements"}
-       className="text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-       {job.title}</Link>
+    {visibleJobs.map(job=><article key={job.id} className="relative min-w-0 space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
+     <Link href={"/college/placements/jobs/"+encodeURIComponent(job.id)+"/overview?returnTo=%2Fcollege%2Fplacements"}
+      aria-label={"Open drive overview: "+job.title}
+      className="absolute inset-0 rounded-[var(--lms-control-radius)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" />
+     <h3 className="pointer-events-none relative break-words [overflow-wrap:anywhere] font-semibold text-link underline">
+      {job.title}
      </h3>
      <p className="text-sm">{job.applicants} applicants
       {job.attention>0?<span className="ml-2 font-semibold text-warning-text">
        {job.attention} attention item(s)</span>:null}</p>
      <p className="text-xs">Deadline: {job.deadline?
       new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(job.deadline):"Not specified"}</p>
-     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
+     <div className="relative z-10 flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
       <Link href={"/college/placements/jobs/"+job.id+"/applications"}
        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Applications</Link>
       <details className="relative min-w-0">
