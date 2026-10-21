@@ -26,7 +26,7 @@ export function ProjectTaskAssigneeControl({projectId,taskId,taskTitle,assigneeM
   }
   if(!editing)return <Button variant="secondary" onClick={()=>setEditing(true)}>Assignee</Button>;
   return <div className="flex flex-wrap items-center gap-2">
-    <label className="text-xs font-semibold text-body">Assignee
+    <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Assignee
       <Select value={selected} disabled={pending} onChange={e=>setSelected(e.target.value)}
         aria-label={"Reassign "+(taskTitle??"task")+" to a team member"} className="ml-2 w-full min-w-0 max-w-full md:w-auto">
         <option value="">Unassigned</option>
