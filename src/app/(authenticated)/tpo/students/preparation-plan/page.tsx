@@ -25,7 +25,7 @@ export default async function TpoPreparationCoursePlan(){
    </div>}/>
   <p className="text-sm text-body">This lists the college placement cell&apos;s recorded readiness-course selection. It is a planning preview, not a course enrollment, assignment, learner completion record, or outreach workflow.</p>
   {!plan.ready?<Alert tone="warning">{!settings.ready?"Preparation settings storage is unavailable.":"Saved preparation settings could not be validated; ask an administrator to review them."}</Alert>:<>
-    <p role="status" className="text-sm">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
+    <p role="status" className="text-sm leading-[1.6]">Configured minimum completed courses: {plan.minimumCompleted}. {plan.courses.length} referenced courses are visible in the first 200 active course records.</p>
     {plan.unresolved>0?<Alert tone="warning">{plan.unresolved} configured course reference(s) are not in this bounded active catalog; their availability is unknown.</Alert>:null}
     {plan.courses.length===0?<EmptyState title="No active preparation courses in the configured subset."/>:<ul className="min-w-0 divide-y divide-border border-y border-border">{plan.courses.map(course=><li key={course.id} className="flex min-w-0 flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <h2 className="min-w-0 break-words font-semibold">{course.name}</h2><p className="shrink-0 text-xs text-muted-foreground">{course.code}</p>

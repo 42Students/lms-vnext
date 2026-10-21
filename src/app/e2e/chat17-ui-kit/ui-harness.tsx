@@ -161,7 +161,7 @@ function UIKitTestSurface() {
         aria-describedby="harness-external-help"
         helper="PDF file, maximum 1 KB" maxBytes={1024}
         onFiles={files => setFileStatus(files?.length ? "Selected: " + files[0]!.name : "No file selected")}/>
-      <p role="status" className="max-w-prose break-words text-sm leading-6 text-body" data-testid="file-status">{fileStatus}</p>
+      <p role="status" className="max-w-prose break-words text-sm leading-[1.6] text-body" data-testid="file-status">{fileStatus}</p>
     </section>
 
     <section aria-label="Responsive private column fixture">
