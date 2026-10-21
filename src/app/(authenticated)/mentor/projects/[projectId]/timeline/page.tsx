@@ -55,7 +55,7 @@ export default async function MentorProjectTimelinePage({
           href: mentorTimelineHref({...data.query,sprintStatus:status,page:1}),
         }))} />
       </div>
-      <p role="status" aria-live="polite" className="text-sm text-body">
+      <p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">
         {data.total.toLocaleString("en-IN")} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered releases"
@@ -69,7 +69,7 @@ export default async function MentorProjectTimelinePage({
             <StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status}</StatusBadge>
           </div>
           {release.sprints.length===0
-            ?<p className="mt-3 text-sm text-body">No registered Sprints in this Release.</p>
+            ?<p className="mt-3 text-sm text-body leading-[22px]">No registered Sprints in this Release.</p>
             :<ol aria-label="Sprints in this release" className="mt-3 divide-y divide-[var(--lms-canvas-border)]">{release.sprints.map(sprint=>
               <li key={sprint.id} className="min-w-0 py-[var(--lms-space-3)]">
                 <div className="flex flex-wrap items-center justify-between gap-2">
@@ -78,7 +78,7 @@ export default async function MentorProjectTimelinePage({
                   </h3>
                   <StatusBadge tone={sprint.status==="COMPLETED"?"success":sprint.status==="ACTIVE"?"info":"neutral"}>{sprint.status}</StatusBadge>
                 </div>
-                <p className="mt-1 text-sm text-body">
+                <p className="mt-1 text-sm text-body leading-[22px]">
                   {sprint.doneCount} / {sprint.taskCount} registered tasks Done
                   {" · "}
                   {sprint.progressPercent===null
@@ -88,7 +88,7 @@ export default async function MentorProjectTimelinePage({
         </TimelineEntry>)}</Timeline>}
       {data.totalPages>1?<Pagination label="Release timeline pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorTimelineHref({...data.query,page})}/>:null}
     </>}
-    <p className="text-xs text-muted-foreground">
+    <p className="text-xs text-muted-foreground leading-5">
       The registered schema has no planned start/end dates on Releases or Sprints.
       This is sequence and lifecycle progression only—not a calendar schedule,
       delivery forecast or claim of milestone acceptance.
