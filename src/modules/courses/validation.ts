@@ -303,6 +303,7 @@ export const updateCourseLessonInputSchema =
     ).strict();
 
 const lessonContentBaseSchema = z.object({
+  visibleToStudents:z.boolean().optional(),
   lessonId: courseLessonIdSchema,
   deliveryId:
     courseSectionDeliveryIdSchema
@@ -419,6 +420,7 @@ export const createLessonContentInputSchema =
 export const updateLessonContentInputSchema =
   z
     .object({
+      visibleToStudents:z.boolean().optional(),
       title: courseNameSchema.optional(),
       points: z.number().int().min(0).max(1000).optional(),
       notes: learningTextSchema
