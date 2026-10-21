@@ -22,21 +22,32 @@ import {eq} from "drizzle-orm";
 import { SuperAdminTemplatePreviewControl } from "@/components/admin/super-admin-template-preview-control";
 
 export default async function SuperAdminProjectTemplateDetailPage({
-  params,
+  params,searchParams,
 }: {
   params: Promise<{ templateId: string }>;
+  searchParams?: Promise<Record<string,string|string[]|undefined>>;
 }) {
   const context = await getCurrentRequestContext();
   const { templateId } = await params;
   const id = projectTemplateIdSchema.safeParse(templateId);
   if(!id.success&&can(context,"project-template.read")){
     const resolved=await resolveLegacyProjectTemplateBookmark(context,templateId);
-    if(resolved)redirect("/admin/projects/templates/"+encodeURIComponent(resolved));
+    if(resolved){
+      const paramsValue=await searchParams;
+      const safe=new URLSearchParams();
+      // Old bookmarked template query state stays local to the authorized
+      // project-template route; never forward arbitrary URLs or origin keys.
+      for(const key of ["tab","view","version"]){
+        const value=paramsValue?.[key];
+        if(typeof value==="string"&&/^[a-zA-Z0-9_-]{1,64}$/.test(value))safe.set(key,value);
+      }
+      redirect("/admin/projects/templates/"+encodeURIComponent(resolved)+(safe.size?"?"+safe:""));
+    }
   }
   if (!id.success) return <div className="min-w-0 space-y-5">
     <PageHeader title="Project template"/>
     <ErrorState title="No template in this link"
-     description="This template identifier is not supported. Choose a template from the directory. Legacy numeric and slug identifiers require a verified migration mapping."
+     description="The URL is missing a template id. Open the template from the Templates list instead."
      action={<PageBackLink href="/admin/projects/templates" label="Back to templates"/>}/>
    </div>;
   if (!can(context,"project-template.read")) {
@@ -79,10 +90,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
       <PageBackLink href="/admin/projects/templates" label="Back to templates" />
       <PageHeader
         title={detail.template.title}
-        description={
-          detail.template.summary ??
-          "Global project template."
-        }
+        description="Identity, lifecycle and the overview content mentors and students read."
         actions={
           <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <StatusBadge
@@ -96,17 +104,18 @@ export default async function SuperAdminProjectTemplateDetailPage({
             >
               {detail.template.status}
             </StatusBadge>
-            {detail.currentVersion?
-              <SuperAdminTemplatePreviewControl title={detail.template.title} blueprint={detail.currentVersion.blueprint}/> : null}
             {can(context,"activity.read")?<Link
               href={"/admin/projects/audit?subjectType=project_template&subjectId="+encodeURIComponent(detail.template.id)}
               className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
               Audit trail</Link>:null}
+            {detail.currentVersion?
+              <SuperAdminTemplatePreviewControl title={detail.template.title} blueprint={detail.currentVersion.blueprint}/> :
+              <span role="status" className="text-xs text-muted-foreground">No preview available</span>}
             {detail.template.status==="PUBLISHED"&&context.adminScope?.collegeId&&
              detail.assignments.some(a=>a.collegeId===context.adminScope?.collegeId)?
              <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
               className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary">
-              Use this template</Link>:
+              Create workspace</Link>:
              <span role="status" className="text-xs text-muted-foreground">
               {context.adminScope?.collegeId?"Assign a published template to this college to create workspaces.":"Choose a college to use this template."}
              </span>}
@@ -150,15 +159,52 @@ export default async function SuperAdminProjectTemplateDetailPage({
           versions:detail.versions.length,
         }}
       />
-      {detail.currentVersion ? (
-        <ProjectTemplateView
-          blueprint={detail.currentVersion.blueprint}
-        />
-      ) : (
-        <section className="border-b border-border py-5 text-sm text-muted-foreground">
-          The current template version could not be resolved.
+      <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)] lg:gap-6">
+        <section aria-labelledby="template-basic-info" className="min-w-0 rounded-lg border border-[var(--lms-canvas-border)] p-4 sm:p-5">
+          <h2 id="template-basic-info" className="text-base font-semibold text-[var(--lms-heading)]">Basic info</h2>
+          <dl className="mt-3 divide-y divide-[var(--lms-canvas-border)] text-sm">
+            {([["Name",detail.template.title],["Slug",detail.template.slug],
+              ["Summary",detail.template.summary??"Not given"],
+              ["Course",detail.template.legacyCourseLabel??"Not given"]] as const).map(([label,value])=>
+              <div key={label} className="grid min-w-0 gap-1 py-3 sm:grid-cols-[110px_minmax(0,1fr)]">
+                <dt className="font-semibold text-body">{label}</dt>
+                <dd className="min-w-0 break-words text-body">{value}</dd>
+              </div>)}
+          </dl>
         </section>
-      )}
+        <section aria-labelledby="template-lifecycle" className="min-w-0 rounded-lg border border-[var(--lms-canvas-border)] p-4 sm:p-5">
+          <h2 id="template-lifecycle" className="text-base font-semibold text-[var(--lms-heading)]">Lifecycle settings</h2>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge>
+            <StatusBadge>Version {detail.template.currentVersion}</StatusBadge>
+          </div>
+          <dl className="mt-2 divide-y divide-[var(--lms-canvas-border)] text-sm">
+            {([
+              ["Published version",detail.template.publishedVersion!==null?"Version "+detail.template.publishedVersion:"Not published"],
+              ["Published at","Not recorded"],
+              ["Archived at",detail.template.archivedAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(detail.template.archivedAt)+" IST":"Not archived"],
+              ["Created at",new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(detail.template.createdAt)+" IST"],
+              ["Last updated",new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(detail.template.updatedAt)+" IST"],
+            ] as const).map(([label,value])=>
+              <div key={label} className="grid min-w-0 gap-1 py-2 sm:grid-cols-[135px_minmax(0,1fr)]">
+                <dt className="font-semibold text-body">{label}</dt>
+                <dd className="min-w-0 break-words text-body">{value}</dd>
+              </div>)}
+          </dl>
+          <p className="mt-2 text-xs text-muted-foreground">Publication time is not stored in the current template record; no timestamp is inferred from the version date.</p>
+        </section>
+      </div>
+      <section aria-labelledby="template-overview-content" className="min-w-0 space-y-3">
+        <h2 id="template-overview-content" className="text-base font-semibold text-[var(--lms-heading)]">Overview content</h2>
+        {detail.currentVersion ? <ProjectTemplateView blueprint={detail.currentVersion.blueprint}/> :
+          <div role="status" className="border-b border-border py-5 text-sm text-muted-foreground">
+            No preview available. The current template version could not be resolved.
+          </div>}
+      </section>
+      <section aria-labelledby="template-submission" className="border-b border-[var(--lms-canvas-border)] pb-4">
+        <h2 id="template-submission" className="text-base font-semibold text-[var(--lms-heading)]">Submission</h2>
+        <p className="mt-2 text-sm text-body">Submission requirements and deliverables are shown with the authorized current version above. Existing workspaces keep their materialized version.</p>
+      </section>
       <section className="border-b border-border py-5">
         <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Version history
