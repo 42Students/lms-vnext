@@ -14,6 +14,8 @@ import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist
 import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 type Job={id:string;title:string;description:string;locations:string[];
  applicationDeadline:string|null;openings:number|null;minCtc:number|null;maxCtc:number|null;updatedAt:string;
+ companyRelationshipId:string;assessmentUrl:string|null;assessmentDeadline:string|null;
+ candidatePreferences:{preferredDegree:string;specialization:string;graduationYear:number|null;minGpa:number|null;city:string};
  jobTypeLabel:string;employmentType:"FULL_TIME"|"INTERNSHIP"|"CONTRACT";
  workMode:"ONSITE"|"HYBRID"|"REMOTE";responsibilities:string;
  targeting:{programs:number;cohorts:number;sections:number}|null};
@@ -28,8 +30,8 @@ function nullableNumber(value:FormDataEntryValue|null){
  const s=String(value??"").trim();
  return s===""?null:Number(s);
 }
-export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
- job:Job;jobTypes:readonly {label:string}[];sourceReady?:boolean;
+export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady=true}:{
+ job:Job;jobTypes:readonly {label:string}[];companies:readonly {relationshipId:string;name:string}[];sourceReady?:boolean;
 }){
  const router=useRouter(),[open,setOpen]=useState(false),[error,setError]=useState("");
  const {showToast}=useToast();
@@ -77,6 +79,11 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
   if(!description.replace(/<[^>]*>/g,"").trim()){
    setError("Please enter job description.");return;
   }
+  const assessmentAt=String(data.get("assessmentDeadline")??"");
+  const deadlineAt=String(data.get("deadline")??"");
+  if(assessmentAt&&(!deadlineAt||assessmentAt<=deadlineAt)){
+   setError("Assessment deadline must follow application deadline.");return;
+  }
   const min=nullableNumber(data.get("minimumAnnualCtcInr"));
   const max=nullableNumber(data.get("maximumAnnualCtcInr"));
   if(min!==null&&max!==null&&max<min){
@@ -107,6 +114,17 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
      body:JSON.stringify({confirmed:true,expectedUpdatedAt:job.updatedAt,
       reason:String(data.get("reason")??"").trim(),title:String(data.get("title")??"").trim(),
       description,
+      companyRelationshipId:String(data.get("companyRelationshipId")??""),
+      assessmentUrl:String(data.get("assessmentUrl")??"").trim(),
+      assessmentDeadline:String(data.get("assessmentDeadline")??"")
+       ?driveDeadlineIstToIso(String(data.get("assessmentDeadline"))):null,
+      candidatePreferences:{
+       preferredDegree:String(data.get("preferredDegree")??"").trim(),
+       specialization:String(data.get("specialization")??"").trim(),
+       graduationYear:nullableNumber(data.get("graduationYear")),
+       minGpa:nullableNumber(data.get("minGpa")),
+       city:String(data.get("preferredCity")??"").trim(),
+      },
       responsibilities:String(data.get("responsibilities")??"").trim(),
       jobTypeLabel:String(data.get("jobTypeLabel")??"").trim(),
       employmentType:String(data.get("employmentType")??""),
@@ -144,6 +162,24 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
      defaultValue={job.title} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Application deadline (IST)<Input type="datetime-local" required
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company Name
+     <input list="published-drive-companies" name="companySearch" className={cls} defaultValue={
+       companies.find(c=>c.relationshipId===job.companyRelationshipId)?.name??""}
+       onChange={event=>{
+        const match=companies.find(c=>c.name===event.target.value);
+        const hidden=formRef.current?.elements.namedItem("companyRelationshipId");
+        if(hidden instanceof HTMLInputElement)hidden.value=match?.relationshipId??"";
+       }} required/>
+     <datalist id="published-drive-companies">{companies.map(company=><option key={company.relationshipId} value={company.name}/>)}</datalist>
+     <input type="hidden" name="companyRelationshipId" defaultValue={job.companyRelationshipId}/>
+     <small className="font-normal text-muted-foreground">Choose a verified company in this college. Employer reassignment is blocked after any applications.</small>
+    </label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment URL
+      <Input type="url" name="assessmentUrl" maxLength={2000} defaultValue={job.assessmentUrl??""} className={cls}/>
+    </label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assessment deadline (IST)
+      <Input type="datetime-local" name="assessmentDeadline" defaultValue={istLocal(job.assessmentDeadline)} className={cls}/>
+    </label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Description<Textarea name="description" required
      maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Responsibilities
@@ -172,6 +208,20 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
      type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
      type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
+    <fieldset className="grid min-w-0 gap-3 border-t border-border pt-3 sm:col-span-2 sm:grid-cols-2">
+      <legend className="mb-3 text-sm font-semibold">Preferred candidate details (informational)</legend>
+      <label className="grid gap-1 text-xs font-semibold">Preferred Degree
+        <Input name="preferredDegree" maxLength={160} defaultValue={job.candidatePreferences.preferredDegree}/></label>
+      <label className="grid gap-1 text-xs font-semibold">Specialization
+        <Input name="specialization" maxLength={160} defaultValue={job.candidatePreferences.specialization}/></label>
+      <label className="grid gap-1 text-xs font-semibold">Graduation Year
+        <Input name="graduationYear" type="number" min={1990} max={2050} defaultValue={job.candidatePreferences.graduationYear??""}/></label>
+      <label className="grid gap-1 text-xs font-semibold">GPA (out of 10)
+        <Input name="minGpa" type="number" min={0} max={10} step="0.01" defaultValue={job.candidatePreferences.minGpa??""}/></label>
+      <label className="grid gap-1 text-xs font-semibold">City
+        <Input name="preferredCity" maxLength={160} defaultValue={job.candidatePreferences.city}/></label>
+      <p className="self-end text-xs text-muted-foreground">Saved as legacy display preferences, not admission eligibility gates.</p>
+    </fieldset>
     <div className="sm:col-span-2 border-y border-border py-3 text-sm">
      <p className="font-semibold">Target Audience · Department / Program / Batch / Class</p>
      <p className="mt-1 text-body">Published eligibility targeting is locked to protect existing applicant policy and historical evaluations. Duplicate this drive as a draft to change the dependent academic audience; blank restrictions mean all eligible students within the selected college.</p>

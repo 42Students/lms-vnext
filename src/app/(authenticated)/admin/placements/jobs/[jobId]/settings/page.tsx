@@ -15,6 +15,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { getPlacementJob } from "@/modules/placements/job-service";
 import {getJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
 import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
+import {listPlacementCompanies} from "@/modules/placements/company-service";
 import {driveSettingsIstDate} from "@/modules/placements/admin-drive-settings-date-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -49,13 +50,15 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>}/>
   </div>;
  }
- const [policyRead,typesRead]=["PUBLISHED","DRAFT"].includes(job.status)?await Promise.allSettled([
+ const [policyRead,typesRead,companiesRead]=["PUBLISHED","DRAFT"].includes(job.status)?await Promise.allSettled([
   getJobEligibilityPolicy(context,jobId),
   listPlacementJobTypeChoices(context,job.collegeId),
- ]):[null,null];
+  listPlacementCompanies(context,job.collegeId),
+ ]):[null,null,null];
  const publishedPolicy=policyRead?.status==="fulfilled"?policyRead.value:null;
  const publishedJobTypes=typesRead?.status==="fulfilled"?typesRead.value:[];
- const publishedEditReady=publishedPolicy?.updatedAt!=null&&typesRead?.status==="fulfilled";
+ const publishedCompanies=companiesRead?.status==="fulfilled"?companiesRead.value:[];
+ const publishedEditReady=publishedPolicy?.updatedAt!=null&&typesRead?.status==="fulfilled"&&companiesRead?.status==="fulfilled";
  const draftPrograms=job.status==="DRAFT"?await listPrograms(context,job.collegeId).catch(()=>null):[];
  const draftCohorts=job.status==="DRAFT"&&draftPrograms?
   await Promise.all(draftPrograms.map(async program=>({
@@ -100,6 +103,12 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       value={{
        job:{
         id:job.id,title:job.title,description:job.description,
+      companyRelationshipId:job.companyRelationshipId,
+      assessmentUrl:job.legacyPostingDetails?.assessmentUrl??null,
+      assessmentDeadline:job.legacyPostingDetails?.assessmentDeadline??null,
+      candidatePreferences:job.legacyPostingDetails?.candidatePreferences??{
+       preferredDegree:"",specialization:"",graduationYear:null,minGpa:null,city:"",
+      },
         employmentType:job.employmentType,jobTypeLabel:job.jobTypeLabel,
         workMode:job.workMode,locations:job.locations,openings:job.openings,
         minimumAnnualCtcInr:job.minimumAnnualCtcInr,
@@ -132,6 +141,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     <SuperAdminPublishedDriveEdit
      sourceReady={publishedEditReady}
      jobTypes={publishedJobTypes}
+     companies={publishedCompanies.map(c=>({relationshipId:c.relationshipId,name:c.name}))}
      job={{
       id:job.id,title:job.title,description:job.description,
       locations:job.locations,applicationDeadline:job.applicationDeadline?.toISOString()??null,
