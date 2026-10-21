@@ -1,6 +1,11 @@
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { StatTile } from "@/components/ui/stat-tile";
+import { Alert } from "@/components/ui/alert";
+import { getDb } from "@/db/client";
+import { countDistinct, eq, and } from "drizzle-orm";
+import { departments,programs,sections,cohorts,collegeMemberships,membershipRoles } from "@/db/schema";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -24,10 +29,16 @@ function collegePeopleManageHref(filter: CollegePeopleDirectoryFilter) {
   return collegePeopleDirectoryHref(filter).replace("/college/people", "/college/people/manage");
 }
 
+function personLabel(person:PersonMembershipView){
+ const name=person.user.displayName?.trim();
+ if(name)return name;
+ const contact=person.user.email?.split("@")[0]?.trim()||person.user.phoneE164?.trim();
+ return contact||"Person "+person.membership.id.slice(0,8);
+}
 const columns: DataTableColumn<PersonMembershipView>[] = [
   { key: "person", header: "Person", mobilePriority: "primary", mobileLabel: "Person", cell: person => (
     <div className="min-w-32">
-      <p className="m-0 font-semibold text-foreground">{person.user.displayName || "Unnamed person"}</p>
+      <p className="m-0 font-semibold text-foreground">{personLabel(person)}</p>
       <p className="mt-1 break-all text-xs text-muted-foreground">
         {person.user.email || person.user.phoneE164 || "No contact detail"}
       </p>
@@ -44,7 +55,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
     cell: person => (
       <PersonMembershipActions membershipId={person.membership.id}
         collegeId={person.membership.collegeId}
-        displayName={person.user.displayName || "Person"}
+        displayName={personLabel(person)}
         roles={person.membership.roles} status={person.membership.status} />
     ) },
 ];
@@ -71,6 +82,43 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     q: filter.q, role: filter.role, status: filter.status,
   });
   const pagination = peoplePageState(filter.page, people.pagination.total);
+  // The legacy learner picker returned 15 suggestions for a blank query.
+  // Keep this separate from the 50-row administrative membership directory.
+  const showLearnerSearch=filter.role==="LEARNER";
+  const suggestionsResult=showLearnerSearch?await Promise.allSettled([
+   listCollegePeopleWithRuntime(context,{
+    collegeId:membership.collegeId,limit:15,offset:0,q:filter.q,
+    role:"LEARNER",status:"ACTIVE",
+   }),
+   getDb().select({count:countDistinct(collegeMemberships.id)})
+    .from(collegeMemberships).innerJoin(membershipRoles,
+     eq(membershipRoles.membershipId,collegeMemberships.id))
+    .where(and(eq(collegeMemberships.collegeId,membership.collegeId),
+     eq(membershipRoles.role,"LEARNER"))),
+   getDb().select({count:countDistinct(departments.id)})
+    .from(departments).where(eq(departments.collegeId,membership.collegeId)),
+   getDb().select({count:countDistinct(programs.id)})
+    .from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(eq(departments.collegeId,membership.collegeId)),
+   getDb().select({count:countDistinct(sections.id)})
+    .from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(eq(departments.collegeId,membership.collegeId)),
+  ]):null;
+  const suggestions=suggestionsResult?.[0].status==="fulfilled"
+   ?suggestionsResult[0].value.items:[];
+  const snapshot=suggestionsResult?[
+   {label:"Learners",value:suggestionsResult[1].status==="fulfilled"
+    ?suggestionsResult[1].value[0]?.count??0:"Unavailable"},
+   {label:"Departments",value:suggestionsResult[2].status==="fulfilled"
+    ?suggestionsResult[2].value[0]?.count??0:"Unavailable"},
+   {label:"Colleges",value:1},
+   {label:"Programs",value:suggestionsResult[3].status==="fulfilled"
+    ?suggestionsResult[3].value[0]?.count??0:"Unavailable"},
+   {label:"Classes",value:suggestionsResult[4].status==="fulfilled"
+    ?suggestionsResult[4].value[0]?.count??0:"Unavailable"},
+  ]:null;
   if (filter.page !== pagination.page) {
     redirect(collegePeopleManageHref({ ...filter, page: pagination.page }));
   }
@@ -115,6 +163,35 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
         <Link href="/college/people/manage" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
     </section>
+    {showLearnerSearch?<section aria-label="Learner search" className="min-w-0 space-y-3">
+     <h2 className="text-base font-semibold text-foreground">Learner search</h2>
+     {snapshot?<div className="grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-5">
+      {snapshot.map(tile=><StatTile key={tile.label} label={tile.label} value={tile.value}/>)}
+     </div>:null}
+     {suggestionsResult?.some(item=>item.status==="rejected")?
+      <Alert tone="warning">Some learner search statistics couldn't be loaded. The college membership directory is still available.</Alert>:
+      <p role="status" className="text-xs text-muted-foreground">Stats retrieved.</p>}
+     <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+      <h3 className="text-sm font-semibold text-foreground">
+       {filter.q?"Matching learner suggestions":"First 15 learners"}
+      </h3>
+      <p className="mt-1 text-xs text-muted-foreground">
+       Scoped to the selected college. Choosing a suggestion filters the directory;
+       it does not imply a popularity ranking or grant new access.
+      </p>
+      {suggestions.length?<ul className="mt-2 divide-y divide-border">
+       {suggestions.map(person=><li key={person.membership.id}
+        className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2">
+        <span className="min-w-0 break-words text-sm">{personLabel(person)}</span>
+        <Link href={collegePeopleManageHref({...filter,q:person.user.displayName?.trim()||
+         person.user.email||person.user.phoneE164||"",page:1})}
+         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+         Select
+        </Link>
+       </li>)}
+      </ul>:<p className="mt-2 text-sm text-muted-foreground">No learners found.</p>}
+     </div>
+    </section>:null}
     <section className="space-y-2" aria-label="Filtered people">
       {filter.role==="LEARNER"?<p role="status" className="text-sm text-[var(--lms-muted-text)]">Learners retrieved</p>:null}
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
