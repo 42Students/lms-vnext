@@ -1,4 +1,4 @@
-import { and, asc, eq, ilike, or } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { containsLikePattern } from "@/lib/sql-match";
 import { cohorts, collegeMemberships, departments, learnerProfiles, learnerProgramEnrollments, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
@@ -44,21 +44,14 @@ export async function requireTeamCreationAuthority(context: RequestContext, coll
   return college;
 }
 
-export async function listProjectTeamClasses(
-  context: RequestContext, collegeId: string, options:{q?:string;limit?:number}={},
-) {
+export async function listProjectTeamClasses(context: RequestContext, collegeId: string) {
   const college = await requireTeamCreationAuthority(context, collegeId);
-  const query=options.q?.trim().slice(0,120)??"";
-  const pattern="%"+query.replace(/[\\%_]/g,"\\  const college = await requireTeamCreationAuthority(context, collegeId);
-  return getDb().select({ id: sections.id, name: sections.name, code: sections.code })")+"%";
-  const limit=Math.min(500,Math.max(1,options.limit??500));
   return getDb().select({ id: sections.id, name: sections.name, code: sections.code })
     .from(sections).innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
-    .where(and(eq(departments.collegeId, college.id), eq(sections.status, "ACTIVE"),
-      query?or(ilike(sections.name,pattern),ilike(sections.code,pattern)):undefined))
-    .orderBy(asc(sections.name), asc(sections.id)).limit(limit);
+    .where(and(eq(departments.collegeId, college.id), eq(sections.status, "ACTIVE")))
+    .orderBy(asc(sections.name), asc(sections.id)).limit(500);
 }
 
 export async function loadClassTeamRoster(context: RequestContext, collegeId: string, classId: string) {
