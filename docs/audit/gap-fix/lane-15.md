@@ -47,3 +47,16 @@
 - SUBMITTED always persists through screening failure; screening, round and offer histories are separately auditable. A declined offer remains DECLINED in offer history while base application stays SUBMITTED, with no active accept action; HIRED is an offer acceptance label and does not imply joined.
 - For a published drive past deadline, atomic status PUBLISHED→CLOSED and closedAt stamp only if unchanged with WHERE status='PUBLISHED'; leave DRAFT/CANCELLED/ARCHIVED untouched. Keep deadline original; never close an already manually closed job twice.
 - Previous role-option uniqueness is deliberate vNext membership model; legacy one-job-per-learner data is a future import mapping decision, not a reason to insert a new global job/member unique constraint now. Source stage copy `Not shortlisted`, `Not cleared: Assessment`, `Waitlist ended` must be derived from applied screening and round outcomes.
+
+## Packet 9 — placements part 9/15
+- `src_db_schema_placements.ts.part9of15.md` | Added G2-3-015-049 source job version for CAS, G2-13-019-007 recordedOutside and G2-13-019-030 JD object-path/legacy source URL (0146). Existing job per-drive countsAsPlaced from packet1, tenant association, recruiter request model separation, normalized application/history checked. | Handed off G2-3-013-044, G2-3-015-002/007/024/047, G2-3-011-050/052, G2-11-019-075, G2-11-022-075, G2-12-014-013/064, G2-13-019-001/002/020/022/023/035; legacy numeric IDs/slug, evaluationConfig privacy and request statuses not forced into job row. 0146 NOT EXECUTED.
+
+## Packet 10 — placements part 10/15
+- `src_db_schema_placements.ts.part10of15.md` | Applied G2-12-015-008/012/023: role package exact CTC LPA (4 decimals), monthly stipend (2 decimals) and positive duration (0147), retained fixed/variable and bounded numeric checks. | G2-13-019-045/047/048/050, G2-3-026-078, G2-3-031-068, G2-4-015-003/016/038/062/064, G2-12-010-043, G2-12-015-001/015/026/027/036 deferred to write/read/ETL owners. Bond fields remain as historical schema, not approval for new editing after legacy 8 Oct retirement. 0147 NOT EXECUTED.
+
+### Job / package migration dispositions
+- Legacy numeric Job.id → new UUID, organizationId through college's organization, old jobSlug requires explicit redirect alias mapping if bookmarks matter. Legacy isDeleted → archived/status disposition (not hard-delete), old recruiter REQUEST/SENT_BACK/REJECTED → separate recruiter request workflow.
+- Legacy @Version → placement_jobs.version with UPDATE WHERE version=? and atomic version+1, do not rely only on updatedAt.
+- Legacy jdUrl → legacyJobDescriptionUrl for import evidence or signed URL from jobDescriptionObjectPath. Legacy assessmentUrl/evaluationConfig are sensitive and must remain outside recruiter or learner projections unless expressly authorized.
+- Legacy job_type/counts_as_placed → per-college jobTypeLabel and countsAsPlaced policy (other lane migration coordination unresolved); recordedOutside keeps external-job suppression independently of job type.
+- Role packages: name/title blank → `Default` through validation on create; per-package ctcLpa kept to 4 decimals, stipend INR/month + positive months; require at least one active primary pay package before publish, not through a row-level DB constraint. Existing bond amounts should not be reintroduced to form without owner approval.

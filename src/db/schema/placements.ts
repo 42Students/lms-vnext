@@ -547,6 +547,12 @@ export const placementJobs = pgTable(
       .default("DRAFT"),
     /** P-S1-05: persisted dream-drive classification (exempt from held-offer cap). */
     isDream: boolean("is_dream").notNull().default(false),
+    /** Legacy outside/off-campus placements must not be counted as campus jobs. */
+    recordedOutside: boolean("recorded_outside").notNull().default(false),
+    /** Object path only; never persist an expiring signed JD download URL. */
+    jobDescriptionObjectPath: text("job_description_object_path"),
+    /** Source URL used solely to reconcile historical drive documents. */
+    legacyJobDescriptionUrl: text("legacy_job_description_url"),
     /** REC-home-drives-24/25/26: recruiter drive parity fields copied from an approved request draft. */
     recruiterDriveMode: varchar("recruiter_drive_mode", { length: 16 })
       .notNull()
@@ -576,9 +582,12 @@ export const placementJobs = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
+    /** Atomic optimistic version independent of updatedAt timestamp precision. */
+    version: integer("version").notNull().default(1),
   },
   (table) => [
     uniqueIndex("placement_jobs_id_college_uq").on(table.id, table.collegeId),
+    check("placement_jobs_version_ck", sql`${table.version} > 0`),
     index("placement_jobs_college_status_idx").on(
       table.collegeId,
       table.status,
@@ -686,6 +695,10 @@ export const placementJobRoleOptions = pgTable(
       "maximum_annual_ctc_inr",
     ),
     // Pay breakdown in lakh per annum (legacy precision, migration 0096).
+    /** Exact legacy package CTC; min/max INR remain normalized range fields. */
+    ctcLpa: numeric("ctc_lpa", { precision: 12, scale: 4 }),
+    stipendPerMonthInr: numeric("stipend_per_month_inr", { precision: 12, scale: 2 }),
+    stipendMonths: integer("stipend_months"),
     fixedLpa: numeric("fixed_lpa", { precision: 10, scale: 2 }),
     variableLpa: numeric("variable_lpa", { precision: 10, scale: 2 }),
     joiningBonusLpa: numeric("joining_bonus_lpa", {
@@ -755,6 +768,12 @@ export const placementJobRoleOptions = pgTable(
       sql`(${table.minimumAnnualCtcInr} is null or ${table.minimumAnnualCtcInr} >= 0)
         and (${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= 0)
         and (${table.minimumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} is null or ${table.maximumAnnualCtcInr} >= ${table.minimumAnnualCtcInr})`,
+    ),
+    check(
+      "placement_job_role_options_package_pay_ck",
+      sql`(${table.ctcLpa} is null or ${table.ctcLpa} >= 0)
+        and (${table.stipendPerMonthInr} is null or ${table.stipendPerMonthInr} >= 0)
+        and (${table.stipendMonths} is null or ${table.stipendMonths} > 0)`,
     ),
     check(
       "placement_job_role_options_pay_breakdown_ck",

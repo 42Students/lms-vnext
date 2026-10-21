@@ -1023,6 +1023,20 @@
       "when": 1792350071266,
       "tag": "0145_lane15_published_deadline_idx",
       "breakpoints": true
+    },
+    {
+      "idx": 146,
+      "version": "7",
+      "when": 1792350131266,
+      "tag": "0146_lane15_job_parity_foundations",
+      "breakpoints": true
+    },
+    {
+      "idx": 147,
+      "version": "7",
+      "when": 1792350191266,
+      "tag": "0147_lane15_role_pay_package",
+      "breakpoints": true
     }
   ]
 }
