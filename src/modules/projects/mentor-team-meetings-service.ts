@@ -48,14 +48,19 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
         ? sql`nullif(btrim(${projectMeetings.outcome}), '') is not null`
         : sql`nullif(btrim(${projectMeetings.outcome}), '') is null`,
     search);
-  const [teamRows,summary]=await Promise.all([
-    db.select({role:projectMembers.role,isPrimary:projectMembers.isPrimary})
-      .from(projectMembers)
+  // Aggregate current, tenant-verified team members in SQL. Loading the
+  // entire membership roster just to count learners/mentors is unbounded.
+  const [teamSummary,summary]=await Promise.all([
+    db.select({
+      learners:sql<number>`count(*) filter(where ${projectMembers.role} = 'LEARNER')::int`.mapWith(Number),
+      mentors:sql<number>`count(*) filter(where ${projectMembers.role} = 'MENTOR')::int`.mapWith(Number),
+      primary:sql<boolean>`coalesce(bool_or(${projectMembers.role} = 'MENTOR' and ${projectMembers.isPrimary}),false)`,
+    }).from(projectMembers)
       .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
       .innerJoin(users,eq(users.id,collegeMemberships.userId))
       .innerJoin(membershipRoles,and(
         eq(membershipRoles.membershipId,collegeMemberships.id),
-        sql`CAST(${membershipRoles.role} AS text) = ${projectMembers.role}`,
+        sql`cast(${membershipRoles.role} as text) = ${projectMembers.role}`,
       ))
       .where(and(
         eq(projectMembers.projectId,scope.project.id),
@@ -64,8 +69,7 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
         eq(collegeMemberships.status,"ACTIVE"),
         eq(users.platformStatus,"ACTIVE"),
       )),
-    db.select({total:count()}).from(projectMeetings)
-      .where(meetingFilters),
+    db.select({total:count()}).from(projectMeetings).where(meetingFilters),
   ]);
   const page=mentorTeamMeetingsPage(Number(summary[0]?.total??0),query.page);
   const meetings=await db.select({
@@ -84,9 +88,9 @@ export async function getMentorTeamMeetings(context:RequestContext,raw:unknown){
     enabled:true as const,query,projectTitle:scope.project.title,
     projectStatus:scope.project.status,
     team:{
-      learners:teamRows.filter(row=>row.role==="LEARNER").length,
-      mentors:teamRows.filter(row=>row.role==="MENTOR").length,
-      primaryRecorded:teamRows.some(row=>row.role==="MENTOR"&&row.isPrimary),
+      learners:Number(teamSummary[0]?.learners??0),
+      mentors:Number(teamSummary[0]?.mentors??0),
+      primaryRecorded:teamSummary[0]?.primary??false,
     },
     ...page,
     items:meetings.map(({outcome,...row})=>({

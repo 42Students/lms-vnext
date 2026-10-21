@@ -38,6 +38,14 @@ export default async function TpoDriveRoundsPage({
   ]):[[],[],[]];
   const countFor=(rows:readonly {roundId:string|null;n:number}[],id:string)=>
     rows.find(r=>r.roundId===id)?.n??0;
+  // The original workspace shows what the placement cell must do next,
+  // before the round-by-round drilldown. Compute from the same scoped reads.
+  const stagedTotal=drive.rounds.reduce((sum,round)=>
+    sum+round.participants.filter(p=>p.result?.status==="STAGED").length,0);
+  const pendingProposals=proposals.reduce((sum,row)=>sum+row.n,0);
+  const pendingChanges=requests.reduce((sum,row)=>sum+row.n,0);
+  const nextRound=drive.rounds.find(round=>
+    round.status!=="COMPLETED"&&round.status!=="CANCELLED");
   const root = "/tpo/placements/jobs/" + encodeURIComponent(jobId);
   const date = (value: Date | null) =>
     value ? new Intl.DateTimeFormat("en-IN", {
@@ -48,6 +56,34 @@ export default async function TpoDriveRoundsPage({
       description="Plan the drive rounds, check bookings and record company results."
       actions={<Link href={root + "#drive-round-actions"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Manage and reorder rounds</Link>} />
 
+    <section aria-labelledby="round-next-action" className="min-w-0 space-y-3 border-b border-border pb-4">
+      <h2 id="round-next-action" className="text-base font-semibold text-foreground">
+        Next action for this drive
+      </h2>
+      {stagedTotal>0?<p className="text-sm text-body">
+        <strong>{stagedTotal} results waiting to apply.</strong> Review the staged results
+        with the company before moving students to the next round.
+      </p>:pendingProposals+pendingChanges>0?<p className="text-sm text-body">
+        <strong>{pendingProposals} recruiter slot proposals</strong> and
+        <strong> {pendingChanges} reschedule requests</strong> need review.
+        Confirm the interview schedule with the college and candidates.
+      </p>:nextRound?<p className="text-sm text-body">
+        <strong>{nextRound.name}</strong> is the next round to check.
+        Confirm the schedule and record the company results when ready.
+      </p>:<p className="text-sm text-body">
+        No open round action is recorded. Review completion and audit history.
+      </p>}
+      <div className="flex flex-wrap gap-3 text-sm">
+        {nextRound?<Link href={root+"/rounds/"+encodeURIComponent(nextRound.id)+"/results"}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Review next round results
+        </Link>:null}
+        {pendingProposals+pendingChanges>0?<Link href={root+"/candidate-schedule"}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Review schedule requests
+        </Link>:null}
+      </div>
+    </section>
     {drive.rounds.length === 0
       ? <EmptyState title="No rounds planned" description="Add an evaluation round in the drive workspace before scheduling students." />
       : <div className="min-w-0 divide-y divide-border border-y border-border">

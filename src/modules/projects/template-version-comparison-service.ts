@@ -27,6 +27,17 @@ export async function getSuperAdminTemplateVersionComparison(context: RequestCon
   if (!selected || !current) {
     throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
   }
-  return { template, selected, current,
-    changes: compareTemplateVersionSnapshots(current, selected) };
+  // The comparison intentionally lives on an addressable read-only page,
+  // rather than a non-bookmarkable modal. The page preserves keyboard
+  // navigation, close/back semantics and side-by-side changed fields.
+  const changes=compareTemplateVersionSnapshots(current,selected);
+  return {template,selected,current,changes,
+    presentation:{
+      kind:"ACCESSIBLE_PAGE" as const,
+      heading:`Compare version ${selected.version} with current version ${current.version}`,
+      backHref:`/admin/projects/templates/${template.id}/versions`,
+      warning:"Versions are read-only; restoring a snapshot creates a new version.",
+      changedFieldCount:changes.length,
+    },
+  };
 }
