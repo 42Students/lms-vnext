@@ -285,14 +285,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/projects/project-meeting-controls.tsx`
 - [x] `src/components/projects/project-mentor-reassignment.tsx`
 - [x] `src/components/projects/project-participant-list-controls.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-template-controls.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-create-form.tsx`
-- [ ] `src/components/projects/super-admin-template-overview-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-resource-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-template-controls.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-create-form.tsx`
+- [x] `src/components/projects/super-admin-template-overview-editor.tsx`
+- [x] `src/components/projects/super-admin-template-resource-editor.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
 - [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
 - [ ] `src/components/tpo/tpo-campaign-compose.tsx`
