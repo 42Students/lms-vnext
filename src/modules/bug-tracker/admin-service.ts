@@ -155,7 +155,7 @@ export async function listBugTrackerIssuesForAdmin(
   if (input.createdBefore) conditions.push(lt(db10BugReports.createdAt,input.createdBefore));
   if(input.reporter){
     const reporter=input.reporter.toLowerCase();
-    conditions.push(sql`position(${reporter}::text in lower(${db10BugReports.reporterName})) > 0`);
+    conditions.push(sql`lower(${db10BugReports.reporterName}) = ${reporter}`);
   }
   if (input.q) {
     // Literal substring semantics: '%' and '_' in user input are data, not LIKE wildcards.
@@ -164,6 +164,8 @@ export async function listBugTrackerIssuesForAdmin(
       sql`position(${term}::text in lower(${db10BugReports.publicId})) > 0`,
       sql`position(${term}::text in lower(${db10BugReports.reporterName})) > 0`,
       sql`position(${term}::text in lower(${db10BugReports.page})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.screen})) > 0`,
+      sql`position(${term}::text in lower(${db10BugReports.section})) > 0`,
       sql`position(${term}::text in lower(${db10BugReports.description})) > 0`,
     )!);
   }

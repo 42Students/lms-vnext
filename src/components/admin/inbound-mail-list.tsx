@@ -5,7 +5,7 @@ import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
-import {safeInboundPreview} from "@/modules/inbound-mail/message-model";
+import {safeInboundPreview,inboundMailRoutingStatusLabels,type InboundMailRoutingStatus} from "@/modules/inbound-mail/message-model";
 import {createInboundMailTriageGate} from "@/modules/inbound-mail/triage-submit-model";
 import {inboundMailStatusActions,type InboundMailStatus} from "@/modules/inbound-mail/triage-transition-model";
 export type InboundMailRow={
@@ -58,7 +58,7 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
        <div className="min-w-0 flex-1 space-y-[var(--lms-space-1)]">
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
          <h2 className="min-w-0 break-words text-base font-semibold text-[var(--lms-heading)]">{row.subject||"(No subject)"}</h2>
-         {row.routingStatus ? <StatusBadge>{row.routingStatus.replaceAll("_"," ")}</StatusBadge> : null}
+         {row.routingStatus ? <StatusBadge>{inboundMailRoutingStatusLabels[row.routingStatus as InboundMailRoutingStatus]??row.routingStatus}</StatusBadge> : null}
          <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
          {row.handledAt ? <StatusBadge>Done</StatusBadge> : null}
         </div>

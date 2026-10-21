@@ -6,7 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {BUG_STATUSES,type BugStatus} from "@/modules/bug-tracker/workflow";
 
@@ -29,12 +29,13 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
     if(!confirmed){setConfirmOpen(true);return;}
     lock.current=true;setBusy(true);setFailed([]);setSuccess(0);setNotice("");
     const failures:string[]=[];let completed=0;
+    const reasons:Record<string,string>={};
     try{
       // Each write still goes through the authorized version-checked single-issue
       // workflow. A failed row does not prevent later rows from being processed.
       for(const id of selected){
         const row=rows.find(item=>item.publicId===id);
-        if(!row){failures.push(id);continue;}
+        if(!row){failures.push(id);reasons[id]="This issue is no longer on the current page.";continue;}
         if(row.status===status){completed++;continue;}
         try{
           await apiFetch("/api/tracker/issues/"+encodeURIComponent(id)+"/workflow",{
@@ -42,16 +43,23 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
             body:JSON.stringify({expectedVersion:row.version,status}),
           });
           completed++;
-        }catch{failures.push(id);}
+        }catch(error){
+          failures.push(id);
+          reasons[id]=error instanceof FriendlyFetchError?error.message:
+            "Unable to update this issue.";
+        }
       }
       setFailed(failures);setSuccess(completed);
+      // A successful write must never be retried against its stale version.
+      setSelected(failures);
       if(completed)router.refresh();
       if(failures.length){
-        setNotice("Could not update "+failures.length+" issue"+(failures.length===1?"":"s")+
-          ". Review the failed IDs and retry after refreshing their details.");
+        const first=failures[0];
+        setNotice(failures.length+" could not be updated ("+failures.join(", ")+"): "+
+          (reasons[first]??"Refresh issue details and retry."));
       }else{
-        setSelected([]);
-        setNotice(completed+" issues updated.");
+        setSelecting(false);
+        setNotice("Updated "+completed+" issue(s).");
       }
     }finally{lock.current=false;setBusy(false);setConfirmOpen(false);}
   }
