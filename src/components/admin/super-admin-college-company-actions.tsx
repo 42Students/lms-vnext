@@ -82,12 +82,12 @@ export function SuperAdminCollegeCompanyRelationshipActions({relationshipId,name
     {trusted?"Mark not trusted":"Mark trusted"}</Button>:null}
    <Button type="button" variant={archive?"danger":"secondary"} disabled={pending||(archive&&driveCount>0)||companyStatus!=="ACTIVE"}
     title={archive&&driveCount>0?"Cannot delete a company with drives":undefined}
-    onClick={()=>setConfirm(true)}
+    onClick={()=>{setError("");setConfirm(true);}}
     className="min-h-11 w-full sm:w-auto md:min-h-9">
     {archive?"Delete company":"Restore company"}</Button>
   </div>
   {archive&&driveCount>0?<p className="text-xs leading-5 text-muted-foreground">Cannot delete a company with drives</p>:null}
-  <ConfirmDialog open={confirm} onOpenChange={setConfirm}
+  <ConfirmDialog open={confirm} onOpenChange={next=>{if(!pending)setConfirm(next);}}
    title={(archive?"Delete ":"Restore ")+name+" for this college?"}
    description="The global company record will be kept."
    confirmLabel={archive?"Confirm delete":"Confirm restore"}

@@ -84,7 +84,7 @@ export function ResourceProgressControl({
         title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
         description="Mark this learning item as complete?"
         confirmLabel="Mark as complete" confirmVariant="primary" pending={saving} onConfirm={markComplete} />
-      {error ? <div role="alert"><Alert tone="error">{error}</Alert></div> : null}
+      {error ? <Alert tone="error">{error}</Alert> : null}
     </div>
   );
 }
