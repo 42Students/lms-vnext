@@ -186,6 +186,12 @@ export default async function TpoReportsPage({
   ] as const;
   const indexedCards=groups.flatMap(group=>group.cards);
   const legacyPaths=new Set<string>(legacyReportOrder.flat());
+  const retryParams=new URLSearchParams();
+  for(const key of ["seasonId","jobId","q","group"] as const){
+   const value=first(query[key]);
+   if(value)retryParams.set(key,value);
+  }
+  const retryHref="/tpo/reports"+(retryParams.size?"?"+retryParams.toString():"");
   const legacyGroups=groups.map((group,index)=>({
    ...group,
    eyebrow:["Placement health","Student outcomes","Relationships and compliance"][index],
@@ -207,7 +213,7 @@ export default async function TpoReportsPage({
       <Alert tone="error">
         <h2 className="text-base font-semibold">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">Previously loaded figures cannot be verified in this request. The report links remain available.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+        <Link href={retryHref} className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry headline numbers</Link>
       </Alert>
       {visibleGroups.length === 0 ? <EmptyState title="No matching reports" description="Clear filters to see the full report directory." /> : null}
       {visibleGroups.map(group => <section key={group.heading} className="space-y-3 border-b border-border pb-4">
@@ -322,7 +328,7 @@ export default async function TpoReportsPage({
       ) : null}
 
 
-      <p role="status" className="text-sm text-body leading-[1.6]">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>
+      {parsedSearch.data||parsedGroup.data!=="ALL"?<p role="status" className="text-sm text-body leading-[1.6]">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>:null}
       {visibleGroups.length===0?<EmptyState title="No matching reports"
         description="No available report matches this search and category. Clear filters to see the full gallery."/>:null}
       {visibleGroups.map((group) => (
