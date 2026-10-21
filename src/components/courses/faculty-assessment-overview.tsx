@@ -3,6 +3,8 @@ import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 
 import { Button } from "@/components/ui/button";
+import { Drawer } from "@/components/ui/drawer";
+import { Alert } from "@/components/ui/alert";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -34,7 +36,8 @@ export function FacultyAssessmentOverview({
   overview: Overview;
   kind: "ASSIGNMENT" | "QUIZ";
 }) {
-  const [courseId, setCourseId] = useState("");
+  const [courseCode, setCourseCode] = useState("");
+  const [viewedKey,setViewedKey] = useState<string|null>(null);
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(()=>{
@@ -45,10 +48,20 @@ export function FacultyAssessmentOverview({
   const items: Assessment[] =
     kind === "ASSIGNMENT" ? overview.assignments : overview.quizzes;
 
-  const filtered = useMemo(
-    () => filterFacultyAssessments(items, { deliveryId: courseId, status, search }),
-    [items, courseId, status, search],
+  const courseChoices = useMemo(() =>
+    [...new Map(overview.courses.map(course => [course.courseCode, {
+      code: course.courseCode, name: course.courseName,
+    }])).values()].sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code)),
+    [overview.courses],
   );
+  const filtered = useMemo(
+    () => filterFacultyAssessments(
+      courseCode ? items.filter(item=>item.courseCode===courseCode) : items,
+      { status, search },
+    ),
+    [items, courseCode, status, search],
+  );
+  const viewedItem=items.find(item=>`${item.deliveryId}:${item.id}`===viewedKey);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
   const rows = filtered.slice(
@@ -101,19 +114,19 @@ export function FacultyAssessmentOverview({
       </Disclosure>
       <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Course / Section
+          Course
           <Select
-            value={courseId}
+            value={courseCode}
             onChange={(event) => {
-              setCourseId(event.target.value);
+              setCourseCode(event.target.value);
               setPage(1);
             }}
             className="mt-1.5"
           >
             <option value="">All courses</option>
-            {overview.courses.map((course) => (
-              <option key={course.deliveryId} value={course.deliveryId}>
-                {course.courseCode} · {course.courseName} · {course.sectionName}
+            {courseChoices.map((course) => (
+              <option key={course.code} value={course.code}>
+                {course.code} · {course.name}
               </option>
             ))}
           </Select>
@@ -157,7 +170,7 @@ export function FacultyAssessmentOverview({
       {filtered.length === 0 ? (
         <EmptyState
           title={kind==="QUIZ"?"No matching quizzes":"No matching assignments"}
-          description="Change Course / Section or Status to see other assessments."
+          description="Change Course or Status to see other assessments."
         />
       ) : (
         <div className="min-w-0 divide-y divide-border" aria-label={kind === "QUIZ" ? "All quizzes" : "All assignments"}>
@@ -176,7 +189,14 @@ export function FacultyAssessmentOverview({
                       {item.authoredDeliveryId ? "This Section" : "Shared Offering"}
                     </StatusBadge>
                   </div>
-                  <h2 className="mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{item.title}</h2>
+                  <h2 className="mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
+                    <Button type="button" variant="link" size="sm"
+                      className="h-auto min-h-11 max-w-full justify-start whitespace-normal break-words p-0 text-left font-semibold text-inherit underline-offset-2 hover:underline md:min-h-9"
+                      aria-label={`View ${item.kind === "QUIZ" ? "quiz" : "assignment"} ${item.title}`}
+                      onClick={()=>setViewedKey(`${item.deliveryId}:${item.id}`)}>
+                      {item.title}
+                    </Button>
+                  </h2>
                   <p className="mt-1 break-words text-sm text-body leading-[22px]">
                     {item.courseName} · {item.sectionName} · {item.lessonName}
                   </p>
@@ -191,9 +211,19 @@ export function FacultyAssessmentOverview({
                   ) : null}
                 </div>
                 <div className="w-full min-w-0 lg:w-auto lg:max-w-[27rem]">
+                  <Button type="button" variant="secondary" size="sm"
+                    className="min-h-11 w-full md:min-h-9"
+                    onClick={()=>setViewedKey(`${item.deliveryId}:${item.id}`)}>
+                    View details
+                  </Button>
                   <Disclosure title="Actions" className="border-0" summaryClassName="min-h-11 md:min-h-9" contentClassName="grid min-w-0 gap-2 pt-2 sm:grid-cols-2 lg:grid-cols-1">
                   {item.facultyOwned ? (
                     <>
+                      {item.kind==="QUIZ" && item.status!=="DRAFT" ? (
+                        <Alert tone="info">
+                          Published Quiz questions and attempt limits are locked. The editor permits only server-approved metadata changes; deadlines are rejected after learner attempts.
+                        </Alert>
+                      ) : null}
                       <FacultyAssessmentEditor
                         assessment={{
                           id: item.id,
@@ -288,6 +318,39 @@ export function FacultyAssessmentOverview({
           ))}
         </div>
       )}
+
+      <Drawer open={Boolean(viewedItem)} onOpenChange={open=>{if(!open)setViewedKey(null);}}
+        title={viewedItem?.title??"Assessment details"}
+        description={viewedItem ? `${viewedItem.courseName} · ${viewedItem.sectionName}` : undefined}>
+        {viewedItem ? <div className="min-w-0 space-y-4 text-sm text-body">
+          <div className="flex flex-wrap gap-2">
+            <StatusBadge tone={viewedItem.status==="PUBLISHED"?"success":"neutral"}>{viewedItem.status}</StatusBadge>
+            <StatusBadge tone="info">{viewedItem.authoredDeliveryId?"This Section":"Shared Offering"}</StatusBadge>
+          </div>
+          <dl className="grid min-w-0 grid-cols-2 gap-3">
+            <div><dt className="text-xs text-muted-foreground">Course</dt>
+              <dd className="break-words font-semibold text-foreground">{viewedItem.courseName} ({viewedItem.courseCode})</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Lesson</dt>
+              <dd className="break-words font-semibold text-foreground">{viewedItem.lessonName}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Due</dt>
+              <dd className="font-semibold text-foreground">{formatDate(viewedItem.dueAt)}</dd></div>
+            <div><dt className="text-xs text-muted-foreground">Maximum</dt>
+              <dd className="font-semibold text-foreground">
+                {viewedItem.kind==="QUIZ"?`${viewedItem.totalPoints} points · ${viewedItem.maxAttempts} attempts`:`${viewedItem.maxPoints} points`}
+              </dd></div>
+          </dl>
+          <section className="border-t border-border pt-3">
+            <h3 className="mb-2 font-semibold text-foreground">Instructions</h3>
+            <p className="whitespace-pre-wrap break-words leading-6">
+              {viewedItem.description||"No additional instructions provided."}
+            </p>
+          </section>
+          <Link href={facultyCourseTabHref(viewedItem.deliveryId,"blueprint")}
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+            Open Course
+          </Link>
+        </div> : null}
+      </Drawer>
 
       {totalPages > 1 ? (
         <nav aria-label="Assessment pages" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)]">

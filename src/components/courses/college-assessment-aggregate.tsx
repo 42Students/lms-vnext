@@ -199,11 +199,15 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
         </form>
       </section>
 
-      <section aria-label="Displayed assessment summary" className="grid gap-3 md:grid-cols-3">
+      <section aria-label="Displayed assessment summary" className={isAssignment
+        ? "grid gap-3 md:grid-cols-4"
+        : "grid gap-3 md:grid-cols-3"}>
         {[
           ["Matching records", data.total],
           ["Published on this page", summary.published],
           [isAssignment ? "Submitted records on this page" : "Quiz attempts on this page", summary.activity],
+          ...(isAssignment ? [["Not graded on this page",
+            data.items.reduce((sum,item)=>sum+Math.max(0,item.submittedLearners-item.gradedLearners),0)]] : []),
         ].map(([label, value]) => (
           <StatTile key={String(label)} label={String(label)} value={value as number}/>
         ))}
@@ -233,10 +237,14 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   <div><dt className="font-semibold text-muted-foreground">Audience</dt><dd>{collegeAudienceLabel(item.deliverySpecific)}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Maximum points</dt><dd>{item.points}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Due</dt><dd>{formatDue(item.dueAt)}</dd></div>
+                  <div><dt className="font-semibold text-muted-foreground">Total students eligible</dt>
+                    <dd>{item.eligibleLearners}</dd></div>
                   <div><dt className="font-semibold text-muted-foreground">Submitted</dt>
-                    <dd>{item.submittedLearners}/{item.eligibleLearners}</dd></div>
+                    <dd>{item.submittedLearners}</dd></div>
                   {isAssignment?<div><dt className="font-semibold text-muted-foreground">Graded</dt>
-                    <dd>{item.gradedLearners} graded · {Math.max(0,item.submittedLearners-item.gradedLearners)} not graded</dd></div>:null}
+                    <dd>{item.gradedLearners}</dd></div>:null}
+                  {isAssignment?<div><dt className="font-semibold text-muted-foreground">Not graded</dt>
+                    <dd>{Math.max(0,item.submittedLearners-item.gradedLearners)}</dd></div>:null}
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd><StatusBadge tone={item.resultsPublished?"success":"warning"}>{item.resultsPublished?"Published":"Hidden"}</StatusBadge></dd></div>:null}
                 </dl>
                 {!isAssignment?<><QuizListActions item={item}/><CollegeQuizActions quiz={item}/><CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId} specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries} status={item.status}/></>:null}
@@ -277,10 +285,12 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   ...(!isAssignment?[{key:"results",header:COLLEGE_COURSE_TAB_COPY.assessmentColumns.results,
                     mobilePriority:"secondary" as const,cell:(item:CollegeAssessmentAggregateItem)=><StatusBadge tone={item.resultsPublished?"success":"warning"}>{collegeResultsLabel(Boolean(item.resultsPublished))}</StatusBadge>}]:[]),
                   {key:"due",header:"Due (IST)",mobilePriority:"secondary" as const,cell:(item)=>formatDue(item.dueAt)},
-                  {key:"submitted",header:"Submitted / eligible",mobilePriority:"secondary" as const,
-                    cell:(item)=>item.submittedLearners+"/"+item.eligibleLearners+" submitted"},
-                  ...(isAssignment?[{key:"graded",header:"Graded",mobilePriority:"secondary" as const,
-                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded / "+Math.max(0,item.submittedLearners-item.gradedLearners)+" not graded"}]:[]),
+                  {key:"eligible",header:"Total students",mobilePriority:"secondary" as const,
+                    cell:(item)=>item.eligibleLearners},
+                  {key:"submitted",header:"Submitted",mobilePriority:"secondary" as const,
+                    cell:(item)=>item.submittedLearners},
+                  ...(isAssignment?[{key:"graded",header:"Graded / not graded",mobilePriority:"secondary" as const,
+                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded · "+Math.max(0,item.submittedLearners-item.gradedLearners)+" not graded"}]:[]),
                   {key:"actions",header:"Actions",mobilePriority:"action" as const,
                     cell:(item)=><div className="min-w-0 space-y-2">
                       {isAssignment?<><CollegeAssignmentActions assignment={item}/>
@@ -312,6 +322,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
       <p className="text-xs leading-5 text-muted-foreground">
         Submitted means distinct active enrolled learners with a submission or attempt.
         Denominators count active eligible learners across this assessment’s Section audience.
+        Not graded is submitted minus graded for currently eligible learners, not a historical count.
         Graded counts active learners with graded submissions. The activity summary above
         separately counts all recorded rows, including historical attempts.
         Draft and archived items remain visible to authorized College Admins.
