@@ -45,11 +45,11 @@ export function deriveMentorProjectAttention(
        freshReview&&submission.submittedAt){
       alerts.push({
         projectId:project.projectId,
-        key:"review:"+project.submission.id,kind:"REVIEW",
+        key:"review:"+submission.id,kind:"REVIEW",
         title:project.projectTitle+" — submission waiting for your review",
         description:"A team member submitted work for this project.",
         href:href+"?tab=overview",
-        occurredAt:project.submission.submittedAt.toISOString(),
+        occurredAt:submission.submittedAt.toISOString(),
       });
     }
     // MEN-projects-meetings-73: legacy includes idle PLANNED and ACTIVE
