@@ -84,6 +84,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    setConfirmCreate(false);
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setPoints("0");
+   setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);
    setMessage("Assignment draft created. Publish it to let learners submit.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
