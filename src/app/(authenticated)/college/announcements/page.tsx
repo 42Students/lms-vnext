@@ -90,6 +90,10 @@ export default async function AnnouncementsPage({
   // Server component: evaluated once per request, so the request-time clock is intended.
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
+  // Migration contract: legacy Announcement.createdAt was an IST local
+  // datetime, converted ONCE to UTC using
+  // legacyAnnouncementIstWallTimeToUtc before writing timestamptz.
+  // Drizzle values are now real UTC instants; do not add +05:30 again here.
   const items: AnnouncementAdminItem[] = page.items.map((item) => ({
     id: item.id,
     receiverType: item.receiverType as AnnouncementAdminItem["receiverType"],
