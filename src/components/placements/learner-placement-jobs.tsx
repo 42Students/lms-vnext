@@ -31,6 +31,8 @@ export type LearnerPlacementJobItem = {
     targetProgramName?: string | null;
     employmentType: string;
     jobTypeLabel?: string | null;
+    /** Approved legacy HTTPS job-description document; never an object-storage key. */
+    legacyJobDescriptionUrl?: string | null;
     workMode: string;
     locations: string[];
     openings: number | null;
@@ -766,6 +768,7 @@ export function LearnerPlacementJobs({
           <div className="divide-y divide-border/60">
           {roles.map((item,index) => {
         const firstRole=index===0;
+        const jobDescriptionUrl=firstRole?safeLearnerPlacementUrl(item.job.legacyJobDescriptionUrl):null;
         const roleCount=roles.length;
         const failedChecks =
           item.eligibility.checks.filter(
@@ -809,6 +812,11 @@ export function LearnerPlacementJobs({
                 <p className="mt-2 line-clamp-3 max-w-3xl break-words text-sm leading-6 text-body">
                   {item.job.description}
                 </p>
+                {jobDescriptionUrl?.startsWith("https://")?<a href={jobDescriptionUrl}
+                  target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer"
+                  className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 md:min-h-9">
+                  View job description ↗
+                </a>:null}
               </div>
               <div className="flex min-w-0 flex-wrap items-center gap-2 sm:justify-end">
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
