@@ -112,7 +112,7 @@ export default async function TpoPerformanceIntelligencePage({
           averages, not treated as zero.
         </p>
         <Disclosure title="Compensation metrics" className="border-y border-border py-3">
-          <div className="pt-3 grid min-w-0 grid-cols-2 gap-3 lg:grid-cols-3">
+          <div className="pt-3 grid min-w-0 grid-cols-1 md:grid-cols-2 gap-3 lg:grid-cols-3">
           {([
             ["Accepted full-time offer versions", compensation.acceptedFullTimeOfferVersions],
             ["Versions with known CTC", compensation.knownPackageOfferVersions],
