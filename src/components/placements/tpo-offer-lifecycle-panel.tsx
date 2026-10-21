@@ -102,8 +102,8 @@ export function TpoOfferLifecyclePanel({
   return (
     <section className="space-y-4 border-b border-border pb-6" aria-label="TPO verified offer lifecycle">
       <div>
-        <h3 className="text-base font-semibold text-foreground">Verified offer lifecycle</h3>
-        <p className="mt-1 text-sm leading-6 text-body">
+        <h3 className="text-base font-semibold text-[var(--lms-heading)]">Verified offer lifecycle</h3>
+        <p className="mt-1 text-sm text-body leading-[22px]">
           Record an expiry extension, evidence-backed learner response, joining
           confirmation or employer withdrawal for up to 200 offers.
           Changing a learner response here requires independent confirmation evidence.
@@ -198,7 +198,7 @@ export function TpoOfferLifecyclePanel({
           {busy ? "Recording..." : "Review and confirm action"}
         </Button>
       </div>
-      {notice ? <p role={notice.includes("updated and audited")?"status":"alert"} className="text-sm text-body">{notice}</p> : null}
+      {notice ? <p role={notice.includes("updated and audited")?"status":"alert"} className="text-sm text-body leading-[22px]">{notice}</p> : null}
     </section>
   );
 }

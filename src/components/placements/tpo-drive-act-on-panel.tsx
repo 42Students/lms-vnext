@@ -99,7 +99,7 @@ export function TpoDriveActOnPanel(){
   <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setOpen(!open)} aria-expanded={open}
    aria-controls="tpo-drive-bulk-actions">Act on selected drives</Button>
   {open?<div id="tpo-drive-bulk-actions" className="min-w-0 space-y-4 border-t border-border pt-4">
-   <p className="text-sm text-body">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
+   <p className="text-sm text-body leading-[22px]">Actions only apply to checked rows on this page. Every drive is rechecked by the placement server before applying a change.</p>
    <details className="min-w-0 border-b border-border pb-3">
     <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Other selected-drive actions</summary>
     <div className="pt-2"><TpoBulkDriveReminder/></div>
@@ -116,7 +116,7 @@ export function TpoDriveActOnPanel(){
     >Preview applicable drives</Button>
    </div>
    {rows.length?<div className="min-w-0 space-y-3 border-t border-border pt-4">
-    <p role="status" className="text-sm">{rows.filter(row=>row.allowed).length} applicable · {rows.filter(row=>!row.allowed).length} left out</p>
+    <p role="status" className="text-sm leading-[22px]">{rows.filter(row=>row.allowed).length} applicable · {rows.filter(row=>!row.allowed).length} left out</p>
     <ul className="min-w-0 divide-y divide-border text-sm">{rows.map(row=><li key={row.id} className="flex min-w-0 flex-col gap-1 py-2 sm:flex-row sm:justify-between sm:gap-3"><span className="break-words font-medium">{row.title}</span><span className={row.allowed?"text-body":"text-muted-foreground"}>{row.reason}</span></li>)}</ul>
     <label className="grid min-w-0 max-w-xl gap-[6px] text-[13px] font-semibold">Reason (audited)
      <Textarea className="min-w-0 w-full" value={reason} onChange={e=>{setReason(e.target.value);setNotice("");}} rows={3} minLength={10} maxLength={1000}
@@ -127,7 +127,7 @@ export function TpoDriveActOnPanel(){
      {pending?"Applying…":"Confirm selected action"}</Button>
    </div>:null}
    {results.length?<div className="min-w-0 space-y-2 border-t border-border pt-4">
-    <p className="text-sm font-semibold">Per-drive results and retry</p>
+    <p className="text-sm font-semibold leading-[22px]">Per-drive results and retry</p>
     <ul className="min-w-0 divide-y divide-border text-sm">{results.map(row=><li key={row.id} className="min-w-0 break-all py-2">{row.id} · {row.status} · {row.reason}</li>)}</ul>
     {results.some(row=>row.status==="failed")?<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
      <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void apply(true)} >Retry failed</Button>

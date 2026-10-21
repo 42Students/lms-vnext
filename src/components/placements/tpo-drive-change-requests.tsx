@@ -54,7 +54,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   {error?<InlineNotice tone="error" message={error}/>:null}
   {success?<InlineNotice tone="success" message={success}/>:null}
   <Disclosure title={"Suggest a change or ask the "+(party==="TPO"?"company":"placement cell")} defaultOpen={requests.length===0} className="min-w-0 border-b border-border pb-3" contentClassName="min-w-0 space-y-3 pt-3">
-   <p className="text-sm text-body">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
+   <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
     <label className="grid gap-1 text-sm">Request type
      <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
@@ -76,19 +76,19 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
   </Disclosure>
   <section className="space-y-3">
-   <h2 className="text-base font-semibold leading-6">Change requests · {requests.length}</h2>
+   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Change requests · {requests.length}</h2>
    {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
     <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <h3 className="font-semibold">{item.field.replaceAll("_"," ")} · {item.mode.toLowerCase()}</h3>
       <StatusBadge tone={item.status==="ACCEPTED"?"success":item.status==="DECLINED"?"error":item.status==="OPEN"?"warning":"neutral"}>{item.status.replaceAll("_"," ")}</StatusBadge>
      </div>
-     <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm">{item.proposedValue}</p>
-     <p className="break-words [overflow-wrap:anywhere] text-sm text-body">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
+     <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px]">{item.proposedValue}</p>
+     <p className="break-words [overflow-wrap:anywhere] text-sm text-body leading-[22px]">Why: {item.reason} · From {item.proposerParty==="TPO"?"placement cell":"company"}</p>
      {item.decisionNote?<Alert tone="info">Decision: {item.decisionNote}</Alert>:null}
      <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
-      {item.messages.length===0?<p className="text-sm text-body">No discussion yet.</p>:null}
-      {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm">
+      {item.messages.length===0?<p className="text-sm text-body leading-[22px]">No discussion yet.</p>:null}
+      {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm leading-[22px]">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
       <label className="grid gap-1 text-sm">Reply or decision explanation
@@ -119,7 +119,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    confirmVariant={confirmation?.action==="ACCEPT"?"primary":"danger"} pending={busy}
    onConfirm={()=>{if(confirmation)void send({action:confirmation.action,requestId:confirmation.requestId,
      expectedUpdatedAt:confirmation.expectedUpdatedAt,note:confirmation.note});}}>
-   <p className="text-sm text-body">{confirmation?.action==="ACCEPT"?"Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.":"This decision is recorded in the drive discussion. It does not apply a proposed drive change."}</p>
+   <p className="text-sm text-body leading-[22px]">{confirmation?.action==="ACCEPT"?"Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.":"This decision is recorded in the drive discussion. It does not apply a proposed drive change."}</p>
    {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>
  </div>;

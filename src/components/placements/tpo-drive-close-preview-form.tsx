@@ -55,8 +55,8 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
   ["Offer versions",preview.counts.offers],
  ] as const;
  return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5">
-  <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
-  <p className="max-w-prose text-sm text-body">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Review consequences</h2>
+  <p className="max-w-prose text-sm text-body leading-[22px]">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
   <dl className="grid min-w-0 grid-cols-3 gap-2 border-y border-border sm:gap-4">
    {consequences
     .map(([label,n])=><div key={label} className="min-w-0 py-3">
@@ -68,7 +68,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
     disabled={pending} value={reasonText} onChange={event=>{setReasonText(event.target.value);setError(null);}}
     className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/>
    <span className="text-xs font-normal text-muted-foreground">{reasonText.length}/1000 characters</span></label>
-  <p className="text-xs text-body">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
+  <p className="text-xs text-body leading-[20px]">If the drive version or these counts change, closing is rejected and you must review the consequences again.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
   <Button type="submit" disabled={pending} className="min-h-11 w-full sm:w-auto md:min-h-9">
    {pending?"Closing…":"Review and close drive"}</Button>
@@ -76,7 +76,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
     title="Close this drive?"
     description="New applications stop, open applicants are marked Not selected and told, and pending withdrawal requests are settled. Accepted offers remain valid. This action is audited."
     confirmLabel="Review and close drive" confirmVariant="danger" onConfirm={()=>void performClose()}>
-    <p className="text-sm text-body">Applications: {preview.counts.applications} · Round records: {preview.counts.rounds} · Offer versions: {preview.counts.offers}</p>
+    <p className="text-sm text-body leading-[22px]">Applications: {preview.counts.applications} · Round records: {preview.counts.rounds} · Offer versions: {preview.counts.offers}</p>
   </ConfirmDialog>
  </form>;
 }

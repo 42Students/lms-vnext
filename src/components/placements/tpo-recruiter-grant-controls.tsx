@@ -41,8 +41,8 @@ export function TpoRecruiterGrantForm({ companies }: {
   }
   return (
     <section className="min-w-0 space-y-3 border-t border-border pt-4">
-      <h3 className="text-base font-semibold text-foreground">Grant recruiter college access</h3>
-      <p className="text-sm text-body">
+      <h3 className="text-base font-semibold text-[var(--lms-heading)]">Grant recruiter college access</h3>
+      <p className="text-sm text-body leading-[22px]">
         Choose an active linked company and an existing active user email. Duplicate
         active grants are not re-created. No invitation email is sent.
       </p>

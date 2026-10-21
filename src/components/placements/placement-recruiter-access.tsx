@@ -174,10 +174,10 @@ export function PlacementRecruiterAccess({
   return (
     <section className="min-w-0 border-b border-border pb-4">
       <div className="border-b border-border pb-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Recruiter access
         </h2>
-        <p className="mt-1 break-words text-sm text-body">
+        <p className="mt-1 break-words text-sm text-body leading-[22px]">
           Grant an existing canonical account access to one exact employer relationship. Recruiters never become college members.
         </p>
       </div>
@@ -269,7 +269,7 @@ export function PlacementRecruiterAccess({
       </div>
 
       {grants.length === 0 ? (
-        <p className="m-0 py-6 text-sm text-muted-foreground">
+        <p className="m-0 py-6 text-sm text-muted-foreground leading-[22px]">
           No active recruiter grants in this college.
         </p>
       ) : (
@@ -285,14 +285,14 @@ export function PlacementRecruiterAccess({
                     grant.email ??
                     "Recruiter"}
                 </p>
-                <p className="mt-1 text-sm text-body">
+                <p className="mt-1 text-sm text-body leading-[22px]">
                   {grant.companyName}
                   {grant.title
                     ? " · " + grant.title
                     : ""}
                 </p>
                 {grant.email ? (
-                  <p className="mt-1 break-all text-xs text-muted-foreground">
+                  <p className="mt-1 break-all text-xs text-muted-foreground leading-5">
                     {grant.email}
                   </p>
                 ) : null}
