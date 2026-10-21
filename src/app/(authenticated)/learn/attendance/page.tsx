@@ -52,7 +52,7 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
     <Alert tone="error" role="alert">
       <strong>Failed to load attendance.</strong>
       Something went wrong loading attendance for this month. No attendance records were changed.
-      <Link href={"/learn/attendance?"+new URLSearchParams({month:selected}).toString()}
+      <Link href={"/learn/attendance?"+new URLSearchParams({month:selected,...(deliveryId?{deliveryId}:{})}).toString()}
         className="lms-inline-link font-semibold underline underline-offset-4">
         Retry attendance
       </Link>
@@ -62,7 +62,7 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
 
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
-      <PageHeader title="Attendance" actions={(
+      <PageHeader title="Attendance" description="See your attendance record and class-wise status in one place." actions={(
         <div className="flex flex-wrap items-center gap-2">
         <span className="inline-flex min-h-9 items-center rounded-lg border border-border px-3 text-sm font-semibold">
           {workspace.courses.length} {workspace.courses.length===1?"Course":"Courses"}
@@ -75,8 +75,6 @@ async function LearnerAttendanceContent({searchParams}:{searchParams:Promise<Att
           Monthly attendance calendar →
         </Link></div>
       )} />
-      <p className="max-w-3xl text-sm text-body">See your attendance record and class-wise status in one place.</p>
-      
       <LearnerAttendanceWorkspace
         defaultMonth={defaultMonth}
         courses={workspace.courses}
