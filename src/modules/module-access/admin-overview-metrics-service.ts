@@ -37,7 +37,7 @@ export async function getModuleAccessOverviewMetrics(
     .where(and(inArray(collegeMemberships.collegeId,ids),
       eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
     .groupBy(collegeMemberships.collegeId),
-  tx.select({total:countDistinct(moduleAccessRules.id)}).from(moduleAccessRules)
+  tx.select({total:countDistinct(moduleAccessRules.scopeId)}).from(moduleAccessRules)
     .innerJoin(collegeMemberships,eq(moduleAccessRules.scopeId,collegeMemberships.id))
     .innerJoin(membershipRoles,and(
       eq(membershipRoles.membershipId,collegeMemberships.id),
