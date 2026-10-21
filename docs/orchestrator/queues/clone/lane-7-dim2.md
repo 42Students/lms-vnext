@@ -245,18 +245,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/people/faculty-profile-repeatable.tsx`
 - [x] `src/components/people/faculty-profile-skills.tsx`
 - [x] `src/components/placements/applicant-notes-panel.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-drive-attention-cards.tsx`
-- [ ] `src/components/placements/college-drive-deadline-action.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/learner-own-drive-journey.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-drive-attention-cards.tsx`
+- [x] `src/components/placements/college-drive-deadline-action.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/learner-own-drive-journey.tsx`
 - [ ] `src/components/placements/learner-placement-job-detail.tsx`
 - [ ] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
