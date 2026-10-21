@@ -28,6 +28,9 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
   try{
    await apiFetch(url,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({confirmed:true})});
+   // Confirm the archive explicitly before navigating. The record is retained,
+   // so the old "Drive deleted" success wording would be misleading.
+   window.alert("Drive archived");
    router.push("/college/placements/drives?status=ARCHIVED");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{setBusy(false);}

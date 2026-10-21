@@ -269,3 +269,6 @@
 
 - work2 #9 `tpo-draft-drive-model.ts` | G2-3-011-033: constrained canonical label syntax; added scoped picker helper allowing all active configured labels and hidden saved historical choice only in its existing edit context. Employment category remains separate; createPlacementJob already verifies tenant status/built-ins. UI sourcing of all five choices handed off.
 - work2 #10 `public-page/publication-service.ts` | G2-17-022-026: added live publish eligibility signal requiring explicit enabled/published state and current >=5 consented active learners; historical snapshot not treated as live approval. 12-month metric aggregation remains in scoped public-read service and is handed off.
+
+- work2 #11 `placements/offers/[offerId]/actions/route.ts` | G2-17-023-026: retained authenticated vNext `{offer}` client contract, documented direct-object legacy response adapter instead of breaking current consumers.
+- work2 #12 `college-drive-archive-action.tsx` | G2-9-013-047: explicitly announces accurate `Drive archived` on confirmed successful request before returning to archived drives, not legacy false deletion claim.
