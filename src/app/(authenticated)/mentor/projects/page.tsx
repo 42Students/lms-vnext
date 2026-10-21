@@ -227,7 +227,10 @@ async function MentorProjectsContent({
         query.status
       );
     })
-    .filter((row) => matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
+    .filter((row) => query.attention==="BLOCKED"?
+      (Boolean(row.project.blocker?.trim())||
+        Boolean(kinds.get(row.project.id)?.has("STALLED"))):
+      matchesMentorProjectAttention(query.attention, kinds.get(row.project.id)))
     .sort((a,b) => query.sort === "PROGRESS"
       ? compareMentorProjectsByProgress(a.project,b.project,
           mentorTaskProgress(workCounts.get(a.project.id))?.percent,
