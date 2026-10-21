@@ -45,7 +45,8 @@ const quizQuestionInputSchema = z
       .number()
       .int()
       .min(1)
-      .max(100),
+      .max(100)
+      .default(1),
     sequence: z
       .number()
       .int()
@@ -169,6 +170,9 @@ export const createCourseQuizInputSchema =
       .min(0)
       .max(10000),
     questions: questionsSchema,
+    // DTO bridge: legacy publish=true => publishNow=true. Numeric course,
+    // class, lesson and question/option IDs must be resolved within the
+    // authorized college/section before entering this UUID-only schema.
     // Atomic create-and-publish avoids a second browser request that might
     // leave an unintended draft after creation succeeded.
     publishNow: z.boolean().optional().default(false),
@@ -283,11 +287,55 @@ export const submitQuizInputSchema = z
             "selectedOptionIds",
           ],
           message:
-            "Selected options may not contain duplicates",
+            "Duplicate selected option submitted for questionId "+answer.questionId,
         });
       }
     });
   });
+
+/** A legacy question's authoring array order, not its persisted numeric
+ * option ID, was the displayed order. Import adapters normalize this data
+ * before inserting UUID option rows. The first correct option wins on
+ * malformed single-choice imports, matching the legacy retrieval fallback.
+ * Runtime authoring still rejects multiple correct single-choice choices.
+ */
+export function normalizeLegacyQuizOptions(
+ type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE",
+ options:readonly {text:string;correct:boolean;id?:number|null}[],
+){
+ if(options.length<1||options.length>20)throw new RangeError("Options must contain 1 to 20 choices");
+ let singleCorrectSeen=false;
+ return options.map((item,index)=>{
+  const correct=type==="SINGLE_CHOICE"
+   ?Boolean(item.correct)&&!singleCorrectSeen:Boolean(item.correct);
+  if(correct&&type==="SINGLE_CHOICE")singleCorrectSeen=true;
+  return quizOptionInputSchema.parse({text:item.text,correct,sequence:index});
+ });
+}
+
+/** Legacy quiz DTO crosswalk:
+ * - courseId/classId/lessonId (numeric) are resolved tenant-locally to
+ *   offering/delivery/lesson UUID before validation;
+ * - publish -> publishNow, maxAttempts defaults to one, shuffle flags false;
+ * - shownQuestionIds are mapped via a scoped question-ID dictionary;
+ * - a maximum of 200 answers, with no duplicate answers or selected options.
+ * Unmapped IDs cannot be interpreted as global UUIDs or ignored silently. */
+export function normalizeLegacyQuizCreate<T extends {
+ lessonId:string;deliveryId?:string|null;title:string;
+ description?:string|null;dueAt?:string|null;sequence:number;
+ questions:unknown[];publish?:boolean;maxAttempts?:number;
+ shuffleQuestions?:boolean;shuffleOptions?:boolean;
+}>(value:T){
+ return createCourseQuizInputSchema.parse({
+  lessonId:value.lessonId,deliveryId:value.deliveryId??null,
+  title:value.title,description:value.description??null,
+  dueAt:value.dueAt??null,sequence:value.sequence,
+  maxAttempts:value.maxAttempts??1,
+  shuffleQuestions:value.shuffleQuestions??false,
+  shuffleOptions:value.shuffleOptions??false,
+  publishNow:value.publish??false,questions:value.questions,
+ });
+}
 
 export type CreateCourseQuizInput = z.infer<
   typeof createCourseQuizInputSchema
