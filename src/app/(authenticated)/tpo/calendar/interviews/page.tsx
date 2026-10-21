@@ -54,8 +54,8 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
        scheduledAt:r.scheduledAt,mode:r.mode,venue:r.venue,meetingUrl:r.meetingUrl??null}}/>:null}
    </article>)}</section>}
   {(data.page>1||data.limited)?<nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
-   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous 200</Link>:null}
-   {data.limited?<Link href={href(data.page+1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next 200</Link>:null}
+   {data.page>1?<Link href={href(data.page-1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous 200</Link>:null}
+   {data.limited?<Link href={href(data.page+1)} className="min-h-11 min-[768px]:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-link lms-inline-link hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next 200</Link>:null}
   </nav>:null}
   <p className="text-xs text-[var(--lms-muted-text)] leading-5">No interviewer identities, per-candidate slots or calendar invitations are invented from the round schedule.</p>
  </div>;
