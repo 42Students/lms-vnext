@@ -97,7 +97,7 @@ export default async function CollegeLectureHallsPage({
         description={"Manage registered teaching rooms at " + result.collegeName +
           ". Find rooms by name, room type, department or archive status."}
         actions={<Link prefetch={false} download href={lectureHallsCsvHref(query)}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</Link>}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</Link>}
       />
 
       <section aria-label="Lecture hall filters" className="min-w-0 border-t border-border pt-3">
@@ -167,7 +167,7 @@ export default async function CollegeLectureHallsPage({
               Filter
             </Button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
               Clear
             </Link>
           </div>
