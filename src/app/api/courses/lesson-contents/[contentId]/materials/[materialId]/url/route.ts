@@ -1,6 +1,10 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
-import { grantLessonResourceMaterialFile } from "@/modules/courses/lesson-resource-materials-service";
+import {
+  grantLessonResourceMaterialFile,
+  resolveLegacyResourceMaterialId,
+} from "@/modules/courses/lesson-resource-materials-service";
+import { StorageFileError } from "@/modules/storage/file-errors";
 import { authorizeOrNotFound } from "@/modules/storage/file-access";
 import { z } from "zod";
 
@@ -19,7 +23,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     const rawParams = await params;
     const parsedIds = z.object({
       contentId: z.string().uuid(),
-      materialId: z.string().uuid(),
+      materialId: z.string().min(1),
     }).safeParse(rawParams);
     if (!parsedIds.success) {
       return Response.json(
@@ -47,10 +51,28 @@ export async function GET(request: Request, { params }: RouteContext) {
       );
     }
     const deliveryId = parsedDelivery?.data ?? null;
+    const isUuid = z.string().uuid().safeParse(ids.materialId).success;
+    const isLegacyIndex = /^[0-9]{1,9}$/.test(ids.materialId);
+    if (!isUuid && !isLegacyIndex) {
+      return Response.json(
+        { error: "INVALID_REQUEST", message: "Invalid Resource material" },
+        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+      );
+    }
     const context = await getCurrentRequestContext();
+    // Preserve the historic material array index without exposing object keys.
+    // Both resolution and signing independently enforce the course scope.
+    const materialId = isUuid
+      ? ids.materialId
+      : await authorizeOrNotFound(() =>
+          resolveLegacyResourceMaterialId(
+            context, ids.contentId, deliveryId, Number(ids.materialId),
+          ),
+        );
+    if (!materialId) throw new StorageFileError("STORAGE_NOT_FOUND");
     const grant = await authorizeOrNotFound(() =>
       grantLessonResourceMaterialFile(
-        context, ids.contentId, deliveryId, ids.materialId,
+        context, ids.contentId, deliveryId, materialId,
       ),
     );
     return Response.json(
