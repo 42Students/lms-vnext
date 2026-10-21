@@ -40,11 +40,12 @@ export const PUBLIC_JOIN_LINK_COPY = {
   publicInitial: "Make the link",
   replace: "New link",
   replaceTitle: "Make a new link?",
-  replaceExplanation: "The old link stops working.",
+  replaceExplanation: "A new public link; the old one stopped working.",
   replaceConfirm: "Make a new link",
   once: "Copy it now: for safety it is shown only once.",
   copied: "Link copied",
   copyError: "Couldn't copy. Select the link and copy it.",
+  legacySlugCollision: "Unable to generate a unique external link. Please try again.",
 } as const;
 
 export const tpoPublicJoinLinkToggleSchema=z.discriminatedUnion("scope", [
@@ -57,6 +58,19 @@ export const tpoPublicJoinLinkToggleSchema=z.discriminatedUnion("scope", [
 export function isLegacyJobSlug(value:unknown):boolean {
  return typeof value==="string" && value.length>=4 && value.length<=32 &&
   /^smr-[A-Za-z0-9\-_!@#$%&*]+$/.test(value);
+}
+
+/** Legacy job external sharing and invitation links are distinct access
+ * mechanisms. INTERNAL_ONLY jobs must never receive a public smr- slug
+ * implicitly; protected invitation tokens have an independent lifecycle.
+ */
+export function legacyExternalJobLinkState(input:{
+ visibility:"INTERNAL_ONLY"|"HYBRID"|"EXTERNAL_ONLY";
+ slug:string|null;
+}){
+ const publicVisible=input.visibility!=="INTERNAL_ONLY";
+ return {publicVisible,legacySlug:publicVisible&&isLegacyJobSlug(input.slug)?
+   input.slug:null,requiresExplicitTokenAction:true as const};
 }
 
 /** Posting policy is independent of link enabled state. A null old-LMS
