@@ -13,6 +13,11 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
   [locked,setLocked]=useState(false),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
  const {askConfirm,dialog}=useConfirmFlow();
  const scope=scopes.find(x=>x.scopeType+":"+x.scopeId===scopeKey);
+ const shadowed=scope ? (module==="projects"?scope.projectsShadowed:
+   module==="placements"?scope.placementsShadowed:scope.electivesShadowed) : false;
+ // Legacy placement eligibility is decided by the placement cell; showing
+ // an editable academic scope toggle as eligibility would mislead students.
+ const placementCellControlled=module==="placements";
  const url="/api/admin/features/"+encodeURIComponent(collegeId)+"/descendants";
  async function recheck(){
   if(!scope)return;
@@ -28,16 +33,28 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
   finally{setBusy(false);}
  }
  async function save(){
-  if(!scope||stored===undefined||busy||!(await askConfirm("Apply this module rule to the selected academic scope?")))return;
+  if(!scope||stored===undefined||busy||shadowed||placementCellControlled)return;
+  const population=scope.studentsInScope;
+  const changeLock=choice!=="INHERIT"&&locked!==(stored?.locked??false);
+  const impact=choice==="OFF"?" This can remove access for affected learners.":"";
+  const lockEffect=changeLock
+    ? (locked?" Locking will prevent descendant overrides.":" Unlocking will permit descendant overrides.")
+    : "";
+  const warning="Apply "+(choice==="INHERIT"?"inherited":choice==="ON"?"enabled":"disabled")+
+    " "+module+" to "+scope.label+" ("+population+" active "+(population===1?"learner":"learners")+")?"+
+    impact+lockEffect;
+  if(!(await askConfirm(warning)))return;
   setBusy(true);setMessage("");
   try{
    const payload=choice==="INHERIT"?{scopeType:scope.scopeType,scopeId:scope.scopeId,module,action:"INHERIT",expected:stored}:
     {scopeType:scope.scopeType,scopeId:scope.scopeId,module,action:"SET",enabled:choice==="ON",locked,expected:stored};
    const response=await fetch(url,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(payload)});
-   if(!response.ok){const body=await response.json().catch(()=>({error:"SAVE_FAILED"}));throw Error(body.error??"Save failed");}
+   if(!response.ok)throw Error(response.status===409
+     ?"The module rule changed elsewhere. Recheck before saving."
+     :"Could not save — please retry");
    const body=await response.json() as {stored:Observed};
-   setStored(body.stored);setMessage("Module access saved.");router.refresh();
-  }catch(error){setMessage(error instanceof Error?error.message:"Save failed");}
+   setStored(body.stored);setMessage("Saved");router.refresh();
+  }catch(error){setMessage(error instanceof Error?error.message:"Could not save — please retry");}
   finally{setBusy(false);}
  }
  return <div className="mt-4 flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-end">
@@ -56,13 +73,17 @@ export function DescendantFeatureRuleEditor({collegeId,scopes}:{collegeId:string
     <option value="projects">Projects</option><option value="placements">Placements</option><option value="electives">Electives</option>
    </Select>
   </label>
-  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto min-[768px]:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>Recheck</Button>
-  {stored!==undefined&&<><label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule
-   <Select value={choice} className="min-h-11 min-[768px]:min-h-9" onChange={e=>setChoice(e.target.value)}>
+  <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto min-[768px]:min-h-9" disabled={!scope||busy} onClick={()=>void recheck()}>{busy?"Rechecking…":"Recheck"}</Button>
+  {stored!==undefined&&<>
+   {placementCellControlled?<p className="w-full text-sm font-semibold text-body">Placement cell decides · Academic scope toggles do not decide learner placement eligibility.</p>:null}
+   {shadowed?<p role="status" className="w-full text-sm text-warning-text">An ancestor rule takes precedence here. Resolve the higher rule before editing this descendant.</p>:null}
+   {scope?<p className="w-full text-xs text-muted-foreground">Selected scope: {scope.label} · {scope.studentsInScope} active learners. Changes may affect the entire selected scope.</p>:null}
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Stored rule
+   <Select value={choice} disabled={busy||shadowed||placementCellControlled} className="min-h-11 min-[768px]:min-h-9" onChange={e=>setChoice(e.target.value)}>
     <option value="INHERIT">Inherit</option><option value="ON">On</option><option value="OFF">Off</option>
    </Select></label>
-   <label className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Checkbox checked={locked} disabled={choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
-   <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy} onClick={()=>void save()}>Save rule</Button>
+   <label className="flex min-h-11 min-[768px]:min-h-9 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><Checkbox checked={locked} disabled={choice==="INHERIT"||busy||shadowed||placementCellControlled} onChange={e=>setLocked(e.target.checked)}/>Lock</label>
+   <Button type="button" className="min-h-11 min-[768px]:min-h-9" disabled={busy||shadowed||placementCellControlled} onClick={()=>void save()}>Save rule</Button>
   </>}
   {message&&<p role="status" className="w-full text-sm text-body leading-[22px]">{message}</p>}
   {scopes.length>=500&&<p className="w-full text-sm text-warning-text leading-[22px]">This page displays up to 500 academic scopes. Open the next hierarchy page to edit later scopes.</p>}
