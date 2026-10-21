@@ -111,7 +111,7 @@ export default async function MentorTeamMeetingsPage({
             </div>
           </Disclosure>
           {filtered?<Link href={mentorTeamMeetingsHref({...data.query,status:"ALL",type:"ALL",outcome:"ALL",order:"NEWEST",search:"",page:1})}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
         </form>
       </FilterBar>
       <p className="text-sm text-body leading-[22px]">{data.total} registered meeting{data.total===1?"":"s"} match</p>
@@ -143,7 +143,7 @@ export default async function MentorTeamMeetingsPage({
               </div>:null}
             <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+
               "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
-              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
               View outcome notes
             </Link>
           </li>)}</ol>}
