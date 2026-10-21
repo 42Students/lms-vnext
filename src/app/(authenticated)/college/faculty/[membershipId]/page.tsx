@@ -73,8 +73,8 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
             >
             <option value="ALL">All teaching roles</option>
             <option value="PRIMARY">Primary</option>
-            <option value="CO_TEACHER">Co-teacher</option>
-            <option value="TA">Teaching assistant</option>
+            <option value="CO_TEACHER">Co-Teacher</option>
+            <option value="TA">Teaching Assistant</option>
           </Select>
         </label>
           <Button type="submit" className="min-h-11 w-full md:col-span-2 md:min-h-9 min-[992px]:col-span-1 min-[992px]:w-auto">Filter</Button>
