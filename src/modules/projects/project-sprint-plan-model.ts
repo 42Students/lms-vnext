@@ -4,7 +4,9 @@ import { z } from "zod";
 const sprintPlanRowSchema = z.strictObject({
   id: z.string().uuid(),
   expectedUpdatedAt: z.iso.datetime({ offset: true }),
-  title: z.string().trim().min(1).max(200),
+  key:z.string().trim().min(1).max(120),
+  title: z.string().trim().min(1,"Title is required").max(200),
+  dueLabel:z.string().trim().max(160).nullable(),
   description: z.string().trim().max(4000).nullable(),
   goal: z.string().trim().max(4000).nullable(),
   definitionOfDone: z.string().trim().max(4000).nullable(),
@@ -22,7 +24,7 @@ const sprintPlanRowSchema = z.strictObject({
 
 export const projectSprintPlanSchema = z.strictObject({
   releaseId: z.string().uuid(),
-  sprints: z.array(sprintPlanRowSchema).min(1).max(100),
+  sprints: z.array(sprintPlanRowSchema).min(1).max(500),
 }).superRefine((value, ctx) => {
   const seen = new Set<string>();
   value.sprints.forEach((sprint, index) => {
@@ -30,6 +32,10 @@ export const projectSprintPlanSchema = z.strictObject({
       ctx.addIssue({ code: "custom", path: ["sprints", index, "id"], message: "Duplicate sprint" });
     }
     seen.add(sprint.id);
+    if(!sprint.key.trim())ctx.addIssue({code:"custom",path:["sprints",index,"key"],
+      message:"Item "+(index+1)+": Sprint key required"});
+    if(!sprint.title.trim())ctx.addIssue({code:"custom",path:["sprints",index,"title"],
+      message:"Item "+(index+1)+": Title required"});
   });
 });
 
@@ -38,13 +44,15 @@ export type ProjectSprintPlanRow = ProjectSprintPlanInput["sprints"][number];
 
 export function projectSprintPlanFieldsChanged(
   previous: {
+    templateKey:string;legacySprintKey:string|null;dueLabel:string|null;
     title: string; description: string | null; goal: string | null;
     definitionOfDone: string | null; startDate: string | null;
     endDate: string | null; dueDate: string | null;
   },
   next: ProjectSprintPlanRow,
 ): boolean {
-  return previous.title !== next.title ||
+  return (previous.legacySprintKey||previous.templateKey)!==next.key||
+    previous.dueLabel!==next.dueLabel||previous.title !== next.title ||
     previous.description !== next.description ||
     previous.goal !== next.goal ||
     previous.definitionOfDone !== next.definitionOfDone ||
