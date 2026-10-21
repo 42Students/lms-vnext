@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
+import { ModuleAccessHierarchyActions } from "@/components/admin/module-access-hierarchy-actions";
 import { requirePermission } from "@/modules/permissions/policy";
 import { getModuleAccessOverviewMetrics } from "@/modules/module-access/admin-overview-metrics-service";
 import SuperAdminCollegeModuleAccessPage from "@/app/(authenticated)/admin/features/[collegeId]/page";
@@ -22,8 +23,8 @@ export default async function SuperAdminModuleAccessPage({
     return <div className="min-w-0 space-y-4 md:space-y-6">
       <PageHeader title="Module Access" description="Manage the selected college's module access hierarchy." />
       <Banner tone="warning" role="status">
-        Select a college in the Super Admin scope switcher to view module access.
-        No college is selected; no hierarchy has been loaded.
+        Pick a college first so this page does not show stale access data.
+        No hierarchy, student overrides or historic decisions have been loaded.
       </Banner>
       <Link href="/admin/colleges"
         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
@@ -36,20 +37,27 @@ export default async function SuperAdminModuleAccessPage({
     .then(value => ({available: true as const, value}))
     .catch(() => ({available: false as const, value: null}));
   return <div className="min-w-0 space-y-5">
-    <section aria-label="Module Access selected-college summary" className="border-b border-border pb-4">
-      <PageHeader title="Module Access" description="Using the college selected in your Super Admin scope switcher." />
+    <section aria-label="Module Access selected-college summary" className="space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <PageHeader eyebrow="Module Access" title="Optional module access hierarchy"
+       description="Use this page for inherited Projects/Placements access below the college level. Review which rules are stored, inherited and locked." />
       <div className="mt-3 flex flex-wrap gap-5 text-sm text-body">
-        <p>Hierarchy scopes: Global · Organization · College · Department · Program · Batch · Class · Learner</p>
+        <p><strong>8</strong> hierarchy scopes: Global · Organization · College · Department · Program · Batch · Class · Learner</p>
         {metrics.available ? <>
           <p><strong>{metrics.value.largestLearnerScope}</strong> active learners in this college</p>
           <p><strong>{metrics.value.studentOverrides}</strong> stored learner membership rules</p>
         </> : <p role="status">Hierarchy overview counts are temporarily unavailable.</p>}
       </div>
-      <nav aria-label="Module Access tools" className="mt-3 flex flex-wrap gap-4">
+      {metrics.available&&metrics.value.studentOverrides>0?<Banner tone="warning">
+        {metrics.value.studentOverrides} learner override(s) or stored learner membership rule(s) need review.
+        <Link href={"/admin/features/"+encodeURIComponent(collegeId)+"/trace"}
+         className="ml-2 font-semibold text-link underline">Review →</Link>
+      </Banner>:null}
+      <nav aria-label="Module Access tools" className="mt-3 flex flex-wrap gap-3">
         <Link href={`/admin/features/${encodeURIComponent(collegeId)}/history`}
           className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
           Recent changes
         </Link>
+        <ModuleAccessHierarchyActions/>
         <Link href={`/admin/features/${encodeURIComponent(collegeId)}/trace`}
           className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
           Search learner
@@ -60,9 +68,9 @@ export default async function SuperAdminModuleAccessPage({
         </Link>
       </nav>
     </section>
-    <SuperAdminCollegeModuleAccessPage
-      params={Promise.resolve({collegeId})}
-      searchParams={searchParams}
-    />
+    <div data-module-access-hierarchy className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <SuperAdminCollegeModuleAccessPage params={Promise.resolve({collegeId})}
+        searchParams={searchParams}/>
+    </div>
   </div>;
 }

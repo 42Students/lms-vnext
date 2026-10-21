@@ -524,7 +524,9 @@ export function AdminCourseOverview({
          No courses match these filters. Clear filters to see the whole catalogue.
         </p>:null}
         {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
-          key={workspace.collegeId+":"+(catalogue?catalogue.items:workspace.courses).map(course=>course.id).join(":")}
+          key={workspace.collegeId}
+          collegeId={workspace.collegeId}
+          maxSelection={(() => { const n=Number(process.env.COURSE_BULK_STATUS_MAX??"100"); return Number.isInteger(n)?Math.min(100,Math.max(1,n)):100; })()}
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         <DataTable empty={<p className="m-0 text-sm text-muted-foreground">No records to show. Create Course and offering above to add the first record.</p>}
           columns={courseColumns}
