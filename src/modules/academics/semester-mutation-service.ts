@@ -21,7 +21,8 @@ export type SemesterMutationErrorCode =
   | "SEMESTER_NOT_FOUND" | "PROGRAM_NOT_FOUND" | "SEMESTER_NUMBER_CONFLICT"
   | "SEMESTER_OUTSIDE_PROGRAM_DURATION" | "SEMESTER_HAS_COURSES"
   | "SEMESTER_HAS_ACTIVE_COHORTS" | "SEMESTER_DEPENDENCY_CONFLICT"
-  | "SEMESTER_STALE" | "SEMESTER_ACTIVE_CURRICULUM";
+  | "SEMESTER_STALE" | "SEMESTER_ACTIVE_CURRICULUM"
+  | "SEMESTER_COMPLETED_IMMUTABLE";
 
 export class SemesterMutationError extends Error {
   constructor(public readonly code: SemesterMutationErrorCode) {
@@ -112,6 +113,10 @@ export async function createCollegeSemester(context: RequestContext, rawInput: u
       if (!canCreateSemesterTerm(input.termNumber, program.durationTerms)) {
         throw new SemesterMutationError("SEMESTER_OUTSIDE_PROGRAM_DURATION");
       }
+      // program_terms stores name and totalCredits as the vNext semester
+      // contract; legacy start/end dates, status and course IDs are archival
+      // source fields, not an editable new-semester payload. Do not silently
+      // coerce a legacy integer ID or course list into a new UUID relation.
       const [created] = await tx.insert(programTerms).values({
         programId: program.id,
         termNumber: input.termNumber,
@@ -149,6 +154,9 @@ export async function updateCollegeSemester(
           sql`date_trunc('milliseconds',${programTerms.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`))
         .limit(1);
       if(!version)throw new SemesterMutationError("SEMESTER_STALE");
+      if (current.legacyStructureStatus === "COMPLETED" && input.isActive !== current.isActive) {
+        throw new SemesterMutationError("SEMESTER_COMPLETED_IMMUTABLE");
+      }
       if(current.isActive && !input.isActive){
         const [[mapped],[live]] = await Promise.all([
           tx.select({id:programTermCourses.id}).from(programTermCourses)
@@ -161,6 +169,60 @@ export async function updateCollegeSemester(
             .limit(1),
         ]);
         if(mapped||live)throw new SemesterMutationError("SEMESTER_ACTIVE_CURRICULUM");
+      }
+      const deactivatedSiblings: { id: string; termNumber: number }[] = [];
+      if (input.isActive && !current.isActive) {
+        // The parent program is locked in lockedTerm(), serializing status
+        // changes for all terms of the SAME program. "Completed" import
+        // history is immutable and must not be collapsed into isActive.
+        const siblings = await tx.select({
+          id: programTerms.id,
+          termNumber: programTerms.termNumber,
+          name: programTerms.name,
+          legacyStructureStatus: programTerms.legacyStructureStatus,
+        }).from(programTerms)
+          .where(and(
+            eq(programTerms.programId, current.programId),
+            ne(programTerms.id, current.id),
+            eq(programTerms.isActive, true),
+          ))
+          .for("update");
+        for (const sibling of siblings) {
+          if (sibling.legacyStructureStatus === "COMPLETED") continue;
+          // vNext has a stricter active-curriculum dependency guard than
+          // the legacy status cascade. Fail the whole transition rather than
+          // disable a course-linked/current-cohort term without a decision.
+          const [[mapped], [live]] = await Promise.all([
+            tx.select({ id: programTermCourses.id }).from(programTermCourses)
+              .where(eq(programTermCourses.programTermId, sibling.id)).limit(1),
+            tx.select({ id: cohorts.id }).from(cohorts)
+              .innerJoin(cohortProgressionState,
+                eq(cohortProgressionState.cohortId, cohorts.id))
+              .where(and(eq(cohorts.programId, current.programId),
+                ne(cohorts.status, "ARCHIVED"),
+                eq(cohortProgressionState.currentTermNumber, sibling.termNumber)))
+              .limit(1),
+          ]);
+          if (mapped || live) throw new SemesterMutationError("SEMESTER_ACTIVE_CURRICULUM");
+          await tx.update(programTerms)
+            .set({
+              isActive: false,
+              updatedAt: sql<Date>`greatest(${programTerms.updatedAt}+interval '1 millisecond',clock_timestamp())`,
+            })
+            .where(and(eq(programTerms.id, sibling.id),
+              eq(programTerms.programId, current.programId)));
+          deactivatedSiblings.push({ id: sibling.id, termNumber: sibling.termNumber });
+          await recordActivityEventInTransaction(tx, context, {
+            eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
+            collegeId: member.collegeId,
+            organizationId: member.organizationId,
+            subjectType: "program_term",
+            subjectId: sibling.id,
+            subjectLabel: sibling.name,
+            summary: "Semester marked inactive by activation",
+            metadata: { programId: current.programId, termNumber: sibling.termNumber, activatedTermId: current.id },
+          });
+        }
       }
       const [updated] = await tx.update(programTerms).set({
         name: input.name,
@@ -181,6 +243,7 @@ export async function updateCollegeSemester(
         metadata: {
           programId: updated.programId, termNumber: updated.termNumber,
           fromName: current.name, isActive: updated.isActive,
+          deactivatedSiblings, activationSerializedByProgram: true,
         },
       });
       return updated;
