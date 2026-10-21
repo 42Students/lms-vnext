@@ -5,6 +5,8 @@ export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("DEACTIVATE"),
     expectedStatus: z.literal("ACTIVE"),
+    /** Optional millisecond-CAS token to prevent ACTIVE→SUSPENDED→ACTIVE ABA. */
+    expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
     // Match the legacy no-reason lifecycle request while capping any supplied explanation.
     reason: z.string().trim().max(1000).optional(),
     confirm: z.literal(true),
@@ -12,6 +14,7 @@ export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("REACTIVATE"),
     expectedStatus: z.literal("SUSPENDED"),
+    expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
     confirm: z.literal(true),
   }).strict(),
 ]);

@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, isNull } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, membershipRoles, users, identityDeviceSessions,
@@ -55,6 +55,7 @@ export async function transitionCollegeFaculty(
     const [faculty] = await tx.select({
       id: collegeMemberships.id, userId:collegeMemberships.userId, status: collegeMemberships.status,
       name: users.displayName, userStatus: users.platformStatus,
+      updatedAt:collegeMemberships.updatedAt,
     }).from(collegeMemberships)
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .where(and(
@@ -74,7 +75,9 @@ export async function transitionCollegeFaculty(
     assertMutableMembershipTarget(context,{userId:faculty.userId,
       roles:targetRoles.map(item=>item.role)},
       input.action==="DEACTIVATE"?"SUSPEND":"REACTIVATE");
-    if (faculty.status !== input.expectedStatus)
+    if (faculty.status !== input.expectedStatus ||
+        (input.expectedUpdatedAt && Math.trunc(faculty.updatedAt.getTime()) !==
+         new Date(input.expectedUpdatedAt).getTime()))
       throw new CollegeFacultyLifecycleError("FACULTY_STATUS_CHANGED");
     if(input.action==="DEACTIVATE"){
       const activeProjects = await activeMentorProjectCount(tx,membershipId);
@@ -92,6 +95,8 @@ export async function transitionCollegeFaculty(
       eq(collegeMemberships.id, membershipId),
       eq(collegeMemberships.status, input.expectedStatus),
       eq(collegeMemberships.collegeId, own.collegeId),
+      input.expectedUpdatedAt ? sql`date_trunc('milliseconds',${collegeMemberships.updatedAt}) =
+        ${input.expectedUpdatedAt}::timestamptz` : undefined,
     )).returning({
       id: collegeMemberships.id,status: collegeMemberships.status,
       suspendedAt:collegeMemberships.suspendedAt,
@@ -124,6 +129,11 @@ export async function transitionCollegeFaculty(
         reason: input.action === "DEACTIVATE" ? input.reason : null,
         lifecycleSemantic:"SUSPEND_NOT_LEGACY_DELETE",
         userSessionsRevoked:action==="SUSPENDED",
+        legacyAuditType:input.action==="DEACTIVATE"?"FACULTY_SUSPEND":"FACULTY_REACTIVATE",
+        legacyEntityType:"faculty",
+        previousUpdatedAt:faculty.updatedAt.toISOString(),
+        transitionIntent:input.action,
+        actorScope:"COLLEGE_MEMBERSHIP",
       },
     });
     return updated;

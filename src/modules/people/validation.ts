@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { MEMBERSHIP_ROLES } from "@/modules/identity/constants";
+import { MEMBERSHIP_ROLES, MEMBERSHIP_ROLE_LABELS, resolveLegacyAccountRole,
+ type MembershipRole } from "@/modules/identity/constants";
 
 export const personCollegeIdSchema = z.string().uuid();
 export const personMembershipIdSchema = z.string().uuid();
@@ -27,6 +28,26 @@ export const personDisplayNameSchema = z
   .max(255, "Display name must be 255 characters or less");
 
 export const membershipRoleInputSchema = z.enum(MEMBERSHIP_ROLES);
+/** Legacy seed values admin/user are NOT active role claims. The old admin
+ * maps to COLLEGE_ADMIN under its selected college; the old generic user is
+ * ambiguous and must be mapped to a learner/faculty from real membership data.
+ */
+export const MEMBERSHIP_ROLE_LEGACY_HELP={
+ admin:"Old Admin accounts map to College Admin within their college.",
+ user:"Old User accounts need an explicit Learner or Faculty membership.",
+} as const;
+export const MEMBERSHIP_ROLE_PICKER_OPTIONS:ReadonlyArray<{
+ value:MembershipRole;label:string;description:string;
+ }>=MEMBERSHIP_ROLES.map(value=>({value,label:MEMBERSHIP_ROLE_LABELS[value],
+  description:value==="COLLEGE_ADMIN"?"Manage college settings and people":
+   value==="TPO"?"Manage placement operations":
+   value==="MENTOR"?"Guide assigned project teams":
+   value==="FACULTY"?"Teach and manage course delivery":
+    "Learn through courses and activities",
+ }));
+export function legacyRolePickerResolution(role:string,facultyType?:string|null){
+ return resolveLegacyAccountRole(role,facultyType);
+}
 
 export const identityProvisionInputSchema = z
   .object({
