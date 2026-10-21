@@ -8,6 +8,32 @@ import {placementTpoNoticeAudiences,placementTpoNoticeRecipients}
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {deliverInAppNotificationInTransaction} from "@/modules/activity/notification-service";
 
+/** Parse legacy local wall-clock schedule into an explicit IST instant. Old
+ * yyyy-MM-dd HH:mm:ss was a LocalDateTime, while ISO Z/offset timestamps
+ * represent actual instants. Malformed dates must not silently mean send now.
+ */
+export function parseLegacyTpoNoticeSchedule(raw:unknown):{
+ ok:true;scheduledAt:Date|null;
+}|{ok:false;message:string}{
+ if(raw===null||raw===undefined||raw==="")return {ok:true,scheduledAt:null};
+ if(typeof raw!=="string")return {ok:false,message:"Choose a valid schedule date and time."};
+ const value=raw.trim();
+ if(!value)return {ok:true,scheduledAt:null};
+ const local=value.match(/^([0-9]{4}-[0-9]{2}-[0-9]{2})[ T]([0-9]{2}:[0-9]{2})(?::([0-9]{2}))?$/);
+ const iso=/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.][0-9]{1,3})?)?(?:Z|[+-][0-9]{2}:[0-9]{2})$/i;
+ const parsed=local?new Date(local[1]+"T"+local[2]+":"+(local[3]??"00")+"+05:30"):
+  iso.test(value)?new Date(value):null;
+ if(!parsed||!Number.isFinite(parsed.getTime()))
+  return {ok:false,message:"Choose a valid schedule date and time."};
+ return {ok:true,scheduledAt:parsed};
+}
+
+export const TPO_NOTICE_DELIVERY_BATCH_LIMIT=200;
+export const TPO_NOTICE_DELIVERY_HOLD_MS=30_000;
+export const TPO_NOTICE_DELIVERY_JOBS=[
+ "Placement announcement delivery","Deadline-today reminder","Shortlist notification",
+] as const;
+
 /** Call from an authenticated scheduler. Never from GET or a browser render.
  * A 30-second hold permits author Undo before any notification is enqueued.
  * Existing (user,event) uniqueness makes delivery idempotent on retries.
@@ -18,7 +44,7 @@ export async function deliverDueTpoNotices(now=new Date()){
     !await placementTableExists("placement_tpo_notice_recipients"))
   return {ready:false as const,scanned:0,delivered:0,failed:0,
     failures:[] as {announcementId:string;status:"FAILED";retryable:true}[]};
- const db=getDb(),cutoff=new Date(now.getTime()-30_000);
+ const db=getDb(),cutoff=new Date(now.getTime()-TPO_NOTICE_DELIVERY_HOLD_MS);
  const due=await db.select({
   id:db10Announcements.id,collegeId:db10Announcements.collegeId,
   title:db10Announcements.title,message:db10Announcements.message,
@@ -35,7 +61,7 @@ export async function deliverDueTpoNotices(now=new Date()){
      and e.subject_type='announcement'
      and e.subject_id=${db10Announcements.id}
      and e.event_type='placements.tpo_notice.created')`,
- )).orderBy(asc(db10Announcements.createdAt),asc(db10Announcements.id)).limit(100);
+  )).orderBy(asc(db10Announcements.createdAt),asc(db10Announcements.id)).limit(TPO_NOTICE_DELIVERY_BATCH_LIMIT);
  let delivered=0,scanned=0;
  const failures:{announcementId:string;status:"FAILED";retryable:true}[]=[];
  for(const notice of new Map(due.map(row=>[row.id,row])).values()){
@@ -84,9 +110,10 @@ export async function deliverDueTpoNotices(now=new Date()){
       tx.select({id:placementTpoNoticeRecipients.membershipId})
        .from(placementTpoNoticeRecipients)
        .where(eq(placementTpoNoticeRecipients.announcementId,notice.id)))]:[]),
-    )).limit(5001);
-   // Never deliver a partial selection if the entire eligible audience cannot be loaded.
-   if(members.length>5000)return 0;
+    )).limit(20001);
+   // One college can have 10,000 learners. A too-large audience cannot be
+   // silently partially notified: return a detectable retryable failure.
+   if(members.length>20000)return -1;
    let done=0;
    for(let offset=0;offset<members.length;offset+=250){
     const result=await deliverInAppNotificationInTransaction(
@@ -105,6 +132,7 @@ export async function deliverDueTpoNotices(now=new Date()){
    failures.push({announcementId:notice.id,status:"FAILED",retryable:true});
    continue;
   }
+  if(result<0){failures.push({announcementId:notice.id,status:"FAILED",retryable:true});continue;}
   delivered+=result;
  }
  return {ready:true as const,scanned,delivered,failed:failures.length,failures};
