@@ -30,10 +30,10 @@ export function projectResourceAuditDelta(before:ResourceAuditSnapshotInput|null
  after:ResourceAuditSnapshotInput|null|undefined){
  const beforeJson=redactedProjectResourceSnapshot(before);
  const afterJson=redactedProjectResourceSnapshot(after);
- const beforeFields=beforeJson??{},afterFields=afterJson??{};
+ const beforeFields:Record<string,unknown>=beforeJson??{},afterFields:Record<string,unknown>=afterJson??{};
  const keys=new Set([...Object.keys(beforeFields),...Object.keys(afterFields)]);
  const changedFields=[...keys].filter(field=>
-  beforeFields[field as keyof typeof beforeFields]!==afterFields[field as keyof typeof afterFields]);
+  beforeFields[field]!==afterFields[field]);
  return {beforeJson,afterJson,changedFields};
 }
 /** Does not copy resource URLs, descriptions or learner identities into audit metadata. */
