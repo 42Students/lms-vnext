@@ -106,6 +106,7 @@ function normalizedContentValues(
     deliveryId: input.deliveryId ?? null,
     contentType: input.contentType,
     title: input.title,
+    visibleToStudents:input.visibleToStudents??true,
     points: input.points,
     notes: input.notes ?? null,
     externalUrl: null as string | null,
@@ -169,6 +170,7 @@ function mergedContentInput(
     lessonId: current.lessonId,
     deliveryId: current.deliveryId,
     title: input.title ?? current.title,
+    visibleToStudents:input.visibleToStudents??current.visibleToStudents,
     points: input.points ?? current.points,
     sequence:
       input.sequence ?? current.sequence,
@@ -510,6 +512,7 @@ export async function updateLessonContent(
     .update(lessonContents)
     .set({
       title: normalized.title,
+      visibleToStudents:normalized.visibleToStudents,
       points: normalized.points,
       notes: normalized.notes,
       externalUrl: normalized.externalUrl,
