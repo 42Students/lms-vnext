@@ -10,6 +10,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
+import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 
 async function scope(ctx:RequestContext,raw:unknown){
  const collegeId=await requireCollegePlacementAdmin(ctx),jobId=collegeDriveIdSchema.parse(raw);
@@ -86,9 +87,20 @@ export async function getCollegeRoundSlotAppointments(
    ?or(sql`cast(${slots.applicationId} as text) ilike ${searchPattern}`,
       candidateNameMatch):undefined,
  );
+ const currentStageMatches=exists(db.select({id:placementCollegeApplicationStages.id})
+  .from(placementCollegeApplicationStages)
+  .where(and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
+   eq(placementCollegeApplicationStages.jobId,job.id),
+   inArray(placementCollegeApplicationStages.stage,["SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED"]))));
+ const stageRejected=exists(db.select({id:placementCollegeApplicationStages.id})
+  .from(placementCollegeApplicationStages)
+  .where(and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
+   eq(placementCollegeApplicationStages.jobId,job.id),
+   eq(placementCollegeApplicationStages.stage,"REJECTED"))));
  const candidateWhere=and(
   eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
-  eq(placementApplicationScreenings.status,"SHORTLISTED"),
+  ne(placementApplicationScreenings.status,"REJECTED"),not(stageRejected),
+  or(eq(placementApplicationScreenings.status,"SHORTLISTED"),currentStageMatches),
  );
  const [rounds,candidates,candidateCount,appointmentCount]=await Promise.all([
   db.select({id:placementJobRounds.id,name:placementJobRounds.name,
@@ -195,8 +207,20 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
       eq(placementApplicationScreenings.applicationId,placementApplications.id))
     .where(and(eq(placementApplications.id,a.applicationId),
       eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
-      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
-   if(!app)throw Error("Only an eligible shortlisted applicant can be scheduled.");
+      ne(placementApplicationScreenings.status,"REJECTED"),
+      not(exists(tx.select({id:placementCollegeApplicationStages.id})
+       .from(placementCollegeApplicationStages)
+       .where(and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
+        eq(placementCollegeApplicationStages.jobId,job.id),
+        eq(placementCollegeApplicationStages.stage,"REJECTED"))))),
+      or(eq(placementApplicationScreenings.status,"SHORTLISTED"),
+       exists(tx.select({id:placementCollegeApplicationStages.id})
+        .from(placementCollegeApplicationStages)
+        .where(and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),
+         eq(placementCollegeApplicationStages.jobId,job.id),
+         inArray(placementCollegeApplicationStages.stage,["SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED"])))))))
+    .limit(1);
+   if(!app)throw Error("Only an eligible applicant at shortlist, assessment, interview, offer or hired stage can be scheduled; rejected and withdrawn applicants are excluded.");
    // Serialize same-learner bookings across every drive/round by college
    // membership before taking the round lock or checking any overlaps.
    const [lockedLearner]=await tx.select({id:collegeMemberships.id})

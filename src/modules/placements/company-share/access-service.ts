@@ -50,7 +50,7 @@ export async function emailAuthorizedCompanyShareCode(
    email:users.email,name:users.displayName,status:users.platformStatus,
   }).from(users).where(eq(users.id,context.user.id)).limit(1);
   if(!recipient?.email||recipient.status!=="ACTIVE"||
-    !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(recipient.email))return "DENIED" as const;
+    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipient.email))return "DENIED" as const;
   const now=new Date();
   const sent=await tx.select({id:activityEvents.id}).from(activityEvents)
    .where(and(eq(activityEvents.collegeId,share.collegeId),

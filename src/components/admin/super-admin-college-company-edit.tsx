@@ -60,10 +60,10 @@ export function SuperAdminCollegeCompanyEdit({relationshipId,name}:{
    setError("");
    const email=(details.contactEmail??"").trim();
    const phone=(details.contactPhone??"").trim();
-   if(email&&!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)){
+   if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
     setError("Must be a valid contact email");return;
    }
-   if(phone&&!/^[+()\\d][\\d\\s().-]{6,29}$/.test(phone)){
+   if(phone&&!/^[+()\d][\d\s().-]{6,29}$/.test(phone)){
     setError("Enter a valid phone number");return;
    }
    try{
