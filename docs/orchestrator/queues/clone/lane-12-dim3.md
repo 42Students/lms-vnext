@@ -12,14 +12,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/courses/admin-assessment-read-directory.tsx`
 - [x] `src/components/courses/learner-course-list.tsx`
 - [x] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/placements/tpo-round-apply-control.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/mentor-meetings-calendar.module.css`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/placements/tpo-round-apply-control.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/mentor-meetings-calendar.module.css`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
 - [ ] `src/components/public/public-auth-skin.module.css`
 - [ ] `src/components/tpo/legacy-company-year-chart.module.css`
 - [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
