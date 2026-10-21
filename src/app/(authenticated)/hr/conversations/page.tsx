@@ -44,7 +44,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
  if(!parsed.success)return <div className="min-w-0 space-y-3">
   <PageHeader title="Messages"/>
   <ErrorState title="Invalid conversation filters" description="Review the college and conversation filters."
-    action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Reset</Link>}/></div>;
+    action={<Link href="/hr/conversations" className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Reset</Link>}/></div>;
  const result=await listHrConversations(context,parsed.data);
  const generalLookup=result.status==="READY"
   ?await listHrConversations(context,{
@@ -79,7 +79,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     ? result.unreadInView+" unread across "+result.items.filter(row=>row.unread>0).length+" conversation(s) on this page"
     : "Conversations with the placement cell, one per drive, plus a general one."}
    actions={<Link href="/hr/notifications"
-     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Notification inbox</Link>}/>
+     className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Notification inbox</Link>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
    <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(g=>({
@@ -99,7 +99,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <p className="font-semibold text-foreground">{item.title}{item.unread?" · New":""}</p>
       <p className="mt-1 max-w-prose whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm text-body">{item.body}</p>
       <p className="mt-1 text-xs text-muted-foreground">{when(item.createdAt)} IST</p>
-      <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+      <Link href={item.href} className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
        View your drive request
       </Link>
       {item.unread?<RecruiterDecisionReadButton id={item.id}/>:null}
@@ -157,7 +157,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       </ol></ScrollCue>:null}
       {generalHistoryResult?.ok?<div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>:null}
       <Link href={"/hr/conversations/"+generalThread.id}
-        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Open full conversation</Link>
+        className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open full conversation</Link>
     </Disclosure>:null}
     {generalLookup && !generalLookup.ok?
       <p role="status" className="mt-3 text-sm text-body">
@@ -187,7 +187,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    {result.items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
     {visibleRows.map(row=><li key={row.id} className="min-w-0 py-3 transition-colors duration-[var(--lms-motion-fast)] hover:bg-[var(--lms-table-hover)] motion-reduce:transition-none">
      <div className="flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-1"><Link href={"/hr/conversations/"+row.id}
-      className="inline-flex min-h-11 min-w-0 flex-1 items-center break-words [overflow-wrap:anywhere] font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
+      className="inline-flex min-h-11 min-w-0 flex-1 items-center break-words [overflow-wrap:anywhere] font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{row.jobId ? (context.recruiter?.companyName??"Company")+" · "+row.jobTitle : "General"}</Link>
      {row.unread>0?<Badge tone="info" aria-label={row.unread+" unread messages"} className="shrink-0 self-center">{row.unread} new</Badge>:null}</div>
      {row.preview?<p className="mt-1 line-clamp-2 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">
       {row.preview.senderType==="RECRUITER"?"You: ":"Placement cell: "}{row.preview.text}

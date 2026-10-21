@@ -63,7 +63,7 @@ export default async function LearnerPlacementApplicationsPage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader title="Applications" actions={(
-        <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        <Link href="/learn/my-placements/offers" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
         Review all official offers →
       </Link>
       )} />
@@ -71,7 +71,7 @@ export default async function LearnerPlacementApplicationsPage() {
       
       {!roundsRead.available ? <Alert tone="error">
         Interview and assessment shortcuts are temporarily unavailable. Your saved applications remain visible and unchanged.
-        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry round shortcuts</Link>
+        <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry round shortcuts</Link>
       </Alert> : null}
       <Suspense fallback={<PageLoading label="Loading application filters" variant="form" count={2} />}>
         <LearnerApplicationsBrowse items={items} interviewLinks={interviewLinks} assessmentLinks={assessmentLinks}

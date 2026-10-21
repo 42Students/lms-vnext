@@ -44,13 +44,13 @@ export default async function LearnerPlacementAssessmentsPage({searchParams}: {
         description="Scheduled placement tests and assessments for your shortlisted applications."
         actions={
           <Link href="/learn/my-placements/assessments/results"
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             View official assessment results →
           </Link>
         }
       />
       <details className="border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Assessment submission guidance</summary>
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Assessment submission guidance</summary>
         <Banner tone="info" className="mt-3">
         <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
           Submit assessments on the employer’s platform

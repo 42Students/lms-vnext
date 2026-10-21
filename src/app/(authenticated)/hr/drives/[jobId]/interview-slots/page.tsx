@@ -36,7 +36,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
    description={workspace.job.title+" · This schedules employer time blocks only. No learner invitation or candidate booking is created here."}/>
   <nav aria-label="Interview coordination destinations" className="flex flex-wrap gap-3">
    <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Drive rounds"/>
-   <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Recruiter calendar</Link>
+   <Link href="/hr/calendar" className="inline-flex min-h-11 items-center text-sm font-medium text-primary-text md:min-h-9 hover:underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Recruiter calendar</Link>
   </nav>
   <Alert tone="info">
     Time blocks proposed here are visible to the placement cell. They are not confirmed interview appointments until the placement cell coordinates the schedule.
@@ -50,7 +50,7 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     {rounds.length===0?<Alert tone="warning">
      No pending or scheduled interview round is available for this drive.{" "}
      <Link href={"/recruiter/drives/"+jobId+"/rounds/editor"}
-      className="font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review hiring rounds</Link>
+      className="font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review hiring rounds</Link>
      {" "}before proposing a slot.
     </Alert>:null}
     <RecruiterInterviewSlotForm action={action} rounds={rounds.map(row=>({
