@@ -70,4 +70,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-bulk-drive-service.ts.md` (edit src/modules/placements/college-bulk-drive-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_identity-provisioning-repository.ts.md` (edit src/modules/people/identity-provisioning-repository.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_admin_features_collegeId_trace_route.ts.md` (edit src/app/api/admin/features/[collegeId]/trace/route.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-9/src_app_home_page.tsx.md` (edit src/app/home/page.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-9/src_app_home_page.tsx.md` (edit src/app/home/page.tsx; 2 findings; best P1)
