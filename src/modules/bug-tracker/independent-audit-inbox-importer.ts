@@ -1,5 +1,5 @@
 import "server-only";
-import {desc,eq,inArray,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs,
@@ -34,23 +34,6 @@ function safeReason(_error:unknown){return "Import refused: source data failed v
 function ledgerAction(item:IndependentAuditInboxPayload):LedgerAction{
  return item.type==="finding"?"IMPORT":"UPDATE";
 }
-async function persistAuditSyncFailure(){
- // Store an actual failed attempt, never invent a successful repository read.
- // Do not copy credentials, provider body or arbitrary exception messages.
- try{
-  const at=new Date();
-  await getDb().insert(db10AuditFindingSyncs).values({
-   source:SOURCE,repo:SOURCE,lastSyncedAt:at,lastResult:"FAILED",
-   lastError:"Source fetch or importer transaction failed",
-  }).onConflictDoUpdate({target:db10AuditFindingSyncs.source,set:{
-   lastSyncedAt:at,lastResult:"FAILED",
-   lastError:"Source fetch or importer transaction failed",
-  }});
- }catch{
-  // The storage feature itself may be unavailable; keep the caller failure.
- }
-}
-
 /** Importer updates only *authorized, validated* immutable files. A change to
  * an already accepted file is never replayed, even when SHA has changed.
  * A new valid agent update can append history and merge commits. */
@@ -58,12 +41,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
  if(!independentAuditImporterReady())
   return {ran:false,busy:false,commit:null,imported:0,updates:0,
    refused:0,tampered:0,deleted:0,message:"Sync is not set up on this server"};
- let inbox:Awaited<ReturnType<typeof readAuditGithubInbox>>;
- try{inbox=await readAuditGithubInbox();}
- catch{
-  await persistAuditSyncFailure();
-  throw new Error("Audit findings source could not be read");
- }
+ const inbox=await readAuditGithubInbox();
  const started=Date.now();
  const ordered=[...inbox.items].sort((a,b)=>
   Number(a.path.includes(".u"))-Number(b.path.includes(".u"))||
@@ -73,7 +51,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
  const now=new Date();
  const stats={imported:0,updates:0,refused:0,tampered:0,deleted:0};
  const db=getDb();
- try{return await db.transaction(async tx=>{
+ return db.transaction(async tx=>{
   // Distributed, transaction-scoped, non-blocking lease. A competing manual
   // or scheduled runner must never modify the same ledger concurrently.
   const lock=await tx.execute<{acquired:boolean}>(sql`
@@ -104,7 +82,6 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
     accepted.set(row.sourcePath,row);
   }
   const problems:{path:string;reason:string}[]=[];
-  const correctedPaths=new Set<string>();
   async function event(
    findingId:string,action:"COMMENT"|"STATUS",path:string,actor:string,
    note:string,fromStatus:string|null,toStatus:string|null,
@@ -200,7 +177,6 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
      "Imported from immutable findings repository ("+input.severity+")",
      null,duplicate?"DUPLICATE":"NEW");
     await record(file.path,file.sha,action,"ACCEPTED",saved.id,null);
-    correctedPaths.add(file.path);
     stats.imported++;continue;
    }
    const [finding]=await tx.select().from(db10AuditFindings)
@@ -230,7 +206,6 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
     "Marked fixed by agent with verified commit references.",
     finding.status,"FIXED_DEV",input.commits??[]);
    await record(file.path,file.sha,action,"ACCEPTED",finding.id,null);
-   correctedPaths.add(file.path);
    stats.updates++;
   }
   // Deletions of accepted files create separate immutable ledger attempts;
@@ -255,7 +230,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   // success merely because its previously rejected files were skipped.
   const mentioned=new Set(problems.map(item=>item.path));
   for(const [path,reason] of previousProblems){
-   if(!reason||mentioned.has(path)||correctedPaths.has(path))continue;
+   if(!reason||mentioned.has(path))continue;
    if(reason.startsWith("REJECTED") && accepted.has(path))continue;
    problems.push({path,reason});
   }
@@ -272,9 +247,5 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   }});
   return {ran:true,busy:false,commit:inbox.commit,...stats,
    message:result+(incomplete?": additional inbox files remain":""),};
- },{isolationLevel:"serializable"});}
- catch{
-  await persistAuditSyncFailure();
-  throw new Error("Audit findings import transaction failed");
- }
+ },{isolationLevel:"serializable"});
 }
