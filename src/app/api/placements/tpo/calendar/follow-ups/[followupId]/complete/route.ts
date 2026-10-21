@@ -31,6 +31,14 @@ export async function POST(request: Request, { params }: RouteContext) {
     const followup = await finishTpoFollowup(
       context, collegeId, tpoCrmFollowupIdSchema.parse(rawId),
     );
+    // Legacy clients used 204 No Content. Keep the existing JSON response
+    // for the vNext calendar while supporting explicit minimal-response callers.
+    // finishTpoFollowup is idempotent: a repeated Done returns the original
+    // timestamp without writing a second completion.
+    if(request.headers.get("prefer")?.split(",").some(value=>value.trim()==="return=minimal"))
+      return new NextResponse(null,{status:204,headers:{
+        "Cache-Control":"private, no-store","Preference-Applied":"return=minimal",
+      }});
     return NextResponse.json({
       followup: { id: followup.id, doneAt: followup.doneAt?.toISOString() ?? null },
     }, { headers: { "Cache-Control": "private, no-store" } });

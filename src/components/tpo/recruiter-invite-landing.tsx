@@ -261,6 +261,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     return shell(<div className="text-center space-y-3" role="status" aria-live="polite">
       <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">i</span>
       <PageHeader title="One more step" />
+      <p className="text-sm font-semibold text-body">Your invitation is awaiting your account sign-in.</p>
       <p className="text-sm text-muted-foreground leading-[22px]">You already have a 42LMS account. Sign in on {invite.collegeName}&apos;s placement address with your work email to accept the invitation.</p>
       <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
