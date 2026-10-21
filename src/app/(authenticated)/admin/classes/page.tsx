@@ -2,6 +2,7 @@ import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
+import {CollegeDirectoryInstantFilters} from "@/components/academics/college-directory-instant-filters";
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
 import {DataTable} from "@/components/ui/data-table";
@@ -65,17 +66,18 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     </section>
     <div className="min-w-0 space-y-4">
       <section aria-label="Filter managed classes" className="border-b border-border pb-4">
-        <form method="get" action="/admin/classes" role="search" aria-label="Class filters" className="grid min-w-0 items-end gap-[8px] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+        <CollegeDirectoryInstantFilters formId="admin-classes-filters"/>
+        <form id="admin-classes-filters" method="get" action="/admin/classes" role="search" aria-label="Class filters" className="grid min-w-0 items-end gap-[8px] md:grid-cols-2 xl:grid-cols-[165px_165px_minmax(165px,1fr)_auto_auto]">
           <SuperAdminClassBatchFilter
             programs={data.programs} cohorts={options?.cohorts??[]}
             selectedProgramId={data.query.programId??""}
             selectedCohortCode={data.query.cohortCode??""}/>
-          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search class, program, batch or capacity
+          <label className="grid min-w-0 w-full gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search class, program, batch, capacity or description
             <Input name="q" type="search" placeholder="Search class, program, batch or capacity" defaultValue={data.query.q}
               className="min-h-11 md:min-h-9" />
           </label>
           <Disclosure title="More filters" defaultOpen={Boolean(data.query.status!=="ALL" || data.query.pageSize!==25 || data.query.cohortCode)}
-            className="order-last min-w-0 md:col-span-2 xl:col-span-4"
+            className="order-last min-w-0 md:col-span-2 xl:col-span-5"
             contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] md:grid-cols-2">
           <label className="grid min-w-0 w-full md:min-w-32 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
             <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
@@ -101,7 +103,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
           <span className="text-xs tabular-nums text-muted-foreground">{data.total.toLocaleString("en-IN")} results</span>
         </div>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
-        <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}
+        <div className="min-w-0 overflow-x-auto" role="region" aria-label="Existing classes horizontal scroll" tabIndex={0}>
+        <DataTable<(typeof data.items)[number]> caption="Existing Classes/Sections" rows={data.items} getRowKey={row=>row.id}
           empty={<EmptyState title={data.total===0 && !data.query.q && !data.query.programId && !data.query.cohortCode?"No classes yet. Create your first class or section.":"No matching classes."} />}
           columns={[
             {key:"class",header:"Class Name",mobilePriority:"primary",cell:row=><div className="min-w-0">
@@ -128,6 +131,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
                   className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Schedule</Link>
               </div>},
           ]} />
+        </div>
         <nav aria-label="Class pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
           <span role="status" aria-live="polite">{data.items.length} of {data.total.toLocaleString("en-IN")} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex flex-wrap gap-2">

@@ -84,11 +84,39 @@ export async function setCollegeCgpaConversionRule(
   });
 }
 
+/** Legacy profile verification route mapping:
+ * - GET /api/v1/tpo/profile-verification/settings -> scoped, read-only setting
+ * - PUT /api/v1/tpo/profile-verification/settings -> college-admin writer
+ * - POST /api/v1/tpo/profile-verification/verify-many -> separately scoped
+ *   /api/placements/tpo/verification/bulk writer with per-row outcomes.
+ * All imports resolve the original numeric learner ID through an approved
+ * membership UUID crosswalk; no cross-college lookup is performed here. */
+export async function readTpoProfileVerificationEnabled(context:RequestContext,rawCollegeId:unknown){
+ const collegeId=uuid.parse(rawCollegeId);
+ const [college]=await getDb().select({organizationId:colleges.organizationId})
+  .from(colleges).where(eq(colleges.id,collegeId)).limit(1);
+ if(!college)throw Error("COLLEGE_NOT_FOUND");
+ if(!isSuperAdmin(context)){
+  const membership=context.membership;
+  if(!membership||membership.collegeId!==collegeId||membership.status!=="ACTIVE"||
+     context.user.platformStatus!=="ACTIVE"||
+     !membership.roles.some(role=>role==="TPO"||role==="COLLEGE_ADMIN"))
+   throw new AuthorizationError("placements.read");
+ }else{
+  requirePermission(context,"college.read",{collegeId,organizationId:college.organizationId});
+ }
+ const [row]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles})
+  .from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,collegeId)).limit(1);
+ return {tpoCanVerify:row?.enabled??true,editable:false,
+  explanation:"Only a College Admin or authorized Super Admin can change this setting."};
+}
 /** Only same-college College Admin or scoped Super Admin may control
  * whether TPO admins can review profile-verification requests. */
 export async function setTpoProfileVerificationEnabled(
-  context:RequestContext,collegeIdInput:string,enabled:boolean,
+  context:RequestContext,collegeIdInput:string,enabledInput:unknown,
 ):Promise<void>{
+  // Missing/invalid body must not implicitly disable a tenant's verifier.
+  const enabled=z.boolean({error:"tpoCanVerify must be an explicit boolean."}).parse(enabledInput);
   const collegeId=uuid.parse(collegeIdInput);
   await getDb().transaction(async tx=>{
     const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})

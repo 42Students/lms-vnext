@@ -109,9 +109,9 @@ export function CollegeArchiveButton({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "College archived",
+        title: "College deleted successfully",
         description:
-          `${name} is no longer active.`,
+          `${name} was soft-archived. Historical records are retained for authorized restoration.`,
       });
       router.refresh();
       } catch {
@@ -129,17 +129,21 @@ export function CollegeArchiveButton({
         variant="danger"
         size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9 print:hidden"
+        aria-label={"Delete college "+name}
         disabled={pending}
         onClick={() => {setArchiveError("");setOpen(true);}}
       >
-        Archive
+        <svg aria-hidden="true" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+          <path d="M4 7h16m-12 0V4h8v3m-9 0 1 13h8l1-13M10 11v6m4-6v6"/>
+        </svg> Delete
       </Button>
       <Dialog
         open={open}
         onOpenChange={next=>{if(!pending)setOpen(next);}}
         dismissible={!pending}
-        title="Archive college"
-        description={`Archive ${name}? This deactivates the tenant without deleting historical records and requires all linked dependencies to be resolved.`}
+        className="max-w-[380px]"
+        title={"Delete College · "+name+"?"}
+        description={`Delete ${name}? This performs a reversible soft archive; existing academic, student, project, placement and domain dependencies must be resolved first.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
@@ -159,7 +163,7 @@ export function CollegeArchiveButton({
             >
               {pending
                 ? "Archiving…"
-                : "Archive college"}
+                : "Yes, Delete"}
             </Button>
           </div>
         }
@@ -171,6 +175,7 @@ export function CollegeArchiveButton({
         <p className="m-0 max-w-prose text-sm text-body">
           The server rechecks memberships, departments, academic periods,
           Projects, Placements and tenant domains before archiving.
+          This Delete action uses a soft archive, never a physical data deletion.
           Archived colleges remain available for authorized restoration. If this
           college is your selected scope, that selection is cleared. Restoration
           does not automatically reactivate child memberships or domains.

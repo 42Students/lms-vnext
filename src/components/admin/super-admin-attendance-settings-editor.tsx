@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
+import {useToast} from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
@@ -9,7 +10,8 @@ import {DEFAULT_ATTENDANCE_POLICY} from "@/modules/attendance/policy-validation"
 export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresholdPercent,correctionWindowHours,maxCorrectionHours=168}:{
  collegeId:string;eligibilityThresholdPercent:number;correctionWindowHours:number;maxCorrectionHours?:number;
 }){
- const router=useRouter();
+ const router=useRouter(),{showToast}=useToast();
+ const labelOf=(field:"correctionWindowHours"|"eligibilityThresholdPercent")=>field==="correctionWindowHours"?"Late marking allowed for":"Minimum attendance";
  const actionLock=useRef(false);
  const [threshold,setThreshold]=useState(String(eligibilityThresholdPercent));
  const [hours,setHours]=useState(String(correctionWindowHours));
@@ -69,12 +71,19 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
       expectedValue:selectedField==="correctionWindowHours"?savedHours:savedThreshold,
       value:Number(selectedField==="correctionWindowHours"?hours:threshold)}),
    });
-   if(!response.ok)throw new Error(response.status===409?"Attendance setting changed elsewhere. Reload this field before saving.":"Failed");
+   if(!response.ok){const issue=await response.json().catch(()=>null) as {message?:string;error?:string}|null;
+    throw new Error(response.status===409?"Attendance setting changed elsewhere. Reload this field before saving.":
+      issue?.message||issue?.error||"Failed");}
    const data=await response.json() as {policy:{correctionWindowHours:number;eligibilityThresholdPercent:number}};
    setSavedHours(data.policy.correctionWindowHours);setSavedThreshold(data.policy.eligibilityThresholdPercent);
    setSource("COLLEGE");setConfirming(false);setSelectedField(null);
-   setMessage("Saved");router.refresh();
-  }catch(error){setMessage(error instanceof Error&&error.message!=="Failed"?error.message:"Attendance setting could not be saved. Try again.");setFailed(true);}
+   setMessage(labelOf(selectedField)+" updated");
+   showToast({tone:"success",title:labelOf(selectedField)+" updated"});router.refresh();
+  }catch(error){
+   const message=error instanceof Error&&error.message!=="Failed"?error.message:"Attendance setting could not be saved. Try again.";
+   setMessage(message);setFailed(true);
+   showToast({tone:"error",title:"Failed to save "+labelOf(selectedField),description:message});
+  }
   finally{actionLock.current=false;setSaving(false);}
  }
  async function resetField(field:"correctionWindowHours"|"eligibilityThresholdPercent"){
@@ -104,6 +113,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
    else setThreshold(String(data.policy.eligibilityThresholdPercent));
    setSource(data.hasCollegeOverride?"COLLEGE":"DEFAULT");
    setMessage(label+" reset to default");
+   showToast({tone:"success",title:label+" updated"});
    router.refresh();
   }catch(error){
    setFailed(true);
@@ -117,7 +127,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   const timer=window.setTimeout(()=>setMessage(""),4_000);
   return ()=>window.clearTimeout(timer);
  },[message,failed]);
- return <section aria-label="Attendance policy" className="min-w-0 space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+ return <section aria-label="Attendance policy" className="min-w-0 max-w-3xl space-y-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <h2 className="font-semibold text-[var(--lms-heading)]">Attendance policy</h2>
   <div className="grid gap-4 md:grid-cols-2 print:hidden">
    <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-hours">Late marking allowed for</label>
