@@ -105,7 +105,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </details>
   </form>
   <p role="status" className="text-sm text-body">
-   {data.total} matching independent findings · page {data.page} of {data.pages} · 50 per page.
+   {data.total.toLocaleString("en-IN")} matching independent findings · page {data.page} of {data.pages} · 50 per page.
   </p>
   <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
    caption="Independent audit findings"

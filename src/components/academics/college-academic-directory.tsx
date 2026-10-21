@@ -239,7 +239,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
 
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-b border-[var(--lms-canvas-border)]">
         <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
-          {data.total} matching {semesters ? "program terms" : "cohorts"}
+          {data.total.toLocaleString("en-IN")} matching {semesters ? "program terms" : "cohorts"}
         </p>
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
@@ -325,13 +325,13 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         <div className="flex gap-2">
           {data.query.page > 1 ? (
             <Link href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page - 1 })}
-              className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 py-2 font-semibold text-[var(--lms-link-text)]">
+              className="rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 py-2 font-semibold text-[var(--lms-link-text)]">
               Previous
             </Link>
           ) : null}
           {data.query.page < data.totalPages ? (
             <Link href={academicDirectoryHref(data.kind, { ...data.query, page: data.query.page + 1 })}
-              className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 py-2 font-semibold text-[var(--lms-link-text)]">
+              className="rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 py-2 font-semibold text-[var(--lms-link-text)]">
               Next
             </Link>
           ) : null}

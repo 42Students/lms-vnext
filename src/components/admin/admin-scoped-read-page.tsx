@@ -41,24 +41,24 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
        actions={backHref||exportAction||headerActions?<>{headerActions}{backHref?<PageBackLink href={backHref} label="Placement overview" />:null}{exportAction}</>:undefined}/>;
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
- return <div className="min-w-0 space-y-5">{heading("Super Admin")}
+ return <div className="space-y-5">{heading("Super Admin")}
   <ErrorState title="Invalid directory filters" description="Check the search, status or page."
    action={<Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>}/></div>;
  const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context))return <div className="min-w-0 space-y-5">
+ if(!isSuperAdmin(context))return <div className="space-y-5">
   {heading("Super Admin")}
   <ErrorState title="Directory access denied"
    description="Your account cannot access Super Admin directory records."
    action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to dashboard</Link>}/>
  </div>;
- if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
+ if(!context.adminScope?.collegeId)return <div className="space-y-5">
   {heading("Super Admin")}
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
  </div>;
  const directory=await loader(parsed.data)
   .then(value=>({ok:true as const,value}))
   .catch(()=>({ok:false as const}));
- if(!directory.ok)return <div className="min-w-0 space-y-5">
+ if(!directory.ok)return <div className="space-y-5">
   {heading("Super Admin")}
   <ErrorState title="Directory unavailable"
    description="The selected college's directory could not be loaded. Your filters have not changed."
@@ -106,7 +106,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
    </article>)}
   </section>:null}
-  {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
+  {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   {headingMode==="section"?refreshAction:null}
@@ -210,7 +210,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
@@ -218,7 +218,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
   {compactReadLayout?<>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">

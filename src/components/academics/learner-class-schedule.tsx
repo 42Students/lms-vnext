@@ -160,7 +160,7 @@ function scheduleEventTooltip(event:LearnerScheduleEvent){
 }
 
 function learnerEventStartHour(event:LearnerScheduleEvent){
-  const value=new Intl.DateTimeFormat("en-GB",{
+  const value=new Intl.DateTimeFormat("en-IN",{
     timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
   }).format(new Date(event.startsAt));
   return Number(value);
@@ -443,7 +443,7 @@ export function LearnerClassSchedule({
 
       {upcoming.length > 0 ? (
         <Disclosure
-          title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3 flex-wrap"><span>Next classes</span><span className="text-xs font-semibold text-muted-foreground">Next {upcoming.length}</span></span>}
+          title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3"><span>Next classes</span><span className="text-xs font-semibold text-muted-foreground">Next {upcoming.length}</span></span>}
           className="min-w-0 border-b border-border pb-2"
           contentClassName="pt-3"
         >
@@ -718,7 +718,7 @@ export function LearnerClassSchedule({
                           key={localDayKey(day)}
                           className="min-h-32 border-b border-r border-border p-2 first:border-l"
                         >
-                          <div className="mb-2 flex items-center justify-between flex-wrap">
+                          <div className="mb-2 flex items-center justify-between">
                             <span
                               className={
                                 isToday
