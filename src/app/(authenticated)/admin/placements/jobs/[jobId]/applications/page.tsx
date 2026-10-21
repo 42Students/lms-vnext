@@ -26,7 +26,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
 }) {
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
-    <PageHeader title="Placement Drives" description="Placement administration requires a college safety scope." />
+    <PageHeader title="Drives" description="Placement administration requires a college safety scope." />
     <EmptyState title="Choose a college" description="Select a college in the Super Admin scope selector to manage its drives."/>
   </div>;
   requireSuperAdminSelectedCollege(context,"placements.manage");
