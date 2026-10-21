@@ -55,6 +55,11 @@ export type CollegeRoleDirectoryRow = {
   cohort: string | null;
   sections: string[];
   activeTeachingAssignments: number;
+  /** College-scoped learner search identifiers, absent for faculty. */
+  rollNumber?:string|null;
+  registrationNumber?:string|null;
+  legacyUniqueId?:string|null;
+  department?:string|null;
 };
 
 export function describeCollegeDirectoryContext(
@@ -198,4 +203,16 @@ export function collegeRoleDirectoryHasActiveFilters(kind:CollegeDirectoryKind,f
 export function collegeRoleDirectoryPageRange(page:number,pageSize:number,total:number):{first:number;last:number}{
  if(total<=0)return {first:0,last:0};
  return {first:Math.min(total,(page-1)*pageSize+1),last:Math.min(total,page*pageSize)};
+}
+
+/** Approved crosswalk for legacy learner search. Contact details must be
+ * separately authorized by the contact drilldown, not dumped in search. */
+export function collegeLearnerSearchProjection(row:CollegeRoleDirectoryRow){
+ const names=row.name.trim().split(/\s+/);
+ return {id:row.membershipId,firstName:names[0]??"",
+  lastName:names.slice(1).join(" "),uniqueId:row.legacyUniqueId??null,
+  rollNumber:row.rollNumber??null,registrationNumber:row.registrationNumber??null,
+  department:row.department??null,program:row.program,college:null,
+  class:row.sections.join(", ")||null,
+  contactMail:null,contactMobile:null,contactHref:collegeRoleContactHref(row.membershipId)};
 }
