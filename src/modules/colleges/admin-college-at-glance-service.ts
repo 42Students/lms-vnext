@@ -35,6 +35,16 @@ export async function getSuperAdminCollegeAtGlance(ctx:RequestContext,collegeRaw
   db.select({n:countDistinct(placementJobs.id)}).from(placementJobs)
    .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"))),
  ]);
- return {students,faculty,courses:courseRows[0]?.n??0,activeDrives:driveRows[0]?.n??0};
+ // Legacy AtAGlance field names are preserved alongside vNext dashboard
+ // names. Only ACTIVE college memberships and platform users count as
+ // students/faculty; courses must be ACTIVE and drives PUBLISHED. This is
+ // intentional active-operational parity, not a historical all-time count.
+ const coursesCount=courseRows[0]?.n??0,activeDrives=driveRows[0]?.n??0;
+ return {
+  students,faculty,courses:coursesCount,activeDrives,
+  studentCount:students,facultyCount:faculty,courseCount:coursesCount,
+  activeDriveCount:activeDrives,
+  countScope:"ACTIVE_OPERATIONAL" as const,
+ };
  });
 }

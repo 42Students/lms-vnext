@@ -26,7 +26,7 @@ function scopedTenantSource(context: RequestContext, query?: z.output<typeof ten
   if (query && query.status !== "ALL") where.push(eq(colleges.status, query.status));
   if (query?.q) {
     const pattern = "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%";
-    where.push(or(ilike(colleges.name, pattern), ilike(colleges.code, pattern), ilike(organizations.name, pattern))!);
+    where.push(or(ilike(colleges.name, pattern), ilike(colleges.code, pattern), ilike(colleges.city, pattern), ilike(organizations.name, pattern))!);
   }
   // Every colliding source column has its own SQL alias and decoder, including both names/statuses/IDs.
   return getDb().select({
@@ -36,7 +36,13 @@ function scopedTenantSource(context: RequestContext, query?: z.output<typeof ten
     organizationName: sql<string>`${organizations.name}`.mapWith(organizations.name).as("tenant_organization_name"),
     status: sql<"ACTIVE" | "ARCHIVED">`${colleges.status}`.mapWith(colleges.status).as("tenant_college_status"),
     organizationStatus: sql<"ACTIVE" | "ARCHIVED">`${organizations.status}`.mapWith(organizations.status).as("tenant_organization_status"),
-    code: colleges.code, city: colleges.city, state: colleges.state, country: colleges.country,
+    code: colleges.code,
+    // The legacy CollegeDTO called this immutable routing key "uniqueId".
+    // Numeric legacy college/org IDs require an authorized UUID crosswalk.
+    uniqueId: sql<string>`${colleges.code}`.mapWith(colleges.code).as("tenant_legacy_unique_id"),
+    addressLine1:colleges.addressLine1,addressLine2:colleges.addressLine2,
+    landmark:colleges.landmark,postalCode:colleges.postalCode,
+    city: colleges.city, state: colleges.state, country: colleges.country,
     createdAt: colleges.createdAt, updatedAt: colleges.updatedAt,
   }).from(colleges).innerJoin(organizations, eq(organizations.id, colleges.organizationId))
     .where(and(...where)).as("admin_tenant_lifecycle_scope");
@@ -73,7 +79,13 @@ export async function getSuperAdminTenantLifecycleDetail(context: RequestContext
     await assertPersistedPlatformPermission(tx,context,"college.read",persistedTenantScope(context));
     const [row] = await tx.select().from(source).where(eq(source.id, parsed.data)).limit(1);
     if (!row) throw new CollegeServiceError("COLLEGE_NOT_FOUND");
-    return row;
+    // Single-college GET equivalent: preserve the selected organization's
+    // boundaries while returning the same scoped detail as the directory.
+    return {...row,legacyFieldMap:{
+      uniqueId:row.code,pinCode:row.postalCode,
+      collegeId:row.id,orgId:row.organizationId,
+      requiresNumericIdCrosswalk:true,
+    }};
   });
 }
 

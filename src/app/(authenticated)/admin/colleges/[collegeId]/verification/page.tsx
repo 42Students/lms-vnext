@@ -34,11 +34,11 @@ export default async function AdminCollegeVerification({
  }catch(e){
   if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();
   if(e instanceof AuthorizationError)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-   <PageHeader title="Verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+   <PageHeader title="Profile verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
    <ErrorState title="Verification access denied" description="Your current account and college scope do not permit reviewing this verification queue."/>
   </div>;
   if(e instanceof VerificationAccessCheckError)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-   <PageHeader title="Verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+   <PageHeader title="Profile verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
    <ErrorState title="Could not check your verification access" description="The access check could not be completed. No verification records were opened."
     action={<Link href={`/admin/colleges/${encodeURIComponent(collegeId)}/verification?retry=1`} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>
   </div>;
@@ -53,7 +53,7 @@ export default async function AdminCollegeVerification({
  const parsed=invalidPaging||Object.values(raw).some(Array.isArray)?null:verificationQueueFilters.safeParse(Object.fromEntries(
   Object.entries(raw).filter(([,v])=>v!==undefined&&v!==""),
  ));
- const header=<PageHeader title="Verification"
+ const header=<PageHeader title="Profile verification"
   eyebrow={college.name} description="College-scoped learner Education and Identity verification. Review only the currently selected college."
   actions={<PageBackLink href={`/admin/colleges/${encodeURIComponent(college.id)}`} label="College setup"/>}/>;
  if(!parsed?.success)return <div className="min-w-0 space-y-[var(--lms-space-6)]">{header}
