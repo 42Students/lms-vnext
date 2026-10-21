@@ -60,6 +60,9 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  const bypassUnload=useRef(false);
  const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const [otherDirty,setOtherDirty]=useState(false);
+ // Saving an unlisted key refreshes the authoritative entries list.
+ // Retire its conservative pending-draft warning on that verified refresh.
+ useEffect(()=>{setOtherDirty(false);},[entries]);
  const keys=LEGACY_TENANT_SETTING_SPECS.filter(item=>item.scope===scopeType);
  const existing=new Map(entries.map(row=>[row.key,row]));
  const [draft,setDraft]=useState<Record<string,string>>(()=>Object.fromEntries(
