@@ -33,6 +33,7 @@ import {countUnreleasedTpoSelections} from "@/modules/placements/tpo-drive-selec
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import {tpoDriveLegacyInnerTabs} from "@/modules/placements/tpo-drive-tab-model";
+import {DriveCompanyAvatar} from "./drive-company-avatar";
 import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
@@ -54,19 +55,6 @@ import {
   type PlacementDriveControlData,
 } from "./placement-drive-controls";
 
-/** A company avatar shows deterministic initials below its public HTTPS logo. */
-function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|null}){
- const words=name.trim().split(/\s+/).filter(Boolean);
- const initials=(words.length>1?words[0][0]+words[1][0]:name.slice(0,2)).toUpperCase()||"?";
- const colors=["#e6f4ff","#f6ffed","#fff7e6","#f9f0ff","#fff1f0"];
- const hash=Array.from(name).reduce((sum,char)=>(sum*31+char.charCodeAt(0))>>>0,0);
- return <span className="relative inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border text-lg font-bold text-[#172033]"
-  style={{backgroundColor:colors[hash%colors.length]}} aria-label={name+" logo"}>
-  <span aria-hidden="true">{initials}</span>
-  {logoUrl&&/^https:\/\//i.test(logoUrl)?<img src={logoUrl} alt="" loading="lazy"
-   referrerPolicy="no-referrer" className="absolute inset-0 h-full w-full object-contain text-transparent"/>:null}
- </span>;
-}
 function formatDriveIst(date:Date|null){
  return date?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",
   minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date to be decided";
@@ -266,12 +254,22 @@ export async function PlacementDriveWorkspace({
     recordedOutside:job.recordedOutside,
   });
 
-  const journey=isTpo?await getTpoDriveJourney(context,jobId).catch(()=>null):null;
-  const pendingSelections=isTpo&&job.status==="PUBLISHED"
-    ? await countUnreleasedTpoSelections(context,jobId).catch(()=>null) : 0;
-  const reminderPreview=isTpo&&job.status==="PUBLISHED"
-    ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
-    : null;
+  // These three projections have no dependencies on each other; loading
+  // them together avoids extending first paint through sequential reads.
+  const [journey,pendingSelections,reminderPreview]=await Promise.all([
+    isTpo?getTpoDriveJourney(context,jobId).catch(()=>null):Promise.resolve(null),
+    isTpo&&job.status==="PUBLISHED"
+      ?countUnreleasedTpoSelections(context,jobId).catch(()=>null):Promise.resolve(0),
+    isTpo&&job.status==="PUBLISHED"
+      ?getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null):Promise.resolve(null),
+  ]);
+
+  const appliedCount=journey?.stages.find(stage=>stage.name==="Applied")?.count??null;
+  const notAppliedCount=reminderPreview?.count??null;
+  // Legacy denominator: applicants + registered non-applicants; do not
+  // divide by the entire eligible audience or sum historical journey stages.
+  const applicationRate=appliedCount!==null&&notAppliedCount!==null
+    ? Math.round(100*appliedCount/Math.max(1,appliedCount+notAppliedCount)):null;
 
   const nextStep = isTpo&&lifecycleReadiness&&journey&&shortlist&&placementRequests&&
     pendingSelections!==null&&evaluation&&screening&&offerCandidates&&roleOptions
@@ -427,8 +425,12 @@ export async function PlacementDriveWorkspace({
       </Alert>:null}
       {nextStep ? (
         <section aria-label="Next step" className="rounded-[var(--lms-canvas-radius)] border border-primary bg-primary-subtle p-4" data-testid="drive.next-step">
-          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Next step</h2>
-          <p className="mt-2 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Next step</p>
+          <h2 className="mt-1 text-lg font-semibold leading-7 text-[var(--lms-heading)]">{nextStep.primary.label}</h2>
+          <p className="mt-1 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
+          {applicationRate!==null?<p className="mt-2 text-xs text-muted-foreground">
+            Application rate {applicationRate}% · {appliedCount} applied · {notAppliedCount} registered not applied
+          </p>:null}
           <Link href={nextStep.primary.href}
             className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
             {nextStep.primary.label}
@@ -548,7 +550,8 @@ export async function PlacementDriveWorkspace({
             <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
           </Link>)}
         </div>
-        <p className="mt-3 text-xs text-body leading-[20px]">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.</p>
+        <p className="mt-3 text-xs text-body leading-[20px]">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.
+          {applicationRate!==null?" · Application rate: "+applicationRate+"%.":""}</p>
       </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
         <section aria-label="Round journey" className="min-w-0 border-b border-border pb-4">
