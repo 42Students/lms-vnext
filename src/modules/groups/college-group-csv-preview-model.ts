@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const GROUP_IMPORT_MAX_ROWS = 500;
-export const GROUP_IMPORT_MAX_CHARACTERS = 131072;
+export const GROUP_IMPORT_MAX_ROWS = 2000;
+export const GROUP_IMPORT_MAX_CHARACTERS = 524288;
 export const collegeGroupCsvPreviewSchema = z.object({
   groupId: z.string().uuid(),
   csv: z.string().min(1).max(GROUP_IMPORT_MAX_CHARACTERS),
