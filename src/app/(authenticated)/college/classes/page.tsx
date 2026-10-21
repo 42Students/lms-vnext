@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
 import { CollegeClassCreate } from "@/components/academics/college-section-management";
+import { CollegeRecurringEntry } from "@/components/academics/college-recurring-entry";
 import { Disclosure } from "@/components/ui/disclosure";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -14,6 +15,7 @@ import {
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
 import { classesExportHref, CLASSES_EXPORT_CAP } from "@/modules/academics/college-classes-export-model";
 import { listCollegeSectionOptions } from "@/modules/academics/college-section-mutation-service";
+import { listRecurringPreviewOptions } from "@/modules/academics/college-recurring-preview-service";
 
 export default async function CollegeClassesPage({
   searchParams,
@@ -28,10 +30,11 @@ export default async function CollegeClassesPage({
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
-  const [classes, optionResult] = await Promise.all([
+  const [classes, optionResult, recurringResult] = await Promise.all([
     listCollegeClasses(context, parsed.data),
     listCollegeSectionOptions(context).then(options => ({ options, error: false as const }))
       .catch(() => ({ options: { cohorts: [], periods: [] }, error: true as const })),
+    listRecurringPreviewOptions(context).catch(() => null),
   ]);
   const options = optionResult.options;
   return <CollegeStructureDirectory data={classes} classOptions={optionResult.error ? undefined : options} prepend={
@@ -44,6 +47,8 @@ export default async function CollegeClassesPage({
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
             Export CSV
           </a>
+          {recurringResult ? <CollegeRecurringEntry options={{...recurringResult,
+            classes: recurringResult.classes.map(row => ({...row, updatedAt: row.updatedAt.toISOString()}))}} /> : null}
           <Link href="/college/classes/recurring-preview"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
             Preview recurring class schedule
