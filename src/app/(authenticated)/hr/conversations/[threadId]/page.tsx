@@ -82,7 +82,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <Link href={"/hr/conversations?collegeId="+result.thread.collegeId}
    className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to conversations</Link>
   </div>
-  <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
+  <p className="text-sm text-body">{result.total.toLocaleString("en-IN")} messages · {result.unread.toLocaleString("en-IN")} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
   {changeRequestResult && !changeRequestResult.ok?

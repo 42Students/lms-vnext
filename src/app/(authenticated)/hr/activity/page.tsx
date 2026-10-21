@@ -76,7 +76,7 @@ export default async function HrJobActivityPage({searchParams}:{
      <li key={item.id} className="grid min-w-0 gap-1 py-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-center min-[768px]:gap-4">
       <Link href={"/hr/placements/jobs/"+encodeURIComponent(item.jobId)}
        className="inline-flex min-h-11 min-w-0 max-w-full items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9">{item.title}</Link>
-      <p className="m-0 flex min-w-0 flex-wrap items-center text-sm text-body min-[768px]:justify-end leading-[22px]">
+      <p className="m-0 flex min-w-0 flex-wrap items-center text-sm text-body min-[768px]:justify-end">
        <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"warning":"neutral"}>{item.status}</StatusBadge>
        <span className="ml-2">· {fmt(item.occurredAt)} IST</span>
       </p>
@@ -89,12 +89,12 @@ export default async function HrJobActivityPage({searchParams}:{
    <footer className="min-w-0 space-y-2">
     <nav aria-label="Activity history pages" className="flex min-w-0 flex-wrap items-center gap-3">
      {result.page>1?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(result.page-1)}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
+       className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Previous</Link>:null}
      <span className="text-xs text-muted-foreground">Page {result.page} · up to {input.data.limit} events</span>
      {result.hasNext?<Link href={"/hr/activity?collegeId="+encodeURIComponent(result.collegeId)+"&kind="+input.data.kind+"&q="+encodeURIComponent(input.data.q)+"&page="+(result.page+1)}
-       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}
+       className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next</Link>:null}
     </nav>
-    <p className="text-xs text-muted-foreground leading-5">Read-only hiring history, not the recruiter Messages inbox.</p>
+    <p className="text-xs text-muted-foreground">Read-only hiring history, not the recruiter Messages inbox.</p>
    </footer>
   </>}
  </div>;
