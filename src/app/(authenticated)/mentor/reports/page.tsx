@@ -127,7 +127,7 @@ export default async function MentorReportsPage({searchParams}:{
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
-          "Clear filters to see the other currently assigned project records."} action={<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>}/>:
+          "Clear filters to see the other currently assigned project records."} action={<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>}/>:
         <ol aria-label="mentor reports entries" className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(project=>
           <li key={project.id} className="min-w-0 py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">

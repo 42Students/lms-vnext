@@ -12,7 +12,7 @@ export default async function LearnerProfileDataAccessPage(){
   getOwnLearnerAcademicSummary(context),
  ]);
  return <div className="min-w-0 space-y-5">
-  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">← Profile</Link>
+  <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Profile</Link>
   <PageHeader title="Who has my data" description="Your saved academic details, access boundaries and recorded changes."/>
   <section aria-labelledby="data-access-permissions" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-permissions" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Who may use your information</h2>
@@ -27,7 +27,7 @@ export default async function LearnerProfileDataAccessPage(){
    <h2 id="data-access-academic-record" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Academic record</h2>
    <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
    <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
-   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">View academic record →</Link>
+   <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View academic record →</Link>
   </section>
   <section aria-labelledby="data-access-changes" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-changes" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recent recorded profile-related changes</h2>

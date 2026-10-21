@@ -126,10 +126,10 @@ export default async function MentorTeamCoveragePage({
           ? data.projectCount===0
             ? <EmptyState title="No currently assigned active projects"
                 description="There are no current non-archived project assignments for this mentor. No historical team or staffing status is inferred."
-                action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Projects</Link>} />
+                action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Projects</Link>} />
             : <EmptyState title="No projects match these filters"
                 description="Your registered assigned projects do not match this search or coverage filter. Clear filters to review all active assignments."
-                action={<Link href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">{hasFilters ? "Clear filters" : "Projects"}</Link>} />
+                action={<Link href={hasFilters ? "/mentor/team-coverage" : "/mentor/projects"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{hasFilters ? "Clear filters" : "Projects"}</Link>} />
           : <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
             <article key={item.projectId} className="py-[var(--lms-space-3)]">
               <div className="flex flex-wrap items-center justify-between gap-2">

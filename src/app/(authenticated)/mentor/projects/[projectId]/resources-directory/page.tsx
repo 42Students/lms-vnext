@@ -99,7 +99,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
    {data.items.length===0?<EmptyState title="No matching resources"
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":
-     "Clear the filters to see other registered resource metadata."} action={<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>} />:
+     "Clear the filters to see other registered resource metadata."} action={<Link href={base+"/resources-directory"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>} />:
    <ol className="min-w-0 divide-y divide-border border-y border-border">
     {data.items.map(resource=><li key={resource.id}
      className="min-w-0 py-4">

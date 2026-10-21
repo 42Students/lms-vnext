@@ -106,7 +106,7 @@ export default async function MentorReviewsPage({
       </div>
       <p className="text-sm text-body leading-[22px]">{data.total} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
-        description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Projects</Link>} />
+        description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Projects</Link>} />
         : <div className="grid">{data.items.map(item =>
           <Link key={item.key} href={item.href} className="min-h-11 block border-b border-border py-4 hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             <p className="min-w-0 break-words font-semibold text-link">{item.description}</p>
