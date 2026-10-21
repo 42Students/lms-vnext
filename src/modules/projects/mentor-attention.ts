@@ -8,7 +8,11 @@ export type MentorProjectAttentionSource = {
   projectStatus: string;
   projectUpdatedAt: Date;
   lastActivityAt: Date | null;
-  submission: {id: string;status: string;submittedAt: Date | null} | null;
+  blocker?:string|null;
+  submission:{
+    id:string;status:string;submittedAt:Date|null;reviewedAt?:Date|null;
+    version?:number;reopenedAt?:Date|null;
+  } | null;
   meetings: readonly {
     id: string; status: string;title: string; startsAt: Date;
   }[];
@@ -32,7 +36,13 @@ export function deriveMentorProjectAttention(
   for (const project of projects) {
     if (project.projectStatus==="ARCHIVED") continue;
     const href="/mentor/projects/"+encodeURIComponent(project.projectId);
-    if (project.submission?.status==="SUBMITTED" && project.submission.submittedAt) {
+    const submission=project.submission;
+    const freshReview=Boolean(submission?.submittedAt)&&
+      (!submission?.reviewedAt||
+        submission.submittedAt!.getTime()>submission.reviewedAt.getTime())&&
+      !submission?.reopenedAt;
+    if(submission && ["SUBMITTED","UNDER_REVIEW","IN_REVIEW"].includes(submission.status)&&
+       freshReview&&submission.submittedAt){
       alerts.push({
         projectId:project.projectId,
         key:"review:"+project.submission.id,kind:"REVIEW",
@@ -45,16 +55,17 @@ export function deriveMentorProjectAttention(
     // MEN-projects-meetings-73: legacy includes idle PLANNED and ACTIVE
     // projects after seven days, but never BLOCKED, COMPLETED or ARCHIVED.
     // Prefer recorded events; use last project update when none exist.
-    const last=project.lastActivityAt ?? project.projectUpdatedAt;
-    const lastMillis=last.getTime();
+    const last=project.lastActivityAt;
+    const lastMillis=last?.getTime()??NaN;
     const stalled=["PLANNED","ACTIVE"].includes(project.projectStatus) &&
-      Number.isFinite(lastMillis) && timestamp-lastMillis >= 7*24*60*60*1000;
+      !project.blocker?.trim() &&
+      Number.isFinite(lastMillis) && timestamp-lastMillis>=7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,
         key:"stalled:"+project.projectId,kind:"STALLED",
       title:project.projectTitle+" — no activity in 7+ days",
       description:"This project hasn't had any recorded activity recently.",
-      href:href+"?tab=audit",occurredAt:last.toISOString(),
+      href:href+"?tab=audit",occurredAt:last!.toISOString(),
     });
     for (const meeting of project.meetings) {
       if (meeting.status==="REQUESTED") {
@@ -77,5 +88,11 @@ export function deriveMentorProjectAttention(
       }
     }
   }
-  return alerts.sort((a,b)=>b.occurredAt.localeCompare(a.occurredAt)||a.key.localeCompare(b.key));
+  // Announcements are a separate inbox source; project attention keeps the
+  // legacy review / request / stalled / upcoming precedence within each feed.
+  const priority:{[kind in MentorProjectAttention["kind"]]:number}={
+    REVIEW:0,REQUESTED:1,STALLED:2,MEETING_SOON:3,
+  };
+  return alerts.sort((a,b)=>priority[a.kind]-priority[b.kind]||
+    b.occurredAt.localeCompare(a.occurredAt)||a.key.localeCompare(b.key));
 }

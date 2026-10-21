@@ -4,6 +4,7 @@ import {
   activityEvents,
   projectMeetings,
   projectSubmissions,
+  projectSubmissionReviews,
   projectTaskSubmissions,
 } from "@/db/schema";
 import { hasActiveMembership, hasMembershipRole, type RequestContext } from
@@ -63,9 +64,13 @@ export async function listMyMentorProjectAttention(
       id:projectSubmissions.id,projectId:projectSubmissions.projectId,
       status:projectSubmissions.status,submittedAt:projectSubmissions.submittedAt,
       version:projectSubmissions.version,
-    }).from(projectSubmissions).where(and(
-      inArray(projectSubmissions.projectId,ids),
-    )).orderBy(desc(projectSubmissions.version)),
+      reopenedAt:projectSubmissions.reopenedAt,
+      reviewedAt:projectSubmissionReviews.reviewedAt,
+    }).from(projectSubmissions)
+      .leftJoin(projectSubmissionReviews,eq(
+        projectSubmissionReviews.submissionId,projectSubmissions.id))
+      .where(inArray(projectSubmissions.projectId,ids))
+      .orderBy(desc(projectSubmissions.version)),
     getDb().select({
       id:projectMeetings.id,projectId:projectMeetings.projectId,
       status:projectMeetings.status,title:projectMeetings.title,
@@ -135,6 +140,7 @@ export async function listMyMentorProjectAttention(
   return deriveMentorProjectAttention(rows.map(row=>({
     projectId:row.project.id,projectTitle:row.project.title,
     projectStatus:row.project.status,projectUpdatedAt:row.project.updatedAt,
+    blocker:row.project.blocker,
     lastActivityAt:activityMap.get(row.project.id)??null,
     submission:submissionMap.get(row.project.id)??null,
     meetings:meetingMap.get(row.project.id)??[],

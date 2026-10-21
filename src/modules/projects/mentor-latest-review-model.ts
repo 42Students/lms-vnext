@@ -4,6 +4,7 @@
  */
 export function currentPendingMentorSubmissions<T extends {
   id:string;projectId:string;version:number;status:string;submittedAt:Date|null;
+  reviewedAt?:Date|null;reopenedAt?:Date|null;
 }>(rows:readonly T[]):Map<string,T>{
   const latest=new Map<string,T>();
   for(const row of rows){
@@ -14,7 +15,11 @@ export function currentPendingMentorSubmissions<T extends {
     }
   }
   for(const [projectId,row] of latest){
-    if(row.status!=="SUBMITTED"||!row.submittedAt)latest.delete(projectId);
+    if(!["SUBMITTED","UNDER_REVIEW","IN_REVIEW"].includes(row.status)||
+      !row.submittedAt||row.reopenedAt||
+      row.reviewedAt&&row.submittedAt.getTime()<=row.reviewedAt.getTime()){
+      latest.delete(projectId);
+    }
   }
   return latest;
 }
