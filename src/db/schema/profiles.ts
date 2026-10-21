@@ -130,3 +130,20 @@ export function canUndoImportedLearnerBatch(input:{
  return input.reversedAt===null&&input.currentCohortId===input.importedCohortId&&
   Number.isSafeInteger(input.dependencyCount)&&input.dependencyCount===0;
 }
+
+/** Replacement object cleanup is durable; a worker must verify no faculty
+ * profile still references the key before using private-storage DELETE. */
+export const facultyAvatarCleanupQueue=pgTable("faculty_avatar_cleanup_queue",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ membershipId:uuid("membership_id").notNull().references(()=>collegeMemberships.id,{onDelete:"restrict"}),
+ collegeId:uuid("college_id").notNull(),
+ oldObjectKey:varchar("old_object_key",{length:1024}).notNull(),
+ status:varchar("status",{length:16}).notNull().default("PENDING"),
+ createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ completedAt:timestamp("completed_at",{withTimezone:true}),
+},t=>[
+ index("faculty_avatar_cleanup_pending_idx").on(t.status,t.createdAt),
+ check("faculty_avatar_cleanup_status_ck",sql`${t.status} in ('PENDING','DONE','FAILED')`),
+ check("faculty_avatar_cleanup_state_ck",sql`
+  (${t.status}='DONE')=(${t.completedAt} is not null)`),
+]);

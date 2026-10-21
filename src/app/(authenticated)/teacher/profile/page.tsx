@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { notFound } from "next/navigation";
 import { FacultyProfileEditor } from "@/components/people/faculty-profile-editor";
+import {FacultyAvatarUpload} from "@/components/people/faculty-avatar-upload";
 import { facultyProfileDocumentStorageReady } from "@/modules/people/faculty-profile-readiness";
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
 import { PageHeader } from "@/components/ui/page-header";
@@ -37,6 +38,7 @@ export default async function FacultyProfilePage() {
           {initials || "F"}
         </div>
         <div className="min-w-0 space-y-1">
+          <FacultyAvatarUpload initialVersion={selfDocument?.version??0}/>
           <h2 className="break-words text-xl font-semibold text-[var(--lms-heading)]">{person.user.displayName}</h2>
           <p className="break-all text-sm text-body">{person.user.email || "No email recorded"}</p>
           <p className="text-sm text-muted-foreground">Faculty · College-managed identity</p>
