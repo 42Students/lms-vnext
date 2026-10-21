@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { Dialog } from "@/components/ui/dialog";
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -164,6 +165,7 @@ export function TpoCalendarMoveFollowup({
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const [moveOpen, setMoveOpen] = useState(false);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -179,6 +181,7 @@ export function TpoCalendarMoveFollowup({
         "MOVE",
       );
       setMessage(tpoCalendarFollowupSuccess("MOVE"));
+      setMoveOpen(false);
       router.refresh();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not reschedule follow-up.");
@@ -210,34 +213,40 @@ export function TpoCalendarMoveFollowup({
   }
 
   return (
-    <form onSubmit={onSubmit} className="grid min-w-0 gap-[var(--lms-space-3)]">
-      <label className="flex min-w-48 flex-1 flex-col gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-        Move follow-up (IST)
-        <Input
-          name="dueAt"
-          type="datetime-local"
-          key={currentIst}
-          defaultValue={currentIst}
-          required
-          className={inputClass}
-        />
-      </label>
-      <Button variant="primary"
-        type="submit"
-        disabled={busy}
-        className="w-full sm:w-auto"
-      >
-        {busy ? "Moving…" : "Reschedule"}
-      </Button>
-      <Button variant="secondary"
-        type="button"
-        disabled={busy}
-        onClick={() => void onDone()}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text disabled:opacity-50"
-      >
-        {busy ? "Saving…" : "Done"}
-      </Button>
-      {message?<InlineNotice tone={message===tpoCalendarFollowupSuccess("MOVE")||message===tpoCalendarFollowupSuccess("DONE")?"success":"error"} message={message}/>:null}
-    </form>
+    <div className="grid min-w-0 gap-[var(--lms-space-3)]">
+      <div className="flex flex-wrap gap-2">
+        <Button variant="secondary" type="button" disabled={busy}
+          onClick={() => { setMessage(""); setMoveOpen(true); }}>
+          Move follow-up
+        </Button>
+        <Button variant="secondary" type="button" disabled={busy}
+          onClick={() => void onDone()}>
+          {busy ? "Saving…" : "Done"}
+        </Button>
+      </div>
+      <Dialog open={moveOpen} onOpenChange={(open) => { if (!busy) setMoveOpen(open); }}
+        title="Move this follow-up" description="Choose the new due date and time in IST."
+        dismissible={!busy}>
+        <form onSubmit={onSubmit} className="grid gap-4">
+          <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            Due date and time (IST)
+            <Input name="dueAt" type="datetime-local" key={currentIst}
+              defaultValue={currentIst} required className={inputClass} />
+          </label>
+          {message && message !== tpoCalendarFollowupSuccess("MOVE")
+            ? <InlineNotice tone="error" message={message} /> : null}
+          <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button variant="secondary" type="button" disabled={busy}
+              onClick={() => setMoveOpen(false)}>Cancel</Button>
+            <Button variant="primary" type="submit" disabled={busy}>
+              {busy ? "Moving…" : "Move follow-up"}
+            </Button>
+          </div>
+        </form>
+      </Dialog>
+      {message ? <InlineNotice
+        tone={message === tpoCalendarFollowupSuccess("MOVE") || message === tpoCalendarFollowupSuccess("DONE") ? "success" : "error"}
+        message={message} /> : null}
+    </div>
   );
 }
