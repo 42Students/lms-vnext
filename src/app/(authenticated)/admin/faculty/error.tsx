@@ -1,2 +1,2 @@
 "use client";import {Button} from "@/components/ui/button";import {ErrorState} from "@/components/ui/error-state";
-export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <section className="min-w-0"><ErrorState title="Could not load faculty" description="The selected college faculty directory is unavailable." action={<Button onClick={reset}>Retry</Button>}/></section>;}
+export default function ErrorPage({reset}:{error:Error & {digest?:string};reset:()=>void}){return <section className="min-w-0"><ErrorState title="Could not load faculty" description="The selected college faculty directory is unavailable." action={<Button onClick={reset} className="w-full md:w-auto">Retry</Button>}/></section>;}
