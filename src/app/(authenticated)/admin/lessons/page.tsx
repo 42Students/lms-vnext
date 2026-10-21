@@ -54,6 +54,14 @@ export default async function SuperAdminLessonsPage({
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
   const paths=pathsResult.status==="fulfilled"?pathsResult.value:[];
   const summary = adminLessonStats(data.items);
+  // The directory is atomic, but unavailable filter choices make a bulk selection unsafe.
+  const listIncomplete = filtersResult.status === "rejected";
+  // A move is safe only with every lesson of one path visible, including archived rows.
+  // The server still checks the expected sequence before applying any change.
+  const allRowsOfOnePath = !data.query.q && !data.query.courseCode && !data.query.cohortCode &&
+    data.query.status === "ALL" && data.total === data.items.length &&
+    data.items.length > 1 && new Set(data.items.map(item => item.learningPathId)).size === 1 &&
+    data.items.every(item => item.status === "ACTIVE");
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons"
       description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion."
@@ -82,13 +90,21 @@ export default async function SuperAdminLessonsPage({
       </details>
       <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/admin/lessons">Clear filters</Link>
     </form>
-    <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
+    <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
+      <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold text-primary-text underline underline-offset-4">Reload results</Link>
+    </p>
     {filtersResult.status==="rejected"?<Alert tone="warning">
-      Course and cohort filter choices are temporarily unavailable. Your selected filters are still applied.
+      Courses could not be loaded. The lesson directory and your applied filters remain visible.{" "}
+      <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold underline">Retry filter choices</Link>.
     </Alert>:null}
     {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
-      <Alert tone="warning">Lesson creation options are temporarily unavailable. Existing lessons remain visible.</Alert>}
-    {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
+      <Alert tone="warning">Lesson creation options are temporarily unavailable. Existing lessons remain visible.{" "}
+        <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold underline">Retry creation options</Link>.
+      </Alert>}
+    {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items} listIncomplete={listIncomplete}/>:null}
+    {data.items.length && !allRowsOfOnePath?<p className="text-xs text-muted-foreground">
+      Reordering is unavailable in a filtered, multi-path or incomplete list. Open the offering to manage its complete lesson order.
+    </p>:null}
     {data.items.length ? <div className="min-w-0 divide-y divide-border border-y border-border">
       {data.items.map(lesson => <article key={lesson.id} className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
         <div className="flex flex-wrap items-start justify-between gap-2">
@@ -97,7 +113,15 @@ export default async function SuperAdminLessonsPage({
         </div>
         <p className="mt-1 text-sm text-body">{lesson.courseName} ({lesson.courseCode})</p>
         <p className="mt-1 text-xs text-muted-foreground">{lesson.cohortName} · {lesson.periodName} · Order {lesson.sequence + 1}</p>
-        <p className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body">Learning path: <StatusBadge tone={lesson.pathStatus==="PUBLISHED"?"success":"neutral"}>{lesson.pathStatus}</StatusBadge> Offering: <StatusBadge tone={lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>{lesson.offeringStatus}</StatusBadge></p>
+        <p className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body">
+          Students see it: <StatusBadge tone={lesson.status==="ACTIVE" && lesson.visibleToStudents &&
+            lesson.pathStatus==="PUBLISHED" && lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>
+            {lesson.status==="ACTIVE" && lesson.visibleToStudents &&
+              lesson.pathStatus==="PUBLISHED" && lesson.offeringStatus==="ACTIVE"?"Visible":"Hidden"}
+          </StatusBadge>
+          Learning path: <StatusBadge tone={lesson.pathStatus==="PUBLISHED"?"success":"neutral"}>{lesson.pathStatus}</StatusBadge>
+          Offering: <StatusBadge tone={lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>{lesson.offeringStatus}</StatusBadge>
+        </p>
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
         {lesson.status==="ACTIVE"?<details className="mt-[var(--lms-space-2)] min-w-0">
           <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
@@ -105,10 +129,12 @@ export default async function SuperAdminLessonsPage({
           <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
           <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lesson.name,
             visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
-          <CollegeLessonReorderActions learningPathId={lesson.learningPathId} lessonId={lesson.id}
-            expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
+          {allRowsOfOnePath?<CollegeLessonReorderActions learningPathId={lesson.learningPathId} lessonId={lesson.id}
+            expectedSequence={lesson.sequence}
+            canMoveUp={data.items.some(other=>other.learningPathId===lesson.learningPathId && other.sequence===lesson.sequence-1)}
+            canMoveDown={data.items.some(other=>other.learningPathId===lesson.learningPathId && other.sequence===lesson.sequence+1)}/>:null}
           </div>
-        </details>:null}
+        </details>:<p className="mt-2 text-xs text-muted-foreground">Archived lesson retained with its content and order. Restoration requires an authorized server workflow.</p>}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
           className="mt-[var(--lms-space-2)] inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline focus-visible:outline hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Open offering to add lessons →
