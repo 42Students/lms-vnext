@@ -55,7 +55,17 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const contentId=url.searchParams.get("contentId");
     const facultyId=url.searchParams.get("facultyId");
-    optionalLegacyFacultyFilter(facultyId);
+    if(facultyId!==null){
+      // Numeric identity from the old LMS cannot be equated with the current
+      // membership author UUID. Never ignore a supplied filter.
+      try{optionalLegacyFacultyFilter(facultyId);}
+      catch(error){
+        return NextResponse.json({
+          error:"FACULTY_FILTER_UNAVAILABLE",
+          message:error instanceof Error?error.message:"Invalid faculty filter",
+        },{status:400,headers:noStore});
+      }
+    }
     // Distinct legacy content-grades and learner-progress aggregates are not
     // represented by the simple author content list. An explicit error is
     // preferable to a 200 empty list that looks like zero grades.
@@ -88,7 +98,7 @@ export async function GET(request: Request) {
       const learner=hasMembershipRole(context,"LEARNER");
       const faculty=hasMembershipRole(context,"FACULTY");
       if(!learner&&!faculty)throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
-      const initial=learner?await getLearnerAssessmentOverview(context):null;
+      const initial=learner&&courseSlug?await getLearnerAssessmentOverview(context):null;
       const authorizedCourse=courseSlug&&initial?
         initial.courses.find(course=>course.code.toLowerCase()===courseSlug.toLowerCase()):null;
       if(courseSlug&&learner&&!authorizedCourse)
