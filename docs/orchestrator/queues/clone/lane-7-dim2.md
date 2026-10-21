@@ -317,18 +317,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/projects/project-mentor-reassignment.tsx`
 - [x] `src/components/projects/project-participant-list-controls.tsx`
 - [x] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-task-comments.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/shell/admin-scope-switcher.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/shell/topbar/command-search.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-applications-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-audit-grid.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-task-comments.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/shell/admin-scope-switcher.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/shell/topbar/command-search.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-audit-grid.tsx`
 - [ ] `src/components/tpo/tpo-batch-instant-search.tsx`
 - [ ] `src/components/tpo/tpo-bell-panel.tsx`
 - [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
