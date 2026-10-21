@@ -7,6 +7,24 @@ export const adminElectiveQuerySchema = z.strictObject({
   page: z.coerce.number().int().min(1).max(100000).default(1),
   pageSize: z.coerce.number().int().refine(n=>n===20||n===50||n===100).default(20),
 });
+/** Legacy /slots?programId&semester&includeArchived crosswalk.
+ * includeArchived is inclusive (ACTIVE + ARCHIVED), not ARCHIVED-only.
+ * The advanced ARCHIVED selector remains available to vNext callers.
+ */
+const legacySlotFiltersSchema = z.strictObject({
+  programId: z.string().uuid().optional(),
+  semester: z.coerce.number().int().min(1).max(12).optional(),
+  includeArchived: z.boolean().default(false),
+});
+export function adminElectiveFromLegacyFilters(raw: unknown) {
+  const legacy = legacySlotFiltersSchema.parse(raw);
+  return adminElectiveQuerySchema.parse({
+    programId: legacy.programId,
+    semesterNumber: legacy.semester,
+    status: legacy.includeArchived ? "ALL" : "ACTIVE",
+  });
+}
+
 export type AdminElectiveRow = {
   id: string; name: string; programId: string; programName: string; semesterNumber: number;
   academicYear: string | null; credits: number; minPick: number;
