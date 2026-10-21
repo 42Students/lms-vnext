@@ -177,7 +177,16 @@ export default async function SuperAdminHrPage({
   ].join(":");
 
   return (
-    <SuperAdminHrAccounts
+    <div className="min-w-0 space-y-3">
+      <p role="note" className="max-w-3xl text-xs leading-5 text-muted-foreground">
+        Recruiter college access is now time-limited and verified. New grants expire
+        after three months unless an explicit future expiry (up to five years) is
+        provided. Legacy indefinite grants must be reviewed rather than silently
+        converted to a new permanent grant. Recruiter accounts and college access
+        options load independently; retry an unavailable section without creating
+        or renewing any grant.
+      </p>
+      <SuperAdminHrAccounts
       key={scopeKey}
       list={list}
       filters={filters}
@@ -185,6 +194,7 @@ export default async function SuperAdminHrPage({
       statusSummary={statusSummary}
       scopeDescription={scopeDescription}
       selectedCollegeId={context.adminScope?.collegeId??null}
-    />
+      />
+    </div>
   );
 }
