@@ -1,8 +1,8 @@
 import "server-only";
-import {and,desc,eq,inArray,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
- placementJobs,placementOffers} from "@/db/schema";
+ placementJobs} from "@/db/schema";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
@@ -15,14 +15,14 @@ export async function getCollegeDriveAttention(context:RequestContext){
  // first 60 job rows as the total number of drives in this college.
  const [driveCounts]=await db.select({
   all:sql<number>`count(*)::integer`,
-  published:sql<number>`count(*) filter (where ${placementJobs.status}='PUBLISHED')::integer`,
+  published:sql<number>`count(*) filter (where ${placementJobs.status}='PUBLISHED' and ${placementJobs.archivedAt} is null)::integer`,
  }).from(placementJobs).where(eq(placementJobs.collegeId,collegeId));
  const allDriveCount=driveCounts?.all??0;
  const activeDriveCount=driveCounts?.published??0;
  const jobs=await db.select({id:placementJobs.id,title:placementJobs.title,
   deadline:placementJobs.applicationDeadline,status:placementJobs.status})
   .from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
-    eq(placementJobs.status,"PUBLISHED"))).orderBy(desc(placementJobs.createdAt)).limit(60);
+    eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt))).orderBy(desc(placementJobs.createdAt)).limit(60);
  if(!jobs.length)return {jobs:[],total:0,categories:[] as {
   jobId:string;title:string;category:CollegeAttentionCategory;count:number;href:string;
  }[],hasOfferLetterEvidence:true,lookbackDays:DEFAULT_STALE_DAYS,
@@ -82,7 +82,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
   }
  }
  return {jobs:jobs.map(job=>({...job,applicants:counts.get(job.id)?.total??0,
-  attention:categories.filter(row=>row.jobId===job.id).length})),
+  attention:categories.filter(row=>row.jobId===job.id).reduce((n,row)=>n+row.count,0)})),
   // The legacy Needs attention total is the sum of affected candidate items,
   // not the number of category labels rendered in a grid.
   total:categories.reduce((count,item)=>count+item.count,0),
