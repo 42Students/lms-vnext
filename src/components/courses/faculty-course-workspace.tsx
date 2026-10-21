@@ -388,7 +388,7 @@ export function FacultyCourseWorkspace({
   workspace: Workspace;
   homeSignals: Awaited<
     ReturnType<typeof getFacultyCourseHomeSignals>
-  >;
+  > | null;
   display: CourseDisplayContentView | null;
   view?: "ALL" | "OVERVIEW" | "BLUEPRINT";
   contentFilter?:"ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";

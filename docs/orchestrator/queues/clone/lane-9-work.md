@@ -87,7 +87,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_learner-video-player.tsx.md` (edit src/components/courses/learner-video-player.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-list.tsx.md` (edit src/components/courses/faculty-course-list.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_college-lesson-visibility-controls.tsx.md` (edit src/components/courses/college-lesson-visibility-controls.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_college-content-aggregate-service.ts.md` (edit src/modules/courses/college-content-aggregate-service.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_college-content-aggregate-service.ts.md` (edit src/modules/courses/college-content-aggregate-service.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-workspace.tsx.md` (edit src/components/courses/faculty-course-workspace.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-home-signals.tsx.md` (edit src/components/courses/faculty-course-home-signals.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_college-learner-progress-report.tsx.md` (edit src/components/courses/college-learner-progress-report.tsx; 3 findings; best P1)
