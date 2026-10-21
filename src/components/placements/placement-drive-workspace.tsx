@@ -33,6 +33,7 @@ import {countUnreleasedTpoSelections} from "@/modules/placements/tpo-drive-selec
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import {tpoDriveLegacyInnerTabs} from "@/modules/placements/tpo-drive-tab-model";
+import {DriveCompanyAvatar} from "./drive-company-avatar";
 import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
@@ -54,19 +55,6 @@ import {
   type PlacementDriveControlData,
 } from "./placement-drive-controls";
 
-/** A company avatar shows deterministic initials below its public HTTPS logo. */
-function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|null}){
- const words=name.trim().split(/\s+/).filter(Boolean);
- const initials=(words.length>1?words[0][0]+words[1][0]:name.slice(0,2)).toUpperCase()||"?";
- const colors=["#e6f4ff","#f6ffed","#fff7e6","#f9f0ff","#fff1f0"];
- const hash=Array.from(name).reduce((sum,char)=>(sum*31+char.charCodeAt(0))>>>0,0);
- return <span className="relative inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border text-lg font-bold text-[#172033]"
-  style={{backgroundColor:colors[hash%colors.length]}} aria-label={name+" logo"}>
-  <span aria-hidden="true">{initials}</span>
-  {logoUrl&&/^https:\/\//i.test(logoUrl)?<img src={logoUrl} alt="" loading="lazy"
-   referrerPolicy="no-referrer" className="absolute inset-0 h-full w-full object-contain text-transparent"/>:null}
- </span>;
-}
 function formatDriveIst(date:Date|null){
  return date?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",
   minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date to be decided";
