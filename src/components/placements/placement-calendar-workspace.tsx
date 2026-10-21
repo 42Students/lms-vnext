@@ -1125,9 +1125,9 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className={"hidden min-w-0 overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[992px]:block "+(isTpo?calendarStyles.tpoMonthFrame:"")}
+          className={"min-w-0 overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
         >
-          <CalendarGrid variant="hairline" className={"min-w-[56rem] "+calendarStyles.calendarHairline}>
+          <CalendarGrid variant="hairline" className={"min-w-[42rem] min-[992px]:min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[
               "Mon",
               "Tue",
@@ -1230,7 +1230,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Calendar agenda"
-        className="min-w-0 space-y-4"
+        className={state.view==="agenda"?"min-w-0 space-y-4":"hidden"}
       >
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -1252,7 +1252,9 @@ export async function PlacementCalendarWorkspace({
           </p>
         </div>
 
-        {state.view!=="agenda"?<p className="text-xs text-muted-foreground min-[992px]:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
+        {state.view==="agenda"?<p className="text-xs text-muted-foreground">
+          Select an event to view its company, schedule and location.
+        </p>:null}
         {!loadedResponse ? (
           <div role="status" className="border-y border-border py-8 text-sm text-warning-text">
             Calendar events could not be loaded. Use Retry above to refresh.
