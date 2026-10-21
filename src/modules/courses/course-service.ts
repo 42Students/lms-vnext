@@ -310,6 +310,7 @@ export async function updateCourse(
       const [locked] = await tx.select({
         id: courses.id, name: courses.name, code: courses.code,
         status: courses.status, departmentId: courses.departmentId,
+        updatedAt: courses.updatedAt,
       }).from(courses).innerJoin(departments, and(
         eq(departments.id, courses.departmentId),
         eq(departments.collegeId, scope.collegeId),
@@ -320,10 +321,14 @@ export async function updateCourse(
       )).for("update", { of: courses }).limit(1);
       if (!locked || locked.status !== "ACTIVE")
         throw new CoursesServiceError("COURSE_NOT_FOUND");
+      if (locked.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime()) {
+        throw new CoursesServiceError("COURSE_STALE_VERSION");
+      }
+      const { expectedUpdatedAt, ...changes } = input;
       const [updated] = await tx
       .update(courses)
       .set({
-        ...input,
+        ...changes,
         updatedAt: new Date(),
       })
       .where(
@@ -333,13 +338,15 @@ export async function updateCourse(
           // A course moved to a different department since permission lookup
           // must not be edited with stale tenant authorization.
           eq(courses.departmentId, scope.departmentId),
+          // Compare the browser token to the persisted millisecond version.
+          sql`date_trunc('milliseconds', ${courses.updatedAt}) = ${expectedUpdatedAt}::timestamptz`,
         ),
       )
       .returning();
 
     if (!updated) {
       throw new CoursesServiceError(
-        "COURSE_NOT_FOUND",
+        "COURSE_STALE_VERSION",
       );
     }
 
