@@ -355,12 +355,16 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
  const reviewTone=["APPROVED","ACCEPTED"].includes(reviewState)?"success" as const:
   ["CHANGES_REQUESTED","REJECTED"].includes(reviewState)?"warning" as const:
   ["SUBMITTED","UNDER_REVIEW"].includes(reviewState)?"info" as const:"neutral" as const;
+ const reviewText=reviewState==="APPROVED"||reviewState==="ACCEPTED"?"Accepted":
+  reviewState==="CHANGES_REQUESTED"||reviewState==="REJECTED"?"Changes requested":
+  reviewState==="SUBMITTED"||reviewState==="UNDER_REVIEW"?"Under review":
+  reviewState==="LOCKED"?"Locked":reviewState==="DRAFT"?"Draft":"Pending";
  return <div className="space-y-4" aria-label="Latest final delivery">
   <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <div><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Final delivery</p>
      <h3 className="mt-1 text-base font-semibold text-foreground">Submission package and review state</h3></div>
-    <StatusBadge tone={reviewTone}>{label(reviewState)}</StatusBadge>
+    <StatusBadge tone={reviewTone}>{reviewText}</StatusBadge>
    </div>
    <dl className="mt-4 grid gap-3 text-sm text-body sm:grid-cols-2 lg:grid-cols-4">
     <div><dt className="text-xs text-muted-foreground">Submission type</dt><dd>{mainType}</dd></div>
@@ -380,6 +384,9 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
      })}
      {source?<a href={source} target="_blank" rel="noopener noreferrer"
       className="font-semibold text-link underline">Open source link</a>:null}
+     {safeHttpHref(delivery.demoUrl)?<a href={safeHttpHref(delivery.demoUrl)!}
+      target="_blank" rel="noopener noreferrer" className="font-semibold text-link underline">
+      Open demo</a>:null}
      {!source&&!latest?.attachments.some(item=>Boolean(item&&typeof item==="object"&&
       (item as {kind?:unknown}).kind==="FILE"))?
        <p className="text-sm text-muted-foreground">No valid file or source link is attached.</p>:null}
