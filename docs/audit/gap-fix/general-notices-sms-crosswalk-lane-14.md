@@ -1,0 +1,7 @@
+# General notices / SMS attempts (lane 14)
+
+Existing db10GeneralNotices is an unregistered DRAFT producer outbox with APP/EMAIL/SMS, sendAfter, undo 30s holds, digest 08:00 Asia/Kolkata, idempotency, claim fence and failed-state fields. It must NOT be barrel-exported or dispatched before authenticated recipient/scope validation, transactional producer integration, DLT configuration and worker lease/claim tests. The legacy due scan was recurring, but no general send worker is active in vNext.
+
+The added db10SmsDeliveryLogs table is a privacy-safe per-attempt ledger: nullable original legacy SMS log int, optional notice/college, purpose, last FOUR numeric digits (never full phone or message body), SENT meaning provider accepted rather than delivered, FAILED meaning provider rejected/unknown, provider message ID and safe error summary. Missing Exotel DLT templates should produce FAILED and a sanitized configuration error in the producer/provider adapter, not mark as SENT or silently discard; operator-facing admin UI needs retry/read visibility.
+
+Migration 0231 depends on general_notification_outbox table, itself still draft. It is journal-unregistered and cannot be independently run until parent migration and provider integration are reviewed. Exotel configuration, round/offer/deadline/cancellation fanout, app-notification idempotency and verified same-college scope are service owner handoffs. No SQL, application code or CI executed.
