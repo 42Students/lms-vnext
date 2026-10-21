@@ -57,7 +57,13 @@ export interface TenantDomainRepository {
     collegeId: string;
     host: string;
     verificationToken: string;
+    context:RequestContext;
+    organizationId:string;
   }): Promise<TenantDomainView>;
+  /** Only restores a missing challenge on a still-unverified domain. */
+  ensureToken?(input:{
+    domainId:string;expectedHost:string;token:string;context:RequestContext;
+  }):Promise<TenantDomainView>;
   editDomainHost(input:{
     domainId:string;
     expectedHost:string;
@@ -67,9 +73,9 @@ export interface TenantDomainRepository {
   }):Promise<TenantDomainView>;
   recordVerificationResult(
     domainId: string,
-    input: VerificationResult & { checkedAt: Date; expectedHost:string; expectedToken:string },
+    input: VerificationResult & { checkedAt: Date; expectedHost:string; expectedToken:string; context:RequestContext },
   ): Promise<TenantDomainView>;
-  setPrimary(domainId: string): Promise<TenantDomainView>;
+  setPrimary(domainId: string,context:RequestContext): Promise<TenantDomainView>;
   deleteDomain(domainId: string, confirmationHost: string | undefined, context:RequestContext): Promise<void>;
   resolveVerifiedHost(host: string): Promise<ResolvedTenantHost | null>;
 }
@@ -193,6 +199,7 @@ export async function createTenantDomain(
       collegeId: college.id,
       host: input.host,
       verificationToken: tokenFactory(),
+      context,organizationId:college.organizationId,
     });
   } catch (error) {
     // Concurrent same-host requests may both pass the read. The registered
@@ -204,6 +211,18 @@ export async function createTenantDomain(
     if (raced?.collegeId === college.id) return raced;
     throw new TenantDomainServiceError("HOST_CONFLICT");
   }
+}
+
+/** Idempotent legacy ensure-token operation; never resets a verified domain. */
+export async function ensureTenantDomainVerificationToken(
+ context:RequestContext,domainId:string,repository:TenantDomainRepository,
+ tokenFactory:()=>string=verificationToken,
+){
+ const domain=await loadAuthorizedDomain(context,domainId,repository);
+ if(domain.isVerified||domain.verificationToken)return domain;
+ if(!repository.ensureToken)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+ return repository.ensureToken({domainId:domain.id,expectedHost:domain.host,
+  token:tokenFactory(),context});
 }
 
 export async function verifyTenantDomain(
@@ -236,6 +255,7 @@ export async function verifyTenantDomain(
     checkedAt: new Date(),
     expectedHost:domain.host,
     expectedToken:domain.verificationToken,
+    context,
   });
 }
 
@@ -254,7 +274,7 @@ export async function setPrimaryTenantDomain(
     throw new TenantDomainServiceError("DOMAIN_NOT_VERIFIED");
   }
 
-  return repository.setPrimary(domain.id);
+  return repository.setPrimary(domain.id,context);
 }
 
 /** Replacing a custom domain is not verification. Rotate the DNS challenge
