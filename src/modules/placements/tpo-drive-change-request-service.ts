@@ -181,7 +181,9 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
    }
    if(mode==="SUGGEST"&&["PAY","CTC","STIPEND"].includes(input.field)){
     const roleCounts=await tx.select({total:sql<number>`count(*)::integer`.mapWith(Number)})
-     .from(placementJobRoleOptions).where(eq(placementJobRoleOptions.jobId,job.id));
+     .from(placementJobRoleOptions).where(and(
+      eq(placementJobRoleOptions.jobId,job.id),
+      eq(placementJobRoleOptions.status,"ACTIVE")));
     if((roleCounts[0]?.total??0)>1)
      throw new Error("This drive has multiple roles. Please ask for the package instead.");
    }
