@@ -24,7 +24,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
     .then(value=>({ok:true as const,value}))
     .catch(()=>({ok:false as const})):null;
  const data=lookup&&lookup.ok?lookup.value:null;
- return <div className="min-w-0 space-y-5">
+ return <div className="min-w-0 space-y-6">
   <div className="min-w-0">
    <PageBackLink href="/admin/placements" label="Placement overview" />
    <PageHeader title="Student placement lookup" />

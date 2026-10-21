@@ -29,14 +29,14 @@ export default async function SuperAdminTenantSetup({
 }:{searchParams:Promise<Record<string,string|string[]|undefined>>}){
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context)||!can(context,"admin-scope.select"))
-  return <div className="min-w-0 space-y-4 md:space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/dashboard" label="Dashboard"/>}/>
    <ErrorState title="Tenant setup access denied"
     description="Your account cannot configure Super Admin tenants."
     action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
  const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
- if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-5">
+ if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
   <ErrorState title="Invalid tenant setup step"
    description="Select a valid Tenant structure or Launch setup step."
@@ -65,7 +65,7 @@ export default async function SuperAdminTenantSetup({
   }
  }catch(error){
   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")notFound();
-  return <div className="min-w-0 space-y-4 md:space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
    <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
    <ErrorState title="Tenant setup unavailable"
     description="The authorized organization or college readiness information could not be verified. Setup actions are unavailable until the read succeeds."
@@ -76,7 +76,7 @@ export default async function SuperAdminTenantSetup({
  const creatable=organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=can(context,"organization.manage");
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
- return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageBackLink href="/admin/tenants" label="Tenant directory" />
   <PageHeader title="Tenant Setup"
    description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes." />

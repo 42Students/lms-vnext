@@ -28,14 +28,14 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
 }){
  const raw=await searchParams;
  const query=parseSuperAdminTemplateDirectoryQuery(raw);
- if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-5">
+ if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Project templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
    action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
-  return <div className="min-w-0 space-y-4 md:space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
    <PageHeader title="Project templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates access denied"
@@ -46,7 +46,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  try {
   data=await listSuperAdminTemplateDirectory(context,query.data);
  } catch {
-  return <div className="min-w-0 space-y-4 md:space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
    <PageHeader title="Project templates"/>
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates unavailable"
@@ -54,7 +54,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading templates</Link>}/>
   </div>;
  }
- return <div className="min-w-0 space-y-4 md:space-y-5">
+ return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Project templates"
    description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3.5 text-sm font-[650] text-on-primary hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:w-auto">New template →</Link>:undefined}/>
