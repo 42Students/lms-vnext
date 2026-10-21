@@ -1,12 +1,13 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {inArray,and,desc,eq,or,sql} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages,placementTpoTeamAsks} from "@/db/schema/tpo-internal";
 import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {assertPersistedPlatformPermission,type PermissionTransaction} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoTeamAskActionSchema,tpoTeamAskCanTransition,tpoTeamAskCreateSchema} from "./tpo-team-asks-model";
@@ -29,6 +30,22 @@ async function requireScope(context:RequestContext){
  return {member,college};
 }
 async function hasAskTable(){return placementTableExists("placement_tpo_team_asks");}
+
+/** In addition to the thread's original pair, users can join a TPO thread.
+ * Verify their current participation inside the same guarded transaction. */
+async function isActiveThreadParticipant(
+ tx:PermissionTransaction,threadId:string,collegeId:string,membershipId:string,
+):Promise<boolean>{
+ const result=await tx.execute<{active:boolean}>(sql`
+  select exists(
+   select 1 from placement_tpo_internal_thread_participants p
+   where p.thread_id=${threadId}::uuid
+     and p.college_id=${collegeId}::uuid
+     and p.membership_id=${membershipId}::uuid
+     and p.left_at is null
+  ) as active`);
+ return result.rows[0]?.active===true;
+}
 export async function listTpoTeamAsks(context:RequestContext,threadId:string){
  const {member,college}=await requireScope(context);
  if(!await hasAskTable())return {status:"NOT_REGISTERED" as const,items:[]};
@@ -54,7 +71,9 @@ export async function listTpoTeamAsks(context:RequestContext,threadId:string){
     eq(placementTpoInternalThreads.collegeId,college.id),
     eq(placementTpoInternalThreads.invitedMembershipId,member.id),
    )).limit(1);
-  if(!participants&&!invited)throw new Error("TEAM_THREAD_NOT_FOUND");
+  if(!participants&&!invited&&
+     !await isActiveThreadParticipant(tx,threadId,college.id,member.id))
+   throw new Error("TEAM_THREAD_NOT_FOUND");
   const items=await tx.select({
    id:placementTpoTeamAsks.id,threadId:placementTpoTeamAsks.threadId,
    title:placementTpoTeamAsks.title,dueAt:placementTpoTeamAsks.dueAt,
@@ -88,7 +107,8 @@ export async function createTpoTeamAsk(context:RequestContext,raw:unknown){
    .where(and(eq(placementTpoInternalThreads.id,input.threadId),
     eq(placementTpoInternalThreads.collegeId,college.id)))
    .for("update").limit(1);
-  if(!thread||![thread.startedByMembershipId,thread.invitedMembershipId].includes(member.id))
+  if(!thread||(![thread.startedByMembershipId,thread.invitedMembershipId].includes(member.id)&&
+     !await isActiveThreadParticipant(tx,input.threadId,college.id,member.id)))
    throw new Error("TEAM_THREAD_NOT_FOUND");
   const [assignee]=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
    .from(collegeMemberships)
@@ -100,7 +120,8 @@ export async function createTpoTeamAsk(context:RequestContext,raw:unknown){
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
    .limit(1);
   if(!assignee)throw new Error("TEAM_ASK_BAD_ASSIGNEE");
-  if(![thread.startedByMembershipId,thread.invitedMembershipId].includes(assignee.id))
+  if(![thread.startedByMembershipId,thread.invitedMembershipId].includes(assignee.id)&&
+     !await isActiveThreadParticipant(tx,thread.id,college.id,assignee.id))
    throw new TpoTeamAddPeopleRequiredError([assignee.id]);
   const [already]=await tx.select({
    id:placementTpoTeamAsks.id,title:placementTpoTeamAsks.title,
@@ -157,7 +178,8 @@ export async function changeTpoTeamAsk(context:RequestContext,raw:unknown){
    eq(placementTpoInternalThreads.id,input.threadId),
    eq(placementTpoInternalThreads.collegeId,college.id),
   )).limit(1);
-  if(!thread||![thread.startedByMembershipId,thread.invitedMembershipId].includes(member.id))
+  if(!thread||(![thread.startedByMembershipId,thread.invitedMembershipId].includes(member.id)&&
+     !await isActiveThreadParticipant(tx,input.threadId,college.id,member.id)))
    throw new Error("TEAM_THREAD_NOT_FOUND");
   const [ask]=await tx.select({
    id:placementTpoTeamAsks.id,title:placementTpoTeamAsks.title,
@@ -262,10 +284,12 @@ async function scopedTeamAskQuery(context:RequestContext,raw:{
  });
 }
 export async function listOwnTpoTeamAsks(context:RequestContext,limit=100){
- const items=await scopedTeamAskQuery(context,{view:"mine",limit});
- return {items:items.map(item=>({
+ const requested=Number.isSafeInteger(limit)?Math.max(1,Math.min(199,limit)):100;
+ // Read one extra result: a full page alone does not prove there is more.
+ const rows=await scopedTeamAskQuery(context,{view:"mine",limit:requested+1});
+ return {items:rows.slice(0,requested).map(item=>({
   ...item,href:"/tpo/team/"+item.threadId+"?ask="+item.id,
- })),hasMore:items.length===Math.min(Math.max(limit,1),200)};
+ })),hasMore:rows.length>requested};
 }
 export async function listTpoTeamMentions(context:RequestContext,limit=100){
  const items=await scopedTeamAskQuery(context,{view:"mentions",limit});
@@ -283,7 +307,7 @@ export async function getTpoTeamAskSummary(context:RequestContext){
   limited:items.length===200};
 }
 export async function lookupTpoTeamAsk(context:RequestContext,askId:string){
- if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f-]{23}$/i.test(askId))
+ if(!z.string().uuid().safeParse(askId).success)
   throw new Error("TEAM_ASK_NOT_FOUND");
  const [item]=await scopedTeamAskQuery(context,{view:"all",askId});
  if(!item)throw new Error("TEAM_ASK_NOT_FOUND");
