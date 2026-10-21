@@ -251,7 +251,7 @@ export default async function ActivityPage({
       </nav>:null}
       <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
-          <label>
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
             <Select name="collegeId" defaultValue={one(params.collegeId) ?? ""} className={inputClass}>
               <option value="">Current admin safety scope</option>
@@ -261,7 +261,7 @@ export default async function ActivityPage({
             </Select>
           </label>
         ) : null}
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Module
           </span>
@@ -287,7 +287,7 @@ export default async function ActivityPage({
             )}
           </Select>
         </label>
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Importance
           </span>
@@ -313,7 +313,7 @@ export default async function ActivityPage({
             )}
           </Select>
         </label>
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             From (IST)
           </span>
@@ -323,7 +323,7 @@ export default async function ActivityPage({
             defaultValue={defaultFrom}
           />
         </label>
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             To (IST)
           </span>
@@ -337,7 +337,7 @@ export default async function ActivityPage({
           className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
           <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Event type
           </span>
@@ -350,7 +350,7 @@ export default async function ActivityPage({
             placeholder="placements.offer.issued"
           />
         </label>
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Subject type
           </span>
@@ -363,20 +363,20 @@ export default async function ActivityPage({
             placeholder="placement_offer"
           />
         </label>
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Subject / entity ID</span>
           <Input className={inputClass} name="subjectId" maxLength={500}
             defaultValue={one(params.subjectId)} placeholder="Exact entity ID" />
         </label>
         {isSuperAdmin(context) ? <>
-          <label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Actor name</span>
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Actor name</span>
             <Input type="search" className={inputClass} name="actorName" maxLength={100}
               defaultValue={one(params.actorName)} placeholder="Name contains…" /></label>
-          <label><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Event / entity search</span>
+          <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"><span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">Event / entity search</span>
             <Input type="search" className={inputClass} name="q" maxLength={100}
               defaultValue={one(params.q)} placeholder="Summary, event or entity contains…" /></label>
         </> : null}
-        <label>
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
             Actor user ID
           </span>
