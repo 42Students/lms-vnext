@@ -29,7 +29,7 @@ export default async function MentorProjectPage({
   const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
   const breadcrumbTab: Record<string, string> = {
     overview: "Overview", team: "People & Meetings", sprints: "Releases and Sprints",
-    board: "Board", performance: "Task Allocation", resources: "Resources", delivery: "Delivery",
+    board: "Board", performance: "Task Allocation", resources: "Resources", delivery: "Overview",
     activity: "Activity",
   };
   const activeSection =
@@ -64,6 +64,7 @@ export default async function MentorProjectPage({
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       <ProjectWorkspaceHeader workspace={workspace} mode="MENTOR" />
       <MentorProjectTabs projectId={projectId}/>
+      {/* The delivery deep link keeps its section mounted so the one-time review dialog can open. */}
       {selectedTab==="board"?<div className="min-w-0 space-y-4 md:space-y-6">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}

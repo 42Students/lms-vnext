@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { learnerProgramEnrollments } from "@/db/schema";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
@@ -34,5 +34,26 @@ export async function getOwnLearnerRegistration(context: RequestContext) {
         eq(placementBatchRegistrations.membershipId, membership.id)))
       .limit(1).then(rows => rows[0] ?? null),
   ]);
-  return resolveLearnerRegistrationDisplay(batch, registration?.choice ?? null, new Date());
+  // A new academic cohort is a new placement cycle. Never silently treat an
+  // old season/cohort's choice or consent as current-cycle registration.
+  const [previous] = registration ? [] : await db.select({
+    cohortId: placementBatchRegistrations.cohortId,
+    choice: placementBatchRegistrations.choice,
+    recordedAt: placementBatchRegistrations.updatedAt,
+  }).from(placementBatchRegistrations).where(and(
+    eq(placementBatchRegistrations.membershipId, membership.id),
+    eq(placementBatchRegistrations.collegeId, membership.collegeId),
+    ne(placementBatchRegistrations.cohortId, cohortId),
+  )).orderBy(desc(placementBatchRegistrations.updatedAt)).limit(1);
+  return {
+    ...resolveLearnerRegistrationDisplay(batch, registration?.choice ?? null, new Date()),
+    cohortId,
+    // False is the semantic equivalent of legacy GET mine's empty 204 case.
+    hasRegistration: registration !== null,
+    priorCohortRegistration: previous ? {
+      cohortId: previous.cohortId,
+      choice: previous.choice,
+      recordedAt: previous.recordedAt.toISOString(),
+    } : null,
+  };
 }
