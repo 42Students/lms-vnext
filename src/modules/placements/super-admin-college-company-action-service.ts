@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,count,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementCompanies,placementCompanyRelationships,placementJobs} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -26,16 +26,20 @@ export async function changeSuperAdminCollegeCompanyRelationship(context:Request
    eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .where(and(eq(placementCompanyRelationships.id,input.relationshipId),
     eq(placementCompanyRelationships.collegeId,acting.collegeId)))
-   .for("update",{of:placementCompanyRelationships}).limit(1);
+   .for("update").limit(1);
   if(!row)throw new Error("Company is not linked to the selected college.");
   const next=input.action==="ARCHIVE"?"ARCHIVED":"ACTIVE";
   if(row.status===next)return {relationshipId:row.id,status:next,changed:false};
   if(row.companyStatus!=="ACTIVE")throw new Error("Restore the global company first.");
   if(next==="ARCHIVED"){
-   const [dependent]=await tx.select({id:placementJobs.id}).from(placementJobs)
+   // Keep the relationship/company lock through the job count and the CAS
+   // update. Archive only when every linked drive is already archived.
+   const [dependent]=await tx.select({total:count()}).from(placementJobs)
     .where(and(eq(placementJobs.companyRelationshipId,row.id),
-     isNull(placementJobs.archivedAt))).limit(1);
-   if(dependent)throw new Error("Cannot delete a company with active or historical non-archived drives.");
+     isNull(placementJobs.archivedAt)));
+   const activeJobs=dependent?.total??0;
+   if(activeJobs>0)throw new Error("This company has "+activeJobs+
+    " job posting(s) linked to it. Unlink or delete those jobs first.");
   }
   const now=new Date();
   const [saved]=await tx.update(placementCompanyRelationships).set({
