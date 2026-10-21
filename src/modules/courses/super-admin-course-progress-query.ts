@@ -1,6 +1,19 @@
 import {z} from "zod";
 import {adminLearningQuerySchema} from "./admin-learning-read-model";
 
+/** Legacy progress endpoint required separate courseId and classId.
+ * A vNext offeringId identifies the scoped course delivery, so we do not
+ * accept untrusted legacy numeric IDs as offering UUIDs. These are display
+ * messages for missing-field recovery, not weaker query validation. */
+export const superAdminCourseProgressLegacyMissingFieldCopy = {
+ courseId: "courseId is required",
+ classId: "classId is required",
+} as const;
+
+export function courseProgressLegacyMissingFieldMessage(field:"courseId"|"classId"){
+ return superAdminCourseProgressLegacyMissingFieldCopy[field];
+}
+
 /** Read-only course progress URLs never accept repeated fields or ambiguous
  * numeric page notation. No caller-supplied tenant or organization scope. */
 export function parseSuperAdminCourseProgressParams(raw:Record<string,string|string[]|undefined>){
