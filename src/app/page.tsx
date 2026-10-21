@@ -123,9 +123,10 @@ export default async function HomePage({
   if (tenant.kind === "college" && tenant.shouldRedirectToCanonicalHost && tenant.canonicalHost) {
     const pagePath = requestHeaders.get("x-lms-path")?.split("?")[0] === "/login" ? "/login" : "/";
     const destination = new URL(pagePath, "https://" + tenant.canonicalHost);
-    if (authValue) destination.searchParams.set("auth", authValue);
-    if (recruiterValue) destination.searchParams.set("recruiter", recruiterValue);
-    if (requested) destination.searchParams.set("returnTo", requested);
+    if (authValue && messages[authValue]) destination.searchParams.set("auth", authValue);
+    if (recruiterValue === "email") destination.searchParams.set("recruiter", recruiterValue);
+    const safeNext = safeReturnTo(requested);
+    if (safeNext) destination.searchParams.set("returnTo", safeNext);
     redirect(destination.toString());
   }
   if (await isSignedIn()) redirect(safeReturnTo(requested) ?? "/dashboard");
@@ -215,7 +216,10 @@ export default async function HomePage({
               <p className={styles.statusMessage}>
                 This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.
               </p>
-              <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+              <div className="flex flex-wrap items-center gap-3">
+                <a className={styles.statusLink} href="/login">Retry college lookup</a>
+                <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+              </div>
             </div>
           ) : tenant.kind === "unknown" ? (
             <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
@@ -223,7 +227,10 @@ export default async function HomePage({
               <p className={styles.statusMessage}>
                 Ask your administrator to add this college&apos;s address in 42LMS, or use the main sign-in page.
               </p>
-              <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+              <div className="flex flex-wrap items-center gap-3">
+                <a className={styles.statusLink} href="/login">Try again</a>
+                <a className={styles.statusLink} href="https://42lms.com/login">Use the main sign-in page (42lms.com)</a>
+              </div>
             </div>
           ) : !signin ? (
             <div role="alert" className={`${styles.status} ${styles.statusWarning}`}>
