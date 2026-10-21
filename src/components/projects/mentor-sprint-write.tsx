@@ -12,6 +12,11 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
+/** Deliberate vNext granularity: each sprint mutation is a separate
+ * version-checked transaction. A multi-sprint legacy Save plan is NOT atomic
+ * in this UI; do not simulate one with parallel POST/PATCH calls. */
+export const MENTOR_SPRINT_PLAN_SAVE_POLICY="PER_SPRINT_VERSIONED" as const;
+
 export function MentorSprintCreate({
   projectId, releaseId,releases=[],
 }: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[]}) {
@@ -60,7 +65,7 @@ export function MentorSprintCreate({
       Add sprint
     </Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
-      description="Create a planned sprint with goal, dates and definition of done in this release."
+      description="Create a planned sprint with goal, dates and definition of done in this release. Sprints are saved individually, not as one atomic plan."
       footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
         <Button className="w-full sm:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button className="w-full sm:w-auto" loading={busy} disabled={busy||!title.trim()||title.trim().length>200||
