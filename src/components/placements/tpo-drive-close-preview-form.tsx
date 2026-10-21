@@ -54,7 +54,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
   ["Round records",preview.counts.rounds],
   ["Offer versions",preview.counts.offers],
  ] as const;
- return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5">
+ return <form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-6">
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Review consequences</h2>
   <p className="max-w-prose text-sm text-body leading-[22px]">Closing stops new applications. Applicants without accepted offers who are still in the process are marked Not selected and told; pending withdrawal requests are settled. Accepted offers remain valid. Application, round and offer history is retained.</p>
   <dl className="grid min-w-0 grid-cols-3 gap-2 border-y border-border sm:gap-4">
@@ -63,7 +63,7 @@ export function TpoDriveClosePreviewForm({preview}:{preview:Preview}){
      <dt className="text-xs text-body">{label}</dt><dd className="break-words text-xl font-semibold tabular-nums sm:text-2xl">{n}</dd>
     </div>)}
   </dl>
-  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for closure (audited)
+  <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Reason for closure (audited)
    <Textarea required name="reason" minLength={10} maxLength={1000} rows={3}
     disabled={pending} value={reasonText} onChange={event=>{setReasonText(event.target.value);setError(null);}}
     className="min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-foreground"/>
