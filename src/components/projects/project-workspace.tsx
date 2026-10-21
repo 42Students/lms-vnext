@@ -36,6 +36,8 @@ import {CollegeProjectStudentRosterDialog} from "./college-project-student-roste
 import {ProjectResourceList} from "./project-resource-list";
 import {ProjectResourceLibraryEditor} from "./project-resource-library-editor";
 import {projectResourceLibraryToken} from "@/modules/projects/project-resource-library-token";
+import {ProjectResourceLibraryEditor} from "./project-resource-library-editor";
+import {projectResourceLibraryToken} from "@/modules/projects/project-resource-library-token";
 import {legacyResourceKind,makeResourceKey} from "@/modules/projects/project-resource-library-model";
 import { ProjectRosterTable } from "./project-roster-table";
 import {CollegeAdminWorkspaceTeamOverview} from "./college-admin-workspace-team-overview";
@@ -1842,6 +1844,10 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode==="ADMIN"&&!readOnly?<ProjectResourceLibraryEditor
+            projectId={workspace.project.id}
+            token={projectResourceLibraryToken(workspace.resources)}
+            resources={workspace.resources}/>:null}
           <ProjectResourceList projectId={workspace.project.id} rows={workspace.resources}
             mode={mode} readOnly={readOnly}
             sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
