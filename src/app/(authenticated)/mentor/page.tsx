@@ -29,10 +29,10 @@ export default async function MentorLandingPage() {
       </Alert>
       <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-center">
         <Link href="/mentor/notifications"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-on-primary md:min-h-[var(--lms-control-height)] md:w-auto hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 py-2 text-sm font-semibold text-on-primary md:min-h-[var(--lms-control-height)] md:w-auto hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           View notifications
         </Link>
-        {access===null?<Link href="/mentor?retry=1" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Retry access check</Link>:null}
+        {access===null?<Link href="/mentor?retry=1" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Retry access check</Link>:null}
       </div>
     </div>
   </div>;

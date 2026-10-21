@@ -8,9 +8,9 @@ export default function ErrorPage({ reset }: {
   reset: () => void;
 }) {
   return (
-    <section role="alert" className="space-y-3 py-6">
+    <section className="space-y-3 py-6">
       <PageHeader title={"Couldn't load Reports · Offers Acceptance"} />
-      <p className="mt-2 text-sm text-body">
+      <p role="alert" className="mt-2 text-sm text-body">
         The requested records could not be retrieved. A load failure does not
         mean there are no records or that a reported total is zero.
       </p>

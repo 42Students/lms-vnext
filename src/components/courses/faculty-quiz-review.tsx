@@ -282,7 +282,7 @@ export function FacultyQuizReview({
         <EmptyState title="No submissions yet" action={<Button type="button" variant="secondary" onClick={()=>void load()} className="min-h-11 md:min-h-9">Refresh</Button>} />
       ) : null}
 
-      {!loading && attempts && attempts.length > 0 ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
+      {!loading && attempts && attempts.length > 0 ? <p className="text-sm font-semibold text-foreground leading-[22px]">{attempts.length} submission(s)</p> : null}
       {!loading && attempts &&
       attempts.length > 0 ? (
         <div className="mt-3 min-w-0 divide-y divide-border">
@@ -297,11 +297,11 @@ export function FacultyQuizReview({
                     {learnerLabel(attempt)}
                   </h4>
                   {attempt.learnerEmail ? (
-                    <p className="mt-1 text-xs text-muted-foreground">
+                    <p className="mt-1 text-xs text-muted-foreground leading-5">
                       {attempt.learnerEmail}
                     </p>
                   ) : null}
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground leading-5">
                     Attempt{" "}
                     {attempt.attemptNumber} ·{" "}
                     {formatDateTime(
@@ -323,7 +323,7 @@ export function FacultyQuizReview({
                       className="min-w-0 py-[var(--lms-space-3)]"
                     >
                       <div className="flex flex-wrap items-start justify-between gap-2">
-                        <p className="m-0 text-sm font-semibold text-foreground">
+                        <p className="m-0 text-sm font-semibold text-foreground leading-[22px]">
                           {index + 1}.{" "}
                           {
                             answer.promptSnapshot

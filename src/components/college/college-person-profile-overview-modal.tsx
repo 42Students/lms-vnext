@@ -43,8 +43,8 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
       <div><dt className="text-muted-foreground">Role</dt><dd>{data.person.academicTitle||data.person.employmentType||data.person.kind}</dd></div>
       <div className="md:col-span-2"><dt className="text-muted-foreground">Bio</dt><dd className="mt-1 whitespace-pre-wrap break-words">{data.person.bio||"Not recorded"}</dd></div>
      </dl>
-     <section className="min-w-0"><h3 className="font-semibold text-foreground">Education</h3>
-      {!data.education.length?<p role="status" className="py-[var(--lms-space-3)] text-sm text-muted-foreground">No education records.</p>:
+     <section className="min-w-0"><h3 className="font-semibold text-[var(--lms-heading)]">Education</h3>
+      {!data.education.length?<p role="status" className="py-[var(--lms-space-3)] text-sm text-muted-foreground leading-[22px]">No education records.</p>:
       <ul className="mt-[var(--lms-space-2)] divide-y divide-border">{data.education.map((item,index)=>
        <li key={index} className="min-w-0 break-words py-[var(--lms-space-3)] text-sm"><strong>{item.title||"Education"}</strong>
         <p>{item.detail||"Institution not recorded"} · {item.year||"Year not recorded"}</p>
@@ -56,9 +56,9 @@ export function CollegePersonProfileOverviewModal({membershipId,name,kind}:{
        <h3 className="font-semibold capitalize">{section}</h3>
        {data[section].length?<ul className="mt-[var(--lms-space-2)] list-inside list-disc space-y-[var(--lms-space-1)] break-words text-sm">
         {data[section].map((item,index)=><li key={index}>{item}</li>)}</ul>:
-        <p className="mt-2 text-sm text-muted-foreground">None recorded.</p>}
+        <p className="mt-2 text-sm text-muted-foreground leading-[22px]">None recorded.</p>}
       </section>)}</div>
-     <section className="min-w-0"><h3 className="font-semibold">Identity</h3><p className="mt-[var(--lms-space-2)] break-words text-sm text-muted-foreground">{data.identity}</p></section>
+     <section className="min-w-0"><h3 className="font-semibold">Identity</h3><p className="mt-[var(--lms-space-2)] break-words text-sm text-muted-foreground leading-[22px]">{data.identity}</p></section>
     </div>:null}
   </Dialog>
  </>;

@@ -25,7 +25,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
     <div><h2 className="font-semibold">Placement Analytics</h2>
-     <p className="text-sm text-body">Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.</p>
+     <p className="text-sm text-body leading-[22px]">Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below.</p>
     </div>
     <div className="flex min-w-0 flex-col items-stretch gap-2 text-sm print:hidden md:flex-row md:items-center">
      <Link href={collegeHiringAnalyticsHref({...raw})} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 py-2 focus-visible:outline-2 md:min-h-9 md:w-auto focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Refresh</Link>
@@ -94,7 +94,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <span className={reportStyles.value+" tabular-nums"}>{data.totals[stage]??0}</span>
     </div>)}
    </div>}
-   <p className="text-xs text-muted-foreground">Counts show current pipeline stages, not cumulative conversion. A candidate can occupy only one current stage.</p>
+   <p className="text-xs text-muted-foreground leading-5">Counts show current pipeline stages, not cumulative conversion. A candidate can occupy only one current stage.</p>
   </section>
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>

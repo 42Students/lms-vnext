@@ -99,7 +99,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
     className="min-h-32 w-full"
     placeholder="Write a message to the placement cell"/>
   </label>
-  <p className="text-xs text-muted-foreground">
+  <p className="text-xs text-muted-foreground leading-5">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}

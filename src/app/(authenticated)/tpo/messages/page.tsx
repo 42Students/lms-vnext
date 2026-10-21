@@ -269,7 +269,7 @@ export default async function TpoMessagesPage({
           action="/tpo/messages"
           method="get"
           className="mt-3 grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5"
-        >
+         aria-label="Filter messages">
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select

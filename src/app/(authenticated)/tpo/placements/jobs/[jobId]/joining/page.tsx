@@ -51,7 +51,7 @@ export default async function TpoDriveJoiningPage({
           ← Back to drive workspace
         </Link>}
       />
-      <section aria-label="Joining summary" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface grid-cols-1 md:grid-cols-2 xl:grid-cols-5">
+      <section aria-label="Joining summary" className="grid min-w-0 max-w-full overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-surface grid-cols-2 xl:grid-cols-5">
         {labels.map(([name, value]) => (
           <div key={name} className="min-w-0 border-b border-r border-border p-3 even:border-r-0 last:border-b-0 xl:border-b-0 xl:border-r xl:p-4 xl:last:border-r-0">
             <p className="text-xs font-semibold uppercase text-muted-foreground leading-5">{name}</p>

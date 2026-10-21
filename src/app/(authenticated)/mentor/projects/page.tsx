@@ -61,10 +61,10 @@ export default async function MentorProjectsPage({
     singleValueMentorFilters(params),
   );
   if (!parsed.success) {
-    return <div className="min-w-0 space-y-5">
+    return <div className="min-w-0 space-y-6">
       <PageHeader title="Projects" />
       <ErrorState title="Invalid Project filters" description="Review the project search, attention, status and page filters."
-        action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
+        action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>}/>
     </div>;
   }
   const query = parsed.data;
@@ -314,34 +314,34 @@ export default async function MentorProjectsPage({
       <Disclosure title="More project links" className="min-w-0 border-b border-border" contentClassName="min-w-0 py-3">
         <div className="grid min-w-0 gap-x-4 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
             <Link href="/mentor/reviews"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Review queue
             </Link>
             <Link href="/mentor/sprint-progress"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Sprint progress
             </Link>
             <Link href="/mentor/task-reviews"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Task reviews
             </Link>
             <Link href="/mentor/reports"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Reports
             </Link>
             <Link href="/mentor/activity"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Activity
             </Link>
             <Link
               href="/mentor/calendar"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Meetings
             </Link>
             <Link
               href="/mentor/notifications"
-              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+              className="inline-flex min-h-11 min-w-0 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Notifications
             </Link>

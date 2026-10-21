@@ -118,7 +118,7 @@ export function PlacementBulkAddApplicants({
         </p>
       ) : (
         <>
-          <label className="block max-w-md text-sm font-semibold text-foreground">
+          <label className="block max-w-md text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
             Apply learners to role
             <Select
               value={roleOptionId}
@@ -133,7 +133,7 @@ export function PlacementBulkAddApplicants({
           </label>
 
           <div className="flex flex-wrap items-end gap-2">
-            <label className="flex-1 text-sm font-semibold text-foreground">
+            <label className="flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
               Find learners by name
               <Input
                 value={search}

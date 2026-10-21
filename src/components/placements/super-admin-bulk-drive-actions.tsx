@@ -61,7 +61,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
             setPreview(null);setResult(null);}}/>
         Select eligible on this page ({eligible.length})
       </label>
-      <label className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] text-sm">Action
+      <label className="flex min-w-0 flex-col items-start gap-[6px] text-[13px]">Action
         <Select value={action} aria-label="Bulk action" disabled={busy} onChange={e=>{
           setAction(e.target.value as "OPEN" | "CLOSE");setSelected([]);
           setPreview(null);setResult(null);}}

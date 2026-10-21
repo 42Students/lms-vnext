@@ -160,3 +160,23 @@ Reference: docs/design/old-lms-shell-spec.md, old-lms-shell.css, legacy-styles, 
 - `src/app/(authenticated)/mentor/projects/[projectId]/team-history/page.tsx` | 21 instances | space-y-3: 12px ↔ legacy 12px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
 - `src/app/(authenticated)/mentor/projects/[projectId]/team-meetings/page.tsx` | 34 instances | space-y-3: 12px ↔ legacy 12px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
 - `src/app/(authenticated)/mentor/projects/[projectId]/timeline/page.tsx` | 13 instances | space-y-4: 16px ↔ legacy 16px; pb-4: 16px ↔ legacy 16px; space-y-2: 8px ↔ legacy 8px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/projects/page.tsx` | 7 instances | space-y-6: 24px ↔ legacy 24px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: space-y-5 20px → space-y-6 24px | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/reports/page.tsx` | 36 instances | space-y-3: 12px ↔ legacy 12px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/review-history/loading.tsx` | instances: none | fixes: none.
+- `src/app/(authenticated)/mentor/review-history/page.tsx` | 21 instances | space-y-3: 12px ↔ legacy 12px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/reviews/page.tsx` | 21 instances | space-y-3: 12px ↔ legacy 12px; space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/sprint-progress/loading.tsx` | instances: none | fixes: none.
+- `src/app/(authenticated)/mentor/sprint-progress/page.tsx` | 30 instances | space-y-3: 12px ↔ legacy 12px; space-y-6: 24px ↔ legacy 24px; pb-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/task-review-history/page.tsx` | 24 instances | space-y-3: 12px ↔ legacy 12px; space-y-6: 24px ↔ legacy 24px; pb-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/task-reviews/loading.tsx` | instances: none | fixes: none.
+- `src/app/(authenticated)/mentor/task-reviews/page.tsx` | 26 instances | space-y-3: 12px ↔ legacy 12px; gap-x-4: 16px ↔ legacy 16px; gap-y-1: 4px ↔ legacy 4px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/mentor/team-coverage/page.tsx` | 40 instances | space-y-3: 12px ↔ legacy 12px; space-y-6: 24px ↔ legacy 24px; pb-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/notifications/page.tsx` | 4 instances | space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px; control radius 9px ↔ legacy 9px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/superadmin/not-found.tsx` | 3 instances | space-y-4: 16px ↔ legacy 16px; control radius 9px ↔ legacy 9px; px-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teach/courses/[deliveryId]/page.tsx` | 12 instances | space-y-4: 16px ↔ legacy 16px; md:space-y-6: 24px ↔ legacy 24px; gap-2: 8px ↔ legacy 8px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teach/not-found.tsx` | 2 instances | control radius 9px ↔ legacy 9px; px-4: 16px ↔ legacy 16px; inherited canvas padding 24px ↔ legacy 24px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teacher/allAssignments/error.tsx` | 4 instances | space-y-4: 16px ↔ legacy 16px; gap-2: 8px ↔ legacy 8px; control radius 9px ↔ legacy 9px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teacher/allAssignments/page.tsx` | 3 instances | space-y-4: 16px ↔ legacy 16px; control radius 9px ↔ legacy 9px; px-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teacher/allQuizzes/error.tsx` | 4 instances | space-y-4: 16px ↔ legacy 16px; gap-2: 8px ↔ legacy 8px; control radius 9px ↔ legacy 9px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teacher/allQuizzes/page.tsx` | 3 instances | space-y-4: 16px ↔ legacy 16px; control radius 9px ↔ legacy 9px; px-4: 16px ↔ legacy 16px | fixes: none | 1280/768/375 source.
+- `src/app/(authenticated)/teacher/calendar/error.tsx` | 5 instances | space-y-4: 16px ↔ legacy 16px; mt-2: 8px ↔ legacy 8px; gap-2: 8px ↔ legacy 8px | fixes: none | 1280/768/375 source.

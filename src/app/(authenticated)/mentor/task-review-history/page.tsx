@@ -101,7 +101,7 @@ export default async function MentorTaskReviewHistoryPage({
       </div>
       {data.items.length===0 ? <EmptyState title="No reviewed task submissions"
         description="No registered approved or changes-requested task versions match this filter and your current project assignments. Unmigrated history is not inferred."
-        action={<Link href={hasFilters ? "/mentor/task-review-history" : "/mentor/task-reviews"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{hasFilters ? "Clear filters" : "Pending task reviews"}</Link>} />
+        action={<Link href={hasFilters ? "/mentor/task-review-history" : "/mentor/task-reviews"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{hasFilters ? "Clear filters" : "Pending task reviews"}</Link>} />
       : <ol aria-label="mentor task review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
         <li key={item.id} className="py-[var(--lms-space-3)]">
           <div className="flex flex-wrap items-center justify-between gap-3">

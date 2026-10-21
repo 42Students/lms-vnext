@@ -83,7 +83,7 @@ export default async function FacultyAssignmentSubmissionsPage({
     </Disclosure>
     <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <p className="text-sm text-body leading-[22px]">
-        {data.total} matching persisted submission{data.total===1?"":"s"} in this teaching Section
+        {data.total.toLocaleString("en-IN")} matching persisted submission{data.total===1?"":"s"} in this teaching Section
       </p>
       <div className="min-w-0 space-y-1">
         <Link href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[rgba(38,186,199,0.07)]">

@@ -221,7 +221,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   {quizSearch.trim()&&visibleQuizzes.length===0?<EmptyState title="No matching quizzes" description="Clear the search to see all Section quizzes."/>:null}
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
-   <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold">Copy as new draft</Button>:null}
+   <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650]">Copy as new draft</Button>:null}
   {!chosen?<label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Lesson
    <Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
@@ -258,7 +258,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     </div>
     <Button variant="secondary" type="button" onClick={()=>setPreviewOpen(open=>!open)}
      aria-expanded={previewOpen} aria-controls="faculty-quiz-preview"
-     className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold">
+     className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650]">
      {previewOpen?"Hide preview":"Preview Quiz"}
     </Button>
    </div>
@@ -382,7 +382,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        askConfirm("Discard unsaved Quiz metadata and retry loading the saved question bank?",()=>void choose(selected));return;
       }
       void choose(selected);}}
-      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-primary-text">
       Reload Quiz questions
     </Button> : null}
   {success?<Alert tone="success">{success}</Alert>:null}

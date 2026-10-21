@@ -26,7 +26,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
  return <section className="min-w-0 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
   <div>
    <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Course Progress</h2>
-   <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">
+   <p className="max-w-[75ch] text-sm leading-[22px] text-muted-foreground">
     See measured completion for a class and course, then focus on the students furthest behind.
    </p>
   </div>
@@ -58,7 +58,7 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     Clear
    </Link>
   </form>
-  {!report?<p className="text-sm text-muted-foreground">
+  {!report?<p className="text-sm text-muted-foreground leading-[22px]">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
    <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] lg:grid-cols-4" role="group" aria-label="Class course progress summary">
