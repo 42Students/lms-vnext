@@ -114,7 +114,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
         </div> : null}
       </form>
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 md:flex-row md:items-center md:justify-between">
-        <p className="m-0 text-sm text-body">{data.total} recorded project event{data.total === 1 ? "" : "s"}</p>
+        <p className="m-0 text-sm text-body">{data.total.toLocaleString("en-IN")} recorded project event{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-col items-start gap-1 md:items-end">
           <Link data-unskin="" href={mentorPortfolioActivityExportHref(data.query)} download
             className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">

@@ -120,7 +120,7 @@ export default async function MentorTeamCoveragePage({
              <StatTile key={label} label={label} value={value} className="!min-h-0 !rounded-none !border-0 !bg-transparent !px-0 !py-2" />)}
          </section>
         <p className="text-sm text-body leading-[22px]">
-          {data.total} matching project{data.total === 1 ? "" : "s"}
+          {data.total.toLocaleString("en-IN")} matching project{data.total === 1 ? "" : "s"}
         </p>
         {data.items.length === 0
           ? data.projectCount===0

@@ -29,15 +29,15 @@ export default async function MentorProjectReviewCompletenessPage({
     <PageHeader eyebrow="Mentor · Project Overview" title="Delivery review completeness"
       description={data.projectTitle??"Current assigned project"}
       actions={<Link data-unskin="" href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto justify-center">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         Delivery workspace
       </Link>} />
     {!data.enabled?<section role="status"
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Delivery history was not loaded.
     </section>:<>
-      <p className="text-sm text-body leading-[22px]">
-        {data.total} persisted final-delivery version{data.total===1?"":"s"}
+      <p className="text-sm text-body">
+        {data.total.toLocaleString("en-IN")} persisted final-delivery version{data.total===1?"":"s"}
         {" · "}Project state: {data.projectStatus}
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
@@ -58,14 +58,14 @@ export default async function MentorProjectReviewCompletenessPage({
               </dd>
             </div>
           </dl>
-          {item.submittedAt?<p className="mt-2 text-xs text-muted-foreground leading-5">
+          {item.submittedAt?<p className="mt-2 text-xs text-muted-foreground">
             Submitted {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(item.submittedAt)} IST
-          </p>:<p className="mt-2 text-xs text-muted-foreground leading-5">
+          </p>:<p className="mt-2 text-xs text-muted-foreground">
             No submitted timestamp (draft)
           </p>}
-          {item.reviewedAt?<p className="mt-1 text-xs text-muted-foreground leading-5">
+          {item.reviewedAt?<p className="mt-1 text-xs text-muted-foreground">
             Reviewed {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(item.reviewedAt)} IST

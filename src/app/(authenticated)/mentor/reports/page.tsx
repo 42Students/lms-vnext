@@ -123,7 +123,7 @@ export default async function MentorReportsPage({searchParams}:{
           CSV omits {data.exportOmitted} matching assigned projects.
         </span>:null}
       </div>
-      <p className="text-sm text-body leading-[22px]">{data.total} projects match these filters.</p>
+      <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} projects match these filters.</p>
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
