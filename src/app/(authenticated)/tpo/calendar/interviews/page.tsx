@@ -23,7 +23,7 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
   <PageHeader eyebrow="TPO · Interview rounds" title="Interview schedule readiness"
    description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here." actions={<Link href="/tpo/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 lms-inline-link">← Calendar</Link>}/>
   <form action="/tpo/calendar/interviews" method="get"
-    className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]">
+    className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]" aria-label="Filter interviews">
    <label className="min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Search company, drive or round
     <Input name="q" type="search" maxLength={100} defaultValue={data.q}
      className="mt-[6px] block min-h-11 md:min-h-9 w-full" />
