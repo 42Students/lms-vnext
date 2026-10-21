@@ -195,3 +195,10 @@
 
 ## Packet 45 — tracker audit finding source fidelity
 - `src_db_schema_db10-audit-findings.draft.ts.md` | Added roles, reportedSeverity, environment, sourceCommitSha, agent actor kind/label, file/commit and structured from/to evidence; sync repo, lastCommit, lastError and lastSuccessAt, preserving externalId+internal UUID. Registered migration 0168/export for G2-16-001-066/067/069. | Actual sync worker/status endpoint must record failures and last successful run truthfully, sanitize commits and sensitive notes, and honor DB10_AUDIT_FINDINGS_READY. No sync run occurred; migration NOT EXECUTED.
+
+
+## Packet 46 — DB06 grade audit immutability
+- `src_db_schema_db06-history-staged.ts.md` | G2-17-019-038/043/044: reviewed exact scoped composite FK, before/after grade fields, CAS versions, staged append-only triggers and legacy LONG/status/timestamp mapping; documented strict cutover prerequisite. | PROMOTION CONFLICT: source contract expressly prohibits registering event table/triggers before gradeAssignmentSubmission/publishAssignmentGrade and attendance producers write matching events in same transaction. Existing producer uses activityEvents; enabling deferred completeness first would break grading. Left source-only, no SQL migration or schema barrel registration. Requires coordinated application+DB cutover and owner-approved PostgreSQL replay; no migration executed.
+
+## Packet 47 — department ID/archive crosswalk
+- `src_db_schema_departments.ts.md` | G2-18-027-010/052, G2-9-024-066: documented legacy numeric college/department → verified UUID and isDeleted→archivedAt mapping. Existing UUID FK, soft archive and timestamps already preserve current vNext model. | No historic department records by greenfield policy; an actual data migration requires tenant-verified crosswalk and original timezone. No new schema DDL or migration.
