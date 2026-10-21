@@ -57,7 +57,7 @@ export function CollegeRecurringPreview({
   const [to, setTo] = useState(chosen?.periodEnd ?? "");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("10:00");
-  const [weekdays, setWeekdays] = useState<number[]>([1, 2, 3, 4, 5]);
+  const [weekdays, setWeekdays] = useState<number[]>([]);
   const [hallId, setHallId] = useState("");
   const [facultyId, setFacultyId] = useState("");
   const [result, setResult] = useState<Result | null>(null);
@@ -222,7 +222,7 @@ export function CollegeRecurringPreview({
                 </label>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground">Clear every weekday to repeat daily. Times use five-minute steps (IST).</p>
+            <p className="text-xs text-muted-foreground">Leave every day unchecked to repeat daily. Times use five-minute steps (IST).</p>
           </fieldset>
           <Disclosure title="Optional teaching details" defaultOpen={Boolean(facultyId || hallId)} className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 py-3"><div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
@@ -240,7 +240,7 @@ export function CollegeRecurringPreview({
               </Select>
             </label>
           </div></Disclosure>
-          {invalidRange ? <Alert tone="error">To date cannot be earlier than From date.</Alert> : null}
+          {invalidRange ? <Alert tone="error">{from && to && from > to ? "To date cannot be earlier than From date." : "End time must be after start time."}</Alert> : null}
           <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || invalidRange || !sectionId || !from || !to}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
@@ -248,7 +248,7 @@ export function CollegeRecurringPreview({
         </form>
       )}
       {created !== null ? <Alert tone="success" className="space-y-2">
-        <p>Requested: {requested??created+skipped.length} · Created: {created} · Failed or skipped: {skipped.length}</p>
+        <p role="status">{created === 0 ? "No sessions were scheduled. " : ""}Scheduled {created} of {requested??created+skipped.length} sessions. Failed or skipped: {skipped.length}.</p>
         {savedSessionIds.length>0?<p className="text-xs text-body">Created session IDs: {savedSessionIds.join(", ")}</p>:null}
         {skipped.length > 0 && <>
           <p className="font-semibold">These dates were skipped:</p>
