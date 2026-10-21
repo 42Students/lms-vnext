@@ -39,7 +39,7 @@ export default async function SuperAdminProjectsPage({
   // or non-Super-Admin actor before any project or template service call.
   if (!isSuperAdmin(context)) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Project workspaces" actions={<PageBackLink href="/admin/projects" label="Projects" />} />
+      <PageHeader title="Workspaces" actions={<PageBackLink href="/admin/projects" label="Projects" />} />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
         action={<PageBackLink href="/dashboard" label="Back to dashboard" />}
@@ -52,7 +52,7 @@ export default async function SuperAdminProjectsPage({
     return (
       <div className="min-w-0 space-y-4">
         <PageHeader
-          title="Project workspaces"
+          title="Workspaces"
           description="Live projects, each run by a mentor with a team of students."
           actions={<PageBackLink href="/admin/projects" label="Projects" />}
         />
@@ -71,7 +71,7 @@ export default async function SuperAdminProjectsPage({
   const parsed = parseAdminProjectsQuery(await searchParams);
   if (!parsed.success) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Project workspaces"
+      <PageHeader title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<PageBackLink href="/admin/projects" label="Projects" />} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
@@ -118,7 +118,7 @@ export default async function SuperAdminProjectsPage({
     if (query.pageSize) retryParams.set("pageSize", String(query.pageSize));
     const suffix = retryParams.toString();
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Project workspaces"
+      <PageHeader title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<PageBackLink href="/admin/projects" label="Projects" />} />
       <ProjectAdminNav basePath="/admin/projects" active="workspaces" />
@@ -134,7 +134,7 @@ export default async function SuperAdminProjectsPage({
 
   return (
     <div className="min-w-0 space-y-4">
-      <PageHeader title="Project workspaces"
+      <PageHeader title="Workspaces"
         description="Live projects, each run by a mentor with a team of students." />
       <div className="flex min-w-0 flex-wrap items-center gap-2 print:hidden">
         <CreateProjectControl
