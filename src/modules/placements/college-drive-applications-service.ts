@@ -185,8 +185,9 @@ export async function exportCollegeDriveApplicationsCsv(
  * compatibility adapter. The canonical vNext college roster stays 1-based
  * and never interprets a stage as an offer or automated score. */
 export const legacyCollegeApplicationsQuerySchema=z.object({
- page:z.coerce.number().int().min(0).max(999).default(0),
- size:z.coerce.number().int().min(1).max(100).default(20),
+ page:z.coerce.number().int().transform(page=>Math.max(0,Math.min(999,page))).default(0),
+ size:z.coerce.number().int().transform(size=>size<=0?20:Math.min(100,size)).default(20),
+ sort:z.enum(["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"]).optional(),
  applicationStatus:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT",
   "INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ASSESSMENT"),
  status:z.enum(["ALL","SUBMITTED","WITHDRAWN"]).default("ALL"),
@@ -201,11 +202,36 @@ export async function listLegacyCollegeDriveApplications(
  context:RequestContext,jobId:unknown,raw:unknown,
 ){
  const query=legacyCollegeApplicationsQuerySchema.parse(raw);
- return listCollegeDriveApplications(context,jobId,{
-  page:query.page+1,stage:query.applicationStatus,status:query.status,
+ const filters={
+  stage:query.applicationStatus,status:query.status,
   source:query.source,q:query.q,
   departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId,
- },{pageSize:query.size});
+ };
+ const sort=query.sort??(query.applicationStatus==="ASSESSMENT"?
+  "SUBMITTED_DESC":"AGE_ASC");
+ const firstRead=await listCollegeDriveApplications(context,jobId,{
+  ...filters,page:query.page+1,
+ },{pageSize:query.size,sort});
+ const pageCount=Math.ceil(firstRead.total/query.size);
+ const effectivePage=Math.min(query.page,Math.max(0,pageCount-1));
+ // An out-of-range browser bookmark uses the last valid page, without
+ // changing filters or accidentally exposing another college.
+ const result=query.page>effectivePage&&firstRead.total>0?
+  await listCollegeDriveApplications(context,jobId,{
+   ...filters,page:effectivePage+1,
+  },{pageSize:query.size,sort}):firstRead;
+ return {
+  ...result,
+  // The legacy Spring page response is zero-based. Keep the canonical
+  // vNext page/index model unchanged for its existing consumers.
+  content:result.items,number:effectivePage,size:query.size,
+  totalElements:result.total,totalPages:pageCount,
+  numberOfElements:result.items.length,
+  first:effectivePage===0,last:pageCount===0||effectivePage>=pageCount-1,
+  empty:result.items.length===0,
+  hasPrevious:effectivePage>0,hasNext:effectivePage+1<pageCount,
+  emptyLabel:"No applications",sort,
+ };
 }
 
 /** Legacy CSV has application identifiers and audit actor alongside the
