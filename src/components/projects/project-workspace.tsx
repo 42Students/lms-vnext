@@ -1043,7 +1043,7 @@ export function ProjectWorkspace({
               <strong className="block font-semibold text-foreground">This workspace is a team</strong>
               Its learners are kept by the team it was created with. Only College Admin or
               Super Admin may change team membership in the class team workspace;
-              mentors can review Project work but cannot edit team membership.
+              mentors can review Project work but cannot edit team membership. College Admin changes are audited and notify affected accounts; mentors must request roster corrections through the College Admin workspace.
             </div>
             {mode === "ADMIN" && !readOnly ?
               <ProjectTeamRosterReconcile projectId={workspace.project.id} /> : null}

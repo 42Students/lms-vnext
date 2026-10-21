@@ -24,6 +24,7 @@ import { parseProjectAdminAuditQuery,legacyProjectAuditActions,
  projectLegacyAuditLink } from "@/modules/projects/admin-audit-query-model";
 import { mayReadGlobalProjectAudit } from "@/modules/projects/admin-audit-access-model";
 import {z} from "zod";
+import {getProjectResourceHistory} from "@/modules/projects/resource-history-service";
 
 const destructiveProjectEventTypes=new Set<string>([
  ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
@@ -169,6 +170,15 @@ export async function ProjectAdminAuditPage({
       action={<Link href={basePath+"/audit"} className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Retry audit</Link>} />
   </div>;
   const result = activityRead.value;
+  // Resource history has a separate project-scoped audit stream. Never
+  // conflate a filtered project-activity page with its resource event trail.
+  const resourceWorkspaceId=(subjectType==="project"||subjectType==="project_instance")&&
+    subjectId&&z.string().uuid().safeParse(subjectId).success?subjectId:null;
+  const resourceRead=resourceWorkspaceId
+    ?await getProjectResourceHistory(context,resourceWorkspaceId)
+      .then(value=>({ok:true as const,value}))
+      .catch(()=>({ok:false as const,value:null}))
+    :null;
   const rawEvents=result.items;
   const coveredEvents=rawEvents.length;
   const peopleCount=new Set(rawEvents.map(item=>item.actor.id)
@@ -417,6 +427,23 @@ export async function ProjectAdminAuditPage({
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       </div>
+      {resourceWorkspaceId?<section aria-label="Project resource audit trail"
+        className="min-w-0 space-y-3 border-y border-border py-4">
+        <h2 className="text-base font-semibold text-foreground">Resource audit trail</h2>
+        <p className="text-sm text-body">Resource changes are independent of the project activity filters above. Each event is scoped to the selected workspace and college.</p>
+        {!resourceRead?.ok?<p role="alert" className="text-sm text-error">Resource audit unavailable. Retry this workspace filter.</p>:
+          resourceRead.value.rows.length===0?<p className="text-sm text-body">No resource changes recorded for this workspace.</p>:
+          <ol className="divide-y divide-border border-y border-border">
+            {resourceRead.value.rows.map(event=><li key={event.id} className="min-w-0 space-y-1 py-3 text-sm">
+              <p className="font-semibold">{projectActionLabel(event.eventType)}</p>
+              <p className="break-words text-body">{event.summary}</p>
+              <p className="text-xs text-muted-foreground">Resource {event.resourceId} · {new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+              }).format(new Date(event.occurredAt))} IST</p>
+            </li>)}
+          </ol>}
+        {resourceRead?.ok&&resourceRead.value.hasMore?<p className="text-xs text-warning">Showing the most recent 200 resource changes; older history requires a narrower export or audit search.</p>:null}
+      </section>:null}
       <section aria-label="Change log" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
           <h2 className="text-base font-semibold text-foreground">Change log</h2>
@@ -487,7 +514,7 @@ export async function ProjectAdminAuditPage({
       </Link>:null}
 
       <p className="text-xs text-muted-foreground leading-[20px]">
-        This view reflects persisted vNext Project activity events. Legacy-only audit actions remain tracked as W03 parity work until their producers are implemented against the shared activity taxonomy.
+        This view shows persisted Project activity events. Use a Project subject filter to view its independent resource audit trail, including historical destructive events recorded by the activity service. Events not emitted by legacy-only action producers cannot be inferred.
       </p>
     </div>
   );
