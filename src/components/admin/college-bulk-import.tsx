@@ -72,8 +72,8 @@ export function CollegeBulkImport({organizations}:{organizations:readonly {id:st
     <p>Import one verified organization at a time. The selected organization applies to all rows. Header optional; up to 200 rows. Quoted commas, newlines and escaped quotes are supported.</p>
     <p>Converting an old LMS CSV? Map every numeric orgId to its verified vNext organization UUID, separate rows by organization and choose the matching organization above. Use <strong>uniqueId</strong> as the new <strong>code</strong>. Mixed-organization uploads are rejected rather than assigned to the wrong college.</p>
     <div className="flex flex-wrap gap-4">
-     <a download="colleges-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(COLLEGE_IMPORT_TEMPLATE+"\\n")} className="font-semibold text-primary-text underline">Download new CSV template</a>
-     <a download="colleges-legacy-conversion-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(LEGACY_COLLEGE_IMPORT_TEMPLATE+"\\n")} className="font-semibold text-primary-text underline">Download legacy conversion template</a>
+     <a download="colleges-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(COLLEGE_IMPORT_TEMPLATE+"\n")} className="font-semibold text-primary-text underline">Download new CSV template</a>
+     <a download="colleges-legacy-conversion-template.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(LEGACY_COLLEGE_IMPORT_TEMPLATE+"\n")} className="font-semibold text-primary-text underline">Download legacy conversion template</a>
     </div>
    </div>
    {valid>0?<Alert tone="info">{valid} colleges ready</Alert>:null}

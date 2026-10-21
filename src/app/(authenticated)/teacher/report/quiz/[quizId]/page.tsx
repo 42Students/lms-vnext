@@ -60,7 +60,7 @@ export default async function FacultyQuizReportPage({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       {report.rosterUnavailable ? <Banner tone="warning" role="status">
-        Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
+        Couldn't load the student roster. Student scores and the not-attempted list are hidden until the current roster is verified.
         <a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
           className="ml-2 font-semibold text-primary-text underline">Retry roster</a>
       </Banner> : null}

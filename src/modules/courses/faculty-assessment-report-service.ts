@@ -230,8 +230,10 @@ export async function getFacultyQuizReport(
   // Roster failure must not hide the already-authorized attempt summary.
   // Never infer non-attempting learners without a current roster.
   const rosterScope=rosterRead.ok?rosterRead.value:null;
+  // An unavailable roster must never be treated as authorization to disclose
+  // historical or otherwise ineligible learner attempts.
   const scopedAttempts=rosterScope
-    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):attempts;
+    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):[];
   const latestAttempts =
     latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
@@ -305,26 +307,25 @@ export async function getFacultyAssignmentReport(
     "ASSIGNMENT_NOT_FOUND",
     "ASSIGNMENT_DELIVERY_MISMATCH",
   );
-  const [submissions, rosterScope] =
+  const [submissions, rosterRead] =
     await Promise.all([
-      listAssignmentSubmissions(
-        context,
-        assignmentId,
-        assignment.deliveryId,
-      ),
-      getFacultyDeliveryRoster(
-        context,
-        assignment.deliveryId,
-      ),
+      listAssignmentSubmissions(context,assignmentId,assignment.deliveryId),
+      getFacultyDeliveryRoster(context,assignment.deliveryId)
+        .then(value=>({ok:true as const,value}))
+        .catch(()=>({ok:false as const})),
     ]);
-  const scopedSubmissions=facultyReportCurrentRosterRows(submissions,rosterScope.roster);
+  const rosterScope=rosterRead.ok?rosterRead.value:null;
+  // A historical submission is not permission to view that learner after
+  // their enrollment ended; never drop the current-roster filter on failure.
+  const scopedSubmissions=rosterScope
+    ?facultyReportCurrentRosterRows(submissions,rosterScope.roster):[];
   const submittedMemberships = new Set(
     scopedSubmissions.map(
       (submission) => submission.membershipId,
     ),
   );
   const missingLearners =
-    rosterScope.roster.filter(
+    (rosterScope?.roster??[]).filter(
       (learner) =>
         !submittedMemberships.has(
           learner.membershipId,
@@ -343,12 +344,13 @@ export async function getFacultyAssignmentReport(
   );
   return {
     assignment,
+    rosterUnavailable:rosterScope===null,
     submissions:scopedSubmissions,
     missingLearners,
     distribution: scores.distribution,
     metrics: {
       eligibleLearners:
-        rosterScope.roster.length,
+        rosterScope?.roster.length??0,
       submitted: scopedSubmissions.length,
       missing: missingLearners.length,
       onTime:
