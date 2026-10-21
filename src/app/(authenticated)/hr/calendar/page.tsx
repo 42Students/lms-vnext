@@ -235,6 +235,20 @@ function RecruiterCalendarEventCard({
   );
 }
 
+/** The old recruiter week folds slot dates under their scheduled round.
+ * Keep orphan slots visible: otherwise a slot with no in-window parent would
+ * vanish from the recruiter's calendar entirely. */
+function foldRecruiterWeekDays(days: ReturnType<typeof combineHrCalendarDays>) {
+  const roundIds = new Set(days.flatMap(day =>
+    day.events.filter(event => event.kind === "ROUND" && event.roundId)
+      .map(event => event.roundId)));
+  return days.map(day => ({
+    ...day,
+    events: day.events.filter(event => event.kind !== "INTERVIEW_SLOT" ||
+      !event.roundId || !roundIds.has(event.roundId)),
+  })).filter(day => day.events.length > 0 || day.resultsDue.length > 0);
+}
+
 export default async function HrCalendarPage({
   searchParams,
 }: {
@@ -324,11 +338,15 @@ export default async function HrCalendarPage({
     1,
   );
 
-  const allDays = filterHrCalendarDays(combineHrCalendarDays(calendar.days, calendar.resultsDue),category);
+  const combinedDays = combineHrCalendarDays(calendar.days, calendar.resultsDue);
+  const visibleDays = view === "week" && category !== "SLOTS"
+    ? foldRecruiterWeekDays(combinedDays) : combinedDays;
+  const allDays = filterHrCalendarDays(visibleDays,category)
+    .filter(day => day.events.length > 0 || day.resultsDue.length > 0);
   const byDay = new Map(allDays.map((day) => [day.day, day]));
   const mobileDays = selectHrMobileCalendarDays(allDays, window.days);
   const eventCount = allDays.reduce((total,day)=>total+day.events.length+day.resultsDue.length,0);
-  const nextVisible=hrNextCalendarEvent(calendar.events,calendar.resultsDue,category,now);
+  const nextVisible=hrNextCalendarEvent(allDays.flatMap(day=>day.events),calendar.resultsDue,category,now);
 
   const heading =
     view === "week"
@@ -413,6 +431,7 @@ export default async function HrCalendarPage({
                   <form action="/hr/calendar" method="get"
                     className="mt-3 grid min-w-0 gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end" aria-label="Filter recruiter calendar">
                     <Input type="hidden" name="view" value={view} />
+                    {selectedCollegeId?<Input type="hidden" name="collegeId" value={selectedCollegeId}/>:null}
                     <Input type="hidden" name="category" value={category} />
                     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                       Jump to date
@@ -423,7 +442,7 @@ export default async function HrCalendarPage({
                     <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Go to date</Button>
                   </form>
                 </details>
-                {!noCollegeAccess ? <Link
+                {!noCollegeAccess && grants.length<=1 ? <Link
                   href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 min-[768px]:w-auto">
                   Export calendar CSV
