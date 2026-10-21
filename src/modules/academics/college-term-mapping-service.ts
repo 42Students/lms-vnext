@@ -240,6 +240,8 @@ export async function updateCollegeTermMapping(
         id: programTermCourses.id,
         displayOrder: programTermCourses.displayOrder,
         credits: programTermCourses.credits,
+        type: programTermCourses.type,
+        legacyIsMandatory: programTermCourses.legacyIsMandatory,
       }).from(programTermCourses)
         .where(eq(programTermCourses.programTermId, subject.termId))
         .orderBy(asc(programTermCourses.displayOrder), asc(programTermCourses.id))
@@ -249,16 +251,27 @@ export async function updateCollegeTermMapping(
       // vNext reorders one scoped mapping by a 1-based position, not by
       // replacing all mappingIds. A full-list legacy reorder adapter would
       // need its own validated set-equality contract and endpoint.
-      if (input.position > before.length)
+      const position = input.position ?? current.displayOrder;
+      const credits = input.credits ?? current.credits;
+      // Imported mandatory-flag and CORE/ELECTIVE are distinct persisted
+      // values. Only an explicit legacy edit changes both together.
+      const type = input.isMandatory !== undefined
+        ? input.isMandatory ? "CORE" : "ELECTIVE"
+        : input.type ?? current.type;
+      const isMandatory = input.isMandatory !== undefined
+        ? input.isMandatory : current.legacyIsMandatory;
+      if (position > before.length)
         throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
-      const order = reorderTermCourseIds(before.map(row => row.id), mappingId, input.position);
+      const order = reorderTermCourseIds(before.map(row => row.id), mappingId, position);
       for (const [index, id] of order.entries()) {
         const row = before.find(item => item.id === id)!;
-        if (row.displayOrder !== index + 1 || (id === mappingId && row.credits !== input.credits)) {
+        if (row.displayOrder !== index + 1 || (id === mappingId &&
+          (row.credits !== credits || row.type !== type ||
+            row.legacyIsMandatory !== isMandatory))) {
           await tx.update(programTermCourses)
             .set({
               displayOrder: index + 1,
-              ...(id === mappingId ? { credits: input.credits } : {}),
+              ...(id === mappingId ? { credits, type, legacyIsMandatory: isMandatory } : {}),
               updatedAt: new Date(),
             })
             .where(and(eq(programTermCourses.id, id),
@@ -271,15 +284,17 @@ export async function updateCollegeTermMapping(
         subjectType: "program_term_course", subjectId: mappingId,
         summary: "Semester course mapping updated",
         metadata: {
-          action: current.displayOrder !== input.position ? "SEMESTER_COURSE_REORDER" : "SEMESTER_COURSE_UPDATE",
+          action: current.displayOrder !== position ? "SEMESTER_COURSE_REORDER" : "SEMESTER_COURSE_UPDATE",
           termId: subject.termId,
           fromCredits: current.credits,
-          toCredits: input.credits,
+          toCredits: credits,
+          fromType: current.type, toType: type,
+          fromMandatory: current.legacyIsMandatory, toMandatory: isMandatory,
           fromOrder: current.displayOrder,
-          toOrder: input.position,
+          toOrder: position,
         },
       });
-      return { id: mappingId, credits: input.credits, displayOrder: input.position };
+      return { id: mappingId, credits, type, isMandatory, displayOrder: position };
     });
   } catch (error) { return mapConflict(error); }
 }
