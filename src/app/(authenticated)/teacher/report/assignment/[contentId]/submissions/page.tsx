@@ -43,7 +43,7 @@ export default async function FacultyAssignmentSubmissionsPage({
     kind:"assignment",assessmentId:report.assignment.id,
     deliveryId:report.assignment.deliveryId,filter:query.filter,
   });
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Assignment submissions"
       description={[report.assignment.courseName, report.assignment.sectionName].join(" · ")}
       actions={<Link href={"/teacher/report/assignment/"+

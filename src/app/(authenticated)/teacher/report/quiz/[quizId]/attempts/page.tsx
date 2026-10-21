@@ -39,7 +39,7 @@ export default async function FacultyQuizAttemptPage({
   }
   const back="/teacher/report/quiz/"+encodeURIComponent(quizId)+
     "?deliveryId="+encodeURIComponent(data.query.deliveryId);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Quiz Report" title="Individual Quiz attempts"
       description={data.quiz.title+" · "+data.quiz.sectionName}
       actions={<Link href={back}
