@@ -22,7 +22,7 @@ export default async function CollegeResourcesPage({
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return (
-      <div className="min-w-0 space-y-5 md:space-y-6">
+      <div className="min-w-0 space-y-6 md:space-y-6">
         <PageHeader title="Resources" />
         <ErrorState title="Invalid resource filters"
           description="The title, status or page filter is invalid. No content was loaded."
