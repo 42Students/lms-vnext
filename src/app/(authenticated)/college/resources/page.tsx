@@ -40,7 +40,14 @@ export default async function CollegeResourcesPage({
   const catalogue=catalogueResult.status==="fulfilled"?catalogueResult.value:null;
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Resources"
+      description="Give a lesson reading material: files, links and notes, together in one resource."
       actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
+    <nav className="flex flex-wrap items-center gap-5 border-b border-[var(--lms-canvas-border)]" aria-label="Courses & Content">
+      <Link href="/college/lessons" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-sm text-body md:min-h-9">Lessons</Link>
+      <Link href="/college/resources" aria-current="page"
+        className="inline-flex min-h-11 items-center border-b-2 border-[var(--lms-primary)] text-sm font-semibold text-primary-text md:min-h-9">Resources</Link>
+      <Link href="/college/videos" className="inline-flex min-h-11 items-center border-b-2 border-transparent text-sm text-body md:min-h-9">Videos</Link>
+    </nav>
     {authoring?<CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons}
       deliveries={authoring.deliveries} existing={authoring.existing}
       existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}

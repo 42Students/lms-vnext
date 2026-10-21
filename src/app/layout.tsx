@@ -3,6 +3,7 @@ import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { OfflineBanner } from "@/components/public/offline-banner";
 import { BrowserSupportNotice } from "@/components/public/browser-support-notice";
+import { ClientErrorMonitor } from "@/components/telemetry/client-error-monitor";
 
 // Premium UI font, as in the old LMS (Inter 400/500/600/700 + JetBrains Mono). Self-hosted by next/font at build time.
 const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-inter" });
@@ -20,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body><noscript>Please enable JavaScript to use the LMS.</noscript><BrowserSupportNotice /><OfflineBanner />{children}</body>
+      <body><noscript>Please enable JavaScript to use the LMS.</noscript><ClientErrorMonitor /><BrowserSupportNotice /><OfflineBanner />{children}</body>
     </html>
   );
 }

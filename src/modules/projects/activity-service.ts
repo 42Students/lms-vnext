@@ -33,6 +33,9 @@ export async function getProjectActivityPage(
   const filters = learnerProjectActivityFilterSchema.parse(filterInput);
   const bounds = learnerProjectActivityDateBounds(filters);
   const prefixes = learnerProjectActivityPrefixes(filters.category);
+  const sourceTab=filters.sourceTab?.trim();
+  const search=filters.search?.trim();
+  const contains=(value:string)=>"%"+value.replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_")+"%";
 
   const rows = await getDb()
     .select({
@@ -83,6 +86,12 @@ export async function getProjectActivityPage(
         bounds.from ? gte(activityEvents.occurredAt, bounds.from) : undefined,
         bounds.until ? lt(activityEvents.occurredAt, bounds.until) : undefined,
         prefixes.length ? or(...prefixes.map(prefix => ilike(activityEvents.eventType, prefix + "%"))) : undefined,
+        sourceTab ? sql`coalesce(${activityEvents.metadata} ->> 'sourceTab','') ilike ${contains(sourceTab)}` : undefined,
+        search ? or(
+          ilike(activityEvents.eventType,contains(search)),
+          ilike(activityEvents.subjectLabel,contains(search)),
+          sql`coalesce(${activityEvents.metadata} ->> 'sourceTab','') ilike ${contains(search)}`,
+        ) : undefined,
         eq(
           activityEvents.module,
           "PROJECTS",
@@ -112,7 +121,10 @@ export async function getProjectActivityPage(
     .limit(101);
 
   return {message:"Project activity feed retrieved",
-    events: rows.slice(0, 100), hasMore: rows.length > 100};
+    events: rows.slice(0, 100).map(event=>({
+      ...event,projectSlug:scope.project.slug,
+      title:event.subjectLabel||event.eventType,
+    })), hasMore: rows.length > 100};
 }
 
 /** Preserve the original bounded array contract for existing shared workspaces. */
@@ -126,5 +138,6 @@ export async function listProjectActivity(
     subjectLabel: event.subjectLabel, summary: event.summary,
     occurredAt: event.occurredAt, actorDisplayName: event.actorDisplayName,
     actorType:event.actorType,sourceTab:event.sourceTab,
+    projectSlug:event.projectSlug,title:event.title,
   }));
 }

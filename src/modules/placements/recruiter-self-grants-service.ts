@@ -30,6 +30,7 @@ import {
 import {
   getRecruiterSelfProfile,
 } from "./recruiter-profile-service";
+import {listSignedInRecruiterPendingInvites} from "./public-recruiter-invite-accept-service";
 
 /**
  * Pending invitations are a separate lifecycle and must not be inferred from
@@ -74,6 +75,15 @@ export async function getRecruiterSelfGrantOverview(
 
   const authorizedGrants =
     context.recruiter.grants;
+  // Pending invitations are proven by the signed-in identity, not by an
+  // ACTIVE college grant. Keep them separate from permitted workspace choices.
+  const pending=await listSignedInRecruiterPendingInvites(context);
+  const pendingSummary={
+    pendingInvites:pending.slice(0,50),
+    pendingTotal:pending.length,
+    pendingPages:Math.max(1,Math.ceil(pending.length/50)),
+    pendingHasMore:pending.length>50,
+  };
 
   // A recruiter can have an active employer profile
   // without a currently active college grant.
@@ -81,6 +91,7 @@ export async function getRecruiterSelfGrantOverview(
     return {
       profileStatus: "ACTIVE" as const,
       grants: [],
+      ...pendingSummary,
     };
   }
 
@@ -109,6 +120,7 @@ export async function getRecruiterSelfGrantOverview(
       collegeId: colleges.id,
       collegeName: colleges.name,
       collegeCode: colleges.code,
+      legacyLogoUrl:colleges.legacyLogoUrl,
       relationshipId:
         placementCompanyRelationships.id,
       grantStatus:
@@ -202,6 +214,19 @@ export async function getRecruiterSelfGrantOverview(
 
   return {
     profileStatus: "ACTIVE" as const,
-    grants: buildRecruiterSelfGrantRows(rows),
+    grants: buildRecruiterSelfGrantRows(rows).map(grant=>{
+      const source=rows.find(row=>row.id===grant.id);
+      const raw=source?.legacyLogoUrl;
+      let collegeLogoUrl:string|null=null;
+      if(raw){
+        try{
+          const url=new URL(raw);
+          if(url.protocol==="https:"&&!url.username&&!url.password)
+            collegeLogoUrl=url.toString();
+        }catch{/* Historic malformed logo URLs are not navigable. */}
+      }
+      return {...grant,collegeLogoUrl};
+    }),
+    ...pendingSummary,
   };
 }

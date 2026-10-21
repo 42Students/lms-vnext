@@ -24,7 +24,7 @@ export type CareerCalendarEvent = {
   start: Date;
   dayKey: string;
   rescheduled: boolean;
-  eventType?:"ROUND"|"APPLICATION_DEADLINE"|"EXAM_BLOCK";
+  eventType?:"ROUND"|"APPLICATION_DEADLINE"|"EXAM_BLOCK"|"JOB_IMPORTANT_DATE";
   mode?:string|null;venue?:string|null;meetingUrl?:string|null;
   durationMinutes?:number|null;booked?:boolean;learnerConfirmedAt?:string|null;
   note?:string|null;
@@ -33,10 +33,55 @@ export type CareerCalendarEvent = {
 /** The caller must independently authorize blackout dates and supply only
  * un-applied, learner-visible deadlines. No arbitrary job IDs are queried. */
 export type CareerCalendarSupplement={
- key:string;kind:"APPLICATION_DEADLINE"|"EXAM_BLOCK";day:string;title:string;
+ key:string;kind:"APPLICATION_DEADLINE"|"EXAM_BLOCK"|"JOB_IMPORTANT_DATE";day:string;title:string;
  companyName?:string;roleTitle?:string;visible?:boolean;applied?:boolean;
  note?:string|null;
 };
+
+
+/** The legacy adapter uses these copies in its response; no success toast on load. */
+export const legacyJobCalendarSuccess="Calendar dates retrieved successfully";
+export const legacyJobCalendarFailure="Failed to fetch calendar dates. Please try again or contact support.";
+export const legacyJobImportantDateEventType="JOB_IMPORTANT_DATE" as const;
+export type LegacyJobImportantDateDTO={
+ label:string;eventType:typeof legacyJobImportantDateEventType;type:string;
+ at:string;jobId:string;index:number;
+};
+/** Caller supplies authorized learner-visible job details only. The original
+ * index is part of the identity; two entries for one job on one day survive.
+ * Legacy naive dates are normalized to UTC midnight before reaching here;
+ * we then present the resulting instant in the college's IST calendar.
+ */
+export function legacyJobImportantDatesToSupplements(
+ job:{jobId:string;companyName?:string;roleTitle?:string;
+  importantDates:readonly {label:string;at:string;type?:string}[]},
+):CareerCalendarSupplement[]{
+ return job.importantDates.flatMap((entry,index)=>{
+  if(!entry.label.trim()||!Number.isFinite(Date.parse(entry.at)))return [];
+  const record:LegacyJobImportantDateDTO={
+   label:entry.label,eventType:legacyJobImportantDateEventType,
+   type:entry.type??"IMPORTANT_DATE",at:entry.at,jobId:job.jobId,index,
+  };
+  return [{key:job.jobId+":"+index+":"+record.at,
+   kind:legacyJobImportantDateEventType,day:careerDayKey(new Date(entry.at)),
+   title:record.label,companyName:job.companyName,roleTitle:job.roleTitle,
+   visible:true,note:record.type}];
+ });
+}
+/** For SQL readers of rounds and job-important-dates: inclusive IST days become
+ * one half-open UTC range. Both queries must also keep their own membership
+ * and publication visibility restrictions.
+ */
+export function careerCalendarUtcRangeForIstDays(startDay:string,endDay:string){
+ const valid=/^\d{4}-\d{2}-\d{2}$/;
+ if(!valid.test(startDay)||!valid.test(endDay)||startDay>endDay)
+  throw new Error("Invalid calendar range");
+ const start=new Date(startDay+"T00:00:00+05:30");
+ const end=new Date(Date.parse(endDay+"T00:00:00+05:30")+86_400_000);
+ if(!Number.isFinite(start.getTime())||!Number.isFinite(end.getTime()))
+  throw new Error("Invalid calendar range");
+ return {from:start,toExclusive:end};
+}
 
 export type CareerCalendarView = "agenda" | "month" | "week" | "day";
 
@@ -169,7 +214,7 @@ export function learnerCareerIcal(
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
   ];
-  for (const event of events) {
+  for (const event of [...events].sort((a,b)=>a.start.getTime()-b.start.getTime()||a.key.localeCompare(b.key))) {
     const uid = event.key.replace(/[^a-zA-Z0-9:-]/g, "") + "@42students.lms";
     lines.push(
       "BEGIN:VEVENT",

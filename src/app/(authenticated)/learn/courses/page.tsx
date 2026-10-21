@@ -20,6 +20,8 @@ import {
   listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
 
+export const dynamic="force-dynamic";
+
 export default async function LearnerCoursesPage({
  searchParams,
 }:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
@@ -60,12 +62,14 @@ export default async function LearnerCoursesPage({
     </section>;
   }
 
+  let displayLoadFailed=false;
   let displays=new Map<string,{thumbnailUrl:string|null}>();
   try{
     displays=await loadAuthorizedCourseDisplayContentsIfReady(courses
       .map(course=>course.courseId).filter(id=>typeof id==="string"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)));
   }catch{
     // Optional display metadata must not hide authenticated course cards.
+    displayLoadFailed=true;
     displays=new Map();
   }
   // Each delivery fails independently; one corrupt or temporarily unavailable
@@ -186,9 +190,22 @@ export default async function LearnerCoursesPage({
       .catch(()=>({semesters:[],error:"LOAD_FAILED" as const})),
   ]);
   const programSemesters=semesterResult.semesters;
+  const malformedCount=rows.filter(row=>row.unavailable&&
+    /^(?:Invalid course record|Duplicate course mapping)/.test(row.unavailableLabel??"")).length;
+  const invalidCredits=courses.filter(course=>course.credits!==null&&
+    (!Number.isFinite(course.credits)||course.credits<0)).length;
   return (
     <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader title="Courses" />
+      {malformedCount>0?<Alert tone="warning" role="alert" title="Some course records need attention">
+        {malformedCount} course mapping{malformedCount===1?" is":"s are"} missing required data. Your other courses are still available. Contact your administrator.
+      </Alert>:null}
+      {invalidCredits>0?<Alert tone="warning" role="alert" title="Some credits could not be counted">
+        {invalidCredits} course credit value{invalidCredits===1?" is":"s are"} invalid. Please contact your administrator.
+      </Alert>:null}
+      {displayLoadFailed?<Alert tone="warning" role="status">
+        Course images could not be refreshed. Course details remain available.
+      </Alert>:null}
       {directoryError?<Alert tone="error" role="alert">
        {directoryError} <Link href="/learn/courses" className="inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Try again</Link>
       </Alert>:<LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters}

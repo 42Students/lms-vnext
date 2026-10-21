@@ -8,7 +8,7 @@ export type ClientErrorEvent = "render" | "api" | "auth" | "video" | "upload" |
 
 const REPORT_WINDOW_MS = 60_000;
 const MAX_REPORTS_PER_WINDOW = 8;
-const RECENT_DUPLICATE_MS = 10_000;
+const RECENT_DUPLICATE_MS = 60_000;
 let reportWindowStart = 0;
 let reportWindowCount = 0;
 const lastReports = new Map<string, number>();
@@ -49,6 +49,9 @@ function submit(event: ClientErrorEvent, error: unknown, component: string, requ
  reportWindowCount++;
  if (lastReports.size > 64) lastReports.clear();
  lastReports.set(signature, now);
+ // Synthetic size bands preserve responsive diagnostics without exact screen data.
+ const viewport=window.innerWidth<768?"375x800":
+  window.innerWidth<1024?"800x1000":"1440x900";
  const safeComponent = /^(?:root|global|page|widget)$/.test(component) ? component : "global";
  const safeRequestId = requestId && /^(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(requestId)
   ? requestId : undefined;
@@ -56,7 +59,7 @@ function submit(event: ClientErrorEvent, error: unknown, component: string, requ
   void fetch("/api/client-errors", {
    method: "POST",
    headers: { "content-type": "application/json" },
-   body: JSON.stringify({ event, message, name, component: safeComponent, path, requestId: safeRequestId }),
+   body: JSON.stringify({ event, message, name, component: safeComponent, path, viewport, requestId: safeRequestId }),
    keepalive: true,
    cache: "no-store",
   }).catch(() => undefined);
@@ -75,6 +78,15 @@ export function reportClientEvent(event: Exclude<ClientErrorEvent, "render" | "c
  error: unknown, component = "global"): void {
  submit(event, error, component);
 }
+
+/** Named legacy categories avoid reducing all user actions to a render error.
+ * No request URLs, posted values, stack traces or arbitrary component names
+ * are forwarded to the ingestion endpoint.
+ */
+export const reportApiFailure=(error:unknown)=>submit("api",error,"global");
+export const reportAuthFailure=(error:unknown)=>submit("auth",error,"global");
+export const reportVideoFailure=(error:unknown)=>submit("video",error,"widget");
+export const reportUploadFailure=(error:unknown)=>submit("upload",error,"widget");
 
 /** Install once from a persistent client root. Console capture is explicitly opt-in. */
 export function installClientErrorReporting(options: { captureConsoleErrors?: boolean } = {}): () => void {

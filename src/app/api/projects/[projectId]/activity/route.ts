@@ -12,7 +12,9 @@ export async function GET(request:Request,{params}:{
   const {projectId}=await params;
   const url=new URL(request.url);
   const parsed=parseLearnerProjectActivityFilters({
-    category:url.searchParams.get("category")??url.searchParams.get("sourceTab")??undefined,
+    category:url.searchParams.get("category")??undefined,
+    sourceTab:url.searchParams.get("sourceTab")??undefined,
+    search:url.searchParams.get("search")??undefined,
     from:url.searchParams.get("fromDate")??url.searchParams.get("from")??undefined,
     to:url.searchParams.get("toDate")??url.searchParams.get("to")??undefined,
     beforeTime:url.searchParams.get("beforeTime")??undefined,

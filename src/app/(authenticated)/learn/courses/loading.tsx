@@ -1,6 +1,19 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { PageHeader } from "@/components/ui/page-header";
 
-/** Legacy LMS: one canvas, compact page heading and hairline rows. */
+/** The old LMS shows six course-card skeletons before authenticated enrolment resolves. */
 export default function Loading() {
-  return <GracefulPageLoading label="Loading courses…" shape="directory" />;
+  return <section className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading courses">
+    <PageHeader title="Courses" />
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" aria-hidden="true">
+      {Array.from({length:6},(_,index)=><div key={index}
+        className="overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface">
+        <div className="h-28 animate-pulse bg-muted"/>
+        <div className="space-y-3 p-4">
+          <div className="h-5 w-4/5 animate-pulse rounded bg-muted"/>
+          <div className="h-4 w-2/5 animate-pulse rounded bg-muted"/>
+          <div className="h-4 w-3/5 animate-pulse rounded bg-muted"/>
+        </div>
+      </div>)}
+    </div>
+  </section>;
 }
