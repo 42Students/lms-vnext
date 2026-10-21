@@ -59,8 +59,8 @@ export async function mergeSuperAdminCompanies(context: RequestContext, raw: unk
     // this one college, and reject a combined note too large to persist.
     const sourceNotes = from.internalNotes?.trim();
     const combinedNotes = [to.internalNotes?.trim(),
-      sourceNotes ? "[Merged from "+source.name+"]\\n"+sourceNotes : null]
-      .filter((value):value is string=>Boolean(value)).join("\\n\\n")||null;
+      sourceNotes ? "[Merged from "+source.name+"]\n"+sourceNotes : null]
+      .filter((value):value is string=>Boolean(value)).join("\n\n")||null;
     if (combinedNotes && combinedNotes.length > 2000)
       throw new Error("Combined private CRM notes exceed 2,000 characters. Review the notes before merging.");
 
@@ -68,12 +68,11 @@ export async function mergeSuperAdminCompanies(context: RequestContext, raw: unk
     // facts. Moving only placement_companies.primaryDomain orphaned all other
     // domains from the active company; moving names without aliases made old
     // company searches disappear.
-    const [domains, aliases] = await Promise.all([
-      tx.select().from(placementCompanyDomains)
-        .where(eq(placementCompanyDomains.companyId,source.id)).for("update"),
-      tx.select().from(placementCompanyAliases)
-        .where(eq(placementCompanyAliases.companyId,source.id)).for("update"),
-    ]);
+    // Stable lock order prevents overlapping company merges from deadlocking.
+    const domains = await tx.select().from(placementCompanyDomains)
+      .where(eq(placementCompanyDomains.companyId,source.id)).for("update");
+    const aliases = await tx.select().from(placementCompanyAliases)
+      .where(eq(placementCompanyAliases.companyId,source.id)).for("update");
     const [existingSourceNameAlias] = await tx.select({id:placementCompanyAliases.id,
       companyId:placementCompanyAliases.companyId}).from(placementCompanyAliases)
       .where(ilike(placementCompanyAliases.alias,source.name)).limit(1);

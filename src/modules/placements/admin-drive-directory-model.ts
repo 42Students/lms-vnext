@@ -12,7 +12,8 @@ export const adminDriveDirectoryQuerySchema=z.object({
  page:decimalSelection.refine(n=>n>=1&&n<=100000).default(1),
  pageSize:decimalSelection.refine(n=>[10,20,50,100].includes(n)).default(10),
 }).strict();
-type Drive={job:{id:string;title:string;status:string;applicationDeadline:Date|null};company?:{name:string}};
+type Drive={job:{id:string;title:string;status:string;applicationDeadline:Date|null;
+ publishedAt?:Date|null;createdAt?:Date|null};company?:{name:string}};
 export function filterAdminDriveDirectory<T extends Drive>(rows:readonly T[],
  query:z.infer<typeof adminDriveDirectoryQuerySchema>){
  const term=query.q.toLocaleLowerCase("en-IN");
@@ -20,7 +21,14 @@ export function filterAdminDriveDirectory<T extends Drive>(rows:readonly T[],
   (query.status==="ACTIVE"&&row.job.status==="PUBLISHED")||
   (query.status==="DRAFT"&&row.job.status==="DRAFT")||
   (query.status==="CLOSED"&&["CLOSED","CANCELLED"].includes(row.job.status)))&&
-  (!term||(row.job.title+" "+(row.company?.name??"")).toLocaleLowerCase("en-IN").includes(term)));
+  (!term||(row.job.title+" "+(row.company?.name??"")).toLocaleLowerCase("en-IN").includes(term)))
+  .sort((a,b)=>{
+   // Legacy jobs listing places most recently posted drives first. A stable
+   // UUID tie-break avoids pages shifting when two posting times are equal.
+   const posted=(row:Drive)=>row.job.publishedAt?.getTime()??
+    row.job.createdAt?.getTime()??0;
+   return posted(b)-posted(a)||a.job.id.localeCompare(b.job.id);
+  });
  const totalPages=Math.max(1,Math.ceil(all.length/query.pageSize));
  const page=Math.min(query.page,totalPages);
  return {items:all.slice((page-1)*query.pageSize,page*query.pageSize),
