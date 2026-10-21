@@ -30,7 +30,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-course-actions.tsx.part2of2.md` (edit src/components/courses/admin-course-actions.tsx; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_college-assignment-create.tsx.md` (edit src/components/courses/college-assignment-create.tsx; 34 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_admin_placements_jobs_jobId_schedule_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx; 32 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_assignment-submission-service.ts.md` (edit src/modules/courses/assignment-submission-service.ts; 31 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_assignment-submission-service.ts.md` (edit src/modules/courses/assignment-submission-service.ts; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-16_u001-tracker-audit-findings.md.md` (new; 28 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_progress-service.ts.md` (edit src/modules/courses/progress-service.ts; 27 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_admin-course-create-panel.tsx.md` (edit src/components/courses/admin-course-create-panel.tsx; 25 findings; best P2)
