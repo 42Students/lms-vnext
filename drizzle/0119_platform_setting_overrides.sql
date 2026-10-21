@@ -1,3 +1,8 @@
+-- Before an approved historic import, group nullable-global source rows by
+-- normalized (scope,key), choosing highest updated_at and source numeric ID.
+-- NULL/empty only maps to GLOBAL/GLOBAL with no conflicting org context.
+-- Equal sort keys with different values require manual resolution. Values
+-- longer than varchar limits are rejected instead of silently truncated.
 CREATE TABLE "platform_setting_overrides" (
 	"scope_type" varchar(8) NOT NULL,
 	"scope_id" varchar(40) NOT NULL,
