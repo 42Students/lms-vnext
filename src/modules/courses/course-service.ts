@@ -144,6 +144,9 @@ function mapCourseConstraint(error: unknown) {
       return new CoursesServiceError(
         "COURSE_CODE_CONFLICT",
       );
+    case "courses_active_department_short_title_uq":
+      // Preserve the legacy name-or-short-title collision message.
+      return new CoursesServiceError("COURSE_NAME_CONFLICT");
     default:
       return error;
   }
@@ -155,6 +158,7 @@ export async function listCourses(
   departmentIdInput?: string | null,
   includeArchived = false,
   paging?: { limit: number; offset: number },
+  onlyArchived = false,
 ) {
   const collegeId =
     collegeIdSchema.parse(collegeIdInput);
@@ -165,6 +169,11 @@ export async function listCourses(
     organizationId: college.organizationId,
     collegeId,
   });
+  // Archived results expose retained course history. Only an authorized
+  // course manager may intentionally request them, never a read-only actor.
+  if (includeArchived || onlyArchived) {
+    requireCourseWrite(context, college.organizationId, collegeId);
+  }
 
   const departmentId = departmentIdInput
     ? departmentIdSchema.parse(
@@ -190,7 +199,9 @@ export async function listCourses(
     isNull(departments.archivedAt),
   ];
 
-  if (!includeArchived) {
+  if (onlyArchived) {
+    conditions.push(eq(courses.status, "ARCHIVED"));
+  } else if (!includeArchived) {
     conditions.push(eq(courses.status, "ACTIVE"));
   }
 
@@ -242,9 +253,11 @@ export async function listCoursesPage(
   paging: { limit: number; offset: number },
   departmentIdInput?: string | null,
   includeArchived = false,
+  onlyArchived = false,
 ) {
   const coursesPage = await listCourses(
     context, collegeIdInput, departmentIdInput, includeArchived, paging,
+    onlyArchived,
   );
   const collegeId = collegeIdSchema.parse(collegeIdInput);
   const departmentId = departmentIdInput
@@ -253,7 +266,8 @@ export async function listCoursesPage(
     eq(departments.collegeId, collegeId),
     isNull(departments.archivedAt),
   ];
-  if (!includeArchived) conditions.push(eq(courses.status, "ACTIVE"));
+  if (onlyArchived) conditions.push(eq(courses.status, "ARCHIVED"));
+  else if (!includeArchived) conditions.push(eq(courses.status, "ACTIVE"));
   if (departmentId) conditions.push(eq(courses.departmentId, departmentId));
   const [counter] = await getDb()
     .select({ total: sql<number>`count(*)::int` })
@@ -266,6 +280,17 @@ export async function listCoursesPage(
     limit: Math.min(100, paging.limit),
     offset: paging.offset,
   };
+}
+
+/** A separate, bounded recycle-bin read. Never mix archives into the
+ * ordinary course catalogue unless the caller explicitly requests that view. */
+export async function listArchivedCoursesPage(
+  context: RequestContext,
+  collegeId: string,
+  paging: { limit: number; offset: number },
+  departmentId?: string | null,
+) {
+  return listCoursesPage(context, collegeId, paging, departmentId, true, true);
 }
 
 export async function createCourse(
@@ -404,7 +429,10 @@ export async function updateCourse(
       .update(courses)
       .set({
         ...changes,
-        updatedAt: new Date(),
+        // The persisted token MUST advance even for two edits within one
+        // millisecond (or across app/DB clocks). The browser sends this exact
+        // updatedAt back as the optimistic concurrency token.
+        updatedAt: sql`greatest(now(), ${courses.updatedAt} + interval '1 millisecond')`,
       })
       .where(
         and(
@@ -490,7 +518,7 @@ export async function archiveCourse(
       .update(courses)
       .set({
         status: "ARCHIVED",
-        updatedAt: new Date(),
+        updatedAt: sql`greatest(now(), ${courses.updatedAt} + interval '1 millisecond')`,
       })
       .where(and(
         eq(courses.id, courseId),
@@ -562,7 +590,10 @@ export async function restoreCourse(
       );
       const [restored] = await tx
         .update(courses)
-        .set({ status: "ACTIVE", updatedAt: new Date() })
+        .set({
+          status: "ACTIVE",
+          updatedAt: sql`greatest(now(), ${courses.updatedAt} + interval '1 millisecond')`,
+        })
         .where(and(
           eq(courses.id, courseId),
           eq(courses.departmentId, scope.departmentId),
