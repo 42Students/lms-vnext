@@ -1366,6 +1366,20 @@
       "when": 1792353011266,
       "tag": "0194_lane15_department_legacy_name_bounds",
       "breakpoints": true
+    },
+    {
+      "idx": 195,
+      "version": "7",
+      "when": 1792353071266,
+      "tag": "0195_lane15_db10_skills_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 196,
+      "version": "7",
+      "when": 1792353131266,
+      "tag": "0196_lane15_project_change_history",
+      "breakpoints": true
     }
   ]
 }

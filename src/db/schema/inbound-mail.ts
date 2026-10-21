@@ -79,3 +79,15 @@ export const inboundMailMessages = pgTable(
     check("inbound_mail_messages_version_ck", sql`${t.version} >= 0`),
   ],
 );
+
+/** Shared mailbox intake classification. Worker proofs must be checked before
+ * calling this: a public sender's From header is never authentication. */
+export const VERIFIED_INBOUND_ROUTING_OUTCOMES=[
+ "POSTED","STORED","NO_THREAD","WRONG_SENDER",
+ "NOT_VERIFIED","EMPTY","ACCESS_ENDED","FAILED",
+] as const;
+export function inboundMailRecipientKind(address:string,replyDomain:string){
+ const parsed=/^r-[a-f0-9]{32}@([a-z0-9.-]+)$/i.exec(address.trim());
+ return parsed&&replyDomain.length>0&&parsed[1]?.toLowerCase()===replyDomain.toLowerCase()
+  ?"REPLY" as const:"OTHER" as const;
+}
