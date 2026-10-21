@@ -24,7 +24,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
  if(!isSuperAdmin(ctx))throw new AuthorizationError("admin-scope.select");
  requirePermission(ctx,"admin-scope.select");
  const collegeId=id.parse(collegeRaw),moduleName=z.enum(["projects","placements","electives"]).parse(moduleRaw);
- const [college]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId}).from(colleges)
+ const [college]=await getDb().select({id:colleges.id,name:colleges.name,organizationId:colleges.organizationId}).from(colleges)
   .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"))).limit(1);
  if(!college)throw new AuthorizationError("college.read");
  requirePermission(ctx,"college.read",{collegeId,organizationId:college.organizationId});
@@ -45,7 +45,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
      eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt)));
   const counts=[row?.total??0];
   await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
-  return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
+  return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts,college.name)};
  }
  if(moduleName==="placements"){
   const [drives,applications,offers,interviews]=await Promise.all([
@@ -71,7 +71,7 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
     offers[0]?.total??0,interviews[0]?.total??0,
   ];
   await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
-  return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
+  return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts,college.name)};
  }
  await assertCurrentImpactScope(ctx,collegeId,college.organizationId);
  return {module:moduleName,students,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};

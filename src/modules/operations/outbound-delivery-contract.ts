@@ -28,6 +28,28 @@ export const LEGACY_JOB_SMS_EVENTS = [
   "interview.confirmed",
 ] as const;
 
+/** Read-only purpose names from the legacy delivery ledger. These are not send templates. */
+export const LEGACY_SMS_PURPOSE_LABELS = {
+ "attendance.absence":"Attendance absence",
+ "attendance.correction":"Attendance correction",
+ "otp":"One-time password",
+ "job.update":"Placement update",
+} as const;
+
+export const adminOutboundLogReadSchema=z.object({
+ purpose:z.enum(["ALL",...Object.keys(LEGACY_SMS_PURPOSE_LABELS) as
+  [keyof typeof LEGACY_SMS_PURPOSE_LABELS,...(keyof typeof LEGACY_SMS_PURPOSE_LABELS)[]]]).default("ALL"),
+ page:z.coerce.number().int().min(0).max(10000).default(0),
+ size:z.coerce.number().int().min(1).max(100).default(20),
+ // Never place a complete recipient, email or phone number into an audit/log URL.
+ recipientSuffix:z.string().regex(/^[0-9]{2,4}$/).optional(),
+}).strict();
+export type AdminOutboundLogReadQuery=z.infer<typeof adminOutboundLogReadSchema>;
+export function parseAdminOutboundLogRead(raw:unknown):AdminOutboundLogReadQuery|null{
+ const parsed=adminOutboundLogReadSchema.safeParse(raw);
+ return parsed.success?parsed.data:null;
+}
+
 export const LEGACY_SMS_ORIGINS = [
   "otp",
   "notification",

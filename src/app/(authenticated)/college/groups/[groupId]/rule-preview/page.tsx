@@ -24,6 +24,10 @@ export default async function CollegeGroupRulePreviewPage({
   } catch (error) {
     if (error instanceof CollegeRulePreviewError) {
       if (error.code === "GROUP_NOT_FOUND") notFound();
+      if(error.code==="RULE_NOT_CONFIGURED")return <div className="min-w-0 space-y-4">
+        <PageHeader title="Rule preview" actions={<PageBackLink href={"/college/groups/"+encodeURIComponent(groupId)} label="Back to group"/>}/>
+        <Alert tone="info" title="No rule configured">This group has no automatic membership rule. Preview only; no learners were evaluated or changed.</Alert>
+      </div>;
       return <ErrorState
         title="Rule preview unavailable"
         description="This group does not have a supported, configured rule. No learners were evaluated or changed."
@@ -40,6 +44,7 @@ export default async function CollegeGroupRulePreviewPage({
       description="Read-only eligibility preview. No membership changes, refresh or rule edits are performed."
       actions={<PageBackLink href={"/college/groups/" + encodeURIComponent(group.id)} label="Back to group"/>}
     />
+    <Alert tone="info" title="Preview only">This preview evaluates eligibility without changing group membership. Applying a rule is a separate, authorized action.</Alert>
     {projection.incomplete ? (
       <Alert tone="warning" title="Preview candidate cap reached">
         More than 1,000 active learners were eligible for evaluation. Counts below describe only the first 1,000 records; they are not college-wide totals.

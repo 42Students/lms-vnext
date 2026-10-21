@@ -46,7 +46,9 @@ export function resolveCollegeModuleDecisions(
     rules,
   );
 
-  return OPTIONAL_MODULE_KEYS.map((module) => {
+  // Legacy Feature Controls exposes only Projects and Placements.
+  // Electives continues to resolve internally without a third public toggle.
+  return OPTIONAL_MODULE_KEYS.filter(module => module === "projects" || module === "placements").map((module) => {
     const decision = resolved[module];
 
     return {
