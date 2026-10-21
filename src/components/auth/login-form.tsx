@@ -344,7 +344,7 @@ export function LoginForm({
     setBusy(true);
     setError(null);
     try {
-      const result = await runGuarded(() => post<{ next?: string; membershipSelectionRequired?: boolean }>(
+      const result = await runGuarded(() => post<{ next?: string; membershipSelectionRequired?: boolean; systemWorkspaceAvailable?: boolean }>(
         "/api/auth/login/verify",
         {
           attemptId: attempt.attemptId,
@@ -370,6 +370,10 @@ export function LoginForm({
         const accounts=selectableLoginAccounts(listed);
         if(accounts.length>1||result.data.membershipSelectionRequired){
           if(!accounts.some(account=>account.selectable)){
+            if(result.data.systemWorkspaceAvailable){
+              window.location.assign(landing);
+              return;
+            }
             setError("No active college account is available. Contact your administrator.");
             return;
           }
@@ -383,7 +387,7 @@ export function LoginForm({
       } catch(reason) {
         // A membership lookup failure must not silently choose a college when
         // the login service explicitly requires a workspace selection.
-        if(result.data.membershipSelectionRequired){
+        if(result.data.membershipSelectionRequired&&!result.data.systemWorkspaceAvailable){
           reportAuthFailure(reason);
           setError("Unable to load available accounts. Refresh to choose your college and role.");
           return;
