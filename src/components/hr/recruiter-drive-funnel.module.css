@@ -23,7 +23,7 @@
 .count {
   display: block;
   margin: 4px 0 0;
-  color: #334155;
+  color: var(--lms-topbar-ink);
   font-size: 26px;
   line-height: 1.1;
   font-weight: 700;
@@ -32,9 +32,9 @@
 .track {
   height: 11px !important;
   border-radius: 999px;
-  background: #e7ecf2 !important;
+  background: var(--lms-header-border) !important;
 }
-.track > div { background: #26bac7 !important; }
+.track > div { background: var(--lms-primary) !important; }
 .track[aria-valuenow]:not([aria-valuenow="0"]) > div { min-width: 2px; }
 .note {
   margin: 8px 0 0;
@@ -61,9 +61,9 @@
   margin: 0 !important;
   height: 8px !important;
   border-radius: 999px;
-  background: #e7ecf2 !important;
+  background: var(--lms-header-border) !important;
 }
-.reviewTrack > div { background: #26bac7 !important; }
+.reviewTrack > div { background: var(--lms-primary) !important; }
 @media (max-width: 767px) {
   .reviewTrack { min-width: 100px; }
 }

@@ -322,18 +322,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/courses/faculty-course-home-signals.module.css`
 - [x] `src/components/courses/faculty-report-legacy-charts.module.css`
 - [x] `src/components/courses/learner-assessment-metrics.module.css`
-- [ ] `src/components/courses/learner-course-progress.module.css`
-- [ ] `src/components/courses/learner-quiz-attempt.module.css`
-- [ ] `src/components/courses/legacy-upload-meter.module.css`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/recruiter-calendar-legacy.module.css`
-- [ ] `src/components/hr/recruiter-drive-funnel.module.css`
-- [ ] `src/components/placements/learner-career-calendar.module.css`
-- [ ] `src/components/placements/learner-placement-metrics.module.css`
-- [ ] `src/components/placements/legacy-calendar-theme.module.css`
-- [ ] `src/components/placements/legacy-tpo-report-stats.module.css`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/report-bar-chart.module.css`
+- [x] `src/components/courses/learner-course-progress.module.css`
+- [x] `src/components/courses/learner-quiz-attempt.module.css`
+- [x] `src/components/courses/legacy-upload-meter.module.css`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/hr/recruiter-calendar-legacy.module.css`
+- [x] `src/components/hr/recruiter-drive-funnel.module.css`
+- [x] `src/components/placements/learner-career-calendar.module.css`
+- [x] `src/components/placements/learner-placement-metrics.module.css`
+- [x] `src/components/placements/legacy-calendar-theme.module.css`
+- [x] `src/components/placements/legacy-tpo-report-stats.module.css`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/components/placements/report-bar-chart.module.css`
 - [ ] `src/components/placements/super-admin-hiring-funnel.module.css`
 - [ ] `src/components/placements/tpo-week-hour-calendar.module.css`
 - [ ] `src/components/projects/learner-project-activity.tsx`

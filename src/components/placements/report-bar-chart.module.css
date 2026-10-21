@@ -4,9 +4,9 @@
  * src/styles/components/_tpo-reports.scss:429-483,602-605.
  * This is presentation-only; the existing MetricBar retains its a11y meter.
  */
-.figure { border-color: #e7ecf2; }
+.figure { border-color: var(--lms-header-border); }
 .title {
-  color: #334155;
+  color: var(--lms-topbar-ink);
   font-size: 14px;
   font-weight: 650;
 }
@@ -20,14 +20,14 @@
 .chartRow:last-child { margin-bottom: 0; }
 .label {
   overflow: hidden;
-  color: #54505d;
+  color: var(--lms-neutral-700);
   font-size: 12px;
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .value {
-  color: #334155;
+  color: var(--lms-topbar-ink);
   font-size: 12px;
   font-weight: 650;
   text-align: right;
@@ -35,11 +35,11 @@
 .track {
   height: 11px !important;
   border-radius: 999px;
-  background-color: #e7ecf2 !important;
+  background-color: var(--lms-header-border) !important;
 }
 .track > div {
   min-width: 0;
-  background-color: #26bac7 !important;
+  background-color: var(--lms-primary) !important;
 }
 .track[aria-valuenow]:not([aria-valuenow="0"]) > div {
   min-width: 2px;

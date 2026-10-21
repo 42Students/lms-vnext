@@ -9,23 +9,23 @@
   background-color: #dddddd52 !important;
 }
 .calendarWeekday {
-  background-color: #fff;
+  background-color: var(--lms-white);
 }
 .calendarDay {
-  background-color: #fff;
+  background-color: var(--lms-white);
   border-color: #dddddd52 !important;
   border-radius: 0 !important;
 }
 .calendarSunday {
   /* $sunCalendarColor: #ff7576, variables.scss:273 */
-  color: #ff7576 !important;
+  color: var(--lms-calendar-sunday) !important;
 }
 .calendarCurrentDay {
   /* $activeCalendarDayColor: #26bac7, variables.scss:272 */
-  box-shadow: inset 0 0 0 2px #26bac7;
+  box-shadow: inset 0 0 0 2px var(--lms-primary);
 }
 .calendarDay:focus-visible {
-  outline: 2px solid #26bac7;
+  outline: 2px solid var(--lms-primary);
   outline-offset: -2px;
 }
 
@@ -36,17 +36,17 @@
  * continue to use their own original visual conventions.
  */
 .tpoCommandBar {
-  border: 1px solid #e7ecf2 !important;
+  border: 1px solid var(--lms-header-border) !important;
   border-radius: 14px;
-  background: #fff;
+  background: var(--lms-white);
   padding: 16px 18px;
   box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
 }
 .tpoMonthFrame {
   overflow: hidden;
-  border: 1px solid #e7ecf2 !important;
+  border: 1px solid var(--lms-header-border) !important;
   border-radius: 14px !important;
-  background: #fff;
+  background: var(--lms-white);
   padding: 10px 14px 14px;
   box-shadow: 0 4px 18px rgba(26, 45, 72, 0.045);
 }
