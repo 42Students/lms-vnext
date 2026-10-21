@@ -4,6 +4,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact-availability-service";
 import {facultyProfileDocumentStorageReady} from "@/modules/people/faculty-profile-readiness";
 import {loadOwnFacultyProfileDocumentStaged} from "@/modules/people/faculty-profile-self.staged";
+import {FacultyContactEditor} from "@/components/people/faculty-contact-editor";
 
 export default async function FacultyOwnContactPage(){
  const context=await getCurrentRequestContext();
@@ -40,7 +41,8 @@ export default async function FacultyOwnContactPage(){
   </dl>
  </section>
  {editable?<div className="space-y-2">
-  <Link href="/teacher/profile#faculty-profile-sections" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">Edit contacts</Link>
+  <FacultyContactEditor key={current!.version} initial={current!.document.contact}
+   initialVersion={current!.version}/>
   <p className="text-xs text-muted-foreground">Primary mobile number is required when updating contacts. Your college-managed login email and login phone are unchanged.</p>
  </div>:<p className="max-w-prose text-xs leading-5 text-muted-foreground">Contact editing will be available when private Faculty profile storage is ready. No changes have been submitted.</p>}
  </div>;
