@@ -143,7 +143,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         {generalThread.preview!.text}
       </p>:null}
       {generalHistoryResult && !generalHistoryResult.ok?
-        <p role="status" className="mt-2 text-sm text-body">
+        <p role="status" className="mt-2 text-sm text-body leading-[1.6]">
           General message history is unavailable right now. Refresh or contact the placement cell if access was removed.
         </p>:null}
       {generalHistory?<ScrollCue axis="y" label="General placement-cell messages" className="mt-3" viewportClassName="max-h-72"><ol aria-label="General placement-cell messages" className="space-y-2">
@@ -160,7 +160,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         className="mt-3 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open full conversation</Link>
     </Disclosure>:null}
     {generalLookup && !generalLookup.ok?
-      <p role="status" className="mt-3 text-sm text-body">
+      <p role="status" className="mt-3 text-sm text-body leading-[1.6]">
         General conversation preview is temporarily unavailable. Refresh to try again; existing conversations remain accessible.
       </p>:null}
     {!generalThread && (!generalLookup || generalLookup.ok)?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
@@ -168,7 +168,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open general conversation</Button>
     </form>:null}
    </section>
-   <p role="status" className="text-sm text-body">
+   <p role="status" className="text-sm text-body leading-[1.6]">
     {result.unreadInView} unread placement cell messages in these conversations
    </p>
    {result.unreadInView>0?<form method="post"
