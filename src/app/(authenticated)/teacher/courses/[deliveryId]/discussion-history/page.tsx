@@ -31,7 +31,7 @@ export default async function FacultyDiscussionHistoryPage({
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
         Discussions
       </Link>} />
-    <form role="search" aria-label="discussion history filters" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+    <form role="search" aria-label="discussion history filters" method="get" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Recorded action
         <Select name="action" defaultValue={data.query.action}
           className="min-h-11 md:min-h-[var(--lms-control-height)]">

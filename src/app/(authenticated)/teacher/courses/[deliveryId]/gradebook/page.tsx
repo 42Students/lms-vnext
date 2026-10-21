@@ -73,7 +73,7 @@ export default async function FacultyGradebookPage({
       {data.rosterSize} current eligible learners · {data.publishedAssessments}
       {" "}assessments with published result records
     </p>
-    <form role="search" aria-label="gradebook filters" method="get" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
+    <form role="search" aria-label="gradebook filters" method="get" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto] sm:items-end">
       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         Find learner
         <Input type="search" name="search" defaultValue={view.data.search}
