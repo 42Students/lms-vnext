@@ -149,3 +149,5 @@
 
 - Inbound mail provider/source owners: approval gates in `docs/audit/gap-fix/inbound-mail-cutover-lane-5.md`; migration 0068 schema alone does not provide signed source ingestion or historical MySQL V225 mapping.
 - Account lifecycle/auth owners: verify `college-admin-lifecycle-contract-lane-5.md` cross-college session blast radius and reactivation guards against token/session state and audit receipts; not changed by UI lane.
+
+- G2-9-019-056: `src/modules/academics/college-academic-export-model.ts` CSV semester format owned by the academics export lane still differs from legacy `semesters.csv` (`id,name,semesterNumber,programId,totalCredits,isActive` and `yes/no` tokens); align through the export owner rather than editing their file here.
