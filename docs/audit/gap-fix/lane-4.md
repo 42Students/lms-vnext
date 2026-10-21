@@ -11,16 +11,18 @@
 - G2-4-010-072, 124: implement current-page CSV export with legacy column order, IST wall-clock deadlines, `assignments-college-<college>-page-<page>.csv` filename and disabled action when page is empty. Preserve full-filter export as a separate action. Both College Admin and Super Admin routes have a page-only mode.
 
 - G2-4-010-068: assignment list now uses a dedicated failed-load error with retry, while a failure to load authoring choices leaves the authorized directory visible.
+- G2-4-010-064, 122: explicit Save & hide from learner is available for published grades; PATCH with current version retains score and feedback, re-hides grade, logs an event. Existing score changes still require regrade feedback.
+- G2-4-010-119 (partial): College Admin submission review now opens shared 760px Dialog (instead of Drawer); publish-grades uses ConfirmDialog (no native confirm).
 
 **Partial rows (NOT credited as complete):**
 - G2-4-010-022: list now displays `not graded` as submitted-currently-eligible minus graded-currently-eligible; legacy denominator/history semantics remain to reconcile.
 - G2-4-010-008, 035, 040, 073: create trigger label, instructions placeholder and rows, stale-version copy, page-export column/order are aligned or improved, but the full modal/form/grade flow remains open.
 - G2-4-010-025: page still uses 25 rows; legacy is 20, so current-page export is not yet exact 20-row parity.
 
-**Outstanding P1:** resource/PDF/file/Drive picker and signed upload persistence (015/036/037/042/052/074/092/097/131/132), server-side atomic bulk grade publish and audit receipts (054/089/093/101/120), grade re-hide (064/122), list error boundary (068), deletion/archival parity (055), and end-to-end validation for options/export. P2/P3 are not yet completed.
+**Outstanding P1:** resource/PDF/file/Drive picker and signed upload persistence (015/036/037/042/052/074/092/097/131/132), server-side atomic bulk grade publish and audit receipts (054/089/093/101/120), list error boundary verification (068), deletion/archival parity (055), and end-to-end validation for options/export. P2/P3 are not yet completed.
 
 **UNKNOWN rows** (leave untouched until evidence): 028, 056, 058, 065, 071, 075, 076, 091, 102, 121, 125, 130. These require live/service checks or scope-switch validation; no claim of resolution.
 
-**Files changed on the lane branch:** `src/components/courses/college-assignment-create.tsx`, `college-assignment-actions.tsx`, `college-assessment-aggregate.tsx`, `college-assessment-course-section-filters.tsx`, `src/modules/courses/college-assessment-aggregate-model.ts`, `college-assessment-aggregate-service.ts`, `college-assessment-export-model.ts`, `college-assessment-export-service.ts`, `admin-assessment-directory-model.ts`, `src/modules/admin-ui/super-admin-learning-csv-service.ts`, both College Admin assignment/quiz pages, Super Admin assignments page, assignment CSV route.
+**Files changed on the lane branch:** `src/modules/courses/assignment-validation.ts`, `assignment-submission-service.ts`, `src/components/courses/faculty-assignment-review.tsx`, `college-assignment-review.tsx`, plus  `src/components/courses/college-assignment-create.tsx`, `college-assignment-actions.tsx`, `college-assessment-aggregate.tsx`, `college-assessment-course-section-filters.tsx`, `src/modules/courses/college-assessment-aggregate-model.ts`, `college-assessment-aggregate-service.ts`, `college-assessment-export-model.ts`, `college-assessment-export-service.ts`, `admin-assessment-directory-model.ts`, `src/modules/admin-ui/super-admin-learning-csv-service.ts`, both College Admin assignment/quiz pages, Super Admin assignments page, assignment CSV route.
 
 **Verification:** edited files fetched/read back after writes; project code, tests, lint, typecheck, browser and CI deliberately not run (lane instruction). Manual compile/browser checks remain open.
