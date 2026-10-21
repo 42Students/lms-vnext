@@ -45,6 +45,7 @@ export async function readCompleteCollegeModuleTree(
  return {
   root:{scopeType:"COLLEGE" as const,scopeId:overview.college.id,
    label:overview.college.name,modules:overview.modules},
+  college:overview.college,modules:overview.modules,ancestors:overview.ancestors,
   items:academic.items.map(item=>{
    const parent=byNode.get(item.scopeType+":"+item.scopeId);
    return {...item,parentScopeType:parent?.parentType??null,
