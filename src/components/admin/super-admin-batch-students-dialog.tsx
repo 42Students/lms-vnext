@@ -16,7 +16,7 @@ export function SuperAdminBatchStudentsDialog({name,students,classes}:{
    className="min-h-11 w-full md:min-h-9 md:w-auto">Manage students ({students.length})</Button>
   <Dialog open={open} onOpenChange={setOpen} title={"Manage students · "+name}
    description="Search and move active class assignments inside this batch."
-   className="!max-w-[980px]" footer={<Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Close</Button>}>
+   className="!max-w-[720px]" footer={<Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Close</Button>}>
    <SuperAdminBatchRosterManager students={students} classes={classes}/>
   </Dialog>
  </>;
