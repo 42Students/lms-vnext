@@ -90,6 +90,26 @@ export function parseStaffNotificationSchedule(raw: string | null | undefined): 
   if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
     throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
   }
+  // Date.parse normalizes some impossible calendar dates instead of rejecting
+  // them (for example February 30). Validate the entered wall-clock fields
+  // before applying its explicit timezone offset.
+  const [datePart, timePart] = value.split("T");
+  const [year, month, day] = datePart.split("-").map(Number);
+  const [hour, minute] = timePart.slice(0, 5).split(":").map(Number);
+  const second = timePart.length > 5 && timePart[5] === ":"
+    ? Number(timePart.slice(6, 8)) : 0;
+  const wallClock = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+  const offset = /([+-])(\d{2}):(\d{2})$/.exec(value);
+  if (year < 100 ||
+      wallClock.getUTCFullYear() !== year ||
+      wallClock.getUTCMonth() + 1 !== month ||
+      wallClock.getUTCDate() !== day ||
+      wallClock.getUTCHours() !== hour ||
+      wallClock.getUTCMinutes() !== minute ||
+      wallClock.getUTCSeconds() !== second ||
+      (offset && (Number(offset[2]) > 23 || Number(offset[3]) > 59))) {
+    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+  }
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
     throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
@@ -385,17 +405,45 @@ export async function requireStaffNotificationMutation(
   if (!previous.success) {
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   }
-  const { audience: originalAudience } =
-    await requireStaffNotificationAudience(context, previous.data);
-  if (originalAudience.collegeId !== existing.collegeId ||
-      originalAudience.organizationId !== existing.organizationId) {
-    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
-  }
   if (isAdmin) {
     requirePermission(context, "courses.manage", {
       collegeId: existing.collegeId,
       organizationId: existing.organizationId,
     });
+    // Administrators must still be able to recall a notice after the class
+    // or course is archived. Verify the original tenant via stored relations
+    // without requiring those historic academic records to remain ACTIVE.
+    if (audience.classId) {
+      const [originalSection] = await getDb()
+        .select({ collegeId: academicPeriods.collegeId })
+        .from(sections)
+        .innerJoin(academicPeriods, eq(academicPeriods.id, sections.academicPeriodId))
+        .where(eq(sections.id, audience.classId))
+        .limit(1);
+      if (!originalSection || originalSection.collegeId !== existing.collegeId) {
+        throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+      }
+    }
+    if (audience.courseId) {
+      const [originalCourse] = await getDb()
+        .select({ collegeId: departments.collegeId })
+        .from(courses)
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
+        .where(eq(courses.id, audience.courseId))
+        .limit(1);
+      if (!originalCourse || originalCourse.collegeId !== existing.collegeId) {
+        throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+      }
+    }
+  } else {
+    // A faculty creator must still have a live teaching assignment to the
+    // original course/class; a role in the college alone is insufficient.
+    const { audience: originalAudience } =
+      await requireStaffNotificationAudience(context, previous.data);
+    if (originalAudience.collegeId !== existing.collegeId ||
+        originalAudience.organizationId !== existing.organizationId) {
+      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    }
   }
   return audience;
 }
