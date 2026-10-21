@@ -37,7 +37,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-7_u005-college-admin-project-template-detail.md.md` (new; 30 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-2_superadmin-audit-findings-controller.md.md` (new; 28 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_super-admin-faculty-assignment-create.tsx.md` (edit src/components/admin/super-admin-faculty-assignment-create.tsx; 28 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_projects_templates_templateId_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx; 26 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_projects_templates_templateId_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx; 26 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_lecture-halls_page.tsx.md` (edit src/app/(authenticated)/admin/lecture-halls/page.tsx; 24 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_teacher_report_assignment_contentId_page.tsx.md` (edit src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx; 23 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-5_u005-recruiter-calendar.md.md` (new; 23 findings; best P2)
